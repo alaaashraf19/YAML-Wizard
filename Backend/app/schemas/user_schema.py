@@ -1,11 +1,12 @@
 import re
 from pydantic import BaseModel, EmailStr, Field, field_validator
 
-class User(BaseModel):
-    username: str
-    email: EmailStr
-    hashed_password: str
-    role: str = "user" #default role is "user", can be overridden to "admin" during signup if needed
+# class User(BaseModel):
+#     username: str
+#     email: EmailStr
+#     password : str
+#     hashed_password: str = ""
+#     role: str = "user" #default role is "user", can be overridden to "admin" during signup if needed
 
 
 class UserCreate(BaseModel):
@@ -25,6 +26,9 @@ class UserCreate(BaseModel):
             raise ValueError("Password must include at least one special character.")
         return value
     
+class UserCreateResponse(BaseModel):
+    message: str
+    user_id: str
 
 class UserLogin(BaseModel):
     username: str = Field(..., min_length=3, max_length=20)
@@ -33,3 +37,4 @@ class UserLogin(BaseModel):
 class UserLoginResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
+

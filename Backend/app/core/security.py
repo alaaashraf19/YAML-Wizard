@@ -13,7 +13,7 @@ SECRET_KEY =os.getenv("SECRET_KEY")
 ACCESS_TOKEN_EXPIRE_MINUTES = os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES",30)
 ALGORITHM = "HS256"
 
-pwd_context = CryptContext(schemes=["bcrypt"])
+pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
 def create_access_token(data: dict):
 
