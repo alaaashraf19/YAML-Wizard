@@ -1,5 +1,15 @@
-from fastapi import FastAPI
-from routers import auth_router
+from contextlib import asynccontextmanager
 
-app = FastAPI()
+from fastapi import FastAPI
+from database.db_engine import create_tables
+from routers import auth_router, github_app_router, user_router
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    create_tables()
+    yield
+    
+app = FastAPI(lifespan=lifespan)
 app.include_router(auth_router.router, prefix="/auth", tags=["auth"])
+app.include_router(github_app_router.router, prefix="/github", tags=["github"])
+app.include_router(user_router.router, prefix="/user", tags=["user"])

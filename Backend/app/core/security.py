@@ -1,11 +1,13 @@
 import os
 from dotenv import load_dotenv
 from datetime import timedelta,datetime,timezone
-from fastapi import HTTPException, Depends
+from fastapi import HTTPException, Depends, status
 from passlib.context import CryptContext
 from fastapi.security import  OAuth2PasswordBearer
 from jose import JWTError, jwt
-
+from sqlalchemy.orm import Session
+from database.db_engine import get_db
+from models.user_model import User
 load_dotenv()
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
@@ -34,18 +36,33 @@ def verify_password(password: str, hashed_password: str) -> bool:
     return pwd_context.verify(password,hashed_password)
 
 
-#to be updated 
-def get_current_user(token: str = Depends(oauth2_scheme)):
+def get_user(db:Session, username: str):
+    return db.query(User).filter(User.username == username).first()
+
+
+def get_current_user(db: Session = Depends(get_db),token: str = Depends(oauth2_scheme)):
     if SECRET_KEY is None:
         raise ValueError("SECRET_KEY environment variable is not set")
+    
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+
     try:
 
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username = payload.get("sub")
+        
         role = payload.get("role")
         if username is None or role is None:
-            raise HTTPException(status_code=401, detail="Could not validate credentials") #401->Unauthorized
+            raise credentials_exception
         
-        return {"username": username,"role": role}
     except JWTError:
-        raise HTTPException(status_code=401, detail="Invalid token")
+        raise credentials_exception 
+    
+    user = get_user(db, username=username.lower())
+    if user is None:
+        raise credentials_exception
+    return user
