@@ -1,5 +1,5 @@
 import re
-from pydantic import BaseModel, EmailStr, Field, field_validator
+from pydantic import BaseModel, Field, field_validator
 
 # class User(BaseModel):
 #     username: str
@@ -11,8 +11,16 @@ from pydantic import BaseModel, EmailStr, Field, field_validator
 
 class UserCreate(BaseModel):
     username: str = Field(..., min_length=3, max_length=20)
-    email: EmailStr
+    email: str = Field(..., min_length=5, max_length=50)
     password: str = Field(..., min_length=8, max_length=64)
+
+    @field_validator("email")
+    def validate_email(cls, value):
+        if "@" not in value:
+            raise ValueError("The email should contain an @ symbol.")
+        if "." not in value.split("@")[-1]:
+            raise ValueError("The email should have a period after the @ symbol.")
+        return value
 
     @field_validator("password")
     def validate_password(cls, value):
@@ -27,14 +35,16 @@ class UserCreate(BaseModel):
         return value
     
 class UserCreateResponse(BaseModel):
-    message: str
+    msg: str
     user_id: str
 
 class UserLogin(BaseModel):
     username: str = Field(..., min_length=3, max_length=20)
     password: str = Field(..., min_length=8, max_length=64)
 
-class UserLoginResponse(BaseModel):
-    access_token: str
-    token_type: str = "bearer"
+class LoginResponse(BaseModel):
+    username: str
+    role: str
 
+class LoginConfirm(BaseModel):
+    username: str

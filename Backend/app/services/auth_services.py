@@ -1,14 +1,15 @@
-from uuid import uuid4
 from fastapi import HTTPException
-from schemas.user_schema import UserCreate, UserCreateResponse, UserLogin, UserLoginResponse
-from core.security import hash_password, create_access_token, verify_password
+from fastapi.responses import JSONResponse
+from schemas.user_schema import UserCreate, UserCreateResponse, UserLogin
+from core.security import hash_password, create_access_token, verify_password, get_user
 from models.user_model import User as UserModel
 
 
 async def signup(user: UserCreate, db):
-
-    db_user = db.query(UserModel).filter(UserModel.username == user.username.lower()).first()
-    email_exists = db.query(UserModel).filter(UserModel.email == user.email.lower()).first()
+    username = user.username.lower()
+    email = user.email.lower()
+    db_user = get_user(db, username)
+    email_exists = db.query(UserModel).filter(UserModel.email == email).first()
     
     if db_user:
         raise HTTPException(
@@ -24,8 +25,8 @@ async def signup(user: UserCreate, db):
     hashed_pw = hash_password(user.password)
     
     new_user = UserModel(
-        username=user.username.lower(),
-        email=user.email.lower(),
+        username=username,
+        email=email,
         hashed_password=hashed_pw,
     )
     db.add(new_user)
@@ -54,4 +55,19 @@ async def login(user: UserLogin, db):
             data={"sub": db_user.username, "role": db_user.role}
         )
     
-    return UserLoginResponse(access_token=access_token, token_type="bearer")
+    response = JSONResponse(
+        content={
+            "username": user.username, 
+            "role": db_user.role,
+            "msg": "Logged in successfully"
+        })
+    response.set_cookie(
+        key="access_token",
+        value=access_token,
+        httponly=True,
+        secure=False,        # ===========> MAKE SECURE FOR HTTPS
+        samesite="Lax",
+        max_age=60 * 60 * 24 * 7 #7 days
+    )
+
+    return response
