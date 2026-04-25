@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 from datetime import timedelta,datetime,timezone
-from fastapi import HTTPException, Depends, status
+from fastapi import Cookie, HTTPException, Depends, status
 from passlib.context import CryptContext
 from fastapi.security import  OAuth2PasswordBearer
 from jose import JWTError, jwt
@@ -40,7 +40,7 @@ def get_user(db:Session, username: str):
     return db.query(User).filter(User.username == username).first()
 
 
-def get_current_user(db: Session = Depends(get_db),token: str = Depends(oauth2_scheme)):
+def get_current_user(db: Session = Depends(get_db),token: str | None= Cookie(None, alias="access_token")):
     if SECRET_KEY is None:
         raise ValueError("SECRET_KEY environment variable is not set")
     
@@ -49,6 +49,9 @@ def get_current_user(db: Session = Depends(get_db),token: str = Depends(oauth2_s
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
+
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
 
     try:
 
