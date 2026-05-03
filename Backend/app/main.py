@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
-from routers import auth_router
+from routers import auth_router,project_router,chatbot_router
 from database.db_engine import create_tables
 from middleware.middleware import setup_middleware
 
@@ -15,3 +15,5 @@ app = FastAPI(lifespan=lifespan)
 setup_middleware(app)
 
 app.include_router(auth_router.router, prefix="/auth", tags=["auth"])
+app.include_router(project_router.router, prefix="/projects", tags=["projects"])
+app.include_router(chatbot_router.router, prefix="/chatbot", tags=["chatbot"])
