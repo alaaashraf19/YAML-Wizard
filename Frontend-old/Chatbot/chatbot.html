@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+    <link rel="stylesheet" href="chatbot.css">
+</head>
+
+<body>
+    <div id="chat-window">
+        <div id ="chat-messages" hidden></div>
+        <div id="chatbox">
+            <form id="form">
+                <textarea id="input" rows="1" placeholder="Type a message..."></textarea>
+                <input id="send-button" type="submit" value = "Send">
+            </form>
+
+            <div id="dropdown">
+                <button onclick="chooseProject()" id="projectButton">Choose Project ⮟</button>
+
+                <div id="projectOptions" class="dropdown-content">
+                    <a href="#">Project 1</a>
+                    <a href="#">Project 2</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="chatbot.js"></script>
+</body>
+</html>
