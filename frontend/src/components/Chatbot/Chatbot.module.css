@@ -1,0 +1,224 @@
+.chatWindow {
+    position: absolute;
+    inset: 0;
+    margin: 5px auto;
+    width: 80%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* border: 10px solid black; */
+    color: white;
+}
+
+.chatMessages {
+    position: relative;
+    flex: 1;
+    height: 100%;
+
+    width: 85%;
+    padding-right: 8px;
+    margin-top: 45px;
+
+    overflow-y: scroll;
+    overflow-anchor:auto;
+    
+    display: flex;
+    flex-direction: column;
+    scrollbar-gutter: stable;
+}
+.spacer{flex: 1;}
+.emptyMessages {
+    display: flex;
+    align-items: end;
+    justify-content: center;
+    font-size: 40px;
+    margin-top: 250px;
+}
+.centerMessage {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.messagePack {
+    position: relative;
+    padding: 10px;
+    margin: 30px;
+    word-wrap: break-word;
+    display: flex;
+    flex-direction: column;
+}
+.message {
+    max-width: 50%;
+    margin: 10px;
+    padding: 10px 20px;
+    color: white;
+    border-radius: 15px;
+    font-size: larger;
+    white-space: pre-wrap;
+}
+.userMessage {
+    align-self: flex-end;
+    text-align: right;
+    background-color: rgb(50, 19, 201);
+}
+.botMessage {
+    align-self: flex-start;
+    text-align: left;
+    /* background-color: rgb(10, 1, 54); */
+}
+.chatbox {
+    display: flex;
+    align-items: center;
+    min-width: 700px;
+}
+.chatboxCenter {
+    position: fixed;
+    width: 60%;
+    top: 40%;
+}
+.chatboxBelow {
+    width: 75%;
+    bottom: 0;
+}
+.form {
+    width: 80%;
+    margin: 50px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 40px;
+    
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    box-shadow: 3px 3px 10px rgba(0,0,0,0.4);
+}
+.textarea {
+    flex: 1;
+    min-height: 0;
+    max-height: 300px;
+
+    overflow-y: hidden;
+    resize: none;
+    scrollbar-gutter: stable;
+
+    box-sizing: border-box;
+    padding: 10px;
+    margin-right: 10px;
+
+    border: hidden;
+    border-radius: 15px;
+    background-color: unset;
+    color: inherit;
+    font-size: 16px;
+}
+.textarea:focus{
+    outline: none;
+}
+.textarea::placeholder{
+    color: rgb(200, 200, 200);
+}
+.sendButton {
+    width: 90px;
+    padding: 10px;
+    border: 2px solid #ccc;
+    border-radius: 15px;
+    background-color: rgb(19, 5, 79);
+    color: inherit;
+    cursor: pointer;
+}
+.projectButton{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin: 20px;
+    padding: 15px;
+    width: 170px;
+
+    background-color: rgb(19, 5, 79);
+    box-shadow: 3px 3px 10px rgba(0,0,0,0.4);
+    border: 2px solid #ccc;
+    border-radius: 20px;
+
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+.menu {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    height: 100%;
+    width: 50vh;
+    padding: 10px;
+
+    overflow-y: auto;
+    overflow-wrap: break-word;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+
+    background-color: rgb(9, 2, 41);
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.6);
+    z-index: 1000;
+    font-size: 20px;
+    
+    scrollbar-gutter: stable;
+    transition: 0.7s;
+}
+
+.addButton {
+    padding: 10px;
+    margin-top: 40px;
+    width: 90%;
+    right: 0;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    font-size: 18px;
+    background-color: rgb(19, 5, 79);
+    color: white;
+    cursor: pointer;
+}
+.addButton:hover {background-color: rgb(23, 8, 92);}
+.searchContainer{
+        display: flex;
+        flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+.searchBar {
+    position: sticky;
+    top: 20px;
+    padding: 8px;
+    margin: 20px;
+    width: 90%;
+    background-color: rgb(194, 181, 242);
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    color: black;
+}
+.list {
+    width: 90%;
+    margin: 0;
+}
+.menuItem{
+    color: white;
+    /* background-color: rgb(19, 5, 79); */
+    padding: 12px 16px;
+    margin: 10px;
+    cursor: pointer;
+    border-radius: 15px;
+}
+.menuItem:hover {background-color: rgb(19, 5, 79);}
+
+.menuNoProjects {
+    background-color: rgb(42, 35, 67);
+    padding: 10px 20px;
+    margin: 10px;
+    border-radius: 15px;
+}
