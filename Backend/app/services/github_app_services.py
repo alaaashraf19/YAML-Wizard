@@ -1,14 +1,10 @@
-from fastapi import  HTTPException, Request
+from fastapi import  HTTPException
 from fastapi.responses import RedirectResponse
 import httpx
-from models.user_model import User
 from agent.utils.github_auth import generate_jwt
 from core.security import get_current_user
-from models.github_installation_model import GitHubInstallation as GitHubInstallationModel
-from models.user_model import User as UserModel
-from dotenv import load_dotenv
-import os
-load_dotenv()
+from models.platforms_model import GitHubInstallation as GitHubInstallationModel
+
 
 
 # User clicks button
