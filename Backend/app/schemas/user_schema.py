@@ -1,14 +1,6 @@
 import re
 from pydantic import BaseModel, Field, field_validator
 
-# class User(BaseModel):
-#     username: str
-#     email: EmailStr
-#     password : str
-#     hashed_password: str = ""
-#     role: str = "user" #default role is "user", can be overridden to "admin" during signup if needed
-
-
 class UserCreate(BaseModel):
     username: str = Field(..., min_length=3, max_length=20)
     email: str = Field(..., min_length=5, max_length=50)

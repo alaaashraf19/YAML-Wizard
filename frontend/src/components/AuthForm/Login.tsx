@@ -5,6 +5,7 @@ import { UsernameField, PasswordField } from "./AuthForm";
 import { Link } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
 import { useAuth } from '../../Context/AuthContext';
+const BACKEND_URL = "https://sprain-reiterate-cape.ngrok-free.dev";
 
 function Login(){
     const [username, setUsername] = useState("");
@@ -61,7 +62,7 @@ function Login(){
 
             login(username);
             console.log("Server:", data.msg);
-            navigate("/chatbot"); // Redirect to home page on successful login
+            navigate("/connect"); // Redirect to connect page on successful login
 
         } catch (err: any) {
             const msg = err?.response?.data?.detail?.[0]?.msg || "Server Error. Please try again later.";
