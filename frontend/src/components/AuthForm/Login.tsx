@@ -16,6 +16,7 @@ function Login(){
     const [emptyPassword, setEmptyPassword] = useState(false);
     const { login } = useAuth();
     const navigate = useNavigate();
+    const api_url = import.meta.env.API_URL;
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -37,7 +38,7 @@ function Login(){
         
         setLoading(true);
         try {
-            const res = await fetch("http://localhost:8000/auth/login", {
+            const res = await fetch(`${api_url}/auth/login`, {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
                 credentials: "include",

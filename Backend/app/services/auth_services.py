@@ -65,7 +65,7 @@ async def login(user: UserLogin, db):
         key="access_token",
         value=access_token,
         httponly=True,
-        secure=True,        # ===========> MAKE SECURE FOR HTTPS
+        secure=False,        # ===========> MAKE SECURE FOR HTTPS
         samesite="none",
         max_age=60 * 60 * 24 * 7 #7 days
     )

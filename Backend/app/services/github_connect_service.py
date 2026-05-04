@@ -1,6 +1,6 @@
 import secrets
 from fastapi import HTTPException
-from fastapi.responses import RedirectResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 import httpx
 import os
 from dotenv import load_dotenv
@@ -82,8 +82,9 @@ async def github_callback_service(code, request, db):
     db.commit()
 
     # Redirect back to frontend with success
-    frontend_url = "http://localhost:5173/connect?status=success"
-    return RedirectResponse(frontend_url)
+    # frontend_url = "http://localhost:5173/connect?status=success"
+    # return RedirectResponse(frontend_url)
+    return JSONResponse(content={"msg":"Github connected successfully"})
 
 
 
