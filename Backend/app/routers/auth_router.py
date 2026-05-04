@@ -4,7 +4,7 @@ from requests import Session
 from core.security import get_current_user
 from database.db_engine import get_db
 from schemas.user_schema import UserCreate, UserCreateResponse, UserLogin, LoginResponse, LoginConfirm
-from services.auth_services import signup as signup_service, login as login_service, readme_service
+from services.auth_services import signup as signup_service, login as login_service
 from models.user_model import User
 
 router = APIRouter()
@@ -19,8 +19,9 @@ async def login(user: UserLogin, db : Session = Depends(get_db)):
       return await login_service(user, db)
 
 @router.get("/me", response_model=LoginConfirm)
-async def read_current_user(current_user: User = Depends(get_current_user),db : Session = Depends(get_db)):
-      return await readme_service(current_user, db)
+async def read_current_user(current_user: User = Depends(get_current_user)):
+      return {"username": current_user.username}
+      
 
 @router.post("/logout")
 async def logout():

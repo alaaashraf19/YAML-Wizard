@@ -72,21 +72,3 @@ async def login(user: UserLogin, db):
 
     return response
 
-
-
-async def readme_service(current_user,db):
-    if current_user.github_access_token:
-        is_valid = await is_github_token_valid(current_user.github_access_token)
-        
-        if not is_valid:
-            # 🔴 Token revoked - clear GitHub connection
-            current_user.github_id = None
-            current_user.github_login = None
-            current_user.github_access_token = None
-            db.commit()
-    
-    return {
-        "username": current_user.username,
-        "github_id": current_user.github_id,
-        "github_login": current_user.github_login
-    }
