@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 from schemas.user_schema import UserCreate, UserCreateResponse, UserLogin
 from core.security import hash_password, create_access_token, verify_password, get_user
 from models.user_model import User as UserModel
-
+from services.github_connect_service import is_github_token_valid
 
 async def signup(user: UserCreate, db):
     username = user.username.lower()
@@ -32,7 +32,7 @@ async def signup(user: UserCreate, db):
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
-    return UserCreateResponse(message = "User created successfully", user_id = str(new_user.id))
+    return UserCreateResponse(msg = "User created successfully", user_id = str(new_user.id))
 
 
 
@@ -65,9 +65,28 @@ async def login(user: UserLogin, db):
         key="access_token",
         value=access_token,
         httponly=True,
-        secure=False,        # ===========> MAKE SECURE FOR HTTPS
-        samesite="Lax",
+        secure=True,        # ===========> MAKE SECURE FOR HTTPS
+        samesite="none",
         max_age=60 * 60 * 24 * 7 #7 days
     )
 
     return response
+
+
+
+async def readme_service(current_user,db):
+    if current_user.github_access_token:
+        is_valid = await is_github_token_valid(current_user.github_access_token)
+        
+        if not is_valid:
+            # 🔴 Token revoked - clear GitHub connection
+            current_user.github_id = None
+            current_user.github_login = None
+            current_user.github_access_token = None
+            db.commit()
+    
+    return {
+        "username": current_user.username,
+        "github_id": current_user.github_id,
+        "github_login": current_user.github_login
+    }

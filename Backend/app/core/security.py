@@ -40,7 +40,7 @@ def get_user(db:Session, username: str):
     return db.query(User).filter(User.username == username).first()
 
 
-def get_current_user(db: Session = Depends(get_db),token: str | None= Cookie(None, alias="access_token")):
+def get_current_user(db: Session = Depends(get_db),token: str | None = Cookie(None, alias="access_token")):
     if SECRET_KEY is None:
         raise ValueError("SECRET_KEY environment variable is not set")
     
@@ -54,7 +54,7 @@ def get_current_user(db: Session = Depends(get_db),token: str | None= Cookie(Non
         raise HTTPException(status_code=401, detail="Not authenticated")
 
     try:
-
+        #print("COOKIE TOKEN:", token)
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username = payload.get("sub")
         

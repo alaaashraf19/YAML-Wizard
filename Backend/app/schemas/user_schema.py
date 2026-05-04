@@ -48,3 +48,5 @@ class LoginResponse(BaseModel):
 
 class LoginConfirm(BaseModel):
     username: str
+    github_id: int | None = None
+    github_login: str | None = None
