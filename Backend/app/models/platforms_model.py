@@ -34,6 +34,6 @@ class GitLabConnection(Base):
     access_token = Column(String)  # encrypt this
     refresh_token = Column(String, nullable=True)
 
-    expires_at = Column(DateTime, nullable=True)
+    expires_at = Column(DateTime(timezone=True), nullable=True)
 
-    created_at = Column(DateTime,  default=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime(timezone=True),  default=lambda: datetime.now(timezone.utc))

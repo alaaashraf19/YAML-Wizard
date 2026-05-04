@@ -84,6 +84,6 @@ async def publish_yaml(platform: str, current_user: User = Depends(get_current_u
             raise HTTPException(status_code=404, detail="Gitlab Account not linked")
         token = await get_valid_gitlab_token(gitlab_connection, db)
 
-    result = publish_to_repo(yaml_content=yaml_content, repo_url=repo_url, platform=platform, token=token, file_path=None, branch= "feature/Backend/Repo-Publisher",commit_message= "test commit message",create_pr= False, pr_branch= "feature/Backend/Repo-Publisher")
+    result = publish_to_repo(yaml_content=yaml_content, repo_url=repo_url, platform=platform, token=token, file_path=None, branch= "main",commit_message= "test commit message",create_pr= True, pr_branch= "test")
     print(result.success)
     

@@ -6,12 +6,19 @@ import httpx
 from fastapi import HTTPException
 from datetime import datetime, timezone, timedelta
 from models.platforms_model import GitLabConnection
+from fastapi.responses import JSONResponse, RedirectResponse
+from cryptography.fernet import Fernet
+
 
 load_dotenv()
-
 GITLAB_CLIENT_ID = os.getenv("GITLAB_CLIENT_ID")
 GITLAB_REDIRECT_URI = os.getenv("GITLAB_REDIRECT_URI")
 GITLAB_CLIENT_SECRET = os.getenv("GITLAB_CLIENT_SECRET")
+FERNET_KEY=os.getenv("FERNET_KEY")
+
+if FERNET_KEY is None:
+    raise ValueError("FERNET_KEY is missing from environment variables")
+fernet = Fernet(FERNET_KEY.encode())
 
 
 def gitlab_connect_service(request, db):
@@ -27,11 +34,11 @@ def gitlab_connect_service(request, db):
         "client_id": GITLAB_CLIENT_ID,
         "redirect_uri": GITLAB_REDIRECT_URI,
         "response_type": "code",
-        "scope": "read_user api", #Full API access to GitLab on behalf of the user
+        "scope": "api", #Full API access to GitLab on behalf of the user
     }
 
     url = "https://gitlab.com/oauth/authorize?" + urlencode(params)
-    return {"auth_url": url}
+    return RedirectResponse(url)
 
 
 
@@ -79,6 +86,8 @@ async def gitlab_callback_service(code, request,db):
             headers={"Authorization": f"Bearer {access_token}"}
         )
 
+    access_token = encrypt_token(access_token)
+    refresh_token= encrypt_token(refresh_token)
     gitlab_user = user_resp.json()
     gitlab_user_id = gitlab_user["id"]
     gitlab_username = gitlab_user["username"]
@@ -104,20 +113,24 @@ async def gitlab_callback_service(code, request,db):
 
     db.commit()
 
-    return {"status": "connected"}
+    return JSONResponse(content={"msg":"Gitlab connected successfully"})
 
 
 async def get_valid_gitlab_token(connection, db):
     if is_token_expired(connection):
         connection = await refresh_gitlab_token(connection, db)
 
-    return connection.access_token#
+    return decrypt_token(connection.access_token)
 
 
 def is_token_expired(connection):
     if not connection.expires_at:
         return False
-    return datetime.now(timezone.utc) >= connection.expires_at
+    expires_at = connection.expires_at
+    if expires_at.tzinfo is None:
+        expires_at = expires_at.replace(tzinfo=timezone.utc)
+
+    return datetime.now(timezone.utc) >= expires_at
 
 
 async def refresh_gitlab_token(connection, db):
@@ -130,7 +143,7 @@ async def refresh_gitlab_token(connection, db):
         "client_id": GITLAB_CLIENT_ID,
         "client_secret": GITLAB_CLIENT_SECRET,
         "grant_type": "refresh_token",
-        "refresh_token": connection.refresh_token,
+        "refresh_token": decrypt_token(connection.refresh_token),
     }
 
     async with httpx.AsyncClient() as client:
@@ -142,8 +155,8 @@ async def refresh_gitlab_token(connection, db):
     token_data = resp.json()
 
     # new tokens
-    connection.access_token = token_data["access_token"]
-    connection.refresh_token = token_data.get("refresh_token", connection.refresh_token)
+    connection.access_token = encrypt_token(token_data["access_token"])
+    connection.refresh_token = encrypt_token(token_data.get("refresh_token", connection.refresh_token))
 
     expires_in = token_data.get("expires_in")
     if expires_in:
@@ -153,3 +166,10 @@ async def refresh_gitlab_token(connection, db):
     db.refresh(connection)
 
     return connection
+
+
+def encrypt_token(token: str) -> str:
+    return fernet.encrypt(token.encode()).decode()
+
+def decrypt_token(token: str) -> str:
+    return fernet.decrypt(token.encode()).decode()

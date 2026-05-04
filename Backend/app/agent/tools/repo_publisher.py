@@ -52,13 +52,16 @@ def publish_to_repo(
 
     Can either commit directly to a branch or create a pull/merge request.
     """
+    print("here")
     platform = platform.lower()
+    print(platform)
     if platform == "github":
         return _publish_github(
             yaml_content, repo_url, token, file_path, branch,
             commit_message, create_pr, pr_branch,
         )
     elif platform == "gitlab":
+        print("here")
         return _publish_gitlab(
             yaml_content, repo_url, token, file_path, branch,
             commit_message, create_pr, pr_branch,
@@ -289,8 +292,8 @@ def _publish_gitlab(
     
     project_id = _parse_gitlab_project(repo_url)
     api_base = f"{gitlab_host}/api/v4" #GitLab API version 4 is the standard REST API base.
-    headers = {"PRIVATE-TOKEN": token}
-
+    headers = {"Authorization": f"Bearer {token}"}
+    
     if file_path is None:
         file_path = ".gitlab-ci.yml"
 
@@ -298,7 +301,8 @@ def _publish_gitlab(
         commit_message = f"ci: add {file_path} via YAML Wizard"
 
     target_branch = pr_branch if create_pr else branch
-
+    #print("PROJECT ID:", project_id)
+    #print("TARGET BRANCH:", target_branch)
     try:
         # Create branch if making merge request
         if create_pr:
@@ -308,10 +312,12 @@ def _publish_gitlab(
                 headers=headers,
                 timeout=15.0,
             )
+        print(" before FILE EXISTS:")
+
 
         # Check if file exists
         file_exists = _gitlab_file_exists(api_base, headers, project_id, file_path, target_branch)
-
+        print("FILE EXISTS:", file_exists)
         # Create or update file
         encoded_path = file_path.replace("/", "%2F")
         payload = {
@@ -380,22 +386,28 @@ def _publish_gitlab(
         return PublishResult(success=False, message=str(e))
 
 
-def _gitlab_file_exists(api_base: str, headers: dict, project_id: str, path: str, branch: str,
-                        ) -> bool:
-    
-    """Check if a file exists in the GitLab repository."""
-    
-    encoded_path = path.replace("/", "%2F")
-    try:
-        resp = httpx.get(
-            f"{api_base}/projects/{project_id}/repository/files/{encoded_path}",
-            params={"ref": branch},
-            headers=headers,
-            timeout=15.0,
-        )
-        return resp.status_code == 200
-    except httpx.HTTPError:
+from urllib.parse import quote
+import httpx
+
+def _gitlab_file_exists(api_base: str, headers: dict, project_id: str, path: str, branch: str) -> bool:
+    encoded_path = quote(path, safe="")
+
+    url = f"{api_base}/projects/{project_id}/repository/files/{encoded_path}"
+
+    resp = httpx.get(
+        url,
+        params={"ref": branch},
+        headers=headers,
+        timeout=15.0,
+    )
+
+    print("FILE CHECK:", resp.status_code, resp.text)
+
+    if resp.status_code == 200:
+        return True
+    if resp.status_code == 404:
         return False
+    raise Exception(f"GitLab file check failed: {resp.status_code} - {resp.text}")
     
 def _parse_gitlab_project(repo_url: str) -> str:
 
