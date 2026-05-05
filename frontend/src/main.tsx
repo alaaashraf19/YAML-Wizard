@@ -13,7 +13,7 @@ const router = createBrowserRouter([{
   children: [
     { path: "/chatbot", element: <Chatbot /> },
     { path: "/profile", element: <UserProfile/>},
-    { path: "/", element: <SignUp /> },
+    { path: "/", element: <Chatbot /> },
     // {path: "*", element: <App />}, // Handle not provided page
   ]},
   { path: "/signup", element: <SignUp /> },

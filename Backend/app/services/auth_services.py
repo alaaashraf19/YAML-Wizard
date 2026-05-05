@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 from schemas.user_schema import UserCreate, UserCreateResponse, UserLogin
 from core.security import hash_password, create_access_token, verify_password, get_user
 from models.user_model import User as UserModel
-
+from services.github_connect_service import is_github_token_valid
 
 async def signup(user: UserCreate, db):
     username = user.username.lower()
@@ -32,7 +32,7 @@ async def signup(user: UserCreate, db):
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
-    return UserCreateResponse(message = "User created successfully", user_id = str(new_user.id))
+    return UserCreateResponse(msg = "User created successfully", user_id = str(new_user.id))
 
 
 
@@ -66,8 +66,9 @@ async def login(user: UserLogin, db):
         value=access_token,
         httponly=True,
         secure=False,        # ===========> MAKE SECURE FOR HTTPS
-        samesite="Lax",
+        samesite="none",
         max_age=60 * 60 * 24 * 7 #7 days
     )
 
     return response
+

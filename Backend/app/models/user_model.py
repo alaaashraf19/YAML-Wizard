@@ -14,3 +14,10 @@ class User(Base):
     chat_sessions = relationship("ChatSession", back_populates="user",cascade="all, delete-orphan")
 
     chat_messages = relationship("ChatMessage", back_populates="user",cascade="all, delete-orphan")
+    github_installations = relationship(
+            "GitHubInstallation",
+            back_populates="user"
+        )
+    github_id = Column(Integer, unique=True, nullable=True, index=True)
+    github_login = Column(String, nullable=True, index=True)
+    github_access_token = Column(String, nullable=True)  

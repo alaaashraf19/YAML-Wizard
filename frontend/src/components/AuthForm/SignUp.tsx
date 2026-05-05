@@ -19,6 +19,7 @@ function SignUp(){
     const [emptyPassword, setEmptyPassword] = useState(false);
     const [emptyConfirmPassword, setEmptyConfirmPassword] = useState(false);
     const navigate = useNavigate();
+    const api_url = import.meta.env.VITE_API_URL;
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -49,7 +50,7 @@ function SignUp(){
         
         setLoading(true);
         try {
-            const res = await fetch("http://localhost:8000/auth/signup", {
+            const res = await fetch(`${api_url}/auth/signup`, {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(userData)

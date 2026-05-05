@@ -10,8 +10,8 @@ import { FaSignOutAlt } from "react-icons/fa";
 function NavBar(){
     const [openOptions, setOpenOptions] = useState<boolean>(false)
     const optionsRef = useRef<HTMLButtonElement  | null>(null);
-
     const { username, loading, logout } = useAuth();
+    const api_url = import.meta.env.VITE_API_URL;
 
     // Close options on outside click
     useEffect(
@@ -29,20 +29,19 @@ function NavBar(){
         }
     , []);
 
-    const handleSignOut = () => {
-        fetch("http://localhost:8000/auth/logout", {
-            method: "POST",
-            credentials: "include"
-        })
-        .then(res =>  {
-            if (!res.ok) throw new Error();
-            return res.json();
-        })
-        .then(data => {
+    const handleSignOut = async () => {
+        try {
+            const res = await fetch(`${api_url}/auth/logout`, {
+                method: "POST",
+                credentials: "include"
+            });
+
+            if (!res.ok) throw new Error("Logout failed");
+
             logout();
-            console.log("Server:", data.msg);
-        })
-        .catch((err) => {console.error("Server error:", err);})
+        } catch (err) {
+            console.error("Server error:", err);
+        }
     }
 
     return(
@@ -68,10 +67,10 @@ function NavBar(){
                             </div>
                         )}
                     </div>
-                </>) : (<>
-                    <Link className={`${styles.Link} ${styles.LoginLink} ${gStyles.clickable}`} to="/login">Login</Link>
-                    <Link className={`${styles.Link} ${styles.SignUpLink} ${gStyles.clickable}`} to="/signup">Sign Up</Link>
-                </>)
+                    </>) : (<>
+                        <Link className={`${styles.Link} ${styles.LoginLink} ${gStyles.clickable}`} to="/login">Login</Link>
+                        <Link className={`${styles.Link} ${styles.SignUpLink} ${gStyles.clickable}`} to="/signup">Sign Up</Link>
+                    </>)
             }
         </div>
     )
