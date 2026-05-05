@@ -1,17 +1,8 @@
 import base64
 import time
 import httpx
-from dataclasses import dataclass
-from urllib.parse import urlparse
-
-
-@dataclass
-class PublishResult:
-    """Result of publishing a YAML file to a remote repository."""
-
-    success: bool
-    message: str
-    url: str | None = None  # link to the committed file or PR
+from urllib.parse import urlparse, quote
+from schemas.publish_result_schema import PublishResult
 
 _RETRYABLE_STATUS_CODES = {500, 502, 503, 504}
 _MAX_RETRIES = 3
@@ -37,19 +28,10 @@ def _request_with_retry(method: str, url: str, **kwargs) -> httpx.Response:
 
 
 
-def publish_to_repo(
-    yaml_content: str,
-    repo_url: str,
-    platform: str,
-    token: str,
-    file_path: str | None = None,
-    branch: str = "main",
-    commit_message: str | None = None,
-    create_pr: bool = False,
-    pr_branch: str = "yaml-wizard/ci-pipeline",
-) -> PublishResult:
+def publish_to_repo(yaml_content: str, repo_url: str, platform: str, token: str, file_path: str | None = None,
+    branch: str = "main", commit_message: str | None = None, create_pr: bool = False, pr_branch: str = "yaml-wizard/ci-pipeline",) -> PublishResult:
+    
     """Publish a YAML file to a GitHub or GitLab repository.
-
     Can either commit directly to a branch or create a pull/merge request.
     """
     print("here")
@@ -75,20 +57,11 @@ def publish_to_repo(
 # ── GITHUB ──────────────────────────────────────────────────────────────────
 
 
-def _publish_github(
-    yaml_content: str,
-    repo_url: str,
-    token: str,
-    file_path: str | None,
-    branch: str,
-    commit_message: str | None,
-    create_pr: bool,
-    pr_branch: str,) -> PublishResult:
+def _publish_github(yaml_content: str,repo_url: str,token: str,file_path: str | None,
+    branch: str,commit_message: str | None,create_pr: bool,pr_branch: str,) -> PublishResult:
     
-
     """Publish YAML to a GitHub repository via the Contents API."""
     """directly to a branch or via pull request"""
-
 
     owner, repo = _parse_github_repo(repo_url)
     api_base = "https://api.github.com"
@@ -158,30 +131,32 @@ def _publish_github(
             message=f"File committed to {target_branch}: {file_path}",
             url=file_url,
         )
-
+    
     except httpx.HTTPStatusError as e:
         error_body = e.response.text
-        if e.response.status_code == 401:
+
+        status = e.response.status_code
+        if status == 401:
             return PublishResult(success=False, message="Authentication failed — check your token")
-        elif e.response.status_code == 403:
-            return PublishResult(success=False, message="Permission denied — token may lack 'repo' scope")
-        elif e.response.status_code == 404:
+        elif status == 403:
+            return PublishResult(success=False, message="Permission denied — missing required scopes")
+        elif status == 404:
             return PublishResult(success=False, message=f"Repository not found: {owner}/{repo}")
-        elif e.response.status_code == 409:
-            return PublishResult(success=False, message=f"Conflict — file may have been updated. Try again. Details: {error_body}")
-        elif e.response.status_code == 422:
+        elif status == 409:
+            return PublishResult(success=False, message=f"Conflict — file may have changed. {error_body}")
+        elif status == 422:
             return PublishResult(success=False, message=f"Validation error: {error_body}")
-        elif e.response.status_code == 500:
-            return PublishResult(success=False, message=f"GitHub server error (500) — retried {_MAX_RETRIES} times. Details: {error_body}")
-        elif e.response.status_code in (502, 503, 504):
-            return PublishResult(success=False, message=f"GitHub temporarily unavailable ({e.response.status_code}) — retried {_MAX_RETRIES} times, try again later")
-        return PublishResult(success=False, message=f"GitHub API error (HTTP {e.response.status_code}): {error_body}")
-    except httpx.HTTPError as e:
-        # Extract response body if available
-        detail = ""
-        if isinstance(e, httpx.HTTPStatusError):
-            detail = f" — {e.response.status_code}: {e.response.text[:200]}"
-        return PublishResult(success=False, message=f"Network error: {e}{detail}")
+        elif status == 500:
+            return PublishResult(success=False, message="GitHub server error (500)")
+        elif status in (502, 503, 504):
+            return PublishResult(success=False, message=f"GitHub unavailable ({status}) — retry later")
+        else:
+            return PublishResult(success=False, message=f"HTTP error {status}: {error_body}")
+
+    except httpx.RequestError as e:
+        # Covers network issues (DNS, timeout, connection refused, etc.)
+        return PublishResult(success=False, message=f"Network error: {str(e)}")
+
     except ValueError as e:
         return PublishResult(success=False, message=str(e))
     
@@ -373,24 +348,40 @@ def _publish_gitlab(
             message=f"File committed to {target_branch}: {file_path}",
             url=file_url,
         )
-
     except httpx.HTTPStatusError as e:
-        if e.response.status_code == 401:
+        status = e.response.status_code
+
+        if status == 401:
             return PublishResult(success=False, message="Authentication failed — check your token")
-        elif e.response.status_code == 403:
+        elif status == 403:
             return PublishResult(success=False, message="Permission denied — token may lack write access")
-        return PublishResult(success=False, message=f"GitLab API error (HTTP {e.response.status_code}): {e.response.text}")
+        elif status == 404:
+            return PublishResult(success=False, message="Repository not found")
+        elif status == 409:
+            return PublishResult(success=False, message="Conflict — resource already exists or was modified")
+        elif status == 422:
+            return PublishResult(success=False, message="Validation error — check request payload")
+        elif status == 429:
+            return PublishResult(success=False, message="Rate limit exceeded — try again later")
+        elif status >= 500:
+            return PublishResult(success=False, message="GitLab server error — try again later")
+
+        return PublishResult(
+            success=False,
+            message=f"GitLab API error (HTTP {status})"
+        )
     except httpx.HTTPError as e:
-        return PublishResult(success=False, message=f"Network error: {e}")
+        return PublishResult(
+            success=False,
+            message="Network error while contacting GitLab"
+        )
     except ValueError as e:
         return PublishResult(success=False, message=str(e))
 
 
-from urllib.parse import quote
-import httpx
 
 def _gitlab_file_exists(api_base: str, headers: dict, project_id: str, path: str, branch: str) -> bool:
-    encoded_path = quote(path, safe="")
+    encoded_path = quote(path, safe="") #encodes ALL unsafe URL characters, not just /, whitespaces, # 
 
     url = f"{api_base}/projects/{project_id}/repository/files/{encoded_path}"
 
