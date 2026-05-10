@@ -3,6 +3,7 @@ from sqlalchemy.orm import sessionmaker
 from database.base import Base
 import os
 from dotenv import load_dotenv
+import models 
 
 load_dotenv() 
 SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL",)
@@ -22,4 +23,5 @@ def get_db():
         db.close()
 
 def create_tables():
+
     Base.metadata.create_all(bind=engine)

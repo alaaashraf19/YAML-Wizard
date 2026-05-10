@@ -1,0 +1,101 @@
+from __future__ import annotations
+
+from datetime import datetime
+
+from sqlalchemy import BigInteger, DateTime,Float,ForeignKey,Integer,String,Text, func
+
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from database.base import Base
+
+
+class Repository(Base):
+    __tablename__ = "repositories"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    full_name: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
+    platform: Mapped[str] = mapped_column(String(20), nullable=False, default="github")
+    default_branch: Mapped[str] = mapped_column(String(100), nullable=False, default="main")
+    url: Mapped[str] = mapped_column(String(500), nullable=False)
+    last_synced_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False,
+    )
+
+    # 1 to many with PipelineRun
+    runs: Mapped[list[PipelineRun]] = relationship(back_populates="repository", cascade="all, delete-orphan")
+
+    
+class PipelineRun(Base):
+    __tablename__ = "pipeline_runs"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    
+    repo_id: Mapped[int] = mapped_column(ForeignKey("repositories.id", ondelete="CASCADE"), nullable=False)
+    
+    external_id: Mapped[int] = mapped_column(BigInteger, nullable=False, unique=True)
+    
+    commit_hash: Mapped[str] = mapped_column(String(40), nullable=False)
+    commit_message: Mapped[str | None] = mapped_column(Text, nullable=True)
+    branch: Mapped[str | None] = mapped_column(String(200), nullable=True)
+    status: Mapped[str] = mapped_column(String(30), nullable=False)
+    
+    conclusion: Mapped[str | None] = mapped_column(String(30), nullable=True)
+    
+    total_duration_s: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    
+    compared_to_prev_pct: Mapped[float | None] = mapped_column(Float, nullable=True)
+    
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False,
+    )
+
+    repository: Mapped[Repository] = relationship(back_populates="runs")
+    jobs: Mapped[list[JobTiming]] = relationship(back_populates="run", cascade="all, delete-orphan")
+    tests: Mapped[list[TestRun]] = relationship(back_populates="run", cascade="all, delete-orphan")
+
+
+class JobTiming(Base):
+    __tablename__ = "job_timings"
+    
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    
+    run_id: Mapped[int] = mapped_column(ForeignKey("pipeline_runs.id", ondelete="CASCADE"), nullable=False)
+    
+    external_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    
+    job_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    status: Mapped[str] = mapped_column(String(30), nullable=False)
+    
+    duration_s: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    
+    compared_to_prev_pct: Mapped[float | None] = mapped_column(Float, nullable=True)
+
+    run: Mapped[PipelineRun] = relationship(back_populates="jobs")
+
+
+class TestRun(Base):
+    __tablename__ = "test_runs"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    
+    run_id: Mapped[int] = mapped_column(ForeignKey("pipeline_runs.id", ondelete="CASCADE"), nullable=False)
+    
+    test_name: Mapped[str] = mapped_column(String(500), nullable=False)
+    
+    status: Mapped[str] = mapped_column(String(20), nullable=False)
+    
+    duration_ms: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    avg_duration_ms: Mapped[float | None] = mapped_column(Float, nullable=True)
+    diff_from_avg_pct: Mapped[float | None] = mapped_column(Float, nullable=True)
+    
+    color: Mapped[str] = mapped_column(String(10), nullable=False, default="green")
+    
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False,
+    )
+
+    run: Mapped[PipelineRun] = relationship(back_populates="tests")
