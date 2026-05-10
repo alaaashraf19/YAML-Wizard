@@ -1,11 +1,11 @@
 from pydantic import BaseModel, ConfigDict
 from datetime import datetime
 
-# ── Repository ──────────────────────────────────────────────────────────────
+# Repository 
 
 class RepoCreate(BaseModel):
     url: str
-    platform: str | None = None  # auto-detected if omitted
+    platform: str | None = None
     default_branch: str = "main"
 
 
@@ -19,3 +19,14 @@ class RepoOut(BaseModel):
     url: str
     last_synced_at: datetime | None
     created_at: datetime
+
+
+
+#  Sync 
+
+class SyncStatus(BaseModel):
+    repo_id: int
+    runs_synced: int
+    jobs_synced: int
+    tests_parsed: int
+    message: str

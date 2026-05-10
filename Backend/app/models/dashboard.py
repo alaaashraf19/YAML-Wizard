@@ -1,17 +1,18 @@
 from __future__ import annotations
-
 from datetime import datetime
-
 from sqlalchemy import BigInteger, DateTime,Float,ForeignKey,Integer,String,Text, func
-
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from database.base import Base
-
+from models.user_model import User
 
 class Repository(Base):
     __tablename__ = "repositories"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
+    user: Mapped["User"] = relationship("User", back_populates="repositories")
+
     full_name: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
     platform: Mapped[str] = mapped_column(String(20), nullable=False, default="github")
     default_branch: Mapped[str] = mapped_column(String(100), nullable=False, default="main")
@@ -32,6 +33,7 @@ class PipelineRun(Base):
     
     repo_id: Mapped[int] = mapped_column(ForeignKey("repositories.id", ondelete="CASCADE"), nullable=False)
     
+    # id from the platform that is why we call it external_id
     external_id: Mapped[int] = mapped_column(BigInteger, nullable=False, unique=True)
     
     commit_hash: Mapped[str] = mapped_column(String(40), nullable=False)

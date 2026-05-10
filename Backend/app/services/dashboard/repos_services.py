@@ -1,27 +1,9 @@
 from schemas.dashboard import RepoCreate
-from database.db_engine import get_db
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from models.dashboard import Repository
 from urllib.parse import urlparse
-from fastapi import HTTPException, Depends
+from fastapi import HTTPException
 
-def _parse_repo_info(url: str) -> tuple[str, str]:
-    """Extract full_name and platform from a repo URL."""
-    parsed = urlparse(url)
-    host = parsed.hostname or ""
-    path = parsed.path.strip("/")
-    if path.endswith(".git"):
-        path = path[:-4]
-
-    if "github" in host:
-        platform = "github"
-    elif "gitlab" in host:
-        platform = "gitlab"
-    else:
-        platform = "github"
-
-    return path, platform
 
 
 async def add_repo_service(body: RepoCreate, db, current_user):
@@ -38,8 +20,29 @@ async def add_repo_service(body: RepoCreate, db, current_user):
         platform=platform,
         default_branch=body.default_branch,
         url=body.url.rstrip("/"),
+        user_id=current_user.id
+
     )
     db.add(repo)
     await db.commit()
     await db.refresh(repo)
     return repo
+
+def _parse_repo_info(url: str) -> tuple[str, str]:
+    
+    """Extract full_name and platform from a repo URL."""
+    
+    parsed = urlparse(url)
+    host = parsed.hostname or ""
+    path = parsed.path.strip("/")
+    if path.endswith(".git"):
+        path = path[:-4]
+
+    if "github" in host:
+        platform = "github"
+    elif "gitlab" in host:
+        platform = "gitlab"
+    else:
+        platform = "github"
+
+    return path, platform

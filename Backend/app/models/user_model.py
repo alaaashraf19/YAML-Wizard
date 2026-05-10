@@ -13,7 +13,8 @@ class User(Base):
     #github installation
     github_installations = relationship(
             "GitHubInstallation",
-            back_populates="user"
+            back_populates="user",
+            cascade="all, delete-orphan"
         )
     #github connection
     github_id = Column(Integer, unique=True, nullable=True, index=True)
@@ -22,5 +23,13 @@ class User(Base):
     #gitlab connection
     gitlab_connections = relationship(
         "GitLabConnection",
-        back_populates="user"
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
+
+    #repositories, 1 to many
+    repositories = relationship(
+        "Repository",
+        back_populates="user",
+        cascade="all, delete-orphan"
     )
