@@ -1,95 +1,65 @@
 import styles from './UserProfile.module.css'
-
 function UserProfile() {
-    const api_url = import.meta.env.API_URL;
+    const api_url = "https://sprain-reiterate-cape.ngrok-free.dev";
 
-    const handleInstallApp = async () => {
-        try{
-            const res = await fetch(`${api_url}/install_app`, {
-                method: "GET",
-                headers: {"Content-Type": "application/json"},
-                credentials: "include"
-            });
+    const handleConnectGithub = () => {
+        window.location.href = `${api_url}/platform/github/connect`;
+    };
 
-            const data = await res.json();
+    const handleConnectGitlab = () => {
+        window.location.href = `${api_url}/platform/gitlab/connect`;
+    };
 
-            if(!res.ok){
-                const msg = data.detail?.msg || "Couldn't install app to github";
-                console.log("Error: ", msg);
-                return;
-            }
+    const handleInstallApp = () => {
+        window.location.href = `${api_url}/github/install_app`;
+    };
 
-            console.log("Server:", data.detil.msg);
-
-        }catch(err: any){
-            const msg = err?.response?.data?.detail?.[0]?.msg || "Server Error. Please try again later.";
-            console.error("Server error:", msg);
-        }
-    }
-
-    const handleConnectGithub = async () => {
-        try{
-            const res = await fetch(`${api_url}/connect`, {
-                method: "GET",
-                headers: {"Content-Type": "application/json"},
-                credentials: "include"
-            });
-
-            const data = await res.json();
-
-            if(!res.ok){
-                const msg = data.detail?.msg || "Couldn't install app to github";
-                console.log("Error: ", msg);
-                return;
-            }
-
-            console.log("Server:", data.detil.msg);
-
-        }catch(err: any){
-            const msg = err?.response?.data?.detail?.[0]?.msg || "Server Error. Please try again later.";
-            console.error("Server error:", msg);
-        }
-    }
-
-    return(<>
+    return (
         <div className={styles.formContainer}>
             <p className={styles.header}>Profile</p>
+
             <form className={styles.section}>
                 <p>Information</p>
-                <label id='name'>
-                    Name: 
+                <label>
+                    Name:
                     <input type="text" />
                 </label>
             </form>
 
             <form className={styles.section}>
                 <p className={styles.header}>Security</p>
-                <label id='password'>
-                    Password: 
+                <label>
+                    Password:
                     <input type="password" />
                 </label>
-                <label id='confirm_password'>
-                    Confirm Password: 
+                <label>
+                    Confirm Password:
                     <input type="password" />
                 </label>
             </form>
 
             <form className={styles.section}>
                 <p className={styles.header}>Projects</p>
-                <label id='repo_url'>
-                    Repository URL: 
+                <label>
+                    Repository URL:
                     <input type="text" />
-                    <button className={`${styles.clickable}`}>Add Project</button>
+                    <button type="button" className={styles.clickable}>
+                        Add Project
+                    </button>
                 </label>
             </form>
 
-            <form className={styles.section}>
+            {/* IMPORTANT: not a form anymore */}
+            <div className={styles.section}>
+                <p className={styles.header}>Connect Accounts</p>
+
                 <p className={styles.header}>Connect to GitHub</p>
-                <button onSubmit={handleConnectGithub} className={`${styles.clickable}`}>Connect with github account</button>
-                <button onSubmit={handleInstallApp} className={`${styles.clickable}`}>Install app</button> 
-            </form>
+                <button onClick={handleConnectGithub} className={`${styles.clickable}`}>Connect with github account</button>
+                <button onClick={handleInstallApp} className={`${styles.clickable}`}>Install app</button> 
+                <button onClick={handleConnectGitlab} className={`${styles.clickable}`}>Connect with gitlab account</button>
+            </div>
         </div>
-    </>)
+    );
 }
 
 export default UserProfile;

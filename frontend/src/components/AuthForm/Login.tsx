@@ -38,7 +38,7 @@ function Login(){
         
         setLoading(true);
         try {
-            const res = await fetch(`${api_url}/auth/login`, {
+            const res = await fetch(`https://sprain-reiterate-cape.ngrok-free.dev/auth/login`, {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
                 credentials: "include",
