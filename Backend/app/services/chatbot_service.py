@@ -6,7 +6,7 @@ from datetime import datetime
 from google import genai
 from google.genai import types
 
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session,joinedload
 from models.chat_message_model import ChatMessage
 from models.chat_session_model import ChatSession
 
@@ -62,6 +62,7 @@ class ChatbotService:
             user_id: int,
             message: str,
             session_id: Optional[int],
+            project_id : Optional[int],
             db: Session
     ) -> Dict[str, Any]:
 
@@ -70,6 +71,7 @@ class ChatbotService:
             session = await self.create_new_session(
                 user_id=user_id,
                 first_message=message,
+                project_id=project_id,
                 db=db
             )
             session_id = session.id
@@ -85,7 +87,10 @@ class ChatbotService:
                     status_code=404,
                     detail="Chat session not found or access denied"
                 )
-
+            if project_id is not None and session.project_id != project_id:
+                session.project_id = project_id
+                db.commit()
+                db.refresh(session)
             # load existed chat history
             chat_history = await self.get_session_messages(
                 user_id=user_id,
@@ -119,9 +124,12 @@ class ChatbotService:
             "full_history": full_history
         }
 
-    async def create_new_session(self, user_id: int,first_message: str, db:Session) -> ChatSession:
+    async def create_new_session(
+            self, user_id: int,first_message: str, db:Session,project_id : Optional[int] = None
+    ) -> ChatSession:
         session_name = first_message[:50] + "..." if len(first_message) > 50 else first_message
-        new_session = ChatSession(user_id = user_id,session_name = session_name)
+        new_session = ChatSession(user_id = user_id,session_name = session_name,project_id=project_id,
+                                  created_at=datetime.utcnow(),updated_at=datetime.utcnow())
         db.add(new_session)
         db.commit()
         db.refresh(new_session)
@@ -202,7 +210,9 @@ class ChatbotService:
             db: Session
     )->List[ChatSession]:
 
-        return db.query(ChatSession).filter(
+        return db.query(ChatSession).options(
+            joinedload(ChatSession.project)
+        ).filter(
             ChatSession.user_id == user_id
         ).order_by(ChatSession.updated_at.desc()).all()
 
@@ -212,7 +222,14 @@ class ChatbotService:
             session_id: int,
             db: Session
     ) -> Dict[str, Any]:
-        session = await self.get_session_if_owned(user_id,session_id,db)
+        # session = await self.get_session_if_owned(user_id,session_id,db)
+        session = db.query(ChatSession).options(
+            joinedload(ChatSession.project)
+        ).filter(
+            ChatSession.id == session_id,
+            ChatSession.user_id == user_id
+        ).first()
+
         if not session:
             raise HTTPException(
                 status_code=404,
@@ -222,6 +239,12 @@ class ChatbotService:
         return {
             "session_id": session.id,
             "session_name": session.session_name,
+            "project_id": session.project_id,
+            "project" : {
+                "id": session.project_id,
+                "name": session.project.project_name,
+                "target_platform": session.project.target_platform
+            } if session.project else None,
             "messages": messages
         }
 
@@ -232,3 +255,13 @@ class ChatbotService:
         db.delete(session)
         db.commit()
 
+    async def get_project_sessions(
+            self,
+            user_id: int,
+            project_id: int,
+            db: Session
+    ) -> List[ChatSession]:
+        return db.query(ChatSession).filter(
+            ChatSession.user_id == user_id,
+            ChatSession.project_id == project_id
+        ).order_by(ChatSession.updated_at.desc()).all()
