@@ -1,15 +1,17 @@
-from datetime import datetime
+from datetime import datetime, timezone
 import os
 from dotenv import load_dotenv
-from processor_services import compute_job_comparison, compute_run_comparison
+from processor_services import compute_job_comparison, compute_run_comparison, compute_test_avg_and_color
 from schemas.dashboard import SyncStatus
-from models.dashboard import JobTiming, PipelineRun, Repository
+from models.dashboard import JobTiming, PipelineRun, Repository, TestRun
 from services.dashboard.github_collector_services import GitHubCollector
 from sqlalchemy import select
+from test_parsing_service import MultipleFrameworkTestParser
+from sqlalchemy.ext.asyncio import AsyncSession
 
 load_dotenv()
 
-async def sync_repository(repo: Repository, db) -> SyncStatus:
+async def sync_repository(repo: Repository, db: AsyncSession) -> SyncStatus:
     
     """Sync pipeline data for a repository from the platform API."""
     
@@ -24,7 +26,8 @@ async def sync_repository(repo: Repository, db) -> SyncStatus:
             message=f"Platform '{repo.platform}' sync not yet implemented",
         )
     
-async def sync_github_actions(repo: Repository, db):
+#here framework will be replaced with fetching it from repocontext model when repo fetcher is done
+async def sync_github_actions(repo: Repository, db: AsyncSession, framework: str | None = None) -> SyncStatus:
     
     """Fetch runs, jobs, and test results from GitHub Actions."""
     
@@ -94,10 +97,18 @@ async def sync_github_actions(repo: Repository, db):
                 if job_duration is not None:
                     job.compared_to_prev_pct = await compute_job_comparison(job.job_name, job_duration, repo.id, pipeline_run.id, db,)
                 db.add(job)
+                await db.flush()  #to get job.id before syncing tests
+
+                tests_parsed += await sync_job_tests(job, raw_job, collector, db, owner, repo_name, repo)
+                if tests_parsed > 0:
+                    print(f"Job {job.job_name}: Parsed {tests_parsed} tests")
                 jobs_synced += 1
+            
+            runs_synced += 1
+            repo.last_synced_at = datetime.now(timezone.utc)
+            await db.commit()
 
-
-            ##still logic for tests to be addec
+                
     except Exception as e:
             await db.rollback()
             return SyncStatus(
@@ -127,3 +138,122 @@ def _parse_ts(time: str | None) -> datetime | None:
     except (ValueError, TypeError):
         return None
 
+
+
+async def sync_job_tests(job: JobTiming, raw_job, collector: GitHubCollector, db: AsyncSession, owner: str, repo_name: str, repo:Repository):
+    """
+    Collect test results for a job
+    
+    Returns: {
+        "tests_found": int,
+        "artifacts_errors": list[Exception],
+        "logs_errors": list[Exception]
+    }
+    """
+    
+    job_id = raw_job["id"]
+    run_id = raw_job["run_id"]
+    
+    test_parser = MultipleFrameworkTestParser()
+    tests_found = 0
+    artifacts_errors = []
+    logs_errors = []
+    
+    #Check for test report artifacts
+    try:
+        artifacts = await collector.get_job_artifacts(owner, repo_name, run_id)
+        
+        for artifact in artifacts:
+            if any(name in artifact["name"].lower() for name in 
+                   ["test", "report", "result", "junit", "coverage"]):
+                
+                try:
+                    zip_data = await collector.download_artifact(artifact["archive_download_url"])
+                    reports = collector.extract_test_reports_from_zip(zip_data)
+                    
+                    for filename, content, ext in reports:
+                        try:
+                            parsed_tests = test_parser.parse(
+                                content=content,
+                                framework="auto",
+                                filename=filename
+                            )
+                            
+                            for test in parsed_tests:
+                                avg, diff, color = await compute_test_avg_and_color(
+                                        test.test_name, test.duration_ms,
+                                        test.status, repo.id, db,)
+                                db.add(TestRun(
+                                    run_id=job.run_id,
+                                    job_id=job.id,
+                                    test_name=test.test_name,
+                                    status=test.status,
+                                    duration_ms=test.duration_ms,
+                                    avg_duration_ms=avg,
+                                    diff_from_avg_pct=diff,
+                                    color=color,
+
+                                    error_message=test.error,
+                                    framework=test.framework,
+                                    source_format=test.source,
+
+                                ))
+                                tests_found += 1
+                        except Exception as e:
+                            artifacts_errors.append(
+                                Exception(f"Failed to parse {filename}, while snying job tests function: {str(e)}")
+                            )
+                
+                except Exception as e:
+                    artifacts_errors.append(
+                        Exception(f"Failed to download/extract artifact {artifact['name']}, while snying job tests function:: {str(e)}")
+                    )
+    
+    except Exception as e:
+        artifacts_errors.append(
+            Exception(f"Failed to fetch artifacts: {str(e)}")
+        )
+    
+    #Parse logs if no test reports found
+    if tests_found == 0:
+        try:
+            log_content = await collector.get_job_logs(owner, repo_name, job_id)
+            
+            try:
+                parsed_tests = test_parser.parse(
+                    content=log_content,
+                    framework="auto",
+                    filename="job.log"
+                )
+                
+                for test in parsed_tests:
+                    avg, diff, color = await compute_test_avg_and_color(
+                                        test.test_name, test.duration_ms,
+                                        test.status, repo.id, db,)
+                    db.add(TestRun(
+                        run_id=job.run_id,
+                        job_id=job.id,
+                        test_name=test.test_name,
+                        status=test.status,
+                        duration_ms=test.duration_ms,
+                        avg_duration_ms=avg,
+                        diff_from_avg_pct=diff,
+                        color=color,
+
+                        error_message=test.error,
+                        framework=test.framework,
+                        source_format=test.source
+                    ))
+                    tests_found += 1
+            
+            except Exception as e:
+                logs_errors.append(
+                    Exception(f"while snying job tests function:, Failed to parse job logs: {str(e)}")
+                )
+        
+        except Exception as e:
+            logs_errors.append(
+                Exception(f"while snying job tests function:, Failed to fetch job logs: {str(e)}")
+            )
+    
+    return tests_found

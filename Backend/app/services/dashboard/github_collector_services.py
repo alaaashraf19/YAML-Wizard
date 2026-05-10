@@ -1,8 +1,11 @@
-
 from datetime import datetime
 import os
 from dotenv import load_dotenv
 import httpx
+from io import BytesIO
+import zipfile
+from typing import Tuple
+
 load_dotenv()
 
 class GitHubCollector:
@@ -57,22 +60,45 @@ class GitHubCollector:
         resp.raise_for_status()
         return resp.json().get("jobs", [])
 
+    async def get_job_logs(self, owner: str, repo: str, job_id: int) -> str:
+        """Fetch raw job logs from GitHub API"""
+        endpoint = f"repos/{owner}/{repo}/actions/jobs/{job_id}/logs"
+        response = await self._request("GET", endpoint)
+        return response.text
 
-
-    async def get_job_log(self, owner: str, repo: str, job_id: int) -> str:
+    async def get_job_artifacts(self, owner: str, repo: str, run_id: int) -> list[dict]:
+        """Fetch artifact metadata for a run"""
+        endpoint = f"repos/{owner}/{repo}/actions/runs/{run_id}/artifacts"
+        response = await self._request("GET", endpoint)
+        return response.json().get("artifacts", [])
+    
+    async def download_artifact(self, artifact_url: str) -> bytes:
+        """Download artifact zip file"""
+        response = await self._request("GET", artifact_url)
+        return response.content
+    
+    def extract_test_reports_from_zip(self, zip_data: bytes) -> list[Tuple[str, str, str]]:
+        """Extract test report files from artifact zip
         
-        """Fetch raw log text for a specific job"""
-        
+        Returns: [(filename, content, framework_hint), ...]
+        """
+        reports = []
         try:
-            resp = await self._client.get(
-                f"{self.BASE_URL}/repos/{owner}/{repo}/actions/jobs/{job_id}/logs",
-                follow_redirects=True,
-            )
-            if resp.status_code == 200:
-                return resp.text
-        except httpx.HTTPError:
-            pass
-        return ""
+            with zipfile.ZipFile(BytesIO(zip_data)) as z:
+                for file_info in z.filelist:
+                    fname = file_info.filename
+                    
+                    # Look for common test report patterns
+                    if any(pattern in fname.lower() for pattern in 
+                           ['test', 'report', 'result', 'junit', 'jest', 'coverage']):
+                        
+                        if fname.endswith(('.xml', '.json')):
+                            content = z.read(fname).decode('utf-8', errors='ignore')
+                            reports.append((fname, content, fname.split('.')[-1]))
+        except Exception as e:
+            logger.warning(f"Failed to extract artifacts: {e}")
+        
+        return reports
     
 
     @staticmethod
@@ -90,6 +116,3 @@ class GitHubCollector:
             return max(0, int((end - start).total_seconds()))
         except (ValueError, TypeError):
             return None
-    
-
-

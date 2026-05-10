@@ -1,7 +1,10 @@
-from models.dashboard import JobTiming, Repository, PipelineRun
+from models.dashboard import JobTiming, PipelineRun, TestRun
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, func
+from sqlalchemy import select
 
+
+ORANGE_THRESHOLD = 0.15  # >15% slower
+RED_THRESHOLD = 0.50     # >50% slower or failed
 
 async def compute_run_comparison(run: PipelineRun, repo_id: int, db: AsyncSession,) -> float | None:
     
@@ -44,3 +47,42 @@ async def compute_job_comparison(job_name: str, current_duration: int, repo_id: 
         return None
     return ((current_duration-prev_dur)/prev_dur) *100
 
+
+async def compute_test_avg_and_color(test_name: str, current_duration: int | None, status: str,repo_id: int, db: AsyncSession,) -> tuple[float | None, float | None, str]:
+    """Calculate rolling average, diff, and color for a test.
+
+    Returns (avg_duration_ms, diff_from_avg_pct, color).
+    """
+    if status in ("fail", "error"):
+        return None, None, "red"
+
+    #last 10 runs for this test to get its avg data
+    result = await db.execute(select(TestRun.duration_ms).join(PipelineRun, TestRun.run_id == PipelineRun.id)
+        .where(
+            PipelineRun.repo_id == repo_id,
+            TestRun.test_name == test_name,
+            TestRun.duration_ms.isnot(None),
+            TestRun.status == "pass",
+        )
+        .order_by(PipelineRun.started_at.desc())
+        .limit(10)
+    )
+    durations = [row[0] for row in result.all()]
+
+    if not durations or current_duration is None:
+        return None, None, "green"
+
+    avg = sum(durations) / len(durations)
+    if avg == 0:
+        return avg, 0.0, "green"
+
+    diff_pct = ((current_duration - avg) / avg) * 100
+
+    if diff_pct > RED_THRESHOLD * 100:
+        color = "red"
+    elif diff_pct > ORANGE_THRESHOLD * 100:
+        color = "orange"
+    else:
+        color = "green"
+
+    return avg, diff_pct, color

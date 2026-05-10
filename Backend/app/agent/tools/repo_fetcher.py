@@ -233,19 +233,41 @@ def _detect_test_runners(key_files: dict[str, str]) -> list[str]:
         runners.append("mocha")
     if "vitest" in pkg:
         runners.append("vitest")
+    if "cypress" in pkg:
+            runners.append("cypress")
+    if "@playwright/test" in pkg:
+        runners.append("playwright")
 
     # Java
-    if "pom.xml" in key_files:
-        pom = key_files["pom.xml"]
-        if "junit" in pom.lower():
-            runners.append("junit")
-        if "surefire" in pom:
-            runners.append("maven-surefire")
+    pom = key_files.get("pom.xml", "").lower()
+    gradle = key_files.get("build.gradle", "").lower()
+
+    if "junit" in pom or "junit" in gradle:
+        runners.append("junit")
+
+    if "surefire" in pom:
+        runners.append("maven-surefire")
+
+    if "test" in gradle:
+        runners.append("gradle-test")
 
     # Go (built-in)
     if "go.mod" in key_files:
         runners.append("go test")
 
-    return runners
 
-    
+    yaml_content = (
+        key_files.get("workflow.yml", "")
+        + key_files.get(".github/workflows", "")
+    )
+
+    if "pytest" in yaml_content:
+        runners.append("pytest")
+    if "npm test" in yaml_content:
+        runners.append("jest")
+    if "go test" in yaml_content:
+        runners.append("go test")
+    if "mvn test" in yaml_content:
+        runners.append("junit")
+
+    return runners

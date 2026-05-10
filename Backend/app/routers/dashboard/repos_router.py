@@ -4,6 +4,7 @@ from schemas.dashboard import RepoCreate, RepoOut, SyncStatus
 from database.db_engine import get_db
 from sqlalchemy.ext.asyncio import AsyncSession
 from services.dashboard.repos_services import add_repo_service
+from services.dashboard.sync_services import sync_repository
 from models.user_model import User
 from sqlalchemy import select
 from models.dashboard import Repository
@@ -51,5 +52,4 @@ async def sync_repo(repo_id: int, db: AsyncSession = Depends(get_db), current_us
     if not repo:
         raise HTTPException(status_code=404, detail="Repository not found")
     
-    #yet to be updated actual sny logic
-    return {"status": "sync triggered"}
+    return await sync_repository(repo, db)
