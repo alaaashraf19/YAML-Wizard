@@ -27,6 +27,7 @@ async def chat_with_bot(
         user_id=current_user.id,
         message=request.message,
         session_id=request.session_id,
+        project_id=request.project_id,
         db=db
     )
 
@@ -65,7 +66,13 @@ async def get_chat_sessions(
             id=session.id,
             session_name=session.session_name,
             created_at=session.created_at,
-            updated_at=session.updated_at
+            updated_at=session.updated_at,
+            project_id=session.project_id,
+            project= {
+                "id" : session.project_id,
+                "name" : session.project.project_name,
+                "target_platform" : session.project.target_platform,
+            } if session.project else None,
         )
         for session in sessions
     ]
@@ -87,6 +94,8 @@ async def get_session_details(
     return ChatSessionDetailResponse(
         id=session_data["session_id"],
         session_name=session_data["session_name"],
+        project_id=session_data["project_id"],
+        project=session_data["project"],
         messages=[
             ChatMessage(
                 role=msg["role"],
@@ -96,7 +105,6 @@ async def get_session_details(
             for msg in session_data["messages"]
         ]
     )
-
 
 @router.delete("/sessions/{session_id}")
 async def delete_session(
