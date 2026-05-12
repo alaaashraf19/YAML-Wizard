@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
 from database.db_engine import get_db
 from core.security import get_current_user
 from models.user_model import User
@@ -7,11 +6,12 @@ from models.platforms_model import GitHubInstallation,GitLabConnection
 from agent.tools.repo_publisher import publish_to_repo
 from agent.utils.github_auth import get_installation_token
 from services.gitlab_connect_service import get_valid_gitlab_token
-
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 router = APIRouter()
 
 @router.post("/yaml/{platform}")
-async def publish_yaml(platform: str, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+async def publish_yaml(platform: str, current_user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
     
     if platform.lower() not in ["github", "gitlab"]:
         raise HTTPException(status_code=400, detail="Invalid platform. Supported: github, gitlab")
@@ -39,7 +39,8 @@ async def publish_yaml(platform: str, current_user: User = Depends(get_current_u
         #will be replaced with repo model after repo fetching data
         repo_url = "https://github.com/alaaashraf19/YAML-Wizard.git"
         user_id = current_user.id
-        user = db.query(User).filter(User.id == user_id).first()
+        result = await db.execute(select(User).where(User.id == user_id))
+        user = result.scalar_one_or_none()
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
         
@@ -48,7 +49,8 @@ async def publish_yaml(platform: str, current_user: User = Depends(get_current_u
         
 
         #rememeber to check if it is isntallation for user or org this query will change!
-        installation = db.query(GitHubInstallation).filter(GitHubInstallation.account_id == user.github_id).first()
+        installation = await db.execute(select(GitHubInstallation).where(GitHubInstallation.account_id == user.github_id))
+        installation = installation.scalar_one_or_none()
 
         if not installation:
             raise HTTPException(status_code=404, detail="installation not found")
@@ -75,11 +77,13 @@ async def publish_yaml(platform: str, current_user: User = Depends(get_current_u
         """
         repo_url="https://gitlab.com/alaaashraf19-group/alaaashraf19-project.git"
         user_id = current_user.id
-        user = db.query(User).filter(User.id == user_id).first()
+        result = await db.execute(select(User).where(User.id == user_id))
+        user = result.scalar_one_or_none()
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
         
-        gitlab_connection = db.query(GitLabConnection).filter(GitLabConnection.user_id == user_id).first()
+        result = await db.execute(select(GitLabConnection).where(GitLabConnection.user_id == user_id))
+        gitlab_connection = result.scalar_one_or_none()
         if gitlab_connection is None:
             raise HTTPException(status_code=404, detail="Gitlab Account not linked")
         token = await get_valid_gitlab_token(gitlab_connection, db)

@@ -3,12 +3,27 @@ from fastapi import FastAPI
 from database.db_engine import create_tables
 from middleware.middleware import setup_middleware
 from routers import auth_router, github_app_router, publisher_router,platfroms_connect_router
-from routers.dashboard import repos_router
+from routers.dashboard import repos_router, runs_router, tests_router
+from realtime import realtime_router
+import asyncio
+from services.dashboard.sync_loop_service import background_sync_loop
+_sync_task: asyncio.Task | None = None
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    create_tables()
+    
+    """Startup: init DB tables, start background sync. Shutdown: cleanup."""
+    
+    global _sync_task
+    await create_tables()
+    _sync_task = asyncio.create_task(background_sync_loop())
     yield
+    if _sync_task:
+        _sync_task.cancel()
+        try:
+            await _sync_task
+        except asyncio.CancelledError:
+            pass
 
 app = FastAPI(lifespan=lifespan)
 
@@ -20,4 +35,8 @@ app.include_router(github_app_router.router, prefix="/github", tags=["github_app
 app.include_router(platfroms_connect_router.router, prefix="/platform", tags=["platform_connect"])
 app.include_router(publisher_router.router, prefix="/publish", tags=["publish_yaml"])
 
-app.include_router(repos_router.router, prefix="/dashboard/repos", tags=["dashboard_repositories"])
+app.include_router(repos_router.router, prefix="/dashboard", tags=["dashboard_repositories"])
+app.include_router(runs_router.router, prefix="/dashboard", tags=["dashboard_repo_runs"])
+app.include_router(tests_router.router, prefix="/dashboard", tags=["dashboard_repo_runs_tests"])
+
+app.include_router(realtime_router.router, prefix="/realtime", tags=["realtime_updates"])

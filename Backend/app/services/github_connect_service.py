@@ -78,7 +78,7 @@ async def github_callback_service(code, request, db):
     # link to our user in database
     user.github_id = github_id
     user.github_login = github_login
-    db.commit()
+    await db.commit()
 
     # Redirect back to frontend with success
     # frontend_url = "http://localhost:5173/connect?status=success"

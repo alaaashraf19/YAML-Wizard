@@ -23,7 +23,71 @@ class RepoOut(BaseModel):
     created_at: datetime
 
 
+##pipeline run
 
+class PipelineRunOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    repo_id: int
+    external_id: int
+    commit_hash: str
+    commit_message: str | None
+    branch: str | None
+    status: str
+    conclusion: str | None
+    total_duration_s: int | None
+    started_at: datetime | None
+    completed_at: datetime | None
+    compared_to_prev_pct: float | None
+    created_at: datetime
+
+
+class JobTimingOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    run_id: int
+    external_id: int
+    job_name: str
+    status: str
+    duration_s: int | None
+    started_at: datetime | None
+    completed_at: datetime | None
+    compared_to_prev_pct: float | None
+
+
+class TestRunOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    run_id: int
+    test_name: str
+    status: str
+    duration_ms: int | None
+    avg_duration_ms: float | None
+    diff_from_avg_pct: float | None
+    color: str
+    created_at: datetime
+
+
+class PipelineRunDetail(PipelineRunOut):
+    """Run with nested jobs and tests."""
+    jobs: list[JobTimingOut] = []
+    tests: list[TestRunOut] = []
+
+
+
+class TestHistoryPoint(BaseModel):
+    commit_hash: str
+    commit_message: str | None
+    status: str
+    duration_ms: int | None
+    avg_duration_ms: float | None
+    diff_from_avg_pct: float | None
+    color: str
+    timestamp: datetime | None
+    
 #  Sync 
 
 class SyncStatus(BaseModel):

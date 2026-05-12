@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
-from requests import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from core.security import get_current_user
 from database.db_engine import get_db
 from schemas.user_schema import UserCreate, UserCreateResponse, UserLogin, LoginResponse, LoginConfirm
@@ -10,12 +10,12 @@ from models.user_model import User
 router = APIRouter()
 
 @router.post("/signup", response_model=UserCreateResponse)
-async def signup(userCreate: UserCreate , db : Session = Depends(get_db)):
+async def signup(userCreate: UserCreate , db : AsyncSession = Depends(get_db)):
       return await signup_service(userCreate, db)
     
 
 @router.post("/login", response_model=LoginResponse)
-async def login(user: UserLogin, db : Session = Depends(get_db)):
+async def login(user: UserLogin, db : AsyncSession = Depends(get_db)):
       return await login_service(user, db)
 
 @router.get("/me", response_model=LoginConfirm)

@@ -8,6 +8,7 @@ from datetime import datetime, timezone, timedelta
 from models.platforms_model import GitLabConnection
 from fastapi.responses import JSONResponse, RedirectResponse
 from cryptography.fernet import Fernet
+from sqlalchemy import select
 
 
 load_dotenv()
@@ -92,7 +93,8 @@ async def gitlab_callback_service(code, request,db):
     gitlab_user_id = gitlab_user["id"]
     gitlab_username = gitlab_user["username"]
 
-    existing = db.query(GitLabConnection).filter_by(user_id=user.id).first()
+    result = await db.execute(select(GitLabConnection).where(GitLabConnection.user_id == user.id))
+    existing = result.scalar_one_or_none()
 
     if existing:
             existing.access_token = access_token
@@ -111,7 +113,8 @@ async def gitlab_callback_service(code, request,db):
         )
         db.add(new_conn)
 
-    db.commit()
+    await db.flush()
+    await db.commit()
 
     return JSONResponse(content={"msg":"Gitlab connected successfully"})
 
@@ -162,8 +165,8 @@ async def refresh_gitlab_token(connection, db):
     if expires_in:
         connection.expires_at = datetime.now(timezone.utc) + timedelta(seconds=expires_in)
 
-    db.commit()
-    db.refresh(connection)
+    await db.commit()
+    await db.refresh(connection)
 
     return connection
 

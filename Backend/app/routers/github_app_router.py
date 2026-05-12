@@ -1,8 +1,7 @@
 from fastapi import APIRouter, Depends, Request
 from services.github_app_services import  github_webhook as github_webhook_services, install_app_services, setup_github_url_services
 from database.db_engine import get_db
-from requests import Session
-
+from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter()
 
@@ -15,9 +14,9 @@ async def install_app():
     return await install_app_services()
 
 @router.post("/webhook")
-async def github_webhook(request: Request, db: Session = Depends(get_db)):
+async def github_webhook(request: Request, db: AsyncSession  = Depends(get_db)):
     return await github_webhook_services(request, db)
 
 @router.get("/setup")
-async def setup_github_url(installation_id:int, request: Request , db: Session = Depends(get_db)):
+async def setup_github_url(installation_id:int, request: Request , db: AsyncSession  = Depends(get_db)):
     return await setup_github_url_services(installation_id,request,db)

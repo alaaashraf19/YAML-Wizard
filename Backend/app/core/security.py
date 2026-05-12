@@ -5,9 +5,11 @@ from fastapi import Cookie, HTTPException, Depends, status
 from passlib.context import CryptContext
 from fastapi.security import  OAuth2PasswordBearer
 from jose import JWTError, jwt
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from database.db_engine import get_db
 from models.user_model import User
+from sqlalchemy import select
+
 load_dotenv()
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
@@ -36,11 +38,11 @@ def verify_password(password: str, hashed_password: str) -> bool:
     return pwd_context.verify(password,hashed_password)
 
 
-def get_user(db:Session, username: str):
-    return db.query(User).filter(User.username == username).first()
+async def get_user(db: AsyncSession, username: str):
+    result = await db.execute(select(User).where(User.username == username))
+    return result.scalar_one_or_none()
 
-
-def get_current_user(db: Session = Depends(get_db),token: str | None = Cookie(None, alias="access_token")):
+async def get_current_user(db: AsyncSession = Depends(get_db),token: str | None = Cookie(None, alias="access_token")):
     if SECRET_KEY is None:
         raise ValueError("SECRET_KEY environment variable is not set")
     
@@ -65,7 +67,7 @@ def get_current_user(db: Session = Depends(get_db),token: str | None = Cookie(No
     except JWTError:
         raise credentials_exception 
     
-    user = get_user(db, username=username.lower())
+    user = await get_user(db, username=username.lower())
     if user is None:
         raise credentials_exception
     return user

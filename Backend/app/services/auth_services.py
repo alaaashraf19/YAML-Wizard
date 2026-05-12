@@ -3,12 +3,15 @@ from fastapi.responses import JSONResponse
 from schemas.user_schema import UserCreate, UserCreateResponse, UserLogin
 from core.security import hash_password, create_access_token, verify_password, get_user
 from models.user_model import User as UserModel
+from sqlalchemy import select
 
 async def signup(user: UserCreate, db):
     username = user.username.lower()
     email = user.email.lower()
     db_user = get_user(db, username)
-    email_exists = db.query(UserModel).filter(UserModel.email == email).first()
+
+    result_email_exists = await db.execute(select(UserModel).where(UserModel.email == email))
+    email_exists = result_email_exists.scalar_one_or_none()
     
     if db_user:
         raise HTTPException(
@@ -29,8 +32,8 @@ async def signup(user: UserCreate, db):
         hashed_password=hashed_pw,
     )
     db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
+    await db.commit()
+    await db.refresh(new_user)
     return UserCreateResponse(msg = "User created successfully", user_id = str(new_user.id))
 
 
@@ -44,7 +47,8 @@ async def login(user: UserLogin, db):
         raise HTTPException(status_code=400, detail="Username and password are required")
     
     
-    db_user = db.query(UserModel).filter(UserModel.username == username.lower()).first()
+    result = await db.execute(select(UserModel).where(UserModel.username == username.lower()))
+    db_user = result.scalar_one_or_none()
     hashed_pw = db_user.hashed_password if db_user else None
 
     if not db_user or not hashed_pw or not verify_password(password, hashed_pw):
