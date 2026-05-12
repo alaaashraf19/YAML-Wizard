@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List
 
 from schemas.project_schema import ProjectCreate, ProjectResponse, ProjectUpdate
@@ -13,6 +14,8 @@ async def create_project(project: ProjectCreate,user_id:int, db: Session):
     project_data = project.model_dump()
     project_data['user_id'] = user_id
     new_project = Project(**project_data)
+    new_project.created_at = datetime.utcnow()
+    new_project.updated_at = datetime.utcnow()
     db.add(new_project)
     db.commit()
     db.refresh(new_project)
@@ -28,6 +31,9 @@ async def update_project(project_id: int, user_id:int, project_update: ProjectUp
 
     for key, value in update_data.items():
         setattr(project, key, value)
+    db.query(Project).filter(Project.id == project_id).update({
+        "updated_at": datetime.utcnow()
+    })
     db.commit()
     db.refresh(project)
     return project

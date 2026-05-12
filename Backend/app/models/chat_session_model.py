@@ -14,6 +14,8 @@ class ChatSession(Base):
 
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
 
+    project_id = Column(Integer, ForeignKey('projects.id'), nullable=True)
+
     chat_messages = relationship(
         "ChatMessage",
         back_populates="chat_session",
@@ -21,3 +23,4 @@ class ChatSession(Base):
         cascade="all, delete-orphan"
     )
     user = relationship("User", back_populates="chat_sessions")
+    project = relationship("Project", back_populates="chat_sessions")
