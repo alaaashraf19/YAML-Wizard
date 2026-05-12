@@ -16,7 +16,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const login = (user: string) => {
         setUsername(user);
-        sessionStorage.setItem("username", user);
     };
 
     // Check logged in user constantly
@@ -50,7 +49,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const logout = () => {
         setUsername(null);
-        sessionStorage.removeItem("username");
     };
 
     return (

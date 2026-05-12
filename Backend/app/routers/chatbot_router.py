@@ -32,6 +32,7 @@ async def chat_with_bot(
 
     return ChatResponse(
         session_id=result["session_id"],
+        session_name=result["session_name"],
         message=ChatMessage(
             role="assistant",
             content=result["bot_response"],

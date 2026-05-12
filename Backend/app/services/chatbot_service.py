@@ -55,7 +55,22 @@ class ChatbotService:
             }
 
         except Exception as e:
-            raise HTTPException(status_code=502, detail=f"Gemini API error: {str(e)}")
+            error_text = str(e)
+
+            if "RESOURCE_EXHAUSTED" in error_text or "429" in error_text:
+                return{
+                    "status_code": 429,
+                    "role": "assistant",
+                    "content": "The chatbot has reached its limit. Please try again later.",
+                    "error": error_text
+                }
+            
+            return{
+                "status_code": 500,
+                "role": "assistant",
+                "content": "Something went wrong while generating the response.",
+                "error": error_text
+            }
 
     async def process_chat_message(
             self,
@@ -64,7 +79,6 @@ class ChatbotService:
             session_id: Optional[int],
             db: Session
     ) -> Dict[str, Any]:
-
 
         if not session_id:
             session = await self.create_new_session(
@@ -93,6 +107,8 @@ class ChatbotService:
                 db=db
             )
 
+        session_name = session.session_name
+
         result = await self.send_message(
             message=message,
             chat_history=chat_history
@@ -114,6 +130,7 @@ class ChatbotService:
 
         return {
             "session_id": session_id,
+            "session_name": session_name,
             "bot_response": result["content"],
             "bot_timestamp": bot_msg.timestamp,
             "full_history": full_history

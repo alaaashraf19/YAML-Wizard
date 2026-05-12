@@ -1,9 +1,9 @@
+import os
 from fastapi import HTTPException
 from fastapi.responses import JSONResponse
 from schemas.user_schema import UserCreate, UserCreateResponse, UserLogin
 from core.security import hash_password, create_access_token, verify_password, get_user
 from models.user_model import User as UserModel
-from services.github_connect_service import is_github_token_valid
 
 async def signup(user: UserCreate, db):
     username = user.username.lower()
@@ -66,8 +66,8 @@ async def login(user: UserLogin, db):
         value=access_token,
         httponly=True,
         secure=False,        # ===========> MAKE SECURE FOR HTTPS
-        samesite="none",
-        max_age=60 * 60 * 24 * 7 #7 days
+        samesite="Lax",
+        max_age=os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES",30)
     )
 
     return response

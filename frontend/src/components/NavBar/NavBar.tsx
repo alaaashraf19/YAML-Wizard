@@ -9,7 +9,8 @@ import { FaSignOutAlt } from "react-icons/fa";
 
 function NavBar(){
     const [openOptions, setOpenOptions] = useState<boolean>(false)
-    const optionsRef = useRef<HTMLButtonElement  | null>(null);
+    const optionsRef = useRef<HTMLDivElement  | null>(null);
+    const optionsButtonRef = useRef<HTMLButtonElement  | null>(null);
     const { username, loading, logout } = useAuth();
     const api_url = import.meta.env.VITE_API_URL;
 
@@ -17,14 +18,17 @@ function NavBar(){
     useEffect(
         () => {
             function handleClickOutside(e: MouseEvent) {
-                if (optionsRef.current && !optionsRef.current.contains(e.target as Node)) {
+                if (optionsRef.current &&
+                        !optionsRef.current.contains(e.target as Node) && 
+                        optionsButtonRef.current && 
+                        !optionsButtonRef.current.contains(e.target as Node)) {
                     setOpenOptions(false);
                 }
             }
 
-            document.addEventListener("click", handleClickOutside);
+            document.addEventListener("mousedown", handleClickOutside);
             return () => {
-                document.removeEventListener("click", handleClickOutside);
+                document.removeEventListener("mousedown", handleClickOutside);
             };
         }
     , []);
@@ -36,7 +40,10 @@ function NavBar(){
                 credentials: "include"
             });
 
-            if (!res.ok) throw new Error("Logout failed");
+            if (!res.ok){
+                console.error("Logout failed");
+                return;
+            }
 
             logout();
         } catch (err) {
@@ -52,10 +59,10 @@ function NavBar(){
                         <GoPerson/>{username}
                     </Link>
                     <div className={styles.optionsContainer}>
-                        <button className={`${styles.optionsButton} ${gStyles.clickable}`} ref={optionsRef}
+                        <button className={`${styles.optionsButton} ${gStyles.clickable}`}  ref={optionsButtonRef}
                             onClick={() => setOpenOptions(prev => !prev)}> ≡ </button>
                         {openOptions && (
-                            <div className={styles.options}>
+                            <div className={styles.options} ref={optionsRef}>
                                 <Link className={`${styles.option} ${gStyles.clickable}`} to="/profile">
                                     <IoPerson/>
                                     Profile

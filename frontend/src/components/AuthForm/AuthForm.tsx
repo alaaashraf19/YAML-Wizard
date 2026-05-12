@@ -1,3 +1,4 @@
+import gStyles from "../../gobal.module.css"
 import styles from './AuthForm.module.css';
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
@@ -62,7 +63,7 @@ export function PasswordField(P_props: PasswordProps) {
                         placeholder="Enter password.." value={P_props.password}
                         onChange={(e) => {P_props.setPassword(e.target.value); P_props.setEmptyPassword(false)}}>
                     </input>
-                    <button type="button" className={styles.toggle} onClick={() => P_props.setShowPassword(!P_props.showPassword)}>
+                    <button type="button" className={`${styles.toggle} ${gStyles.clickable}`} onClick={() => P_props.setShowPassword(!P_props.showPassword)}>
                         {P_props.showPassword ? <FaEye /> : <FaEyeSlash />}
                     </button>
                 </div>
@@ -90,7 +91,7 @@ export function ConfirmPasswordField(CP_props: ConfirmPasswordProps) {
                         className={styles.input} placeholder="Confirm password.." value={CP_props.confirmPassword}
                         onChange={(e) => {CP_props.setConfirmPassword(e.target.value); CP_props.setEmptyConfirmPassword(false)}}>
                     </input>
-                    <button type="button" className={styles.toggle}
+                    <button type="button" className={`${styles.toggle} ${gStyles.clickable}`}
                         onClick={() => CP_props.setShowConfirmPassword(!CP_props.showConfirmPassword)}>
                         {CP_props.showConfirmPassword ? <FaEye /> : <FaEyeSlash />}
                     </button>

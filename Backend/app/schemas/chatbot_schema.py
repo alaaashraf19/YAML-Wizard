@@ -23,5 +23,6 @@ class ChatRequest(BaseModel):
 
 class ChatResponse(BaseModel):
     session_id: Optional[int] = None
+    session_name: str
     message: ChatMessage
     full_history: List[ChatMessage]
