@@ -52,6 +52,9 @@ function NavBar(){
                 <Link className={`${styles.username} ${gStyles.clickable}`} to="/profile">
                     <GoPerson/>{username}
                 </Link>
+                <Link className={`${styles.Link} ${gStyles.clickable}`} to="/dashboard">
+                Dashboard
+                </Link>
                 <div className={styles.optionsContainer}>
                     <button className={`${styles.optionsButton} ${gStyles.clickable}`} ref={optionsRef}
                         onClick={() => setOpenOptions(prev => !prev)}> ≡ </button>

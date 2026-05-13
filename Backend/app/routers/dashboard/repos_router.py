@@ -12,18 +12,18 @@ from models.dashboard import Repository
 router = APIRouter()
 
 
-@router.post("/add", response_model=RepoOut, status_code=201)
+@router.post("/repos/add", response_model=RepoOut, status_code=201)
 async def add_repo(body: RepoCreate, db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_user),):
-    return add_repo_service(body, db, current_user)
+    return await add_repo_service(body, db, current_user)
 
 
-@router.get("/list", response_model=list[RepoOut])
+@router.get("/repos/list", response_model=list[RepoOut])
 async def list_repos(db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_user)):
     result = await db.execute(select(Repository).where(Repository.user_id == current_user.id).order_by(Repository.created_at.desc()))
     return result.scalars().all()
 
 
-@router.get("/get_repo/{repo_id}", response_model=RepoOut)
+@router.get("/repos/get_repo/{repo_id}", response_model=RepoOut)
 async def get_repo(repo_id: int, db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_user)):
     result = await db.execute(select(Repository).where(Repository.id == repo_id and Repository.user_id == current_user.id))
     repo = result.scalar_one_or_none()
@@ -32,7 +32,7 @@ async def get_repo(repo_id: int, db: AsyncSession = Depends(get_db), current_use
     return repo
 
 
-@router.delete("/delete/{repo_id}", status_code=204)
+@router.delete("/repos/delete/{repo_id}", status_code=204)
 async def delete_repo(repo_id: int, db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_user)):
     result = await db.execute(select(Repository).where(Repository.id == repo_id and Repository.user_id == current_user.id))
     repo = result.scalar_one_or_none()
@@ -43,7 +43,7 @@ async def delete_repo(repo_id: int, db: AsyncSession = Depends(get_db), current_
 
 
 
-@router.post("/sync/{repo_id}", response_model=SyncStatus)
+@router.post("/repos/sync/{repo_id}", response_model=SyncStatus)
 async def sync_repo(repo_id: int, db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_user)):
     
     """Trigger an on-demand sync for a repository."""

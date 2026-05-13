@@ -62,20 +62,27 @@ class GitHubCollector:
 
     async def get_job_logs(self, owner: str, repo: str, job_id: int) -> str:
         """Fetch raw job logs from GitHub API"""
-        endpoint = f"repos/{owner}/{repo}/actions/jobs/{job_id}/logs"
-        response = await self._request("GET", endpoint)
-        return response.text
+        resp = await self._client.get(
+            f"{self.BASE_URL}/repos/{owner}/{repo}/actions/jobs/{job_id}/logs",
+            follow_redirects=True,
+        )
+        resp.raise_for_status()
+        return resp.text
 
     async def get_job_artifacts(self, owner: str, repo: str, run_id: int) -> list[dict]:
         """Fetch artifact metadata for a run"""
-        endpoint = f"repos/{owner}/{repo}/actions/runs/{run_id}/artifacts"
-        response = await self._request("GET", endpoint)
-        return response.json().get("artifacts", [])
-    
+        resp = await self._client.get(
+            f"{self.BASE_URL}/repos/{owner}/{repo}/actions/runs/{run_id}/artifacts"
+        )
+        resp.raise_for_status()
+        return resp.json().get("artifacts", [])
+
+
     async def download_artifact(self, artifact_url: str) -> bytes:
         """Download artifact zip file"""
-        response = await self._request("GET", artifact_url)
-        return response.content
+        resp = await self._client.get(artifact_url, follow_redirects=True)
+        resp.raise_for_status()
+        return resp.content
     
     def extract_test_reports_from_zip(self, zip_data: bytes) -> list[Tuple[str, str, str]]:
         """Extract test report files from artifact zip

@@ -19,7 +19,7 @@ function SignUp(){
     const [emptyPassword, setEmptyPassword] = useState(false);
     const [emptyConfirmPassword, setEmptyConfirmPassword] = useState(false);
     const navigate = useNavigate();
-    const api_url = import.meta.env.API_URL;
+    const api_url = import.meta.env.VITE_API_URL;
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();

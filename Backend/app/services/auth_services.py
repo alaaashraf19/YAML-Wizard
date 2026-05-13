@@ -8,7 +8,7 @@ from sqlalchemy import select
 async def signup(user: UserCreate, db):
     username = user.username.lower()
     email = user.email.lower()
-    db_user = get_user(db, username)
+    db_user = await get_user(db, username)
 
     result_email_exists = await db.execute(select(UserModel).where(UserModel.email == email))
     email_exists = result_email_exists.scalar_one_or_none()

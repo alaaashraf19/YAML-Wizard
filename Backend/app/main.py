@@ -3,8 +3,8 @@ from fastapi import FastAPI
 from database.db_engine import create_tables
 from middleware.middleware import setup_middleware
 from routers import auth_router, github_app_router, publisher_router,platfroms_connect_router
-from routers.dashboard import repos_router, runs_router, tests_router
-from realtime import realtime_router
+from routers.dashboard import repos_router, runs_router, tests_router, insights_router
+from realtime import websocket_router
 import asyncio
 from services.dashboard.sync_loop_service import background_sync_loop
 _sync_task: asyncio.Task | None = None
@@ -38,5 +38,6 @@ app.include_router(publisher_router.router, prefix="/publish", tags=["publish_ya
 app.include_router(repos_router.router, prefix="/dashboard", tags=["dashboard_repositories"])
 app.include_router(runs_router.router, prefix="/dashboard", tags=["dashboard_repo_runs"])
 app.include_router(tests_router.router, prefix="/dashboard", tags=["dashboard_repo_runs_tests"])
+app.include_router(insights_router.router, prefix="/dashboard", tags=["dashboard_insights"])
 
-app.include_router(realtime_router.router, prefix="/realtime", tags=["realtime_updates"])
+app.include_router(websocket_router.router, prefix="/realtime", tags=["realtime_updates"])

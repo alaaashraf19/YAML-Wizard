@@ -112,3 +112,21 @@ class TestResult(BaseModel):
         source : str = "unknown"
         framework : str = "unknown"
 
+class Insight(BaseModel):
+    level: str  # "warning", "info", "success", "error"
+    icon: str  # emoji
+    title: str
+    detail: str
+    commit_hash: str | None = None
+    test_name: str | None = None
+
+
+
+class TrendPoint(BaseModel):
+    commit_hash: str
+    timestamp: datetime | None
+    total_duration_s: int | None
+    status: str
+    test_count: int = 0
+    test_pass_count: int = 0
+    test_fail_count: int = 0
