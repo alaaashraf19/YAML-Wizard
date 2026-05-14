@@ -3,10 +3,10 @@ from fastapi.responses import JSONResponse
 from requests import Session
 from core.security import get_current_user
 from database.db_engine import get_db
-from schemas.user_schema import UserCreate, UserCreateResponse, UserLogin, LoginResponse, LoginConfirm
-from services.auth_services import signup as signup_service, login as login_service
-
-
+from schemas.user_schema import UserCreate, UserCreateResponse, UserLogin, LoginResponse, LoginConfirm,UserResponse,UserUpdate
+from services.auth_services import signup as signup_service, login as login_service,update_user_profile,get_user_profile
+from models.user_model import User
+from sqlalchemy.orm import Session
 router = APIRouter()
 
 @router.post("/signup", response_model=UserCreateResponse)
@@ -27,3 +27,13 @@ async def logout():
       response = JSONResponse({"msg": "Logged out successfully"})
       response.delete_cookie(key="access_token")
       return response
+
+@router.get("/profile", response_model=UserResponse)
+async def get_profile(current_user:User = Depends(get_current_user),db: Session = Depends(get_db)):
+      return await get_user_profile(current_user.id, db)
+
+@router.put("/profile", response_model=UserResponse)
+async def update_profile(user_update: UserUpdate,
+                         current_user:User = Depends(get_current_user),
+                         db: Session = Depends(get_db)):
+      return await update_user_profile(current_user.id,user_update, db)
