@@ -45,17 +45,9 @@ function timeAgo(dateStr: string | null) {
   return `${days}d ago`;
 }
 
-export default function CommitTimeline({
-  runs,
-  selectedId,
-  onSelect,
-}: Props) {
+export default function CommitTimeline({runs,selectedId,onSelect,}: Props) {
   if (!runs.length) {
-    return (
-      <p className={styles.empty}>
-        No runs synced yet. Click 🔄 to sync.
-      </p>
-    );
+    return (<p className={styles.empty}>No runs synced yet. Click 🔄 to sync.</p>);
   }
 
   return (

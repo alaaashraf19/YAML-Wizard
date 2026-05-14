@@ -104,11 +104,11 @@ export default function Dashboard() {
           <>
             <header className={styles.header}>
               <div>
-                <h2 className="text-lg font-bold">
-                  {activeRepo.full_name}
+                <h2 className="text-lg font-bold whitespace-pre-line">
+                  {activeRepo.full_name.split('/').join('\n')}
                 </h2>
                 <span className="text-xs text-gray-400">
-                  {activeRepo.platform} · {activeRepo.default_branch}
+                  {activeRepo.platform} · {branchFilter || activeRepo.default_branch}
                 </span>
               </div>
 
