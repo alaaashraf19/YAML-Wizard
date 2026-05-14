@@ -1,0 +1,88 @@
+.testDetail {
+    background: rgb(31 41 55);
+    border-radius: 8px;
+    border: 1px solid rgb(55 65 81);
+    padding: 16px;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.title {
+    font-size: 14px;
+    font-weight: 600;
+    color: rgb(229 231 235);
+}
+
+.closeBtn {
+    font-size: 14px;
+    color: rgb(156 163 175);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.closeBtn:hover {
+    color: rgb(229 231 235);
+}
+
+.loading {
+    color: rgb(156 163 175);
+    font-size: 14px;
+    padding: 16px;
+}
+
+.chartContainer {
+    height: 192px;
+    margin-bottom: 16px;
+}
+
+.sectionTitle {
+    font-size: 12px;
+    font-weight: 500;
+    color: rgb(156 163 175);
+    margin-bottom: 4px;
+}
+
+.commitRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(55, 65, 81, 0.5);
+}
+
+.commitLeft {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.commitHash {
+    color: rgb(96 165 250);
+    font-family: monospace;
+}
+
+.commitRight {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.duration {
+    color: rgb(209 213 219);
+}
+
+.diff {
+    color: rgb(156 163 175);
+}
+
+.empty {
+    color: rgb(156 163 175);
+    font-size: 14px;
+}

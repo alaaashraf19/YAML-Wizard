@@ -1,4 +1,5 @@
 import type { JobTiming } from '../../types';
+import styles from './PipelineStages.module.css';
 
 interface Props {
   jobs: JobTiming[];
@@ -6,63 +7,121 @@ interface Props {
 
 function statusIcon(status: string) {
   switch (status) {
-    case 'success': return '✅';
-    case 'failure': return '❌';
-    case 'skipped': return '⏭️';
-    case 'cancelled': return '⚪';
-    default: return '⏳';
+    case 'success':
+      return '✅';
+    case 'failure':
+      return '❌';
+    case 'skipped':
+      return '⏭️';
+    case 'cancelled':
+      return '⚪';
+    default:
+      return '⏳';
   }
 }
 
 function formatDuration(seconds: number | null) {
   if (seconds === null) return '—';
   if (seconds < 60) return `${seconds}s`;
+
   const m = Math.floor(seconds / 60);
   const s = seconds % 60;
+
   return `${m}m ${s}s`;
 }
 
-export default function PipelineStages({ jobs }: Props) {
+export default function PipelineStages({
+  jobs,
+}: Props) {
   if (!jobs.length) {
-    return <p className="text-gray-400 text-sm">No job data available.</p>;
+    return (
+      <p className={styles.empty}>
+        No job data available.
+      </p>
+    );
   }
 
-  const maxDuration = Math.max(...jobs.map((j) => j.duration_s || 0), 1);
+  const maxDuration = Math.max(
+    ...jobs.map((j) => j.duration_s || 0),
+    1
+  );
 
   return (
-    <div>
-      <h2 className="text-sm font-semibold text-gray-300 mb-2">Pipeline Stages</h2>
-      <div className="space-y-2">
+    <div className={styles.container}>
+      <h2 className={styles.title}>
+        Pipeline Stages
+      </h2>
+
+      <div className={styles.list}>
         {jobs.map((job) => {
-          const widthPct = job.duration_s ? (job.duration_s / maxDuration) * 100 : 0;
-          const diffPct = job.compared_to_prev_pct;
-          const diffStr = diffPct !== null
-            ? `${diffPct > 0 ? '+' : ''}${diffPct.toFixed(0)}%`
-            : null;
+          const widthPct = job.duration_s
+            ? (job.duration_s / maxDuration) *
+              100
+            : 0;
+
+          const diffPct =
+            job.compared_to_prev_pct;
+
+          const diffStr =
+            diffPct !== null
+              ? `${diffPct > 0 ? '+' : ''}${diffPct.toFixed(0)}%`
+              : null;
+
           const barColor =
-            job.status === 'failure' ? 'bg-red-600' :
-            (diffPct && diffPct > 20) ? 'bg-yellow-600' : 'bg-green-600';
+            job.status === 'failure'
+              ? styles.barRed
+              : diffPct && diffPct > 20
+              ? styles.barYellow
+              : styles.barGreen;
+
+          const diffColor =
+            diffPct! > 20
+              ? styles.diffRed
+              : diffPct! > 0
+              ? styles.diffYellow
+              : styles.diffGreen;
 
           return (
-            <div key={job.id} className="bg-gray-800/50 rounded p-2">
-              <div className="flex items-center justify-between mb-1">
-                <div className="flex items-center gap-2">
-                  <span>{statusIcon(job.status)}</span>
-                  <span className="text-sm text-gray-200">{job.job_name}</span>
+            <div
+              key={job.id}
+              className={styles.card}
+            >
+              <div className={styles.row}>
+                <div className={styles.left}>
+                  <span>
+                    {statusIcon(job.status)}
+                  </span>
+
+                  <span
+                    className={styles.jobName}
+                  >
+                    {job.job_name}
+                  </span>
                 </div>
-                <div className="flex items-center gap-2 text-xs">
-                  <span className="text-gray-300">{formatDuration(job.duration_s)}</span>
+
+                <div className={styles.right}>
+                  <span
+                    className={styles.duration}
+                  >
+                    {formatDuration(
+                      job.duration_s
+                    )}
+                  </span>
+
                   {diffStr && (
-                    <span className={diffPct! > 20 ? 'text-red-400' : diffPct! > 0 ? 'text-yellow-400' : 'text-green-400'}>
+                    <span className={diffColor}>
                       {diffStr}
                     </span>
                   )}
                 </div>
               </div>
-              <div className="w-full bg-gray-700 rounded-full h-2">
+
+              <div className={styles.barBg}>
                 <div
-                  className={`${barColor} h-2 rounded-full transition-all duration-500`}
-                  style={{ width: `${widthPct}%` }}
+                  className={`${styles.barFill} ${barColor}`}
+                  style={{
+                    width: `${widthPct}%`,
+                  }}
                 />
               </div>
             </div>

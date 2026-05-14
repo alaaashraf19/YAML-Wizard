@@ -1,16 +1,33 @@
 import { useTrends } from '../../api/hooks';
 import {
-  AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid,
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  CartesianGrid,
 } from 'recharts';
+
+import styles from './TrendChart.module.css';
 
 interface Props {
   repoId: number;
 }
 
-export default function TrendChart({ repoId }: Props) {
-  const { data: trends, isLoading } = useTrends(repoId);
+export default function TrendChart({
+  repoId,
+}: Props) {
+  const { data: trends, isLoading } =
+    useTrends(repoId);
 
-  if (isLoading) return <p className="text-gray-400 text-sm">Loading trends...</p>;
+  if (isLoading)
+    return (
+      <p className={styles.loading}>
+        Loading trends...
+      </p>
+    );
+
   if (!trends || !trends.length) return null;
 
   const data = trends.map((t) => ({
@@ -23,21 +40,61 @@ export default function TrendChart({ repoId }: Props) {
   }));
 
   return (
-    <div>
-      <h2 className="text-sm font-semibold text-gray-300 mb-2">📈 Duration Trend</h2>
-      <div className="h-48 bg-gray-800/50 rounded p-2">
-        <ResponsiveContainer width="100%" height="100%">
+    <div className={styles.container}>
+      <h2 className={styles.title}>
+        📈 Duration Trend
+      </h2>
+
+      <div className={styles.wrapper}>
+        <ResponsiveContainer
+          width="100%"
+          height="100%"
+        >
           <AreaChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-            <XAxis dataKey="commit" tick={{ fontSize: 10, fill: '#9ca3af' }} />
-            <YAxis tick={{ fontSize: 10, fill: '#9ca3af' }} label={{ value: 's', position: 'insideLeft', style: { fontSize: 10, fill: '#9ca3af' } }} />
-            <Tooltip
-              contentStyle={{ backgroundColor: '#1f2937', border: '1px solid #374151', fontSize: 12 }}
-              formatter={(value, name) => {
-                if (name === 'duration') return [`${value}s`, 'Duration'];
-                return [value, String(name)];
+            <CartesianGrid
+              strokeDasharray="3 3"
+              stroke="#374151"
+            />
+
+            <XAxis
+              dataKey="commit"
+              tick={{
+                fontSize: 10,
+                fill: '#9ca3af',
               }}
             />
+
+            <YAxis
+              tick={{
+                fontSize: 10,
+                fill: '#9ca3af',
+              }}
+              label={{
+                value: 's',
+                position: 'insideLeft',
+                style: {
+                  fontSize: 10,
+                  fill: '#9ca3af',
+                },
+              }}
+            />
+
+            <Tooltip
+              contentStyle={{
+                backgroundColor: '#1f2937',
+                border: '1px solid #374151',
+                fontSize: 12,
+              }}
+              formatter={(value, name) => {
+                if (name === 'duration')
+                  return [`${value}s`, 'Duration'];
+                return [
+                  value,
+                  String(name),
+                ];
+              }}
+            />
+
             <Area
               type="monotone"
               dataKey="duration"

@@ -3,6 +3,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import type { Repo, PipelineRun, TestRun } from '../types';
 import { useRuns, useRun, useInsights, useRepos } from '../api/hooks';
 import { useWebSocket } from '../api/websocket';
+
 import RepoSidebar from '../components/dashboard/RepoSidebar';
 import CommitTimeline from '../components/dashboard/CommitTimeline';
 import PipelineStages from '../components/dashboard/PipelineStages';
@@ -12,8 +13,11 @@ import InsightsPanel from '../components/dashboard/InsightsPanel';
 import TrendChart from '../components/dashboard/TrendChart';
 import Filters from '../components/dashboard/Filters';
 
+import styles from './Dashboard.module.css';
+
 export default function Dashboard() {
   const queryClient = useQueryClient();
+
   const [activeRepo, setActiveRepo] = useState<Repo | null>(null);
   const [selectedRunId, setSelectedRunId] = useState<number | null>(null);
   const [selectedTest, setSelectedTest] = useState<string | null>(null);
@@ -25,7 +29,6 @@ export default function Dashboard() {
   const { data: runDetail } = useRun(activeRepo?.id ?? null, selectedRunId);
   const { data: insights } = useInsights(activeRepo?.id ?? null, selectedRunId);
 
-  // WebSocket: auto-refresh data when backend syncs new runs
   const handleWSMessage = useCallback((msg: Record<string, unknown>) => {
     if (msg.type === 'sync_complete') {
       const repoId = msg.repo_id;
@@ -38,14 +41,12 @@ export default function Dashboard() {
 
   useWebSocket(activeRepo?.id ?? null, handleWSMessage);
 
-  // Auto-select the first (latest) run when runs load or repo changes
   useEffect(() => {
     if (runs && runs.length > 0 && !selectedRunId) {
       setSelectedRunId(runs[0].id);
     }
   }, [runs, selectedRunId]);
 
-  // Reset selection when switching repos
   const handleSelectRepo = (repo: Repo) => {
     setActiveRepo(repo);
     setSelectedRunId(null);
@@ -77,7 +78,8 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="flex h-screen bg-gray-950 text-gray-100">
+    <div className={styles.container}>
+
       <RepoSidebar
         repos={repos ?? []}
         isLoading={reposLoading}
@@ -85,24 +87,31 @@ export default function Dashboard() {
         onSelect={handleSelectRepo}
       />
 
-      <main className="flex-1 overflow-hidden flex flex-col">
+      <main className={styles.main}>
+
         {!activeRepo ? (
-          <div className="flex items-center justify-center h-full">
-            <div className="text-center">
-              <h2 className="text-2xl font-bold mb-2">🔮 YAML Wizard Dashboard</h2>
-              <p className="text-gray-400">Add a repository from the sidebar to get started.</p>
+          <div className={styles.center}>
+            <div style={{ textAlign: 'center' }}>
+              <h2 className="text-2xl font-bold mb-2">
+                YAML Wizard Dashboard
+              </h2>
+              <p className="text-gray-400">
+                Add a repository from the sidebar to get started.
+              </p>
             </div>
           </div>
         ) : (
           <>
-            {/* Header */}
-            <header className="p-4 border-b border-gray-800 flex items-center justify-between">
+            <header className={styles.header}>
               <div>
-                <h2 className="text-lg font-bold">{activeRepo.full_name}</h2>
+                <h2 className="text-lg font-bold">
+                  {activeRepo.full_name}
+                </h2>
                 <span className="text-xs text-gray-400">
                   {activeRepo.platform} · {activeRepo.default_branch}
                 </span>
               </div>
+
               <Filters
                 branch={branchFilter}
                 onBranchChange={setBranchFilter}
@@ -112,24 +121,23 @@ export default function Dashboard() {
               />
             </header>
 
-            {/* Content */}
-            <div className="flex-1 overflow-hidden flex">
+            <div className={styles.content}>
+
               {runs && runs.length === 0 ? (
-                <div className="flex-1 flex items-center justify-center">
-                  <div className="text-center">
+                <div className={styles.center}>
+                  <div style={{ textAlign: 'center' }}>
                     <p className="text-5xl mb-4">📭</p>
-                    <h3 className="text-lg font-semibold mb-1">No pipeline runs found</h3>
+                    <h3 className="text-lg font-semibold mb-1">
+                      No pipeline runs found
+                    </h3>
                     <p className="text-gray-400 text-sm max-w-md">
                       This repository has no GitHub Actions workflow runs.
-                      Make sure the repo has a <code className="bg-gray-800 px-1 rounded">.github/workflows/</code> directory
-                      with at least one completed run.
                     </p>
                   </div>
                 </div>
               ) : (
                 <>
-                  {/* Left: Commit Timeline */}
-                  <div className="w-80 border-r border-gray-800 overflow-y-auto p-3">
+                  <div className={styles.timeline}>
                     <CommitTimeline
                       runs={filteredRuns}
                       selectedId={selectedRunId}
@@ -137,26 +145,26 @@ export default function Dashboard() {
                     />
                   </div>
 
-                  {/* Right: Run detail */}
-                  <div className="flex-1 overflow-y-auto p-4 space-y-6">
+                  <div className={styles.detail}>
                     {!runDetail ? (
-                      <div className="flex items-center justify-center h-full">
-                        <p className="text-gray-400">Select a run from the timeline.</p>
+                      <div className={styles.center}>
+                        <p className="text-gray-400">
+                          Select a run from the timeline.
+                        </p>
                       </div>
                     ) : (
                       <>
-                        {/* Insights */}
                         {insights && insights.length > 0 && (
                           <InsightsPanel insights={insights} />
                         )}
 
-                        {/* Pipeline Stages */}
                         <PipelineStages jobs={runDetail.jobs} />
 
-                        {/* Test Grid */}
-                        <TestGrid tests={runDetail.tests} onSelect={handleSelectTest} />
+                        <TestGrid
+                          tests={runDetail.tests}
+                          onSelect={handleSelectTest}
+                        />
 
-                        {/* Test Detail (expanded) */}
                         {selectedTest && activeRepo && (
                           <TestDetail
                             repoId={activeRepo.id}
@@ -165,7 +173,6 @@ export default function Dashboard() {
                           />
                         )}
 
-                        {/* Trend Chart */}
                         <TrendChart repoId={activeRepo.id} />
                       </>
                     )}
