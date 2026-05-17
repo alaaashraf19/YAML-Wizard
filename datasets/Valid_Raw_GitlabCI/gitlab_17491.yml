@@ -1,0 +1,16 @@
+build:
+  artifacts:
+    expire_in: 24 months
+    name: power5online.tar.gz
+    paths:
+    - .build/
+  image: node:8
+  script:
+  - curl https://install.meteor.com/ --insecure | sh
+  - NODE_TLS_REJECT_UNAUTHORIZED=0 npm install
+  - mkdir .build
+  - NODE_TLS_REJECT_UNAUTHORIZED=0 meteor --allow-superuser build .build --architecture
+    os.linux.x86_64
+  stage: build
+  tags:
+  - docker-executor

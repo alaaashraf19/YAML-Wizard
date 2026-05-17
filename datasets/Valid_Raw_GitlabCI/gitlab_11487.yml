@@ -1,0 +1,83 @@
+debian:
+  needs: []
+  stage: build
+deploy:
+  stage: deploy
+include:
+- template: Workflows/MergeRequest-Pipelines.gitlab-ci.yml
+- template: Jobs/SAST.gitlab-ci.yml
+- template: Jobs/Secret-Detection.gitlab-ci.yml
+- file: .gitlab-ci-sign-off.yml
+  project: librespacefoundation/templates/gitlab-ci
+  ref: ed44d9741ba9d13ff097b85cbd6ce7c11af3ee8c
+- file: .gitlab-ci-obs-debian.yml
+  project: librespacefoundation/templates/gitlab-ci
+  ref: ed44d9741ba9d13ff097b85cbd6ce7c11af3ee8c
+sast:
+  needs: []
+  stage: security
+secret_detection:
+  needs: []
+  stage: security
+sign_off:
+  needs: []
+  stage: static
+stages:
+- static
+- build
+- test
+- deploy
+- security
+style:
+  before_script:
+  - apt-get -q update
+  - apt-get -qy install gnupg libcurl4 wget
+  - echo "$GITLAB_CI_LLVM_APT_REPOSITORY" > /etc/apt/sources.list.d/llvm.list
+  - wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -
+  - apt-get -q update
+  - apt-get -qy install clang-format-13 python3-pip
+  - pip install cmake_format
+  image: ${GITLAB_CI_STYLE_IMAGE_DEBIAN}
+  needs: []
+  script:
+  - find include/gnuradio/satnogs/ -iname *.h | xargs clang-format-13 --dry-run --style
+    file --verbose --Werror -i
+  - find lib/ -iname "*.h" -o -iname "*.cpp" -o -iname "*.cc" -o -path 'lib/libsigmf'
+    -prune -type f -o -path 'lib/libfec' -prune -type f | xargs clang-format-13 --dry-run
+    --style file --verbose --Werror -i
+  - find python/satnogs/bindings/ -iname *.h -o -iname *.cpp -o -iname *.cc | xargs
+    clang-format-13 --dry-run --style file --verbose --Werror -i
+  - find ./ -iname CMakeLists.txt -o -path './CRCpp' -prune -type f | xargs cmake-format
+    --check --enable-sort=true --autosort=true
+  stage: static
+test:
+  before_script:
+  - apt-get -q update
+  - apt-get -qy install libhamlib-utils
+  - apt -qy install ./artifacts/*.deb
+  image: ${GITLAB_CI_TEST_IMAGE_DEBIAN}
+  script:
+  - python3 -c "import gnuradio.satnogs as satnogs"
+  - grcc -r test/flowgraphs/test_crc.grc
+  - grcc -r test/flowgraphs/test_ax25.grc
+  - grcc -r test/flowgraphs/test_ieee802154_variable_size.grc
+  - grcc -r test/flowgraphs/test_ieee802154_fixed_size.grc
+  - grcc -r test/flowgraphs/test_ax100_mode5.grc
+  - grcc -r test/flowgraphs/test_ax100_mode6.grc
+  - rigctld &
+  - test/scripts/rigctl_scenario.sh 435000000 15 &
+  - grcc -r test/flowgraphs/test_rigctl.grc
+  stage: test
+variables:
+  GITLAB_CI_APT_KEY_URL: https://download.opensuse.org/repositories/home:librespace:satnogs2/Debian_12/Release.key
+  GITLAB_CI_APT_REPOSITORY: deb http://download.opensuse.org/repositories/home:/librespace:/satnogs2/Debian_12/
+    /
+  GITLAB_CI_LLVM_APT_REPOSITORY: deb http://apt.llvm.org/bullseye/ llvm-toolchain-bullseye-13
+    main
+  GITLAB_CI_OBS_IMAGE: librespace/gnuradio:3.10.5.1-slim
+  GITLAB_CI_OBS_PROJECT: home:librespace:satnogs2
+  GITLAB_CI_OBS_PROJECT_UNSTABLE: home:librespace:satnogs-unstable2
+  GITLAB_CI_SIGN_OFF_EXCLUDE: 2981f0c59affb0277c0aa7a364cc5817f0071400
+  GITLAB_CI_STYLE_IMAGE_DEBIAN: debian:bullseye
+  GITLAB_CI_TEST_IMAGE_DEBIAN: librespace/gnuradio:3.10.5.1-slim
+  GIT_SUBMODULE_STRATEGY: recursive

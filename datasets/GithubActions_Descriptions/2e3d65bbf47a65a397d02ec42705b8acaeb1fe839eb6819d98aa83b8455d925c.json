@@ -1,0 +1,15 @@
+{
+  "sha": "2e3d65bbf47a65a397d02ec42705b8acaeb1fe839eb6819d98aa83b8455d925c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4299,
+  "description": "Create a GitHub Actions workflow named CI that runs on push and pull request events. The workflow should have two jobs, one for Unix-based systems and one for Windows. The Unix job should use a matrix strategy to run on ubuntu-latest and macos-latest with different Xcode versions, and install dependencies, cache boost and ccache, and then build and test the project using cmake. The Windows job should install dependencies, build and test the project using cmake, and then create an installer and upload artifacts.",
+  "tags": [
+    "cmake",
+    "boost",
+    "ccache",
+    "unix",
+    "windows",
+    "ci"
+  ]
+}

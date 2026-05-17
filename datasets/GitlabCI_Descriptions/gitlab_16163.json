@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_16163",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 216,
+  "description": "Create a GitLab CI configuration that defines three hidden jobs: .private_runner_test which sets the runner tags to docker and samba-ci-private; .shared_runner_build which defines a variable SAMBA_SHARED_RUNNER_BUILD_DUMMY_VARIABLE with value shared_runner_build; and .shared_runner_test which extends .shared_runner_build to inherit its variable. No stages, Docker image, services, script commands, caches, artifacts, or deployment rules are specified.",
+  "tags": [
+    "hidden-jobs",
+    "runner-tags",
+    "variables",
+    "extends"
+  ]
+}

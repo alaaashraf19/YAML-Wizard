@@ -1,0 +1,14 @@
+before_script:
+- apt-get update -qq > /dev/null
+- apt-get install -qq git-core sbcl cl-quicklisp > /dev/null
+- sbcl --noinform --non-interactive --eval '(load "/usr/share/common-lisp/source/quicklisp/quicklisp.lisp")'
+  --eval '(quicklisp-quickstart:install)' --eval '(ql-util:without-prompting (ql:add-to-init-file))'
+- git clone https://gitlab.com/zombie-raptor/zr-utils ~/quicklisp/local-projects/zr-utils
+- ln -s "${CI_PROJECT_DIR}" ~/quicklisp/local-projects/zombie-raptor
+image: debian:latest
+stages:
+- test
+test:
+  script:
+  - sbcl --non-interactive --load ~/quicklisp/local-projects/zombie-raptor/tests/test-script.lisp
+  stage: test

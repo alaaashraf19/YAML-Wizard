@@ -1,0 +1,10 @@
+all_tests:
+  script:
+  - npm install
+  - npm run test-coverage
+  - npm run build
+  - npm run dist
+cache:
+  paths:
+  - node_modules/
+image: node:latest

@@ -1,0 +1,28 @@
+before_script:
+- apt-get update -qq && apt-get install
+build:
+  artifacts:
+    paths:
+    - build/
+  cache:
+    key: $CI_COMMIT_REF_SLUG-$CI_PROJECT_DIR
+    paths:
+    - node_modules/
+    - .yarn
+    policy: pull
+  script:
+  - yarn
+  - yarn build
+  stage: build
+cache:
+  key: $CI_BUILD_REF_NAME
+  paths:
+  - node_modules/
+  - build/=
+  untracked: true
+image: node:16.13
+include:
+- template: Security/Dependency-Scanning.gitlab-ci.yml
+stages:
+- test
+- build

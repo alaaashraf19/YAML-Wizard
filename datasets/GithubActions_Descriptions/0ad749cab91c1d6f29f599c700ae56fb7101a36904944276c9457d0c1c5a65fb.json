@@ -1,0 +1,16 @@
+{
+  "sha": "0ad749cab91c1d6f29f599c700ae56fb7101a36904944276c9457d0c1c5a65fb",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3516,
+  "description": "Create a GitHub Actions workflow named Ubuntu CI that runs on every push to main and on pull requests to main. Use an ubuntu-latest job with a matrix strategy to test multiple Ubuntu versions and LLVM versions. For each job, checkout the repository, detect package metadata, login to a Docker registry, build, test, and package the project using devcontainers, and publish the package to Cloudsmith if an API key is provided.",
+  "tags": [
+    "ubuntu",
+    "llvm",
+    "devcontainers",
+    "cloudsmith",
+    "github-actions",
+    "ci",
+    "cd"
+  ]
+}

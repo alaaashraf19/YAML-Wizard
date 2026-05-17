@@ -1,0 +1,14 @@
+{
+  "sha": "09e240b55b404433f5214bc1f37198c1db91d3814c089d955e0c05510d8058a8",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1364,
+  "description": "Create a GitHub Actions workflow named Build Wheels that runs on push to main, on create, and on workflow dispatch. Use a matrix job strategy to build wheels on ubuntu-latest, windows-latest, and macos-latest environments. For each environment, check out the code, set up QEMU if on Linux, set up Python 3.x, install dependencies, build wheels using cibuildwheel, build a pure Python wheel, and upload the wheels as an artifact.",
+  "tags": [
+    "python",
+    "wheels",
+    "cibuildwheel",
+    "github-actions",
+    "matrix-job"
+  ]
+}

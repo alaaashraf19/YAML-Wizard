@@ -1,0 +1,27 @@
+before_script:
+- yarn install
+build:
+  artifacts:
+    paths:
+    - dist
+  script:
+  - yarn run build:example
+  stage: build
+  tags:
+  - docker
+cache:
+  paths:
+  - node_modules
+image: node:erbium
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - mkdir -p public
+  - cp -r dist/example dist/index.html public/
+  stage: deploy
+  tags:
+  - docker

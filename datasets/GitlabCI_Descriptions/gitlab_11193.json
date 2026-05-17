@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_11193",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 668,
+  "description": "Create a GitLab CI pipeline using the docker:latest image with a docker:dind service and set DOCKER_DRIVER, IMAGE_NAME and IMAGE_LATEST variables. Add a before_script that runs `docker info` and logs in to $CI_REGISTRY with the CI job token for every job. Define two stages, test and deploy. In the test stage add a test job that executes `docker build -t $IMAGE_NAME .` then runs the built image mounting the repository (`docker run -v `pwd`:/git $IMAGE_NAME /bin/sh -c \"wget -qO- https://fedoraproject.org/static/hotspot.txt | grep OK && cd /git/hugotest && hugo\"`). In the deploy stage add a deploy job that runs only on tags and runs `docker build -t $IMAGE_NAME -t $IMAGE_LATEST .`, `docker push $IMAGE_NAME`, and `docker push $IMAGE_LATEST`. No caches or artifacts are defined.",
+  "tags": [
+    "docker",
+    "dind",
+    "hugo",
+    "test",
+    "deploy",
+    "gitlab-ci",
+    "tags"
+  ]
+}

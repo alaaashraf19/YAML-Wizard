@@ -1,0 +1,16 @@
+image: node:latest
+pages:
+  artifacts:
+    paths:
+    - public
+  cache:
+    paths:
+    - node_modules/
+  only:
+  - master
+  script:
+  - npm install -g typescript
+  - npm install @types/node
+  - make
+  - ls -1 public > public/index.html
+  stage: deploy

@@ -1,0 +1,15 @@
+{
+  "sha": "5102b220ea257f2b45c9f8cf4ae76b64d7530c22e36195918138d61d7f0be559",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1631,
+  "description": "Create a GitHub Actions workflow named Spack Builds that triggers on push events. Run a job on an ubuntu-22.04 environment with a spack/ubuntu-jammy container, using a matrix strategy to build HiOp with Spack across multiple specs. Checkout the repository with submodules, then set up the Spack environment, add a public mirror, create and activate a Spack environment, add and develop HiOp, concretize dependencies, and install HiOp with Spack.",
+  "tags": [
+    "spack",
+    "ubuntu",
+    "hiop",
+    "mpi",
+    "raja",
+    "github-actions"
+  ]
+}

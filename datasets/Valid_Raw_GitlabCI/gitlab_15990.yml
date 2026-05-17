@@ -1,0 +1,20 @@
+build:
+  artifacts:
+    paths:
+    - build/libs/deploy.jar
+  image: java:8
+  script:
+  - ./gradlew clean build
+  stage: build
+docker-deploy:
+  dependencies:
+  - build
+  image: docker:git
+  script:
+  - echo $REGISTRY_TOKEN
+  - docker login -u romanowalex@mail.ru -p $REGISTRY_TOKEN registry.gitlab.com
+  - docker build --tag registry.gitlab.com/romanowalex/deploy:latest .
+  - docker push registry.gitlab.com/romanowalex/deploy:latest
+  services:
+  - docker:dind
+  stage: deploy

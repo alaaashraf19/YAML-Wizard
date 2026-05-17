@@ -1,0 +1,17 @@
+before_script:
+- mix local.rebar --force
+- mix local.hex --force
+- mix deps.get
+build:
+  artifacts:
+    paths:
+    - _build/prod/rel/gameserver/releases/**/*.tar.gz
+  script:
+  - mix release
+  stage: build
+  variables:
+    MIX_ENV: prod
+image: elixir:latest
+test:
+  script:
+  - mix test

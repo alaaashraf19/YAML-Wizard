@@ -1,0 +1,13 @@
+{
+  "sha": "4fc7cdd66f29da60b2ff0fe59c154ff070b8e7f88945f2f300a860a55b83f1f4",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 447,
+  "description": "Create a GitHub Actions workflow named CI that runs on every pull request. Use a single ubuntu-latest job named Tests that checks out the repository, logs in to the GitHub Container registry using the actor's credentials, starts the environment with make start-containers, and runs tests with make params=-T tests.",
+  "tags": [
+    "ci",
+    "tests",
+    "docker",
+    "github-container-registry"
+  ]
+}

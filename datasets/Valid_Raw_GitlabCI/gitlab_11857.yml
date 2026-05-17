@@ -1,0 +1,48 @@
+coverage:
+  script:
+  - tox -e py312-django52-coverage
+  stage: test
+image: ghcr.io/maxking/mailman-ci-runner
+include:
+- template: SAST.gitlab-ci.yml
+py313-djangolatest:
+  allow_failure: true
+  script:
+  - printf "Remove all django version restriction from setup.py.\n"
+  - sed -E 's/django[<=>,.[:digit:]]+/django/' -i pyproject.toml
+  - tox -e py313-djangolatest
+  stage: test
+qa:
+  artifacts:
+    reports:
+      codequality: gl-code-quality-report.json
+  script:
+  - tox -e qa
+  stage: quality-assurance
+stages:
+- quality-assurance
+- test
+test-django42:
+  parallel:
+    matrix:
+    - PYTHON_VER:
+      - '39'
+      - '310'
+      - '311'
+      - '312'
+  script:
+  - tox -e "py$PYTHON_VER-django42"
+  stage: test
+test-django52:
+  parallel:
+    matrix:
+    - PYTHON_VER:
+      - '310'
+      - '311'
+      - '312'
+      - '313'
+  script:
+  - tox -e "py$PYTHON_VER-django52"
+  stage: test
+variables:
+  SAST_DEFAULT_ANALYZERS: bandit,secrets

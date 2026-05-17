@@ -1,0 +1,17 @@
+arm:
+  script:
+  - mkdir examples/embedded/build
+  - pushd examples/embedded/build
+  - cmake -DTOOLCHAIN_PREFIX=$TOOLCHAIN_PREFIX -DCMAKE_TOOLCHAIN_FILE=gcc_stm32.cmake
+    ..
+  - make VERBOSE=1
+  - make test ARGS=-V
+image: kylemanna/ci-embedded:latest
+services: null
+x86-gcc:
+  script:
+  - mkdir examples/build
+  - pushd examples/build
+  - cmake ..
+  - make
+  - make test ARGS=-V

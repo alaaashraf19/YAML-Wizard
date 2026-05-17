@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_15723",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 567,
+  "description": "Create a GitLab CI pipeline with a variable S3_BUCKET_NAME set to resume.filiosoft.net and a single stage named deploy. Add a deploy-production job that runs in the deploy stage, uses the filiosoft/aws-cli:latest Docker image, is allowed to fail, targets the production environment at https://resume.filiosoft.net, and executes the command \"aws s3 cp ./ s3://$S3_BUCKET_NAME/ --recursive --exclude \\\".git\\\" --include \\\"*\\\"\". Add a pages job also in the deploy stage, runs only on the master branch, uses a Docker runner (tag docker), sets up a pages environment at https://oss.filiosoft.net/resume, runs the commands \"mkdir .public\", \"cp -r * .public\", and \"mv .public public\", and publishes the public/ directory as a GitLab Pages artifact.",
+  "tags": [
+    "aws-cli",
+    "s3",
+    "gitlab-pages",
+    "docker",
+    "production",
+    "deploy"
+  ]
+}

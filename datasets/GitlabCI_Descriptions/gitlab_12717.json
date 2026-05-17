@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_12717",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 255,
+  "description": "Create a GitLab CI pipeline that uses the gcc Docker image and defines a single build stage. Add a build job that runs in the build stage, with a before_script that updates apt and installs make and cmake, then prints the versions of cmake, make, gcc, and ld. Cache all *.o files, then execute the script 'cmake . && make execasm' to compile the execasm binary, and publish the resulting execasm file as a build artifact. No additional services, variables, or rules are required.",
+  "tags": [
+    "gcc",
+    "cmake",
+    "make",
+    "c",
+    "build"
+  ]
+}

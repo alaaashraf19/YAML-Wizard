@@ -1,0 +1,14 @@
+{
+  "sha": "cba732dee279dd85cfb5aba0bf607b7d2c1d6d581c053156398f5a17841e28ce",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 924,
+  "description": "Create a GitHub Actions workflow named Release that triggers on published releases. Use a single windows-latest job that checks out the repository, sets up .NET Core, restores dependencies, builds the project with a version matching the release tag, runs tests, creates NuGet packages with the release tag and notes, and publishes these packages to NuGet.org using the NUGET_API_KEY from secrets.",
+  "tags": [
+    "dotnet",
+    "nuget",
+    "release",
+    "tests",
+    "windows"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "sha": "0d9d6d074c9c05e1018bcce552f2b78c540510098b239098f01ecfd7391ceec0",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 17242,
+  "description": "Create a GitHub Actions workflow named build that runs on every push and pull request. The workflow uses a concurrency group to cancel in-progress jobs and runs on a dynamically selected runner. For POSIX jobs, it uses a matrix strategy to test various toolsets, including GCC and Clang, across different Ubuntu versions and macOS. For Windows jobs, it uses another matrix to test MSVC toolsets. Each job installs dependencies, sets up the environment, and runs tests.",
+  "tags": [
+    "github-actions",
+    "ci",
+    "gcc",
+    "clang",
+    "msvc",
+    "ubuntu",
+    "macos",
+    "windows",
+    "matrix-testing"
+  ]
+}

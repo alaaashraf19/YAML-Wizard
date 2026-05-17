@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_19233",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 570,
+  "description": "Create a GitLab CI pipeline using the ubuntu:16.04 Docker image. Define three stages: build, test, and deploy (default order). In the build stage add a job named build that runs a before_script to apt update && apt -y install make autoconf gcc g++, then compiles helloworld.cpp with g++ -Wall --coverage -fprofile-arcs -ftest-coverage -o helloworld, lists files with ls, and stores the resulting helloworld binary as an artifact. In the test stage add a job named test that runs bash verify.sh. In the deploy stage add a job named coverage that runs a before_script to apt-get -qq update && apt-get -qq install -y make autoconf gcc g++ gcovr ggcov lcov, then lists files, recompiles helloworld.cpp with g++ -Wall -fprofile-arcs -ftest-coverage -fPIC -o helloworld, executes ./helloworld, and runs gcovr -r . to generate a coverage report; no caches, services, or conditional rules are used.",
+  "tags": [
+    "ubuntu",
+    "c-plus-plus",
+    "gcovr",
+    "coverage",
+    "make",
+    "gcc"
+  ]
+}

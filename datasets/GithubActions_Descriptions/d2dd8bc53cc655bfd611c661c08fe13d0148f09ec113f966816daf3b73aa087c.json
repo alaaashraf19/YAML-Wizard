@@ -1,0 +1,16 @@
+{
+  "sha": "d2dd8bc53cc655bfd611c661c08fe13d0148f09ec113f966816daf3b73aa087c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1817,
+  "description": "Create a GitHub Actions workflow named Windows that triggers on push and pull request events. Run a windows-latest job with read-all permissions, checking out the code, setting up Python and uv, and then performing a series of steps including installing the project, running pre-commit hooks and unit tests, building the project, testing installations from tar.gz and wheel, running PyInstaller, copying scripts, building an installer, and finally uploading the build as an artifact named ykman-builds-windows.",
+  "tags": [
+    "windows",
+    "python",
+    "pre-commit",
+    "pytest",
+    "pyinstaller",
+    "installer",
+    "artifact"
+  ]
+}

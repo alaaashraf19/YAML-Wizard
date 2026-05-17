@@ -1,0 +1,19 @@
+before_script:
+- docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+build-master:
+  only:
+  - master
+  script:
+  - docker build --pull -t "$CI_REGISTRY_IMAGE:latest" .
+  - docker push "$CI_REGISTRY_IMAGE:latest"
+  stage: build
+build-other:
+  except:
+  - master
+  script:
+  - docker build --pull -t "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME" .
+  - docker push "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME"
+  stage: build
+image: docker:latest
+services:
+- docker:dind

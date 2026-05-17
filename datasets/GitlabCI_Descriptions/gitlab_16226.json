@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_16226",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 632,
+  "description": "Create a GitLab CI pipeline using the java:8 Docker image, with a before_script that runs apt-get update -yqq, apt-get install apt-transport-https -yqq, and java -version. Define a cache for /root/.gradle/. Add a build job that runs chmod +x gradlew, then ./gradlew setupCIWorkspace build uploadArchives, creates an artifacts directory, copies build/libs/* into artifacts/, and finally sends a Discord webhook notification with curl using the MESSAGE, NAME, and IMG variables. Set the variables IMG to \"https://cdn.discordapp.com/icons/131019825681006592/9df46a9d968c06e8eb264c590cc23a43.jpg\", MESSAGE to \"$CI_PROJECT_NAME build $CI_BUILD_ID successful: $(git log -1 --pretty=%B)\", and NAME to \"Builds stalker\". Configure the job to publish the artifacts/ directory as an artifact.",
+  "tags": [
+    "java",
+    "gradle",
+    "discord",
+    "ci",
+    "artifact",
+    "apt"
+  ]
+}

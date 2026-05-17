@@ -1,0 +1,17 @@
+{
+  "sha": "61cde79fc5575b6c60340120b3e6f72c8929d9c018c3bab2f6a0ea2c68e43af3",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2355,
+  "description": "Create a GitHub Actions workflow named AMR-Wind Intel OneAPI CI that runs on push and pull requests to the development branch when files in cmake, amr-wind, submods, unit_tests, CMakeLists.txt, or .github/workflows/dpcpp-ci.yml change. Use an ubuntu-latest job matrix to test with Intel OneAPI ICC and DPCPP compilers. For each compiler, cancel previous workflow runs, check out the repository with submodules, prepare the DPC++ environment, and configure and build the project with CMake and the respective compiler.",
+  "tags": [
+    "intel",
+    "oneapi",
+    "dpcpp",
+    "cmake",
+    "ubuntu",
+    "ci",
+    "sycl",
+    "clang"
+  ]
+}

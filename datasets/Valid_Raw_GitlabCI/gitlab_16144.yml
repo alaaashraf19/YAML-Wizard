@@ -1,0 +1,47 @@
+before_script:
+- npm install -g bower
+- bower install --allow-root
+- gem install jekyll
+- gem install bundler
+- bundle install --path=.bundler-cache
+cache:
+  paths:
+  - .bower-cache
+  - .bower-registry
+  - .bundler-cache
+image: starefossen/ruby-node:2-5
+pages:
+  artifacts:
+    paths:
+    - public
+  dependencies:
+  - test
+  only:
+  - master
+  script:
+  - jekyll build -d public
+  stage: deploy
+publish:
+  dependencies:
+  - test
+  only:
+  - tags
+  script:
+  - gem build jekyll-creative.gemspec
+  - chmod +x prepare-publish.sh
+  - sh prepare-publish.sh $GEMS_API_KEY
+  - gem push jekyll-creative-*.gem
+  stage: release
+stages:
+- test
+- deploy
+- release
+test:
+  artifacts:
+    paths:
+    - test
+  except:
+  - master
+  script:
+  - jekyll build -d test
+  stage: test

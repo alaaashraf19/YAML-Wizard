@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_09147",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 546,
+  "description": "Create a GitLab CI pipeline with two stages: build and deploy, using the alexsuch/angular-cli:1.4.2 Docker image for the build job and gitlab/dind for the deploy job. In the build stage add an angular-demo job that runs `cd angular-demo`, then `npm install --loglevel warn`, then `ng build --prod`, and publishes the `angular-demo/dist` directory as an artifact that expires in one week. In the deploy stage add a dockerize job that first runs `docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY`, then moves the built app with `mv angular-demo ./docker`, builds a Docker image using `docker build -t $IMAGE:$TAG ./docker` (where IMAGE is `$CI_REGISTRY_IMAGE/angular-demo` and TAG is `$CI_COMMIT_REF_NAME`), and finally pushes the image with `docker push $IMAGE`.",
+  "tags": [
+    "angular",
+    "npm",
+    "docker",
+    "dind",
+    "gitlab-ci",
+    "ci-cd"
+  ]
+}

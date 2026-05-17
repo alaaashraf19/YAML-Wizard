@@ -1,0 +1,15 @@
+before_script:
+- apt-get update -qy
+- apt-get install -y git-core
+- make install
+build:
+  artifacts:
+    paths:
+    - bookshops
+  script:
+  - make build
+  stage: build
+image: daewok/lisp-devel
+stages:
+- build
+- test

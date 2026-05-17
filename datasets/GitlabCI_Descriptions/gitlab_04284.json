@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_04284",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 776,
+  "description": "Create a GitLab CI pipeline with two stages: build and archive. In the build stage add a build_project job that runs `xcodebuild clean -project ProjectName.xcodeproj -scheme SchemeName | xcpretty` then `xcodebuild test -project ProjectName.xcodeproj -scheme SchemeName -destination 'platform=iOS Simulator,name=iPhone 8,OS=11.3' | xcpretty -s`. In the archive stage add an archive_project job that runs `xcodebuild clean archive -archivePath build/ProjectName -scheme SchemeName` and `xcodebuild -exportArchive -exportFormat ipa -archivePath \"build/ProjectName.xcarchive\" -exportPath \"build/ProjectName.ipa\" -exportProvisioningProfile \"ProvisioningProfileName\"`, stores `build/ProjectName.ipa` as an artifact, and only runs on the master branch. Apply the tags ios_11-3, xcode_9-3, and macos_10-13 to both jobs.",
+  "tags": [
+    "ios-11-3",
+    "xcode-9-3",
+    "macos-10-13",
+    "xcodebuild",
+    "xcpretty",
+    "ipa",
+    "archive",
+    "build"
+  ]
+}

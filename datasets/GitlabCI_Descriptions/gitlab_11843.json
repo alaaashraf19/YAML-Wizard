@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_11843",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 743,
+  "description": "Create a GitLab CI pipeline that uses the python:3.7 Docker image. Define a single stage called publish_to_pypi and add a manual job named publish_to_pypi_prod that runs: python3 -m pip install --user --upgrade setuptools wheel, python3 setup.py sdist bdist_wheel, python3 -m pip install --user --upgrade twine, set PATH=/root/.local/bin:$PATH, and twine upload -u $PYPI_USER -p $PYPI_PASSWORD dist/*. Add another manual job named publish_to_pypi_test in the same stage that runs the same first three commands, sets the same PATH, and then executes twine upload -u $PYPI_TEST_USER -p $PYPI_TEST_PASSWORD --repository-url https://test.pypi.org/legacy/ dist/*. Both jobs are triggered manually and publish the built distribution to the production PyPI repository and the Test PyPI repository respectively.",
+  "tags": [
+    "python-3.7",
+    "pypi",
+    "twine",
+    "manual",
+    "publish",
+    "setuptools",
+    "wheel"
+  ]
+}

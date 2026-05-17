@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_17508",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 696,
+  "description": "Create a GitLab CI pipeline using the debian:testing Docker image. Add a build job in the build stage that caches src/*.o, runs \"apt update && apt -y install make autoconf automake libtool check lcov cppcheck python3 pkgconf\", then executes \"autoreconf -i && ./configure --disable-pylint && make\", and publishes the directories super and superdb as artifacts. Add a test job in the test stage that runs \"apt update && apt -y install make autoconf automake libtool check lcov cppcheck pkgconf clang-tools-4.0 clang python3 python3-pip python3-numpy python3-scipy python3-biopython python3-pyparsing pylint\", then \"pip3 install -U ProDy\", followed by \"autoreconf -i && ./configure --enable-code-coverage\", then \"scan-build make\", \"make check\", and finally \"make local-code-coverage-output\". No special rules, only/except, or deployment targets are defined.",
+  "tags": [
+    "debian",
+    "make",
+    "autoconf",
+    "coverage",
+    "scan-build",
+    "cppcheck",
+    "prody"
+  ]
+}

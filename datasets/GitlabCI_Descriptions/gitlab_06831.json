@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_06831",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1191,
+  "description": "Create a GitLab CI pipeline with stages test, build, deploy, and finish, using a global before_script that creates ci/artifacts and ci/destroy directories and decodes $DECRYPTOR into ci/destroy/encryption.key, and a global after_script that removes ci/destroy. In the test stage add a test-and-cover job that runs on golang:1.6.2-wheezy and executes `source ci/prepare`, `source ci/test`, and `source ci/cover`. In the build stage add a build-artifact job that also uses golang:1.6.2-wheezy, runs `source ci/prepare`, `source ci/build`, copies the .semver file to ci/artifacts/, and stores the ci/artifacts directory as an artifact. In the deploy stage add two jobs, docker-deploy-dev and docker-deploy-prod, both using the docker:git image with a docker:dind service; docker-deploy-dev runs only on the develop branch, sets the environment to development and runs `source ci/dockerize dev`, while docker-deploy-prod runs only on the master branch, sets the environment to production and runs `source ci/dockerize`; both depend on the build-artifact job. In the finish stage add an update-version job that runs on docker:git only on the master branch, creates an SSH key from $GL_GIT_SSH_KEY, configures SSH to skip host checking, and runs `source ci/update_version`.",
+  "tags": [
+    "golang",
+    "docker",
+    "dind",
+    "test",
+    "build",
+    "deploy",
+    "versioning",
+    "ci-pipeline"
+  ]
+}

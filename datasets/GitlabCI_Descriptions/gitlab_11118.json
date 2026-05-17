@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_11118",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 414,
+  "description": "Create a GitLab CI pipeline using the php:5.6 Docker image. Set a global before_script that runs apt-get update -yqq, installs git unzip nodejs -yqq, downloads Composer via curl, creates build/logs, runs php composer.phar install --no-progress --no-interaction --prefer-dist, and runs npm install --no-progress --production. Cache the vendor/ directory. Define a test job in the test stage that executes php composer.phar run test and then npm run test. Add a global after_script that uploads coverage to Coveralls with php ./vendor/bin/coveralls. No services, artifacts, or special rules are required.",
+  "tags": [
+    "php",
+    "composer",
+    "npm",
+    "coveralls",
+    "php5.6",
+    "cache"
+  ]
+}

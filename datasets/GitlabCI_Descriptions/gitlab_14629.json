@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_14629",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 785,
+  "description": "Create a GitLab CI pipeline with three stages: static analysis, build, and test, using the default gcc Docker image and a rsmmr/clang image for static analysis. Add a static analysis job that runs scan-build --status-bugs gcc operations.c calculator.c. Add a build job that compiles the calculator with gcc -fprofile-arcs -ftest-coverage -fPIC operations.c calculator.c -o calculator and stores the calculator, calculator.gcno, and operations.gcno files as artifacts. Add a module tests job that runs apt update && apt -y install gcovr as before_script, then executes test $(./calculator 1 + 1) = 2, test $(./calculator 100 - 10) = 90, test $(./calculator 25 \\* 5) = 125, (! ./calculator 30 / 5) and gcovr -r . with a coverage regex /^TOTAL.*\\s+(\\d+\\%)$/. Add a unit tests job that compiles unit_tests/minunit.c with gcc operations.c unit_tests/minunit.c -o minunit_tests and runs ./minunit_tests, both in the test stage.",
+  "tags": [
+    "gcc",
+    "clang",
+    "static-analysis",
+    "coverage",
+    "unit-tests",
+    "module-tests"
+  ]
+}

@@ -1,0 +1,13 @@
+before_script:
+- chmod +x ./gradlew
+image: hafiyyan94/androidsdk25gitlabci:newSet
+stages:
+- build
+- test
+unitTests:
+  artifacts:
+    paths:
+    - app/build/reports/jacoco/
+  script:
+  - ./gradlew testDebugUnitTestCoverage
+  stage: test

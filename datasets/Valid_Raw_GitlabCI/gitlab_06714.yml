@@ -1,0 +1,20 @@
+before_script:
+- rustc --version
+- cargo --version
+build:all-features:
+  script:
+  - cargo build --verbose --jobs 1 --release --all-features
+  stage: build
+build:default:
+  script:
+  - cargo build --verbose --jobs 1 --release
+  stage: build
+build:experimental:
+  script:
+  - cargo build --verbose --jobs 1 --release --features experimental
+  stage: build
+build:function_prototypes:
+  script:
+  - cargo build --verbose --jobs 1 --release --features function_prototypes
+  stage: build
+image: rust:1.20.0

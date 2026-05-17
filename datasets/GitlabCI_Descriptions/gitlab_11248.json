@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_11248",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 576,
+  "description": "Create a GitLab CI pipeline that caches the directories _build and deps per job using a cache key of $CI_JOB_NAME and includes untracked files. Define global variables POSTGRES_DB=sprout_tree_test, POSTGRES_USER=postgres, POSTGRES_PASSWORD=postgres and two stages: test and deploy. In the test stage add a test job that runs on the default image registry.gitlab.com/robin-good/docker-build-image:latest, uses the postgres:9.3-alpine service, sets the variable MIX_ENV=test_gitlab, executes the before_script 'mix deps.get' and then the script 'mix test'. In the deploy stage add a deploy job that runs only on the master branch, uses the ruby:latest image, runs 'gem install dpl' followed by 'dpl --provider=heroku --app=sprout-tree --api-key=$HEROKU_API_KEY' to deploy the app to Heroku.",
+  "tags": [
+    "ruby",
+    "heroku",
+    "mix",
+    "postgres",
+    "docker-build-image",
+    "gitlab-ci"
+  ]
+}

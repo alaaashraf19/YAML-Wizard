@@ -1,0 +1,237 @@
+name: Test
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+
+
+  doc:
+    runs-on: ubuntu-latest
+    name: '📓 Docs'
+    steps:
+
+    - name: '🧰 Checkout'
+      uses: actions/checkout@v2
+
+    - name: '📓 BuildTheDocs (BTD)'
+      uses: buildthedocs/btd@v0
+      with:
+        token: ${{ github.token }}
+        skip-deploy: ${{ github.event_name == 'pull_request' }}
+
+    - name: '📤 Upload artifact: HTML'
+      uses: actions/upload-artifact@v2
+      with:
+        path: doc/_build/html
+
+
+  lin-build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+        - 18
+        - 20
+    name: '🚧🐧 Ubuntu ${{ matrix.os }} | build'
+    runs-on: ubuntu-${{ matrix.os }}.04
+    steps:
+
+    - name: '🧰 Checkout'
+      uses: actions/checkout@v2
+
+    - name: '⚙️ Install dependencies'
+      run: |
+        sudo apt update -qq
+        sudo apt install -y \
+          cmake \
+          libftdi1-2 \
+          libftdi1-dev \
+          libhidapi-hidraw0 \
+          libhidapi-dev \
+          libudev-dev \
+          pkg-config \
+          tree \
+          zlib1g-dev
+
+    - name: '🚧 Build tarball'
+      run: |
+        mkdir build
+        cd build
+        cmake ..
+        cmake --build .
+
+        make DESTDIR=$(pwd)/dist install
+        _rulesdir='dist/etc/udev/rules.d/'
+        mkdir -p "${_rulesdir}"
+        cp ../99-openfpgaloader.rules "${_rulesdir}"
+        _licenses="dist/usr/local/share/licenses/openFPGALoader"
+        mkdir -p "${_licenses}"
+        install -m 644 ../LICENSE "${_licenses}"
+
+        tar -cvzf ../ubtuntu${{ matrix.os }}.04-openFPGALoader.tgz -C dist .
+
+    - name: '📤 Upload artifact: tarball'
+      uses: actions/upload-artifact@v2
+      with:
+        name: ubtuntu${{ matrix.os }}.04-openFPGALoader
+        path: ubtuntu${{ matrix.os }}.04-openFPGALoader.tgz
+
+    - name: '🔍 Show package content'
+      run: |
+        mkdir tmp
+        cd tmp
+        tar -xf ../ubtuntu${{ matrix.os }}.04-openFPGALoader.tgz
+        tree .
+
+
+  lin-test:
+    needs: lin-build
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+        - 18
+        - 20
+    name: '🚦🐧 Ubuntu ${{ matrix.os }} | test'
+    runs-on: ubuntu-${{ matrix.os }}.04
+    steps:
+
+    - name: '⚙️ Install dependencies'
+      run: |
+        sudo apt update -qq
+        sudo apt install -y \
+          libftdi1-2 \
+          libhidapi-hidraw0 \
+          udev \
+          zlib1g
+
+    - name: '📥 Download artifact: package'
+      uses: actions/download-artifact@v2
+      with:
+        name: ubtuntu${{ matrix.os }}.04-openFPGALoader
+
+    - name: '🛠️ Install package'
+      run: sudo tar -xvzf *.tgz -C /
+
+    - name: '🚦 Test package'
+      run: |
+        openFPGALoader --help
+        openFPGALoader --detect || true
+
+
+  win-makepkg:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { icon: '⬛', sys: mingw32 }
+          - { icon: '🟦', sys: mingw64 }
+          - { icon: '🟨', sys: ucrt64  } # Experimental!
+          - { icon: '🟧', sys: clang64 } # Experimental!
+    name: '🚧${{ matrix.icon }} ${{ matrix.sys }} | makepkg'
+    defaults:
+      run:
+        shell: msys2 {0}
+    env:
+      MINGW_ARCH: ${{ matrix.sys }}
+    steps:
+
+    - name: '⚙️ git config'
+      run: git config --global core.autocrlf input
+      shell: bash
+
+    - name: '🧰 Checkout'
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: '${{ matrix.icon }} Setup MSYS2'
+      uses: msys2/setup-msys2@v2
+      with:
+        msystem: ${{ matrix.sys }}
+        update: true
+        install: >
+          git
+          base-devel
+          tree
+        pacboy: toolchain:p
+
+    - name: '🚧 Build package'
+      run: |
+        cd scripts/msys2
+        makepkg-mingw --noconfirm --noprogressbar -sCLf
+
+    - name: '📤 Upload artifact: package'
+      uses: actions/upload-artifact@v2
+      with:
+        name: ${{ matrix.sys }}-openFPGALoader
+        path: scripts/msys2/*.zst
+
+    - name: '🔍 Show package content'
+      run: |
+        mkdir tmp
+        cd tmp
+        tar -xf ../scripts/msys2/*.zst
+        tree .
+
+
+  win-test:
+    needs: win-makepkg
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { icon: '⬛', sys: mingw32 }
+          - { icon: '🟦', sys: mingw64 }
+          - { icon: '🟨', sys: ucrt64  } # Experimental!
+          - { icon: '🟧', sys: clang64 } # Experimental!
+    name: '🚦${{ matrix.icon }} ${{ matrix.sys }} | test'
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+
+    - name: '${{ matrix.icon }} Setup MSYS2'
+      uses: msys2/setup-msys2@v2
+      with:
+        msystem: ${{ matrix.sys }}
+        update: true
+
+    - name: '📥 Download artifact: package'
+      uses: actions/download-artifact@v2
+      with:
+        name: ${{ matrix.sys }}-openFPGALoader
+
+    - name: '🛠️ Install package'
+      run: pacman -U --noconfirm --noprogressbar *.zst
+
+    - name: '🚦 Test package'
+      run: |
+        openFPGALoader --help
+        openFPGALoader --detect || true
+
+
+  Release:
+    if: github.event_name != 'pull_request' && (github.ref == 'refs/heads/master' || contains(github.ref, 'refs/tags/'))
+    needs: [ lin-test, win-test ]
+    runs-on: ubuntu-latest
+    name: '📦 Release'
+    steps:
+
+    - name: '📥 Download artifacts'
+      uses: actions/download-artifact@v2
+      with:
+        path: artifact
+
+    # Tagged: create a pre-release or a release (semver)
+    # Untagged: update the assets of pre-release 'nightly'
+    - uses: eine/tip@master
+      with:
+        token: ${{ github.token }}
+        tag: 'nightly'
+        files: artifact/*-openFPGALoader/*

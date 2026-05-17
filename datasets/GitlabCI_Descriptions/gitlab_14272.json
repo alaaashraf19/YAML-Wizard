@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_14272",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 442,
+  "description": "Create a GitLab CI pipeline using the node:16 Docker image with a cache on node_modules. Define two stages: test and deploy. In the test stage add a test job that runs `npm install -g harp less` then `harp source public`, and is triggered only for merge request events on non-default branches. In the deploy stage add a pages job that runs the same two commands, publishes the public/ directory as a pages artifact, and runs only on the default branch.",
+  "tags": [
+    "node",
+    "harp",
+    "less",
+    "gitlab-pages",
+    "cache",
+    "npm"
+  ]
+}

@@ -1,0 +1,62 @@
+clang-format-check:
+  image: saschpe/clang
+  script:
+  - apk update && apk add bash git
+  - /bin/bash ./ci/ci_clang_format_check.sh
+  - echo clang-format was applied ok
+  tags:
+  - linux
+  - docker
+docker:
+  name: tinyrefl
+  repo: manu343726
+stages:
+- clang-format-check
+- test
+- user-integration
+test:
+  llvm-versions:
+  - 4.0.0
+  - 5.0.0
+  - 6.0.0
+  script:
+  - ./ci/ci_test.sh
+  - echo finished ok
+  tags:
+  - linux
+  - docker
+  toolchains:
+  - clang40-x86
+  - clang50-x86
+  - clang60-x86
+  - gcc5-armv7
+  - gcc5-x86
+  - gcc6-armv7
+  - gcc6-x86
+  - gcc7-armv7
+  - gcc7-x86
+  - gcc8-armv7
+  - gcc8-x86
+user-integration:
+  llvm-versions:
+  - 4.0.0
+  - 5.0.0
+  - 6.0.0
+  script:
+  - ./ci/ci_user_integration.sh
+  - echo finished ok
+  tags:
+  - linux
+  - docker
+  toolchains:
+  - clang40-x86
+  - clang50-x86
+  - clang60-x86
+  - gcc5-armv7
+  - gcc5-x86
+  - gcc6-armv7
+  - gcc6-x86
+  - gcc7-armv7
+  - gcc7-x86
+  - gcc8-armv7
+  - gcc8-x86

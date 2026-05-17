@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_09857",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 395,
+  "description": "Create a GitLab CI pipeline using the nixos/nix Docker image with a single build stage. Define a cache keyed nix that stores .gitlab-cache.tar.gz, and set a global before_script that runs if [ -e .gitlab-cache.tar.gz ]; then rm -rf /nix || true; fi followed by if [ -e .gitlab-cache.tar.gz ]; then tar -xzf .gitlab-cache.tar.gz -C / || true; fi. Add a global after_script that runs tar -czf .gitlab-cache.tar.gz /nix || true. Add a compile job in the build stage that executes nix-build and publishes the result directory as an artifact. No services, rules, or deployment targets are defined.",
+  "tags": [
+    "nix",
+    "nixos",
+    "cache",
+    "build",
+    "artifact"
+  ]
+}

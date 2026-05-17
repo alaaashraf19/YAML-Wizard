@@ -1,0 +1,14 @@
+{
+  "sha": "02303a1acbc82a8a36068d555ee8af51ab4c607981ff0befd72de5b00b99486e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1342,
+  "description": "Create a GitHub Actions workflow named test-coverage that runs on every push to main and master branches and on pull requests to these branches. Use a single ubuntu-latest job that checks out the repository, sets up R with public RSPM, installs R dependencies including covr for coverage, runs test coverage with covr::codecov, displays testthat output, and uploads test results as an artifact on failure.",
+  "tags": [
+    "r",
+    "test-coverage",
+    "github-actions",
+    "ubuntu",
+    "covr"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "1357ca4a0c9fe83e89d0eb43c00201b4fd239d816ca876f74456e4c3c0c1c32c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 929,
+  "description": "Create a GitHub Actions workflow named Update Donors that runs daily on a schedule and can be manually triggered. The workflow checks if the repository owner is 'cpeditor', then in an ubuntu-latest job, checks out the code, sets up Python, installs the requests library, updates donors using a Python script with a GITHUB_TOKEN from secrets, checks for changes, and if changes exist, creates a pull request with a specific commit message, title, and branch.",
+  "tags": [
+    "python",
+    "scheduled",
+    "donors",
+    "github-actions",
+    "pull-requests"
+  ]
+}

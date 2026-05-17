@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_12133",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 717,
+  "description": "Create a GitLab CI pipeline with three cargo jobs that each run in the default test stage. Add a beta:cargo job using the rustdocker/rust:beta image that executes `rustc --version && cargo --version`, then `cargo test --verbose --jobs 1 --release`, `cargo doc`, and finally changes into dds-utils and runs `cargo run --bin dds-info ../examples/dxt1.dds`. Add a nightly:cargo job using the rustdocker/rust:nightly image that runs the same version check, `cargo test --verbose --jobs 1 --release`, `cargo bench --verbose --jobs 1`, `cargo doc`, and the same dds-utils command. Add a stable:cargo job using the rustdocker/rust:stable image that runs the version check, `cargo test --verbose --jobs 1 --release`, `cargo doc`, and the dds-utils command. No caches, artifacts, services, or special rules are defined.",
+  "tags": [
+    "rust",
+    "cargo",
+    "beta",
+    "nightly",
+    "stable",
+    "docker"
+  ]
+}

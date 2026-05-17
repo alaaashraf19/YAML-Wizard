@@ -1,0 +1,157 @@
+default:
+  image: $CI_REGISTRY_IMAGE/base:$CI_DEFAULT_BRANCH
+  retry:
+    max: 2
+    when:
+    - runner_system_failure
+    - scheduler_failure
+    - stale_schedule
+    - unmet_prerequisites
+    - stuck_or_timeout_failure
+  tags:
+  - gitlab-org
+include:
+- local: .gitlab-ci-asdf-versions.yml
+- local: .gitlab/ci/templates.gitlab-ci.yml
+- local: .gitlab/ci/test.gitlab-ci.yml
+- local: .gitlab/ci/trace.gitlab-ci.yml
+- local: .gitlab/ci/automation.gitlab-ci.yml
+- local: .gitlab/ci/chatops.gitlab-ci.yml
+- local: .gitlab/ci/metrics.gitlab-ci.yml
+- local: .gitlab/ci/auto-build.gitlab-ci.yml
+- local: .gitlab/ci/auto-deploy.gitlab-ci.yml
+- local: .gitlab/ci/coordinated-pipeline.gitlab-ci.yml
+- local: .gitlab/ci/mirror-status.gitlab-ci.yml
+- local: .gitlab/ci/post-deploy-migrations-pipeline.gitlab-ci.yml
+- local: .gitlab/ci/workflow.gitlab-ci.yml
+- local: .gitlab/ci/internal/*.yml
+- local: .gitlab/ci/monthly/*.yml
+- local: .gitlab/ci/security/*.yml
+- local: .gitlab/ci/pre-deploy.gitlab-ci.yml
+- local: .gitlab/ci/release_environment.gitlab-ci.yml
+- file: renovate-bot.yml
+  project: gitlab-com/gl-infra/common-ci-tasks
+  ref: v3.3
+  rules:
+  - if: $CI_SERVER_HOST == "gitlab.com"
+- file:
+  - docker.yml
+  - .gitlab-ci-other-versions.yml
+  project: gitlab-com/gl-infra/common-ci-tasks
+  ref: v3.3
+  rules:
+  - if: $CI_SERVER_HOST == "gitlab.com"
+  - if: $CI_SERVER_HOST == "ops.gitlab.net"
+- file: danger.yml
+  inputs:
+    job_allow_failure: true
+    job_image: $CI_REGISTRY_IMAGE/base:$CI_DEFAULT_BRANCH
+  project: gitlab-com/gl-infra/common-ci-tasks
+  ref: v3.3
+  rules:
+  - if: $CI_SERVER_HOST == "gitlab.com"
+- local: .gitlab/ci/docker-images.gitlab-ci.yml
+  rules:
+  - if: $CI_SERVER_HOST == "gitlab.com"
+  - if: $CI_SERVER_HOST == "ops.gitlab.net"
+- local: .gitlab/ci/secrets.gitlab-ci.yml
+- local: .gitlab/ci/shared-ops-vault-tokens.gitlab-ci.yml
+  rules:
+  - if: $CI_SERVER_HOST == "ops.gitlab.net"
+- local: .gitlab/ci/shared-vault-tokens.gitlab-ci.yml
+  rules:
+  - if: $CI_SERVER_HOST == "gitlab.com"
+- local: .gitlab/ci/protected-ops-vault-tokens.gitlab-ci.yml
+  rules:
+  - if: $CI_SERVER_HOST == "ops.gitlab.net" && $CI_COMMIT_REF_PROTECTED == "true"
+- local: .gitlab/ci/protected-vault-tokens.gitlab-ci.yml
+  rules:
+  - if: $CI_SERVER_HOST == "gitlab.com" && $CI_COMMIT_REF_PROTECTED == "true"
+stages:
+- validate
+- renovate_bot
+- build_images
+- test
+- build
+- coverage
+- coordinated:tag
+- coordinated:build
+- coordinated:prepare
+- coordinated:deploy:staging-canary-and-ref
+- coordinated:qa:staging-canary
+- coordinated:finish:staging-canary-and-ref
+- coordinated:deploy:canary
+- coordinated:qa:canary
+- coordinated:finish:canary
+- coordinated:promote
+- coordinated:deploy:staging
+- coordinated:deploy:production
+- coordinated:qa:staging
+- coordinated:finish:staging
+- coordinated:finish:production
+- coordinated:finish
+- automation
+- chatops
+- metrics:deploy
+- metrics
+- mirror_status
+- internal_release:prepare:start
+- internal_release:prepare
+- internal_release:release:start
+- internal_release:release
+- internal_release:verify:start
+- internal_release:verify
+- internal_release:finalize:start
+- internal_release:finalize
+- monthly_release:initial_rc:start
+- monthly_release:initial_rc
+- monthly_release:final_rc:start
+- monthly_release:final_rc
+- monthly_release:tag_day:prepare
+- monthly_release:tag_day
+- monthly_release:update_paths:start
+- monthly_release:update_paths
+- monthly_release:release_day:start
+- monthly_release:release_day
+- monthly_release:verify:start
+- monthly_release:verify
+- monthly_release:finalize:start
+- monthly_release:finalize
+- security_release:start
+- security_release:prepare
+- security_release:process
+- security_release:disable_issue_processor_schedule:start
+- security_release:disable_issue_processor_schedule
+- security_release:early_merge:start
+- security_release:early_merge
+- security_release:backport_merge:start
+- security_release:backport_merge
+- security_release:release_preparation:start
+- security_release:release_preparation
+- security_release:tag:start
+- security_release:tag
+- security_release:verify_release_deploy
+- security_release:update_paths:start
+- security_release:update_paths
+- security_release:publish:start
+- security_release:publish
+- security_release:verify:start
+- security_release:verify
+- security_release:create_versions:start
+- security_release:create_versions
+- security_release:finalize:start
+- security_release:finalize
+- post_deploy:prepare
+- post_deploy:start:staging
+- post_deploy:track:staging
+- post_deploy:qa:staging
+- post_deploy:finish:staging
+- post_deploy:start:production
+- post_deploy:track:production
+- post_deploy:finish:production
+- pre:start
+- pre:deploy
+- pre:finish
+- release_environment
+variables:
+  TEST_IMAGE_TAG: $CI_DEFAULT_BRANCH

@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_13677",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 179,
+  "description": "Create a GitLab CI pipeline that uses the node:lts-buster Docker image and runs a before_script that executes `node --version` and `npm install`. Define a single job named pages (implicitly in the deploy stage for GitLab Pages) that runs `npm run build` followed by `mv site public`, publishes the `public` directory as a pages artifact, and is limited to the master branch only. No additional stages, caches, or variables are required.",
+  "tags": [
+    "node",
+    "npm",
+    "gitlab-pages",
+    "lts-buster"
+  ]
+}

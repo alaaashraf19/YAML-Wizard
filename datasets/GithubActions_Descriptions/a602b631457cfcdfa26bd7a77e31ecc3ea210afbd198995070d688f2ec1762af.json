@@ -1,0 +1,14 @@
+{
+  "sha": "a602b631457cfcdfa26bd7a77e31ecc3ea210afbd198995070d688f2ec1762af",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5339,
+  "description": "Create a GitHub Actions workflow that triggers on push with tags matching v*. Run separate jobs for Linux, Windows, and macOS, each building and packaging the project. Upload build artifacts. For Linux, also push Docker images to Docker Hub. After all builds succeed, create a release with attached assets for each platform and generate SHA256 checksums.",
+  "tags": [
+    "multi-os",
+    "release",
+    "docker",
+    "github-release",
+    "checksums"
+  ]
+}

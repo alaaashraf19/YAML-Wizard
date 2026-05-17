@@ -1,0 +1,17 @@
+{
+  "sha": "6df73d71d81e5f76abf606785b8cb38f37fa2f14fcae8a30264c3127aeea3350",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1471,
+  "description": "Create a GitHub Actions workflow named Test and Lint that runs on push to the master branch and on pull requests to master. Use an ubuntu-latest job with a matrix strategy for Python versions 3.8 through 3.12. Start a Typesense service and wait for it to be healthy. Then, check out the repository, set up Python with caching, install dependencies from requirements/dev.txt, lint the code with Flake8, check types with mypy, and run tests with coverage using pytest, excluding tests tagged with OpenAI.",
+  "tags": [
+    "python",
+    "linting",
+    "testing",
+    "typesense",
+    "ubuntu",
+    "pytest",
+    "flake8",
+    "mypy"
+  ]
+}

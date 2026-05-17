@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_04864",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 235,
+  "description": "Create a GitLab CI pipeline using the ruby:3.0 Docker image. In the global before_script run apt-get -y update, apt-get -y upgrade, gem install bundler, bundle config set --local path vendor/bundle, and bundle install --jobs $(nproc). Define a spec job in the default test stage that executes bundle exec rake spec and runs on runners tagged \"shared\", inheriting the before_script. No caches, artifacts, services, or additional rules are defined.",
+  "tags": [
+    "ruby",
+    "bundler",
+    "rake",
+    "spec",
+    "gitlab-ci"
+  ]
+}

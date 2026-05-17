@@ -1,0 +1,23 @@
+{
+  "sha": "gitlab_05730",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2529,
+  "description": "Create a GitLab CI pipeline with a containerVersion variable set to stable and stages build-container, build, test, deploy, and update-container. In the build-container stage add a docker:image job using the docker:1.13 image with a docker:dind service that runs \"docker version\", \"docker build -t $CI_REGISTRY_IMAGE/build:latest ./cicd/testImage\", \"docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY\", and \"docker push $CI_REGISTRY_IMAGE/build\", and only runs when the variable $rebuildDocker equals \"True\". In the test stage define build_visplayrenderer_linux (image registry.gitlab.com/coloradoschoolofmines/visplay/build:$containerVersion) executing \"cd /builds/ColoradoSchoolOfMines/visplay/visplayrenderer/\", \"meson build\", \"cd build\", \"ninja\"; build_visplayrenderer_windows (image python:alpine) that creates \"./cicd/azure_forwarding/artifacts\", installs azure-devops via \"pip3 install azure-devops\", runs \"python3 ./cicd/azure_forwarding/azure_build.py\", publishes artifacts from \"cicd/azure_forwarding/artifacts/*\" and runs only on master; lint_js (image node) with before_script \"cd visplay/frontend\" and \"npm install\" then script \"npm run lint\"; lint_python (image python:3.7-alpine, allow_failure) with before_script \"apk add gcc musl-dev\" and \"pip install -r requirements.txt\" then script \"flake8 --version\" and \"flake8\"; and test_python (image python:3.6-alpine) with before_script \"apk add mpv make gcc musl-dev\", \"pip3 install -r requirements.txt\", \"pip install .\" and script \"make doctest\". In the deploy stage add a pages job using the registry.gitlab.com/coloradoschoolofmines/visplay/build:$containerVersion image that runs \"./cicd/pages/before_script.sh\" then \"./cicd/pages/script.sh\", publishes the \"public\" directory as an artifact, and only runs on master. In the update-container stage add a pushdocker:image job (docker:1.13 with docker:dind) that runs \"docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY\", \"docker pull $CI_REGISTRY_IMAGE/build:latest\", \"docker tag $CI_REGISTRY_IMAGE/build:latest $CI_REGISTRY_IMAGE/build:stable\", \"docker push $CI_REGISTRY_IMAGE/build:stable\" and only when $rebuildDocker == \"True\", and also add a serverdocker:image job (docker:1.13 with docker:dind) in the deploy stage that runs \"docker version\", \"docker build -t $CI_REGISTRY_IMAGE/server:stable ./cicd/serverImage\", \"docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY\", \"docker push $CI_REGISTRY_IMAGE/server:stable\" and runs on master or the Server-Docker-CICD branch.",
+  "tags": [
+    "docker",
+    "dind",
+    "python",
+    "node",
+    "lint",
+    "pages",
+    "meson",
+    "ninja",
+    "azure-devops",
+    "ci-variables",
+    "build",
+    "test",
+    "deploy",
+    "update-container"
+  ]
+}

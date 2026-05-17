@@ -1,0 +1,14 @@
+{
+  "sha": "0fb6c8e7a046ae1f97dfe75c313f0878bacd4557186972b2f927893c54e9293e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 834,
+  "description": "Create a GitHub Actions workflow named Build CI Image that runs on push events to the ci/rpm8/ directory. Use an ubuntu-18.04 job to check out the code, set up QEMU, log in to DockerHub, build and push a Docker image with the name fiware/orion-ci:rpm8 using the Dockerfile in ci/rpm8/, and then push the image to DockerHub.",
+  "tags": [
+    "docker",
+    "dockerhub",
+    "ci",
+    "qemu",
+    "rpm8"
+  ]
+}

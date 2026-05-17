@@ -1,0 +1,121 @@
+name: Windows
+
+on:
+  pull_request:
+    branches: [ develop ]
+
+jobs:
+  build_windows_msvc_base:
+    name: MSVC 2019 Default Release
+    runs-on: windows-latest
+    steps:
+    - name: Setup MPI
+      uses: mpi4py/setup-mpi@v1
+    - name: Setup Python Env
+      run: python3 -m pip install --upgrade pip numpy mpi4py
+    - uses: actions/checkout@v2
+      with: 
+        submodules: 'recursive'
+    - name: Build & Test
+      run: |
+        cmake -S src -B build            `
+              -DCMAKE_BUILD_TYPE=Release `
+              -DENABLE_PYTHON=ON         `
+              -DENABLE_MPI=ON
+        cmake --build build --config Release --parallel 2
+        cmake -E env CTEST_OUTPUT_ON_FAILURE=1 cmake --build build --config Release --target RUN_TESTS --parallel 1
+
+  build_windows_msvc_base_cpp14:
+    name: MSVC 2019 C++14 Release
+    runs-on: windows-latest
+    steps:
+    - name: Setup MPI
+      uses: mpi4py/setup-mpi@v1
+    - name: Setup Python Env
+      run: python3 -m pip install --upgrade pip numpy mpi4py
+    - uses: actions/checkout@v4
+      with: 
+        submodules: 'recursive'
+    - name: Build & Test
+      run: |
+        cmake -S src -B build                       `
+              -DBLT_CXX_STD=c++14                   `
+              -DCMAKE_BUILD_TYPE=Release            `
+              -DENABLE_PYTHON=ON                    `
+              -DENABLE_MPI=ON
+        cmake --build build --config Release --parallel 2
+        cmake -E env CTEST_OUTPUT_ON_FAILURE=1 cmake --build build --config Release --target RUN_TESTS --parallel 1
+
+  build_windows_msvc_base_cpp17:
+    name: MSVC 2022 C++17 Release
+    runs-on: windows-2022
+    steps:
+    - name: Setup MPI
+      uses: mpi4py/setup-mpi@v1
+    - name: Setup Python Env
+      run: python3 -m pip install --upgrade pip numpy mpi4py
+    - uses: actions/checkout@v4
+      with: 
+        submodules: 'recursive'
+    - name: Build & Test
+      run: |
+        cmake -S src -B build            `
+              -DBLT_CXX_STD=c++17        `
+              -DCMAKE_BUILD_TYPE=Release `
+              -DENABLE_PYTHON=ON         `
+              -DENABLE_MPI=ON
+        cmake --build build --config Release --parallel 2
+        cmake -E env CTEST_OUTPUT_ON_FAILURE=1 cmake --build build --config Release --target RUN_TESTS --parallel 1
+
+  build_windows_msvc_py_ver:
+    name: MSVC Release Py Verison
+    runs-on: windows-latest
+    strategy:
+      matrix:
+          python-version:
+          - '3.8'
+          - '3.9'
+          - '3.10'
+    steps:
+    - uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Setup MPI
+      uses: mpi4py/setup-mpi@v1
+    - name: Setup Python Env
+      run: python3 -m pip install --upgrade pip numpy mpi4py
+    - uses: actions/checkout@v4
+      with: 
+        submodules: 'recursive'
+    - name: Build & Test
+      run: |
+        cmake -S src -B build            `
+              -DCMAKE_BUILD_TYPE=Release `
+              -DENABLE_PYTHON=ON         `
+              -DENABLE_MPI=ON
+        cmake --build build --config Release --parallel 2
+        cmake -E env CTEST_OUTPUT_ON_FAILURE=1 cmake --build build --config Release --target RUN_TESTS --parallel 1
+        cmake --install build --config Release
+
+  build_windows_clang:
+    name: Clang Base Debug
+    runs-on: windows-latest
+    steps:
+    - name: Setup Python Env
+      run: python3 -m pip install --upgrade pip numpy
+    - uses: actions/checkout@v4
+      with: 
+        submodules: 'recursive'
+    - uses: seanmiddleditch/gha-setup-ninja@master
+    - name: Build & Test
+      shell: cmd
+      run: |
+        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\vc\Auxiliary\build\vcvarsall.bat" x64
+              cmake -S src -B build           ^
+                -G "Ninja"                    ^
+                -DCMAKE_C_COMPILER=clang-cl   ^
+                -DCMAKE_CXX_COMPILER=clang-cl ^
+                -DCMAKE_BUILD_TYPE=Debug
+        cmake --build build --config Debug --parallel 2
+        cmake -E env CTEST_OUTPUT_ON_FAILURE=1 cmake --build build --config Debug --target test --parallel 1
+        cmake --install build --config Release

@@ -1,0 +1,27 @@
+name: run tests
+
+on: [push, pull_request]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    # Use the base-devel image of Arch Linux for building pyalpm
+    container: archlinux:base-devel
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Enable archlinuxcn repo
+      run: |
+        echo -e '[archlinuxcn]\nServer = https://repo.archlinuxcn.org/$arch' >> /etc/pacman.conf
+        pacman-key --init
+        pacman-key --populate
+        pacman -Sy --noconfirm archlinuxcn-keyring
+
+    - name: Install Python and deps
+      run: pacman -Su --noconfirm python python-pytest python-pytest-asyncio nvchecker python-httpx python-lxml python-yaml pyalpm python-structlog python-prctl  python-fluent.runtime
+
+    - name: Run pytest
+      run: pytest

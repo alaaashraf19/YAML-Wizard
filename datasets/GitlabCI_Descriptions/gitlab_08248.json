@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_08248",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 995,
+  "description": "Create a GitLab CI pipeline using the node:boron Docker image with a before_script that runs node --version, npm --version, installs openssh-client if ssh-agent is missing, starts ssh-agent, adds the $SSH_PRIVATE_KEY, creates ~/.ssh, disables strict host key checking when inside Docker, and installs rsync if absent. Define three stages (build, test, deploy) and cache the node_modules directory. In the build stage add a build job that runs npm install, caches node_modules, and stores node_modules as an artifact. In the test stage add a test job that runs npm run lint. In the deploy stage add a deploy job that runs only on the master branch, sets a production environment at https://apilab.gitlab.org, uses rsync -r --delete-after --exclude 'data' --quiet ./ $SSH_USER@$DEPLOY_HOST::apilab/ to sync files, then ssh $SSH_USER@$DEPLOY_HOST '. ~/.bashrc && . ~/.nvm/nvm.sh && nvm use stable && pm2 restart apilab' to restart the service, and runs on runners tagged docker and shared.",
+  "tags": [
+    "node",
+    "npm",
+    "ssh",
+    "rsync",
+    "pm2",
+    "docker",
+    "cache",
+    "artifact",
+    "gitlab-ci"
+  ]
+}

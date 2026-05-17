@@ -1,0 +1,14 @@
+{
+  "sha": "2758b4dc3a9286e0d150936ba9ef65ec2d9323d22da7093c8586883cb5fdc41e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3709,
+  "description": "Create a GitHub Actions workflow named wasm that triggers on push to the master branch and on pull requests targeting master, but only for specific paths. The workflow should run on an ubuntu-24.04 environment with a 60-minute timeout. It checks out the code, installs Python 3.11, and then performs a series of steps including displaying an Easter egg message, installing UV and fastled, verifying live-server installation, compiling fastled.js, fastled.wasm, and index.html, scanning for artifacts, checking for required files, generating a timestamp and random hex, uploading wasm artifacts, and verifying FastLED_onFrame with Playwrite.",
+  "tags": [
+    "wasm",
+    "python",
+    "github-actions",
+    "ubuntu",
+    "fastled"
+  ]
+}

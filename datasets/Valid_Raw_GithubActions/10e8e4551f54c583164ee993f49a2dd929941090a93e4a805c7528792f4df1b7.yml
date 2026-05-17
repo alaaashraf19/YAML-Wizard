@@ -1,0 +1,63 @@
+# Runs the installation tests in the following cases:
+#   1) every day at 3 am
+#   2) a pull request to the master branch
+
+name: macOS System CI
+
+on:
+  schedule:
+    # Every day at 3 am
+    - cron: '0 3 * * *'
+  pull_request:
+    # Upon pull requests
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+    - name: Install dependencies
+      run: |
+        brew install git
+
+    - name: Checkout BioDynaMo
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Install BioDynaMo
+      shell: bash
+      run: |
+        ./install.sh << EOF
+        y
+        EOF
+
+    - name: System tests BioDynaMo
+      shell: bash
+      working-directory: build
+      run: |
+        . bin/thisbdm.sh
+        git config --system user.name "Test User"
+        git config --system user.email user@test.com
+        make run-demos
+
+    - name: Notify Slack
+      uses: 8398a7/action-slack@v3
+      with:
+        status: custom
+        fields: workflow,job,commit,repo,ref,author,took,message
+        custom_payload: |
+          {
+            username: 'GitHub CI',
+            icon_emoji: ':octocat:',
+            attachments: [{
+              color: '${{ job.status }}' === 'success' ? 'good' : '${{ job.status }}' === 'failure' ? 'danger' : 'warning',
+              text: `${process.env.AS_WORKFLOW}\n${process.env.AS_JOB} (${process.env.AS_COMMIT}) of ${process.env.AS_REPO}@${process.env.AS_REF} by ${process.env.AS_AUTHOR} ${{ job.status }} in ${process.env.AS_TOOK}\n${process.env.AS_MESSAGE}`
+            }]
+          }
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      if: always() # Pick up events even if the job fails or is canceled

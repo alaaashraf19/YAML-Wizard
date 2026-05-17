@@ -1,0 +1,15 @@
+{
+  "sha": "47cea724c8a2ee37b21efa899d047463b91eff37551920498a102f99c3377776",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1328,
+  "description": "Create a Linux CI workflow named Linux CI (Debug) that runs on pushes to staging and trying branches. Use an ubuntu-latest job in a stellargroup/build_env:10 container that checks out the repository, configures a Debug build with specific CMake flags, builds the project and its examples, and runs tests with ctest, filtering for tests.examples and excluding a specific test.",
+  "tags": [
+    "linux",
+    "ci",
+    "cmake",
+    "ubuntu",
+    "tests",
+    "debug"
+  ]
+}

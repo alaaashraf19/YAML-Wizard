@@ -1,0 +1,19 @@
+{
+  "sha": "5bd306f02bc893612e1b92266eef514fc5b755b4ef65fab3be7e9fb9e0a26f7e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3244,
+  "description": "Create a GitHub Actions workflow named Analyzers that runs on pull requests, push events, and published releases. The workflow checks if a duplicate action should be skipped, then runs a matrix of analysis jobs on ubuntu-latest and windows-latest environments. For each job, it checks out the repository, installs dependencies, configures the build, and performs analysis using various tools like CodeQL, Clang Analyzer, IWYU, and MSVC Code Analysis.",
+  "tags": [
+    "codeql",
+    "clang-analyzer",
+    "iwyu",
+    "msvc-code-analysis",
+    "ubuntu",
+    "windows",
+    "cmake",
+    "cpp",
+    "analysis",
+    "github-actions"
+  ]
+}

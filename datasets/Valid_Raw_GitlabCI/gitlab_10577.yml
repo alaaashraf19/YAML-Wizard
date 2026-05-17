@@ -1,0 +1,117 @@
+build_app_container_latest:
+  image: docker:stable
+  only:
+  - master
+  script:
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+  - docker build --tag $CONTAINER_APP:$CI_COMMIT_SHA --tag $CONTAINER_APP:latest -f
+    container/app/Dockerfile .
+  - docker push $CONTAINER_APP:$CI_COMMIT_SHA
+  - docker push $CONTAINER_APP:latest
+  services:
+  - docker:dind
+  stage: deploy
+build_app_container_release:
+  image: docker:stable
+  only:
+  - tags
+  script:
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+  - docker pull $CONTAINER_APP:latest || true
+  - docker build --cache-from $CONTAINER_APP:latest --tag $CONTAINER_APP:$CI_COMMIT_TAG
+    --tag $CONTAINER_APP:latest container/app/
+  - docker push $CONTAINER_APP:$CI_COMMIT_TAG
+  - docker push $CONTAINER_APP:latest
+  services:
+  - docker:dind
+  stage: deploy
+build_app_container_testing:
+  image: docker:stable
+  rules:
+  - if: ($CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH)
+  script:
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+  - docker build --tag $CONTAINER_APP:$CI_COMMIT_SHA --tag $CONTAINER_APP:$CI_COMMIT_REF_SLUG
+    -f container/app/Dockerfile .
+  - docker push $CONTAINER_APP:$CI_COMMIT_SHA
+  - docker push $CONTAINER_APP:$CI_COMMIT_REF_SLUG
+  services:
+  - docker:dind
+  stage: deploy
+build_base_container_latest:
+  image: docker:stable
+  rules:
+  - changes:
+    - container/base/*
+    if: ($CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH)
+  script:
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+  - docker build --tag $CONTAINER_BASE:$CI_COMMIT_SHA --tag $CONTAINER_BASE:latest
+    -f container/base/Dockerfile .
+  - docker push $CONTAINER_BASE:$CI_COMMIT_SHA
+  - docker push $CONTAINER_BASE:latest
+  services:
+  - docker:dind
+  stage: prepare
+build_base_container_testing:
+  image: docker:stable
+  rules:
+  - changes:
+    - container/base/*
+    if: ($CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH)
+  script:
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+  - docker build --tag $CONTAINER_BASE:$CI_COMMIT_SHA --tag $CONTAINER_BASE:$CI_COMMIT_REF_SLUG
+    -f container/base/Dockerfile .
+  - docker push $CONTAINER_BASE:$CI_COMMIT_SHA
+  - docker push $CONTAINER_BASE:$CI_COMMIT_REF_SLUG
+  services:
+  - docker:dind
+  stage: prepare
+build_release:
+  image: docker:stable
+  only:
+  - tags
+  script:
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+  - docker pull $CONTAINER_BASE:latest || true
+  - docker pull $CONTAINER_POSTGRES:latest || true
+  - docker build --cache-from $CONTAINER_BASE:latest --tag $CONTAINER_BASE:$CI_COMMIT_TAG
+    --tag $CONTAINER_BASE:latest container/base/
+  - docker build --cache-from $CONTAINER_POSTGRES:latest --tag $CONTAINER_POSTGRES:$CI_COMMIT_TAG
+    --tag $CONTAINER_POSTGRES:latest container/postgres/
+  - docker push $CONTAINER_BASE:$CI_COMMIT_TAG
+  - docker push $CONTAINER_BASE:latest
+  services:
+  - docker:dind
+  stage: build
+image: ruby:2.5
+include:
+- template: Dependency-Scanning.gitlab-ci.yml
+- template: SAST.gitlab-ci.yml
+stages:
+- prepare
+- build
+- test
+- deploy
+test:
+  artifacts:
+    paths:
+    - coverage/
+  image: registry.gitlab.com/iskcrew/isk/base
+  script:
+  - ruby -v
+  - cp config/database.yml.gitlab config/database.yml
+  - cp test/gitlab_redis.rb config/initializers/01_redis.rb
+  - bundle install -j $(nproc) --path vendor
+  - RAILS_ENV=test bundle exec rake db:setup --quiet
+  - RAILS_ENV=test bundle exec rake isk:secrets --quiet
+  - RAILS_ENV=test bundle exec rake db:test:prepare --quiet
+  - RAILS_ENV=test bundle exec rake test
+  services:
+  - redis:latest
+  - postgres:9.6
+  stage: test
+variables:
+  CONTAINER_APP: registry.gitlab.com/$CI_PROJECT_PATH/app
+  CONTAINER_BASE: registry.gitlab.com/$CI_PROJECT_PATH/base

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_09792",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 236,
+  "description": "Create a GitLab CI pipeline that uses the hafiyyan94/androidsdk25gitlabci:newSet Docker image and runs a before_script to make gradlew executable. Define two stages: build and test. In the test stage add a unitTests job that executes ./gradlew testDebugUnitTestCoverage and stores the generated JaCoCo coverage reports from app/build/reports/jacoco/ as artifacts. No caching, services, or deployment are configured.",
+  "tags": [
+    "android",
+    "gradle",
+    "unit-tests",
+    "jacoco",
+    "docker-image"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_05840",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 433,
+  "description": "Create a GitLab CI pipeline with two stages: build_frontend and build_backend. Add a build_npm job that runs in the build_frontend stage using the node:latest image, runs only on the master branch, caches the node_modules/ directory, executes the shell commands 'npm install' and 'npm run build', and publishes the public/ directory as an artifact that expires after 5 seconds. Add a buid_composer job that runs in the build_backend stage using the composer:latest image, runs only on the master branch, executes the command 'composer install -d public/api', and stores the public/ directory as an artifact named public. Order the stages as build_frontend then build_backend.",
+  "tags": [
+    "node",
+    "npm",
+    "composer",
+    "frontend",
+    "backend",
+    "gitlab-ci"
+  ]
+}

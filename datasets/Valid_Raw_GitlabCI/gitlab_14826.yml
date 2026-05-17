@@ -1,0 +1,87 @@
+.is_triggered:
+  only: &id002
+  - pipelines
+.not_triggered:
+  except: &id001
+  - pipelines
+bsd:
+  except: *id001
+  only:
+    refs:
+    - master
+    - dev
+  script:
+  - export SUFFIX=$(if [ "$CI_BUILD_REF_NAME" = "master" ]; then echo ""; else /usr/local/bin/erl
+    -noshell -eval '{{Y, MM, D}, {H, M, S}} = calendar:universal_time(), io:format("pre~4.10.0B~2.10.0B~2.10.0B~2.10.0B~2.10.0B~2.10.0B",
+    [Y, MM, D, H, M, S]),init:stop()'; fi);
+  - export OS_VER=$(echo $CI_RUNNER_TAGS | sed 's/.*freebsd-\([0-9.]*\).*/\1/')
+  - export ARCH=$(uname -m)
+  - export BRANCH=$(if [ "$CI_BUILD_REF_NAME" = "master" ]; then echo rel; else echo
+    dev; fi)
+  - gmake dist
+  - aws s3 cp rel/pkgng/*.txz  s3://freebsd.project-fifo.net/$BRANCH/$ARCH/$OS_VER/
+  - curl --request POST --form "token=$CI_JOB_TOKEN" --form "ref=master" --form "variables[ARCH]=$ARCH"
+    --form "variables[OS_VER]=$OS_VER" --form "variables[BRANCH]=$BRANCH" https://gitlab.com/api/v4/projects/$PKGNG_REPO_PID/trigger/pipeline
+  stage: package
+  tags:
+  - erlang-19
+  - freebsd-11.0
+smartos:
+  except: *id001
+  only:
+    refs:
+    - master
+    - dev
+  script:
+  - export SUFFIX=$(if [ "$CI_BUILD_REF_NAME" = "master" ]; then echo ""; else /opt/local/bin/erl
+    -noshell -eval '{{Y, MM, D}, {H, M, S}} = calendar:universal_time(), io:format("pre~4.10.0B~2.10.0B~2.10.0B~2.10.0B~2.10.0B~2.10.0B",
+    [Y, MM, D, H, M, S]),init:stop()'; fi);
+  - export DS_VER=$(echo $CI_RUNNER_TAGS | sed 's/.*base64-\([0-9.]*\).*/\1/')
+  - export BRANCH=$(if [ "$CI_BUILD_REF_NAME" = "master" ]; then echo rel; else echo
+    dev; fi)
+  - gmake dist
+  - mkdir -p rel/pkg/info
+  - aws s3 cp rel/pkg/*.tgz  s3://release.project-fifo.net/pkg/$DS_VER/$BRANCH/
+  - pkg_info -X rel/pkg/*.tgz > rel/pkg/info/$(pkg_info -X rel/pkg/*.tgz | awk -F
+    "=" '/FILE_NAME/ {print $2}')
+  - aws s3 cp rel/pkg/info/* s3://release-info.project-fifo.net/pkg/$DS_VER/$BRANCH/
+  - curl --request POST --form "token=$CI_JOB_TOKEN" --form "ref=master" --form "variables[DS_VER]=$DS_VER"
+    --form "variables[BRANCH]=$BRANCH" https://gitlab.com/api/v4/projects/$REPO_PID/trigger/pipeline
+  stage: package
+  tags:
+  - erlang-19
+  - smartos
+smartos_test:
+  except:
+  - pipelines
+  - master
+  - dev
+  script:
+  - ./rebar3 as lint lint
+  - ./rebar3 xref
+  - ./rebar3 dialyzer
+  stage: test
+  tags:
+  - erlang-19
+  - smartos
+stages:
+- test
+- package
+trigger_dialyzer:
+  image: erlang:19
+  only: *id002
+  script:
+  - ./rebar3 upgrade $DOWNSTREAM_LIBRARY
+  - ./rebar3 dialyzer
+  stage: test
+  tags:
+  - gitlab-org-high-cpu
+trigger_xref:
+  image: erlang:19
+  only: *id002
+  script:
+  - ./rebar3 upgrade $DOWNSTREAM_LIBRARY
+  - ./rebar3 xref
+  stage: test
+  tags:
+  - gitlab-org-high-cpu

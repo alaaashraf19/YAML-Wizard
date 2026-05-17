@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_01019",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 780,
+  "description": "Create a GitLab CI pipeline that uses the golang:${GO_VERSION} Docker image (GO_VERSION set to '1.8') and defines two stages: test and build. Include a global before_script that runs: cd ~, mkdir -p ${GOPATH}/src/gitlab.com/apetitbois/, ln -s ${CI_PROJECT_DIR} ${GOPATH}/src/gitlab.com/apetitbois/${PACKAGE_NAME}, and cd ${GOPATH}/src/gitlab.com/apetitbois/${PACKAGE_NAME}. In the test stage add a test job that runs the command go test -v $(go list ./... | grep -v /vendor/) -cover. In the build stage add a build job that exports HASH=`git rev-parse --short HEAD`, runs go get github.com/mitchellh/gox, then runs gox -ldflags \"-X main.version=${RELEASE_VERSION}-${HASH}\" -osarch \"darwin/amd64 linux/amd64 windows/amd64\" -output \"{{.OS}}/{{.Arch}}/${PACKAGE_NAME}\" -parallel 3, and publishes all files as untracked artifacts. Define variables GO_VERSION, PACKAGE_NAME (packt-sync), and RELEASE_VERSION (1.0.1).",
+  "tags": [
+    "go",
+    "golang",
+    "gox",
+    "gitlab-ci",
+    "build",
+    "test"
+  ]
+}

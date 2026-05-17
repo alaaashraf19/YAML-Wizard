@@ -1,0 +1,191 @@
+.deb_oldold_option_tester:
+  needs: &id009 []
+  rules: &id010
+  - if: $CI_PIPELINE_SOURCE == "schedule"
+  script: &id011
+  - apt-get update
+  - apt-get install -y netbase bison gcc libssl-dev libcap-dev pps-tools python2-dev
+    python2-minimal libseccomp-dev bash pkg-config python3-dev python3-minimal
+  - PYTHON=python2 bash tests/option-tester.sh
+  - PYTHON=python3 bash tests/option-tester.sh
+  stage: test
+  tags: &id012
+  - gitlab-org
+.deb_option_tester_py3_only:
+  needs: &id005 []
+  rules: &id006
+  - if: $CI_PIPELINE_SOURCE == "schedule"
+  script: &id007
+  - apt-get update
+  - DEBIAN_FRONTEND=noninteractive apt-get install -y netbase bison gcc libssl-dev
+    libcap-dev pps-tools libseccomp-dev bash pkg-config python3-dev python3-minimal
+  - PYTHON=python3 bash tests/option-tester.sh
+  stage: test
+  tags: &id008
+  - gitlab-org
+.option_tester_py3_only:
+  needs: &id001 []
+  rules: &id002
+  - if: $CI_PIPELINE_SOURCE == "schedule"
+  script: &id003
+  - PYTHON=python3 bash tests/option-tester.sh
+  stage: test
+  tags: &id004
+  - gitlab-org
+alpine-edge-options-tester:
+  allow_failure: true
+  before_script:
+  - apk update && apk add gcc bison musl-dev openssl-dev libcap-dev python3-dev asciidoc
+    libseccomp-dev bash
+  image: alpine:edge
+  needs: *id001
+  rules: *id002
+  script: *id003
+  stage: test
+  tags: *id004
+alpine-options-tester:
+  before_script:
+  - apk update && apk add gcc bison musl-dev openssl-dev libcap-dev python3-dev asciidoc
+    libseccomp-dev bash
+  image: alpine
+  needs: *id001
+  rules: *id002
+  script: *id003
+  stage: test
+  tags: *id004
+centos-options-tester:
+  before_script:
+  - dnf -y --enablerepo=crb install bison gcc openssl-devel libcap-devel python3-devel
+    pps-tools-devel libseccomp-devel pkgconf-pkg-config bash
+  image: quay.io/centos/centos:stream9
+  needs: *id001
+  rules: *id002
+  script: *id003
+  stage: test
+  tags: *id004
+debian-i386-options-tester:
+  image: i386/debian:stable-slim
+  needs: *id005
+  rules: *id006
+  script: *id007
+  stage: test
+  tags: *id008
+debian-oldoldstable-options-tester:
+  image: debian:oldoldstable-slim
+  needs: *id009
+  rules: *id010
+  script: *id011
+  stage: test
+  tags: *id012
+debian-stable-options-tester:
+  image: debian:stable-slim
+  needs: *id005
+  rules: *id006
+  script: *id007
+  stage: test
+  tags: *id008
+debian-testing-options-tester:
+  image: debian:testing-slim
+  needs: *id005
+  rules: *id006
+  script: *id007
+  stage: test
+  tags: *id008
+debian-unstable-options-tester:
+  allow_failure: true
+  image: debian:unstable-slim
+  needs: *id005
+  rules: *id006
+  script: *id007
+  stage: test
+  tags: *id008
+fedora-latest-options-tester:
+  before_script:
+  - yum -y install bison gcc openssl-devel libcap-devel pps-tools-devel python3-devel
+    libseccomp-devel pkgconf-pkg-config
+  image: fedora:latest
+  needs: *id001
+  rules: *id002
+  script: *id003
+  stage: test
+  tags: *id004
+freebsd-options-tester:
+  needs: []
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "schedule" && $CI_COMMIT_BRANCH && $CI_PROJECT_PATH
+      == "NTPsec/ntpsec"
+    when: never
+  - when: never
+  script:
+  - PYTHON=python2.7 tests/option-tester.sh
+  - PYTHON=python3 tests/option-tester.sh
+  stage: test
+  tags:
+  - freebsd
+gentoo-options-tester:
+  before_script:
+  - emerge-webrsync
+  - emerge -q y sys-libs/libcap sys-devel/bison net-misc/pps-tools app-text/asciidoc
+    sys-libs/libseccomp app-shells/bash
+  image: gentoo/stage3
+  needs: *id001
+  rules: *id002
+  script: *id003
+  stage: test
+  tags: *id004
+macos-options-tester:
+  needs: []
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "schedule" && $CI_COMMIT_BRANCH && $CI_PROJECT_PATH
+      == "NTPsec/ntpsec"
+  script:
+  - PKG_CONFIG_PATH=${HOMEBREW_PREFIX}/opt/openssl/lib/pkgconfig PYTHON=${HOMEBREW_PREFIX}/bin/python3
+    tests/option-tester.sh
+  stage: test
+  tags:
+  - saas-macos-medium-m1
+make-tarball:
+  image: $CI_REGISTRY/ntpsec/ntpsec/debian-stable
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "schedule"
+  script:
+  - apt-get update
+  - DEBIAN_FRONTEND="noninteractive" apt-get install -y git asciidoctor
+  - ln -svf /usr/bin/python{3,}
+  - ./waf configure build --enable-doc --enable-man
+  - cd devel&&/bin/sh make-tarball
+  stage: test
+  tags:
+  - gitlab-org
+opensuse-leap-options-tester:
+  before_script:
+  - zypper -n install bison gcc libopenssl-devel libcap-devel pps-tools-devel libseccomp-devel
+    python3-devel python3-curses pkg-config bash
+  image: opensuse/leap
+  needs: *id001
+  rules: *id002
+  script: *id003
+  stage: test
+  tags: *id004
+ubuntu-devel-options-tester:
+  allow_failure: true
+  image: ubuntu:devel
+  needs: *id005
+  rules: *id006
+  script: *id007
+  stage: test
+  tags: *id008
+ubuntu-latest-options-tester:
+  image: ubuntu:latest
+  needs: *id005
+  rules: *id006
+  script: *id007
+  stage: test
+  tags: *id008
+ubuntu-rolling-options-tester:
+  image: ubuntu:rolling
+  needs: *id005
+  rules: *id006
+  script: *id007
+  stage: test
+  tags: *id008

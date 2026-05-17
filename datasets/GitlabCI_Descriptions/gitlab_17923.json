@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_17923",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 869,
+  "description": "Create a GitLab CI pipeline using the rust Docker image with a global before_script that runs `apt-get update -yqq`, `apt-get install -yqq --no-install-recommends curl build-essential cmake pkg-config`, `rustup default nightly`, `rustc --version && cargo --version`, and `./ci/install_sdk`. Add a `fmt` job in the lint stage that has its own before_script executing `rustup default nightly`, `rustup component add rustfmt-preview`, and `rustc --version && cargo --version`, then runs `cargo fmt --all -- --check`. Add a `test` job in the test stage that runs `cargo test --all --verbose`. Add a `linux-x86_64-dynamic` job in the build stage that runs `cargo build --all --verbose`, `cargo build --all --verbose --release`, creates a `bin` directory with `mkdir -p ./bin`, moves the debug binary with `mv ./target/debug/cant-touch-this ./bin/cant-touch-this-debug` and the release binary with `mv ./target/release/cant-touch-this ./bin/cant-touch-this`, and publishes the `bin/*` files as an artifact named `linux-x86_64-dynamic` that expires in one month and is kept on success. Define the stages in order: lint, test, build.",
+  "tags": [
+    "rust",
+    "cargo",
+    "fmt",
+    "build",
+    "test",
+    "lint",
+    "artifact"
+  ]
+}

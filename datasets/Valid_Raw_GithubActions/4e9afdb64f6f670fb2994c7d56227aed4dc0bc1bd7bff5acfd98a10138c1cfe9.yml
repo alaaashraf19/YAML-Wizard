@@ -1,0 +1,20 @@
+name: clang-tidy-review
+on: [pull_request]
+
+jobs:
+  build:
+    name: clang-tidy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - uses: ZedThree/clang-tidy-review@v0.9.0
+        id: review
+        with:
+          apt_packages: 'cmake,ninja-build,python3,g++,gettext,qtbase5-dev,libqt5svg5-dev,libkf5archive-dev,liblua5.3-dev,libsqlite3-dev,libsdl2-mixer-dev'
+
+          # Tell clang-tidy-review the build directory, so it finds the
+          # compilation database.
+          build_dir: build

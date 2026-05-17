@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_18905",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 646,
+  "description": "Create a GitLab CI pipeline using the Docker image registry.gitlab.com/showcheap/android-ci:master, with a single stage release and a job named apk. In the before_script export GRADLE_USER_HOME=`pwd`/.gradle, chmod +x ./gradlew, run sdkmanager --update, install platforms;android-28 and build-tools;28.0.3, temporarily disable pipefail, accept all sdkmanager licenses, then re‑enable pipefail. The apk job runs ./gradlew assembleRelease then mv ./app/build/outputs/apk/release/app-release-unsigned.apk ./, and runs in the release stage. Cache the .gradle/ directory with a key based on $CI_COMMIT_REF_NAME. Publish the generated app-release-unsigned.apk as an artifact named vplayer-$CI_COMMIT_REF_NAME, including the path app-release-unsigned.apk.",
+  "tags": [
+    "android",
+    "gradle",
+    "apk",
+    "release",
+    "docker-image"
+  ]
+}

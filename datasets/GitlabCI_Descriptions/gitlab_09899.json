@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_09899",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1049,
+  "description": "Create a GitLab CI pipeline with a single build stage, defining variables APT_CACHE_DIR and CARGO_HOME pointing to $CI_PROJECT_DIR/apt and $CI_PROJECT_DIR/cargo. Add a fmt-check job in the build stage using the rustlang/rust:nightly image, which runs rustup component add rustfmt-preview --toolchain nightly then cargo +nightly fmt --all -- --check, and is allowed to fail. Add a rust-latest job that extends a hidden .rust-build-test template, runs on the rust:latest image, uses a cache keyed \"latest\" for apt/, cargo/, and target/ directories, and executes rustc --version, cargo --version, cargo build --verbose, and cargo test --verbose. Add a rust-nightly job similar to rust-latest but using the rustlang/rust:nightly image, cache key \"nightly\", allowed to fail, and runs the same build and test commands. Add a pages job in the build stage, also using rustlang/rust:nightly, allowed to fail, restricted to the master branch, which caches with key \"nightly\", runs cargo doc --document-private-items, moves the generated docs to a public/ folder, creates an index.html redirect to node_amqp/, and publishes the public/ directory as a GitLab Pages artifact.",
+  "tags": [
+    "rust",
+    "cargo",
+    "fmt-check",
+    "pages",
+    "rust-latest",
+    "rust-nightly",
+    "cache",
+    "gitlab-pages",
+    "build"
+  ]
+}

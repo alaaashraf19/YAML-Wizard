@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_16303",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 239,
+  "description": "Create a GitLab CI pipeline using the node Docker image and caching the node_modules/ directory. Define a single stage named test. Add a pages job that runs in the test stage, executes `echo \"USING PRE-BUILT DOCS\"` and `mv docs/ public/`, publishes the public/ folder as a Pages artifact, and has no branch restrictions. Add a test job in the test stage that runs `yarn install` then `yarn test:no-report`. The pipeline should not define any additional services or rules.",
+  "tags": [
+    "node",
+    "yarn",
+    "gitlab-pages",
+    "cache",
+    "pages"
+  ]
+}

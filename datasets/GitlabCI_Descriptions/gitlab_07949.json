@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_07949",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 462,
+  "description": "Create a GitLab CI pipeline using the docker:latest image with a docker:dind service. Define a single stage called build. Add a build job that runs in the build stage only on the master branch and executes: docker login -u \"gitlab-ci-token\" -p \"$CI_BUILD_TOKEN\" $CI_REGISTRY, docker build -t \"$CI_REGISTRY/$PR_OWNER/docker-php\" ., and docker push \"$CI_REGISTRY/$PR_OWNER/docker-php\". Add a build_test job that also runs in the build stage only on the test branch and runs the same docker login and docker build commands (without push). No caches, artifacts, or variables are defined.",
+  "tags": [
+    "docker",
+    "dind",
+    "php",
+    "build",
+    "gitlab-ci"
+  ]
+}

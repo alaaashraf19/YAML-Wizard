@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_16024",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 189,
+  "description": "Create a GitLab CI pipeline that uses the ruby:2.3 Docker image. Set a before_script that runs ruby -v, installs bundler with --no-ri --no-rdoc, and executes bundle install -j $(nproc) --path vendor, and cache the vendor/ruby directory. Define a single rspec job in the default test stage that runs rspec spec. No services, artifacts, or conditional rules are defined.",
+  "tags": [
+    "ruby",
+    "rspec",
+    "bundler",
+    "cache"
+  ]
+}

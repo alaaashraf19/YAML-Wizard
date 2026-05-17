@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_03922",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 291,
+  "description": "Create a GitLab CI pipeline that uses the ruby:2.1 Docker image with a postgres service and caches the vendor/ directory. Define a variable POSTGRES_DB set to ruby-getting-started_test. Add a test job (default stage) that runs apt-get update -qy, apt-get install -y nodejs, bundle install --path vendor, bundle exec rake db:create RAILS_ENV=test, and bundle exec rake test.",
+  "tags": [
+    "ruby",
+    "rails",
+    "postgres",
+    "bundler",
+    "nodejs",
+    "ci"
+  ]
+}

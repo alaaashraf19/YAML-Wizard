@@ -1,0 +1,72 @@
+debian_sid:
+  image: debian:sid
+  only:
+  - master
+  script:
+  - echo -e 'deb http://deb.debian.org/debian unstable main\ndeb-src http://deb.debian.org/debian/
+    unstable main' >> /etc/apt/sources.list
+  - apt-get update
+  - apt-get install -y libglib2.0-dev libusb-1.0 git python3-dev python3-poetry build-essential
+  - git clone --single-branch --branch master https://gitlab.com/expliot_framework/expliot.git
+    expliot-master
+  - cd expliot-master
+  - poetry install
+  stage: installation
+fedora_latest:
+  image: fedora:latest
+  only:
+  - master
+  script:
+  - dnf -y install redhat-rpm-config libusb glib2-devel python3-devel poetry git gcc-c++
+    @development-tools
+  - git clone --single-branch --branch master https://gitlab.com/expliot_framework/expliot.git
+    expliot-master
+  - cd expliot-master
+  - poetry install
+  stage: installation
+pypi:
+  cache: {}
+  image: python:3.11
+  rules:
+  - if: $CI_COMMIT_TAG
+  script:
+  - pip install -U twine poetry
+  - poetry build
+  - twine upload dist/*
+  stage: post
+ruff:
+  image: registry.gitlab.com/pipeline-components/ruff:latest
+  script:
+  - ruff check --output-format=gitlab .
+  stage: linting
+sdist:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - dist/
+  image: python:3.11
+  only:
+  - master
+  script:
+  - pip install -U poetry
+  - poetry build
+  stage: distribution
+stages:
+- linting
+- tests
+- installation
+- distribution
+- post
+ubuntu_latest:
+  image: ubuntu:latest
+  only:
+  - master
+  script:
+  - DEBIAN_FRONTEND=noninteractive apt-get update
+  - DEBIAN_FRONTEND=noninteractive apt-get install -y libglib2.0-dev libusb-1.0 git
+    python3-dev python3-poetry build-essential
+  - git clone --single-branch --branch master https://gitlab.com/expliot_framework/expliot.git
+    expliot-master
+  - cd expliot-master
+  - poetry install
+  stage: installation

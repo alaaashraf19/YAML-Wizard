@@ -1,0 +1,16 @@
+{
+  "sha": "6ff9ccf49ff76534692af5f1da528364f2b4e419b368cea6d68979886b057576",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 11995,
+  "description": "Create a GitHub Actions workflow named Build and Push that builds and uploads Marauder binaries for various targets. Trigger on push to master and on pull requests to master. Use an ubuntu-latest job to check out the repository, install dependencies, configure TFT_eSPI, and compile Marauder for Flipper Zero WiFi Dev Board, OG Marauder, Marauder v6, Marauder Kit, and Marauder Mini. Upload the resulting binaries as artifacts.",
+  "tags": [
+    "arduino",
+    "esp32",
+    "marauder",
+    "github-actions",
+    "ci",
+    "build",
+    "upload"
+  ]
+}

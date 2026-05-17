@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_04471",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 520,
+  "description": "Create a GitLab CI pipeline with two jobs, pages and platformio, both running in the default stage. The pages job runs only on the master branch, executes \"apt-get update && apt-get install -y doxygen\", then \"doxygen doxygen/Doxyfile\", moves the generated HTML with \"mv doxygen/documentation/html/ public/\", and publishes the public/ directory as a Pages artifact. The platformio job runs a before_script that runs \"apt-get update -qq && apt-get install -y -qq python-pip\" followed by \"pip install platformio\", then its script runs \"platformio ci --lib=\".\" --board=nodemcuv2 test/basic/test_main.cpp -O \\\"build_flags = -Werror\\\"\" and \"platformio ci --lib=\".\" --board=esp32 test/basic/test_main.cpp -O \\\"build_flags = -Werror\\\"\". No custom Docker image or services are defined, and the pipeline relies on the default runner image.",
+  "tags": [
+    "pages",
+    "doxygen",
+    "platformio",
+    "arduino",
+    "esp32",
+    "nodemcuv2"
+  ]
+}

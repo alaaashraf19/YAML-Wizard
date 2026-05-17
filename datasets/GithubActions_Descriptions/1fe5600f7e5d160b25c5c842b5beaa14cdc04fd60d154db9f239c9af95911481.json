@@ -1,0 +1,16 @@
+{
+  "sha": "1fe5600f7e5d160b25c5c842b5beaa14cdc04fd60d154db9f239c9af95911481",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1345,
+  "description": "Create a GitHub Actions workflow named Windows_x64 that runs on push and pull request events. The workflow should use an ubuntu-latest environment to check if a build should be skipped, then use an ubuntu-20.04 environment to build the project if not skipped. The build job checks out the repository, installs required packages, configures CMake, builds the project, and uploads the executable and package as artifacts.",
+  "tags": [
+    "windows",
+    "x64",
+    "cmake",
+    "mingw",
+    "ubuntu",
+    "build",
+    "artifacts"
+  ]
+}

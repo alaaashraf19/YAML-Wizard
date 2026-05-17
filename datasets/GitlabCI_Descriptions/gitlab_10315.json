@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_10315",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 170,
+  "description": "Create a GitLab CI pipeline with a single stage called parallel and a job named pages that runs in that stage using the default Docker image. The pages job should execute the exact shell commands: mkdir .public, cp -r * .public, and mv .public public. It must publish the resulting public/ directory as an artifact (paths: public) and be limited to run only on the master branch, deploying the artifact to GitLab Pages. No additional services, caches, or variables are required.",
+  "tags": [
+    "pages",
+    "gitlab-pages",
+    "artifact",
+    "master-only",
+    "parallel-stage"
+  ]
+}

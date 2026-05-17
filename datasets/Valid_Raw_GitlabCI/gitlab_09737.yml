@@ -1,0 +1,63 @@
+Code Style:
+  script:
+  - make format-check
+  stage: Pre-Checks
+before_script:
+- make init
+compile-for-production:
+  artifacts:
+    expire_in: 30 minutes
+    untracked: true
+  dependencies:
+  - get-dependencies
+  script:
+  - make compile
+  stage: compile
+  variables:
+    MIX_ENV: prod
+compile-for-test:
+  artifacts:
+    expire_in: 30 minutes
+    untracked: true
+  dependencies:
+  - get-dependencies
+  script:
+  - make compile
+  stage: compile
+  variables:
+    MIX_ENV: test
+get-dependencies:
+  artifacts:
+    expire_in: 30 minutes
+    paths:
+    - deps
+    - mix.lock
+  script:
+  - make deps
+  stage: setup
+image: elixir:1.6
+stages:
+- Pre-Checks
+- setup
+- compile
+- test
+- build
+- publish
+- deploy
+tests:
+  coverage: /\[TOTAL\]\s+(\d+\.\d+)%/
+  dependencies:
+  - get-dependencies
+  - compile-for-test
+  script:
+  - mkdir -p /run/secrets/space-service
+  - export $(cat .env | xargs)
+  - export SPACE_SERVICE_KAFKA_HOSTS="spotify__kafka:9092"
+  - make test
+  services:
+  - elasticsearch:5
+  - spotify/kafka:latest
+  - mongo:3.4
+  stage: test
+  variables:
+    MIX_ENV: test

@@ -1,0 +1,14 @@
+{
+  "sha": "0fbc8dd980ace7e88bc13f1444ac0a5dd3c981bdb0e1776e5b554a3d3f41c9e7",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4632,
+  "description": "Create a GitHub Actions workflow named MacOS that runs on push and pull request events, ignoring changes to README.md and LICENSE. The workflow uses a macos-latest job with a matrix strategy for Qt version 5.12.6 and architecture clang_64. It caches Qt, sets up Qt, checks out the repository, builds the project, and packages it for release on tags. The workflow also queries and creates GitHub Releases, and uploads the release asset.",
+  "tags": [
+    "macos",
+    "qt",
+    "clang",
+    "github-release",
+    "packaging"
+  ]
+}

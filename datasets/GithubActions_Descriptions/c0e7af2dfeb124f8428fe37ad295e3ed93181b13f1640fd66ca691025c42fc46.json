@@ -1,0 +1,16 @@
+{
+  "sha": "c0e7af2dfeb124f8428fe37ad295e3ed93181b13f1640fd66ca691025c42fc46",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2252,
+  "description": "Create a reusable GitHub Actions workflow named Build that runs on a ubuntu-latest environment with a Fedora container matrix for versions 41, 42, and 43. For each Fedora version, update and upgrade packages, install dependencies, check out the repository with submodules, configure git safety, generate the project with cmake, compile and deploy the project, and upload the resulting RPM packages as artifacts.",
+  "tags": [
+    "fedora",
+    "cmake",
+    "rpm",
+    "github-actions",
+    "ubuntu",
+    "containers",
+    "matrix-build"
+  ]
+}

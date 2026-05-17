@@ -1,0 +1,18 @@
+{
+  "sha": "60a3adf9a4246d8929ddde56b6d8d351f52f94d5710a4b010b9afaffa20ecb76",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1610,
+  "description": "Create a GitHub Actions workflow named push CI CD that runs on every push to the master branch. The workflow consists of two jobs: testing_job and build_and_publish_job. The testing_job runs on an ubuntu-latest environment with a matrix of Python versions 3.9, 3.10, and 3.11, and performs linting and testing with flake8 and pytest. The build_and_publish_job runs on ubuntu-latest, sets up Python 3.x, installs dependencies, builds a package with python -m build, and publishes it to PyPI using a token from secrets.",
+  "tags": [
+    "python",
+    "ci",
+    "cd",
+    "testing",
+    "linting",
+    "pytest",
+    "flake8",
+    "pypi",
+    "build"
+  ]
+}

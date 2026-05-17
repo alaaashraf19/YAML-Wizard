@@ -1,0 +1,19 @@
+before_script:
+- apt-get -qq update
+- apt-get install -y libmagic-dev libpng-dev libjpeg-dev libtiff-dev libheif-dev
+build:
+  script:
+  - go build ./...
+  stage: build
+image: golang:1.17
+stages:
+- build
+- test
+test:
+  script:
+  - test -z "$(gofmt -l . | tee /dev/stderr)"
+  - go test ./...
+  - curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh
+    | sh -s -- -b $(go env GOPATH)/bin v1.43.0
+  - golangci-lint run -v
+  stage: test

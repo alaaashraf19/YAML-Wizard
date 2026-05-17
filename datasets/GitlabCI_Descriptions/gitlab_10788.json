@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_10788",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1705,
+  "description": "Create a GitLab CI pipeline using the maven:3.5.4-jdk-8-alpine Docker image, with a cache of .maven keyed by $CI_COMMIT_REF_NAME, and a before_script that sets REVISION_STABLE from CI_COMMIT_TAG, REVISION_UNSTABLE from CI_COMMIT_REF_SLUG+sha.${CI_COMMIT_SHA:0:8}, and exports MAVEN_USER_HOME to `pwd`/.maven. Define two stages, code_analysis and build. In the build stage add a build:stable job that runs only on tags matching /^\\d+\\.\\d+\\.\\d+-rc\\.[0-9]+$/ or /^\\d+\\.\\d+\\.\\d+$/, executes mvn install -B -DskipTests=true -Dmaven.javadoc.skip=true -Drevision=$REVISION_STABLE, and stores artifacts for 10 minutes. Also add a build:unstable job that runs only on the develop branch, runs mvn install -B -DskipTests=true -Dmaven.javadoc.skip=true -Drevision=$REVISION_UNSTABLE, and stores artifacts for 10 minutes. In the code_analysis stage add a sonarqube:issues job that runs only on develop, runs mvn --batch-mode verify sonar:sonar -DskipTests=true -Drevision=$REVISION_UNSTABLE -Dsonar.host.url=$SONAR_URL -Dsonar.login=$SONAR_LOGIN -Dsonar.gitlab.project_id=$CI_PROJECT_PATH -Dsonar.gitlab.ref_name=$CI_COMMIT_REF_NAME -Dsonar.gitlab.commit_sha=$CI_COMMIT_SHA -Dsonar.gitlab.failure_notification_mode=exit-code -Dsonar.analysis.mode=issues. Also add a sonarqube:publish job that runs only on tag or rc patterns, runs mvn --batch-mode verify sonar:sonar -Drevision=$REVISION_STABLE -Dsonar.host.url=$SONAR_URL -Dsonar.login=$SONAR_LOGIN -Dsonar.gitlab.project_id=$CI_PROJECT_PATH -Dsonar.gitlab.ref_name=$CI_COMMIT_REF_NAME -Dsonar.gitlab.commit_sha=$CI_COMMIT_SHA -Dsonar.gitlab.failure_notification_mode=exit-code -Dsonar.analysis.mode=publish.",
+  "tags": [
+    "maven",
+    "sonarqube",
+    "code-analysis",
+    "build",
+    "docker",
+    "cache",
+    "ci"
+  ]
+}

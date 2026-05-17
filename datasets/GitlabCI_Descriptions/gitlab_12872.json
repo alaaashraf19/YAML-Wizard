@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_12872",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1718,
+  "description": "Create a GitLab CI pipeline that uses the rust:latest Docker image by default, defines APT_CACHE_DIR and CARGO_HOME variables, runs a before_script to apt-get update and install build-essential and cmake, and caches the $APT_CACHE_DIR and $CARGO_HOME directories. Define three stages: analysis, test, and docs. In the analysis stage add a clippy job (only on tags, master, and merge_requests) that runs rustup component add clippy, cargo clippy --version, and cargo clippy --all-targets --all-features, and a format job (allow_failure, image rustlang/rust:nightly-slim, same only list) that runs rustup component add rustfmt, cargo fmt --version, and cargo fmt --package nng -- --check. In the test stage add a minimum-rust-version job (image rust:1.36-slim-buster), a nightly job (allow_failure, image rustlang/rust:nightly-slim), and a stable job (default image) each executing rustc --version, cargo --version, and cargo test --all --all-features --verbose, all limited to tags, master, and merge_requests. In the docs stage add an examples job (only tags, master, merge_requests) that runs cargo build --examples, and a pages job (only master) that runs cargo doc --no-deps, moves the generated docs to a public directory, creates a redirect index.html with echo '<meta http-equiv=\"refresh\" content=\"0; url=nng\">' > public/index.html, and publishes the public/ folder as an artifact.",
+  "tags": [
+    "rust",
+    "cargo",
+    "clippy",
+    "rustfmt",
+    "pages",
+    "docker"
+  ]
+}

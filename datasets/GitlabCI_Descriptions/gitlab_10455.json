@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_10455",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 235,
+  "description": "Create a GitLab CI pipeline that defines a deploy stage and a pages job. The pages job runs only on the master branch, uses the default runner image, and executes the exact shell commands: curl -L https://github.com/getzola/zola/releases/download/v0.5.1/zola-v0.5.1-x86_64-unknown-linux-gnu.tar.gz | tar xzf - and ./zola build. After building, it stores the generated public/ directory as a GitLab Pages artifact. No services, caches, or extra variables are required.",
+  "tags": [
+    "zola",
+    "gitlab-pages",
+    "deploy",
+    "curl",
+    "tar"
+  ]
+}

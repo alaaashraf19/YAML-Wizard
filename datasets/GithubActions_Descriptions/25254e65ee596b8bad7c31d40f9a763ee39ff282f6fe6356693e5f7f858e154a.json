@@ -1,0 +1,15 @@
+{
+  "sha": "25254e65ee596b8bad7c31d40f9a763ee39ff282f6fe6356693e5f7f858e154a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2565,
+  "description": "Create a GitHub Actions workflow named linters that runs on push to main and on pull requests to main. The workflow should concurrently run three jobs: rubocop, clang_format, and clang_static_analyzer, each on an ubuntu-24.04 environment, and cancel any in-progress runs. The rubocop job should set up Ruby 3.3, install dependencies with bundle install, and run rubocop. The clang_format job should install clang-format-18, and run clang-format checks. The clang_static_analyzer job should set up Ruby 3.3, install clang-18 and clang-tools-18, use ccache, run scan build, and upload a report on failure.",
+  "tags": [
+    "ruby",
+    "linters",
+    "clang",
+    "ubuntu",
+    "rubocop",
+    "static-analysis"
+  ]
+}

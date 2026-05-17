@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_06830",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 918,
+  "description": "Create a GitLab CI pipeline using the docker:latest image with a docker:dind service. Define three stages: build, test, publish, and set the variables PIPELINE_IMAGE_NAME and RELEASE_IMAGE_NAME as registry paths with the commit ref and latest tag. In the build stage add a build_image job that runs the before_script commands (docker info, docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com, apk update, apk upgrade, apk add python python-dev py-pip build-base, pip install requests) then executes docker build -t $PIPELINE_IMAGE_NAME . and docker push $PIPELINE_IMAGE_NAME. In the test stage add a run_tests job that pulls $PIPELINE_IMAGE_NAME and runs docker pull $PIPELINE_IMAGE_NAME followed by docker run -d -p 5000:5000 $PIPELINE_IMAGE_NAME python test.py. In the publish stage add a push_to_registry job that only runs on the master branch and runs docker pull $PIPELINE_IMAGE_NAME, docker tag $PIPELINE_IMAGE_NAME $RELEASE_IMAGE_NAME, and docker push $RELEASE_IMAGE_NAME.",
+  "tags": [
+    "docker",
+    "dind",
+    "build",
+    "test",
+    "publish",
+    "python",
+    "apk",
+    "pip",
+    "gitlab-ci-token"
+  ]
+}

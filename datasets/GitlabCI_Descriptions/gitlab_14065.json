@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_14065",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 295,
+  "description": "Create a GitLab CI pipeline with a single build stage containing a build_project job. Use the default runner image and include a before_script that runs 'carthage bootstrap'. In the build stage, the job should execute 'xcodebuild clean -project NoMADLogin-AD.xcodeproj -scheme NoMADLoginAD | xcpretty' followed by 'xcodebuild -project NoMADLogin-AD.xcodeproj -scheme NoMADLoginAD | xcpretty -s', and archive all untracked files as artifacts. No caches, services, variables, or conditional rules are required.",
+  "tags": [
+    "carthage",
+    "xcodebuild",
+    "xcpretty",
+    "ios",
+    "build"
+  ]
+}

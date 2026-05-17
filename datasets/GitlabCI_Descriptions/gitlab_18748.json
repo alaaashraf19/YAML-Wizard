@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_18748",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 433,
+  "description": "Create a GitLab CI pipeline using the alpine:3.4 Docker image with a before_script that runs `apk update && apk add openssl`, downloads Hugo v0.16 via `wget https://github.com/spf13/hugo/releases/download/v0.16/hugo_0.16_linux-64bit.tgz`, verifies the file with `echo \"37ee91ab3469afbf7602a091d466dfa5  hugo_0.16_linux-64bit.tgz\" | md5sum -c`, extracts it, copies the `hugo` binary to `/usr/bin`, and prints the version with `hugo version`. Add a `pages` job in the default test stage that executes `hugo`, publishes the `public/` directory as a Pages artifact, and runs only on the `master` branch. Add a `test` job also in the test stage that runs `hugo` but is excluded from the `master` branch. No caches, services, or additional deployment targets are defined.",
+  "tags": [
+    "alpine",
+    "hugo",
+    "gitlab-pages",
+    "static-site",
+    "ci"
+  ]
+}

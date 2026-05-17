@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_08075",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2289,
+  "description": "Create a GitLab CI pipeline with stages build, test, deploy, and cleanup, and define global variables DISTRO_RELEASE=7, DOCKER_NAMESPACE=gioxa, GIT_CACHE_STRATEGY=pull, ODAGRUN_IMAGE_LICENSES=MIT, ODAGRUN_IMAGE_REFNAME=ruby-rpm-build-centos, ODAGRUN_IMAGE_TITLE=CentOS 7 docker image with all dependencies to build and package ruby with rpmbuild., ODAGRUN_IMAGE_VENDOR=Gioxa Ltd, ODAGRUN_POD_SIZE=micro. In the build stage add a build_base job that runs on the gioxa/imagebuilder-c7 image (tagged odagrun), retries once, sets OS_CONFIG=make_os.conf, executes make_os, then runs registry_push --rootfs --ISR --reference=$CI_PIPELINE_ID --config=docker_config.yml, and uses the variables GIT_CACHE_STRATEGY=push-pull, ODAGRUN_POD_SIZE=medium, and a complex WORK_SPACES definition. In the test stage add a test_fpm job that runs on the ImageStream:$CI_PIPELINE_ID image (tagged odagrun), with GIT_STRATEGY=none, and executes echo $PATH, uname -a, and rpmbuild --version. In the deploy stage add a push-image-tags job that runs on the scratch image (tagged odagrun), only on the master branch, with environment production, and runs copy commands to load DOCKER_CONFIG_YML, MAKE_OS_CONF, and ODAGRUN_IMAGE_DESCRIPTION from files, then DockerHub_set_description, registry_push --from_ISR --from_reference=$CI_PIPELINE_ID --image=$DOCKER_NAMESPACE/$ODAGRUN_IMAGE_REFNAME:$ODAGRUN_SHORT_DATE --skip_label, registry_tag_image to tag latest, and MicroBadger_Update. In the cleanup stage add a cleanup job that runs on the scratch image (tagged odagrun), always runs (when: always), allows failure, sets GIT_STRATEGY=none, and executes ImageStream_delete --name=\"\" --allow-fail.",
+  "tags": [
+    "centos7",
+    "ruby-rpm",
+    "rpmbuild",
+    "docker-imagebuilder",
+    "gitlab-ci",
+    "odagrun"
+  ]
+}

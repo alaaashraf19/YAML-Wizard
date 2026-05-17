@@ -1,0 +1,14 @@
+{
+  "sha": "31d3f83491a239b696986bd82ebb209e667add2759121b3895c4a129c2991037",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 695,
+  "description": "Create a GitHub Actions workflow named Release that triggers on push events with tags matching 'v*'. The workflow should run on an ubuntu-latest environment with write permissions for ID tokens and repository contents. It should set up Python 3.12, use uv to build the project, publish the distributions to PyPI, and create a GitHub release with auto-generated notes and attached distribution files.",
+  "tags": [
+    "python",
+    "release",
+    "pypi",
+    "uv",
+    "github-release"
+  ]
+}

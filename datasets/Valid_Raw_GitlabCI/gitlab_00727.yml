@@ -1,0 +1,14 @@
+before_script:
+- python -V
+cache:
+  key: $CI_PROJECT_ID
+  paths:
+  - $CI_PROJECT_DIR/pip-cache
+image: python:3.6
+test:
+  script:
+  - pip install -U pip setuptools
+  - pip install -e .[test]
+  - tox
+variables:
+  PIP_CACHE_DIR: $CI_PROJECT_DIR/pip-cache

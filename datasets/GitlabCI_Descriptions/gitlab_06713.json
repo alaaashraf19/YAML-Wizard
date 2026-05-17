@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_06713",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 744,
+  "description": "Create a GitLab CI pipeline that uses the ubuntu:wily Docker image and runs a before_script installing build-essential, pkg-config, cmake and libusb-1.0-0-dev via `apt-get -y update >/dev/null` and `apt-get -y install build-essential pkg-config cmake libusb-1.0-0-dev >/dev/null` for all jobs. Define two stages named build and deploy_docs. In the build stage add a build_job that executes `mkdir build`, `cd build`, `cmake -DBUILD_SCRAW_INFO=ON -DBUILD_DOCS=OFF ..`, and `make`. In the deploy_docs stage add a pages job that runs `apt-get -y install doxygen emacs-nox >/dev/null`, then `mkdir build`, `cd build`, `cmake -DBUILD_SCRAW_INFO=OFF -DBUILD_DOCS=ON ..`, `make doc`, moves the generated HTML with `mv build/doc/html public`, processes protocol files with `cd protocol`, `./export.el`, `mkdir protocol`, `mv protocol.html protocol/index.html`, `cp -r styles protocol/`, then `cd ..` and `mv protocol/protocol public/`, and finally publishes the `public/` directory as a GitLab Pages artifact, but only when the pipeline runs on the master branch.",
+  "tags": [
+    "ubuntu",
+    "cmake",
+    "make",
+    "doxygen",
+    "gitlab-pages",
+    "documentation"
+  ]
+}

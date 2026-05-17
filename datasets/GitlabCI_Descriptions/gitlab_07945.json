@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_07945",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 3813,
+  "description": "Create a GitLab CI pipeline with stages build, test, documentation, deploy and trigger, using the alpine image as default and docker:dind service for Docker jobs. In the build stage define docker_clamd, docker_fuglu, and docker_spamd jobs that each use the docker image, run echo \"Building ... image\", docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY, docker pull $CONTAINER_* || true, docker build (docker_fuglu uses a conditional sh -c to choose between --cache-from $CONTAINER_TEST_IMAGE and --no-cache --pull based on $NOCACHE) with appropriate Dockerfile and tag, and docker push the resulting image; docker_fuglu also writes the commit SHA to fuglu/src/fuglu.sha. Add a docker_deploy_latest job in the deploy stage that runs only on the master branch, echoes the release image name, logs in, pulls $CONTAINER_TEST_IMAGE || true, tags it as $CONTAINER_RELEASE_IMAGE and pushes it. In the test stage add unittests, integrationtests, isolated, and the included SAST job, each using $CONTAINER_TEST_IMAGE, running /fugluenv/bin/python3 -m pytest with --junitxml to generate unit.xml, integration.xml, or isolated.xml, publishing those JUnit reports as artifacts, and starting clamd and spamd containers as services (unittests also start redis:latest and mariadb:latest). Add a pages job in the documentation stage that runs only on master, develop, or milter, creates a public directory, runs a custom Python script to generate plugin docs, builds Sphinx HTML, moves the output to public, and publishes the public/ directory as a GitLab Pages artifact. All Docker jobs use the docker:dind service and the variables CONTAINER_CLAMD, CONTAINER_SPAMD, CONTAINER_TEST_IMAGE, CONTAINER_RELEASE_IMAGE, CONTAINER_RELEASE_IMAGE, DOCKER_TLS_CERTDIR, and database credentials are defined.",
+  "tags": [
+    "docker",
+    "dind",
+    "gitlab-ci",
+    "pytest",
+    "sast",
+    "pages",
+    "sphinx",
+    "clamd",
+    "spamd",
+    "fuglu"
+  ]
+}

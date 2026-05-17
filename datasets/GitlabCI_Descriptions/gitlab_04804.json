@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_04804",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 954,
+  "description": "Create a GitLab CI pipeline using the python:latest Docker image with two stages: test and deploy. In the test stage add a unittesting job that runs pip install -r requirements.txt, pip install -r dev-requirements.txt, coverage run setup.py test, coverage html, and coverage report, and stores the coverage_html_report/ directory as an artifact. In the deploy stage add a pages job that runs python -V, pip install mkdocs mkdocs-material, mkdocs build, and moves coverage_html_report/ to public/, publishes the public/ directory as a pages artifact, and runs only on tags. Also in the deploy stage add a pypi job that runs python -V, apt update && apt -y install pandoc, pip install pypandoc pandoc, creates a ~/.pypirc file using the PYPI_USER and PYPI_PASSWORD variables, executes python setup.py check sdist upload -r pypi, then removes the .pypirc file, and runs only on tags to publish the package to PyPI.",
+  "tags": [
+    "python",
+    "mkdocs",
+    "coverage",
+    "gitlab-pages",
+    "pypi",
+    "pandoc",
+    "unittest",
+    "deploy"
+  ]
+}

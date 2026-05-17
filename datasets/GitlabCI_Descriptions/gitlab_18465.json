@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_18465",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1170,
+  "description": "Create a GitLab CI pipeline with a global before_script that creates a _ccache directory and sets CCACHE_BASEDIR and CCACHE_DIR to the workspace, and cache the _ccache/ path. Define two stages: build and release. In the build stage add a job named build that uses the archlinux:base image and runs the exact commands: pacman -Syy --noconfirm glibc libwnck3 gtk3 vala cmake git base-devel clang ninja xfce4-panel mate-panel budgie-desktop gobject-introspection meson; git clone https://gitlab.com/vala-panel-project/cmake-vala.git; cd cmake-vala && cmake . -DCMAKE_INSTALL_PREFIX=/usr -GNinja && ninja install && cd .. && rm -rf cmake-vala; git clone https://gitlab.com/vala-panel-project/vala-panel.git; meson --prefix=/usr vp-build vala-panel && meson install -C vp-build && rm -rf vala-panel && rm -rf vp-build; mkdir build && cd build && cmake .. -DCMAKE_INSTALL_PREFIX=/usr -GNinja; ninja; ninja install; ninja dist, and publish any xfce4-sntray-plugin*.tar.xz files from the build directory as an artifact that expires in one week. In the release stage add a job named release-main that runs only on tags, uses the alpine:edge image, and executes: apk add --no-cache python3 py3-pip; pip3 install gitlab_release; python3 -m gitlab_release ${PRIVATE_TOKEN} build/xfce4-sntray-plugin*.tar.xz to upload the artifact to a GitLab release.",
+  "tags": [
+    "archlinux",
+    "ccache",
+    "pacman",
+    "cmake",
+    "meson",
+    "ninja",
+    "alpine",
+    "gitlab-release"
+  ]
+}

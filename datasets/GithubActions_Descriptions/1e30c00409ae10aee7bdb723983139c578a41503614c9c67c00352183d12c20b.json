@@ -1,0 +1,15 @@
+{
+  "sha": "1e30c00409ae10aee7bdb723983139c578a41503614c9c67c00352183d12c20b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3099,
+  "description": "Create a GitHub Actions workflow named linux that runs on push to the master branch, excluding README.md, LICENSE.md, CONTRIBUTING.md, and CODE_OF_CONDUCT.md. The workflow should build and test the project on ubuntu20.04 for x64 architecture in both release and debug modes. It checks out the repository and a submodule, installs dependencies, builds the project, runs tests, creates deb packages, and uploads the artifacts.",
+  "tags": [
+    "linux",
+    "ubuntu",
+    "cmake",
+    "vcpkg",
+    "multi-os",
+    "matrix-build"
+  ]
+}

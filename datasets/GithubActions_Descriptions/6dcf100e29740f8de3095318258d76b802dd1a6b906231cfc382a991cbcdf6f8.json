@@ -1,0 +1,16 @@
+{
+  "sha": "6dcf100e29740f8de3095318258d76b802dd1a6b906231cfc382a991cbcdf6f8",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2002,
+  "description": "Create a GitHub Actions workflow named build that triggers on push and pull request events. Run four parallel jobs on different environments: msvc, mingw, linux, and macos. For each job, check out the repository with recursive submodules, then perform environment-specific initialization and compilation steps using tools like ninja, choco, msys2, apt-get, and brew.",
+  "tags": [
+    "multi-os",
+    "ninja",
+    "msvc",
+    "mingw",
+    "linux",
+    "macos",
+    "ci"
+  ]
+}

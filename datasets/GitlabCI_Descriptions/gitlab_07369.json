@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_07369",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 535,
+  "description": "Create a GitLab CI pipeline using the node:lts-jessie Docker image. Define a .base template that caches node_modules/, runs before_script \"npm i -g yarn@^1.9\" and \"yarn\", and declares artifacts paths dist/ and .quasar/. Add three jobs: lint in the test stage extending .base and executing \"yarn lint\"; build in the build stage extending .base and executing \"yarn build\"; and pages in the deploy stage extending .base, limited to the master branch and excluding schedules, running \"PUBLIC=vuenote yarn build\", then \"mkdir public\" and \"mv dist/pwa-mat/* public\", and publishing the public/ directory as an artifact while overriding artifacts to only include public/.",
+  "tags": [
+    "node",
+    "yarn",
+    "npm",
+    "quasar",
+    "gitlab-pages",
+    "lint",
+    "build",
+    "deploy"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_09983",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1454,
+  "description": "Create a GitLab CI pipeline using the docker:stable image with stages build, cleanup, publish, and deploy, and a before_script that exports IMAGE_TAG from the branch name and date, runs uname -a, and shows docker version. In the build stage add a build:master job that runs only on the master branch and executes docker build -f Dockerfile --pull --no-cache -t \"${CI_REGISTRY_IMAGE}/unifi:x86_64-$IMAGE_TAG\" .; also add a build:test job that runs on all non‑master branches and runs docker build -f Dockerfile -t \"huygens/test/unifi:$IMAGE_TAG\" . . In the cleanup stage add a clean:test job that runs on non‑master branches, is manual, and runs docker rmi \"huygens/test/unifi:$IMAGE_TAG\" . In the deploy stage add a deploy_example job that runs only on master and runs apk add --no-cache py2-pip, pip install docker-compose, docker login -u \"gitlab-ci-token\" -p \"$CI_JOB_TOKEN\" $CI_REGISTRY, docker pull \"${CI_REGISTRY_IMAGE}/unifi:x86_64-$IMAGE_TAG\", docker pull \"${CI_REGISTRY_IMAGE}/unifi:latest\", and IMAGE_TAG=x86_64-$IMAGE_TAG docker-compose -f docker-compose.yml up -d . In the publish stage add a push job that runs only on master, tags the built image as latest with docker tag \"${CI_REGISTRY_IMAGE}/unifi:x86_64-$IMAGE_TAG\" \"${CI_REGISTRY_IMAGE}/unifi:latest\", logs in to the registry, and pushes both the versioned and latest images.",
+  "tags": [
+    "docker",
+    "docker-compose",
+    "gitlab-registry",
+    "unifi",
+    "ci-pipeline"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "938359a73df18a17e3f7e690186a2eed49796e6e2f63dfd35aa71a2b1c66c89c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1265,
+  "description": "Create a GitHub Actions workflow named Tests that runs on every push and pull request. Use a matrix job on ubuntu-latest to test multiple Python versions, checking out the repository, setting up Python, installing dependencies, running tests with coverage, and reporting to Coveralls. Have a second job to finalize the Coveralls report after the test job completes.",
+  "tags": [
+    "python",
+    "tests",
+    "coveralls",
+    "matrix",
+    "ubuntu"
+  ]
+}

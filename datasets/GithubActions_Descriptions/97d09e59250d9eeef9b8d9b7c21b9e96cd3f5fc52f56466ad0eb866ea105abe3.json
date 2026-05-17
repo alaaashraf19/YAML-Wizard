@@ -1,0 +1,14 @@
+{
+  "sha": "97d09e59250d9eeef9b8d9b7c21b9e96cd3f5fc52f56466ad0eb866ea105abe3",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1903,
+  "description": "Create a scheduled GitHub Actions workflow named 'Test: other' that runs on a cron schedule from Monday to Friday at 21:00 and can be manually triggered. The workflow uses an ubuntu-latest job with a matrix strategy to test different modes and test directories. It checks out two repositories, sets up a ccache directory, restores the ccache, and then installs packages, builds the project, and runs tests for each test directory.",
+  "tags": [
+    "ubuntu",
+    "scheduled",
+    "tests",
+    "matrix",
+    "ccache"
+  ]
+}

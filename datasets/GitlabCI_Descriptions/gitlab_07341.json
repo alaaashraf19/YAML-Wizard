@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_07341",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 323,
+  "description": "Create a GitLab CI pipeline that uses the danlynn/ember-cli:2.18.0 Docker image and runs npm install as a before_script for all jobs. Define two stages, test and deploy. In the test stage add a test job that runs ember test on a runner tagged docker. In the deploy stage add a deploy job that runs only for Git tags, is manual, sets the production environment, writes the $NPM_CREDENTIALS secret to ~/.npmrc and executes npm publish, also runs on a docker‑tagged runner.",
+  "tags": [
+    "ember",
+    "npm",
+    "docker",
+    "gitlab-ci",
+    "manual-deploy",
+    "test"
+  ]
+}

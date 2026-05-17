@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_17921",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 228,
+  "description": "Create a GitLab CI pipeline that uses the perl:5.14 Docker image. Include a before_script that runs `curl -L https://cpanmin.us | perl - App::cpanminus`, then `cpanm Carton` and `carton install`. Cache the directories `local/` and `/usr/lib/perl/`. Define a single stage called build and a job named job1 in that stage that executes `carton bundle`. No services, artifacts, or special rules are needed.",
+  "tags": [
+    "perl",
+    "cpanminus",
+    "carton",
+    "build",
+    "cache"
+  ]
+}

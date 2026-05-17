@@ -1,0 +1,251 @@
+name: RaZ
+
+on: [push, pull_request]
+
+env:
+  build_type: Debug
+
+jobs:
+  #########
+  # Linux #
+  #########
+
+  linux:
+    name: Linux (${{ matrix.compiler.c }})
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler:
+          - { c: gcc, cpp: g++ }
+          - { c: clang, cpp: clang++ }
+
+    steps:
+    - uses: actions/checkout@v2
+
+    # Defining the timezone to Europe/Paris, which is required by apt (Ubuntu 20.04):
+    #   sudo ln -snf /usr/share/zoneinfo/Europe/Paris /etc/localtime && echo Europe/Paris > /etc/timezone
+    # Installing the needed packages:
+    #   - GLEW & X11 as graphical dependencies
+    #   - Lcov to output code coverage
+    #   - Doxygen & Dot to generate the documentation (python3-* from Ubuntu 20.04 onwards)
+    #   - OpenAL-soft to handle the audio part
+    #   - Xvfb to launch a headless server (allows GL context initialisation without a screen)
+    - name: Packages installation
+      run: |
+        sudo apt install -y --no-install-recommends \
+          libglew-dev libxi-dev libxcursor-dev libxrandr-dev libxinerama-dev libxxf86vm-dev \
+          lcov \
+          doxygen python-pydot python-pydot-ng \
+          libopenal-dev \
+          xvfb
+
+    # Installing the FBX SDK (in /usr)
+    # The installation asks for software user agreement (send 'yes'), then afterwards if the README file should be opened (send 'n')
+    #- name: FBX SDK setup
+    #  run: |
+    #    wget http://download.autodesk.com/us/fbx/2019/2019.0/fbx20190_fbxsdk_linux.tar.gz -O ./fbx_sdk.tar.gz &&
+    #    tar xvf ./fbx_sdk.tar.gz &&
+    #    chmod +x ./fbx20190_fbxsdk_linux &&
+    #    printf 'yes\nn' | sudo ./fbx20190_fbxsdk_linux /usr
+
+    - name: Build setup
+      run: cmake -E make_directory ${{ runner.workspace }}/build-${{ matrix.compiler.c }}
+
+    - name: Configuration
+      shell: bash
+      working-directory: ${{ runner.workspace }}/build-${{ matrix.compiler.c }}
+      run: |
+        cmake -G "Unix Makefiles" -DCMAKE_C_COMPILER=${{ matrix.compiler.c }} -DCMAKE_CXX_COMPILER=${{ matrix.compiler.cpp }} \
+                                  -DCMAKE_BUILD_TYPE=$build_type \
+                                  -DRAZ_BUILD_EXAMPLES=ON -DRAZ_GEN_DOC=ON -DRAZ_USE_FBX=OFF \
+                                  -DRAZ_BUILD_TESTS=ON -DRAZ_ENABLE_COVERAGE=ON -DSKIP_RENDERER_ERRORS=ON \
+                                  -DENABLE_DEBUG_INFO=ON \
+                                  $GITHUB_WORKSPACE &&
+        cmake --build . --target RaZ_PrintDebugInfo
+
+    - name: Build
+      shell: bash
+      working-directory: ${{ runner.workspace }}/build-${{ matrix.compiler.c }}
+      run: cmake --build . --config $build_type
+
+    - name: Test
+      shell: bash
+      working-directory: ${{ runner.workspace }}/build-${{ matrix.compiler.c }}
+      run: ALSOFT_DRIVERS=null xvfb-run -a --server-args='-screen 0 1280x720x16' ./tests/RaZ_Tests
+
+    # Preparing code coverage; only done with GCC
+    - name: Coverage setup
+      if: matrix.compiler.c == 'gcc'
+      working-directory: ${{ runner.workspace }}/build-${{ matrix.compiler.c }}
+      run: |
+        lcov -d ./CMakeFiles/RaZ.dir/src/ -c -o coverage.info &&
+        lcov -r coverage.info '/usr/*' -o coverage.info &&
+        lcov -l coverage.info
+
+    # Processing code coverage; only done with GCC
+    - name: Coverage processing
+      if: matrix.compiler.c == 'gcc'
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        flag-name: github-actions-${{ github.run_id }}
+        path-to-lcov: ${{ runner.workspace }}/build-${{ matrix.compiler.c }}/coverage.info
+
+  ###########
+  # Windows #
+  ###########
+
+  windows:
+    name: Windows (${{ matrix.compiler.c }})
+    runs-on: windows-2016
+
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler:
+          - { c: cl, cpp: cl }
+
+    steps:
+    - uses: actions/checkout@v2
+
+      # Downloading & unpacking OpenAL
+    - name: Build setup
+      run: |
+        curl --silent https://www.openal-soft.org/openal-binaries/openal-soft-1.20.1-bin.zip -O &&
+        7z x openal-soft-1.20.1-bin.zip &&
+        mv openal-soft-1.20.1-bin C:/OpenAL;
+        cmake -E make_directory ${{ runner.workspace }}/build-${{ matrix.compiler.c }}
+
+    - name: Configuration
+      shell: bash
+      working-directory: ${{ runner.workspace }}/build-${{ matrix.compiler.c }}
+      run: |
+        cmake -G "Visual Studio 15 2017" -A x64 -DCMAKE_BUILD_TYPE=$build_type \
+                                                -DRAZ_BUILD_EXAMPLES=ON -DRAZ_GEN_DOC=OFF -DRAZ_USE_FBX=OFF \
+                                                -DRAZ_BUILD_TESTS=ON -DRAZ_ENABLE_COVERAGE=OFF -DSKIP_RENDERER_ERRORS=ON \
+                                                -DENABLE_DEBUG_INFO=ON \
+                                                $GITHUB_WORKSPACE &&
+        cmake --build . --target RaZ_PrintDebugInfo
+
+    - name: Build
+      shell: bash
+      working-directory: ${{ runner.workspace }}/build-${{ matrix.compiler.c }}
+      run: cmake --build . --config $build_type
+
+  #########
+  # macOS #
+  #########
+
+  macos:
+    name: macOS (${{ matrix.compiler.c }})
+    runs-on: macos-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler:
+          - { c: clang, cpp: clang++ }
+
+    steps:
+    - uses: actions/checkout@v2
+
+    # Install OpenAL-soft to handle the audio part
+    - name: Packages installation
+      run: HOMEBREW_NO_AUTO_UPDATE=1 brew install openal-soft
+
+    - name: Build setup
+      run: cmake -E make_directory ${{ runner.workspace }}/build-${{ matrix.compiler.c }}
+
+    - name: Configuration
+      shell: bash
+      working-directory: ${{ runner.workspace }}/build-${{ matrix.compiler.c }}
+      run: |
+        cmake -DCMAKE_C_COMPILER=${{ matrix.compiler.c }} -DCMAKE_CXX_COMPILER=${{ matrix.compiler.cpp }} \
+              -DCMAKE_BUILD_TYPE=$build_type \
+              -DRAZ_BUILD_EXAMPLES=ON -DRAZ_GEN_DOC=OFF -DRAZ_USE_FBX=OFF \
+              -DRAZ_BUILD_TESTS=ON -DRAZ_ENABLE_COVERAGE=OFF -DSKIP_RENDERER_ERRORS=ON \
+              -DENABLE_DEBUG_INFO=ON \
+              $GITHUB_WORKSPACE &&
+        cmake --build . --target RaZ_PrintDebugInfo
+
+    - name: Build
+      working-directory: ${{ runner.workspace }}/build-${{ matrix.compiler.c }}
+      shell: bash
+      run: cmake --build . --config $build_type
+
+  ##############
+  # Emscripten #
+  ##############
+
+  emscripten:
+    name: Emscripten (${{ matrix.compiler.c }})
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler:
+          - { c: emcc, cpp: em++ }
+
+    steps:
+      - uses: actions/checkout@v2
+
+      # Defining the timezone to Europe/Paris, which is required by apt (Ubuntu 20.04):
+      #   sudo ln -snf /usr/share/zoneinfo/Europe/Paris /etc/localtime && echo Europe/Paris > /etc/timezone
+      # Updating packages' repo & installing only the needed packages:
+      #   - GL & X11 as needed graphical dependencies
+      #   - OpenAL-soft to handle the audio part
+      - name: Packages installation
+        run: |
+          sudo apt install -y --no-install-recommends \
+            libglew-dev libxi-dev libxcursor-dev libxrandr-dev libxinerama-dev libxxf86vm-dev \
+            libopenal-dev
+
+      #- name: FBX SDK setup
+      #  run: |
+      #    wget http://download.autodesk.com/us/fbx/2019/2019.0/fbx20190_fbxsdk_linux.tar.gz -O ./fbx_sdk.tar.gz &&
+      #    tar xvf ./fbx_sdk.tar.gz &&
+      #    chmod +x ./fbx20190_fbxsdk_linux &&
+      #    printf 'yes\nn' | ./fbx20190_fbxsdk_linux /usr
+
+      # Caching Emscripten's installation; this avoids installing it on every build
+      - name: Emscripten caching
+        uses: actions/cache@v2
+        id: emsdk
+        with:
+          path: ~/emsdk
+          key: emsdk-${{ hashFiles('~/emsdk/**') }}
+          restore-keys: |
+            emsdk-
+
+      # Downloading & installing Emscripten; only done when failed to find its cached installation
+      - name: Emscripten setup
+        if: steps.emsdk.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          git clone --depth 1 https://github.com/emscripten-core/emsdk.git ~/emsdk &&
+          ~/emsdk/emsdk install latest && ~/emsdk/emsdk activate latest
+
+      # Downloading & installing Emscripten, to build RaZ in WebAssembly
+      - name: Build setup
+        shell: bash
+        run: cmake -E make_directory ${{ runner.workspace }}/build-${{ matrix.compiler.c }}
+
+      - name: Configuration
+        shell: bash
+        working-directory: ${{ runner.workspace }}/build-${{ matrix.compiler.c }}
+        run: |
+          source ~/emsdk/emsdk_env.sh &&
+          emcmake cmake -DCMAKE_BUILD_TYPE=$build_type \
+                        -DRAZ_BUILD_EXAMPLES=ON -DRAZ_GEN_DOC=OFF -DRAZ_USE_FBX=OFF \
+                        -DRAZ_BUILD_TESTS=ON -DRAZ_ENABLE_COVERAGE=OFF -DSKIP_RENDERER_ERRORS=ON \
+                        -DENABLE_DEBUG_INFO=ON \
+                        $GITHUB_WORKSPACE &&
+          cmake --build . --target RaZ_PrintDebugInfo
+
+      - name: Build
+        shell: bash
+        working-directory: ${{ runner.workspace }}/build-${{ matrix.compiler.c }}
+        run: cmake --build . --config $build_type

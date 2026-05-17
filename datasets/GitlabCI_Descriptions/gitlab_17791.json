@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_17791",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 4817,
+  "description": "Create a GitLab CI pipeline that uses the Docker image registry.gitlab.com/thorgate-public/django-project-template/ci:latest with a docker:dind service and a global before_script that logs in to the GitLab registry. Define four stages: test, test-cypress, build, and deploy. In the build stage add a build_compose_file job that runs `make settings`, `./scripts/images/prod-version-env.sh >> .env`, and `docker compose -f docker-compose.production.yml build`; also add publish_django and publish_node jobs (extending .publish_image) that run `./scripts/images/publish-prod-image.sh ${PUBLISH_NAME} ${PUBLISH_DOCKER_FILE}` with variables set for Django and Node images respectively. In the test-cypress stage add a test-cypress job that runs `make settings` and `make cypress CYPRESS_DEFAULT_COMMAND_TIMEOUT=${CYPRESS_DEFAULT_COMMAND_TIMEOUT}` and is excluded when the commit message matches test‑skip patterns. In the test stage add test-django and test-node jobs that each cache their language‑specific directories, produce JUnit and Cobertura coverage artifacts, and execute a series of make commands (`make settings`, `docker compose build …`, lint, coverage, and patch‑coverage steps) with the Django job also running a Python entrypoint command. In the deploy stage add deploy_to_test (runs only on the master branch), manual_deploy_to_test (manual trigger), and deploy_to_live (runs only on tags) jobs that extend .deploy_to_env, set ANSIBLE_CONFIG, and execute the appropriate autodeploy scripts for test or live environments, with deploy_to_live also creating and finalising a Sentry release.",
+  "tags": [
+    "docker",
+    "dind",
+    "django",
+    "node",
+    "cypress",
+    "ansible",
+    "publish",
+    "deploy",
+    "ci"
+  ]
+}

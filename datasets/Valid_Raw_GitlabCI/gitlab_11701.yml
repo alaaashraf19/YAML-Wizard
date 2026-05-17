@@ -1,0 +1,50 @@
+benchmark:
+  artifacts:
+    paths:
+    - prepare_report.csv
+    - run_report.csv
+    - precision_report.csv
+  script:
+  - set -x
+  - pwd
+  - ifconfig
+  - DATE_STR=`date "+%Y_%m_%d"`
+  - CI_PROJECT_OUTPUT_PATH=/mace-build-output/$CI_PROJECT_NAME/${DATE_STR}_${CI_PIPELINE_ID}
+  - mkdir -p $CI_PROJECT_OUTPUT_PATH
+  - ANDROID_NDK_HOME=/opt/android-ndk-r17b/
+  - DAY_OF_WEEK=`date +%u`
+  - "git clone git@v9.git.n.xiaomi.com:deep-computing/generic-mobile-devices.git;\
+    \ if [ $DAY_OF_WEEK -lt 6 ]; then\n  bash tools/benchmark.sh --output_dir=$CI_PROJECT_OUTPUT_PATH\
+    \ --benchmark_option=Precision --target_abis=armeabi-v7a,arm64-v8a,aarch64,armhf\
+    \ --max_time_per_lock=30 --executors=MACE,SNPE --input_dir=http --num_targets=1;\n\
+    \  bash tools/benchmark.sh --output_dir=$CI_PROJECT_OUTPUT_PATH --target_abis=armeabi-v7a,arm64-v8a,aarch64,armhf\
+    \ --max_time_per_lock=30 --num_targets=1;\nelse\n  bash tools/benchmark.sh --output_dir=$CI_PROJECT_OUTPUT_PATH\
+    \ --benchmark_option=Precision --target_abis=armeabi-v7a,arm64-v8a,aarch64,armhf\
+    \ --max_time_per_lock=30 --executors=MACE,SNPE --input_dir=http --all_devices_at_once;\n\
+    \  bash tools/benchmark.sh --output_dir=$CI_PROJECT_OUTPUT_PATH --target_abis=armeabi-v7a,arm64-v8a,aarch64,armhf\
+    \ --max_time_per_lock=30 --all_devices_at_once;\nfi\n"
+  - 'cp $CI_PROJECT_OUTPUT_PATH/*_report.csv .; echo "------------------------------------------------------------------";
+    echo "Prepare Time (see FAQ section in README for more explanations)"; echo "------------------------------------------------------------------";
+    python -c ''import prettytable,sys;print(prettytable.from_csv(sys.stdin));''<prepare_report.csv;
+    echo "------------------------------------------------------------------"; echo
+    "Run Time Average (See FAQ section in README for more explanations)"; echo "------------------------------------------------------------------";
+    python -c ''import prettytable,sys;print(prettytable.from_csv(sys.stdin));''<run_report.csv;
+    echo "------------------------------------------------------------------"; echo
+    "ImageNet Precision (see FAQ section in README for more explanations)"; echo "------------------------------------------------------------------";
+    python -c ''import prettytable,sys;print(prettytable.from_csv(sys.stdin));''<precision_report.csv;
+
+    '
+  stage: benchmark
+cpplint:
+  script:
+  - cpplint --linelength=80 --counting=detailed $(find aibench -name "*.h" -or -name
+    "*.cc")
+  stage: cpplint
+pycodestyle:
+  script:
+  - pycodestyle $(find aibench/python -name "*.py")
+  stage: pycodestyle
+stages:
+- cpplint
+- pycodestyle
+- benchmark

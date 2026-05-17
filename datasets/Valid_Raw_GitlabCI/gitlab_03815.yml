@@ -1,0 +1,7 @@
+image: ubuntu
+job2:
+  image: perl
+  script: cat /etc/*release
+test_it:
+  image: ruby
+  script: cat /etc/*release

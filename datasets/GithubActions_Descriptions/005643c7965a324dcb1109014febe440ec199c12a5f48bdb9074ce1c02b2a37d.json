@@ -1,0 +1,17 @@
+{
+  "sha": "005643c7965a324dcb1109014febe440ec199c12a5f48bdb9074ce1c02b2a37d",
+  "provider": "groq",
+  "model": "llama-3.3-70b-versatile",
+  "yaml_bytes": 2097,
+  "description": "Create a GitHub Actions workflow named Windows MSVC x64 that triggers on push to master and on opened or synchronized pull requests, ignoring changes to markdown files and the docs directory. The workflow should run on a windows-latest environment with write permissions to the repository contents, and use environment variables VCPKG_FEATURE_FLAGS and GITHUB_TOKEN. It should then perform a series of steps including checking out the code, setting up ccache, installing the latest CMake, restoring or setting up vcpkg, fetching test data, and running CMake with presets. Finally, it should upload the resulting executable and its dependencies as an artifact if the ACT environment variable is not set.",
+  "tags": [
+    "windows",
+    "msvc",
+    "x64",
+    "cmake",
+    "vcpkg",
+    "ccache",
+    "github-actions",
+    "ci"
+  ]
+}

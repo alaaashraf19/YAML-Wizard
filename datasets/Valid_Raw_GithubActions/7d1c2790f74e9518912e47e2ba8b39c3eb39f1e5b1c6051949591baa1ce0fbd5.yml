@@ -1,0 +1,34 @@
+name: Code Coverage
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+env:
+  BUILD_TYPE: Debug
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Configure CMake
+      run: CXXFLAGS=--coverage LDFLAGS=-lgcov CC=clang CXX=clang++ cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_PREFIX=./install 
+
+    - name: Build
+      # Build your program with the given configuration
+      run: cmake --build ${{github.workspace}}/build --target install --config ${{env.BUILD_TYPE}}
+
+    - name: Clone z3test
+      run: git clone https://github.com/z3prover/z3test z3test
+    
+    - name: Run regressions
+      run: python z3test/scripts/test_benchmarks.py build/z3 z3test/regressions/smt2    
+      
+    - name: Run coverage
+      run: python z3test/scripts/test_coverage_tests.py ./install z3test/coverage/cpp    
+      

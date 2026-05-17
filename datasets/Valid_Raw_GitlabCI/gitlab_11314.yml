@@ -1,0 +1,24 @@
+deploy:
+  before_script:
+  - apt-get update
+  - apt-get install sshpass
+  only:
+  - master
+  script:
+  - bundle install
+  - bundle exec jekyll build
+  - sshpass -p "$PASS" scp -o StrictHostKeyChecking=no -r $LOCALDIR $USER@$SERVER:$REMOTEDIR
+  stage: deploy
+image: ruby:2
+merge:
+  before_script:
+  - apt-get update
+  except:
+  - master
+  script:
+  - bundle install
+  - bundle exec jekyll build
+  stage: merge
+stages:
+- merge
+- deploy

@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_06868",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2216,
+  "description": "Create a GitLab CI pipeline with stages build, test, delivery, and deploy. Use the digitalr00tsdemo/ruby-jekyll Docker image for the generate, html_verify, and spell_check jobs, and alpine:latest for the pages and edgecast jobs. In the generate job (stage build) run `jekyll doctor` then `jekyll build --verbose --baseurl '/ci-jekyll' --destination _site/ci-jekyll`, and publish the `_site/` directory as an artifact that expires in 1 week. In the html_verify job (stage test) depend on generate and run `htmlproofer _site --check-html --allow-hash-href --empty-alt-ignore --disable-external`. In the spell_check job (stage test) depend on generate, install hunspell with `apk add --no-cache hunspell hunspell-en coreutils`, then loop over HTML files to run `hunspell -u3 -d en_US -p custom.dic -H $file | tee -a spellcheck.log` and fail if `spellcheck.log` is non‑empty. In the pages job (stage delivery) depend on generate, run only on the master branch, copy `_site/ci-jekyll/` to a `public` folder with `cp -av _site/ci-jekyll/ public`, and publish `public` as the GitLab Pages artifact. In the edgecast job (stage deploy) runs manually on master, depends on generate, uses alpine:latest, installs `apk add --no-cache rsync sshpass curl openssh`, then rsync the site with `rsync --delete -rtie \"sshpass -e ssh -p22 -oUserKnownHostsFile=/dev/null -oStrictHostKeyChecking=no -oLogLevel=ERROR\" _site/ci-jekyll ${VDMS_USER}@rsync.${VDMS_STORE}.${VDMS_NUMBER}.systemcdn.net:/com.digitalr00ts.demo.ec/` and send two `curl -sSki -X PUT` requests to the Edgecast API to purge MediaPath for MediaType 8 and 3 using the $VDMS_TOKEN variable.",
+  "tags": [
+    "jekyll",
+    "ruby-jekyll",
+    "alpine",
+    "htmlproofer",
+    "spellcheck",
+    "edgecast",
+    "rsync",
+    "pages"
+  ]
+}

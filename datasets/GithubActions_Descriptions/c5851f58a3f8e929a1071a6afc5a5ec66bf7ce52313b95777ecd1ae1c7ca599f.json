@@ -1,0 +1,14 @@
+{
+  "sha": "c5851f58a3f8e929a1071a6afc5a5ec66bf7ce52313b95777ecd1ae1c7ca599f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2771,
+  "description": "Create a GitHub Actions workflow named Compiler Tests that runs compiler tests for gem5. The workflow is triggered manually via a workflow dispatch. It consists of three jobs: all-compilers, latest-compilers-all-gem5-builds, and compiler-tests. The all-compilers job runs a matrix of compiler tests across different images and optimization levels. The latest-compilers-all-gem5-builds job tests the latest compilers against all gem5 compilations. The compiler-tests job indicates whether the compiler tests have passed or not.",
+  "tags": [
+    "compiler-tests",
+    "gem5",
+    "github-actions",
+    "workflow-dispatch",
+    "matrix-testing"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "sha": "4b76a472dd852e3f12b2ecd3c72b62f4c22f796885fc53028882d995345cf2d2",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1455,
+  "description": "Create a GitHub Actions workflow named LibreSSL CI that runs on every push to the master branch and on pull requests to master. Use a single ubuntu-latest job with a matrix strategy to test multiple versions of LibreSSL. For each version, check out the repository, install CMake, Google Test, and the specific LibreSSL version, then configure and build the project with CMake and make, run tests, and generate badges for successful and failed builds.",
+  "tags": [
+    "libressl",
+    "cmake",
+    "gtest",
+    "ubuntu",
+    "ci",
+    "badges",
+    "github-pages"
+  ]
+}

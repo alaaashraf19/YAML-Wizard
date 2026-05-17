@@ -1,0 +1,36 @@
+image: debian:stable-slim
+pages:
+  artifacts:
+    paths:
+    - public
+  dependencies:
+  - test
+  script:
+  - apt-get update
+  - apt-get install -y python3-pip
+  - pip3 install "coverage<5.0"
+  - cd ROOT
+  - coverage html --directory=../public
+  - coverage report
+  stage: deploy
+test:
+  artifacts:
+    paths:
+    - ROOT/.coverage
+  script:
+  - echo 'allow-loopback-pinentry' >> ./ROOT/gpg_home_folder/gpg-agent.conf
+  - chmod go-rwx ./ROOT/gpg_home_folder
+  - apt-get update
+  - apt-get install -y python3-gpg python3-venv libcairo2 libglib2.0-0 libpango1.0-0
+  - python3 -m venv --system-site-packages env
+  - source env/bin/activate
+  - pip install wheel
+  - pip install --upgrade pip
+  - echo "cython<3" > /tmp/constraint.txt
+  - PIP_CONSTRAINT=/tmp/constraint.txt pip install -r requirements.txt -r requirements-dev.txt
+  - cd ROOT
+  - python manage.py makemigrations --check --dry-run
+  - python manage.py migrate
+  - coverage run --branch --source . --omit '*/migrations/*','*/test*' manage.py test
+    --parallel
+  stage: test

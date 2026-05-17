@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_10445",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2344,
+  "description": "Create a GitLab CI pipeline using the Docker image registry.gitlab.com/inkscape/inkscape-ci-docker/master, define stages build, test, and deploy, and set GIT_DEPTH and GIT_SUBMODULE_STRATEGY variables. In the build stage add a 2geom job that runs the ccache initialization (mkdir -p ccache; export CCACHE_BASEDIR=${PWD}; export CCACHE_DIR=${PWD}/ccache), caches the ccache/ directory, executes mkdir -p build opt, cd build, cmake .. -GNinja -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_FLAGS=\"-fsanitize=address -fno-omit-frame-pointer\" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=../opt -D2GEOM_BOOST_PYTHON=ON -DWITH_COVERAGE=ON, then ninja, ninja perf, ninja py2geom, ninja install, and stores the build and opt directories as artifacts that expire in one day. Also in the build stage add a 2geom:as-subproject job that reuses the same ccache init, caches ccache/, runs mkdir -p opt2, cd tests/dependent-project, mkdir -p build-as-subproject, cd build-as-subproject, cmake .. -GNinja -D2GEOM_AS_SUBPROJECT=ON -DCMAKE_INSTALL_PREFIX=../../../opt2, then ninja main, ./main, and ninja install. In the test stage add a 2geom:find-package job that depends on and needs the 2geom job, runs the ccache init, caches ccache/, creates opt3, configures with cmake .. -GNinja -D2GEOM_AS_SUBPROJECT=OFF -DCMAKE_EXE_LINKER_FLAGS=\"-fsanitize=address\" -DCMAKE_INSTALL_PREFIX=../../../opt3 -D2Geom_DIR=\"$PWD/../../../opt/lib/cmake/2Geom\", builds with ninja main, runs ./main, and installs with ninja install; also add a 2geom:tests job that depends on and needs 2geom, runs cd build, touches all *.gcno files, runs ninja coverage_xml, and on failure uploads the build/Testing directory and the coverage_xml.xml report as a Cobertura coverage artifact that expires in one month. Finally, in the deploy stage add a pages job that runs only on the master branch, depends on 2geom, runs cd build, touches *.gcno files, runs ninja coverage_html, moves the generated coverage_html directory to public/, and publishes the public/ directory as a Pages artifact that expires in 30 days.",
+  "tags": [
+    "ccache",
+    "cmake",
+    "ninja",
+    "coverage",
+    "gitlab-pages",
+    "build",
+    "test",
+    "deploy",
+    "inkscape-ci",
+    "docker"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_04409",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 166,
+  "description": "Create a GitLab CI pipeline that uses the erlang:19.1 Docker image. Include a before_script that runs apt-get update -y, installs g++-4.9 with apt-get -y install g++-4.9, and exports CXX=g++-4.9. Add a test job named test in the default test stage that executes epmd -daemon and then runs ./rebar3 ct --sname test. No additional stages, caches, artifacts, or deployment targets are configured.",
+  "tags": [
+    "erlang",
+    "rebar3",
+    "gpp-4-9",
+    "apt-get",
+    "test"
+  ]
+}

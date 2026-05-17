@@ -1,0 +1,15 @@
+cache:
+  paths:
+  - node_modules/
+image: docker:stable
+services:
+- docker:dind
+stages:
+- test
+test:
+  coverage: /All files[^|]*\|[^|]*\s+([\d\.]+)/
+  image: node:10
+  script:
+  - yarn install
+  - yarn test
+  stage: test

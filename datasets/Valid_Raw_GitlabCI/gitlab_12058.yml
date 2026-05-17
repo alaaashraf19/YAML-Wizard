@@ -1,0 +1,6 @@
+.rspec:
+  extends: .tests
+  script: rake rspec
+.tests:
+  only:
+  - pushes

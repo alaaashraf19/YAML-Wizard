@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_17991",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 997,
+  "description": "Create a GitLab CI pipeline that uses the debian:stable Docker image with a global before_script running `uname -a` and a single `test` stage. Add a `.contributors` job in the test stage that executes `./.tools/contributors.sh` then `pwd`. Add an `imagemagiccheck` job that runs `./.tools/imagemagiccheck.sh`, and a `licensecheck` job (tagged lightweight, allow_failure) that runs `./.tools/licensecheck.sh`. Add a `manaverse` job (using debian:unstable) that runs `./.tools/manaplus.sh manaplus master manaverse.log` and always stores the `shared` directory as an artifact for 3 weeks; similarly, a `newlines` job (lightweight) runs `./.tools/newlines.sh` with the same artifact settings, and an `old_manaplus` job (using debian:bullseye) runs `./.tools/manaplus.sh packetver24 s20180215 manaplus.log` with identical artifacts. Finally, include `pngcheck` running `./.tools/pngcheck.sh` and `testxml` running `./.tools/testxml.sh` then `pwd`, both in the test stage.",
+  "tags": [
+    "debian",
+    "test-stage",
+    "contributors",
+    "imagemagiccheck",
+    "licensecheck",
+    "manaverse",
+    "newlines",
+    "old-manaplus",
+    "pngcheck",
+    "testxml"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "0a38535752ddef4d20dd54ee71c28adef19acf4eac93fd1194548ba9bdfdb4fd",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 733,
+  "description": "Create a GitHub Actions workflow named Validate Website that runs on every push to the main branch, on pull requests to the main branch, and on workflow dispatch. The workflow should have two jobs: build_next and typecheck, both running on ubuntu-latest. The build_next job checks out the repository, sets up JavaScript environment, restores emsdk cache, and builds the website using yarn build in the website-next directory. The typecheck job checks out the repository, sets up JavaScript environment, and runs type checking with yarn tsc in the website-next directory.",
+  "tags": [
+    "javascript",
+    "docusaurus",
+    "website",
+    "validation",
+    "ci"
+  ]
+}

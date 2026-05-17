@@ -1,0 +1,18 @@
+{
+  "sha": "4857c4007a9672a41bd416aaa8e817de09c3b73b1f88963858c01bb1747fd90f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 6522,
+  "description": "Create a GitHub Actions workflow named continuous-integration that runs on every push and pull request. The workflow has four jobs: linux-os, windows-os, macOS, and iOS-Simulator. The linux-os job runs on ubuntu-20.04, updates APT, installs dependencies, checks out repositories, builds an AppImage, and uploads it as an artifact. The windows-os job runs on windows-latest with a matrix strategy for different platforms and installations, clones repositories, sets up Vulkan SDK, downloads and extracts ANGLE, configures and installs the project, and uploads artifacts. The macOS and iOS-Simulator jobs run on macos-latest, clone dependencies, build and export archives, and upload them as artifacts.",
+  "tags": [
+    "continuous-integration",
+    "ubuntu",
+    "windows",
+    "macos",
+    "ios",
+    "appimage",
+    "vulkan",
+    "angle",
+    "xcode"
+  ]
+}

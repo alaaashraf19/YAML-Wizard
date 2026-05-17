@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_18264",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 902,
+  "description": "Create a GitLab CI pipeline with two stages: build and deploy. In the build stage add a job named build that uses the docker:latest image with the docker:dind service, runs `docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY`, then `docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME .`, and finally pushes both tags with `docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME` and `docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA`. In the deploy stage add a job named deploy that uses the alpine:latest image, runs only on the master branch, installs gettext and curl via `apk add --no-cache gettext curl`, downloads the ecs-cli binary, makes it executable, checks its version, configures it with `ecs-cli configure -c $CI_COMMIT_REF_NAME`, substitutes environment variables into the ECS compose file with `envsubst < docker-compose.yml.AWS-ECS > docker-compose.yml`, then brings up the service with `ecs-cli compose -p $CI_COMMIT_REF_NAME service up` and lists tasks with `ecs-cli compose ps`.",
+  "tags": [
+    "docker",
+    "docker-dind",
+    "aws-ecs",
+    "alpine",
+    "gitlab-ci"
+  ]
+}

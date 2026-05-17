@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_14457",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 394,
+  "description": "Create a GitLab CI pipeline using the elixir:1.9.1 Docker image with a postgres:latest service and set DATABASE_HOST, DATABASE_NAME, DATABASE_PASSWORD, DATABASE_USER, and MIX_ENV variables for the test environment. Add a single job named mix in the default test stage that runs a before_script to apt-get update, install postgresql-client, execute mix local.rebar --force, mix local.hex --force, mix deps.get, mix ecto.create, and mix ecto.migrate, then runs the script command mix test --cover. No caches, artifacts, or special rules are defined.",
+  "tags": [
+    "elixir",
+    "mix",
+    "postgres",
+    "coverage",
+    "gitlab-ci"
+  ]
+}

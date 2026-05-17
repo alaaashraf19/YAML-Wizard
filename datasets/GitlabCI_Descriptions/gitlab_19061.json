@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_19061",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 931,
+  "description": "Create a GitLab CI pipeline with two stages: build and release, using the docker image and the docker:dind service. In the build stage add a build-master job that runs the script commands: docker login -u \"$QUAY_USER\" -p \"$QUAY_PASSWORD\" quay.io; docker build --pull --build-arg CI_COMMIT_SHA=${CI_COMMIT_SHA:0:8} -t \"quay.io/xavierbaude/hello-world:${CI_COMMIT_SHA:0:8}\" .; docker tag \"quay.io/xavierbaude/hello-world:${CI_COMMIT_SHA:0:8}\" \"quay.io/xavierbaude/hello-world:latest\"; docker push \"quay.io/xavierbaude/hello-world:${CI_COMMIT_SHA:0:8}\"; docker push \"quay.io/xavierbaude/hello-world:latest\". In the release stage add a release-master job that runs: docker login -u \"$QUAY_USER\" -p \"$QUAY_PASSWORD\" quay.io; docker pull \"quay.io/xavierbaude/hello-world:${CI_COMMIT_SHA:0:8}\"; docker tag \"quay.io/xavierbaude/hello-world:${CI_COMMIT_SHA:0:8}\" \"quay.io/xavierbaude/hello-world:stable\"; docker push \"quay.io/xavierbaude/hello-world:stable\". Both jobs use the docker image and docker:dind service.",
+  "tags": [
+    "docker",
+    "quay",
+    "build",
+    "release",
+    "dind"
+  ]
+}

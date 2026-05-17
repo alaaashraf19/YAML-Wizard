@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_19010",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 388,
+  "description": "Create a GitLab CI pipeline that uses the node:latest Docker image and caches the node_modules directories (node_modules/ and /usr/local/lib/node_modules/). Define two stages, test and pages. In the test stage add a test job that runs `yarn install`, `yarn lint`, and `yarn test`, and saves the generated coverage directory as an artifact. In the pages stage add a pages job that depends on the test job, runs `mkdir public/` and `mv coverage/ public/coverage/`, publishes the public/ directory as a GitLab Pages artifact, and only runs on the master branch.",
+  "tags": [
+    "node",
+    "yarn",
+    "coverage",
+    "gitlab-pages",
+    "cache",
+    "master-only"
+  ]
+}

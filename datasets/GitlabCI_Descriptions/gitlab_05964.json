@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_05964",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 386,
+  "description": "Create a GitLab CI pipeline with three stages named test_36, test_35, and test_34. Add a job build_and_test_36 that runs in the test_36 stage, uses the python:3.6 Docker image, and executes the shell commands sh ./build_scripts/build_py3.sh followed by pytest -v. Add a job build_and_test_35 that runs in the test_35 stage, uses the python:3.5 Docker image, and runs the same two commands. Add a job build_and_test_34 that runs in the test_34 stage, uses the python:3.4 Docker image, and runs the same two commands. Do not define any caches, artifacts, or special rules.",
+  "tags": [
+    "python-3.4",
+    "python-3.5",
+    "python-3.6",
+    "pytest",
+    "gitlab-ci",
+    "stages"
+  ]
+}

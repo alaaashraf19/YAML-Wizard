@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_13789",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 852,
+  "description": "Create a GitLab CI pipeline with stages build, test, install, examples and variables BUILD_DIR=cmake/build and INSTALL_PREFIX=/tmp/ocon. In the build stage add a build job that creates $BUILD_DIR, runs cmake -DCMAKE_INSTALL_PREFIX:PATH=$INSTALL_PREFIX ../.., then make -j2, and stores the $BUILD_DIR directory as an artifact. In the test stage add a test job that depends on build, runs $BUILD_DIR/test/ocon_tester --gtest_output=\"xml:report.xml\", and uploads report.xml as a JUnit artifact. In the install stage add an install job that depends on build, runs cd $BUILD_DIR and make install -j2. In the examples stage add an examples job that runs cd examples, creates $BUILD_DIR, runs cmake ../.. -DCMAKE_PREFIX_PATH=\"/usr/local;$INSTALL_PREFIX\", then make, then executes bicycle/bicycle_tester and pendulum/pendulum. All jobs use the tag ocon.",
+  "tags": [
+    "cmake",
+    "make",
+    "gtest",
+    "ocon",
+    "c-plus-plus",
+    "gitlab-ci"
+  ]
+}

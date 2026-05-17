@@ -1,0 +1,14 @@
+{
+  "sha": "fbf2a4f9e2d62c6b957b451039738ccaa30fba479d412ec1d32f9b9a5fa46e8a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1919,
+  "description": "Create a GitHub Actions workflow named Build Documentation that runs on every push and pull request. Use a single ubuntu-latest job in a rolling Ubuntu container, installing necessary build tools and updating CMake. Checkout the repository, configure CMake for the documentation, build it, perform a link check, and then tar and upload the HTML documentation as an artifact.",
+  "tags": [
+    "ubuntu",
+    "cmake",
+    "documentation",
+    "doxygen",
+    "github-actions"
+  ]
+}

@@ -1,0 +1,11 @@
+before_script:
+- apt-get update -qq && apt-get install -y -qq nodejs npm
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - cd public
+  - npm install

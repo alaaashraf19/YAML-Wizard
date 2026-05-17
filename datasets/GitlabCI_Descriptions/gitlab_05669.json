@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_05669",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 870,
+  "description": "Create a GitLab CI pipeline that uses the rfcardenas/codelogs-btool-ic Docker image and defines three stages: build, package, and deploy. In the build stage add a job named compilacion that runs `mvn --quiet compile`, then changes ownership of `/root/.netrc`, `/root/.cache`, `/root/`, and `$CI_PROJECT_DIR` to the user `codelogs:codelogs`, and publishes the `target/` directory as an artifact (including untracked files) that expires after 1 hour 30 minutes. In the package stage add a job named empaquetado that depends on compilacion, runs `mvn --quiet package -Pprod -DskipTests`, and also stores the `target/` directory as an artifact with the same expiration and untracked settings. In the deploy stage add a job named deployheroku that depends on empaquetado and executes `/root/scripts/heroku.sh $USER_HEROKU $PSW_HEROKU && heroku git:remote -a $HEROKU_APP_GIT && heroku plugins:install heroku-cli-deploy && heroku deploy:jar --jar target/*.war` to deploy the built WAR to Heroku.",
+  "tags": [
+    "maven",
+    "heroku",
+    "docker-image",
+    "gitlab-ci",
+    "java-war",
+    "artifact"
+  ]
+}

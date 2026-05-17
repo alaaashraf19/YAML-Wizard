@@ -1,0 +1,55 @@
+name: Build Documentation
+
+on:
+  push:
+  pull_request:
+    types: [opened]
+
+jobs:
+  build_documentation:
+    name: Build Documentation
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'pull_request' && github.event.action == 'opened' && !github.event.pull_request.merged || github.event_name == 'push' }}
+    container: ubuntu:rolling
+    env:
+      DEBIAN_FRONTEND: "noninteractive"
+    steps:
+      - name: Update environment
+        run: |
+          # Update package lists
+          apt update -qq
+          # Install build tools
+          apt install -y cmake doxygen git python3 python3-pip python3-venv wget
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Configure CMake
+        working-directory: ${{ github.workspace }}/documentation
+        shell: bash
+        run: |
+          cmake . -Bbuild
+
+      - name: Build
+        working-directory: ${{ github.workspace }}/documentation
+        shell: bash
+        run: |
+          cmake --build build
+
+      - name: Linkcheck
+        working-directory: ${{ github.workspace }}/documentation
+        shell: bash
+        # TODO: return true as long GitHub does not allow specific steps to fail
+        run: |
+          cmake --build build --target inexor-vulkan-renderer-documentation-linkcheck || true
+
+      - name: Prepare artifacts
+        working-directory: ${{ github.workspace }}/documentation
+        run: |
+          tar cfz documentation.tar.xz build/html/*
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          path: ${{ github.workspace }}/documentation/documentation.tar.xz
+          name: documentation.tar.xz

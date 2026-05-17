@@ -1,0 +1,14 @@
+{
+  "sha": "8f5eff8ff6e7c702474c5d656a8d6191a790cd5a6966160b50a8de9b226fb3bc",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1946,
+  "description": "Create a GitHub Actions workflow named mac-linux-ci that runs on push and pull request events. Use a concurrency strategy to cancel in-progress runs when a new run is queued. Define two jobs, ubuntu and mac, each using a reusable workflow generic_ci.yml with different matrix strategies for compiler, build, and OS. For ubuntu, use a matrix of gcc and clang compilers, Release and Debug builds, and ubuntu-20.04 OS. For mac, use a matrix of Release and Debug builds on macos-11 with clang compiler.",
+  "tags": [
+    "ci",
+    "mac",
+    "linux",
+    "ubuntu",
+    "macos"
+  ]
+}

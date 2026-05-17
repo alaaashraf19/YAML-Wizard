@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_16258",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 528,
+  "description": "Create a GitLab CI pipeline that uses the registry.gitlab.com/schpaper/alpine-jekyll:master Docker image and defines two stages: test and deploy. In the test stage add a test job that runs \"chmod +x script/*\", \"./script/setup.sh\" and \"./script/build.sh\", stores the \"_site\" directory as an artifact that expires after 1 day, and runs on all branches except master. In the deploy stage add a pages job that runs \"chmod +x script/*\", \"./script/setup.sh\" and \"./script/cirelease.sh\", sets the variable JEKYLL_ENV=production, publishes the \"public\" directory as a pages artifact, configures the environment named gitlab-pages with URL https://schpaper.gitlab.io, and only runs on the master branch.",
+  "tags": [
+    "jekyll",
+    "alpine",
+    "gitlab-pages",
+    "deploy",
+    "test",
+    "docker"
+  ]
+}

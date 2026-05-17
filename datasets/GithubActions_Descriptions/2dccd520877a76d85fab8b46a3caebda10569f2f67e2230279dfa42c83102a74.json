@@ -1,0 +1,14 @@
+{
+  "sha": "2dccd520877a76d85fab8b46a3caebda10569f2f67e2230279dfa42c83102a74",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2099,
+  "description": "Create a GitHub Actions workflow named Prebuild that runs on push to dev and main branches and on pull requests to those branches. The workflow checks the cache for extra downloads, sets up Python 3.12, installs ISOFIT, and checks for cache updates. If the cache is outdated, it fails and requires a maintainer to delete the cache. Then, it launches two dependent jobs, pip and path, defined in separate YAML files.",
+  "tags": [
+    "python",
+    "cache",
+    "github-actions",
+    "parallel-testing",
+    "isofit"
+  ]
+}

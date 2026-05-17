@@ -1,0 +1,429 @@
+.pages_job_template:
+  artifacts: &id005
+    expire_in: 1 week
+    name: dbt Docs Files
+    paths:
+    - public
+  before_script: &id006
+  - export PATH="$CI_PROJECT_DIR/orchestration/:$PATH"
+  image: registry.gitlab.com/gitlab-data/dbt-image:v0.1.2
+  script: &id007
+  - export SNOWFLAKE_SNAPSHOT_DATABASE="RAW"
+  - echo $SNOWFLAKE_SNAPSHOT_DATABASE
+  - mkdir -p ~/.ssh
+  - touch ~/.ssh/id_rsa
+  - chmod 700 ~/.ssh
+  - echo "$GIT_DATA_TESTS_SSH_PRIVATE_KEY" | base64 --decode > ~/.ssh/id_rsa
+  - chmod 0400 ~/.ssh/id_rsa
+  - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+  - cd $CI_PROJECT_DIR/transform/snowflake-dbt/
+  - rm packages.yml
+  - mv docs-packages.yml packages.yml
+  - export DBT_RUNNER="${GITLAB_USER_ID}-0-${CI_JOB_ID}"
+  - echo $DBT_RUNNER
+  - dbt deps --profiles-dir profile --target prod
+  - dbt docs generate --profiles-dir profile --target prod
+  - mkdir -p $CI_PROJECT_DIR/public/
+  - cd target
+  - 'sed -i ''s/"Row Count", "value": [0-9]*/"Row Count", "value": -1/g'' catalog.json
+
+    '
+  - cp *.json graph.gpickle $CI_PROJECT_DIR/public/
+  - cd $CI_PROJECT_DIR/transform/snowflake-dbt/docs/
+  - cp index.html gitlab.css $CI_PROJECT_DIR/public/
+  stage: "\U0001F4DA dbt Docs"
+  tags: &id008
+  - analytics
+  variables: &id009
+    SNOWFLAKE_ROLE: $SNOWFLAKE_TRANSFORM_ROLE
+    SNOWFLAKE_WAREHOUSE: $SNOWFLAKE_TRANSFORM_WAREHOUSE
+.python_check:
+  allow_failure: true
+  before_script: &id015
+  - CHANGED_FILES=$(git diff --name-only --diff-filter=d origin/${CI_MERGE_REQUEST_TARGET_BRANCH_NAME}
+    ${CI_COMMIT_SHA} | grep '\.py'$)
+  image: registry.gitlab.com/gitlab-data/ci-python-image:v0.0.4
+  only: &id016
+    changes:
+    - '**/*.py'
+    refs:
+    - merge_requests
+  stage: "\U0001F40D Python"
+  tags: &id017
+  - analytics
+.python_critical_check:
+  allow_failure: false
+  before_script: &id010
+  - CHANGED_FILES=$(git diff --name-only --diff-filter=d origin/${CI_MERGE_REQUEST_TARGET_BRANCH_NAME}
+    ${CI_COMMIT_SHA} | grep '\.py'$ || true)
+  image: registry.gitlab.com/gitlab-data/ci-python-image:v0.0.4
+  only: &id011
+    changes:
+    - '**/*.py'
+    - '**/*.ipynb'
+    refs:
+    - merge_requests
+  stage: "\U0001F6D1\U0001F40D Python Critical"
+  tags: &id012
+  - analytics
+.python_testing:
+  allow_failure: true
+  image: registry.gitlab.com/gitlab-data/data-image/data-image:v2.0.12
+  only: &id013
+    changes:
+    - '**/*.py'
+    refs:
+    - merge_requests
+  stage: "\U0001F40D Python"
+  tags: &id014
+  - analytics
+.snowflake_clone_template:
+  before_script: &id001
+  - export PATH="$CI_PROJECT_DIR/orchestration/:$PATH"
+  except: &id002
+    refs:
+    - master
+    variables:
+    - $BRANCH_NAME == $SNOWFLAKE_LOAD_DATABASE
+    - $BRANCH_NAME == $SNOWFLAKE_PREP_DATABASE
+    - $BRANCH_NAME == $SNOWFLAKE_PROD_DATABASE
+    - $TEST_PIPELINE
+  image: registry.gitlab.com/gitlab-data/data-image/data-image:v2.0.12
+  only: &id003
+    refs:
+    - merge_requests
+    variables:
+    - $SNOWFLAKE_SYSADMIN_ROLE
+    - $SNOWFLAKE_LOAD_WAREHOUSE
+    - $SNOWFLAKE_LOAD_DATABASE
+    - $SNOWFLAKE_PREP_DATABASE
+    - $SNOWFLAKE_PROD_DATABASE
+  tags: &id004
+  - analytics
+  when: manual
+.snowflake_start_clone:
+  before_script: *id001
+  environment: &id018
+    name: review/$CI_COMMIT_REF_NAME
+    on_stop: clone_stop
+  except: *id002
+  image: registry.gitlab.com/gitlab-data/data-image/data-image:v2.0.12
+  only: *id003
+  stage: "\u2744\uFE0F Snowflake"
+  tags: *id004
+  variables: &id019
+    GIT_STRATEGY: clone
+  when: manual
+.yaml_validate:
+  allow_failure: true
+  before_script: &id020
+  - CHANGED_FILES=$(git diff --name-only --diff-filter=d origin/${CI_MERGE_REQUEST_TARGET_BRANCH_NAME}
+    ${CI_COMMIT_SHA} | grep '\.yml\|\.yaml'$)
+  image: registry.gitlab.com/gitlab-data/data-image/data-image:v0.0.13
+  only: &id021
+    changes:
+    - permissions/snowflake/roles.yml
+    - permissions/snowflake/snowflake_usernames.yml
+    refs:
+    - merge_requests
+  stage: "\U0001F40D Python"
+  tags: &id022
+  - analytics
+clone_stop:
+  before_script: *id001
+  dependencies: []
+  environment:
+    action: stop
+    name: review/$CI_COMMIT_REF_NAME
+  except: *id002
+  image: registry.gitlab.com/gitlab-data/data-image/data-image:v2.0.12
+  only: *id003
+  script:
+  - git clone $CI_REPOSITORY_URL
+  - analytics/orchestration/manage_snowflake.py delete_clones
+  stage: "\U0001F6D1 Snowflake Stop"
+  tags: *id004
+  variables:
+    GIT_STRATEGY: none
+  when: manual
+dry-run:triage:
+  except:
+  - schedules
+  image: ruby:3.1
+  script:
+  - gem install gitlab-triage
+  - gitlab-triage --help
+  - gitlab-triage --dry-run --token $ANALYTICS_API_TOKEN --source projects --source-id
+    $CI_PROJECT_PATH
+  stage: triage
+  when: manual
+include:
+- template: Jobs/Secret-Detection.gitlab-ci.yml
+- extract/extract-ci.yml
+- transform/snowflake-dbt/snowflake-dbt-ci.yml
+pages:
+  artifacts: *id005
+  before_script: *id006
+  image: registry.gitlab.com/gitlab-data/dbt-image:v0.1.2
+  only:
+    changes:
+    - transform/snowflake-dbt/*
+    refs:
+    - master
+    variables:
+    - $DEPLOY_DBT_PAGES
+  script: *id007
+  stage: "\U0001F4DA dbt Docs"
+  tags: *id008
+  variables: *id009
+policy:run-triage:
+  except:
+  - schedules
+  image: ruby:3.1
+  only:
+    refs:
+    - master
+  script:
+  - gem install gitlab-triage
+  - gitlab-triage --token $ANALYTICS_API_TOKEN --source projects --source-id $CI_PROJECT_PATH
+  stage: triage run
+  when: manual
+schedule:run-triage:
+  image: ruby:3.1
+  only:
+    variables:
+    - $RUN_GITLAB_TRIAGE
+  script:
+  - gem install gitlab-triage
+  - gitlab-triage --token $ANALYTICS_API_TOKEN --source projects --source-id $CI_PROJECT_PATH
+  stage: triage run
+secret_detection:
+  allow_failure: false
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  stage: "\U0001F6D1\U0001F40D Python Critical"
+  variables:
+    SECRET_DETECTION_EXCLUDED_PATHS: docker-compose.yml, transform/snowflake-dbt/packages.yml,
+      extract/saas_postgres_pipeline_backfill/postgres_pipeline/postgres_utils.py
+stages:
+- "\u2744\uFE0F Snowflake"
+- "\U0001F682 Extract"
+- "\u2699\uFE0F dbt Run"
+- "\U0001F6E0 dbt Misc"
+- "\U0001F4DA dbt Docs"
+- "\U0001F6D1\U0001F40D Python Critical"
+- "\U0001F40D Python"
+- "\U0001F6D1 Snowflake Stop"
+- notify
+- triage
+- triage run
+variables:
+  BRANCH_NAME: $CI_COMMIT_REF_NAME
+  PYTHONPATH: $CI_PROJECT_DIR/orchestration/:$CI_PROJECT_DIR/extract/:$CI_PROJECT_DIR/extract/shared_modules/:$PYTHONPATH
+workflow:
+  rules:
+  - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS && $CI_PIPELINE_SOURCE == "push"
+    when: never
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+    when: never
+  - if: $CI_COMMIT_BRANCH
+"\u26ABpython_black":
+  allow_failure: false
+  before_script: *id010
+  image: registry.gitlab.com/gitlab-data/ci-python-image:v0.0.4
+  only: *id011
+  script:
+  - echo "Changed files are $CHANGED_FILES"
+  - if [ -n "$CHANGED_FILES" ]; then black --check $CHANGED_FILES; else echo "No Python
+    files to check - skipping black formatter"; fi
+  stage: "\U0001F6D1\U0001F40D Python Critical"
+  tags: *id012
+"\u2705python_pytest":
+  allow_failure: true
+  artifacts:
+    expire_in: 1 day
+    paths:
+    - ${CI_PROJECT_DIR}/.coverage.${CI_JOB_ID}
+    reports:
+      junit: ${CI_PROJECT_DIR}/report.xml
+    when: on_success
+  image: registry.gitlab.com/gitlab-data/data-image/data-image:v2.0.12
+  only: *id013
+  script:
+  - export GCP_SERVICE_CREDS=$(echo "$ENCODED_GCP" | base64 -d)
+  - python -m pytest -vv -x --junitxml=report.xml
+  stage: "\U0001F40D Python"
+  tags: *id014
+"\u270F\uFE0Fpython_mypy":
+  allow_failure: false
+  before_script: *id010
+  image: registry.gitlab.com/gitlab-data/ci-python-image:v0.0.4
+  only: *id011
+  script:
+  - mypy extract/ --ignore-missing-imports --explicit-package-bases --implicit-optional
+  stage: "\U0001F6D1\U0001F40D Python Critical"
+  tags: *id012
+"\U0001F33Dpython_flake8":
+  allow_failure: true
+  before_script: *id015
+  image: registry.gitlab.com/gitlab-data/ci-python-image:v0.0.4
+  only: *id016
+  script:
+  - echo "Changed files are $CHANGED_FILES"
+  - flake8 $CHANGED_FILES --ignore=E203,E501,W503,W605
+  stage: "\U0001F40D Python"
+  tags: *id017
+"\U0001F465force_clone_both":
+  before_script: *id001
+  environment: *id018
+  except: *id002
+  image: registry.gitlab.com/gitlab-data/data-image/data-image:v2.0.12
+  only: *id003
+  script:
+  - manage_snowflake.py manage_clones --force --database prep --empty
+  - manage_snowflake.py manage_clones --force --database prod --empty
+  - manage_snowflake.py manage_clones --force --database raw --include_stages
+  stage: "\u2744\uFE0F Snowflake"
+  tags: *id004
+  variables: *id019
+  when: manual
+"\U0001F4C1yaml_validation":
+  allow_failure: false
+  before_script: *id020
+  image: registry.gitlab.com/gitlab-data/data-image/data-image:v0.0.13
+  only: *id021
+  script: "# Iterate over each changed YAML file using Python's yaml.safe_load\nfor\
+    \ file in $CHANGED_FILES; do\n  if python -c \"import yaml; yaml.safe_load(open('$file'))\"\
+    \ > /dev/null 2>&1; then\n    echo \"YAML validation passed for $file\"\n  else\n\
+    \    echo \"YAML validation failed for $file\"\n    exit 1\n  fi\ndone;\n"
+  stage: "\U0001F40D Python"
+  tags: *id022
+"\U0001F4C8clone_prod":
+  before_script: *id001
+  environment: *id018
+  except: *id002
+  image: registry.gitlab.com/gitlab-data/data-image/data-image:v2.0.12
+  only: *id003
+  script:
+  - manage_snowflake.py manage_clones --database prod --empty
+  - manage_snowflake.py manage_clones --database prep --empty
+  - manage_snowflake.py manage_clones --database raw --empty
+  stage: "\u2744\uFE0F Snowflake"
+  tags: *id004
+  variables: *id019
+  when: always
+"\U0001F4C8\u2699clone_prep_specific_schema":
+  before_script: *id001
+  environment: *id018
+  except: *id002
+  image: registry.gitlab.com/gitlab-data/data-image/data-image:v2.0.12
+  only: *id003
+  script:
+  - manage_snowflake.py manage_clones --database prep --schema $SCHEMA_NAME
+  stage: "\u2744\uFE0F Snowflake"
+  tags: *id004
+  variables: *id019
+  when: manual
+"\U0001F4C8\u2699clone_prod_specific_schema":
+  before_script: *id001
+  environment: *id018
+  except: *id002
+  image: registry.gitlab.com/gitlab-data/data-image/data-image:v2.0.12
+  only: *id003
+  script:
+  - manage_snowflake.py manage_clones --database prod --schema $SCHEMA_NAME
+  stage: "\u2744\uFE0F Snowflake"
+  tags: *id004
+  variables: *id019
+  when: manual
+"\U0001F4C8\u2757\uFE0Fclone_prod_real":
+  before_script: *id001
+  environment: *id018
+  except: *id002
+  image: registry.gitlab.com/gitlab-data/data-image/data-image:v2.0.12
+  only: *id003
+  script:
+  - manage_snowflake.py manage_clones --force --database prod
+  - manage_snowflake.py manage_clones --force --database prep
+  stage: "\u2744\uFE0F Snowflake"
+  tags: *id004
+  variables: *id019
+  when: manual
+"\U0001F5D2\uFE0Fpython_pylint":
+  allow_failure: true
+  before_script: *id015
+  image: registry.gitlab.com/gitlab-data/ci-python-image:v0.0.4
+  only: *id016
+  script:
+  - echo "Changed files are $CHANGED_FILES"
+  - pylint $CHANGED_FILES --ignore=analytics/dags --disable=line-too-long,E0401,E0611,W1203,W1202,C0103,R0801,R0902,W0212,W0104,W0106,W0703
+  stage: "\U0001F40D Python"
+  tags: *id017
+"\U0001F914python_complexity":
+  allow_failure: true
+  before_script: *id015
+  image: registry.gitlab.com/gitlab-data/ci-python-image:v0.0.4
+  only: *id016
+  script:
+  - xenon --max-absolute B --max-modules B --max-average A . -i transform,shared_modules
+  stage: "\U0001F40D Python"
+  tags: *id017
+"\U0001F969clone_raw_full":
+  before_script: *id001
+  environment: *id018
+  except: *id002
+  image: registry.gitlab.com/gitlab-data/data-image/data-image:v2.0.12
+  only: *id003
+  script:
+  - manage_snowflake.py clone_database_by_schemas --database raw --include_stages
+  stage: "\u2744\uFE0F Snowflake"
+  tags: *id004
+  variables: *id019
+  when: manual
+"\U0001F969\u2699clone_raw_specific_schema":
+  before_script: *id001
+  environment: *id018
+  except: *id002
+  image: registry.gitlab.com/gitlab-data/data-image/data-image:v2.0.12
+  only: *id003
+  script:
+  - manage_snowflake.py manage_clones --database raw --schema $SCHEMA_NAME --include_stages
+  stage: "\u2744\uFE0F Snowflake"
+  tags: *id004
+  variables: *id019
+  when: manual
+"\U0001F969\U0001F4DCclone_raw_sheetload":
+  before_script: *id001
+  environment: *id018
+  except: *id002
+  image: registry.gitlab.com/gitlab-data/data-image/data-image:v2.0.12
+  only: *id003
+  script:
+  - manage_snowflake.py manage_clones --database raw --schema sheetload
+  stage: "\u2744\uFE0F Snowflake"
+  tags: *id004
+  variables: *id019
+  when: manual
+"\U0001F969\U0001F6E2clone_raw_postgres_pipeline":
+  before_script: *id001
+  environment: *id018
+  except: *id002
+  image: registry.gitlab.com/gitlab-data/data-image/data-image:v2.0.12
+  only: *id003
+  script:
+  - manage_snowflake.py manage_clones --database raw --schema tap_postgres
+  stage: "\u2744\uFE0F Snowflake"
+  tags: *id004
+  variables: *id019
+  when: manual
+"\U0001F985python_vulture":
+  allow_failure: true
+  before_script: *id015
+  image: registry.gitlab.com/gitlab-data/ci-python-image:v0.0.4
+  only: *id016
+  script:
+  - echo "Changed files are $CHANGED_FILES"
+  - vulture $CHANGED_FILES --min-confidence 100
+  stage: "\U0001F40D Python"
+  tags: *id017

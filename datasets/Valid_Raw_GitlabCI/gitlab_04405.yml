@@ -1,0 +1,57 @@
+before_script:
+- yarn install
+cache:
+  paths:
+  - node_modules/
+  - .yarn
+deploy:
+  artifacts:
+    expire_in: never
+    paths:
+    - dist/*
+  cache:
+  - key:
+      files:
+      - yarn.lock
+    paths:
+    - node_modules
+  - key:
+      files:
+      - electron-builder.json
+    paths:
+    - $HOME/.cache/electron
+    - $HOME/.cache/electron-builder
+  only:
+  - master
+  script:
+  - apt-get -y update
+  - apt-get -y install software-properties-common
+  - add-apt-repository -y ppa:alexlarsson/flatpak
+  - apt-get -y update
+  - apt-get install -y flatpak flatpak-builder
+  - ELECTRON_CACHE=$HOME/.cache/electron
+  - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
+  - yarn run release
+  - rm -rf $HOME/.cache/electron-builder/wine
+  stage: deploy
+image: electronuserland/builder:wine
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - pages
+  script:
+  - mkdir .public
+  - cp -r * .public
+  - mv .public public
+  stage: deploy
+stages:
+- test
+- build
+- deploy
+test:
+  script:
+  - yarn run lint
+  - yarn run test
+  stage: test

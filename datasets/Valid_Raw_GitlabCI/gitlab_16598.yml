@@ -1,0 +1,30 @@
+.test_template:
+  except: &id001
+  - legacy
+  script: &id002
+  - bundle install --jobs $(nproc) --without docs --path vendor
+  - bundle exec rake tests
+  stage: test
+image: ruby:2.7
+pages:
+  artifacts:
+    paths:
+    - public
+  except:
+  - legacy
+  script:
+  - bundle install --without tests --path vendor
+  - bundle exec rake docs
+  stage: deploy
+test:puppet7:
+  except: *id001
+  script: *id002
+  stage: test
+  variables:
+    FACTER_VERSION: ~> 4.3.0
+    HIERA_VERSION: ~> 3.10.0
+    PUPPET_VERSION: ~> 7.23.0
+test:puppetlatest:
+  except: *id001
+  script: *id002
+  stage: test

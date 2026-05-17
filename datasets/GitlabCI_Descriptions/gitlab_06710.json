@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_06710",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 706,
+  "description": "Create a GitLab CI pipeline using the rust:1.20.0 Docker image and a global before_script that runs apt-get update, installs gcc, g++, and cmake, and prints rustc and cargo versions. Define three stages: build:dacite, build:utilities, and build:examples. Add a build:dacite job in the build:dacite stage that changes directory to dacite and runs cargo build --verbose --jobs 1 --release. Add a build:dacite-winit job in the build:utilities stage that changes directory to dacite-winit and runs cargo build --verbose --jobs 1 --release. Add two jobs in the build:examples stage: build:examples/triangles that cd into examples/triangle and runs cargo build --verbose --jobs 1 --release, and build:examples/triangles-offscreen that cd into examples/triangle-offscreen and runs cargo build --verbose --jobs 1 --release.",
+  "tags": [
+    "rust",
+    "cargo",
+    "cmake",
+    "gcc",
+    "build",
+    "examples",
+    "dacite",
+    "utilities"
+  ]
+}

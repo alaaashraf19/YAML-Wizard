@@ -1,0 +1,120 @@
+name: mt32-pi CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: build-${{ matrix.board }}
+    strategy:
+      fail-fast: false
+      matrix:
+        board: [pi2, pi3, pi4]
+    env:
+      toolchain-version: 9.2-2019.12
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: recursive
+
+    - name: Cache ARM toolchain
+      uses: actions/cache@v2
+      with:
+        path: ~/gcc-arm-${{ env.toolchain-version }}-x86_64-arm-none-eabi
+        key: cache-arm-toolchain-${{ env.toolchain-version }}
+
+    - name: Install toolchain if not retrieved from cache
+      run: |
+        if [ ! -d ~/gcc-arm-${{ env.toolchain-version }}-x86_64-arm-none-eabi ]; then
+          wget -q https://developer.arm.com/-/media/Files/downloads/gnu-a/${{ env.toolchain-version }}/binrel/gcc-arm-${{ env.toolchain-version }}-x86_64-arm-none-eabi.tar.xz
+          tar -xf gcc-arm-${{ env.toolchain-version }}-x86_64-arm-none-eabi.tar.xz -C ~
+          rm gcc-arm-${{ env.toolchain-version }}-x86_64-arm-none-eabi.tar.xz
+        fi
+
+    - name: Update PATH
+      run: echo "::add-path::$HOME/gcc-arm-${{ env.toolchain-version }}-x86_64-arm-none-eabi/bin"
+
+    - name: Build
+      run: make -j BOARD=${{ matrix.board }}
+
+    - name: Upload built kernel
+      uses: actions/upload-artifact@v2
+      with:
+        name: kernels
+        path: kernel*.img
+
+  package:
+    needs: build
+    runs-on: ubuntu-latest
+    env:
+      boot-home: external/circle-stdlib/libs/circle/boot
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: recursive
+    
+    - name: Cache boot files
+      uses: actions/cache@v2
+      with:
+        path: |
+          sdcard/bcm2711-rpi-4-b.dtb
+          sdcard/bootcode.bin
+          sdcard/COPYING.linux
+          sdcard/fixup_cd.dat
+          sdcard/fixup4cd.dat
+          sdcard/LICENCE.broadcom
+          sdcard/start_cd.elf
+          sdcard/start4cd.elf
+        key: cache-boot-files-${{ hashFiles(join(env.boot-home, '/Makefile')) }}
+
+    - name: Download boot files if not retrieved from cache
+      run: |
+        if [ ! -f sdcard/bootcode.bin ]; then
+          make -C ${{ env.boot-home }}
+          cp  ${{ env.boot-home }}/bcm2711-rpi-4-b.dtb \
+              ${{ env.boot-home }}/bootcode.bin \
+              ${{ env.boot-home }}/COPYING.linux \
+              ${{ env.boot-home }}/fixup_cd.dat \
+              ${{ env.boot-home }}/fixup4cd.dat \
+              ${{ env.boot-home }}/LICENCE.broadcom \
+              ${{ env.boot-home }}/start_cd.elf \
+              ${{ env.boot-home }}/start4cd.elf \
+              sdcard
+        fi
+
+    - name: Retrieve built kernels
+      uses: actions/download-artifact@v2
+      with:
+        name: kernels
+        path: sdcard
+
+    - name: Upload SD card archive
+      uses: actions/upload-artifact@v2
+      with:
+        name: sdcard
+        path: sdcard
+
+    - name: Get version (git tag)
+      if: startsWith(github.ref, 'refs/tags/')
+      id: get_version
+      run: echo ::set-output name=version::${GITHUB_REF#refs/tags/}
+
+    - name: Create release package
+      if: startsWith(github.ref, 'refs/tags/')
+      run: cd sdcard; zip -r ../mt32-pi-${{ steps.get_version.outputs.version }}.zip *
+
+    - name: Release
+      uses: docker://antonyurchenko/git-release:latest
+      if: startsWith(github.ref, 'refs/tags/')
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        DRAFT_RELEASE: "false"
+        PRE_RELEASE: "false"
+        CHANGELOG_FILE: "CHANGELOG.md"
+        ALLOW_EMPTY_CHANGELOG: "false"
+        ALLOW_TAG_PREFIX: "true"
+      with:
+        args: |
+            mt32-pi-*.zip

@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_07034",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2171,
+  "description": "Create a GitLab CI pipeline with stages try, build, deploy, test, and release using Docker runners tagged \"docker\". In the try stage add try_hchsfox, try_kc, try_kc_2, try_my_lab, and try_rock jobs, each using the ubuntu:16.04 image (or the custom Ubuntu image for try_my_lab) and executing respectively \"echo \\\"hello word hchsfox1\\\"\", \"echo \\\"Hello, KC!!\\\"\", \"echo \\\"Hello, KC!!\\\"\", \"echo \\\"Hello Blues\\\" && pwd\", and \"echo \\\"Hello World\\\"\". In the build stage add a build_binary job that uses the custom Ubuntu 16.04 image, runs \"chmod 755 penguin-htdocs/DEBIAN\" then \"dpkg -b penguin-htdocs\", and publishes the resulting penguin-htdocs.deb as an artifact that expires in one week. In the deploy stage add a deploy_to_dev job using the ansible:2.5.3 image, limited to master, develop, or tags on drx-tw/cdws-2.0-team-b, that runs \"ls\", \"cd ansible-playbooks/\", writes the VAULT_KEY to secret.txt, executes \"ansible-playbook deploy.yml\", removes secret.txt, and deploys to a staging environment at http://stg.cdws.drx.tw:32180. In the test stage add a test_dev job with the same image and ref limits that runs \"cd ansible-playbooks/\", writes VAULT_KEY, executes \"ansible-playbook test.yml\", removes secret.txt, and targets the same staging environment, and in the release stage add a release_to_prd job limited to master and tags that runs \"cd ansible-playbooks/\", writes VAULT_KEY, executes \"ansible-playbook -i production deploy.yml\", removes secret.txt, and deploys to a production environment at http://cdws.drx.tw:32280.",
+  "tags": [
+    "ubuntu-16.04",
+    "ansible",
+    "deb",
+    "staging",
+    "production",
+    "gitlab-ci",
+    "docker-runner"
+  ]
+}

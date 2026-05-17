@@ -1,0 +1,21 @@
+before_script:
+- apk add openjdk21-jre
+- docker info
+build:
+  except:
+  - main
+  script: ./gradlew build
+  stage: build
+build and deploy:
+  environment:
+    name: GitLab docker registry for JOSM
+    url: https://gitlab.com/$CI_PROJECT_PATH_SLUG/container_registry
+  only:
+  - main
+  script: ./gradlew push --continue
+  stage: deploy
+image: docker:27-cli
+services:
+- docker:27-dind
+variables:
+  DOCKER_TLS_CERTDIR: /certs

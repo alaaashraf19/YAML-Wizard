@@ -1,0 +1,56 @@
+build:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - dist/
+  image: node:14
+  script:
+  - node --version
+  - npm --version
+  - npm ci --cache .npm --prefer-offline
+  - npm run build
+  stage: build
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+  - .npm/
+  - node_modules/
+  - dist/
+  untracked: true
+deploy_prod_microsite_manual:
+  environment:
+    name: microsite-prod
+    url: https://sidecar.gitter.im/
+  image: node:14
+  only:
+  - master
+  script:
+  - npm run deploy-microsite
+  stage: deploy
+  when: manual
+deploy_prod_script_manual:
+  environment:
+    name: script-prod
+    url: https://sidecar.gitter.im/dist/sidecar.v1.js
+  image: node:14
+  only:
+  - tags
+  script:
+  - npm run deploy-sidecar
+  stage: deploy
+  when: manual
+stages:
+- build
+- test
+- deploy
+test:
+  image: node:14
+  script:
+  - npm test
+  services:
+  - alias: selenium-server
+    name: selenium/standalone-chrome:3.14.0
+  stage: test
+  variables:
+    SELENIUM_REMOTE_URL: http://selenium-server:4444/wd/hub
+variables: null

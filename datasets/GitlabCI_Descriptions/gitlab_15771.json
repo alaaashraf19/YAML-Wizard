@@ -1,0 +1,20 @@
+{
+  "sha": "gitlab_15771",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1842,
+  "description": "Create a GitLab CI pipeline with three stages: test, check, and deploy, using the node image for JavaScript jobs, docker:stable for the code quality job, and the Hugo image for documentation jobs. In the check stage add a code_quality job that allows failure, sets DOCKER_DRIVER=overlay2, runs an export of SP_VERSION from CI_SERVER_VERSION and then executes a Docker run of the GitLab code‑quality image with the source code mounted, using the docker:stable-dind service, and stores gl-code-quality-report.json as an artifact. Also in the check stage add a test-pages job that runs on all branches except master, clones the ribamar‑docs repository and the hugo‑theme‑learn theme, runs hugo to build the site, and does not publish artifacts. In the test stage add a lint-js job that installs eslint globally with npm and lints the project ignoring \"**/*.min.js\" files, and a unit-test job that sets DB_AUTH_URL, DB_URL, MONGODB_ROOT_PASSWORD and SMTP_HOST variables, starts mongo, bitnami/mongodb and djfarrelly/maildev services, installs mocha and nyc globally, installs project dependencies, runs nyc --reporter=text-summary npm t, captures coverage with the provided regex, and allows Docker runners. Finally, in the deploy stage add a pages job that allows failure, runs only on the master branch, clones the same docs repository and theme, builds the site with hugo using $CI_PAGES_URL as baseURL and outputs to ../public, publishes the public directory as an artifact, and defines a docs environment with URL $CI_PAGES_URL.",
+  "tags": [
+    "docker",
+    "node",
+    "eslint",
+    "mocha",
+    "nyc",
+    "hugo",
+    "code-quality",
+    "pages",
+    "mongo",
+    "mongodb",
+    "maildev"
+  ]
+}

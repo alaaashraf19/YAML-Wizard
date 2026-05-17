@@ -1,0 +1,26 @@
+before_script:
+- ./installs.sh
+image: najeraoscar/latex-emacs-min
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - emacs --batch -Q --script genfiles.el
+  - cd doc; hugo
+  - mv public/ ../public/
+test:
+  artifacts:
+    paths:
+    - doc/public
+    - org-cv-exports
+    when: always
+  except:
+  - master
+  script:
+  - emacs --batch -Q --script genfiles.el
+  - cd doc; hugo
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive

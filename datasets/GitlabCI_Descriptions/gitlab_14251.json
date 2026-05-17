@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_14251",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 692,
+  "description": "Create a GitLab CI pipeline with three stages: lint, test, and deploy. Add a linting job in the lint stage that runs apt-get update -qy, apt-get install -y python3-dev python3-pip, pip3 install -r requirements.txt, pycodestyle *.py --ignore=E501, and bash tests/custom-linting.sh, and uses the gitlab-org runner tag. Add a run_tests job in the test stage that runs apt-get update -qy, apt-get install -y python3-dev python3-pip, pip3 install -r requirements.txt, and python3 -m pytest tests -v, also with the gitlab-org tag. Add a staging job in the deploy stage that runs only on the master branch, executes apt-get update -qy, apt-get install -y ruby-dev, gem install dpl, and dpl --provider=heroku --app=mensa-thumb-bot --api-key=$HEROKU_STAGING_API_KEY, and uses the gitlab-org tag.",
+  "tags": [
+    "lint",
+    "test",
+    "deploy",
+    "heroku",
+    "python",
+    "ruby",
+    "gitlab-org"
+  ]
+}

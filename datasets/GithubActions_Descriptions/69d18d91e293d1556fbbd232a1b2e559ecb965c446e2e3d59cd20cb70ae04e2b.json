@@ -1,0 +1,14 @@
+{
+  "sha": "69d18d91e293d1556fbbd232a1b2e559ecb965c446e2e3d59cd20cb70ae04e2b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2046,
+  "description": "Create a GitHub Actions workflow named Build Aarch64 Linux Wheels that runs on pull requests, pushes to specific branches (nightly, main, and release candidate branches), specific tags (release candidate tags and version tags), and workflow dispatches. The workflow generates a build matrix for Aarch64 Linux wheel packages, then uses the matrix to build wheels for specified repositories (like pytorch/FBGEMM) with custom scripts and secrets for AWS PyTorch uploader credentials.",
+  "tags": [
+    "linux",
+    "aarch64",
+    "wheels",
+    "pytorch",
+    "github-actions"
+  ]
+}

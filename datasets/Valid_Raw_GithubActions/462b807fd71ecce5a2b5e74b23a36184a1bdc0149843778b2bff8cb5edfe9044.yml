@@ -1,0 +1,36 @@
+name: Analyze
+
+# On all pushes to PRs or pushes to specific branches. Not on ALL pushes in general because it will
+# double if pushing to a PR.
+on:
+  pull_request:
+  push:
+    branches:
+      - 'master'
+      - 'dev'
+
+permissions:
+  contents: read
+
+jobs:
+  analyze:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.12']
+
+    steps:
+    - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+      with:
+        python-version: ${{ matrix.python-version }}
+    - uses: actions/cache@704facf57e6136b1bc63b828d79edcd491f0ee84
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os}}-pip-${{ hashFiles('**/.*-requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os}}-pip-
+    - name: Analyze
+      run: ./misc/actions/analyze.sh

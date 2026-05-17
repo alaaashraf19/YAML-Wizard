@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_14803",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 634,
+  "description": "Create a GitLab CI pipeline with two stages: ci and deploy. In the ci stage add a ci job that runs `touch .env` then `./scripts/ci/ci.sh` and stores the `coverage/` directory as an artifact. In the deploy stage add a production job that only runs on the master branch, executes `touch .env`, sets `DEPLOY_TARGET=production`, appends Redis, AWS and Stripe secret variables (e.g., `REDISCLOUD_URL=$PRODUCTION_REDIS_URL`) to the .env file, and finally runs `./scripts/ci/deploy.sh`. No specific Docker image, services, caches, or additional artifacts are defined.",
+  "tags": [
+    "ci",
+    "deploy",
+    "coverage",
+    "environment-variables",
+    "gitlab-ci"
+  ]
+}

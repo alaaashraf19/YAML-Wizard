@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_12260",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 11019,
+  "description": "Create a GitLab CI pipeline with stages build-deployment, prepare-review, build-review, deploy-review, test-review, stop-review, build-staging, deploy-staging, test-staging, build-production, deploy-production, test-production. In the build-deployment job (stage build-deployment, image docker:latest, service docker:dind, tag mtug-dind) run a before_script to log in to the GitLab registry and then script: docker build -t registry.gitlab.com/mhuber84/klickibunti-deployment:latest Build/Docker && docker push registry.gitlab.com/mhuber84/klickibunti-deployment, trigger only on branches and manual. Add build production data on review (stage build-review, image registry.gitlab.com/mhuber84/klickibunti-deployment:latest, tag mtug, except master) that starts ssh-agent, adds $GITLABRUNNER_SSH_PRIVATE_KEY, then runs Build/Shell/DataDeployment.sh $REVIEW_DB_PASSWORD with many DEPLOY_TARGET_* variables and EXCLUDE_TABLES, manual. Add build production data on staging (stage build-staging, same image and tag, only on master) executing Build/Shell/DataDeployment.sh $STAGING_DB_PASSWORD with staging‑specific variables, manual. Add deploy webroot to production, review, and staging jobs (stages deploy-production, deploy-review, deploy-staging) each using the same image, caching Build/.gems, Build/.surfworkspace and vendor, setting GEM_PATH and SURF_WORKSPACE, and running Build/Surf/surf.phar --configurationPath=\"Build/Surf\" -vvv deploy <ProductionDeployment|ReviewDeployment|StagingDeployment> with appropriate environment URLs, only on master for production and staging, on branches except master for review, manual. Finally, add prepare review (stage prepare-review, runs Build/Shell/PrepareReview.sh, creates review environment with on_stop stop review), stop review (stage stop-review, runs an ssh command to delete remote review files), and test production, review, and staging jobs (stages test-production, test-review, test-staging) that run Build/Test/Alive.sh (and Build/Test/SitemapCheck.sh for staging) with TEST_BACKEND_URL and TEST_URL variables, triggered on master for production and staging and on branches for review, with manual where indicated.",
+  "tags": [
+    "docker",
+    "dind",
+    "surf",
+    "data-deployment",
+    "review",
+    "staging",
+    "production",
+    "ssh",
+    "manual"
+  ]
+}

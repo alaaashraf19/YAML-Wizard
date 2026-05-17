@@ -1,0 +1,16 @@
+{
+  "sha": "08f2ed485669bee26299ba8d9b1be02f07e48cd03e693da5ab04497213321ae8",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2584,
+  "description": "Create a GitHub Actions workflow that builds a Kobo kernel. The workflow should trigger on workflow dispatch, push to specific paths in the master branch, and on pull requests to those paths. It should use a matrix strategy to build the kernel for different models (glohd, aura2) with specific toolchains, configurations, and uImage names. The workflow should run on an ubuntu-latest environment, check out the repository and kernel source, cache ccache and downloads, install dependencies, install the ARM toolchain if needed, build the kernel, and upload the resulting uImage as an artifact.",
+  "tags": [
+    "kernel",
+    "kobo",
+    "arm",
+    "toolchain",
+    "ubuntu",
+    "matrix",
+    "workflow-dispatch"
+  ]
+}

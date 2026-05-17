@@ -1,0 +1,12 @@
+{
+  "sha": "gitlab_06711",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 165,
+  "description": "Create a GitLab CI pipeline with a single job named build_job in the build stage. Use the default runner image (or a suitable Rust environment) and execute the exact script commands: curl -sSf https://static.rust-lang.org/rustup.sh | bash -s -- --yes --disable-sudo, then cargo build, then cargo build --release. No caches, artifacts, services, or special rules are required.",
+  "tags": [
+    "rust",
+    "cargo",
+    "build"
+  ]
+}

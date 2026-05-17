@@ -1,0 +1,16 @@
+{
+  "sha": "2bd5eb9b02fb1cc1d25ef6b253c80ed5b3b5de9550bb838658913e2b0c82f617",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2571,
+  "description": "Create a GitHub Actions workflow named CI that runs on pull requests and workflow dispatches. The workflow uses a concurrency group that cancels in-progress jobs and runs on an ubuntu-latest environment. It consists of two jobs: one to get the latest Python versions and another to run CI tests on a matrix of Python versions. The CI job checks out the repository, sets up Python, installs Poetry, loads cached environments, installs dependencies, runs pre-commit checks, and executes tests with coverage reporting.",
+  "tags": [
+    "python",
+    "ci",
+    "poetry",
+    "pytest",
+    "coverage",
+    "pre-commit",
+    "django"
+  ]
+}

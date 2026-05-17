@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_13693",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 200,
+  "description": "Create a GitLab CI pipeline that uses the python:latest Docker image and runs a before_script step printing the Python version with `python -V`. Define a single job named `pages` that runs in the default test stage, executes the shell commands `pip install -r requirements.txt`, `make html`, and `mv build/html/ ./public/` in that order, and then publishes the `public/` directory as a Pages artifact. Configure the job to run only on the `master` branch. No additional services, caches, or variables are needed, and the deployment target is GitLab Pages.",
+  "tags": [
+    "python",
+    "pages",
+    "make",
+    "pip",
+    "gitlab-pages",
+    "master"
+  ]
+}

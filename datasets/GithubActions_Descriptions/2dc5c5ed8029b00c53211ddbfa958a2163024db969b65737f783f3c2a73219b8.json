@@ -1,0 +1,14 @@
+{
+  "sha": "2dc5c5ed8029b00c53211ddbfa958a2163024db969b65737f783f3c2a73219b8",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3935,
+  "description": "Create a GitHub Actions workflow named E.V.E CI that runs on push to all branches except main and on pull requests to main. The workflow has concurrent execution with cancel-in-progress set to true, grouped by environment and reference. It consists of three jobs: specials, mainline, and supplemental, each running on self-hosted or ubuntu-latest environments with different strategies and matrices of compiler, architecture, and options. Each job checks out the code, runs tests or docker actions with specific options, and performs cleanup.",
+  "tags": [
+    "ci",
+    "self-hosted",
+    "matrix",
+    "concurrent",
+    "cleanup"
+  ]
+}

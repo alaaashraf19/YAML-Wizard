@@ -1,0 +1,15 @@
+{
+  "sha": "01211e45c682c54f0646208fa64eedab805268e13c8661abe9da7f2be0f5569f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2389,
+  "description": "Create a GitHub Actions workflow named Tests that runs on every push to main and on pull requests to main. Use a matrix strategy to test on multiple Python versions, operating systems, and extras configurations. For each job, check out the repository, set up Python, install dependencies, run tests with pytest, and upload coverage artifacts. Additionally, have a separate job to merge and upload coverage to Coveralls after all tests have completed.",
+  "tags": [
+    "python",
+    "tests",
+    "coverage",
+    "matrix",
+    "pytest",
+    "coveralls"
+  ]
+}

@@ -1,0 +1,9 @@
+build_job:
+  script:
+  - mvn clean install verify -B -Dgpg.skip=true
+  - cat '/builds/allima/my-similarity-project/target/site/jacoco/index.html'
+  stage: build
+image: maven:3.2.5-jdk-8
+stages:
+- build
+- deploy

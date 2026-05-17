@@ -1,0 +1,141 @@
+frontend_chromium_subdir:
+  image: python:3.10
+  script:
+  - apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -yy xvfb chromium-driver
+  - curl -sSL https://install.python-poetry.org | python3 -
+  - $HOME/.local/bin/poetry config virtualenvs.create false
+  - $HOME/.local/bin/poetry install --no-interaction
+  - scripts/update_translations.sh
+  - TAGUETTE_TEST_WEBDRIVER=chromium TAGUETTE_TEST_BASE_PATH=/base/path xvfb-run python
+    tests.py -v TestSeleniumMultiuser
+  stage: test
+frontend_chromium_valkey:
+  image: python:3.10
+  script:
+  - apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -yy xvfb chromium-driver
+  - curl -sSL https://install.python-poetry.org | python3 -
+  - $HOME/.local/bin/poetry config virtualenvs.create false
+  - $HOME/.local/bin/poetry install --no-interaction
+  - scripts/update_translations.sh
+  - TAGUETTE_TEST_WEBDRIVER=chromium TAGUETTE_TEST_REDIS=redis://valkey:6379 xvfb-run
+    python tests.py -v TestSeleniumMultiuser
+  services:
+  - alias: valkey
+    name: valkey/valkey:latest
+  stage: test
+frontend_firefox:
+  image: python:3.10
+  script:
+  - apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -yy xvfb firefox-esr
+  - curl -Lo /tmp/geckodriver.tar.gz https://github.com/mozilla/geckodriver/releases/download/v0.30.0/geckodriver-v0.30.0-linux64.tar.gz
+  - tar -zxf /tmp/geckodriver.tar.gz -C /usr/local/bin geckodriver
+  - chmod +x /usr/local/bin/geckodriver
+  - curl -sSL https://install.python-poetry.org | python3 -
+  - $HOME/.local/bin/poetry config virtualenvs.create false
+  - $HOME/.local/bin/poetry install --no-interaction
+  - scripts/update_translations.sh
+  - TAGUETTE_TEST_WEBDRIVER=firefox xvfb-run python tests.py -v TestSeleniumMultiuser
+  stage: test
+mariadb:
+  image: python:3.10
+  script:
+  - curl -sSL https://install.python-poetry.org | python3 -
+  - $HOME/.local/bin/poetry config virtualenvs.create false
+  - $HOME/.local/bin/poetry install --no-interaction -E mysql
+  - scripts/update_translations.sh
+  - python -Wd tests.py -v
+  services:
+  - mariadb:latest
+  stage: test
+  variables:
+    MYSQL_DATABASE: taguette
+    MYSQL_PASSWORD: taguette
+    MYSQL_ROOT_PASSWORD: password
+    MYSQL_USER: taguette
+    TAGUETTE_TEST_DB: mysql+pymysql://taguette:taguette@mariadb/taguette
+postgres:
+  image: python:3.10
+  script:
+  - curl -sSL https://install.python-poetry.org | python3 -
+  - $HOME/.local/bin/poetry config virtualenvs.create false
+  - $HOME/.local/bin/poetry install --no-interaction -E postgres
+  - scripts/update_translations.sh
+  - python -Wd tests.py -v
+  services:
+  - postgres:latest
+  stage: test
+  variables:
+    POSTGRES_PASSWORD: taguette
+    POSTGRES_USER: taguette
+    TAGUETTE_TEST_DB: postgresql://taguette:taguette@postgres/taguette
+sqlite3:
+  artifacts:
+    paths:
+    - htmlcov
+  image: python:3.10
+  script:
+  - curl -sSL https://install.python-poetry.org | python3 -
+  - $HOME/.local/bin/poetry config virtualenvs.create false
+  - $HOME/.local/bin/poetry install --no-interaction
+  - scripts/update_translations.sh
+  - python -m readme_renderer README.rst >/dev/null
+  - python -Wd -m coverage run --branch --source=taguette tests.py -v
+  - coverage html
+  - coverage report | tail -n 1 | grep -o '\([0-9]\+\(\.[0-9]\+\)\?%\)$'
+  - flake8 --ignore=W503,W504 tests.py taguette
+  - '! find taguette -name ''*.py'' -exec grep --color ''raise \(validate\.\)\?InvalidFormat([^_]''
+    {} +'
+  stage: test
+sqlite3_latest:
+  image: python:3.14
+  script:
+  - pip --disable-pip-version-check --no-cache-dir install --upgrade setuptools
+  - curl -sSL https://install.python-poetry.org | python3 -
+  - $HOME/.local/bin/poetry config virtualenvs.create false
+  - rm poetry.lock
+  - sed -i 's/^python = ".*$/python = "^3.14"/' pyproject.toml
+  - cat pyproject.toml
+  - $HOME/.local/bin/poetry install --no-interaction
+  - scripts/update_translations.sh
+  - python -Wd tests.py -v
+  stage: test
+sqlite3_latest_pip:
+  image: python:3.14
+  script:
+  - curl -sSL https://install.python-poetry.org | python3 -
+  - pip --disable-pip-version-check --no-cache-dir install --upgrade pip
+  - pip --disable-pip-version-check --no-cache-dir install "babel<3"
+  - scripts/update_translations.sh
+  - $HOME/.local/bin/poetry build
+  - rm -rf taguette
+  - pip --disable-pip-version-check --no-cache-dir install --upgrade dist/taguette-*.whl
+    bcrypt "aiohttp>=3.4,<4"
+  - python -Wd tests.py -v
+  stage: test
+sqlite3_pypy:
+  image: pypy:latest
+  script:
+  - curl -sSL https://install.python-poetry.org | python3 -
+  - $HOME/.local/bin/poetry config virtualenvs.create false
+  - pypy3 -m venv /tmp/venv
+  - . /tmp/venv/bin/activate
+  - pip --disable-pip-version-check --no-cache-dir install --upgrade pip
+  - $HOME/.local/bin/poetry install --no-interaction
+  - scripts/update_translations.sh
+  - python -Wd tests.py -v
+  stage: test
+sqlite3_valkey:
+  image: python:3.10
+  script:
+  - curl -sSL https://install.python-poetry.org | python3 -
+  - $HOME/.local/bin/poetry config virtualenvs.create false
+  - $HOME/.local/bin/poetry install --no-interaction
+  - scripts/update_translations.sh
+  - TAGUETTE_TEST_REDIS=redis://valkey:6379 python -Wd tests.py -v
+  services:
+  - alias: valkey
+    name: valkey/valkey:latest
+  stage: test
+stages:
+- test
+- deploy

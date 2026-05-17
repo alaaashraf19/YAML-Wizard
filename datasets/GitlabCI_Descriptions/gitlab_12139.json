@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_12139",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1209,
+  "description": "Create a GitLab CI pipeline with stages test and deploy, using the melkorm/php-docker:5.5-alpha, melkorm/php-docker:5.6-alpha, and melkorm/php-docker:7.0-alpha Docker images for the jobs. Define variables COMPOSER_CACHE_DIR set to /storage, COMPOSER_DISABLE_XDEBUG_WARN set to '1', and COMPOSER_VENDOR_DIR set to /storage/vendor/${CI_PROJECT_ID}/${CI_BUILD_REF_NAME}. In the test stage add three jobs named test55, test56, and test70; each runs on its respective image and executes the commands: mkdir -p /storage/vendor/${CI_PROJECT_ID}/${CI_BUILD_REF_NAME}, ln -s /storage/vendor/${CI_PROJECT_ID}/${CI_BUILD_REF_NAME} vendor, and make. In the deploy stage add a pages job that runs on melkorm/php-docker:5.5-alpha, runs mkdir -p /storage/vendor/${CI_PROJECT_ID}/${CI_BUILD_REF_NAME}, ln -s /storage/vendor/${CI_PROJECT_ID}/${CI_BUILD_REF_NAME} vendor, mkdir -p ./public, composer require 'phpmetrics/phpmetrics', and vendor/bin/phpmetrics --report-html=./public/index.html ./src, then publishes the ./public directory as a pages artifact. The pages job has no branch restrictions.",
+  "tags": [
+    "php",
+    "composer",
+    "make",
+    "phpmetrics",
+    "gitlab-pages",
+    "docker-image"
+  ]
+}

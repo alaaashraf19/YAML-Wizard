@@ -1,0 +1,16 @@
+{
+  "sha": "c8500d3c84e901ab98493ad7d980fa2df0191c2c7641f79389f762c2f18e315f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1608,
+  "description": "Create a GitHub Actions workflow named Build that runs on every push to the master branch and on pull requests to master. Use an ubuntu-latest job with an opensuse/tumbleweed container that installs dependencies, checks out the repository, and then for each of the LLVM versions 9, 10, and 11, and build types DEBUG, ASAN, UBSAN, and COVERAGE, it builds the project with CMake and runs tests with Pytest, including coverage reporting for the COVERAGE build type which is then uploaded to Codecov.",
+  "tags": [
+    "cmake",
+    "llvm",
+    "pytest",
+    "coverage",
+    "codecov",
+    "ubuntu",
+    "tests"
+  ]
+}

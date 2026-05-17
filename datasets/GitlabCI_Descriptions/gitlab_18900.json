@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_18900",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 619,
+  "description": "Create a GitLab CI pipeline using the rust:1.58.1-alpine3.15 Docker image and a default before_script that installs build-base via apk and sets up nightly Rust with rustup. Define three stages: test, build, and bench. Add a tests job in the test stage that runs rustc --version && cargo --version then cargo test --all --verbose. Add a release_build job in the build stage that runs only on the main branch or tags, executes cargo build --release, moves the resulting binary to the project root, strips it, generates a SHA256 checksum saved to sha.txt, and stores the binary and checksum as artifacts. Add a benches job in the bench stage that runs only when the $BENCH variable is set and executes cargo bench.",
+  "tags": [
+    "rust",
+    "cargo",
+    "bench",
+    "build",
+    "test",
+    "alpine",
+    "release"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "cd7b9065744ce28cca9a6e446ed9fc276ce871fe1104ab0f620dc45435212f1b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2224,
+  "description": "Create a GitHub Actions workflow named CI that runs on every pull request. Use three ubuntu-latest jobs with a Python 3.8 matrix: notebooks1, notebooks2, and docs. For each job, check out the repository, set up Python, cache dependencies, install required packages, and then run specific scripts: test/run_notebook.sh 1 for notebooks1, test/run_notebook.sh 2 for notebooks2, and sphinx-build for docs.",
+  "tags": [
+    "python",
+    "ci",
+    "notebooks",
+    "docs",
+    "sphinx",
+    "ubuntu"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_13167",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 889,
+  "description": "Create a GitLab CI pipeline using the nickbusey/mashio:dev Docker image with a global docker:dind service and define MySQL-related variables. Define two stages: build and test. In the build stage add a pages job that runs on the python:alpine image, is limited to the master branch, executes `pip install mkdocs`, `pip install mkdocs-material`, `mkdocs build`, and `mv site public`, and publishes the public directory as a pages artifact. In the test stage add a test job that uses the mariadb service, runs `cd /builds/NickBusey/mashio/BackEnd`, `composer install`, `rm /var/www/html/mashio_db_test`, `bin/cake migrations migrate -c test`, `vendor/bin/phpunit --coverage-text --colors=never --stop-on-failure --coverage-clover=coverage.xml`, and `bash <(curl -s https://codecov.io/bash)`. The pipeline should use the defined variables for database connection.",
+  "tags": [
+    "mashio",
+    "python-alpine",
+    "mkdocs",
+    "composer",
+    "phpunit",
+    "docker-dind",
+    "mariadb",
+    "gitlab-pages",
+    "coverage"
+  ]
+}

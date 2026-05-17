@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_17982",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1483,
+  "description": "Create a GitLab CI pipeline with stages prepare, test, compile, and release, using the CI_IMAGE variable (${CI_REGISTRY_IMAGE}/ci:1.8) as the Docker image and the docker:dind service for the prepare and release jobs. In the prepare stage add a build_ci_image job that runs on the docker tag, sets DOCKER_DRIVER and DOCKER_HOST, executes apk add -U make bash then make release_ci_image, and only runs for branches matching the regex /\\Adocker-ci-image\\/.*@tmaczukin/hanging-droplets-cleaner. In the compile stage add a compile job that runs on the docker tag with the same image, executes GODIR=\"$GOPATH/src/gitlab.com/tmaczukin/hanging-droplets-cleaner\", mkdir -p \"$(dirname \\\"$GODIR\\\")\", ln -sfv \"$(pwd -P)\" \"$GODIR\", cd \"$GODIR\", and make deps $CI_JOB_NAME, stores the hanging-droplets-cleaner binary as an artifact for 7 days, and excludes the same regex. In the test stage add static_code_analysis and test jobs that use the identical script steps as compile, run on the docker tag, and also exclude the regex. In the release stage add a release job that runs on the docker tag with docker:dind, inherits the Docker variables, and runs make release_image, while excluding the regex.",
+  "tags": [
+    "docker",
+    "go",
+    "make",
+    "dind",
+    "gitlab-ci"
+  ]
+}

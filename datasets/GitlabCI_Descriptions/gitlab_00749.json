@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_00749",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 636,
+  "description": "Create a GitLab CI pipeline that uses the registry.gitlab.com/alelec/docker-android:latest Docker image and defines two stages: android and release. In the android stage add an android job that runs npm install, sets VERS=$(node scripts/version.js), adds the Android platform with echo Y | cordova platform add android, builds the release APK with cordova build android --release -- --keystore=navdy_alelec.jks --storePassword=alelec --alias=navdy_alelec --password=alelec, renames the output to NavdyOBD-${VERS}.apk, and stores any NavdyOBD*.apk files as artifacts. In the release stage add a release job that uses the python:3 image, runs only on tag pipelines, installs the gitlab_release tool via pip3 install gitlab_release, and executes python3 -m gitlab_release $PRIVATE_TOKEN *.apk to publish the APKs to a GitLab release. Ensure the release job runs after the android job.",
+  "tags": [
+    "android",
+    "cordova",
+    "npm",
+    "docker-android",
+    "gitlab-release",
+    "apk",
+    "python"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_17088",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1135,
+  "description": "Create a GitLab CI pipeline that runs npm install in a before_script for all jobs using the default Node image. Define three stages: test, build, and deploy. In the test stage add a lint job that runs npm run lint. In the build stage add a build job that runs npm run hbs, then rm -rf platforms plugins, then npm run build, and configure it to be excluded from the master, beta, and any release/* branches. In the deploy stage add a deploy job that runs npm run hbs, rm -rf platforms plugins, npm run release, export SIASAPP_FILENAME=$(cat config.xml | grep '^<widget' | sed 's|^.*version=\"\\([^\\\"]*\\)\".*|SIASApp-\\1.apk|'), zipalign -f -p 4 $SIASAPP_APK_ROOTPATH/app-release-unsigned.apk $SIASAPP_APK_ROOTPATH/app-release-unsigned-aligned.apk, apksigner sign --ks \"$SIASAR_RELEASE_KEY\" --ks-pass env:SIASAR_RELEASE_KEY_PASS --key-pass env:SIASAR_RELEASE_KEY_PASS --out $SIASAPP_APK_ROOTPATH/app-release.apk $SIASAPP_APK_ROOTPATH/app-release-unsigned-aligned.apk, apksigner verify $SIASAPP_APK_ROOTPATH/app-release.apk, cp $SIASAPP_APK_ROOTPATH/app-release.apk \"$SIASAPP_FILENAME\", publish any *.apk files as an artifact named SIASApp, and configure it to run only on master, beta, or release/* branches with the variable SIASAPP_APK_ROOTPATH set to platforms/android/app/build/outputs/apk/release.",
+  "tags": [
+    "npm",
+    "android",
+    "apk",
+    "zipalign",
+    "apksigner",
+    "ci",
+    "lint",
+    "release"
+  ]
+}

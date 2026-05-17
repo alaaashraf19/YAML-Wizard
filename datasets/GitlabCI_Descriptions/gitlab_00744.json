@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_00744",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1456,
+  "description": "Create a GitLab CI pipeline that uses the python:3 Docker image and defines two stages, test and deploy, with a global before_script running `pip install --editable .`. In the test stage add a job named test that runs only on tags, executes `pip install -U setuptools wheel`, `python setup.py bdist_wheel`, `pip install dist/*.whl`, `mv dist/*.whl ./`, and `gitlab-release --link-artifact --description \"https://pypi.python.org/pypi/gitlab-release\" ./*.whl`, then publishes the generated .whl file as an artifact. Also in the test stage add a manual job called gitlab-release-test with environment gitlab-release-test that runs `git config --global user.email \"ci@gitlab.com\"`, `git config --global user.name \"Gitlab Release\"`, `pip install requests setuptools_scm`, `gitlab-release --version`, clones the repository using the $gitlab_release_test_token, runs `bash ./create_update.sh`, captures the next version from version.txt, and calls `python gitlab_release.py` twice with appropriate server, project_id, release_tag, and token arguments. In the deploy stage add a job named deploy that runs only on tags and performs `pip install -U twine setuptools wheel`, `python setup.py bdist_wheel`, and `twine upload -u $PYPI_USER -p $PYPI_PASS dist/*` to publish the wheel to PyPI. Ensure the test job’s artifact path is set to `./*.whl`.",
+  "tags": [
+    "python",
+    "pip",
+    "twine",
+    "pypi",
+    "gitlab-release",
+    "manual",
+    "test",
+    "deploy"
+  ]
+}

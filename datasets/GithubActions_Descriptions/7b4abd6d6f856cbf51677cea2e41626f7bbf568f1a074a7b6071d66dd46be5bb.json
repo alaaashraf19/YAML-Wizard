@@ -1,0 +1,16 @@
+{
+  "sha": "7b4abd6d6f856cbf51677cea2e41626f7bbf568f1a074a7b6071d66dd46be5bb",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 765,
+  "description": "Create a GitHub Actions workflow named Dinit on debian-bullseye-i386 CI that runs on push to the master branch, on pull requests to the master branch, and on workflow dispatch. Use a single ubuntu-latest job with a debian:bullseye container that checks out the repository, adds 32-bit repositories, installs 32-bit dependencies, prints the g++ architecture, builds the project with make, checks the architecture of the dinit executive file, runs unit tests with make check, and runs integration tests with make check-igr.",
+  "tags": [
+    "debian",
+    "bullseye",
+    "i386",
+    "ci",
+    "make",
+    "gcc",
+    "tests"
+  ]
+}

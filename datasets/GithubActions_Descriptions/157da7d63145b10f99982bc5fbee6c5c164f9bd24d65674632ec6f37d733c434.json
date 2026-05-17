@@ -1,0 +1,16 @@
+{
+  "sha": "157da7d63145b10f99982bc5fbee6c5c164f9bd24d65674632ec6f37d733c434",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3398,
+  "description": "Create a GitHub Actions workflow named Lantern that runs on workflow calls and push events to the libtorch/v1.13.1 branch. The workflow uses a matrix strategy to build the project on multiple operating systems (macOS, ubuntu, windows) and versions (cpu, cu10.2, cu11.3, cu11.6) with different runners (macOS-latest, ubuntu-latest, self-hosted). For each job, install system dependencies, checkout the code, set up cmake 3.25.1, install CUDA and CuDNN if required, run cmake, build the project, and upload artifacts to GCS or GitHub.",
+  "tags": [
+    "github-actions",
+    "lantern",
+    "cuda",
+    "cudnn",
+    "cmake",
+    "gcs",
+    "matrix-build"
+  ]
+}

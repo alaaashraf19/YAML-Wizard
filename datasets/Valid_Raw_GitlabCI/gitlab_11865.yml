@@ -1,0 +1,25 @@
+coverage:
+  script:
+  - tox -e py313-coverage
+  stage: test
+image: ghcr.io/maxking/mailman-ci-runner:latest
+qa:
+  script:
+  - tox -e lint
+  stage: quality-assurance
+stages:
+- quality-assurance
+- test
+test-sqlite:
+  parallel:
+    matrix:
+    - PYTHON_VER:
+      - '39'
+      - '310'
+      - '311'
+      - '312'
+      - '313'
+      - 313-head
+  script:
+  - tox -e "py$PYTHON_VER"
+  stage: test

@@ -1,0 +1,17 @@
+{
+  "sha": "fa6815b1b5d696a7b77ea73146a5f44cd66f94bdb060a294b3c70017b01067c2",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5086,
+  "description": "Create a GitHub Actions workflow named Pipeline that runs on push to master, hotfix/*, and tags matching v*, on pull requests, and on workflow dispatch with an optional force_release input. The workflow has three jobs: tests, asan, and release. The tests job runs on a matrix of OS, Python versions, and configurations, checking out the code, setting up Python, building, testing, and uploading build artifacts. The asan job runs on ubuntu-latest, building and testing with AddressSanitizer. The release job depends on tests and asan, downloading artifacts, setting up Python, installing twine, and uploading to PyPI if the workflow is triggered on a tag or with force_release enabled.",
+  "tags": [
+    "python",
+    "github-actions",
+    "ci",
+    "cd",
+    "pypi",
+    "asan",
+    "testing",
+    "release"
+  ]
+}

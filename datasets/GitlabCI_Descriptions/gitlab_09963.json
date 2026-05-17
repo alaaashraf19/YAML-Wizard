@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_09963",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 585,
+  "description": "Create a GitLab CI pipeline using the thefrenchdev/qc-testing-image Docker image with a mysql:5 service, caching pip files in ~/.cache/pip/ and node_modules in ~/node_modules, and defining variables CONTAINER_IMAGE, CONTAINER_TEST_IMAGE, MYSQL_DATABASE, and MYSQL_ROOT_PASSWORD. Include global before_script steps that run python -V, pip install -U -r requirements.txt, pip install -U --index-url https://test.pypi.org/simple/ pytexder, npm install -d, webpack, and ls -la. Define stages build, test, release, and deploy. Add a test job in the test stage that executes ./test_extra/lint.sh and then runs pytest -n auto --tb native, with no artifacts or conditional rules.",
+  "tags": [
+    "python",
+    "pip",
+    "npm",
+    "webpack",
+    "mysql",
+    "qc-testing-image",
+    "pytest",
+    "lint"
+  ]
+}

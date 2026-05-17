@@ -1,0 +1,16 @@
+{
+  "sha": "2984f25183d85c74e03765a52c0171908f1c3b5b20d273d8ed44f492e5598dd2",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4596,
+  "description": "Create a GitHub Actions workflow named Ubuntu that runs on push and pull request events. Configure a build job on ubuntu-latest with a matrix strategy across multiple Docker images and compilers. For each matrix entry, install dependencies, perform a build, and deploy using Docker. Release builds should upload to a registry and create a GitHub release, while daily builds create a prerelease and upload artifacts.",
+  "tags": [
+    "ubuntu",
+    "docker",
+    "matrix",
+    "build",
+    "deploy",
+    "github-release",
+    "artifacts"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_19356",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 348,
+  "description": "Create a GitLab CI pipeline that runs a before_script on the default runner image to update apt, install apt-transport-https, add the Crystal GPG key from keys.gnupg.net, add the Crystal apt repository, update again, install the crystal compiler, and rename src/config_base.yml to src/config.yml. Define a single default stage with a build job that runs make. No caches, artifacts, or conditional rules are specified.",
+  "tags": [
+    "crystal",
+    "make",
+    "apt",
+    "gitlab-ci"
+  ]
+}

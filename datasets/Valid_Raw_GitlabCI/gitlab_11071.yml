@@ -1,0 +1,62 @@
+.registry:
+  before_script: &id003
+  - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+.shared:
+  only: &id001
+  - master
+  tags: &id002
+  - docker
+analyse:
+  image: sdldevelopers/sonar-scanner:latest
+  only: *id001
+  script:
+  - sonar-scanner
+  stage: analyse
+  tags: *id002
+build:
+  artifacts:
+    expire_in: 3 days
+    paths:
+    - src/publish
+    - src/test
+    - src/doc
+  image: microsoft/dotnet:1.0.4-sdk
+  only: *id001
+  script:
+  - cd ./src
+  - /bin/bash ./build.sh
+  - mkdir ./doc
+  - mv $(find . | grep -E /doc/.*\.xml | xargs) -t ./doc
+  stage: build
+  tags: *id002
+image: docker:latest
+prerelease:
+  before_script: *id003
+  only: *id001
+  script:
+  - docker build -t $CONTAINER_STAGING_IMAGE -f ./Dockerfile.publish .
+  - docker push $CONTAINER_STAGING_IMAGE
+  stage: pre-release
+  tags: *id002
+release:
+  before_script: *id003
+  dependencies: []
+  only: *id001
+  script:
+  - docker pull $CONTAINER_STAGING_IMAGE
+  - docker tag $CONTAINER_STAGING_IMAGE $CONTAINER_RELEASE_IMAGE
+  - docker push $CONTAINER_RELEASE_IMAGE
+  stage: release
+  tags: *id002
+  when: manual
+services:
+- docker:dind
+stages:
+- build
+- analyse
+- pre-release
+- release
+variables:
+  CONTAINER_RELEASE_IMAGE: registry.gitlab.com/kataik/environmenttracker:latest
+  CONTAINER_STAGING_IMAGE: registry.gitlab.com/kataik/environmenttracker:${CI_BUILD_REF_NAME}
+  DOCKER_DRIVER: overlay

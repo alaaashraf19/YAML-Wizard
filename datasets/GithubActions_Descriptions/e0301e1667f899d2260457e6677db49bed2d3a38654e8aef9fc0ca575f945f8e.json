@@ -1,0 +1,18 @@
+{
+  "sha": "e0301e1667f899d2260457e6677db49bed2d3a38654e8aef9fc0ca575f945f8e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 6131,
+  "description": "Create a GitHub Actions workflow that triggers on workflow dispatch, push to master or v0.23.x branches, and pull requests to those branches, excluding certain paths. The workflow should have read permissions to repository contents. It should have three jobs: build-linux, build-macos, and build-msys2. The build-linux job should use a matrix strategy to build with different compilers (gcc11, gcc10) on ubuntu-22.04, install dependencies, configure and build with meson, run unit tests, and configure and build a mini version. The build-macos job should run on macos-latest, install dependencies with Homebrew, configure and build with meson, and run unit tests. The build-msys2 job should use a matrix strategy to build on different msys2 platforms (MINGW32, MINGW64, UCRT64) on windows-latest, install dependencies with pacboy, and compile and test with meson.",
+  "tags": [
+    "github-actions",
+    "meson",
+    "multi-platform",
+    "ccache",
+    "msys2",
+    "macos",
+    "ubuntu",
+    "gcc",
+    "testing"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "a1084a433bddbe1b5685670556620f994f3545b51e8281c1040a5ca4aa6213fa",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1738,
+  "description": "Create a GitHub Actions workflow named msys2 dev-latest that can be triggered manually. The workflow should have two jobs: one running on windows-latest to build the project using msys2, and another on ubuntu-latest to upload the build artifact as a GitHub release. The build job should set up msys2, check out the repository, build the project, and create an archive. The upload job should download the artifact, rename it, and create a GitHub release with it.",
+  "tags": [
+    "msys2",
+    "windows",
+    "github-release",
+    "build",
+    "archive"
+  ]
+}

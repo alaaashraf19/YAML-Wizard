@@ -1,0 +1,15 @@
+{
+  "sha": "8c6810cba7e71f249b7d1fd42a704858b42dba683d9931f379e228d42c6a9d25",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1127,
+  "description": "Create a GitHub Actions workflow named validate-p4c that runs daily at midnight UTC, on push to main, and on pull requests to main. Run a validation job in parallel with normal tests on ubuntu-20.04 if the workflow is triggered on a schedule or if the pull request has a 'run-validation' label. The job checks out the repository with submodules, uses ccache, builds with a script, and runs validation tests with ctest.",
+  "tags": [
+    "validation",
+    "p4c",
+    "ubuntu",
+    "ctest",
+    "schedule",
+    "github-actions"
+  ]
+}

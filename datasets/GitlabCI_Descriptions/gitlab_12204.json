@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_12204",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2139,
+  "description": "Create a GitLab CI pipeline using the jason0330/ubuntu-flask:1.2 Docker image for all jobs and adding a before_script that writes the VAULT_HOSTS variable to /etc/hosts. Define stages check, build, deploy, test, and release. In the check stage add a check_playbooks job that runs pwd, appends VAULT_KEY to ansible-playbook/secret.txt, executes ansible-playbook -i inventory/inventory ansible-playbook/deploy-docker.yml, and removes the secret file, and runs only on the master, dev, or tag refs of the MengZn/gitlab-ci-ansible project. In the build stage add a build_binary job that runs pyinstaller -F hello/backend/app.py --onefile --specpath=temp --workpath=temp --distpath=temp/disk then ls temp, stores the temp directory as an artifact expiring in 1 hour, and is tagged with docker. In the deploy stage add a deploy_to_dev job that runs pwd, ls temp, writes VAULT_KEY to secret.txt, pings all hosts with ansible all -m ping, runs ansible-playbook -i inventory/inventory ansible-playbook/deploy-dev.yml, and deletes the secret, also limited to master, dev, or tags. In the test stage add a test_dev job that runs pwd, ls temp, writes VAULT_KEY to secret.txt, runs ansible-playbook -i inventory/inventory ansible-playbook/test.yml, and removes the secret, with the same only rules. In the release stage add a release_to_prd job that runs pwd, ls temp, writes VAULT_KEY to secret.txt, runs ansible-playbook -i inventory/inventory ansible-playbook/deploy-prod.yml, and deletes the secret, only on master or tag refs.",
+  "tags": [
+    "ubuntu-flask",
+    "pyinstaller",
+    "ansible",
+    "docker",
+    "gitlab-ci"
+  ]
+}

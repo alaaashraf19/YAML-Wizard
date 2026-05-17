@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_07649",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 718,
+  "description": "Create a GitLab CI pipeline using the elixir:1.7 Docker image with a global before_script that runs apt-get -qq update && apt-get install -y ssh-askpass squashfs-tools git libssl-dev libncurses5-dev bc m4 make unzip cmake python, then cd /srv && mix local.hex --force, mix local.rebar --force, mix archive.install --force hex nerves_bootstrap, mix local.nerves --force, and finally cd $CI_PROJECT_DIR && mix deps.get --only test. Define variables MIX_ENV=test and MIX_TARGET=host, and two stages: test and deploy. In the test stage add a unit-testing job that runs the script \"mix test\". In the deploy stage add a pages job that runs only on the master branch, executes cd $CI_PROJECT_DIR, mkdir public, sets MIX_ENV=dev and runs mix deps.get, runs NERVES_ENV_DISABLED=1 MIX_ENV=dev mix docs, copies the generated doc/* files into the public directory, removes the doc folder, and publishes the public/ directory as a GitLab Pages artifact.",
+  "tags": [
+    "elixir",
+    "mix",
+    "nerves",
+    "gitlab-pages",
+    "unit-test",
+    "documentation"
+  ]
+}

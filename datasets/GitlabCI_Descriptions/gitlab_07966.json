@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_07966",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1232,
+  "description": "Create a GitLab CI pipeline using the docker:19.03.2 image with a docker:19.03.2-dind service and global variables DOCKER_DRIVER=overlay2 and DOCKER_TLS_CERTDIR=/certs, and a global before_script that logs in to $CI_REGISTRY with $CI_REGISTRY_USER and $CI_REGISTRY_PASSWORD. Define three stages: test, prepare, and build. Add a hidden .build job in the build stage that retries twice and runs ci/build.sh. Add a prepare_2017_2_1f1 job in the prepare stage that retries twice, sets variables BUILD=f1, DOCKER_DRIVER=overlay2, DOCKER_TLS_CERTDIR=/certs, DOWNLOAD_URL=https://beta.unity3d.com/download/ce9f6a0436e1+/unity-editor_amd64-2017.2.1f1.deb, SHA1=af4301f17ec256095d133091f6a37a3cc74ce7da, TAG=2017.2.1f1, VERSION=2017.2.1, runs ci/prepare.sh, and stores licence_request.alf as an artifact. Add a test-ci-generator job in the test stage using the python:3.7-alpine image, with a before_script that cd ci-generator, prints python version, installs virtualenv, creates and activates a venv, installs requirements.txt, caches .cache/pip and ci-generator/venv/, runs coverage run -m unittest tests/test*.py, coverage report, and coverage html, and publishes ci-generator/htmlcov as an artifact with coverage regex.",
+  "tags": [
+    "docker",
+    "dind",
+    "python",
+    "coverage",
+    "unity",
+    "prepare",
+    "build",
+    "test",
+    "cache",
+    "artifacts"
+  ]
+}

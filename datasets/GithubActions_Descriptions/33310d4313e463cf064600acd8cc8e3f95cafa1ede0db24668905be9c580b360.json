@@ -1,0 +1,15 @@
+{
+  "sha": "33310d4313e463cf064600acd8cc8e3f95cafa1ede0db24668905be9c580b360",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3555,
+  "description": "Create a GitHub Actions workflow named irctest that runs on every pull request, push, and on a weekly schedule. The workflow has two jobs: build and test. The build job checks out the repository and irctest, configures and builds inspircd with optimizations, and uploads the build artifact. The test job downloads the build artifact, checks out irctest, and runs service-independent tests and tests with Anope services.",
+  "tags": [
+    "inspircd",
+    "irctest",
+    "ubuntu",
+    "tests",
+    "anope",
+    "ci"
+  ]
+}

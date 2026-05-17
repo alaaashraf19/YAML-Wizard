@@ -1,0 +1,15 @@
+{
+  "sha": "f264e5ad750957a008749c9605fc64317c36dc12aafd02cdda541fcc90acbf4b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1881,
+  "description": "Create a GitHub Actions workflow named Build & publish PyPI packages that triggers on push of tags matching v[0-9]+.** and on workflow dispatch. The workflow should have multiple jobs: make_sdist to create a source distribution, build to create wheels using cibuildwheel and Miniconda, and two upload jobs to Test PyPI and PyPI respectively, each dependent on the build job.",
+  "tags": [
+    "python",
+    "pypi",
+    "cibuildwheel",
+    "miniconda",
+    "tags",
+    "release"
+  ]
+}

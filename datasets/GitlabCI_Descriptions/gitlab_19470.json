@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_19470",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 257,
+  "description": "Create a GitLab CI pipeline that uses the golang:1.13-alpine Docker image and defines the variables CGO_ENABLED='0', GO111MODULE='on' and PROJECT_PATH='/go/src/gitlab.com/zerok/container-inventory'. Add a single job named test that runs in the default test stage and executes the script commands: mkdir -p ${PROJECT_PATH}, cp -R * ${PROJECT_PATH}, and cd ${PROJECT_PATH} && go test ./... -cover. The job has no services, caches, artifacts, or rules and simply runs the Go tests with coverage.",
+  "tags": [
+    "golang",
+    "go-test",
+    "alpine",
+    "ci",
+    "coverage"
+  ]
+}

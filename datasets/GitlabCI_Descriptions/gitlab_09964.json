@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_09964",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 696,
+  "description": "Create a GitLab CI pipeline using the docker:stable image with a docker:dind service, set DOCKER_DRIVER and DOCKER_HOST variables and define CONTAINER_TEST_IMAGE and CONTAINER_RELEASE_IMAGE variables. Define two stages: build and release. In the build stage add a build job that inherits a before_script running docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com, then executes docker build --pull -t $CONTAINER_TEST_IMAGE . and docker push $CONTAINER_TEST_IMAGE. In the release stage add a release-image job that only runs on the master branch, inherits the same before_script, and runs docker pull $CONTAINER_TEST_IMAGE, docker tag $CONTAINER_TEST_IMAGE $CONTAINER_RELEASE_IMAGE, and docker push $CONTAINER_RELEASE_IMAGE.",
+  "tags": [
+    "docker",
+    "dind",
+    "docker-build",
+    "docker-push",
+    "gitlab-ci",
+    "release",
+    "master-only"
+  ]
+}

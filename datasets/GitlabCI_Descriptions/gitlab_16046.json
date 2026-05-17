@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_16046",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2586,
+  "description": "Create a GitLab CI pipeline with three stages: build, test, and publish. In the build stage, add a job named build that runs on the debian:bullseye image, executes apt update, installs gnupg, ca-certificates, devscripts, dpkg-sig, curl, removes any existing golang, downloads and extracts Go 1.22.0, exports PATH to include /usr/local/go/bin, runs mk-build-deps --install --tool=\"$TOOL_ARGS\" debian/control, then ./build-deb.sh and make; it defines DEBUILD_ARGS and TOOL_ARGS variables, caches nothing, and stores the contents of build/* as artifacts, with tags merge and docker. In the publish stage, add three jobs—fedora-38-rpm (image fedora:38), fedora-39-rpm (image fedora:39), and rhel-rpm (image quay.io/centos/centos:stream9)—each runs dnf update, installs dnf-plugins-core and rpmdevtools (plus epel-release and enables crb for rhel), creates /root/rpmbuild, links the repository as SOURCES, installs build dependencies for fedora/raven.spec, builds the RPMs with rpmbuild -vv -ba fedora/raven.spec, copies the resulting RPMS to a local build directory, and publishes the RPM files matching build/RPMS/**/*.rpm as artifacts; all three use tags merge and docker. Finally, in the test stage, add a job named test with shell tags that depends on the build job, runs sudo -E ../../build/rvn build, deploy, pingwait n0 n1 nimbus, configure inside the models/2net directory, and after the script runs cd models/2net/ and sudo -E ../../build/rvn destroy; it has no special rules and runs on all branches.",
+  "tags": [
+    "debian",
+    "go",
+    "make",
+    "rpm",
+    "fedora",
+    "rhel",
+    "dnf",
+    "deb",
+    "gitlab-ci"
+  ]
+}

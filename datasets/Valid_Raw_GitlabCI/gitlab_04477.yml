@@ -1,0 +1,31 @@
+before_script:
+- export LC_ALL=C.UTF-8
+- apt-get update && apt-get -y install pkg-config brotli
+- export STACK_ROOT=`pwd`/.stack
+- stack setup
+- stack install --only-dependencies
+- stack build
+build:
+  cache:
+    paths:
+    - _cache
+    - .stack
+  except:
+  - master
+  script:
+  - stack exec site build
+image: haskell:latest
+pages:
+  artifacts:
+    paths:
+    - public
+  cache:
+    paths:
+    - _cache
+    - .stack
+  only:
+  - master
+  script:
+  - stack exec site build
+  - find public \( -name '*.html' -o -name '*.ico' -o -name '*.atom' -o -name '*.xml'
+    -o -name '*.js' -o -name '*.svg' -o -name '*.css' \) -exec brotli {} \+

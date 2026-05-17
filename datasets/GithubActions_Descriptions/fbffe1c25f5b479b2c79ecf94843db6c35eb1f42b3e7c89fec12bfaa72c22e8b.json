@@ -1,0 +1,14 @@
+{
+  "sha": "fbffe1c25f5b479b2c79ecf94843db6c35eb1f42b3e7c89fec12bfaa72c22e8b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2620,
+  "description": "Create a GitHub Actions workflow named Hotfix Build that triggers on push to the hotfix branch. Run three jobs in parallel on an ubuntu-18.04 environment: linux, windows, and macos. For each job, check out the repository, build and package using make.sh, and upload the resulting artifact. Additionally, for the linux job, tag and push a Docker image to Docker Hub if the repository is DeFiCh/ain.",
+  "tags": [
+    "docker",
+    "multi-os",
+    "make",
+    "github-actions",
+    "hotfix"
+  ]
+}

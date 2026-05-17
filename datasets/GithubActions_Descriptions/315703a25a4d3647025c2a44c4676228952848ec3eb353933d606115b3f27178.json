@@ -1,0 +1,15 @@
+{
+  "sha": "315703a25a4d3647025c2a44c4676228952848ec3eb353933d606115b3f27178",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1642,
+  "description": "Create a GitHub Actions workflow named Test that runs on push to the master branch, on opened and synchronized pull requests, and on a weekly schedule every Monday. The workflow has two jobs: build and check. The build job uses a matrix strategy to test multiple Python versions, from 3.6 to 3.10, on an ubuntu-18.04 environment. For each matrix entry, it checks out the code, sets up Python, installs poetry, configures it, installs dependencies, and runs tests with a custom script. The check job runs after build and verifies that all build jobs succeeded.",
+  "tags": [
+    "python",
+    "poetry",
+    "tests",
+    "matrix",
+    "schedule",
+    "ubuntu"
+  ]
+}

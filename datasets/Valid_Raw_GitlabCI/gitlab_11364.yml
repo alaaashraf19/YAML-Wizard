@@ -1,0 +1,12 @@
+image: alpine:latest
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - echo 'Nothing to do...'
+  stage: deploy
+variables:
+  GIT_SUBMODULE_STRATEGY: normal

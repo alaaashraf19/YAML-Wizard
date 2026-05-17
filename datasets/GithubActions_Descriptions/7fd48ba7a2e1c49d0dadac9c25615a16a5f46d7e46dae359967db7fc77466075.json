@@ -1,0 +1,15 @@
+{
+  "sha": "7fd48ba7a2e1c49d0dadac9c25615a16a5f46d7e46dae359967db7fc77466075",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3495,
+  "description": "Create a GitHub Actions workflow that triggers on push and pull requests to specific paths. The workflow consists of three jobs: cache-sources, build-guix, and bundle-logs. The cache-sources job caches the depends sources on an ubuntu-24.04 runner. The build-guix job uses a matrix strategy to build Guix for multiple targets, installing dependencies, and uploading build artifacts. The bundle-logs job downloads artifacts, prints hashes, and uploads logs.",
+  "tags": [
+    "guix",
+    "github-actions",
+    "ubuntu",
+    "ci",
+    "build",
+    "cache"
+  ]
+}

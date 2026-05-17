@@ -1,0 +1,9 @@
+danger-review:
+  rules:
+  - if: $PIPELINE_TYPE =~ "/CANONICAL_(PROTECTED_BRANCH|MERGE_REQUEST)_PIPELINE/"
+    when: always
+include:
+- component: ${CI_SERVER_FQDN}/gitlab-org/components/danger-review/danger-review@1.4.1
+  inputs:
+    job_allow_failure: true
+    job_stage: preflight

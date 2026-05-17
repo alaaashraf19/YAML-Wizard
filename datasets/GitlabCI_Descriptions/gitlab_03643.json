@@ -1,0 +1,20 @@
+{
+  "sha": "gitlab_03643",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 32768,
+  "description": "Create a GitLab CI pipeline that uses the docker:24 Docker image with a docker:24-dind service and a postgres:14 service, defines stages build, test, scan, quality, deploy, and production, and sets variables for DATABASE_URL, CI_APPLICATION_REPOSITORY, CI_APPLICATION_TAG, and Helm/Tiller namespaces. In the build stage add a build job that runs the install_dependencies, setup_docker, and build functions which install Alpine packages, download Helm and kubectl, log in to the GitLab Container Registry, build a Dockerfile (docker build -t $CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG .) or Herokuish build, and push the image (docker push $CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG). In the test stage add a test job that runs setup_test_db to export DATABASE_URL and then executes any test suite (e.g., npm test or pytest) and stores test reports as artifacts. In the scan stage add container_scanning, sast, dependency_scanning, code_quality, and license_management jobs that each invoke their respective functions, pulling the built image, running Clair scanner (docker run ... clair-scanner ...), SAST scanner (docker run .../sast:$SP_VERSION), dependency scanner (docker run .../dependency-scanning:$SP_VERSION), code quality scanner (docker run .../codequality:$SP_VERSION), and license management scanner (docker run .../license-management:$LICENSE_MANAGEMENT_VERSION). In the deploy stage add a deploy job that runs the deploy function, which ensures the Kubernetes namespace, installs Tiller, creates a registry secret if the project is private, and runs a Helm upgrade/install with dynamic replica counts, PostgreSQL settings, and environment variables. In the production stage add a scale job that runs the scale function to adjust replica counts via Helm. All jobs use rules to run on the main branch for builds and deployments, on tags for releases, and on merge requests for scans, and the pipeline caches the .cache/pip directory and stores Docker image layers as artifacts where appropriate.",
+  "tags": [
+    "docker",
+    "dind",
+    "helm",
+    "kubernetes",
+    "auto-devops",
+    "container-scanning",
+    "sast",
+    "dependency-scanning",
+    "code-quality",
+    "license-management",
+    "postgres"
+  ]
+}

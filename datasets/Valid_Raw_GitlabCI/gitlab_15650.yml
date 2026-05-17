@@ -1,0 +1,25 @@
+before_script:
+- python -V
+image: python:latest
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - pip install sphinx sphinx-rtd-theme
+  - cd doc ; make html
+  - mv build/html/ ../public/
+run:
+  artifacts:
+    paths:
+    - dist/*.whl
+  script:
+  - python setup.py bdist_wheel
+  - pip install dist/*
+test:
+  script:
+  - python setup.py test
+  - pip install tox flake8
+  - tox -e py36,flake8

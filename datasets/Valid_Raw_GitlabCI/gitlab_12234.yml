@@ -1,0 +1,51 @@
+pages:
+  artifacts:
+    paths:
+    - public
+  image: python:3.6
+  only:
+  - master
+  script:
+  - pip install -r requirements.txt
+  - pip install .
+  - cd doc ; make html
+  - mv _build/html ../public
+  stage: various
+stages:
+- test
+- various
+test:3.6_pg10:
+  coverage: /\d+\%\s*$/
+  image: python:3.6
+  script:
+  - pip install -r requirements.txt
+  - pip install .
+  - pytest
+  services:
+  - postgres:10.1
+  stage: test
+  variables:
+    PG_HOST: postgres
+    POSTGRES_PASSWORD: runner
+    POSTGRES_USER: runner
+test:3.6_pg9:
+  image: python:3.6
+  script:
+  - pip install -r requirements.txt
+  - pip install .
+  - pytest
+  services:
+  - postgres:9
+  stage: test
+  variables:
+    PG_HOST: postgres
+    POSTGRES_PASSWORD: runner
+    POSTGRES_USER: runner
+wheel:
+  artifacts:
+    paths:
+    - dist/*.whl
+  image: python:3.6
+  script:
+  - python setup.py bdist_wheel
+  stage: various

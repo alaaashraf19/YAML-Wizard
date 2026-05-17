@@ -1,0 +1,87 @@
+name: basic test
+
+on:
+  push:
+    tags:
+      - ".*"
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+      - feature-2.0
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # 'Basic' tests and checks
+          - TOXENV: py3check
+            TOXCFG: tox.ini
+          - TOXENV: py3lint
+            TOXCFG: tox.ini
+          - TOXENV: py3mypy
+            TOXCFG: tox.ini
+          - TOXENV: py3
+            TOXCFG: tox.ini
+
+          - TOXENV: py3-generic
+            TOXCFG: tox-integration.ini
+          - TOXENV: py3-mqtt
+            TOXCFG: tox-integration.ini
+          - TOXENV: py3-hooks
+            TOXCFG: tox-integration.ini
+          - TOXENV: py3-advanced
+            TOXCFG: tox-integration.ini
+
+    services:
+      docker:
+        image: docker
+
+    env:
+      TOXENV: ${{ matrix.TOXENV }}
+      TOXCFG: ${{ matrix.TOXCFG }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/cache@v3
+        env:
+          cache-name: cache-${{ matrix.TOXENV }}
+        with:
+          path: .tox
+          key: ${{ runner.os }}-tox-${{ env.cache-name }}-${{ hashFiles('tox.ini', 'tox-integration.ini', 'pyproject.toml', 'requirements.in') }}
+
+      - uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('pyproject.toml', 'requirements.in') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - uses: actions/cache@v3
+        with:
+          path: ~/.cache/pre-commit
+          key: ${{ runner.os }}-pre-commit-${{ hashFiles('.pre-commit-config.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pre-commit-
+
+      - uses: jpribyl/action-docker-layer-caching@v0.1.1
+        continue-on-error: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: install deps
+        run: |
+          pip install tox-travis -c constraints.txt
+
+      - name: tox
+        run: |
+          tox -c ${TOXCFG}

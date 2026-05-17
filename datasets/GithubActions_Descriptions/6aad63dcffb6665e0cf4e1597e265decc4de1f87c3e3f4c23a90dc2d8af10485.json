@@ -1,0 +1,16 @@
+{
+  "sha": "6aad63dcffb6665e0cf4e1597e265decc4de1f87c3e3f4c23a90dc2d8af10485",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1380,
+  "description": "Create a GitHub Actions workflow that triggers on push events to all branches except those matching **-1.3 or **-1.5, and tags except v1.*, and paths except docs/**, Changelog.md, and README.md. It also triggers on pull requests and published, created, or edited releases. The workflow uses a matrix strategy to run on both ubuntu-18.04 and macOS, checking out the code, caching dependencies, installing OS-specific dependencies, configuring, compiling, and running unit tests.",
+  "tags": [
+    "github-actions",
+    "fisco-bcos",
+    "cmake",
+    "make",
+    "tests",
+    "ubuntu",
+    "macos"
+  ]
+}

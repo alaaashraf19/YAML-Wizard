@@ -1,0 +1,14 @@
+{
+  "sha": "2538fab5aec7ff45acc88d6f04edfc1950fa0e8425dd2d4f33e31f84e10d431c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 10209,
+  "description": "Create a GitHub Actions workflow named build that triggers on a schedule, push to master, pull requests, and workflow dispatch. The workflow has a prelude job that generates build matrices for Windows and other platforms. It then uses these matrices to run build jobs on ubuntu-latest and windows-latest environments, installing dependencies, building, packaging, and uploading artifacts. The workflow also handles caching, code coverage, and release assets.",
+  "tags": [
+    "github-actions",
+    "build",
+    "ci",
+    "cd",
+    "gdl"
+  ]
+}

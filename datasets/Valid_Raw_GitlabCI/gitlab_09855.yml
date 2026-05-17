@@ -1,0 +1,19 @@
+build:
+  script:
+  - npm install
+  stage: build
+cache:
+  paths:
+  - node_modules/
+image: node:latest
+release:
+  only:
+  - tags
+  script:
+  - echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}'>.npmrc
+  - npm publish --tag $NPM_TAG
+  stage: deploy
+test:
+  script:
+  - npm run test
+  stage: test

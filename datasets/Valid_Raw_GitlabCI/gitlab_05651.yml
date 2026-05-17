@@ -1,0 +1,28 @@
+before_script:
+- nuget restore -NonInteractive
+debug:
+  artifacts:
+    paths:
+    - CDAR-Debug/*
+  except:
+  - master
+  - tags
+  script:
+  - msbuild /p:Configuration="Debug" /p:Platform="x86" /p:OutputPath="./CDAR-Debug/"
+    "CDAR.sln"
+  - ./mpo -e "./CDAR-Debug/locale"
+  stage: build
+image: coalzombik/mono-gtk2:5.14.0.177
+release:
+  artifacts:
+    paths:
+    - CDAR/*
+  only:
+  - master
+  - tags
+  script:
+  - msbuild /p:Configuration="Release" /p:Platform="x86" /p:OutputPath="./CDAR/" "CDAR.sln"
+  - ./mpo -e "./CDAR/locale/"
+  stage: build
+stages:
+- build

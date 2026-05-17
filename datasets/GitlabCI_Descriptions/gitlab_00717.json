@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_00717",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 292,
+  "description": "Create a GitLab CI pipeline using the node:12.16.3-stretch Docker image and include the built‑in License‑Scanning template. Define a single job named test (default stage) that runs a before_script sequence: npm run build, npm i --build-from-source --verbose, cd src/util, node findandedit.js, and cd ../. In the script step the job executes npm test with the environment variables DEBUG_TOKEN and GOOGLE_API_KEY passed as --debugToken=$DEBUG_TOKEN and --googleAPIKey=$GOOGLE_API_KEY. No additional services, caches, artifacts or rules are configured.",
+  "tags": [
+    "node",
+    "npm",
+    "license-scanning",
+    "test",
+    "debug-token",
+    "google-api-key"
+  ]
+}

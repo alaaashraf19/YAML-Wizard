@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_04307",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1070,
+  "description": "Create a GitLab CI pipeline that uses the bahmutov/cypress-image Docker image. Define two stages, build and test, and set a global before_script of `cypress verify`. In the build stage add a build-specs job that runs `npm install`, `npm test`, and `npm run build`, caches the node_modules/ directory, and saves the cypress/integration folder as an artifact. In the test stage add the following spec jobs—actions_spec, aliasing_spec, assertions_spec, basic_spec, config_spec, connectors_spec, cookies2_spec, cookies_spec, dom_spec, env_spec, fixtures_spec, local-storage_spec, location_spec, misc_spec, navigation_spec, network_spec, querying_spec, server_spec, traversal_spec, utilities_spec, viewport_spec, waiting_spec, and window_spec—each of which runs the global before_script then executes `cypress ci --spec \"cypress/integration/$CI_BUILD_NAME.js\"`. No additional rules, services, or deployment targets are defined.",
+  "tags": [
+    "cypress",
+    "node",
+    "npm",
+    "gitlab-ci",
+    "docker-image",
+    "test",
+    "build"
+  ]
+}

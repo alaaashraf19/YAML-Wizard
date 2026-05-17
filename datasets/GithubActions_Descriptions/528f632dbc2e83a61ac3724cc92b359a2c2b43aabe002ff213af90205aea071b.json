@@ -1,0 +1,14 @@
+{
+  "sha": "528f632dbc2e83a61ac3724cc92b359a2c2b43aabe002ff213af90205aea071b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1949,
+  "description": "Create a GitHub Actions workflow for ClusterFuzzLite PR fuzzing that triggers on pull requests affecting specific paths in the repository. The workflow should run on an ubuntu-latest environment with read-all permissions, using a matrix strategy to test with different sanitizers. For each sanitizer, it should build fuzzers, then run them for 600 seconds in code-change mode, producing SARIF output.",
+  "tags": [
+    "fuzzing",
+    "clusterfuzzlite",
+    "python",
+    "github-actions",
+    "pr-testing"
+  ]
+}

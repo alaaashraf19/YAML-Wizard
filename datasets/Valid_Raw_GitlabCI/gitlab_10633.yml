@@ -1,0 +1,106 @@
+.build-before-script: &id001
+- apt-get update
+- apt-get install zip -y
+- npm install -g electron-packager
+- npm install -g electron-installer-zip
+- npm ci
+.publish-before-script: &id002
+- curl -L -o /tmp/butler.zip https://broth.itch.ovh/butler/linux-amd64/LATEST/archive/default
+- unzip /tmp/butler.zip -d /usr/bin
+- chmod +x /usr/bin/butler
+- butler -V
+audit:
+  script:
+  - npm audit
+  stage: test
+  tags:
+  - docker
+build-darwin:
+  artifacts:
+    paths:
+    - release/
+  before_script:
+  - *id001
+  only:
+  - tags
+  - master
+  script:
+  - npm run package-darwin
+  - npm run package-darwin-m1
+  stage: build
+  tags:
+  - docker
+build-linux:
+  artifacts:
+    paths:
+    - release/
+  before_script:
+  - *id001
+  only:
+  - tags
+  - master
+  script:
+  - npm run package-linux
+  stage: build
+  tags:
+  - docker
+build-win32:
+  artifacts:
+    paths:
+    - release/
+  before_script:
+  - *id001
+  only:
+  - tags
+  - master
+  script:
+  - dpkg --add-architecture i386
+  - apt-get update
+  - apt-get install wine32 wine64 -y
+  - npm run package-win32
+  stage: build
+  tags:
+  - docker
+image: node:lts
+publish-darwin:
+  before_script:
+  - *id002
+  dependencies:
+  - build-darwin
+  only:
+  - tags
+  script:
+  - npm run publish-darwin
+  stage: deploy
+  tags:
+  - docker
+publish-linux:
+  before_script:
+  - *id002
+  dependencies:
+  - build-linux
+  only:
+  - tags
+  script:
+  - npm run publish-linux
+  - npm run publish-linux-32bit
+  stage: deploy
+  tags:
+  - docker
+publish-win32:
+  before_script:
+  - *id002
+  dependencies:
+  - build-win32
+  only:
+  - tags
+  script:
+  - npm run publish-win32
+  - npm run publish-win32-32bit
+  stage: deploy
+  tags:
+  - docker
+stages:
+- test
+- build
+- deploy

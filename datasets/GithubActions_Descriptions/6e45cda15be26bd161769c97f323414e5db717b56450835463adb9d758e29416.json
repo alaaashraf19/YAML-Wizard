@@ -1,0 +1,17 @@
+{
+  "sha": "6e45cda15be26bd161769c97f323414e5db717b56450835463adb9d758e29416",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 11161,
+  "description": "Create a GitHub Actions workflow named LuxCore Samples Builder that builds samples across multiple operating systems. The workflow can be triggered manually or called by another workflow, accepting repository, ref, and version inputs. It checks out the repository, sets up Python 3.13, installs dependencies, and builds samples using make and conan. The workflow runs on a matrix of ubuntu-latest, windows-latest, macos-13, and macos-14, and outputs the commit, branch, version, and attestation URL.",
+  "tags": [
+    "github-actions",
+    "luxcore",
+    "samples",
+    "builder",
+    "cross-platform",
+    "conan",
+    "make",
+    "python"
+  ]
+}

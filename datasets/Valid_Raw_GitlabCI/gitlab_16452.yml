@@ -1,0 +1,9 @@
+maven_build:
+  artifacts:
+    paths:
+    - target/docserver-1.1-SNAPSHOT.jar
+  image: maven:latest
+  script: mvn install -B
+  stage: build
+stages:
+- build

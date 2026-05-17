@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_12249",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 298,
+  "description": "Create a GitLab CI pipeline that uses the node:latest Docker image. Define a single stage named publish and a publish job that runs in this stage. The job executes the following shell commands in order: apt-get update, apt-get install jq -y, cat tsconfig.json | jq 'del(.references)' > a && mv a tsconfig.json, npm ci, npx commitlint --from=master to=CI_BUILD_REF_NAME, npm run build, and npx semantic-release to automatically publish the package. The pipeline has no additional services, caches, artifacts, or conditional rules, so the job runs on every pipeline execution.",
+  "tags": [
+    "node",
+    "npm",
+    "semantic-release",
+    "commitlint",
+    "apt",
+    "jq"
+  ]
+}

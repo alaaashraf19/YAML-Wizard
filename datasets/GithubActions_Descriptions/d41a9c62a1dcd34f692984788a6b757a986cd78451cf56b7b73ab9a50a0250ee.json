@@ -1,0 +1,16 @@
+{
+  "sha": "d41a9c62a1dcd34f692984788a6b757a986cd78451cf56b7b73ab9a50a0250ee",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 12731,
+  "description": "Create a comprehensive GitHub Actions workflow named build that handles multiple build and test jobs for a project across various platforms and environments. Trigger on push to any branch or tag matching specific patterns and on pull requests to any branch. The workflow should include jobs for running clang-tidy, building and testing on Linux, MOD devices, Windows, and MinGW, as well as building with a Makefile and archiving source code. Additionally, include a deploy job that depends on previous build and archive jobs and handles artifact downloads.",
+  "tags": [
+    "github-actions",
+    "ci",
+    "cd",
+    "multi-platform",
+    "build",
+    "test",
+    "deploy"
+  ]
+}

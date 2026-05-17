@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_00716",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 179,
+  "description": "Create a GitLab CI pipeline that uses the gcc Docker image and defines a single build stage. Add a job named build in the build stage that runs the shell command make test and is excluded from pipeline runs triggered by schedules. Add another job named build:on-schedule in the same stage that runs make future and is executed only for scheduled pipelines. No services, caches, artifacts, or deployment targets are defined.",
+  "tags": [
+    "gcc",
+    "make",
+    "build",
+    "schedule"
+  ]
+}

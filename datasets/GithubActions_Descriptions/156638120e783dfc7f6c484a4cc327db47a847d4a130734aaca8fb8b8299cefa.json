@@ -1,0 +1,14 @@
+{
+  "sha": "156638120e783dfc7f6c484a4cc327db47a847d4a130734aaca8fb8b8299cefa",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1006,
+  "description": "Create a GitHub Actions workflow named Deploy to GitHub Pages that triggers on push to the master branch. The workflow should have read access to repository contents, write access to GitHub Pages, and write access to ID tokens. It should use a concurrency group named pages without canceling in-progress jobs. The workflow consists of two jobs: build and deploy. The build job runs on ubuntu-latest, checks out the repository, sets up Python 3.x, installs MkDocs dependencies, and builds the site. The deploy job runs on ubuntu-latest, waits for the build job to complete, and deploys the site to GitHub Pages.",
+  "tags": [
+    "github-pages",
+    "python",
+    "mkdocs",
+    "deployment",
+    "pages"
+  ]
+}

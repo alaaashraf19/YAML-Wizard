@@ -1,0 +1,16 @@
+{
+  "sha": "737142ebf8b5b19ef76ba13bc921b3c3b53a6b28e4de6f76533367d2f782a833",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 11409,
+  "description": "Create a GitHub Actions workflow named Pull/push that runs on every push to the master branch and on pull requests to the master branch. The workflow has three ubuntu-latest jobs: build_ibamr_archlinux_016, build_ibamr_archlinux_016_autotools, and build_ibamr_ubuntu_016. Each job uses a Docker container, checks out the repository, verifies clang-format, and populates the ccache. The jobs then configure, compile, and test IBAMR using either CMake or autotools, and compile sample projects.",
+  "tags": [
+    "ibamr",
+    "cmake",
+    "autotools",
+    "ubuntu",
+    "archlinux",
+    "tests",
+    "ccache"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "cdf8ca1ed67b808acd1c08aac03c62f6df642970fcf437684acc8e5a62c789ea",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2414,
+  "description": "Create a GitHub Actions workflow named build that runs on push and pull request events. The workflow has two jobs: one for building and testing with multiple Python versions and another for building a .deb package. The first job checks out the code, sets up Python, installs dependencies, runs pre-commit hooks, unit tests, and CLI tests. The second job checks out the code, verifies the Debian version, builds a .deb package, installs it, runs CLI tests, and uploads the Debian packages as an artifact.",
+  "tags": [
+    "python",
+    "ubuntu",
+    "tests",
+    "deb",
+    "packaging"
+  ]
+}

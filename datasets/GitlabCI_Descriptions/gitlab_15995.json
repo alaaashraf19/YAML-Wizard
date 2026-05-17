@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_15995",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 187,
+  "description": "Create a GitLab CI pipeline that uses the bravissimolabs/alpine-git Docker image. Define a single job named deploy-to-heroku (default stage) that runs two shell commands: `git remote add heroku https://heroku:$HEROKU_API_KEY@git.heroku.com/hello-gitlab-heroku.git` to add a Heroku remote using the HEROKU_API_KEY secret, and `git push -f heroku master` to force‑push the master branch to the Heroku app repository. No caches, artifacts, services, or special rules are required; the job runs on every pipeline execution.",
+  "tags": [
+    "heroku",
+    "alpine-git",
+    "git-deploy",
+    "ci"
+  ]
+}

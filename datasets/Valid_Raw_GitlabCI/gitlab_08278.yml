@@ -1,0 +1,269 @@
+alpine-stable:
+  extends: .job-base
+  script:
+  - record_stable_image "${DEPENDENCY_PROXY}${ALPINE_IMAGE}"
+  stage: phase-zero
+certificates:
+  extends: .certificates
+  needs:
+  - job: gitlab-base
+    optional: true
+cfssl-self-sign:
+  extends: .cfssl-self-sign
+  needs:
+  - job: alpine-stable
+    optional: true
+debian-stable:
+  extends: .job-base
+  script:
+  - record_stable_image "${DEPENDENCY_PROXY}${DEBIAN_IMAGE}"
+  stage: phase-zero
+gitaly:
+  extends: .gitaly
+  needs:
+  - job: gitlab-go
+    optional: true
+  - job: gitlab-base
+    optional: true
+  - job: gitlab-python
+    optional: true
+gitaly-init-cgroups:
+  extends: .gitaly-init-cgroups
+  needs:
+  - job: gitaly
+    optional: true
+gitlab-agentk:
+  extends: .gitlab-agentk
+  needs:
+  - job: gitlab-go
+    optional: true
+gitlab-base:
+  extends: .gitlab-base
+  needs:
+  - job: debian-stable
+    optional: true
+  - job: gitlab-logger
+    optional: true
+  - job: gitlab-gomplate
+    optional: true
+gitlab-container-registry:
+  extends: .gitlab-container-registry
+  needs:
+  - job: gitlab-base
+    optional: true
+  - job: gitlab-go
+    optional: true
+gitlab-cosign:
+  extends: .gitlab-cosign
+  needs:
+  - job: gitlab-base
+    optional: true
+gitlab-elasticsearch-indexer:
+  extends: .gitlab-elasticsearch-indexer
+  needs:
+  - job: gitlab-go
+    optional: true
+gitlab-exiftool:
+  extends: .gitlab-exiftool
+  needs:
+  - job: gitlab-base
+    optional: true
+gitlab-exporter:
+  extends: .gitlab-exporter
+  needs:
+  - job: gitlab-ruby
+    optional: true
+gitlab-geo-logcursor:
+  extends: .gitlab-geo-logcursor
+  needs:
+  - job: gitlab-rails-ee
+    optional: true
+gitlab-go:
+  extends: .gitlab-go
+  needs:
+  - job: debian-stable
+    optional: true
+gitlab-gomplate:
+  extends: .gitlab-gomplate
+  needs:
+  - job: gitlab-go
+    optional: true
+gitlab-graphicsmagick:
+  extends: .gitlab-graphicsmagick
+  needs:
+  - job: debian-stable
+    optional: true
+gitlab-kas:
+  extends: .gitlab-kas
+  needs:
+  - job: gitlab-go
+    optional: true
+gitlab-logger:
+  extends: .gitlab-logger
+  needs:
+  - job: gitlab-go
+    optional: true
+gitlab-mailroom:
+  extends: .gitlab-mailroom
+  needs:
+  - job: gitlab-ruby
+    optional: true
+gitlab-openbao:
+  extends: .gitlab-openbao
+  needs:
+  - job: gitlab-base
+    optional: true
+  - job: gitlab-go
+    optional: true
+gitlab-pages:
+  extends: .gitlab-pages
+  needs:
+  - job: gitlab-base
+    optional: true
+  - job: gitlab-go
+    optional: true
+gitlab-python:
+  extends: .gitlab-python
+  needs:
+  - job: debian-stable
+    optional: true
+gitlab-rails-ce:
+  extends: .gitlab-rails-ce
+  needs:
+  - job: postgresql
+    optional: true
+  - job: gitlab-graphicsmagick
+    optional: true
+  - job: gitlab-exiftool
+    optional: true
+  - job: gitlab-ruby
+    optional: true
+  - job: gitlab-rust
+    optional: true
+  variables:
+    IMAGE_FLAVOR: debian
+gitlab-rails-ee:
+  extends: .gitlab-rails-ee
+  needs:
+  - job: postgresql
+    optional: true
+  - job: gitlab-graphicsmagick
+    optional: true
+  - job: gitlab-exiftool
+    optional: true
+  - job: gitlab-ruby
+    optional: true
+  - job: gitlab-rust
+    optional: true
+  - job: gitlab-elasticsearch-indexer
+    optional: true
+  variables:
+    IMAGE_FLAVOR: debian
+gitlab-ruby:
+  extends: .gitlab-ruby
+  needs:
+  - job: gitlab-base
+    optional: true
+  - job: gitlab-rust
+    optional: true
+gitlab-rust:
+  extends: .gitlab-rust
+  needs:
+  - job: debian-stable
+    optional: true
+gitlab-shell:
+  extends: .gitlab-shell
+  needs:
+  - job: gitlab-base
+    optional: true
+  - job: gitlab-go
+    optional: true
+gitlab-sidekiq-ce:
+  extends: .gitlab-sidekiq-ce
+  needs:
+  - job: gitlab-rails-ce
+    optional: true
+  - job: gitlab-python
+    optional: true
+  - job: gitlab-cosign
+    optional: true
+gitlab-sidekiq-ee:
+  extends: .gitlab-sidekiq-ee
+  needs:
+  - job: gitlab-rails-ee
+    optional: true
+  - job: gitlab-python
+    optional: true
+  - job: gitlab-cosign
+    optional: true
+gitlab-toolbox-ce:
+  extends: .gitlab-toolbox-ce
+  needs:
+  - job: gitlab-rails-ce
+    optional: true
+  - job: gitlab-python
+    optional: true
+  - job: gitaly
+    optional: true
+gitlab-toolbox-ee:
+  extends: .gitlab-toolbox-ee
+  needs:
+  - job: gitlab-rails-ee
+    optional: true
+  - job: gitlab-python
+    optional: true
+  - job: gitaly
+    optional: true
+gitlab-webservice-ce:
+  extends: .gitlab-webservice-ce
+  needs:
+  - job: gitlab-rails-ce
+    optional: true
+  - job: gitlab-python
+    optional: true
+gitlab-webservice-ee:
+  extends: .gitlab-webservice-ee
+  needs:
+  - job: gitlab-rails-ee
+    optional: true
+  - job: gitlab-python
+    optional: true
+gitlab-workhorse-ce:
+  extends: .gitlab-workhorse-ce
+  needs:
+  - job: gitlab-go
+    optional: true
+  - job: gitlab-exiftool
+    optional: true
+  - job: gitlab-rails-ce
+    optional: true
+gitlab-workhorse-ee:
+  extends: .gitlab-workhorse-ee
+  needs:
+  - job: gitlab-go
+    optional: true
+  - job: gitlab-exiftool
+    optional: true
+  - job: gitlab-rails-ee
+    optional: true
+gitlab-zoekt:
+  extends: .gitlab-zoekt
+  needs:
+  - job: gitlab-base
+    optional: true
+  - job: gitlab-go
+    optional: true
+include:
+- local: .gitlab/ci/ignorable-job-base.gitlab-ci.yml
+  rules:
+  - if: $PIPELINE_TYPE == "GITLAB_RAILS_UPSTREAM_TRIGGER"
+kubectl:
+  extends: .kubectl
+  needs:
+  - job: debian-stable
+    optional: true
+postgresql:
+  extends: .postgresql
+  needs:
+  - job: debian-stable
+    optional: true

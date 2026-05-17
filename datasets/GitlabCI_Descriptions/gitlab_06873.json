@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_06873",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 464,
+  "description": "Create a GitLab CI pipeline with three stages: build, test, and deploy. Use the golang:1.8 Docker image for the build and test jobs, each caching the bin/ directory. In the build stage add a build job that sets GOPATH to the project directory (export GOPATH=$PWD) and runs go install -v $APPNAME, caching bin/. In the test stage add a test job that also sets GOPATH=$PWD and runs go test -v $APPNAME, caching bin/. In the deploy stage add a deploy job using the pivotalpa/cf-cli-resource image, caching bin/, that executes sh deployToCloudFoundry.sh and relies on the APPNAME variable defined in the pipeline. The pipeline runs on all branches with no special rules.",
+  "tags": [
+    "go",
+    "golang",
+    "cloudfoundry",
+    "cf-cli",
+    "build",
+    "test",
+    "deploy",
+    "cache"
+  ]
+}

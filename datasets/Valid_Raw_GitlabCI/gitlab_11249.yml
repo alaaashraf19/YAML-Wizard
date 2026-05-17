@@ -1,0 +1,15 @@
+before_script:
+- npm install
+cache:
+  paths:
+  - node_modules/
+image: node:8-slim
+pages:
+  artifacts:
+    paths:
+    - public
+  script:
+  - npm run build
+  stage: build
+stages:
+- build

@@ -1,0 +1,76 @@
+deploy_pypi:
+  environment:
+    name: deployment
+    url: https://pypi.org/
+  image: seriallab/python3.6dev
+  only:
+  - tags
+  script:
+  - echo "[distutils]" >> ~/.pypirc
+  - echo "index-servers = " >> ~/.pypirc
+  - echo "[pypi]" >> ~/.pypirc
+  - echo "username=$PYPI_USER" >> ~/.pypirc
+  - echo "password=$PYPI_PASSWORD" >> ~/.pypirc
+  - python setup.py check sdist bdist_wheel upload
+  - rm ~/.pypirc
+  stage: pypi
+pages:
+  artifacts:
+    expire_in: 1d
+    paths:
+    - public
+  image: seriallab/python3.6dev
+  only:
+  - tags
+  script:
+  - pip install -r requirements_test.txt
+  - pip install sphinx sphinx_rtd_theme pygments ipython recommonmark
+  - make docs
+  - mv docs/_build/html/ public/
+  stage: build-docs
+python3_10_unit_test:
+  artifacts:
+    paths:
+    - htmlcov/
+  coverage: /TOTAL.*\s+(\d+\%)/
+  image: python:3.10-slim-bullseye
+  script:
+  - apt-get update && apt-get install -y git
+  - export PYTHONPATH=$PYTHONPATH:$CI_PROJECT_DIR
+  - pip install -r requirements_test.txt
+  - coverage run runtests.py
+  - coverage report -m
+  - coverage html
+  stage: test-python
+python3_11_unit_test:
+  artifacts:
+    paths:
+    - htmlcov/
+  coverage: /TOTAL.*\s+(\d+\%)/
+  image: python:3.11-slim-bullseye
+  script:
+  - apt-get update && apt-get install -y git
+  - export PYTHONPATH=$PYTHONPATH:$CI_PROJECT_DIR
+  - pip install -r requirements_test.txt
+  - coverage run runtests.py
+  - coverage report -m
+  - coverage html
+  stage: test-python
+python3_12_unit_test:
+  artifacts:
+    paths:
+    - htmlcov/
+  coverage: /TOTAL.*\s+(\d+\%)/
+  image: python:3.12-slim-bullseye
+  script:
+  - apt-get update && apt-get install -y git
+  - export PYTHONPATH=$PYTHONPATH:$CI_PROJECT_DIR
+  - pip install -r requirements_test.txt
+  - coverage run runtests.py
+  - coverage report -m
+  - coverage html
+  stage: test-python
+stages:
+- test-python
+- build-docs
+- pypi

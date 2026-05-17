@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_10722",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 408,
+  "description": "Create a GitLab CI pipeline that uses the quay.io/jangorecki/r-pkg Docker image and defines a pages job in the deploy stage that runs only on the master branch. The pages job should execute the shell commands: R CMD build ., R CMD check $(ls -1t *.tar.gz | head -n 1) --no-manual --as-cran, mkdir public Rcheck, Rscript -e 'drat::insertArtifacts(repodir = \"public\", repo.url = \"https://jangorecki.github.io/r.pkg.gitlab.ci\")', and mv $(find . -maxdepth 1 -name \"*.Rcheck\" -type d) Rcheck. It must publish the Rcheck and public directories as artifacts for GitLab Pages.",
+  "tags": [
+    "r",
+    "gitlab-pages",
+    "drat",
+    "r-pkg",
+    "quay"
+  ]
+}

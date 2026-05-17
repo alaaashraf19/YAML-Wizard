@@ -1,0 +1,14 @@
+{
+  "sha": "c1f0e8bfc3d1f2710e9b8a28f80076dc45f9c8eb113c2a50ba582683ae3b5c21",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 973,
+  "description": "Create a GitHub Actions workflow named Marketplace - Render that runs on release events. The workflow has two jobs: validate and publish. The validate job checks out the repository and uses the packer-github-actions to fix and validate a template, but both steps are currently disabled. The publish job depends on the validate job, checks out the repository, and uses packer-github-actions to build the template, but this step is also currently disabled.",
+  "tags": [
+    "marketplace",
+    "render",
+    "packer",
+    "validation",
+    "release"
+  ]
+}

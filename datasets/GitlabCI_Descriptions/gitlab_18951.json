@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_18951",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 781,
+  "description": "Create a GitLab CI pipeline that uses the node:8.15-slim Docker image and sets GIT_SUBMODULE_STRATEGY to recursive. Define three stages (build, lint, deploy) and a cache keyed by $CI_BUILD_REF_NAME that stores node_modules/ and includes untracked files. In the build stage add a build job that runs a before_script to wget the Hugo 0.53 extended .deb to /tmp, installs it with dpkg -i, runs npm install, then executes npm run build, and publishes the public directory as an artifact. In the deploy stage add a production_deploy job that depends on build, runs only for tags, installs netlify-cli globally, and runs netlify deploy --dir=./public --prod. Also add a staging_deploy job that depends on build, runs only on the master branch, installs netlify-cli globally, and runs netlify deploy --dir=./public.",
+  "tags": [
+    "node-8",
+    "hugo",
+    "netlify-cli",
+    "cache",
+    "gitlab-ci",
+    "deployment"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_13943",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 954,
+  "description": "Create a GitLab CI pipeline using the openjdk:10 Docker image with a global before_script that exports PATH=$JAVA_HOME/bin:$PATH. Define three stages: build, test, and deploy. In the build stage add a build job that runs ./gradlew jar, and a javadoc job that runs ./gradlew javadoc and stores the generated documentation from build/docs as a 1‑day artifact. In the test stage add a check job that runs ./gradlew check, publishing JUnit reports from build/test-results/test/TEST-*.xml and the build/reports directory as a 1‑day artifact, and an integration-test job that runs ./gradlew integrationTest, uses the winsent/geoserver service, and archives build/reports and JUnit reports from build/test-results/integrationTest/TEST-*.xml for 1 day. In the deploy stage add a coverage-report job that runs ./gradlew jacocoTestReportUpload and only runs on the master branch, a deploy job that runs ./gradlew publish and runs on master and tags, and a pages job that moves the build directory to public, publishes the public/ directory as a pages artifact, runs only on master and always executes.",
+  "tags": [
+    "openjdk",
+    "gradle",
+    "build",
+    "test",
+    "deploy",
+    "javadoc",
+    "integration-test",
+    "coverage",
+    "pages",
+    "geoserver"
+  ]
+}

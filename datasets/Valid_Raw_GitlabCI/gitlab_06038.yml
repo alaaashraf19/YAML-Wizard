@@ -1,0 +1,13 @@
+pgxn:
+  artifacts:
+    expire_in: 1 day
+    paths:
+    - anon*
+    - _pgxn/
+  image: alpine
+  only:
+  - master
+  script:
+  - apk add -U make git zip
+  - make pgxn
+  stage: pack

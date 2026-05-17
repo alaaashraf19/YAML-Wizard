@@ -1,0 +1,68 @@
+## ---------------------------------------------------------------------
+##
+## Copyright (c) 2023 - 2023 by the IBAMR developers
+## All rights reserved.
+##
+## This file is part of IBAMR.
+##
+## IBAMR is free software and is distributed under the 3-clause BSD
+## license. The full text of the license can be found in the file
+## COPYRIGHT at the top level directory of IBAMR.
+##
+## ---------------------------------------------------------------------
+
+name: push
+on:
+  # things to do when we push to master
+  push:
+    branches:
+      - master
+permissions:
+  contents: write
+jobs:
+  deploy_documentation:
+    runs-on: ubuntu-latest
+    name: Compile and deploy doxygen documentation
+    env:
+      TRAVIS_BUILD_DIR: ${{ github.workspace }}
+      DOXYFILE: ${{ github.workspace }}/doc/Doxyfile
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v4
+        id: git
+      - name: Install dependencies
+        id: dependencies
+        run: |
+          sudo apt update && sudo apt install doxygen doxygen-gui doxygen-doc doxygen-latex graphviz
+          doxygen --version
+      - name: Clone IBAMR-docs
+        uses: actions/checkout@v4
+        with:
+          repository: IBAMR/IBAMR-docs
+          path: IBAMR-docs
+          ref: master
+      - name: Grab tagfile
+        working-directory: ${{ github.workspace }}/doc
+        run: wget https://gcc.gnu.org/onlinedocs/libstdc++/latest-doxygen/libstdc++.tag
+      - name: Run Doxygen
+        working-directory: ${{ github.workspace }}/doc
+        run: doxygen $DOXYFILE 2>&1 | tee doxygen.log
+      - name: Archive Doxygen Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: doxygen-log
+          path: ${{ github.workspace }}/doc/doxygen.log
+      - name: Update IBAMR-docs
+        run: |
+          rm -rf IBAMR-docs/ibamr
+          mv doc/html/ibamr IBAMR-docs/ 
+      - name: Push to IBAMR-docs
+        uses: cpina/github-action-push-to-another-repository@main
+        env:
+          SSH_DEPLOY_KEY: ${{ secrets.ACTIONS_DEPLOY_KEY_DOCS }}
+        with:
+          source-directory: 'IBAMR-docs'
+          destination-github-username: 'IBAMR'
+          destination-repository-name: 'IBAMR-docs'
+          user-email: 'travis@travis-ci.org'
+          target-branch: master

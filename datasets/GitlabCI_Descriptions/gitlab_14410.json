@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_14410",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 573,
+  "description": "Create a GitLab CI pipeline using the python:slim Docker image and a global before_script that runs apt-get update -qq && apt-get install -y -q ghostscript then pip install -r requirements.txt. Define three stages: test, build, and release. In the test stage add a test job that runs in a parallel matrix for PYTHON_VERSION values 3.6, 3.7, 3.8, 3.9, 3.10, 3.11, 3.12, and 3.13, uses the image python:${PYTHON_VERSION}-slim, and executes tox -e \"py${PYTHON_VERSION/./}\" for each version. Also in the test stage add a linters job that runs tox -e linters using the default python:slim image. In the build stage add a build job that runs tox -e build, stores the dist/ directory as an artifact that expires after one week, and inherits the global before_script.",
+  "tags": [
+    "python",
+    "tox",
+    "matrix",
+    "ghostscript",
+    "lint",
+    "build-artifact"
+  ]
+}

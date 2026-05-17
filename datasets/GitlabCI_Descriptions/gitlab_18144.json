@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_18144",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 937,
+  "description": "Create a GitLab CI pipeline with two stages: build and deploy. In the build stage add a melakukan-build-dan-package job using the maven:3-jdk-8 image that runs `mvn clean package -DskipTests` and stores the resulting `target/*.jar` files as artifacts. In the deploy stage add a deploy-ke-heroku job using the openjdk:8-jdk image that updates apt, installs wget, downloads and installs the Heroku CLI, installs the heroku-cli-deploy plugin, and runs `heroku deploy:jar target/*.jar --app $HEROKU_APP_NAME` with the HEROKU_API_KEY variable. Also in the deploy stage add a deploy-ke-vps job using the ubuntu:latest image that ensures ssh-agent is available (installing openssh-client if needed), starts the agent, adds the SSH_PRIVATE_KEY, creates ~/.ssh, adds the VPS host to known_hosts when running inside Docker, copies the built jar via scp to `ubuntu@$VPS_HOST:/var/lib/catalogapp/`, and restarts the service with `ssh ubuntu@$VPS_HOST sudo service catalogapp restart`.",
+  "tags": [
+    "maven",
+    "heroku",
+    "vps",
+    "ssh",
+    "java",
+    "docker"
+  ]
+}

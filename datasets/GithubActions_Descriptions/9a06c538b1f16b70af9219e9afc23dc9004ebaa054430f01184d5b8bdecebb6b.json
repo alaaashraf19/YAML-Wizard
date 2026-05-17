@@ -1,0 +1,16 @@
+{
+  "sha": "9a06c538b1f16b70af9219e9afc23dc9004ebaa054430f01184d5b8bdecebb6b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3543,
+  "description": "Create a GitHub Actions workflow named p4c-dpdk-ptf-p4testgen-tests that runs on push to main and on pull requests to main. The workflow should have a concurrency policy to cancel any in-progress runs and start a new one. Set up an ubuntu-22.04 job with various environment variables for infrap4d and dpdk libs. The job should utilize ccache, check out DPDK-target, ipdk-recipe, and P4C repositories, install hugepages and DPDK dependencies, compile p4sde dpdk target, build infrap4d dependencies and infrap4d, build P4C with only the DPDK backend, and finally run DPDK PTF tests using P4Testgen.",
+  "tags": [
+    "dpdk",
+    "p4c",
+    "ptf",
+    "p4testgen",
+    "ubuntu",
+    "infrap4d",
+    "ipdk"
+  ]
+}

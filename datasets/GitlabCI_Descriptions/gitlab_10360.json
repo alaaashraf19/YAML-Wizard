@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_10360",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 847,
+  "description": "Create a GitLab CI pipeline using the docker:latest image with the docker:dind service. Define two stages: build and test. Add a build job that runs for all branches except master, executes docker build --pull -t \"$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG\" . then docker push \"$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG\", and runs after a before_script that logs into the registry, installs py-pip and docker-compose. Add a build-master job that runs only on the master branch, runs docker build --pull -t \"$CI_REGISTRY_IMAGE\" . and docker push \"$CI_REGISTRY_IMAGE\". Add a test job that runs for all branches except master, pulls the image with docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG and runs it with docker run -i --rm \"$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG\" ci/test.sh. Add a test-master job that runs only on master, pulls $CI_REGISTRY_IMAGE and runs docker run -i --rm \"$CI_REGISTRY_IMAGE\" ci/test.sh. All jobs share the same before_script for Docker login and installing docker-compose.",
+  "tags": [
+    "docker",
+    "docker-compose",
+    "dind",
+    "build",
+    "test",
+    "gitlab-ci"
+  ]
+}

@@ -1,0 +1,24 @@
+before_script:
+- git --version
+ps_build:
+  artifacts:
+    expire_in: 30 days
+    paths:
+    - ./coverage
+    - ./src/TT.Tests/TestResults/TestResults.xml
+    reports:
+      junit:
+      - ./src/TT.Tests/TestResults/TestResults.xml
+  coverage: /##teamcity\[buildStatisticValue key='CodeCoverageS' value='(\d+\.?\d*)'\]/
+  script:
+  - .\build-ci.ps1
+  stage: build
+  tags:
+  - powershell
+  - windows
+  - mssql
+workflow:
+  rules:
+  - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+  - if: $CI_COMMIT_TAG
+  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_04204",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 249,
+  "description": "Create a GitLab CI pipeline that uses the ruby:2.3 Docker image. Define a pages job in the deploy stage that runs only on the master branch. The job should execute the exact shell commands: apt-get update -qq && apt-get install -qq nodejs, bundle install -j4, bundle exec rake generate, mv public .public, and mv .public/octopress public. Publish the resulting public directory as a GitLab Pages artifact. No services, caches, or extra variables are required.",
+  "tags": [
+    "ruby",
+    "gitlab-pages",
+    "octopress",
+    "bundle",
+    "nodejs"
+  ]
+}

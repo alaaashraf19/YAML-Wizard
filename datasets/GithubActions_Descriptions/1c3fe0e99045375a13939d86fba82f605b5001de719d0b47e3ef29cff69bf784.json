@@ -1,0 +1,17 @@
+{
+  "sha": "1c3fe0e99045375a13939d86fba82f605b5001de719d0b47e3ef29cff69bf784",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4638,
+  "description": "Create a GitHub Actions workflow named test suite that runs on push to master and on pull requests. The workflow has four jobs: changed-files, pyright, test, and docs. The changed-files job determines which files have changed. The pyright job runs pyright if source or workflow files have changed. The test job runs tests in a matrix of Python versions and operating systems if source, tests, workflow, or pyproject files have changed. The docs job builds documentation if source, docs, workflow, or pyproject files have changed. A final job uploads a coverage report to Coveralls.",
+  "tags": [
+    "python",
+    "tests",
+    "pyright",
+    "sphinx",
+    "coveralls",
+    "ubuntu",
+    "macos",
+    "windows"
+  ]
+}

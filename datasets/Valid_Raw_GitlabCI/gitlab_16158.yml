@@ -1,0 +1,55 @@
+before_script:
+- whoami
+- ls
+- git submodule sync --recursive
+- git submodule update --init --recursive
+luqness:
+  artifacts:
+    name: executable
+    paths:
+    - build/
+  dependencies:
+  - prepare
+  script:
+  - cd build
+  - ls
+  - make -j4 VERBOSE=1
+  stage: build
+pages:
+  artifacts:
+    name: documentation
+    paths:
+    - public
+  dependencies:
+  - prepare
+  only:
+  - master
+  script:
+  - cd build
+  - make doc
+  - mv doc/html/ ../public/
+  stage: build
+prepare:
+  artifacts:
+    name: cmake-configured
+    paths:
+    - build/
+  script:
+  - ls
+  - pwd
+  - mkdir build
+  - cd build
+  - cmake .. -DDOXYGEN_ENABLE=ON
+  stage: prepare
+stages:
+- prepare
+- build
+- test
+tests:
+  dependencies:
+  - luqness
+  script:
+  - cd build/tests
+  - ctest
+  - cat proj_ns_test.out
+  stage: test

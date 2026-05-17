@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_17993",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 894,
+  "description": "Create a GitLab CI pipeline that defines a global before_script echoing the three test matrix combinations and sets a MYSQL_ROOT_PASSWORD variable. Add a test:centos6xmysql56 job in the test stage using the centos:6.6 image with a mysql:5.6.17 service, running rpm -q centos-release, yum install -y mysql, mysql --version, and mysql -h mysql -u root -p${MYSQL_ROOT_PASSWORD} -e 'SELECT VERSION()'. Add a test:centos7xmysql57 job in the test stage using the centos:7 image with a mysql:5.7 service, executing the same four commands. Add a test:centos8xmysql8 job in the test stage using the centos:8 image with a mysql:8 service, executing rpm -q centos-release, dnf install -y mysql, mysql --version, and mysql -h mysql -u root -p${MYSQL_ROOT_PASSWORD} -e 'SELECT VERSION()'. No caches, artifacts, or conditional rules are defined, so all jobs run on every pipeline.",
+  "tags": [
+    "centos",
+    "mysql",
+    "ci-testing",
+    "legacy",
+    "matrix"
+  ]
+}

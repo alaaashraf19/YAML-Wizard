@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_17102",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 855,
+  "description": "Create a GitLab CI pipeline using the docker:latest image with a docker:dind service and a single build stage. Define a hidden .build job template that runs docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY, then docker build -t $IMAGE . and docker push $IMAGE, and records coverage with the regex '/Statements[ ]+: \\d{0,3}+\\.?\\d{0,2}/'. Add a 'build' job in the build stage that runs on all branches except master, sets IMAGE to $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG and uses the .build script; add a 'build and push latest' job that runs only on the master branch, sets IMAGE to $CI_REGISTRY_IMAGE:latest and uses the same script; and add a 'build and push tag' job that runs only on tags, sets IMAGE to $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG and also uses the .build script. No caches or artifacts are defined, and each job pushes the Docker image to the GitLab Container Registry.",
+  "tags": [
+    "docker",
+    "dind",
+    "container-registry",
+    "build",
+    "push",
+    "coverage",
+    "branches",
+    "master",
+    "tags"
+  ]
+}

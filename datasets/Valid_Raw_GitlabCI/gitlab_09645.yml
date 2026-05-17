@@ -1,0 +1,65 @@
+cache:
+  paths:
+  - vendor/
+deploy-update:
+  environment:
+    name: update-server
+    url: https://api.glancr.de
+  only:
+  - tags
+  script:
+  - which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )
+  - eval $(ssh-agent -s)
+  - echo "$DEPLOY_KEY" | tr -d '\r' | ssh-add - > /dev/null
+  - mkdir -p ~/.ssh
+  - chmod 700 ~/.ssh
+  - echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+  - chmod 644 ~/.ssh/known_hosts
+  - apt-get -yqq update
+  - apt-get -yqq install rsync curl zip unzip php7.0 php7.0-cli
+  - zip -r "$CI_BUILD_TAG".zip 404/ classes/ config/ glancr/ includes/ locale/ modules/
+    reset/ setup/ tmp/ vendor/ wlanconfig/ cron.php index.php info.json nonet.php
+  - ./update-channels.sh $CI_BUILD_TAG
+  stage: deploy
+image: debian:stretch-slim
+release-zip:
+  artifacts:
+    name: $CI_BUILD_TAG
+    paths:
+    - 404/
+    - classes/
+    - config/
+    - glancr/
+    - includes/
+    - locale/
+    - modules/
+    - reset/
+    - setup/
+    - tmp/
+    - vendor/
+    - wlanconfig/
+    - cron.php
+    - index.php
+    - info.json
+    - nonet.php
+  only:
+  - tags
+  script:
+  - apt-get -y update
+  - apt-get -yqq install git curl zip unzip
+  - apt-get -y update
+  - apt-get -yqq install php7.0 php7.0-bz2 php7.0-cli php7.0-curl php7.0-gd php7.0-intl
+    php7.0-mbstring php7.0-mysql php7.0-soap php7.0-xml php7.0-zip
+  - curl --silent --show-error https://getcomposer.org/installer | php
+  - php composer.phar install
+  - mkdir tmp
+  - ls -la
+  - find . -type f | grep ".gitkeep" | xargs -r rm
+  - chown -R www-data:www-data .
+  - php -r '$infoFile = json_decode(file_get_contents("info.json")); $infoFile->version
+    = $argv[1]; $infoFile->last_update = $argv[2]; file_put_contents("info.json",
+    json_encode($infoFile, JSON_PRETTY_PRINT));' -- "$CI_BUILD_TAG" "$(date)"
+  stage: build
+stages:
+- build
+- deploy

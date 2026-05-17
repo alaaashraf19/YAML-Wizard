@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_04353",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 532,
+  "description": "Create a GitLab CI pipeline with two stages (verify then package) and three jobs. In the verify stage add a lint job that uses the node Docker image, runs \"npm install\" then \"make check\". Also in verify add a test job that uses the registry.gitlab.com/todo.txt-gnome-shell-extension/todo-txt-gnome-shell-extension/unit-testing:latest image and runs \"RUNNER=xvfb-run make test\". In the package stage add a create_zip job that uses the registry.gitlab.com/todo.txt-gnome-shell-extension/todo-txt-gnome-shell-extension/packaging:latest image, runs \"./tools/make_dev.sh\" and publishes any files matching todo*.zip as artifacts. Set the variable GIT_SUBMODULE_STRATEGY to normal.",
+  "tags": [
+    "node",
+    "npm",
+    "make",
+    "zip",
+    "docker",
+    "gitlab-ci"
+  ]
+}

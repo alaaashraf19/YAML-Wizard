@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_11613",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 549,
+  "description": "Create a GitLab CI pipeline that uses the python:3.10-alpine Docker image with a postgres:alpine service and caches the directories .cache/pip and .tox. Define the variables PIP_CACHE_DIR set to $CI_PROJECT_DIR/.cache/pip and POSTGRES_HOST_AUTH_METHOD set to trust. Add a single job called tests in the default test stage that runs the before_script commands: `python -V`, `time apk --update add --no-cache build-base gcc libgcc libffi-dev openssl-dev git postgresql-client jpeg-dev openjpeg-dev zlib-dev freetype-dev lcms2-dev freetype-dev gifsicle rust cargo`, `time pip3 install --upgrade pip`, and `time pip3 install wheel tox`; then executes the script steps: `ls`, `cp config.ci.py config.py`, and `time tox`. The pipeline does not define any artifacts, caches beyond the listed paths, or special rules, so the job runs on every pipeline execution.",
+  "tags": [
+    "python",
+    "alpine",
+    "postgres",
+    "tox",
+    "pip-cache",
+    "ci"
+  ]
+}

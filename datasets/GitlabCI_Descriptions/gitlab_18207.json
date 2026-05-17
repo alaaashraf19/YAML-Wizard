@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_18207",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 310,
+  "description": "Create a GitLab CI pipeline that uses the python:2.7 Docker image and sets the TERM and TERMINFO variables. Define a single job named unittest that runs in the default test stage and executes the following shell commands in order: apt-get update -qy; apt-get install -y python-dev python-pip unzip; apt-get install -y mediainfo mkvtoolnix task-spooler; pip install --upgrade pip; pip install -r requirements.txt; and bash ./run_test.sh. No services, caches, artifacts, or special rules are required. The pipeline should simply run the unittest job on every pipeline execution.",
+  "tags": [
+    "python-2.7",
+    "unittest",
+    "apt-get",
+    "pip",
+    "legacy"
+  ]
+}

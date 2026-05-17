@@ -1,0 +1,18 @@
+build:
+  only:
+  - master
+  script:
+  - docker login -u "gitlab-ci-token" -p "$CI_BUILD_TOKEN" $CI_REGISTRY
+  - docker build -t "$CI_REGISTRY/$PR_OWNER/docker-php" .
+  - docker push "$CI_REGISTRY/$PR_OWNER/docker-php"
+  stage: build
+build_test:
+  only:
+  - test
+  script:
+  - docker login -u "gitlab-ci-token" -p "$CI_BUILD_TOKEN" $CI_REGISTRY
+  - docker build -t "$CI_REGISTRY/$PR_OWNER/docker-php" .
+  stage: build
+image: docker:latest
+services:
+- docker:dind

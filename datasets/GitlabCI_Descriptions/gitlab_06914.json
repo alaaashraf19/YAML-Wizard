@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_06914",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 606,
+  "description": "Create a GitLab CI pipeline using the ubuntu:latest Docker image. Define a before_script that runs apt-get update, installs software-properties-common, adds the ansible PPA, updates again, installs python-pip and ansible, installs the dopy Python package version 0.3.5 via pip, and writes the PUBLIC_KEY and PRIVATE_KEY variables to id_rsa.pub and id_rsa files. Add a single deploy stage with a deploy_development job that runs in the deploy stage, sets the environment name to development with URL https://abuango.me, is limited to the master branch, and executes the command ansible-playbook do-ha.yml -c paramiko -e \"do_api_token=${DO_TOKEN}\" --private-key=id_rsa. Define empty CI variables DO_TOKEN, PRIVATE_KEY, and PUBLIC_KEY.",
+  "tags": [
+    "ubuntu",
+    "ansible",
+    "dopy",
+    "deployment",
+    "development",
+    "ssh"
+  ]
+}

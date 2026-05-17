@@ -1,0 +1,11 @@
+image: rust:1.63.0-slim-bullseye
+rustfmt:
+  script:
+  - rustup component add rustfmt
+  - cargo fmt -- --version
+  - cargo fmt -- --check
+test:
+  script:
+  - rustc --version && cargo --version
+  - cargo build --verbose
+  - cargo test

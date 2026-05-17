@@ -1,0 +1,14 @@
+{
+  "sha": "0bc6f83366190b1d3a7d40c4e30fd50e1331fc0b869483e0b027b3710085068f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1051,
+  "description": "Create a GitHub Actions workflow named Develop Branch Dockers Deploy that triggers on push to the develop branch. Run a linux_job on an ubuntu-22.04 environment, checking out the repository with submodules, installing dependencies, and deploying Docker images to ghcr.io using GitHub credentials. Additionally, conditionally deploy to Docker Hub if DOCKER_PASSWORD secret exists.",
+  "tags": [
+    "docker",
+    "deploy",
+    "github-actions",
+    "ubuntu",
+    "ghcr"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_13980",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 737,
+  "description": "Create a GitLab CI pipeline using the golang:latest Docker image with a postgres:latest service and set POSTGRES_ADDR, POSTGRES_DB, POSTGRES_USER, POSTGRES_PASSWORD variables. Define three stages: prepare, test, and build. In the prepare stage add a dep job that runs go get -u github.com/golang/dep/... then dep ensure, caches the vendor directory and stores it as an artifact. In the test stage add a lint job that runs go get -u github.com/golang/lint/golint then golint $(go list ./... | grep -v /vendor/), and a test job that runs go test $(go list ./... | grep -v \"vendor\\|driver\\|scheduler\"). In the build stage add a build job that runs go build and publishes the server directory as an artifact, and apply a before_script that symlinks /builds to /go/src/gitlab.com and cd's into the project for all jobs.",
+  "tags": [
+    "golang",
+    "postgres",
+    "dep",
+    "lint",
+    "go-test",
+    "go-build",
+    "ci"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_12547",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 570,
+  "description": "Create a GitLab CI pipeline using the docker image with a docker:dind service and set DOCKER_DRIVER to overlay2. Define variables IMAGE_TAG as $CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME, VERSION_BUILD_TOOLS=25.0.2, VERSION_SDK_TOOLS=25.2.4, VERSION_TARGET_SDK='25'. Add a single build stage containing a build job that runs a before_script to log in to $CI_REGISTRY with the gitlab-ci-token, then executes docker build --pull --build-arg=VERSION_SDK_TOOLS=${VERSION_SDK_TOOLS} --build-arg=VERSION_BUILD_TOOLS=${VERSION_BUILD_TOOLS} --build-arg=VERSION_TARGET_SDK=${VERSION_TARGET_SDK} -t $IMAGE_TAG . and docker push $IMAGE_TAG. The pipeline has only the build stage and no additional triggers, caches, or artifacts.",
+  "tags": [
+    "docker",
+    "dind",
+    "build",
+    "ci-registry",
+    "versioned-sdk"
+  ]
+}

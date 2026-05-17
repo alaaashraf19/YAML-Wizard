@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_17560",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 788,
+  "description": "Create a GitLab CI pipeline with stages download-deps, prebuild, build, and deploy, using the default image and tagging all jobs with npm. In the download-deps stage add a download_deps_npm job that runs npm install and stores the node_modules/ directory as an artifact. In the prebuild stage add a prebuild_content job that depends on download_deps_npm, runs npm run-script prebuild, and saves an artifact named \"Innehåll\" containing the innehall/ directory. In the build stage add a build_deliverables job that depends on download_deps_npm and prebuild_content, runs npm run-script build, and publishes an artifact named utdata with the utdata/ directory. In the deploy stage add a pages job that depends on build_deliverables, runs rm -rf public, mkdir public, and cp -a ./utdata/dokument.html ./public/index.html, publishes the public/ directory as an artifact, and is limited to the master branch.",
+  "tags": [
+    "npm",
+    "pages",
+    "artifacts",
+    "prebuild",
+    "build"
+  ]
+}

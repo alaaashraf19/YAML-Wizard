@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_15113",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 330,
+  "description": "Create a GitLab CI pipeline that uses the gradle:jdk8 Docker image. Define two stages, build and deploy. Add a build_master job in the build stage that runs the command ./gradlew build. Add a pages job in the deploy stage, set to manual, that depends on build_master and runs ./gradlew test-extensions:asciidoctor, then creates a public directory and copies the generated Asciidoctor documentation from test-extensions/build/docs/asciidoc/ into public. Configure the pages job to publish the public/ directory as an artifact for GitLab Pages.",
+  "tags": [
+    "gradle",
+    "jdk8",
+    "asciidoctor",
+    "gitlab-pages",
+    "manual",
+    "build"
+  ]
+}

@@ -1,0 +1,94 @@
+auto-deploy-master:
+  environment: &id003
+    name: staging
+    url: https://$HEROKU_APP-staging.herokuapp.com
+  only:
+  - master
+  script: &id004
+  - docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
+  - docker pull "$CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME"
+  - docker tag "$CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME" registry.heroku.com/$HEROKU_APP-staging/web
+  - docker push registry.heroku.com/$HEROKU_APP-staging/web
+  stage: staging
+auto-deploy-tags:
+  environment: &id001
+    name: production
+    url: https://$HEROKU_APP.herokuapp.com
+  only:
+  - tags
+  script: &id002
+  - docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
+  - docker pull "$CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME"
+  - docker tag "$CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME" registry.heroku.com/$HEROKU_APP/web
+  - docker push registry.heroku.com/$HEROKU_APP/web
+  stage: production
+before_script:
+- set -euo pipefail
+- docker login -u "gitlab-ci-token" -p "$CI_BUILD_TOKEN" $CI_REGISTRY
+build:
+  except:
+  - tags
+  script:
+  - docker build --pull -t "$CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME" .
+  - docker push "$CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME"
+  stage: build
+  variables:
+    GIT_STRATEGY: fetch
+create-review:
+  before_script:
+  - set -euo pipefail
+  - wget -qO- https://toolbelt.heroku.com/install-ubuntu.sh | sh
+  - docker login -u "gitlab-ci-token" -p "$CI_BUILD_TOKEN" $CI_REGISTRY
+  environment:
+    name: review/$CI_BUILD_REF_NAME
+    url: https://$HEROKU_APP-$CI_BUILD_REF_NAME.herokuapp.com
+  except:
+  - master
+  - tags
+  script:
+  - heroku create $HEROKU_APP-CI_BUILD_REF_NAME
+  - docker pull "$CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME"
+  - heroku container:login
+  - heroku container:push --app $HEROKU_APP-CI_BUILD_REF_NAME
+  stage: review
+deploy-to-production:
+  environment: *id001
+  only:
+  - master
+  script: *id002
+  stage: production
+  when: manual
+deploy-to-staging:
+  environment: *id003
+  except:
+  - master
+  - tags
+  only: null
+  script: *id004
+  stage: staging
+  when: manual
+image: docker:latest
+services:
+- docker:dind
+stages:
+- build
+- test
+- review
+- staging
+- production
+- cleanup
+stop-review:
+  before_script:
+  - set -euo pipefail
+  - wget -qO- https://toolbelt.heroku.com/install-ubuntu.sh | sh
+  environment: review/$CI_BUILD_REF_NAME
+  except:
+  - master
+  - tags
+  script:
+  - heroku destroy --confirm $HEROKU_APP-CI_BUILD_REF_NAME
+  stage: cleanup
+  when: manual
+variables:
+  DOCKER_DRIVER: overlay
+  GIT_STRATEGY: none

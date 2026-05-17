@@ -1,0 +1,17 @@
+{
+  "sha": "751ab2ccc1c9efbc8356ad03eb07071d62507db17f8614b7e3a8a85d1c840d7a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 9467,
+  "description": "Create a GitHub Actions workflow named Build TWiLight Menu++ that builds TWiLightMenu++ using devKitARM in a Docker container on every push to any branch except README.md, on every pull request to any branch except README.md, and on every release creation. The workflow checks out the repository, installs required tools, builds TWiLightMenu++, creates CIAs, packs 7z packages for nightly or release, and publishes the build to GitHub Actions and TWLBot/Builds. It also sends Discord webhooks on success or failure.",
+  "tags": [
+    "github-actions",
+    "docker",
+    "devkitarm",
+    "twilightmenu",
+    "nds",
+    "7z",
+    "discord-webhooks",
+    "release-workflow"
+  ]
+}

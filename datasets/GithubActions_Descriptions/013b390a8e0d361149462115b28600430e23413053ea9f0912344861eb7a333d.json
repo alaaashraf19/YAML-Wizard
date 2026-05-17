@@ -1,0 +1,13 @@
+{
+  "sha": "013b390a8e0d361149462115b28600430e23413053ea9f0912344861eb7a333d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 887,
+  "description": "Create a reusable GitHub Actions workflow named ci that can be called from another workflow. The workflow runs a single job on an ubuntu-latest environment with a ubuntu:jammy container. In this job, check out the repository, then in the drake_bazel_download directory, run a bash script to optionally download a package tarball based on a workflow input, install Bazelisk, and finally run a script for building and testing with Bazel.",
+  "tags": [
+    "ubuntu",
+    "bazel",
+    "ci",
+    "reusable-workflow"
+  ]
+}

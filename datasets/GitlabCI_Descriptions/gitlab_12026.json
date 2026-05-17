@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_12026",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1909,
+  "description": "Create a GitLab CI pipeline with stages build, test, package, and deploy-www, and set the variables GIT_DEPTH='1' and GIT_STRATEGY='fetch'. In the build stage add a build_release_android job that runs `android/gradlew assembleRelease -p android`, then `$ANDROID_HOME/build-tools/25.0.2/zipalign -v -p 4 android/app/build/outputs/apk/app-release-unsigned.apk app-release-aligned.apk`, then `$ANDROID_HOME/build-tools/25.0.2/apksigner sign --ks $KEYSTORE_PATH --key-pass env:KEY_PASSWORD --ks-key-alias $KEY_NAME --ks-pass env:KEYSTORE_PASSWORD --out pangoling-release.apk app-release-aligned.apk`, and finally `rm app-release-aligned.apk`; it caches untracked files, stores all untracked files as an artifact named build_release_android that expires in 1 week, and runs on runners tagged android-tools-25-0-5, android-sdk-25, txrunner. In the test stage add a lint_test job that runs `./android/gradlew lintRelease -p android`, depends on build_release_android, caches untracked files, and always uploads `android/app/build/reports/lint-results-release.*` as a JUnit‑style artifact named lint-result that expires in 1 year. Also in the test stage define hidden template jobs .generate_ui_images and .unit_test that inherit the same tags and untracked cache, depend on build_debug_android, and currently contain placeholder scripts. In the package stage add a package_apk job that copies `android/app/build/outputs/apk/app-release-unsigned.apk` to `package-unsigned.apk` and `android/app/build/outputs/mapping/release/mapping.txt` to `mapping.txt`, depends on build_release_android, and publishes `pangoling-release.apk`, `package-unsigned.apk`, and `mapping.txt` as artifacts named packages that expire in 1 year. In the deploy-www stage add a pages job that runs `./www/nindex/generate.py`, publishes the `public` directory as an artifact named site, and runs only on the www-public branch.",
+  "tags": [
+    "android",
+    "gradle",
+    "apk",
+    "lint",
+    "packaging",
+    "pages",
+    "gitlab-ci"
+  ]
+}

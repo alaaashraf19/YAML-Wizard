@@ -1,0 +1,18 @@
+{
+  "sha": "d0ce34b1610643da7736bddece80742b930f015c3f809abc0fe07030222cf212",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2341,
+  "description": "Create a GitHub Actions workflow named CI Build that runs on every push to the master branch and on pull requests to master. The workflow should have three jobs: build_msvc on windows-latest, build_macos on macos-latest, and build_linux on ubuntu-22.04 with a matrix strategy for different presets. Each job should check out the repository with submodules, configure and build using cmake, run tests with ctest, and for build_linux, upload code coverage to Codecov if the preset is clang-ci-coverage.",
+  "tags": [
+    "cmake",
+    "ci",
+    "windows",
+    "macos",
+    "ubuntu",
+    "tests",
+    "codecov",
+    "clang",
+    "gcc"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_11935",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 310,
+  "description": "Create a GitLab CI pipeline that uses the rust:1.26-slim Docker image and defines a single build stage. Cache the .cargo/ and target/ directories and set the CARGO_HOME variable to ${CI_PROJECT_DIR}/.cargo. Add a mc-wrap job in the build stage that runs `cargo build --release`, then `strip target/release/mc-wrap`, and finally moves the binary with `mv target/release/mc-wrap ./`. Configure the job to publish the resulting `mc-wrap` file as an artifact named mc-wrap, with no additional services or trigger rules.",
+  "tags": [
+    "rust",
+    "cargo",
+    "build",
+    "artifact",
+    "cache"
+  ]
+}

@@ -1,0 +1,15 @@
+before_script:
+- gem install rspec --no-ri --no-rdoc
+- gem install rake --no-ri --no-rdoc
+- gem install coveralls --no-ri --no-rdoc
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - mv doc public
+rspec:
+  script:
+  - rspec spec/yahoo_spec.rb

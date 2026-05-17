@@ -1,0 +1,8 @@
+before_script:
+- export GRADLE_USER_HOME=`pwd`/.gradle
+build:
+  script: ./gradlew bootJar
+  stage: build
+image: gradle:alpine
+variables:
+  GRADLE_OPTS: -Dorg.gradle.daemon=false

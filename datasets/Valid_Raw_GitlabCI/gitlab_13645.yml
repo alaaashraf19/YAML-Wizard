@@ -1,0 +1,38 @@
+build:
+  artifacts:
+    paths:
+    - build/
+  before_script:
+  - echo "building branch:$CI_BUILD_REF_NAME tag:$CI_BUILD_TAG"
+  script:
+  - npm install
+  - NODE_ENV=production npm run build
+  stage: build
+cache:
+  key: ${CI_BUILD_REF_NAME}
+  paths:
+  - node_modules/
+  untracked: true
+docker:
+  artifacts:
+    paths:
+    - build
+  script:
+  - apk add --update py-pip && pip install docker-compose
+  - npm run build
+  - npm run prod
+  stage: docker
+image: node:9.2.0
+services:
+- docker:dind
+stages:
+- build
+- test
+- docker
+test:
+  only:
+  - branches
+  - tags
+  script:
+  - npm run coverage
+  stage: test

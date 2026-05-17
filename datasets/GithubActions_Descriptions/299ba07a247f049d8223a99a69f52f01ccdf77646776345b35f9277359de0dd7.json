@@ -1,0 +1,15 @@
+{
+  "sha": "299ba07a247f049d8223a99a69f52f01ccdf77646776345b35f9277359de0dd7",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1646,
+  "description": "Create a GitHub Actions workflow named test_runner that runs on every pull request to the dev branch, on workflow calls, and on workflow dispatches. The workflow has two jobs: run_tests and report_coverage. The run_tests job runs on a matrix of OS and Python versions, checks out the repository, sets up Python, installs dependencies, ensures black format, runs tests with coverage, and uploads coverage to Coveralls. The report_coverage job runs after run_tests and finalizes the coverage report on Coveralls.",
+  "tags": [
+    "python",
+    "tests",
+    "coverage",
+    "coveralls",
+    "black",
+    "github-actions"
+  ]
+}

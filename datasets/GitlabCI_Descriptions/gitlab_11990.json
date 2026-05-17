@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_11990",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1628,
+  "description": "Create a GitLab CI pipeline with stages test and release. In the test stage define a test job that uses the custom CI image registry.gitlab.com/matthieusegret/yummy-phoenix-graphql/ci:1.2, runs a before_script that starts fakes3, builds the npm assets, runs npm test.server in background, fetches Mix dependencies for test and runs mix ecto.migrate, caches the deps, _build and client/node_modules directories with a key based on the commit slug, sets MIX_ENV and PostgreSQL connection variables, uses a postgres:latest service, and finally executes mix test. In the release stage add an api job that uses the docker:stable image with docker:dind service, sets CONTAINER_IMAGE to gcr.io/yummy-phoenix-graphql/api, creates the Docker config from $DOCKER_AUTH_CONFIG in before_script, pulls the latest image if present, builds the image using dockerfiles/api.dockerfile with cache-from the latest tag, tags it with the current CI build ref and latest, and pushes both tags. Also add a frontend job with the same Docker setup but CONTAINER_IMAGE set to gcr.io/yummy-phoenix-graphql/frontend and using dockerfiles/frontend.dockerfile for the build, performing the same pull, build, tag, and push steps. Both release jobs run on every pipeline without additional rules.",
+  "tags": [
+    "docker",
+    "dind",
+    "ci",
+    "test",
+    "mix",
+    "postgres",
+    "npm",
+    "fakes3",
+    "gcr",
+    "release"
+  ]
+}

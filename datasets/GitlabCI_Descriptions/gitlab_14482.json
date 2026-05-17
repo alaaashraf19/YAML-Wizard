@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_14482",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 346,
+  "description": "Create a GitLab CI pipeline that runs npm install in a before_script, caches the node_modules/ directory per job with key $CI_JOB_NAME and untracked:true, and defines a hidden .test_template containing the script npm run lint and npm test. Add four jobs—test:node10, test:node4, test:node6, and test:node8—each using the Docker image node:10, node:4, node:6, and node:8 respectively, inheriting the .test_template script and executing in the default test stage.",
+  "tags": [
+    "node",
+    "npm",
+    "lint",
+    "test",
+    "cache"
+  ]
+}

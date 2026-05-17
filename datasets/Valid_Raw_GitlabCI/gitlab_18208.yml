@@ -1,0 +1,7 @@
+build:
+  artifacts:
+    paths:
+    - build/libs/kafka-connect-ftp*-all.jar
+  script:
+  - ./gradlew shadowJar
+image: java:8-jdk

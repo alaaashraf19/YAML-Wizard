@@ -1,0 +1,25 @@
+ci:
+  artifacts:
+    paths:
+    - coverage/
+  script:
+  - touch .env
+  - ./scripts/ci/ci.sh
+  stage: ci
+production:
+  only:
+  - master
+  script:
+  - touch .env
+  - export DEPLOY_TARGET=production
+  - echo "REDISCLOUD_URL=$PRODUCTION_REDIS_URL" >> .env
+  - echo "REDISCLOUD_PORT=$PRODUCTION_REDIS_PORT" >> .env
+  - echo "REDISCLOUD_PASSWORD=$PRODUCTION_REDIS_PASSWORD" >> .env
+  - echo "AWS_ACCESS_KEY_ID=$PRODUCTION_AWS_KEY_ID" >> .env
+  - echo "AWS_SECRET_ACCESS_KEY=$PRODUCTION_AWS_SECRET_KEY" >> .env
+  - echo "STRIPE_CLIENT_ID=$PRODUCTION_STRIPE_CLIENT_ID" >> .env
+  - ./scripts/ci/deploy.sh
+  stage: deploy
+stages:
+- ci
+- deploy

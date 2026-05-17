@@ -1,0 +1,16 @@
+{
+  "sha": "594003535ba0a1a8427a0ec640c22e6884fb13c32a4325e0dcc353937fd497b9",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5276,
+  "description": "Create a GitHub Actions workflow named CI that runs on every push to main, on pull requests, and on a scheduled basis (Monday and Thursday at 03:42 UTC). The workflow consists of multiple jobs (base, petab, optimize, quality, docs, notebooks1, notebooks2) each running on ubuntu-latest with various Python versions, installing dependencies, running tests, and generating coverage reports.",
+  "tags": [
+    "python",
+    "ci",
+    "ubuntu",
+    "tests",
+    "coverage",
+    "tox",
+    "codecov"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "f30e57cbeecd62cf5f0f3c9b48699c5333e8c4fe2e191dd080dcc71609d13922",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 7697,
+  "description": "Create a comprehensive GitHub Actions workflow for R package testing and checking. The workflow, named rcc, should trigger on push to main, master, release, and cran-* branches, on pull requests to main and master, on workflow dispatch with a ref input, on merge group checks requested, and on a scheduled cron job. The workflow should run multiple jobs: a smoke test job on ubuntu-latest, a check matrix job that depends on the smoke test job, and two more jobs that depend on the smoke test job and run on different matrices of R versions and operating systems.",
+  "tags": [
+    "r",
+    "r-package",
+    "testing",
+    "ci",
+    "ubuntu"
+  ]
+}

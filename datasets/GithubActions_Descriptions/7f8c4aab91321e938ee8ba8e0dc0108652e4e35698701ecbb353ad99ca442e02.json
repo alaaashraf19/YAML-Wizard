@@ -1,0 +1,14 @@
+{
+  "sha": "7f8c4aab91321e938ee8ba8e0dc0108652e4e35698701ecbb353ad99ca442e02",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 871,
+  "description": "Create a GitHub Actions workflow named linux build in docker that runs on push to the master branch, on pull requests to the master branch, and on workflow dispatch. Use an ubuntu-latest job with a matrix strategy for debian and fedora. In each job, check out the repository, set up Docker Buildx, log in to GitHub Container Registry, build a Docker image using a Dockerfile specific to the matrix target, and push the image to ghcr.io with a tag including the target and current date.",
+  "tags": [
+    "docker",
+    "linux",
+    "github-container-registry",
+    "matrix",
+    "workflow-dispatch"
+  ]
+}

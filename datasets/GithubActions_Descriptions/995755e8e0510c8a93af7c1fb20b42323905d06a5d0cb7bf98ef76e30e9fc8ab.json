@@ -1,0 +1,15 @@
+{
+  "sha": "995755e8e0510c8a93af7c1fb20b42323905d06a5d0cb7bf98ef76e30e9fc8ab",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2207,
+  "description": "Create a GitHub Actions workflow named Deploy docker image to ghcr that runs on pushes to master and tags, and on releases. The workflow checks out the repository, sets up Python 3.11, generates a version file, and then logs in to ghcr.io. It uses docker metadata action to generate tags and labels, and then builds and pushes a Docker image to ghcr.io with the generated tags and labels.",
+  "tags": [
+    "docker",
+    "ghcr",
+    "python",
+    "deploy",
+    "releases",
+    "tags"
+  ]
+}

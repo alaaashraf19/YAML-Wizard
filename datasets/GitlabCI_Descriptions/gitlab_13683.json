@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_13683",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1344,
+  "description": "Create a GitLab CI pipeline with three stages: build, test, and deploy. In the build stage add a job build_cryptodiffer that uses the docker:latest image with the docker:dind service, runs `docker build -t $HUB/$CONTAINER_IMAGE_CRYPTODIFFER -f cryptodiffer/cryptodiffer.yaml .`, then `docker login -u $HUB_USER -p $HUB_PASS $HUB`, and finally `docker push $HUB/$CONTAINER_IMAGE_CRYPTODIFFER:latest`. In the test stage add a job test_cryptodiffer that also uses docker:latest with docker:dind, runs `docker login -u $HUB_USER -p $HUB_PASS $HUB` and `docker run $HUB/$CONTAINER_IMAGE_CRYPTODIFFER echo \"echo cryptodiffer test passed succesfully\"`. In the deploy stage add a job deploy_cryptodiffer that uses the gitlab/dind:latest image, prepares an SSH key from $DEPLOY_SERVER_PRIVATE_KEY, adds the deployment server to known_hosts, and then SSHes to $DEPLOYMENT_SERVER_IP to execute `sudo docker login -u ${HUB_USER} -p ${HUB_PASS} ${HUB}; sudo docker pull ${HUB}/${CONTAINER_IMAGE_CRYPTODIFFER}:latest; sudo docker rm $(sudo docker ps -a -q -f name=cryptodiffer) --force; sudo docker run --restart=always --name cryptodiffer -it -d ${HUB}/${CONTAINER_IMAGE_CRYPTODIFFER} python3 /root/cryptodiffer.py`. Define a variable CONTAINER_IMAGE_CRYPTODIFFER as `$HUB_USER/telegram-bot/cryptodiffer-$CI_COMMIT_SHA`.",
+  "tags": [
+    "docker",
+    "dind",
+    "ssh",
+    "deployment",
+    "build",
+    "test",
+    "cryptodiffer"
+  ]
+}

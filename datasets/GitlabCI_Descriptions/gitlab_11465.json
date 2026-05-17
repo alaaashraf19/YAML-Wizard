@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_11465",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 425,
+  "description": "Create a GitLab CI pipeline using the node:lts Docker image and set GIT_SUBMODULE_STRATEGY to recursive. Define a test stage with a test job that runs `yarn global add lerna npm@latest polymer-cli`, then `lerna bootstrap --use-workspaces`, and finally `polymer test`. Define a deploy stage with a pages job that runs the same yarn install and lerna bootstrap commands, then builds the Polymer project with `polymer build --js-transform-import-meta`, moves the generated `build/default` directory to `public`, and publishes the `public` folder as a GitLab Pages artifact. Both jobs run on every pipeline without additional rules.",
+  "tags": [
+    "node",
+    "lerna",
+    "polymer",
+    "gitlab-pages",
+    "yarn",
+    "test"
+  ]
+}

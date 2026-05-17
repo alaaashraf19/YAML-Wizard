@@ -1,0 +1,14 @@
+{
+  "sha": "c446b0e60d185655db21f7b2c5e2fa79a58404f2b1dc6e49bb4074990c57ed95",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1769,
+  "description": "Create a GitHub Actions workflow named bazel that runs on every push to master and on pull requests to master. The workflow has two ubuntu-latest jobs: build_direct and build_indirect. Both jobs check out the repository with submodules, mount a bazel cache, install bazelisk, and install Flex, Bison, and GMP. The build_direct job builds p4c directly with bazel, while the build_indirect job builds a 3rd party Bazel project depending on p4c as a subproject.",
+  "tags": [
+    "bazel",
+    "ubuntu",
+    "p4c",
+    "build",
+    "ci"
+  ]
+}

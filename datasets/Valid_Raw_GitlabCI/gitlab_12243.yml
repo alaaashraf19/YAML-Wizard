@@ -1,0 +1,16 @@
+build:stable:
+  image: rust:latest
+  script:
+  - rustc --version && cargo --version
+  - cargo build --all
+  - cargo test --all --verbose
+pages:
+  artifacts:
+    paths:
+    - public
+  image: rust:latest
+  only:
+  - master
+  script:
+  - cd library && cargo doc && cd ..
+  - mv target/doc/ public/

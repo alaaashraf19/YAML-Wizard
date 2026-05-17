@@ -1,0 +1,14 @@
+{
+  "sha": "4066f233ca001258f523b3076ffe165052af09a26903abbe6a4dd58adcc3ec72",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1117,
+  "description": "Create a GitHub Actions workflow named Run Tests that runs on push and pull request events to branches master and development, excluding certain file paths. The workflow should run on a windows-latest environment with read permissions to repository contents, and allow concurrent runs to be cancelled. The workflow should check out the repository, initialize vendors using a PowerShell script, and then run tests for Clink Shell, PowerShell, and Bash.",
+  "tags": [
+    "windows",
+    "tests",
+    "powershell",
+    "bash",
+    "clink"
+  ]
+}

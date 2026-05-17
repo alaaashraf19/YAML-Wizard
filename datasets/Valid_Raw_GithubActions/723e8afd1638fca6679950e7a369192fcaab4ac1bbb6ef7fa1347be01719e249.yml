@@ -1,0 +1,43 @@
+name: wasm compilers
+
+on:
+    push:
+      branches:
+        - master
+  
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Check for changes
+      id: changes
+      run: |
+        git fetch origin master
+        if [ "$(git rev-list --count HEAD...origin/master)" -eq 0 ]; then
+          echo "No changes detected"
+          exit 0
+        fi
+      shell: bash
+
+
+    - name: Install UV
+      run: pip install uv
+
+    - name: Build WASM Compiler
+      run: ./wasm --build_wasm_compiler
+
+    - name: Upload Artifacts
+      run: |
+        for file in dist/*; do
+          if [ -f "$file" ]; then
+            filename=$(basename "$file")
+            echo "Uploading $filename"
+            gh release upload "$GITHUB_REF" "$file" --clobber
+          fi
+        done
+      shell: bash

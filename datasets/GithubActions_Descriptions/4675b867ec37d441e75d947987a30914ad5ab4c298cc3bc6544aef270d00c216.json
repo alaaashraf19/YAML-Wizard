@@ -1,0 +1,14 @@
+{
+  "sha": "4675b867ec37d441e75d947987a30914ad5ab4c298cc3bc6544aef270d00c216",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4629,
+  "description": "Create a GitHub Actions workflow named Test that runs on pull requests, pushes to trunk-* branches, and workflow dispatches. The workflow starts action runners, then uses a matrix to run build and test jobs with various configurations on self-hosted or ubuntu-latest runners. It also includes a release job that runs build and test jobs with specific configurations when the 'release' label is present. Finally, it runs a tests_complete job that checks the results of the previous jobs.",
+  "tags": [
+    "github-actions",
+    "workflow",
+    "test",
+    "matrix",
+    "self-hosted-runners"
+  ]
+}

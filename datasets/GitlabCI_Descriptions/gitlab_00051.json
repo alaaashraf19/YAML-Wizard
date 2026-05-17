@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_00051",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 599,
+  "description": "Create a GitLab CI pipeline with two stages: build and test. Use a fedora image for the build job, which runs a before_script to install gcc, make, dpkg, and rpm-build, then executes ./configure && make && make install, edits epm.list with sed, builds a deb package via epm -v -f deb epm-deb epm.list and an rpm package via epm -v -f rpm epm-rpm epm.list, and stores all files under lin*/* as artifacts. Add a test_deb job that runs on an ubuntu image, extracts the generated epm-deb*.tgz, installs the .deb with dpkg -i, and runs epm --version. Add a test_rpm job that runs on a fedora image, extracts the epm-rpm*.tgz, installs the .rpm with dnf install -y, and runs epm --version. Both test jobs execute in the test stage.",
+  "tags": [
+    "fedora",
+    "ubuntu",
+    "epm",
+    "deb",
+    "rpm",
+    "build",
+    "test"
+  ]
+}

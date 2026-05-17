@@ -1,0 +1,14 @@
+before_script:
+- pecl install xdebug
+- docker-php-ext-enable xdebug
+- apt-get update && apt-get install poppler-utils -y
+- composer install
+cache:
+  paths:
+  - vendor/
+image: nerones/docker-laravel:latest
+test:
+  script:
+  - vendor/bin/phpunit --configuration phpunit.xml --coverage-text --colors=never
+variables:
+  MYSQL_DATABASE: mysql_database

@@ -1,0 +1,13 @@
+{
+  "sha": "9800c70b3a9811bf41fb8f75752fe54f630218c8d88105d7807b644aa66f07f0",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1062,
+  "description": "Create a GitHub Actions workflow named Build that triggers on push and pull request events. This workflow should have multiple jobs: test, package, docs, lint, and check-pr. The test, package, docs, and lint jobs should reuse existing workflows with specific inputs and inherit secrets. The check-pr job should run on ubuntu-latest and verify that a pull request is based on the develop branch.",
+  "tags": [
+    "github-actions",
+    "workflow-reuse",
+    "multi-job-workflow",
+    "pull-request-validation"
+  ]
+}

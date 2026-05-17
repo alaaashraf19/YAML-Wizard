@@ -1,0 +1,22 @@
+{
+  "sha": "gitlab_06721",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2543,
+  "description": "Create a GitLab CI pipeline with three stages (code-analysis, tests, deploy) and a Composer cache at .composer/, defining COMPOSER_CACHE_DIR, MYSQL_DATABASE and MYSQL_ROOT_PASSWORD variables. In the code-analysis stage add a phpcs job that runs the shared before_script (composer require typo3/cms=\"^8.7\" phpunit/phpunit=\"5.7.5\", git checkout composer.json, export TYPO3_PATH_WEB=$PWD/.Build/Web) then executes .Build/bin/php-cs-fixer fix --config=Build/.php_cs -v --dry-run --using-cache=no, and a phplint job that runs php .Build/bin/phplint ./ --exclude=.Build, both with php7.0 and composer tags. In the tests stage add a unit job that runs the shared before_script followed by .Build/bin/phpunit --colors -c .Build/vendor/nimut/testing-framework/res/Configuration/UnitTests.xml Tests/Unit/, a functional job that runs the shared before_script, starts a mysql:5.7 service, exports typo3DatabaseName, typo3DatabaseHost, typo3DatabaseUsername and typo3DatabasePassword, then runs .Build/bin/phpunit --colors -c .Build/vendor/nimut/testing-framework/res/Configuration/FunctionalTests.xml Tests/Functional, and an acceptance job that runs the shared before_script plus php -S 0.0.0.0:8888 -t .Build/Web & and then performs TYPO3 setup commands (.Build/bin/typo3cms install:setup ..., database import, extension activation, configuration set, IP extraction, sed replacement) before executing .Build/bin/codecept run Acceptance -c Build/AcceptanceTests.yml, using mysql:5.7 and selenium/standalone-chrome:latest services. All test jobs are tagged with php7.0 and composer (acceptance also has typo3 and acceptance tags). Finally, in the deploy stage add a deployment job that echoes a placeholder deploy message, also tagged php7.0 and composer.",
+  "tags": [
+    "php",
+    "composer",
+    "typo3",
+    "acceptance",
+    "functional",
+    "unit",
+    "phpcs",
+    "phplint",
+    "mysql",
+    "selenium",
+    "code-analysis",
+    "tests",
+    "deploy"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_15313",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 432,
+  "description": "Create a GitLab CI pipeline using the docker:latest image with a docker:dind service running in experimental mode. Add a before_script that makes rootfs/app-entrypoint.sh, rootfs/custom.sh and rootfs/init.sh executable and logs in to the GitLab Container Registry with $CI_REGISTRY_USER and $CI_REGISTRY_PASSWORD. Define a single stage called build and a job named build-master that runs only on the master branch; in this job execute docker build --squash --pull -t \"$CI_REGISTRY_IMAGE:master\" . followed by docker push \"$CI_REGISTRY_IMAGE:master\". No caches, artifacts, or deployment targets are required.",
+  "tags": [
+    "docker",
+    "dind",
+    "docker-build",
+    "squash",
+    "master",
+    "ci-registry"
+  ]
+}

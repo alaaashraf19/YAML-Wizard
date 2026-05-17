@@ -1,0 +1,16 @@
+{
+  "sha": "72c1f8bc8f9a657c97343edc615b71e3be88d4fd716a0714c19b888b449cb535",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1047,
+  "description": "Create a GitHub Actions workflow named Python linter that runs on every pull request. Use an ubuntu-20.04 job running in a python:3.9.4-slim-buster container, that installs git and dependencies, checks out the repository, upgrades and installs cardboardlint and pylint, merges the pull request with the base branch, lints the changes against the base branch using cardboardlinter, and then resets the repository to the original state.",
+  "tags": [
+    "python",
+    "linter",
+    "cardboardlint",
+    "pylint",
+    "ubuntu",
+    "container",
+    "github-actions"
+  ]
+}

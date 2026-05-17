@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_00137",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2267,
+  "description": "Create a GitLab CI pipeline with two stages: tests and deploy. Define variables POSTGRES_DB=cms42, POSTGRES_USER=root1, POSTGRES_PASSWORD=$DB_PASS and provide two services: postgres:9.6.7-alpine (alias db) and redis:alpine (alias redis). In the tests stage add a tests job that uses the phpdockerio/php72-fpm:latest image, runs a before_script that decodes $CONFIG into app/config/config.local.neon, then executes: apt-get -y update; apt-get -y install curl; curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer; apt-get -y --no-install-recommends install php7.2-pgsql php7.2-redis; apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*; composer install --no-interaction --prefer-dist; composer dump-autoload -o; php bin/console migrations:migrate --no-interaction; php bin/console fixtures:load --no-interaction; php -S localhost:8085 --docroot www &>/dev/null&; find app src plugins tests -type f \\( -iname *.php -o -iname *.phpt \\) -exec php -l {} \\; | (! grep -v \"No syntax errors detected\"); vendor/bin/phpstan analyse -c phpstan.neon src plugins app tests/Unit tests/Mocks tests/Helpers tests/Traits --level 7; php bin/console orm:validate-schema; php bin/console dbal:reserved-words; php vendor/nette/tester/src/tester.php -c tests/unix.ini tests/Unit; vendor/bin/codecept -c tests/Codeception run; vendor/bin/phpcs --standard=ruleset.xml --extensions=php,phpt --encoding=utf-8 -sp src tests/Unit tests/Helpers tests/Mocks tests/Traits app. In the deploy stage add a deploy-master job that runs only on the master branch, uses the tetraweb/php:7.0 image, sets environment name to production, runs a before_script that creates ~/.ssh, writes $DEPLOY_KEY to id_rsa, chmod 600, and disables StrictHostKeyChecking when inside Docker, then runs a script that SSHes to the server and executes: cd /var/www/cms42 && git checkout . && git checkout master && git pull git@gitlab.com:adamzelycz/cms42.git && echo $CONFIG | base64 -di > app/config/config.local.neon && make update-prod && curl https://cms42.adamzelycz.cz | grep 'Tento CMS (Content Management System) vyv\\xEDj\\xEDm jen tak pro z\\xE1bavu a slou\\u017E\\xED jen jako p\\u0159\\xEDpadn\\xE1 uk\\xE1zka m\\xE9 tvorby.'",
+  "tags": [
+    "php",
+    "composer",
+    "phpstan",
+    "codeception",
+    "phpcs",
+    "postgres",
+    "redis",
+    "ssh",
+    "make",
+    "deploy"
+  ]
+}

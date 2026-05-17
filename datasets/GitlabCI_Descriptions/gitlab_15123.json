@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_15123",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1434,
+  "description": "Create a GitLab CI pipeline using the openjdk:8-jdk Docker image and define variables ANDROID_BUILD_TOOLS, ANDROID_COMPILE_SDK, ANDROID_SDK_TOOLS for the Android SDK setup. In a global before_script install apt packages (wget, tar, unzip, lib32stdc++6, lib32z1), set ANDROID_HOME to a local android-home directory, download and unzip the Android command‑line tools zip from Google using the ANDROID_SDK_TOOLS version, add the tools to PATH, run sdkmanager to accept licenses and install platforms;android-${ANDROID_COMPILE_SDK}, platform-tools, and build-tools;${ANDROID_BUILD_TOOLS}, and make gradlew executable. Add a build stage with an assembleDebug job that runs ./gradlew assembleDebug, is interruptible, and stores the app/build/outputs/ directory as an artifact. Also in the build stage add a lintDebug job that runs ./gradlew -Pci --console=plain :app:lintDebug -PbuildDir=lint, is interruptible, and has no artifacts. Add a test stage with a debugTests job that runs ./gradlew -Pci --console=plain :app:testDebug, is interruptible, and has no artifacts.",
+  "tags": [
+    "android",
+    "gradle",
+    "openjdk-8",
+    "ci",
+    "lint",
+    "debug-tests",
+    "assemble"
+  ]
+}

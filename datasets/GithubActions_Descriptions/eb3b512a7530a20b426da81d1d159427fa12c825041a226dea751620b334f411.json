@@ -1,0 +1,14 @@
+{
+  "sha": "eb3b512a7530a20b426da81d1d159427fa12c825041a226dea751620b334f411",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1861,
+  "description": "Create a GitHub Actions workflow that runs on push and pull request events. The workflow should test SQLAlchemy versions 2.0.18 and above on various Python and ClickHouse versions. Use a matrix strategy to run tests on ubuntu-20.04 with different Python versions, ClickHouse versions, and SQLAlchemy versions. For each test, check out the code, set up Python, install test requirements, install SQLAlchemy, configure the test environment, start a ClickHouse server container, and run tests with a timeout.",
+  "tags": [
+    "python",
+    "sqlalchemy",
+    "clickhouse",
+    "tests",
+    "docker"
+  ]
+}

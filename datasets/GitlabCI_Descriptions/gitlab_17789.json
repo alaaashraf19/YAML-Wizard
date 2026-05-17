@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_17789",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 193,
+  "description": "Create a GitLab CI pipeline that uses the mono:4.4.0.182 Docker image and defines two stages: build and deploy. Add a compile job in the build stage that runs `nuget restore` followed by `MONO_IOMAP=case xbuild /t:Build /p:Configuration=\\\"Release\\\" /p:Platform=\\\"x64\\\" Compiler.sln`. No caches, artifacts, or special rules are defined, and there are no deploy jobs.",
+  "tags": [
+    "mono",
+    "nuget",
+    "xbuild",
+    "csharp",
+    "dotnet"
+  ]
+}

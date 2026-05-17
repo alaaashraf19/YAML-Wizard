@@ -1,0 +1,15 @@
+{
+  "sha": "3ef6c48c9ffc9797e50707af11992710663950d08feab2a74e75f3e989ed0f62",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1872,
+  "description": "Create a GitHub Actions workflow named Build that runs on push to main and develop branches, on pull requests to these branches, and can be triggered manually or by another workflow. The workflow should run in a matrix of environments with different OS and Python versions, checking out the code, setting up Python, installing dependencies with make install, and running tests with make test. Additionally, run a validation job defined in a separate workflow file.",
+  "tags": [
+    "python",
+    "multios",
+    "multiversion",
+    "make",
+    "tests",
+    "validation"
+  ]
+}

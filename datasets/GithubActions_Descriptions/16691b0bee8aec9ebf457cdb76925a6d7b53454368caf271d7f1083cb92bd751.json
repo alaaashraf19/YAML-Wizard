@@ -1,0 +1,15 @@
+{
+  "sha": "16691b0bee8aec9ebf457cdb76925a6d7b53454368caf271d7f1083cb92bd751",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4756,
+  "description": "Create a GitHub Actions workflow named Test that runs on every pull request and push to branches excluding pre-commit-ci*. Use a matrix strategy to test multiple Python versions (3.7, 3.8, 3.9) on different environments (ubuntu-20.04, windows-2019, macos-10.15) and cluster types (ssh, mpi, slurm). For each job, check out the repository, cache conda environments and node_modules, set up Python, install ipyparallel and its dependencies, run tests with pytest and codecov, and submit a coverage report.",
+  "tags": [
+    "python",
+    "test",
+    "matrix",
+    "github-actions",
+    "ipyparallel",
+    "codecov"
+  ]
+}

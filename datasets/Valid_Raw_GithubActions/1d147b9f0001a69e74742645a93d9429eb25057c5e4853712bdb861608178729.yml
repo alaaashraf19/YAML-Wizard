@@ -1,0 +1,108 @@
+# GitHub Actions for GEOS
+#
+# Paul Ramsey <pramsey at cleverelephant dot ca>
+# Based on AZP configuration by Mateusz Loskot <mateusz at loskot dot net>
+
+name: CI
+on: [push, pull_request]
+
+jobs:
+  linux:
+    name: 'Linux'
+    strategy:
+      matrix:
+        ci:
+        - {
+          compiler: g++,
+          build_type: Coverage,
+          cxxstd: 11,
+          arch: 64,
+          packages: 'g++',
+          cmake: 3.15.*,
+          os: ubuntu-18.04
+        }
+        - {
+          compiler: g++,
+          build_type: Release,
+          cxxstd: 11,
+          arch: 32,
+          packages: 'g++-4.8-multilib gcc-4.8-multilib g++-multilib gcc-multilib',
+          cmake: 3.12.*,
+          os: ubuntu-18.04
+        }
+        - {
+          compiler: clang++,
+          build_type: Release,
+          cxxstd: 11,
+          arch: 64,
+          packages: 'clang',
+          cmake: 3.10.*,
+          os: ubuntu-18.04
+        }
+        - {
+          compiler: g++,
+          build_type: Debug,
+          cxxstd: 11,
+          arch: 64,
+          packages: 'g++',
+          cmake: 3.15.*,
+          os: ubuntu-20.04
+        }
+        - {
+          compiler: clang++,
+          build_type: Release,
+          cxxstd: 11,
+          arch: 64,
+          packages: 'clang',
+          cmake: 3.8.*,
+          os: ubuntu-16.04
+        }
+        - {
+          compiler: clang++,
+          build_type: Release,
+          cxxstd: 14,
+          arch: 64,
+          packages: 'clang',
+          cmake: 3.17.*,
+          os: ubuntu-20.04
+        }
+
+
+    runs-on: ${{ matrix.ci.os }}
+    steps:
+
+    - name: 'Install'
+      run: |
+        set -e
+        uname -a
+        sudo -E apt-get update
+        sudo -E apt-get -yq --no-install-suggests --no-install-recommends install make doxygen python3-pip ${{ matrix.ci.packages }}
+        python3 -m pip install --disable-pip-version-check --user cmake==${{ matrix.ci.cmake }}
+
+    - name: 'Check Out'
+      uses: actions/checkout@v2
+
+    - name: 'Build'
+      env:
+        CFLAGS: "-m${{ matrix.ci.arch }}"
+        CXXFLAGS: "-m${{ matrix.ci.arch }}"
+      run: |
+        set -e
+        mkdir build.cmake
+        cd build.cmake
+        cmake --version
+        cmake -DCMAKE_CXX_COMPILER=${{ matrix.ci.compiler }} -DCMAKE_CXX_STANDARD=${{ matrix.ci.cxxstd }} -DBUILD_DOCUMENTATION=YES -DCMAKE_BUILD_TYPE=${{ matrix.ci.build_type }} ..
+        cmake --build . -j 2
+        cmake --build . --target docs
+        ctest --output-on-failure .
+
+    - name: Upload coverage to Codecov
+      if: matrix.ci.build_type == 'Coverage'
+      run: |
+        curl -o codecov.sh https://codecov.io/bash
+        bash codecov.sh
+      shell: bash
+
+
+
+

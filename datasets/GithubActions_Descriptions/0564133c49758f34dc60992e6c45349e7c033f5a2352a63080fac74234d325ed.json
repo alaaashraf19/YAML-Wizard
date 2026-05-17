@@ -1,0 +1,14 @@
+{
+  "sha": "0564133c49758f34dc60992e6c45349e7c033f5a2352a63080fac74234d325ed",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2604,
+  "description": "Create a GitHub Actions workflow named tests that runs on push to the master branch and on pull requests. The workflow has two jobs: python-tests-pr for non-merged pull requests and python-tests-merged for merged pull requests or pushes to master. Both jobs run on ubuntu-latest, check out the repository, set up Python, install dependencies, install The Walrus, run pytest with coverage, and upload coverage to Codecov. The python-tests-merged job uses a matrix strategy to test on multiple OS and Python versions.",
+  "tags": [
+    "python",
+    "tests",
+    "codecov",
+    "pytest",
+    "github-actions"
+  ]
+}

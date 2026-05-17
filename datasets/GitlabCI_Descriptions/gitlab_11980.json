@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_11980",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 644,
+  "description": "Create a GitLab CI pipeline with two stages: build and test. Add three build jobs named build:gcc6, build:gcc7, build:gcc8, each using the gcc:6, gcc:7, gcc:8 Docker images respectively, running the command make FC=gfortran, and publishing any *.exe files as artifacts. Add three test jobs named test:gcc6, test:gcc7, test:gcc8, each depending on the matching build job, using the same gcc image, and executing ./test.exe in the test stage. No caches, services, variables, or special rules are required.",
+  "tags": [
+    "gcc6",
+    "gcc7",
+    "gcc8",
+    "make",
+    "test",
+    "build",
+    "fortran"
+  ]
+}

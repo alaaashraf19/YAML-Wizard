@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_00727",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 252,
+  "description": "Create a GitLab CI pipeline using the python:3.6 Docker image. Set a before_script that runs python -V, define a PIP_CACHE_DIR variable pointing to $CI_PROJECT_DIR/pip-cache, and configure a cache with key $CI_PROJECT_ID storing the pip-cache directory. Add a test job (default stage) that executes pip install -U pip setuptools, then pip install -e .[test], and finally runs tox. The pipeline should use the cache for the pip packages.",
+  "tags": [
+    "python",
+    "tox",
+    "pip",
+    "cache",
+    "python-3.6"
+  ]
+}

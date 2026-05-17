@@ -1,0 +1,15 @@
+{
+  "sha": "874420cbe80d2e263a6e81baa87db8c85da2c4e5e530219219a3ba56d16ee05c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1736,
+  "description": "Create a daily GitHub Actions workflow named static-build-test-p4c that runs at midnight UTC and on push and pull request events to the main branch. The workflow should have a concurrency policy that cancels in-progress runs on non-main branches. It should define a matrix job build-linux that runs on ubuntu-20.04, checks out the repository with submodules, uses ccache, and executes a bash script to build and test p4c with different configurations.",
+  "tags": [
+    "ubuntu",
+    "p4c",
+    "static-build",
+    "test",
+    "schedule",
+    "github-actions"
+  ]
+}

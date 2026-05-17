@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_17249",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 226,
+  "description": "Create a GitLab CI pipeline that uses the node:latest Docker image and caches the node_modules directory. Define a single build stage and a before_script that runs npm install -gd gulp-cli followed by npm install -d to install the Gulp CLI globally and the project’s dev dependencies. Add a compiling job in the build stage that executes the gulp command. Configure the job to publish the out directory as an artifact and include any untracked files.",
+  "tags": [
+    "node",
+    "npm",
+    "gulp",
+    "build",
+    "cache",
+    "artifacts"
+  ]
+}

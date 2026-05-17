@@ -1,0 +1,34 @@
+before_script:
+- npm install
+build:
+  script: npm run build
+  stage: build
+cache:
+  paths:
+  - node_modules/
+deploy_staging:
+  environment:
+    name: staging
+    url: https://deco-stage.herokuapp.com/
+  only:
+  - sit_uat_react
+  - master
+  script:
+  - npm run build
+  - git config --global user.email "kuypplan@gmail.com" && git config --global user.name
+    "Deco A5"
+  - git add . && git commit -m "automated deployment"
+  - git remote add heroku https://heroku:71f4bf41-21db-4472-a626-8cbde006ef43@git.heroku.com/deco-stage.git
+  - git push -f heroku HEAD:master
+  stage: deploy
+image: node:8
+stages:
+- test
+- build
+- deploy
+test:
+  script:
+  - npm install -g codecov
+  - npm run lint
+  - npm test && codecov --token=731120e2-5bab-4af3-84dc-787ed80b6980
+  stage: test

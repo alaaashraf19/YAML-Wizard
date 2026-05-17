@@ -1,0 +1,16 @@
+{
+  "sha": "e507132a4fb4cec26e359b763a959e42549153365425b069af96d72cc23456ed",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2651,
+  "description": "Create a GitHub Actions workflow named Build and Test that runs on push and pull requests to master and array_algebra branches. The workflow should have four jobs: build-test-cpu, build-test-cpu-release, build-test-cpu-openmp-python-asserts, and build-test-python-macos-clang. Each job should run on a specific environment (ubuntu-18.04 or macos-10.15), checkout the code, create a build directory, run cmake, make, and test with specific configurations and environment variables.",
+  "tags": [
+    "cmake",
+    "make",
+    "tests",
+    "ubuntu",
+    "macos",
+    "python",
+    "openmp"
+  ]
+}

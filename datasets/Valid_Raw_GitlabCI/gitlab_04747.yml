@@ -1,0 +1,15 @@
+pages:
+  artifacts:
+    paths:
+    - public
+  image: rustlang/rust:nightly
+  only:
+  - master
+  script:
+  - rustup install stable
+  - cargo +stable check
+  - cargo +nightly check
+  - ./test.sh
+  - cargo doc
+  - cp -r target/doc public
+  stage: deploy

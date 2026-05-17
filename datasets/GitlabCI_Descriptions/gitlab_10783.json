@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_10783",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 197,
+  "description": "Create a GitLab CI pipeline that uses the node:latest Docker image and defines two stages: build and test. In the build stage add an install_dependencies job that runs npm install and saves the node_modules/ directory as an artifact. In the test stage add a test_with_lab job that runs npm test. No services, caches, or special rules are required.",
+  "tags": [
+    "node",
+    "npm",
+    "install",
+    "test",
+    "gitlab-ci"
+  ]
+}

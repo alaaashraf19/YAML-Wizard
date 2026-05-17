@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_04885",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 496,
+  "description": "Create a GitLab CI pipeline that uses the rustlang/rust:nightly Docker image. Define two stages: test and package. Add a rust-nightly job in the test stage that runs cargo test --verbose. Add a linux-static-x86_64 job in the package stage that runs rustup target install x86_64-unknown-linux-musl, then cargo build --verbose --release --target=x86_64-unknown-linux-musl and strip ./target/x86_64-unknown-linux-musl/release/ddssd, produces an artifact named ddssd-$CI_COMMIT_REF_NAME containing ./target/x86_64-unknown-linux-musl/release/ddssd, and is limited to tag pipelines only.",
+  "tags": [
+    "rust",
+    "cargo",
+    "nightly",
+    "musl",
+    "static",
+    "package",
+    "test"
+  ]
+}

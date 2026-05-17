@@ -1,0 +1,16 @@
+{
+  "sha": "529c24011f2a71a51fe457e8af28921b1957f36ac2c438b3843ace12df89690e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4021,
+  "description": "Create a nightly GitHub Actions workflow for a MacOSX companion that runs daily at 23:20. The workflow checks out the repository, sets up a build environment, installs Qt 5.12.9, ARM toolchain, dfu-util, libusb, libsdl, and lftp. It then configures CMake, builds the project, and archives the production artifacts. A subsequent ubuntu-latest job downloads the artifacts and publishes them with a 'nightly' tag.",
+  "tags": [
+    "macos",
+    "nightly",
+    "companion",
+    "cmake",
+    "qt",
+    "arm-toolchain",
+    "github-actions"
+  ]
+}

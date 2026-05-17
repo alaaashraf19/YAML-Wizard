@@ -1,0 +1,10 @@
+before_script:
+- npm i
+image: node:10
+pages:
+  artifacts:
+    paths:
+    - public
+  script:
+  - npm run generate
+  stage: deploy

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_07528",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 494,
+  "description": "Create a GitLab CI pipeline that uses the debian:bullseye Docker image. Define a deploy stage with a pages job that runs `apt-get update`, then `apt-get -qy install --no-install-recommends python3-chardet python3-feedparser python3-html5lib python3-httplib2 python-librdf python3-libxml2 python3-portalocker python3-utidylib python3-bs4 python3-lxml xsltproc`, then `test -d public || mkdir public`, `test -d cache || mkdir cache`, and finally `python3 planet.py fdroid.ini`. The job always publishes the `public/` directory as a GitLab Pages artifact that expires after 60 minutes. The pages job only runs on the master branch.",
+  "tags": [
+    "debian",
+    "gitlab-pages",
+    "apt",
+    "python3",
+    "pages"
+  ]
+}

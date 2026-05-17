@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_09709",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 357,
+  "description": "Create a GitLab CI pipeline using the ubuntu:bionic Docker image. Set a before_script that links the Europe/Warsaw timezone and installs build-essential, g++, cmake, pkg-config, libglfw3-dev, libglew-dev, libgl1-mesa-dev and git via apt-get. Define a single stage called build and a job named build_and_run_tests in that stage that changes to /builds/gravoo/my_game, creates a build directory, runs cmake .., then make and make test. No services, caches, artifacts, or conditional rules are required.",
+  "tags": [
+    "ubuntu",
+    "cmake",
+    "make",
+    "c-plus-plus",
+    "build"
+  ]
+}

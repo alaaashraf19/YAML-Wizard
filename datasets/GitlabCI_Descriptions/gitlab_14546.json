@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_14546",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 261,
+  "description": "Create a GitLab CI pipeline that uses the pnicol/android_sdk_28 Docker image and defines two stages: build and quality. Add a build:debug job in the build stage that runs ./gradlew clean :app:assembleDebug and stores the generated APKs from app/build/outputs/apk/ as artifacts. Add a quality:lint job in the quality stage that runs ./gradlew clean :app:lintDebug. No caches, services, or special rules are needed.",
+  "tags": [
+    "android",
+    "gradle",
+    "apk",
+    "lint",
+    "pnicol-android-sdk-28"
+  ]
+}

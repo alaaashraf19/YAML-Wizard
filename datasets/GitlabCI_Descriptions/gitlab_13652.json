@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_13652",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 270,
+  "description": "Create a GitLab CI pipeline that uses the java:8 Docker image and sets the GRADLE_OPTS variable to -Dorg.gradle.daemon=false. Add a before_script step that runs chmod +x gradlew to make the wrapper executable. Define a build stage with a build job that runs ./gradlew -g /cache/.gradle clean assemble and does not allow failure. Define a test stage with a test job that runs ./gradlew -g /cache/.gradle check.",
+  "tags": [
+    "java",
+    "gradle",
+    "build",
+    "test",
+    "docker-image"
+  ]
+}

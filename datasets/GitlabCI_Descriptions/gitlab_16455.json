@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_16455",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 311,
+  "description": "Create a GitLab CI pipeline that uses the elixir:1.12-alpine Docker image with a postgres:alpine service. Set the variables MIX_ENV to test and POSTGRES_PASSWORD to postgres. In the before_script run apk --update-cache add postgresql-client build-base gcc abuild binutils, then mix local.rebar --force, mix local.hex --force, mix deps.get, and mix ecto.reset. Add a test job in the test stage that runs mix test. The pipeline has no caches, artifacts, or conditional rules.",
+  "tags": [
+    "elixir",
+    "postgres",
+    "mix",
+    "test",
+    "alpine"
+  ]
+}

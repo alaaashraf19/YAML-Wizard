@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_16187",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 255,
+  "description": "Create a GitLab CI pipeline using the clojure:lein-2.8.1 Docker image. Define two stages: test and build, and a global before_script that runs lein deps. In the test stage add a testar job that executes lein test. In the build stage add a compilar job that runs lein uberjar, then stores the resulting JAR files from target/uberjar/*.jar as an artifact named $CI_COMMIT_REF_SLUG. No services, caches, or special rules are required.",
+  "tags": [
+    "clojure",
+    "leiningen",
+    "uberjar",
+    "test",
+    "build"
+  ]
+}

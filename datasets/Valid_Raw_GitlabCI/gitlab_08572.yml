@@ -1,0 +1,24 @@
+.installation:mac-os-job:
+  after_script:
+  - tail -100 gdk-install.log
+  artifacts:
+    expire_in: 2 days
+    paths:
+    - gdk-install.log
+    when: always
+  before_script:
+  - brew install make moreutils
+  extends:
+  - .rules:novel
+  image: macos-15-xcode-16
+  needs: []
+  tags:
+  - saas-macos-large-m2pro
+  variables:
+    GDK_DIR: /Users/gitlab/builds/gitlab-org/gitlab-development-kit
+    MISE_FETCH_REMOTE_VERSIONS_TIMEOUT: 60s
+    MISE_HTTP_TIMEOUT: 60s
+.verification:mac-os-job:
+  after_script:
+  - mv ${GDK_DIR}/gitlab/log/*.log gitlab_log/
+  - mv ${GDK_DIR}/log/ gdk_log/

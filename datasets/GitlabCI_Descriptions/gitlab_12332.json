@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_12332",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 420,
+  "description": "Create a GitLab CI pipeline that uses the gcc Docker image and defines a single build stage with a job named build. In the before_script install make, autoconf, cmake, build-essential, libboost-dev, python3, python3-pip, and ninja-build via apt, then install meson with pip3. In the script run meson setup build_release -DBUILD_EXAMPLES=true -DBUILD_BENCHMARKS=true -DBUILD_TESTS=true, cd into build_release, execute ninja, run ninja test, and finally execute the benchmark binaries ./benchmarks/benchmark_discreture and ./benchmarks/benchmark_parallel. No caches, artifacts, or special triggers are defined.",
+  "tags": [
+    "gcc",
+    "meson",
+    "ninja",
+    "cmake",
+    "boost",
+    "benchmark"
+  ]
+}

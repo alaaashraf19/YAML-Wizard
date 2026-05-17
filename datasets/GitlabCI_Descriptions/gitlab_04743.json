@@ -1,0 +1,20 @@
+{
+  "sha": "gitlab_04743",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 886,
+  "description": "Create a GitLab CI pipeline with three stages (test, build, release), using python:3.7-alpine as the default Docker image, a pip cache at .cache/pip, and a PIP_CACHE_DIR variable pointing to that cache. In the test stage define a linting job that runs the global before_script (python -V and pip install tox) followed by tox -e flake8, and two matrix jobs python36 and python37 that each use python:3.6-alpine and python:3.7-alpine respectively, run the same before_script and then tox -e py36 or tox -e py37. In the build stage add a package job that runs the global before_script then python setup.py sdist bdist_wheel, and publishes the resulting dist/ directory as an artifact retained for one month. In the release stage add a pypi job that runs only on tags, executes the global before_script, then pip install twine and twine upload --skip-existing dist/*, using TWINE_USERNAME and TWINE_PASSWORD variables sourced from $PYPI_USERNAME and $PYPI_PASSWORD. Also in release add an aur job that runs only on tags, uses the archlinux/base:latest image with an empty before_script, and runs cd deploy/, chmod +x pkgbuild-to-aur, and ./pkgbuild-to-aur.",
+  "tags": [
+    "python",
+    "tox",
+    "pip",
+    "archlinux",
+    "aur",
+    "pypi",
+    "twine",
+    "packaging",
+    "test",
+    "build",
+    "release"
+  ]
+}

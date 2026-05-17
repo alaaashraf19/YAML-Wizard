@@ -1,0 +1,10 @@
+image: nott/cobalt:latest
+pages:
+  artifacts:
+    paths:
+    - public/
+  only:
+  - master
+  script:
+  - mkdir -p public
+  - cobalt build -d public

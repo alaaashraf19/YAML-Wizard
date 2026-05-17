@@ -1,0 +1,204 @@
+name: CI
+
+on:
+  # Run CI on every commit to the "main" branch.
+  push:
+    branches: [ main ]
+  # Run CI on every PR.
+  pull_request:
+  # Run CI on the "main" branch every day (to catch random flakiness or CI
+  # environment regressions).
+  schedule:
+    - cron: "0 0 * * *"
+
+env:
+  # The version of libstdc++ to install for analysis builds.
+  ANALYSIS_LIBSTDCPP_VERSION: 12
+
+jobs:
+  # Build and test in WebAssembly mode.
+  build-emscripten:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    strategy:
+      matrix:
+        build-config: [Release, Debug]
+        packaging: [app, extension]
+      fail-fast: false
+
+    steps:
+    - name: Check out sources
+      uses: actions/checkout@v4
+      with:
+        show-progress: false
+
+    - name: Install build dependencies
+      uses: ./.github/actions/build-dependencies-installation
+      with:
+        toolchain: emscripten
+
+    - name: Compile
+      env:
+        TOOLCHAIN: emscripten
+        PACKAGING: ${{ matrix.packaging }}
+        CONFIG: ${{ matrix.build-config }}
+      run: >
+        source env/activate && make -j30
+
+    - name: Test
+      env:
+        TOOLCHAIN: emscripten
+        PACKAGING: ${{ matrix.packaging }}
+        CONFIG: ${{ matrix.build-config }}
+      timeout-minutes: 75
+      run: >
+        source env/activate && make test
+
+    - name: Upload built app packages
+      uses: actions/upload-artifact@v4
+      with:
+        name: built_app_packages.${{ matrix.build-config }}.${{ matrix.packaging }}
+        path: built_app_packages/*
+        if-no-files-found: error
+
+    # Run upload rules only for one packaging mode, to avoid uploded file name
+    # clashes (the actual library code doesn't depend on the packaging).
+    - name: Upload example JS standalone smart card client library
+      if: ${{ matrix.packaging == 'extension' }}
+      uses: actions/upload-artifact@v4
+      with:
+        # Suffix the file name with ".debug" for Debug builds.
+        name: google-smart-card-client-library${{ matrix.build-config == 'Debug' && '.debug' || '' }}.js
+        path: example_js_standalone_smart_card_client_library/out/example_js_standalone_smart_card_client_library/google-smart-card-client-library.js
+    - name: Upload example JS standalone smart card client library ES module
+      if: ${{ matrix.packaging == 'extension' }}
+      uses: actions/upload-artifact@v4
+      with:
+        # Suffix the file name with ".debug" for Debug builds.
+        name: google-smart-card-client-library-es-module${{ matrix.build-config == 'Debug' && '.debug' || '' }}.js
+        path: example_js_standalone_smart_card_client_library/out/example_js_standalone_smart_card_client_library/google-smart-card-client-library-es-module.js
+
+  # Run unit tests under ASan.
+  test-asan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 100
+    strategy:
+      matrix:
+        build-config: [Release, Debug]
+      fail-fast: false
+
+    steps:
+    - name: Check out sources
+      uses: actions/checkout@v4
+      with:
+        show-progress: false
+
+    - name: Install build dependencies
+      uses: ./.github/actions/build-dependencies-installation
+      with:
+        toolchain: asan_testing
+
+    # When building for analysis, explicitly tell Clang to use the right include
+    # path, because Clang's heuristics often fail to deduce it automatically.
+    - name: Compile
+      env:
+        CPLUS_INCLUDE_PATH: /usr/i686-linux-gnu/include/c++/${{ env.ANALYSIS_LIBSTDCPP_VERSION }}/i686-linux-gnu/
+        TOOLCHAIN: asan_testing
+        CONFIG: ${{ matrix.build-config }}
+      run: >
+        source env/activate && make -j30
+
+    - name: Test
+      env:
+        TOOLCHAIN: asan_testing
+        CONFIG: ${{ matrix.build-config }}
+      timeout-minutes: 85
+      run: >
+        source env/activate && make test
+
+  # Run ESLint for JavaScript code.
+  lint-js:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+    # Check out with additionally pulling the parent commit. (In case of Pull
+    # Requests, it's pointing to the base branch's head.)
+    - name: Check out sources
+      uses: actions/checkout@v4
+      with:
+        show-progress: false
+        fetch-depth: 2
+
+    - name: Install dependencies
+      uses: ./.github/actions/build-dependencies-installation
+      with:
+        toolchain: eslint
+
+    # Determine the set of files to be linted. For PR's that don't touch linter
+    # config or helper scripts, only look at the diff against the parent commit
+    # (which, as Github executes the action on the merge commit, is the base
+    # branch). Otherwise, all files are to be linted.
+    - name: Determine lint scope
+      id: lint-scope
+      if: ${{ github.event_name == 'pull_request' }}
+      run: |
+        export LINTER_CHANGES=$(git diff --name-only HEAD^1 HEAD | grep -E 'eslint|.github|scripts')
+        [ -n "$LINTER_CHANGES" ] || (echo "only_diff_to_parent=1" >> "$GITHUB_OUTPUT")
+
+    - name: Run ESLint
+      run: >
+        scripts/eslint.py --base="${{ steps.lint-scope.outputs.only_diff_to_parent && 'HEAD^1' || 'none' }}"
+
+  # Collect code coverage statistics.
+  collect-coverage:
+    runs-on: ubuntu-latest
+    outputs:
+      LINE_COVERAGE_PERCENT: ${{ steps.build-coverage.outputs.LINE_COVERAGE_PERCENT }}
+    timeout-minutes: 60
+    steps:
+    - name: Check out sources
+      uses: actions/checkout@v4
+      with:
+        show-progress: false
+
+    - name: Install build dependencies
+      uses: ./.github/actions/build-dependencies-installation
+      with:
+        toolchain: coverage
+
+    # When building for analysis, explicitly tell Clang to use the right include
+    # path, because Clang's heuristics often fail to deduce it automatically.
+    #
+    # Set pipefail, so that failures in the coverage runs aren't swallowed.
+    - name: Build coverage report
+      id: build-coverage
+      env:
+        CPLUS_INCLUDE_PATH: /usr/i686-linux-gnu/include/c++/${{ env.ANALYSIS_LIBSTDCPP_VERSION }}/i686-linux-gnu/
+      run: >
+        set -o pipefail &&
+        (./coverage-report.sh | tee coverage-output.txt) &&
+        echo "LINE_COVERAGE_PERCENT=$(
+          scripts/parse-coverage-output.py < coverage-output.txt
+        )" >> $GITHUB_OUTPUT
+
+    - name: Upload coverage report
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-report-detailed.zip
+        path: coverage-report-detailed/
+
+  # An empty job whose steps display the short summary of the run.
+  summary:
+    runs-on: ubuntu-latest
+    # Depend on all other jobs, so that we aren't triggered if something fails.
+    needs: [build-emscripten, test-asan, collect-coverage, lint-js]
+
+    steps:
+    - name: >
+        All tests passed.
+      run: ''
+    - name: >
+        C/C++ test coverage:
+        ${{ needs.collect-coverage.outputs.LINE_COVERAGE_PERCENT }} lines.
+      run: ''

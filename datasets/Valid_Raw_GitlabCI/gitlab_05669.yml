@@ -1,0 +1,48 @@
+compilacion:
+  artifacts:
+    expire_in: 1 hrs 30 min
+    paths:
+    - target/
+    untracked: true
+  script: 'mvn --quiet compile
+
+    chown codelogs:codelogs /root/.netrc &&
+
+    chown codelogs:codelogs -R /root/.cache &&
+
+    chown codelogs:codelogs -R /root/
+
+    chown codelogs:codelogs -R $CI_PROJECT_DIR
+
+    '
+  stage: build
+deployheroku:
+  dependencies:
+  - empaquetado
+  script: '/root/scripts/heroku.sh $USER_HEROKU $PSW_HEROKU &&
+
+    heroku git:remote -a $HEROKU_APP_GIT
+
+    heroku plugins:install heroku-cli-deploy
+
+    heroku deploy:jar --jar target/*.war
+
+    '
+  stage: deploy
+empaquetado:
+  artifacts:
+    expire_in: 1 hrs 30 min
+    paths:
+    - target/
+    untracked: true
+  dependencies:
+  - compilacion
+  script: 'mvn --quiet package -Pprod -DskipTests
+
+    '
+  stage: package
+image: rfcardenas/codelogs-btool-ic
+stages:
+- build
+- package
+- deploy

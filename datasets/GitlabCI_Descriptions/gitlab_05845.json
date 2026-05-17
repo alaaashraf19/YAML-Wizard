@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_05845",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 744,
+  "description": "Create a GitLab CI pipeline that uses the docker:git Docker image with a docker:dind service and defines a hidden .build template job that runs only on the master branch, is interruptible, and executes the following shell commands in order: docker info, echo \"$CI_JOB_TOKEN\" | docker login -u gitlab-ci-token --password-stdin=true \"$CI_REGISTRY\", export REGISTRY=\"$CI_REGISTRY_IMAGE\" IMAGE=\"$CI_JOB_NAME\", docker build -f \"./$IMAGE.dockerfile\" -t \"$REGISTRY/$IMAGE\" ., and docker push \"$REGISTRY/$IMAGE:latest\". Place this job in the build stage. Then create individual jobs named android-ndk, cdev-alpine, cdev-arch, cdev-debian, cdev-debian-oldstable, cdev-rocky-8, cdev-rocky-9, cdev-ubuntu, and lua-testing that each extend the .build template, inheriting its image, service, rules, stage, and script. Add a needs relationship so that the lua-testing job depends on the cdev-arch job completing first.",
+  "tags": [
+    "docker",
+    "dind",
+    "docker-build",
+    "template",
+    "needs",
+    "master-branch"
+  ]
+}

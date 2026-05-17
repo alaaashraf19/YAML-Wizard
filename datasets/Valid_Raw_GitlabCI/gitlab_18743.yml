@@ -1,0 +1,41 @@
+build:
+  artifacts:
+    expire_in: 1 month
+    paths:
+    - node_modules
+  script:
+  - yarn install --frozen-lockfile
+  stage: build
+image: node:8
+release:
+  dependencies:
+  - build
+  environment:
+    name: production
+    url: https://www.npmjs.com/package/wdio-webpack-dev-server-service
+  only:
+  - tags
+  script:
+  - echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
+  - npm publish
+  stage: release
+release_snapshot:
+  dependencies:
+  - build
+  environment:
+    name: snapshot
+  only:
+  - master
+  script:
+  - apt-get update
+  - apt-get install jq
+  - echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
+  - VERSION="$(cat package.json | jq -r '.version')"
+  - NEWVERSION="$VERSION-$CI_COMMIT_SHA"
+  - sed --in-place --expression="s/\"$VERSION\"/\"$NEWVERSION\"/" package.json
+  - npm publish --tag next
+  stage: release
+stages:
+- build
+- test
+- release

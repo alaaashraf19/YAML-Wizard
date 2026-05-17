@@ -1,0 +1,15 @@
+{
+  "sha": "fefe254dd5c330e8e3919eb4932a5d48c6f6352f2645bbb7a708f7a4b4722ed1",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 933,
+  "description": "Create a GitHub Actions workflow named VS17-CLANG-CI that runs on every push and pull request. Use a windows-latest job with a matrix strategy to test different build configurations, including Win32 and x64 architectures in Release and Debug modes. For each configuration, check out the repository, configure with CMake using ClangCL, build the project, and run basic tests with ctest.",
+  "tags": [
+    "windows",
+    "cmake",
+    "clang",
+    "ci",
+    "tests",
+    "vs17"
+  ]
+}

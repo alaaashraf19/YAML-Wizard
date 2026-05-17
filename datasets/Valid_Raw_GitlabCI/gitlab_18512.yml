@@ -1,0 +1,20 @@
+.build:java9:
+  before_script:
+  - java -version
+  image: openjdk:9-slim
+  script:
+  - ./gradlew build
+  stage: build
+  tags:
+  - docker
+build:java8:
+  before_script:
+  - java -version
+  image: openjdk:8
+  script:
+  - ./gradlew build
+  stage: build
+  tags:
+  - docker
+stages:
+- build

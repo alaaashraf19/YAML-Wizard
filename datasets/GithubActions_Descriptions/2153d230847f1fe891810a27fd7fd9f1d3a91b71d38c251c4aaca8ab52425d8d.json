@@ -1,0 +1,16 @@
+{
+  "sha": "2153d230847f1fe891810a27fd7fd9f1d3a91b71d38c251c4aaca8ab52425d8d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 6608,
+  "description": "Create a GitHub Actions workflow named macOS CI that runs on every push to main and on pull requests. The workflow has three jobs: build-openbios on ubuntu-latest, macos-build-and-test on macos-11, and publish-app on ubuntu-latest. The build-openbios job checks out the repository, cancels previous runs, updates packages, installs dependencies, builds OpenBIOS, and uploads the results as artifacts. The macos-build-and-test job checks out the repository, restores and updates Homebrew, installs dependencies, fetches submodules, builds PCSX-Redux, downloads OpenBIOS and test artifacts, bundles and packages the application, signs it, creates a DMG file, and uploads it as an artifact. The publish-app job checks out the repository, installs Node.js and appcenter-cli, downloads the DMG artifact, and distributes it to AppCenter.",
+  "tags": [
+    "macos",
+    "ci",
+    "openbios",
+    "pcsx-redux",
+    "appcenter",
+    "ubuntu",
+    "homebrew"
+  ]
+}

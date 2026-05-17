@@ -1,0 +1,96 @@
+after_script:
+- (if cd $CARGO_HOME/registry && [ -d cache ]; then for c in cache/*/*.crate; do s=src/${c#cache/};
+  if [ ! -e ${s%.crate} ]; then rm -v $c; fi; done; find cache -name \*.crate | sort;
+  fi)
+- rm -rf cargo
+- mkdir -p cargo/registry
+- if [ -d $CARGO_HOME/registry/cache ]; then cp -R $CARGO_HOME/registry/cache cargo/registry/;
+  echo Updated registry/cache; fi
+before_script:
+- getconf LONG_BIT
+- rustup self update
+- rustup --version
+- if [ -n "$HOST" ]; then rustup toolchain install --force-non-host --profile minimal
+  beta-$HOST $MSRV-$HOST; fi
+- if [ -n "$HOST" ]; then rustup component add --toolchain beta-$HOST rustfmt clippy;
+  fi
+- if [ -d cargo/registry/cache ]; then rm -rf $CARGO_HOME/registry/cache; mkdir -p
+  $CARGO_HOME/registry; cp -R cargo/registry/cache $CARGO_HOME/registry/; echo Copied
+  registry/cache; fi
+- (if cd $CARGO_HOME/registry && [ -d src ]; then rm -r src; fi)
+- (if cd $CARGO_HOME/registry && [ -d cache ]; then find cache -name \*.crate | sort;
+  fi)
+i686-gnulinux:
+  cache:
+    key: $CI_JOB_NAME
+    paths:
+    - cargo/
+  image: i386/rust:1
+  only:
+  - ci
+  script:
+  - cargo +beta-$HOST test --features fail-on-warnings
+  - cargo +beta-$HOST test --release --features fail-on-warnings
+  - cargo +beta-$HOST fmt -- --check
+  - cargo +beta-$HOST clippy --all-targets --features fail-on-warnings
+  - rm Cargo.lock
+  - cargo +$MSRV-$HOST test --features fail-on-warnings
+  - cargo +$MSRV-$HOST test --release --features fail-on-warnings
+  variables:
+    HOST: i686
+pages:
+  artifacts:
+    paths:
+    - public
+  image: amd64/rust:1
+  only:
+  - www
+  script:
+  - rustup toolchain install --profile minimal $TOOLCHAIN
+  - rm -rf public
+  - mkdir public
+  - cp etc/{index.html,rug.svg} public
+  - cargo +$TOOLCHAIN doc --no-deps -Z rustdoc-map
+  - mv target/doc public/dev
+  variables:
+    TOOLCHAIN: nightly-x86_64
+variables:
+  MSRV: 1.65.0
+x86_64-gnulinux:
+  cache:
+    key: $CI_JOB_NAME
+    paths:
+    - cargo/
+  image: amd64/rust:1
+  only:
+  - ci
+  script:
+  - cargo +beta-$HOST test --features fail-on-warnings
+  - cargo +beta-$HOST test --release --features fail-on-warnings
+  - cargo +beta-$HOST fmt -- --check
+  - cargo +beta-$HOST clippy --all-targets --features fail-on-warnings
+  - rm Cargo.lock
+  - cargo +$MSRV-$HOST test --features fail-on-warnings
+  - cargo +$MSRV-$HOST test --release --features fail-on-warnings
+  variables:
+    HOST: x86_64
+x86_64-i686-gnulinux:
+  cache:
+    key: $CI_JOB_NAME
+    paths:
+    - cargo/
+  image: amd64/rust:1
+  only:
+  - ci
+  script:
+  - apt-get update -qq && apt-get install -y -qq gcc-multilib libc6-dev-i386
+  - rustup target add --toolchain beta-$HOST $TARGET
+  - cargo +beta-$HOST test --target $TARGET --features fail-on-warnings
+  - cargo +beta-$HOST test --release --target $TARGET --features fail-on-warnings
+  - rm Cargo.lock
+  - rustup target add --toolchain $MSRV-$HOST $TARGET
+  - cargo +$MSRV-$HOST test --target $TARGET --features fail-on-warnings
+  - cargo +$MSRV-$HOST test --release --target $TARGET --features fail-on-warnings
+  variables:
+    HOST: x86_64
+    TARGET: i686-unknown-linux-gnu

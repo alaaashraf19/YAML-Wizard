@@ -1,0 +1,16 @@
+{
+  "sha": "a092206b7561b0663ffc217db60d4dbc6b92fd5f74013f7d03436401587982be",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2022,
+  "description": "Create a GitHub Actions workflow named sanitizers that runs on push to main and on pull requests to main. Use an ubuntu-24.04 job with read permission to repository contents, and a matrix strategy to run the build with different sanitizer configurations: address and undefined, thread, and memory. For each configuration, check out the repository, set up ccache, install dependencies, set up Python 3.12, install Python dependencies, set up Meson with the specified sanitizer, build the project, and run tests with error logging and symbolization.",
+  "tags": [
+    "c",
+    "cpp",
+    "sanitizers",
+    "meson",
+    "python",
+    "ubuntu",
+    "tests"
+  ]
+}

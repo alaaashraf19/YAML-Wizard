@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_10904",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 371,
+  "description": "Create a GitLab CI pipeline that uses the node:8.9 Docker image and caches the node_modules/ directory. Include a before_script that runs `npm install gitbook-cli -g`, `gitbook fetch 3.2.3`, and `gitbook install` before each job. Define two stages, test and deploy: the test job runs in the test stage, executes `gitbook build . public`, and runs on all branches except master (only branches, except master). The pages job runs in the deploy stage, executes the same `gitbook build . public` command, publishes the public/ folder as a Pages artifact that expires after one week, and only runs on the master branch.",
+  "tags": [
+    "node",
+    "gitbook",
+    "pages",
+    "cache",
+    "gitlab-ci"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_18517",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1494,
+  "description": "Create a GitLab CI pipeline with stages lint, test, build, and docker using golang:1.13.4 as the default image and docker:dind service for docker jobs. Define a shared before_script that creates a symlink /builds/$CI_PROJECT_PATH to /go/src/replay-api and changes directory to /go/src/replay-api, used by lint, test and build jobs. In the lint stage add a lint job that runs `make lint`. In the test stage add a test job that runs `go get -u github.com/jstemmer/go-junit-report` then `make test 2>&1 | go-junit-report > report.xml` and uploads report.xml as a JUnit artifact. In the build stage add a build job that runs `make release`, then stores the directory build/replay-api as an artifact for one week. In the docker stage add a docker:replay-api job that depends on build, uses the docker image with docker:dind service, sets DOCKER_HOST, runs `docker build -t \"${CI_REGISTRY_IMAGE}/replay-api:latest\" -f docker/Dockerfile .`, `docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}` and `docker push \"${CI_REGISTRY_IMAGE}/replay-api:latest\"`; also add a docker:replay-api:tags job that runs only on tags, builds the image with tag `${CI_COMMIT_TAG}` and pushes it.",
+  "tags": [
+    "golang",
+    "make",
+    "docker",
+    "dind",
+    "go-junit-report",
+    "gitlab-ci"
+  ]
+}

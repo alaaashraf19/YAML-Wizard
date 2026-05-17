@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_16150",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 3473,
+  "description": "Create a GitLab CI pipeline with stages prepare, test, build, review, and deploy using the jkarras/docker-nodemcu-build:spiffs-essential image for all jobs except the pages job which uses jkarras/docker-nodemcu-build:mkdocs. In the prepare stage add a prepare-environment job that runs `bash ci-scripts/preparelua.sh ${CI_BUILD_STAGE}` and `bash ci-scripts/build-nodemcu-image.sh ${CI_BUILD_STAGE}`, caches `builddir/nodemcu-firmware` keyed by $CI_BUILD_REF_NAME, and stores artifacts (builddir/nodemcu-firmware and build_artifacts) for 1 week, excluding branches matching documentation patterns. In the build stage add a build-images job that depends on prepare-environment, runs the same two scripts, uses the same cache, and publishes the `build_artifacts` directory as an artifact, also excluding documentation branches. In the test stage add a test-lua-syntax job that runs the same scripts and excludes documentation branches. In the review stage add a start_review job that runs the same scripts on branch pipelines (excluding master and dev), caches per stage, creates untracked artifacts, and sets a review environment with URL http://saintcon2016badge.karras.co/$CI_BUILD_REF_NAME and an on‑stop stop_review job; the stop_review job runs `s3cmd del -r s3://saintcon2016badge.karras.co/$CI_BUILD_REF_NAME` manually to clean up. Finally, in the deploy stage add manual deploy-to-badger-dev and deploy-to-badger-prod jobs (only on dev and master branches respectively) that run the same scripts, use the stage cache, produce untracked artifacts, and deploy to the corresponding URLs, plus a pages job that always runs on master or tags, executes `export LC_ALL=C.UTF-8` and `mkdocs build`, and publishes the `public` directory as a pages artifact.",
+  "tags": [
+    "nodemcu",
+    "docker",
+    "mkdocs",
+    "review",
+    "deploy",
+    "pages",
+    "test",
+    "build",
+    "prepare",
+    "ci"
+  ]
+}

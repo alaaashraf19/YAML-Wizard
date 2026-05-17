@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_15579",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1132,
+  "description": "Create a GitLab CI pipeline with two stages: test and deploy. In the test stage add a test:data job that uses the oven/bun:1.2.16 image, runs the commands 'bun install' and 'bun test', and is executed only for merge requests (excluded on master). Also add a test:doc job that uses the ruby:3.4 image, runs 'cd documentation', 'bundle install', and 'bundle exec jekyll build', and is executed only for merge requests (excluded on master). Also add a test:inventory job that uses the node:24 image, runs 'yarn global add gulp-cli', 'yarn install', and 'yarn run build', and is executed only for merge requests (excluded on master). In the deploy stage add a pages:docs job that uses the ruby:3.4 image, runs 'mkdir -p public/docs', 'cd documentation', 'bundle install', 'bundle exec jekyll build', 'cp -rT _site/ ../public/docs', and 'cd ..', stores the 'public' directory as an artifact, and runs only on the master branch. Finally add a pages job that uses the node:24 image, depends on pages:docs, runs 'yarn config set unsafe-perm true', 'yarn global --ignore-optional add gulp-cli netlify-cli', 'yarn install', 'yarn run build', 'cp -rT build/ public/', and 'netlify deploy --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN --prod --dir public/', stores the 'public' directory as an artifact, and runs only on the master branch.",
+  "tags": [
+    "node",
+    "ruby",
+    "bun",
+    "netlify",
+    "gulp",
+    "jekyll",
+    "merge-requests",
+    "test",
+    "deploy"
+  ]
+}

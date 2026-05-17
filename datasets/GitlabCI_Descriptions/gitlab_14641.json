@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_14641",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 988,
+  "description": "Create a GitLab CI pipeline that uses the node:latest Docker image, caches the node_modules/ directory, and defines the variables DATABASE_URL, HEROKU_API_KEY and MYSQL_USERNAME. Define a test stage with a test job that runs \"npm install\" then \"npm run-script report\", and a test-with-artifact job that runs \"npm install\" then \"npm run-script test-coverage\", runs only on the master branch, and uploads the coverage/ directory as an artifact. In the deploy stage add a develop job that runs only on the develop branch and executes \"apt-get update -qy\", \"apt-get install -y rubygems\", \"gem install dpl\" and \"dpl --provider=heroku --app=auto-personalia-development --api-key=$HEROKU_API_KEY\" to deploy to Heroku. Also add a staging job that runs only on master and runs the same apt and dpl commands but with \"--app=auto-personalia-staging\" to deploy to the staging Heroku app. Finally add a pages job that runs only on master, depends on test-with-artifact, moves the generated coverage report with \"mv coverage/lcov-report/ public/\", and publishes the public/ directory as a GitLab Pages artifact.",
+  "tags": [
+    "node",
+    "heroku",
+    "gitlab-pages",
+    "npm",
+    "coverage",
+    "deploy"
+  ]
+}

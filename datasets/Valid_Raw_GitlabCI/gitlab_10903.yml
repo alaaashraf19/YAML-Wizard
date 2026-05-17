@@ -1,0 +1,13 @@
+cache:
+  paths:
+  - node_modules/
+image: node:latest
+test_cs:
+  script:
+  - npm install
+  - node_modules/eslint/bin/eslint.js src
+test_units:
+  script:
+  - npm install
+  - node_modules/mocha-webpack/bin/mocha-webpack --webpack-config webpack.tests.config.js
+    --require tests/setup.js tests/*.spec.js

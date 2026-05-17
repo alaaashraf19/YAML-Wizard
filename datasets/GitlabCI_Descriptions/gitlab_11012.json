@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_11012",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 576,
+  "description": "Create a GitLab CI pipeline using the php:7.2-cli Docker image, with a global before_script that runs tests/ci-setup.sh and a cache of vendor/. Define three stages: test, package, and deploy. In the test stage add a test job that runs pecl install xdebug, docker-php-ext-enable xdebug, cp tests/app.test.php config/app.php, and vendor/bin/phpunit --coverage-text --colors=never --coverage-html webroot/coverage, then stores the webroot/coverage/ directory as an artifact. In the package stage add a package job that executes scripts/package.sh and publishes dist/band-manager-backend.tar.gz as an artifact. In the deploy stage add a deploy job that runs scripts/deploy.sh and is limited to the stable branch only.",
+  "tags": [
+    "php",
+    "phpunit",
+    "xdebug",
+    "docker-php-ext-enable",
+    "ci-setup",
+    "packaging",
+    "deployment",
+    "stable"
+  ]
+}

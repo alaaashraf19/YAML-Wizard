@@ -1,0 +1,16 @@
+{
+  "sha": "10fc35ad36a2616db8b7bc04877a2fc22c1b828dc21d034eecb33cd5c5ce56ed",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3280,
+  "description": "Create a GitHub Actions workflow named Autorelease that runs on push to the master branch. The workflow should support concurrent releases, cancelling any in-progress jobs for the same environment. It should have two jobs: one for Windows and one for macOS. The Windows job should set up MSYS2, install dependencies, update protobuf, build the project, create an NSIS installer, and zip binaries. It should then create a release with these assets. The macOS job should install dependencies with Homebrew, build the project, and create a release with the built package.",
+  "tags": [
+    "autorelease",
+    "msys2",
+    "windows",
+    "macos",
+    "github-release",
+    "nsis",
+    "homebrew"
+  ]
+}

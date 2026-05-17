@@ -1,0 +1,35 @@
+ancient:
+  script:
+  - lein ancient
+  stage: test
+deploy:
+  dependencies:
+  - package
+  image: maven:3.3.9-jdk-8
+  only:
+  - master
+  script:
+  - cp ci/settings.xml /root/.m2/settings.xml
+  - mvn deploy
+  stage: deploy
+image: clojure:lein-2.7.0
+kibit:
+  script:
+  - lein kibit
+  stage: test
+package:
+  artifacts:
+    untracked: true
+  only:
+  - master
+  script:
+  - lein pom
+  stage: package
+stages:
+- test
+- package
+- deploy
+test:
+  script:
+  - lein test
+  stage: test

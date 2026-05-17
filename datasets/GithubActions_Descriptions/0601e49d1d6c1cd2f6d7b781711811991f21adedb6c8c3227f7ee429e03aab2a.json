@@ -1,0 +1,15 @@
+{
+  "sha": "0601e49d1d6c1cd2f6d7b781711811991f21adedb6c8c3227f7ee429e03aab2a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1640,
+  "description": "Create a nightly GitHub Actions workflow named Sanitize that runs at 3AM every day on the dev branch. The workflow should also be triggerable manually. It uses a matrix strategy to run a sanitize job on ubuntu-22.04 with RelWithDebInfo configuration. The job checks out the repository with submodules and full history, conditionally switches to the dev branch if on the master branch, sets up shared tools, caches external resources, configures and builds with CMake, and runs tests with a 2-minute timeout.",
+  "tags": [
+    "cmake",
+    "ubuntu",
+    "nightly",
+    "tests",
+    "sanitize",
+    "github-actions"
+  ]
+}

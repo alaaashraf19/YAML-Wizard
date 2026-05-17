@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_09126",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 503,
+  "description": "Create a GitLab CI pipeline that uses the docker:stable Docker image with the docker:stable-dind service and sets DOCKER_DRIVER to overlay2. Define a single build stage and a job named build that runs only on the master branch. In the build job execute the following shell commands in order: docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY, docker info, export IMAGE_TAG=\\\"$CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME/master/latest}\\\", docker pull registry.gitlab.com/gitlab-org/security-products/dast, docker tag registry.gitlab.com/gitlab-org/security-products/dast $IMAGE_TAG, and docker push $IMAGE_TAG. No caches or artifacts are defined.",
+  "tags": [
+    "docker",
+    "dind",
+    "build",
+    "master-only",
+    "gitlab-registry"
+  ]
+}

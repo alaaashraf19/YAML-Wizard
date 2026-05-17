@@ -1,0 +1,50 @@
+build:
+  artifacts:
+    paths:
+    - $BUILD_DIR
+  script:
+  - mkdir -p $BUILD_DIR && cd $BUILD_DIR
+  - cmake -DCMAKE_INSTALL_PREFIX:PATH=$INSTALL_PREFIX ../..
+  - make -j2
+  stage: build
+  tags:
+  - ocon
+examples:
+  script:
+  - cd examples
+  - mkdir -p $BUILD_DIR && cd $BUILD_DIR
+  - cmake ../.. -DCMAKE_PREFIX_PATH="/usr/local;$INSTALL_PREFIX"
+  - make
+  - bicycle/bicycle_tester
+  - pendulum/pendulum
+  stage: examples
+  tags:
+  - ocon
+install:
+  dependencies:
+  - build
+  script:
+  - cd $BUILD_DIR
+  - make install -j2
+  stage: install
+  tags:
+  - ocon
+stages:
+- build
+- test
+- install
+- examples
+test:
+  artifacts:
+    reports:
+      junit: report.xml
+  dependencies:
+  - build
+  script:
+  - $BUILD_DIR/test/ocon_tester --gtest_output="xml:report.xml"
+  stage: test
+  tags:
+  - ocon
+variables:
+  BUILD_DIR: cmake/build
+  INSTALL_PREFIX: /tmp/ocon

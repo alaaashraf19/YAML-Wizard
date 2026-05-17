@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_18788",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1271,
+  "description": "Create a GitLab CI pipeline with stages install, test, build, and deploy, using the node:10.12.0-jessie Docker image for the install, test, and build jobs and the docker:stable image with a docker:dind service for the deploy job, and define variables CONTAINER_IMAGE, DOCKER_DRIVER, DOCKER_HOST, GIT_STRATEGY, and Timeout. In the install stage add an install_job that runs only on tags, caches the node_modules directory, and executes `npm install`. In the test stage add a test_job that runs only on tags, caches node_modules, runs `npm run jest`, captures JUnit results from ./junit.xml as an artifact, and extracts coverage using the regex `/All files[^|]*\\|[^|]*\\s+([\\d\\.]+)/`. In the build stage add a build_job that runs only on tags, caches node_modules and .build, stores the .build directory as an artifact named $CI_COMMIT_TAG, and runs `npm run build`. In the deploy stage add a deploy_job that runs only on tags, uses before_script to log in to the GitLab Container Registry with `$CI_JOB_TOKEN`, runs `docker info`, then pulls the latest image if it exists, builds a new image with `docker build --cache-from $CONTAINER_IMAGE:latest --tag $CONTAINER_IMAGE:$CI_COMMIT_TAG --tag $CONTAINER_IMAGE:latest .`, and pushes both tags to the registry.",
+  "tags": [
+    "node",
+    "npm",
+    "docker",
+    "dind",
+    "gitlab-ci",
+    "tags",
+    "build",
+    "test",
+    "deploy"
+  ]
+}

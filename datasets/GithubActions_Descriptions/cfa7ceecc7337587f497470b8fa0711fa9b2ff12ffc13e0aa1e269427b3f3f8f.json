@@ -1,0 +1,16 @@
+{
+  "sha": "cfa7ceecc7337587f497470b8fa0711fa9b2ff12ffc13e0aa1e269427b3f3f8f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1631,
+  "description": "Create a GitHub Actions workflow named Development CodeQL that analyzes code quality and security. The workflow should trigger on push events to the dev_checks branch, run twice a week, and analyze C++ and Python code. Use an ubuntu-latest job with read permissions for actions and contents, and write permission for security events. The workflow should check out the repository, set up Python 3.x, initialize CodeQL, and then perform autobuild and analysis for Python or configure and build for C++.",
+  "tags": [
+    "codeql",
+    "security",
+    "quality",
+    "cpp",
+    "python",
+    "analysis",
+    "github"
+  ]
+}

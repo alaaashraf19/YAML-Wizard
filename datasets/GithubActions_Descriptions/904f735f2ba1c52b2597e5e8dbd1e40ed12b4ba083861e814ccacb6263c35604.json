@@ -1,0 +1,13 @@
+{
+  "sha": "904f735f2ba1c52b2597e5e8dbd1e40ed12b4ba083861e814ccacb6263c35604",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2909,
+  "description": "Create a GitHub Actions workflow named Docker images build and push that triggers on push to the develop branch when files under util/dockerfiles/ change or on workflow dispatch. The workflow has three jobs: obtain-targets lists Docker build targets, docker-buildx-bake-base-images builds and pushes base Docker images on a self-hosted Linux runner, and docker-buildx-bake-all builds and pushes all other Docker images in parallel on self-hosted Linux runners, limited to 4 parallel jobs.",
+  "tags": [
+    "docker",
+    "github-actions",
+    "docker-buildx",
+    "multi-job-workflow"
+  ]
+}

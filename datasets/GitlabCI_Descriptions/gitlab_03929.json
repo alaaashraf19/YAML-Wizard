@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_03929",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 759,
+  "description": "Create a GitLab CI pipeline using the docker:git image with the docker:dind service. Define variables CONTAINER_APP_IMAGE as registry.gitlab.com/azdle/stockfaces-api:latest and CONTAINER_BUILDER_IMAGE as registry.gitlab.com/azdle/stockfaces-api:builder-$CI_BUILD_REF_NAME, and cache the $CI_PROJECT_DIR/target directory. Include a before_script that runs docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com. Add a build-builder stage with a build-builder job that executes docker build -f Dockerfile.builder -t $CONTAINER_BUILDER_IMAGE . then docker push $CONTAINER_BUILDER_IMAGE. Add a build stage with a build job that runs docker run -v $CI_PROJECT_DIR:/source $CONTAINER_BUILDER_IMAGE cargo build --release, then docker build -f Dockerfile.app -t $CONTAINER_APP_IMAGE . and docker push $CONTAINER_APP_IMAGE, with no additional rules or artifacts.",
+  "tags": [
+    "docker",
+    "dind",
+    "rust",
+    "cargo",
+    "builder-image",
+    "gitlab-ci"
+  ]
+}

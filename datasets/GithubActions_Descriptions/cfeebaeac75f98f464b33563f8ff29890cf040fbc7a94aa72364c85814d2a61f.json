@@ -1,0 +1,16 @@
+{
+  "sha": "cfeebaeac75f98f464b33563f8ff29890cf040fbc7a94aa72364c85814d2a61f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1593,
+  "description": "Create a GitHub Actions workflow named Linux that runs on push and pull request events. Use a matrix strategy to build on different Ubuntu releases with various compilers. For each job, check out the repository, install build dependencies, autogen, configure, and run tests with make. Additionally, run specific commands like lv2lint, make install, and gcov depending on the compiler used, and upload a tarball artifact.",
+  "tags": [
+    "linux",
+    "ubuntu",
+    "gcc",
+    "clang",
+    "make",
+    "tests",
+    "codecov"
+  ]
+}

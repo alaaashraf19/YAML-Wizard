@@ -1,0 +1,14 @@
+{
+  "sha": "3848beeeb31f3442ee3dfe8ee0f068d4beb36d37b69822354dfebd41f7f1d78f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 797,
+  "description": "Create a GitHub Actions workflow named Build on host OS that runs on every pull request. It should have two ubuntu-latest jobs: one for host tests and one for mock checks. The host tests job should check out the repository with submodules, install valgrind and lcov, and run the host_test.sh script. The mock checks job should check out the repository with submodules and run a make command to build an example.",
+  "tags": [
+    "ubuntu",
+    "tests",
+    "valgrind",
+    "mocking",
+    "host-os"
+  ]
+}

@@ -1,0 +1,14 @@
+image: node:latest
+pages:
+  artifacts:
+    paths:
+    - public
+  before_script:
+  - cd presentation
+  - npm install
+  only:
+  - master
+  script:
+  - npm run deploy
+  - mv public ../public
+  stage: deploy

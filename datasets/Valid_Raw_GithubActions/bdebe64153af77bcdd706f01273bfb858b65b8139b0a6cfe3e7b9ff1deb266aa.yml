@@ -1,0 +1,52 @@
+name: Publish Docs
+
+env:
+    Version: 0.0.1
+    NUGET_API_KEY: ${{secrets.NUGET_API_KEY}}
+
+on:
+    push:
+        branches:
+            - master
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v1
+
+            - name: Setup .NET Core
+              uses: actions/setup-dotnet@v1
+              with:
+                  dotnet-version: 3.1.102
+
+            - uses: actions/setup-node@v1
+              with:
+                  node-version: '10.x'
+
+            - name: Publish Docs 🎉
+              run: |
+                  npm install
+                  cd site/AntBlazor.Docs.ClientApp/wwwroot
+                  rm index.html
+                  cp -r gh-pages/* gh-pages/.nojekyll ./
+                  rm -r gh-pages
+                  cd ../../../
+                  dotnet build
+                  dotnet publish -c Release -o tmp
+
+            - name: Deploy 🚀
+              uses: JamesIves/github-pages-deploy-action@releases/v3
+              with:
+                  ACCESS_TOKEN: ${{ secrets.GH_PUSH_TOKEN }}
+                  BRANCH: gh-pages
+                  FOLDER: tmp/wwwroot
+
+            - name: Package Nightly Nuget ✨
+              run: |
+                  dotnet pack components/AntBlazor.csproj /p:PackageVersion=$Version-nightly-$GITHUB_RUN_ID -c Release -o pack-$GITHUB_RUN_ID --no-build --no-restore
+
+            - name: Publish to Nuget ✔
+              run: |
+                  dotnet nuget push pack-$GITHUB_RUN_ID/*.nupkg -s https://api.nuget.org/v3/index.json -k $NUGET_API_KEY

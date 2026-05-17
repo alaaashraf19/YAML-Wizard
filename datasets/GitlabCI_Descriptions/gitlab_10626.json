@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_10626",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 161,
+  "description": "Create a GitLab CI pipeline with a single stage named build. Add a job called deploy that runs only on the master branch and does not allow failure. In this job use the default Docker image, execute `chmod +x gradlew` followed by `./gradlew clean build artifactoryPublish --info --stacktrace`. No caches, artifacts, or services are defined.",
+  "tags": [
+    "gradle",
+    "artifactory",
+    "java",
+    "build"
+  ]
+}

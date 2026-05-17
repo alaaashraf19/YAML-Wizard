@@ -1,0 +1,14 @@
+{
+  "sha": "072c00211a79d5ea0875982f896ce7ce08a3da1c23b187f6ec7465f93fecb7a8",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2811,
+  "description": "Create a GitHub Actions workflow named Annotation that triggers on issue comment creation. Run a job on ubuntu-latest if the comment creator is 'cmllr', the issue is a pull request, and the comment body contains '/check'. The job checks out the repository and pull request, sets up Python 3.11, installs dependencies, runs migrations and a parse command, generates an annotation, and comments on the PR with the result, adding a label based on the annotation content.",
+  "tags": [
+    "python",
+    "github-actions",
+    "annotations",
+    "pull-requests",
+    "comments"
+  ]
+}

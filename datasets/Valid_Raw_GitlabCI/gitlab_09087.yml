@@ -1,0 +1,24 @@
+release-environment:notify:
+  extends:
+  - .with-bundle
+  - .common-ci-tokens
+  rules:
+  - if: $RELEASE_ENVIRONMENT_PIPELINE == "true" && $RELEASE_ENVIRONMENT_NOTIFICATION_TYPE
+      == "deploy"
+    when: always
+  - when: never
+  script:
+  - bundle exec rake "release_environment:notify[$RELEASE_ENVIRONMENT_CI_PIPELINE_URL,$RELEASE_ENVIRONMENT_NAME,$RELEASE_ENVIRONMENT_VERSION]"
+  stage: release_environment
+release-environment:qa_notify_failure:
+  extends:
+  - .with-bundle
+  - .common-ci-tokens
+  rules:
+  - if: $RELEASE_ENVIRONMENT_PIPELINE == "true" && $RELEASE_ENVIRONMENT_NOTIFICATION_TYPE
+      == "qa"
+    when: always
+  - when: never
+  script:
+  - bundle exec rake "release_environment:qa_notify[$RELEASE_ENVIRONMENT_CI_PIPELINE_URL,$RELEASE_ENVIRONMENT_NAME,$RELEASE_ENVIRONMENT_VERSION]"
+  stage: release_environment

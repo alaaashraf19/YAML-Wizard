@@ -1,0 +1,14 @@
+{
+  "sha": "090e9a3284cc8cd092dc975ef36af88d29cb9a1133cf9ed3ce7e863b32d6885a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 995,
+  "description": "Create a GitHub Actions workflow named build that runs on every push and pull request. Use a matrix job on ubuntu-latest to test with multiple Python versions (2.x and 3.x). For each version, check out the repository, set up Python, install dependencies including yubico/stable ppa, upgrade pip, install tox and the package, run pre-commit hooks, execute unit tests with tox, and verify the CLI.",
+  "tags": [
+    "python",
+    "ubuntu",
+    "tests",
+    "cli",
+    "pre-commit"
+  ]
+}

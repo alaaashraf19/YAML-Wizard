@@ -1,0 +1,99 @@
+name: Windows
+
+on: [push]
+
+jobs:
+    build-windows-msvc:
+        strategy:
+            matrix:
+                include:
+                    - occ_version: 7.3.0
+                      occ_zip_sha256: '2503e69d595bb4c4e760b629aba3d8cee5e6b8d0da43b0d790a7949c67fd15d0'
+                    - occ_version: 7.4.0
+                      occ_zip_sha256: '6664b9a4213036ff0960edd2426258cf66844386c1a2338fa62e008f40c476bb'
+                    - occ_version: 7.5.0
+                      occ_zip_sha256: '8000f261ecbf6689e48439aa5895304069d00a14efe28eb7f1d108450cb7a74f'
+                    - occ_version: 7.6.0
+                      occ_zip_sha256: '137788c7693f74fb98797adfd06c1b00f66dac59beca5c3073c1f62c98b7a80f'
+                    - occ_version: 7.7.0
+                      occ_zip_sha256: '82afb7bd5fd7097189ee4e98bf3bc02b4030cae7a82967db68d5f2b556801779'
+                    - occ_version: 7.8.0
+                      occ_zip_sha256: 'beb30920efe5e5384d500d43dcb8ba1f476a76bb65b268b1af32d807b697bdee'
+
+        runs-on: windows-latest
+        name: build-win-msvc-occt${{matrix.occ_version}}
+
+        steps:
+        - name: Checkout
+          uses: actions/checkout@v3
+
+        - name: Install Qt
+          uses: jurplel/install-qt-action@v3
+          with:
+              cache: true
+              cache-key-prefix: QtCache
+
+        - name: Cache OpenCascade archive
+          id: cache-occ
+          uses: actions/cache@v3
+          with:
+              path: OpenCASCADE-${{matrix.occ_version}}-vc14-64.zip
+              key: occ-${{matrix.occ_version}}
+
+        - name: Download OpenCascade
+          if: steps.cache-occ.outputs.cache-hit != 'true'
+          uses: carlosperate/download-file-action@v2
+          with:
+              file-url: 'https://www.fougue.pro/share/bin/OpenCASCADE-${{matrix.occ_version}}-vc14-64.zip'
+              sha256: ${{matrix.occ_zip_sha256}}
+
+        - name: Extract OpenCascade
+          run: 7z x OpenCASCADE-${{matrix.occ_version}}-vc14-64.zip
+
+        - name: Cache Assimp archive
+          id: cache-assimp
+          uses: actions/cache@v3
+          with:
+              path: assimp-5.3.1.zip
+              key: assimp-5.3.1
+
+        - name: Download Assimp
+          if: steps.cache-assimp.outputs.cache-hit != 'true'
+          uses: carlosperate/download-file-action@v2
+          with:
+              file-url: 'https://www.fougue.pro/share/bin/assimp-5.3.1.zip'
+              sha256: 'b6097488fa5b7a0cc610e8258e74aaa9552b48a13bc8680eedd66512d788e64f'
+
+        - name: Extract Assimp
+          run: 7z x assimp-5.3.1.zip
+
+        - name: Get count of CPU cores
+          uses: SimenB/github-actions-cpu-cores@v1
+          id: cpu-cores
+
+        - name: Configure Compiler
+          uses: ilammy/msvc-dev-cmd@v1
+
+        - name: Build
+          shell: cmd
+          run: |
+              mkdir ${{github.workspace}}\build
+              cd ${{github.workspace}}\build
+              cmake --version
+              cmake .. ^
+                    -DMayo_BuildTests=ON ^
+                    -DMayo_BuildPluginAssimp=ON ^
+                    -DOpenCASCADE_DIR=../OpenCASCADE-${{matrix.occ_version}}-vc14-64/opencascade-${{matrix.occ_version}} ^
+                    -Dassimp_DIR=${{github.workspace}}/assimp-5.3.1/lib/cmake/assimp-5.3
+              cmake --build . ^
+                    --config Release ^
+                    --parallel ${{steps.cpu-cores.outputs.count}}
+
+        - name: Execute Unit Tests
+          working-directory: ${{github.workspace}}/build
+          shell: cmd
+          run: |
+              call ..\OpenCASCADE-${{matrix.occ_version}}-vc14-64\opencascade-${{matrix.occ_version}}\env.bat
+              set PATH=${{github.workspace}}\assimp-5.3.1\bin;%PATH%
+              release\mayo.exe --runtests -o utests-output.txt
+              more utests-output.txt

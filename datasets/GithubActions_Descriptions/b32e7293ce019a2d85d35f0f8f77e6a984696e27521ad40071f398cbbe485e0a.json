@@ -1,0 +1,14 @@
+{
+  "sha": "b32e7293ce019a2d85d35f0f8f77e6a984696e27521ad40071f398cbbe485e0a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3281,
+  "description": "Create a GitHub Actions workflow named E.V.E CI that runs on push to main and on pull requests to develop. The workflow has three jobs: arch-x86, arch-arm, and arch-ppc, each with a matrix strategy testing EVE with different compilers, architectures, and options using custom actions run_tests and run_docker. The workflow has concurrency settings to cancel in-progress jobs.",
+  "tags": [
+    "ci",
+    "concurrency",
+    "matrix",
+    "testing",
+    "eve"
+  ]
+}

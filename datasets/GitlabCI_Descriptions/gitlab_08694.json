@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_08694",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 104,
+  "description": "Create a GitLab CI pipeline that uses the node:latest Docker image and caches the node_modules/ directory. Define a single job called eslint that runs in the default test stage, executing the commands 'yarn install' and then 'yarn eslint'. The job does not produce any artifacts, has no special rules, and relies only on the cached dependencies.",
+  "tags": [
+    "node",
+    "yarn",
+    "eslint",
+    "cache"
+  ]
+}

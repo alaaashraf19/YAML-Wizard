@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_05302",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 754,
+  "description": "Create a GitLab CI pipeline using the docker:latest image with the docker:dind service and a REGISTRY variable set to registry.gitlab.com. Define a single stage called buildpush and a job named buildpush that runs in this stage. In the before_script, log in to the registry with docker login using $CI_BUILD_USER and $CI_BUILD_TOKEN, then display RAM and CPU info with free -m and cat /proc/cpuinfo. The job script extracts the version from package.json, formats the current date-time, builds a Docker image tagged ${REGISTRY}/checkmein2/checkmein2-ui:${CI_PIPELINE_ID}-${CI_VERSION}-${CI_DATE_TIME}, lists all images, and pushes the image to the registry. The pipeline has no caches, artifacts, or conditional rules.",
+  "tags": [
+    "docker",
+    "dind",
+    "docker-build",
+    "registry",
+    "node-version"
+  ]
+}

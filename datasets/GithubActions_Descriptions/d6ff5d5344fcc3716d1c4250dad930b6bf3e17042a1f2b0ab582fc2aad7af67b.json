@@ -1,0 +1,17 @@
+{
+  "sha": "d6ff5d5344fcc3716d1c4250dad930b6bf3e17042a1f2b0ab582fc2aad7af67b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 6381,
+  "description": "Create a GitHub Actions workflow named FBGEMM CI that runs on every push to main and on pull requests to main. Use a concurrency strategy to cancel previous runs if a new commit is pushed. The workflow should have three jobs: build-posix on ubuntu-latest and macos-latest, build-windows on windows-2019, and build-bazel on ubuntu-latest. Each job should check out the repository and submodules, get CPU info, and then build and test FBGEMM libraries in various configurations.",
+  "tags": [
+    "fbgemm",
+    "ci",
+    "ubuntu",
+    "macos",
+    "windows",
+    "bazel",
+    "cmake",
+    "ctest"
+  ]
+}

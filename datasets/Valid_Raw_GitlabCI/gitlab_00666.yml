@@ -1,0 +1,17 @@
+before_script:
+- bundle install --path vendor
+cache:
+  paths:
+  - vendor/
+image: ruby:2.3
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - main
+  script:
+  - bundle exec jekyll build -d public/ && gzip -k -6 $(find public/ -type f)
+  stage: deploy
+variables:
+  JEKYLL_ENV: production

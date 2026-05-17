@@ -1,0 +1,16 @@
+{
+  "sha": "7d35f390f30258836f4390aa8428fd063b5a250a2a8fc2d5f5a7fdbb7c09dc58",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 6719,
+  "description": "Create a Linux CI GitHub Actions workflow that runs on pushes to the master branch and on pull requests. The workflow uses two jobs: linux_ci and codecov, both running on ubuntu-22.04. The linux_ci job uses a matrix strategy to run tests with different sanitizers (ubsan, asan, tsan, msan), while the codecov job generates code coverage reports. Both jobs restore vcpkg and its artifacts from the GitHub cache service and perform setup tasks.",
+  "tags": [
+    "linux",
+    "ci",
+    "ubuntu",
+    "vcpkg",
+    "sanitizers",
+    "codecov",
+    "coverage"
+  ]
+}

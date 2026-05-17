@@ -1,0 +1,15 @@
+{
+  "sha": "fc60ef27ce5df44c8380de42532f6ce43414829a5632f51a42cfdbb1bd2f704d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1314,
+  "description": "Create a GitHub Actions workflow named Test that runs on push to the master branch and on pull requests to master. Use a matrix strategy to test on multiple OS and Python versions, checking out the code, setting up Python, installing requirements, running Tox, and submitting coverage to Coveralls. Additionally, for a specific repository, run a finish job that uploads the test results to Coveralls.",
+  "tags": [
+    "python",
+    "tests",
+    "coveralls",
+    "tox",
+    "matrix",
+    "ci"
+  ]
+}

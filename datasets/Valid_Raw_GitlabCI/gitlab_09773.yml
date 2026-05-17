@@ -1,0 +1,7 @@
+before_script:
+- python -v
+- which python
+image: python:3.6-alpine
+testing:
+  script:
+  - python test.py

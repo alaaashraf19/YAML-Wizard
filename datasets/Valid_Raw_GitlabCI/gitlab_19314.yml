@@ -1,0 +1,72 @@
+cache:
+  paths:
+  - $HOME/.gradle
+jdk11:
+  artifacts:
+    expire_in: 60 min
+    paths:
+    - .gradle/
+    - build/
+  except:
+  - pages
+  image: openjdk:11
+  script: ./gradlew -i -s assemble --scan
+  stage: build
+jdk8:
+  artifacts:
+    expire_in: 60 min
+    paths:
+    - .gradle/
+    - build/
+  except:
+  - pages
+  image: openjdk:8
+  script: ./gradlew build -i -s -x gradleTest --scan
+  stage: build
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - pages
+  script: ls -la
+  stage: release
+publish:
+  dependencies:
+  - jdk8
+  image: openjdk:8
+  only:
+  - release
+  script: ./gradlew installDocs publishPlugins gitPublishPush -i -Dgradle.publish.key=$GRADLE_PORTAL_KEY
+    -Dgradle.publish.secret=$GRADLE_PORTAL_SECRET -Dorg.ajoberstar.grgit.auth.username=$PAGES_PUBLISH_USER
+    -Dorg.ajoberstar.grgit.auth.password=$PAGES_PUBLISH_KEY -Dorg.ajoberstar.grgit.auth.force=hardcoded
+    --scan
+  stage: release
+stages:
+- build
+- test
+- release
+test:gradle3:
+  dependencies:
+  - jdk8
+  except:
+  - pages
+  image: openjdk:8
+  script: ./gradlew -i -s gradleTest -DgradleTest.versions=3.0,3.3,3.5 --scan
+  stage: test
+test:gradle4:
+  dependencies:
+  - jdk8
+  except:
+  - pages
+  image: openjdk:8
+  script: ./gradlew -i -s gradleTest -DgradleTest.versions=4.0.2,4.2.1,4.9 --scan
+  stage: test
+test:gradle5:
+  dependencies:
+  - jdk8
+  except:
+  - pages
+  image: openjdk:8
+  script: ./gradlew -i -s gradleTest -DgradleTest.versions=5.0-rc-4 --scan
+  stage: test

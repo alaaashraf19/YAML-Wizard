@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_08184",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 475,
+  "description": "Create a GitLab CI pipeline with three stages: test, build, and deploy. Add a test job that runs the command `echo \"Lanzando tests...\"` in the test stage. Add a build job in the build stage that runs `echo \"Build...\"`. Add a deploy_staging job in the deploy stage that runs only on the master branch, executes `echo \"Deploy a staging...\"`, and sets the environment name to staging with URL https://staging.escuela.it. Add a deploy_prod job in the deploy stage that runs only on the master branch, is manual, executes `echo \"Deploy a producción...\"`, and sets the environment name to production with URL https://escuelta.it.",
+  "tags": [
+    "test",
+    "build",
+    "deploy",
+    "staging",
+    "production",
+    "manual"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_07941",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2003,
+  "description": "Create a GitLab CI pipeline that uses the Docker image registry.gitlab.com/fudaa/fudaa-scripts:21 and defines stages build, deploy, and release. Add a build job in the build stage that runs `mvn $MAVEN_CLI_OPTS -Pcoverage clean verify install`, caches `.m2/repository` and `.sonar/cache`, stores all `*/target/` directories and JUnit XML reports as artifacts (always), runs on all branches except tags, and is interruptible. Add a deploy job in the deploy stage that runs only on the master branch, executes `bash /ci_scripts/prevent_maven_recompile.sh` before the script, depends on the build job, runs `mvn $MAVEN_CLI_OPTS -DskipTests -Passemble -Dmaven.test.skip=true install` then moves `ui/target/Fudaa-Prepro-*.zip` to the project root, and publishes the zip as an artifact. Add a deploy_release job also in the deploy stage that runs on tags matching `release-.*`, excludes regular branches, has no dependencies, runs `mvn $MAVEN_CLI_OPTS -Passemble install` and moves the zip file, publishing it as an artifact. Add a generate_sonar_report job in the deploy stage that runs only on master, allows failure, runs the same before_script, caches `.sonar/cache` with a job‑specific key, depends on build, runs `mvn sonar:sonar -Dsonar.projectKey=fudaa-prepro -Dsonar.organization=fudaa -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN`, and sets `GIT_DEPTH=0` and `SONAR_USER_HOME` variables. Finally, add a manual release job in the release stage that runs `bash /ci_scripts/maven_tag_new_version_and_next_snapshot.sh` and is excluded from tags.",
+  "tags": [
+    "maven",
+    "java",
+    "sonar",
+    "gitlab-ci",
+    "docker-image",
+    "build",
+    "deploy",
+    "release",
+    "cache",
+    "junit"
+  ]
+}

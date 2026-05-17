@@ -1,0 +1,45 @@
+build:amd64:
+  before_script:
+  - apk add --no-cache curl gzip bash
+  - docker login -u "gitlab-ci-token" -p "$CI_JOB_TOKEN" "$CI_REGISTRY"
+  only:
+  - master
+  script:
+  - ./scripts/unifi-build.sh -c stable -e latest -g "${CI_COMMIT_SHORT_SHA}" "${CI_REGISTRY_IMAGE}/unifi"
+  - ./scripts/unifi-publi.sh -c stable -e latest -g "${CI_COMMIT_SHORT_SHA}" "${CI_REGISTRY_IMAGE}/unifi"
+  - ./scripts/unifi-build.sh -c oldstable -g "${CI_COMMIT_SHORT_SHA}" "${CI_REGISTRY_IMAGE}/unifi"
+  - ./scripts/unifi-publi.sh -c oldstable -g "${CI_COMMIT_SHORT_SHA}" "${CI_REGISTRY_IMAGE}/unifi"
+  - ./scripts/unifi-build.sh -c unifi-8.2 -t lts -g "${CI_COMMIT_SHORT_SHA}" "${CI_REGISTRY_IMAGE}/unifi"
+  - ./scripts/unifi-publi.sh -c unifi-8.2 -t lts -g "${CI_COMMIT_SHORT_SHA}" "${CI_REGISTRY_IMAGE}/unifi"
+  tags:
+  - docker
+  variables:
+    UNIFI_CHANNEL: stable
+build:dev:amd64:
+  before_script:
+  - apk add --no-cache curl gzip
+  - export VERSION_UNIFI="$(./scripts/ci-get-unifi-version.sh ${UNIFI_CHANNEL})"
+  - docker login -u "gitlab-ci-token" -p "$CI_JOB_TOKEN" $CI_REGISTRY
+  except:
+  - master
+  - oldstable
+  - testing
+  only:
+  - branches
+  script:
+  - docker build --pull --build-arg stable -t "${CI_REGISTRY_IMAGE}/unifi:dev-${VERSION_UNIFI}-$CI_COMMIT_REF_SLUG"
+    .
+  - docker tag  "${CI_REGISTRY_IMAGE}/unifi:dev-${VERSION_UNIFI}-$CI_COMMIT_REF_SLUG"
+    "${CI_REGISTRY_IMAGE}/unifi:dev-latest"
+  - docker push "${CI_REGISTRY_IMAGE}/unifi:dev-${VERSION_UNIFI}-$CI_COMMIT_REF_SLUG"
+  - docker push "${CI_REGISTRY_IMAGE}/unifi:dev-latest"
+  tags:
+  - docker
+image: docker:stable
+services:
+- docker:stable-dind
+variables:
+  ARG_ARCH: amd64
+  ARG_BASEIMG: ubuntu
+  ARG_BASEVERS: focal
+  DOCKER_DRIVER: overlay

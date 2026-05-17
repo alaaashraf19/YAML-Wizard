@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_18875",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 338,
+  "description": "Create a GitLab CI pipeline using the Docker image ghcr.io/maxking/mailman-ci-runner:latest for all jobs. Define five jobs—coverage, diffcov, docs, qa, and tests—each in the default test stage, executing the specified tox environments. The coverage job runs `tox -e py39-cov,py310-cov,py311-cov,py312-cov`; the diffcov job runs `tox -e py39-diffcov,py310-diffcov,py311-diffcov,py312-diffcov`; the docs job runs `tox -e docs`; the qa job runs `tox -e qa`; and the tests job runs `tox -e py39-nocov,py310-nocov,py311-nocov,py312-nocov`. No additional services, caches, artifacts, or rules are defined.",
+  "tags": [
+    "tox",
+    "python",
+    "coverage",
+    "docs",
+    "qa",
+    "mailman-ci-runner"
+  ]
+}

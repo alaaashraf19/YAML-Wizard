@@ -1,0 +1,41 @@
+build:
+  artifacts:
+    expire_in: never
+    paths:
+    - build
+  before_script:
+  - apt-get update
+  - apt-get install -y gnupg devscripts
+  - echo $MERGETB_GPG_KEY | base64 -di | gpg --import
+  - echo "DEBSIGN_KEYID=$MERGETB_GPG_KEY_ID" >> /etc/devscripts.conf
+  image: debian:testing
+  script:
+  - mk-build-deps --install --tool="$TOOL_ARGS" debian/control
+  - rm -f *build-deps*.deb
+  - ./build-deb.sh
+  stage: build
+  tags:
+  - merge
+  - docker
+  variables:
+    TOOL_ARGS: apt-get -o Debug::pkgProblemResolver=yes --no-install-recommends --yes
+publish:
+  before_script:
+  - apt update
+  - apt install curl -y
+  - curl -L https://gitlab.com/mergetb/devops/pkg/raw/master/add-deb.sh > add-deb.sh
+  - chmod +x add-deb.sh
+  dependencies:
+  - build
+  only:
+  - tags
+  script:
+  - find . -name "*.deb" | RELEASE=bullseye xargs -n 1 ./add-deb.sh
+  - find . -name "*.deb" | RELEASE=buster xargs -n 1 ./add-deb.sh
+  stage: publish
+  tags:
+  - merge
+  - docker
+stages:
+- build
+- publish

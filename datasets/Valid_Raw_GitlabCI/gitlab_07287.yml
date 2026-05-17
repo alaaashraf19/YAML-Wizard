@@ -1,0 +1,10 @@
+before_script:
+- source ci/prepare.sh
+image: golang:1.24-bookworm
+include:
+- template: Workflows/MergeRequest-Pipelines.gitlab-ci.yml
+stages:
+- test
+test:
+  script:
+  - make CONCURRENT_JOBS=4 -k check

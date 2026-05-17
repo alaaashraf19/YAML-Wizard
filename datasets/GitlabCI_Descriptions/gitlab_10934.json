@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_10934",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 640,
+  "description": "Create a GitLab CI pipeline that uses the docker:18.06.1-ce image with a docker:dind service and sets the DOCKER_DRIVER and DOCKER_HOST variables. Define two stages, build and test. In the build stage add a \"build docker images\" job that runs the commands: docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com, docker build -t registry.gitlab.com/jorgemurta/docker-for-laravel -f docker/application/Dockerfile ., and docker push registry.gitlab.com/jorgemurta/docker-for-laravel. Also in the build stage add a \"docker info\" job that runs docker info. In the test stage add a \"unit tests\" job that uses the image registry.gitlab.com/jorgemurta/docker-for-laravel and runs vendor/bin/phpunit.",
+  "tags": [
+    "docker",
+    "dind",
+    "phpunit",
+    "laravel",
+    "docker-build",
+    "gitlab-ci"
+  ]
+}

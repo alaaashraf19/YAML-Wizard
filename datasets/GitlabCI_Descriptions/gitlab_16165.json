@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_16165",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 14762,
+  "description": "Create a GitLab CI pipeline that uses the shared_template and shared_runner_build_image templates with Docker images from ${SAMBA_CI_CONTAINER_REGISTRY}/samba-ci-${SAMBA_CI_JOB_IMAGE}:${SAMBA_CI_CONTAINER_TAG} and defines stages build, test_only, report, and test_private. In the build stage run jobs like coverity (wget the Coverity tool, tar it, ./configure.developer --with-cluster-support, run cov-analysis capture, tar the results and curl upload) and all samba‑o3 jobs (centos9s-samba-o3, debian11-samba-o3, debian12-samba-o3, fedora42-samba-o3, opensuse155-samba-o3, rocky8-samba-o3) that execute script/autobuild.py $AUTOBUILD_JOB_NAME $SAMBA_CI_AUTOBUILD_ENABLE_COVERAGE --verbose --nocleanup --keeplogs --tail --full-testbase /builds/samba-testbase. In the test_only stage run the needs_* jobs (needs_samba-def-build, needs_samba-def-build-ext4, needs_samba-mit-build, needs_samba-mit-build-ext4, needs_samba-h5l-build, needs_samba-h5l-build-ext4, needs_samba-no-opath-build, needs_samba-no-opath-build-ext4, needs_samba-nt4-build, needs_samba-nt4-build-ext4, needs_samba-without-smb1-build, needs_samba-without-smb1-build-5_15) which extend .shared_template_test_only, extract the samba-testbase.tar, verify sha1 and commit files, restore ACLs, and run script/autobuild.py with --skip-dependencies. The report stage has a pages job that lists *.info files, runs ./configure.developer, make -j, lcov to combine *.info into all.info, and genhtml to generate a public coverage report, publishing the public/ directory as an artifact. All jobs inherit before_script and after_script from .shared_template, cache the ccache directory, produce artifacts (*.stdout, *.stderr, *.info, public, system-info.txt, samba-testbase.tar), and use rules such as only on master/schedules for coverity, only when $SAMBA_CI_AUTOBUILD_ENABLE_COVERAGE == \"--enable-coverage\" for pages, and private test rules that skip MRs unless SUPPORT_PRIVATE_TEST is \"yes\".",
+  "tags": [
+    "samba",
+    "autobuild",
+    "docker",
+    "coverage",
+    "ccache",
+    "gitlab-ci",
+    "build",
+    "test",
+    "report"
+  ]
+}

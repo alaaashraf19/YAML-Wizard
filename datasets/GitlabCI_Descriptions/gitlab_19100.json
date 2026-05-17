@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_19100",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 418,
+  "description": "Create a GitLab CI pipeline with a job named cloud-native-image that runs in the post-test stage using the ruby:2.6-alpine Docker image. The job is allowed to fail, has no dependencies, sets the variable GIT_DEPTH='1', runs manually, and only triggers on tag refs when $CI_SERVER_HOST equals \"gitlab.com\" and $CI_PROJECT_NAMESPACE equals \"gitlab-org\". Its script executes the command install_gitlab_gem and then runs CNG_PROJECT_PATH=\"gitlab-org/build/CNG\" BUILD_TRIGGER_TOKEN=$CI_JOB_TOKEN ./scripts/trigger-build cng.",
+  "tags": [
+    "ruby",
+    "alpine",
+    "cloud-native-image",
+    "post-test",
+    "manual",
+    "tags",
+    "gitlab-org",
+    "trigger-build"
+  ]
+}

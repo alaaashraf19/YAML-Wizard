@@ -1,0 +1,14 @@
+{
+  "sha": "7b2cd4329aafce4502de4cbdc95377cb1614f8523e2059e2ee12e94bab51469d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1012,
+  "description": "Create a GitHub Actions workflow named test that runs on push and pull request events. The workflow should have two jobs: tox_unite and style, both running on ubuntu-latest. The tox_unite job should use a matrix strategy to test with Python 3.8, 3.9, and 3.10, while the style job should test with Python 3.9. For each job, check out the code, set up Python, install dependencies with pip, and run tests with tox.",
+  "tags": [
+    "python",
+    "tox",
+    "tests",
+    "ubuntu",
+    "matrix-testing"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "sha": "4dcfcee8e1f5ae89f71d3bc09eed59210a2c29d7609caa8d015a6357b93c3489",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2021,
+  "description": "Create a GitHub Actions workflow named Test myhdl that runs on push, pull request, and a scheduled cron job. The workflow consists of three jobs: build_ghdl, build_iverilog, and build_code. The build_code job uses a matrix strategy to test multiple Python versions, operating systems, and targets. It checks out the repository, caches GHDL and Icarus, sets up Python, installs dependencies, reports the environment, and runs tests using a script.",
+  "tags": [
+    "python",
+    "myhdl",
+    "ghdl",
+    "iverilog",
+    "tests",
+    "scheduled",
+    "ci"
+  ]
+}

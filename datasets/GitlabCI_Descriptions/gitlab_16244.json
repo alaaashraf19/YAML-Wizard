@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_16244",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2330,
+  "description": "Create a GitLab CI pipeline that uses the python:latest Docker image and defines two stages: build and test. In the build stage add an install job that runs `python3 setup.py install`. In the test stage add a commands job that runs `python3 setup.py install` followed by a series of `youtube-sm` invocations (`youtube-sm -h`, `youtube-sm --css \"\"`, `youtube-sm --css`, `youtube-sm -a https://www.youtube.com/channel/UCyg3MF1KU3dUK0HJBBoRYOw -v`, `youtube-sm -a https://www.youtube.com/playlist?list=PLbIUqKI_s0s7RqBHY9_gxmVFBvkViWVHd -v`, `youtube-sm -a https://thinkerview.video/feeds/videos.xml?accountId=5 -v`, `youtube-sm -a https://www.infoconcert.com/artiste/achab-175740/concerts.html -v`, `youtube-sm -a https://www.reddit.com/r/france -v`, `youtube-sm -a https://www.reddit.com/user/reddit -v`, `youtube-sm -a https://www.laquadrature.net/ -v`, `youtube-sm -a https://www.laquadrature.net/fr -v`, `youtube-sm -a https://www.laquadrature.net/en -v`). Also in the test stage add a download job that runs `python3 setup.py install` then multiple `youtube-sm -l` commands to list or fetch raw data from various URLs, each followed by `wc -l` to count lines, plus a `curl -O` to download a test file and several `youtube-sm` commands to initialize and generate output files. No caches, artifacts, services, or conditional rules are defined.",
+  "tags": [
+    "python",
+    "youtube-sm",
+    "build",
+    "test",
+    "ci"
+  ]
+}

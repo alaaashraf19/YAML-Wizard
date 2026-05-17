@@ -1,0 +1,86 @@
+ansible-lint:
+  variables:
+    working_directory: test/ansible
+bash-lint:
+  variables:
+    working_directory: test/bash
+bats:
+  variables:
+    working_directory: test/bash
+container:build:
+  variables:
+    working_directory: test/container
+container:build:my-image:
+  extends: container:build
+  variables:
+    IMAGE_NAME: my-image
+container:delivery:
+  variables:
+    working_directory: test/container
+container:delivery:my-image:
+  extends: container:delivery
+  variables:
+    IMAGE_NAME: my-image
+container:lint:
+  variables:
+    working_directory: test/container
+container:purge:my-image:
+  extends: container:purge
+  variables:
+    IMAGE_NAME: my-image
+container:security:
+  allow_failure: true
+include:
+- /templates/activate-dind.yml
+- /templates/stages.yml
+- /templates/job/ci/images_list.yml
+- /templates/job/node/build.yml
+- /templates/job/node/lint.yml
+- /templates/job/node/test.yml
+- /templates/job/java/lint.yml
+- /templates/job/java/build.yml
+- /templates/job/container/build.yml
+- /templates/job/container/lint.yml
+- /templates/job/container/delivery.yml
+- /templates/job/container/security.yml
+- /templates/job/ansible/lint.yml
+- /templates/job/ansible/role-test.yml
+- /templates/job/bash/lint.yml
+- /templates/job/bash/test.yml
+- /templates/job/yaml/lint.yml
+- /templates/job/terraform/lint.yml
+- /gci-templates/job/info.yml
+- /gci-templates/job/.base.yml
+java:build:
+  variables:
+    working_directory: test/java-jar
+java:lint:
+  variables:
+    working_directory: test/java-jar
+molecule:
+  variables:
+    working_directory: test/ansible-role-testmolecule
+node:build:
+  cache:
+    paths:
+    - test/node/vueapp/node_modules
+  variables:
+    working_directory: test/node/vueapp
+node:lint:
+  cache:
+    paths:
+    - test/node/vueapp/node_modules
+  variables:
+    working_directory: test/node/vueapp
+node:test:
+  cache:
+    paths:
+    - test/node/vueapp/node_modules
+  variables:
+    working_directory: test/node/vueapp
+terraform-lint:
+  variables:
+    working_directory: test/terraform
+terraform-syntax-check:
+  variables:
+    working_directory: test/terraform

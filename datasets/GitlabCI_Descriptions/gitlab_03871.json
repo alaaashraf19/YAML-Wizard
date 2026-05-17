@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_03871",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 673,
+  "description": "Create a GitLab CI pipeline with three stages: build, test, and deploy. Add a build job named build that runs in the build stage using the docker:latest image with a docker:dind service and executes the command docker build -t nevernote/rest . . Add a test job named test that runs in the test stage using the python:3.6 image and runs pip install -r requirements.txt, pip install -r test-requirements.txt, and pytest. Add a deploy-stage job that runs in the deploy stage, targets the staging environment, uses the docker:latest image with a docker:dind service, and is limited to branches matching /^staging.*$/; it logs in to registry.gitlab.com with docker login -u gitlab-ci-token -p $CI_JOB_TOKEN, builds the image with docker build -t registry.gitlab.com/avolokitin/nevernote:$CI_COMMIT_REF_NAME ., and pushes it with docker push registry.gitlab.com/avolokitin/nevernote:$CI_COMMIT_REF_NAME. No caches or artifacts are defined.",
+  "tags": [
+    "docker",
+    "dind",
+    "python-3.6",
+    "pytest",
+    "staging",
+    "gitlab-ci"
+  ]
+}

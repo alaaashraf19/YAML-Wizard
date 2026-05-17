@@ -1,0 +1,18 @@
+{
+  "sha": "dd035672a52cb385e3d4905eb0de2cc3be1d23256fe91f0ccb5ca0a76ca28935",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 36614,
+  "description": "Create a GitHub Actions workflow named continuous-integration that runs nightly at 2am, on every pull request to any branch, and on push to the master branch or any tag. The workflow has three jobs: windows, windows2022, and mac, each running on a different environment (windows-2019, windows-2022, and macos-10.15 respectively). Each job checks out the code, installs Doxygen, Python 3.8, numpy, and SWIG, caches dependencies, builds and tests opensim-core, and uploads the resulting package as an artifact.",
+  "tags": [
+    "ci",
+    "windows",
+    "macos",
+    "python",
+    "cmake",
+    "doxygen",
+    "swig",
+    "numpy",
+    "github-actions"
+  ]
+}

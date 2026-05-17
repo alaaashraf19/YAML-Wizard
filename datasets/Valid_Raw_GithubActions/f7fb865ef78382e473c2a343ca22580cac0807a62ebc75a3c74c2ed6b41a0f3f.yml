@@ -1,0 +1,120 @@
+name: 'tests'
+
+on:
+  pull_request:
+    branches: ['master']
+    paths:
+      - '.github/**'
+      - '**.py'
+      - 'behave/**'
+      - 'tests/**'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  unit:
+    name: "unit"
+    runs-on: 'ubuntu-latest'
+    strategy:
+      fail-fast: false
+      matrix:
+        # Testing per python-version using actions/setup-python is not possible,
+        # because rpm doesn't exist on pypi and cannot be installed via pip on ubuntu.
+        # That's why we're going to test on the target distros directly.
+        container:
+
+          # Fedora
+          - 'registry.fedoraproject.org/fedora:38'
+          - 'registry.fedoraproject.org/fedora:39'
+          - 'registry.fedoraproject.org/fedora:rawhide'
+
+          # openSUSE
+          # leap < 15.2 doesn't contain git-lfs which causes actions/checkout to fail
+          - 'registry.opensuse.org/opensuse/leap:15.3'
+          - 'registry.opensuse.org/opensuse/leap:15.4'
+          - 'registry.opensuse.org/opensuse/leap:15.5'
+          - 'registry.opensuse.org/opensuse/tumbleweed'
+
+          # CentOS Stream
+          - 'quay.io/centos/centos:stream9'
+
+          # Debian
+          - 'docker.io/library/debian:stable'
+          - 'docker.io/library/debian:unstable'
+
+          # Ubuntu
+          - 'docker.io/library/ubuntu:latest'
+
+    container:
+      image: ${{ matrix.container }}
+
+    steps:
+      - name: 'Install packages (openSUSE)'
+        if: ${{ contains(matrix.container, '/opensuse/') }}
+        run: |
+            zypper -n modifyrepo --disable repo-openh264 || :
+            zypper -n --gpg-auto-import-keys refresh
+            zypper -n lr --details
+            grep -qi tumbleweed /etc/os-release && zypper -n dist-upgrade || zypper -n patch || zypper -n patch
+            zypper -n install git-lfs
+            zypper -n install diffstat diffutils git-core python3 python3-cryptography python3-pip python3-rpm python3-setuptools python3-urllib3
+
+      - name: 'Install packages (Fedora/CentOS)'
+        if: ${{ contains(matrix.container, '/fedora:') || contains(matrix.container, '/centos:') }}
+        run: |
+            dnf -y makecache
+            dnf -y distro-sync
+            dnf -y install git-lfs
+            dnf -y install diffstat diffutils git-core python3 python3-cryptography python3-pip python3-rpm python3-setuptools python3-urllib3
+
+      - name: 'Install packages (Debian/Ubuntu)'
+        if: ${{ contains(matrix.container, '/debian:') || contains(matrix.container, '/ubuntu:') }}
+        run: |
+            apt-get -y update
+            apt-get -y upgrade
+            apt-get -y --no-install-recommends install git-lfs
+            apt-get -y --no-install-recommends install diffstat diffutils git-core python3 python3-cryptography python3-pip python3-rpm python3-setuptools python3-urllib3
+
+      - uses: actions/checkout@v3
+
+      - name: 'Run unit tests'
+        run: |
+          pip3 config set global.break-system-packages 1
+          pip3 install -e .
+          python3 setup.py test
+
+      - name: 'Generate coverage reports (openSUSE Tumbleweed)'
+        if: ${{ contains(matrix.container, '/opensuse/tumbleweed') }}
+        run: |
+            zypper -n install python3-pytest python3-pytest-cov
+            pytest --cov=osc
+
+      - name: 'Upload coverage reports to Codecov (openSUSE Tumbleweed)'
+        if: ${{ contains(matrix.container, '/opensuse/tumbleweed') }}
+        uses: codecov/codecov-action@v3
+
+  behave:
+    name: "behave"
+    # to save resources, run only after unit tests have passed
+    needs: unit
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Install packages"
+        run: |
+            sudo sh -c '. /etc/os-release; echo "deb [trusted=yes] http://download.opensuse.org/repositories/openSUSE:Tools/xUbuntu_${VERSION_ID} ./" > /etc/apt/sources.list.d/openSUSE-Tools.list'
+            sudo apt-get -y update
+            sudo apt-get -y --no-install-recommends install python3-behave diffstat diffutils python3 python3-cryptography python3-pip python3-rpm python3-setuptools python3-urllib3 obs-build obs-service-set-version
+
+      - name: "Checkout sources"
+        uses: actions/checkout@v3
+
+      - name: "Pull container image"
+        run: |
+          podman pull ghcr.io/suse-autobuild/obs-server:latest
+
+      - name: "Run tests"
+        run: |
+          cd behave
+          behave -Dosc=../osc-wrapper.py -Dmax_podman_containers=2

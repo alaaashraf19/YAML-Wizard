@@ -1,0 +1,26 @@
+name: Universal test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ${{matrix.os}}
+    strategy:
+      matrix:
+        os: [windows-2022, windows-2019, windows-2016, ubuntu-20.04, ubuntu-18.04, macos-11, macos-10.15]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Checkout submodules
+      uses: textbook/git-checkout-submodule-action@master
+
+    - name: Configure CMake
+      working-directory: ${{github.workspace}}/compcmake
+      run: cmake -B build
+
+    - name: Test
+      working-directory: ${{github.workspace}}/compcmake/build
+      run: ctest -V

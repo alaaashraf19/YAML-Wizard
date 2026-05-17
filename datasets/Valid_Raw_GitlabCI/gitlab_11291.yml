@@ -1,0 +1,29 @@
+cache:
+  key: $CI_BUILD_REF_NAME
+  paths:
+  - node_modules
+  - web/public/jspm_packages
+  untracked: true
+image: node:6
+services:
+- postgres
+- redis
+stages:
+- test
+test:
+  before_script:
+  - npm install
+  - npm run init
+  script:
+  - npm test
+  stage: test
+  tags:
+  - docker
+  variables:
+    DATABASE_URL: postgres://hostr_test@postgres:5432/hostr_test
+    DEBUG: hostr*
+    REDIS_URL: redis://redis:6379
+variables:
+  POSTGRES_DB: hostr_test
+  POSTGRES_PASSWORD: ''
+  POSTGRES_USER: hostr_test

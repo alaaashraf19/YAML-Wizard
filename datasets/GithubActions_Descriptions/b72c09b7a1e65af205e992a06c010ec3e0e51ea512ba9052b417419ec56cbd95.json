@@ -1,0 +1,15 @@
+{
+  "sha": "b72c09b7a1e65af205e992a06c010ec3e0e51ea512ba9052b417419ec56cbd95",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1320,
+  "description": "Create a GitHub Actions workflow named Build LLVM nightly that runs on push to the master branch, on pull requests to the master branch, and on a scheduled cron job. Use a single ubuntu-22.04 job in a rolling ubuntu container that installs necessary packages, sets up mold, checks the ld version, and then builds and tests LLVM 19 using cmake and make.",
+  "tags": [
+    "llvm",
+    "ubuntu",
+    "nightly",
+    "build",
+    "tests",
+    "cmake"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_15286",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 387,
+  "description": "Create a GitLab CI pipeline with two jobs. The first job, dev:image:creation, extends a .build template and sets the variables CONTEXT to docker, DOCKERFILE to docker/Dockerfile, and IMAGE_TAG to ${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_SLUG} to build a Docker image (the .build template is assumed to run docker build -t $IMAGE_TAG -f $DOCKERFILE $CONTEXT). The second job, dev:image:test, runs in the test-dev stage and executes the script `docker container run --rm ${IMAGE_TAG} && exit 0 || exit 1` to verify the built image. No specific Docker image, services, caches, artifacts, or rules are defined, and the pipeline uses the default image.",
+  "tags": [
+    "docker",
+    "image-build",
+    "test-dev",
+    "gitlab-ci"
+  ]
+}

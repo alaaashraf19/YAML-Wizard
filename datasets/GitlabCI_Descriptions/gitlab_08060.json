@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_08060",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 218,
+  "description": "Create a GitLab CI pipeline that uses the alpine:latest Docker image and defines a single build stage. Add a build job named build that runs in the build stage, executes `apk add --no-cache bash cmake make g++ linux-headers git openssl-dev libcurl` followed by `sh build.sh`, and stores the files piebot/piebot and piebot/config.txt as artifacts. No caches, services, variables, or conditional rules are required.",
+  "tags": [
+    "alpine",
+    "apk",
+    "cmake",
+    "make",
+    "g++",
+    "gitlab-ci"
+  ]
+}

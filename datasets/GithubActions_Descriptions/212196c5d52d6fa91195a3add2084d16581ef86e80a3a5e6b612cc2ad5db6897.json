@@ -1,0 +1,16 @@
+{
+  "sha": "212196c5d52d6fa91195a3add2084d16581ef86e80a3a5e6b612cc2ad5db6897",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1539,
+  "description": "Create a GitHub Actions workflow named Clang-Tidy Check that runs on every pull request. Use a matrix job that runs on ubuntu-latest, windows-latest, and macos-latest, checking out the repository with recursive submodules. Restore Qt from cache or install it, set up the Qt environment, and install clang-tidy for Linux and macOS. Enable the Developer Command Prompt on Windows, configure CMake with clang-tidy enabled, and build the project.",
+  "tags": [
+    "clang-tidy",
+    "qt",
+    "cmake",
+    "ubuntu",
+    "windows",
+    "macos",
+    "pull-request"
+  ]
+}

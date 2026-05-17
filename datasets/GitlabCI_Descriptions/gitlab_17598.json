@@ -1,0 +1,12 @@
+{
+  "sha": "gitlab_17598",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 190,
+  "description": "Create a GitLab CI pipeline with a single job named mirror that runs in the default stage using the default GitLab CI Docker image and no services. The mirror job executes the shell commands: git config --global push.default simple, git checkout ${CI_COMMIT_REF_NAME}, and git push -q https://${GITHUB_USERNAME}:${GITHUB_TOKEN}@github.com/${GITHUB_REPO}.git, referencing the CI variables GITHUB_USERNAME, GITHUB_TOKEN, GITHUB_REPO and CI_COMMIT_REF_NAME. The job runs on every pipeline without any caches, artifacts, or specific rules or deployment targets.",
+  "tags": [
+    "git",
+    "github",
+    "mirror"
+  ]
+}

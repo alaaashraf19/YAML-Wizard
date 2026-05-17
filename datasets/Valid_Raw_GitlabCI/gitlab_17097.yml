@@ -1,0 +1,170 @@
+build-job:
+  before_script:
+  - cd src
+  - dotnet restore
+  script:
+  - echo "Compiling the code..."
+  - dotnet build
+  - echo "Compile complete."
+  stage: build
+coverage-report:
+  allow_failure: true
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - /builds/SiLA2/sila_csharp/src/coverage/coverage-report
+  before_script:
+  - echo "Starting SiLA2.IntegrationTests.ServerApp"
+  - cd src/Tests/SiLA2.IntegrationTests.ServerApp
+  - dotnet build --configuration Release
+  - cd ./bin/Release/net10.0
+  - dotnet ./SiLA2.IntegrationTests.ServerApp.dll &
+  coverage: '/Line coverage: \d+\.\d+%/'
+  script:
+  - dotnet tool install -g dotnet-reportgenerator-globaltool
+  - export PATH="$PATH:/root/.dotnet/tools"
+  - cd /builds/SiLA2/sila_csharp/src
+  - dotnet test  ./Tests/SiLA2.Server.Tests/SiLA2.Server.Tests.csproj --configuration
+    Release --collect:"XPlat Code Coverage"
+  - dotnet test ./Tests/SiLA2.Core.Tests/SiLA2.Core.Tests.csproj --configuration Release
+    --collect:"XPlat Code Coverage"
+  - dotnet test  ./Tests/SiLA2.IntegrationTests.Server.Tests/SiLA2.IntegrationTests.Server.Tests.csproj
+    --configuration Release --collect:"XPlat Code Coverage"
+  - reportgenerator -reports:**/coverage.cobertura.xml -targetdir:/builds/SiLA2/sila_csharp/src/coverage/coverage-report
+    -reporttypes:Html -assemblyfilters:"+SiLA2;+SiLA2.AnIML;+SiLA2.AspNetCore;+SiLA2.Client;+SiLA2.Client.Dynamic;+SiLA2.Communication;+SiLA2.Database.NoSQL;+SiLA2.Utils"
+  stage: coverage
+create-sbom:
+  allow_failure: true
+  artifacts:
+    expire_in: 7 days
+    paths:
+    - /builds/SiLA2/sila_csharp/src/sbom.json
+  before_script:
+  - cd src
+  - curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh
+    -s -- -b ./bin
+  only:
+  - master
+  script:
+  - ./bin/syft scan . -o cyclonedx-json > sbom.json
+  stage: securityscan
+image: mcr.microsoft.com/dotnet/sdk:10.0
+include:
+- template: Jobs/SAST.gitlab-ci.yml
+- template: Security/Dependency-Scanning.gitlab-ci.yml
+integration-test-job-dotnet-client-dotnet-server:
+  before_script:
+  - echo "Starting SiLA2.IntegrationTests.ServerApp"
+  - cd src/Tests/SiLA2.IntegrationTests.ServerApp
+  - dotnet build --configuration Release
+  - cd ./bin/Release/net10.0
+  - dotnet ./SiLA2.IntegrationTests.ServerApp.dll &
+  script:
+  - echo "Running .NET Server Integration Tests on .NET Server..."
+  - cd /builds/SiLA2/sila_csharp/src/Tests/SiLA2.IntegrationTests.Server.Tests
+  - dotnet test ./SiLA2.IntegrationTests.Server.Tests.csproj
+  - echo "Finished .NET Server Integration Tests on .NET Server"
+  stage: test
+integration-test-job-python-client-dotnet-server:
+  allow_failure: true
+  artifacts:
+    paths:
+    - /builds/SiLA2/sila_csharp/server-test-report.xml
+    - /builds/SiLA2/sila_csharp/server-test-report.html
+    when: always
+  before_script:
+  - echo "Starting SiLA2.IntegrationTests.ServerApp"
+  - cd src/Tests/SiLA2.IntegrationTests.ServerApp
+  - dotnet build --configuration Release
+  - cd ./bin/Release/net10.0
+  - dotnet ./SiLA2.IntegrationTests.ServerApp.dll &
+  script:
+  - echo "Running Python Client Integration Tests on .NET Server..."
+  - apt update
+  - echo "Installing Python 3 ..."
+  - apt install -y python3 python3-pip
+  - python3 -m pip install sila2_interop_communication_tester --break-system-packages
+  - python3 -m sila2_interop_communication_tester.test_client --roots-cert-file "/builds/SiLA2/sila_csharp/src/Tests/SiLA2.IntegrationTests.ServerApp/bin/Release/net10.0/server.crt"
+    --timeout 240 --testsuite-name "SiLA C# Server Tests" --report-file /builds/SiLA2/sila_csharp/server-test-report.xml
+    --html-file /builds/SiLA2/sila_csharp/server-test-report.html
+  - sleep 5
+  - echo "Finished Python Client Integration Tests on .NET Server"
+  stage: test
+integration-test-job-python-server-dotnet-client:
+  allow_failure: true
+  before_script:
+  - echo "Starting SiLA2.IntegrationTests.ServerApp"
+  - cd src/Tests/SiLA2.IntegrationTests.ServerApp
+  - dotnet build --configuration Release
+  - apt update
+  - echo "Installing Python 3 ..."
+  - apt install -y python3 python3-pip
+  - echo "Starting Python Server on 127.0.0.1:50052 ..."
+  - python3 -m pip install sila2_interop_communication_tester --break-system-packages
+  - python3 -m sila2_interop_communication_tester.test_server --cert-file "/builds/SiLA2/sila_csharp/src/Tests/SiLA2.IntegrationTests.ServerApp/bin/Release/net10.0/server.crt"
+    --key-file "/builds/SiLA2/sila_csharp/src/Tests/SiLA2.IntegrationTests.ServerApp/bin/Release/net10.0/server.key"
+    --server-address 127.0.0.1:50052 --testsuite-name "SiLA C# Client Tests" --report-file
+    /builds/SiLA2/sila_csharp/client-test-report.xml --html-file /builds/SiLA2/sila_csharp/client-test-report.html
+    > server.log 2>&1 & server_pid=$!
+  script:
+  - echo "Running NET Client Integration Tests on Python Server..."
+  - dotnet test /builds/SiLA2/sila_csharp/src/Tests/SiLA2.IntegrationTests.Client.Tests/SiLA2.IntegrationTests.Client.Tests.csproj
+  - sleep 5
+  - echo "Finished NET Client Integration Tests on Python Server"
+  stage: test
+lint-job:
+  artifacts:
+    paths:
+    - /builds/SiLA2/sila_csharp/linter-report.html
+    - /builds/SiLA2/sila_csharp/linter-report.xml
+    when: always
+  before_script:
+  - cd src
+  script:
+  - dotnet new tool-manifest
+  - dotnet tool install JetBrains.ReSharper.GlobalTools
+  - dotnet tool restore
+  - dotnet jb inspectcode sila_csharp.sln -e=ERROR --format=Xml --output="/builds/SiLA2/sila_csharp/linter-report.xml"
+    --exclude="**Test*\**.*"
+  - dotnet jb inspectcode sila_csharp.sln -e=WARNING --format=Html --output="/builds/SiLA2/sila_csharp/linter-report.html"
+    --exclude="**Test*\**.*"
+  stage: lint
+nuget-vulnerability-scan:
+  allow_failure: true
+  artifacts:
+    expire_in: 7d
+    paths:
+    - src/vulnerabilities.log
+    when: always
+  before_script:
+  - cd src
+  script:
+  - dotnet restore
+  - dotnet list package --vulnerable --include-transitive 2>&1 | tee vulnerabilities.log
+    || echo "Skipping vulnerability check for packages.config"
+  - if grep -q -i "critical\|high" vulnerabilities.log; then echo "Critical or High
+    security vulnerabilities found!"; exit 1; else echo "No critical or high vulnerabilities,
+    continuing pipeline."; fi
+  stage: securityscan
+stages:
+- build
+- test
+- coverage
+- lint
+- securityscan
+unit-test-job:
+  script:
+  - echo "Running unit tests..."
+  - cd src
+  - dotnet test ./Tests/SiLA2.Server.Tests/SiLA2.Server.Tests.csproj
+  - dotnet test ./Tests/SiLA2.Core.Tests/SiLA2.Core.Tests.csproj
+  - dotnet test ./Examples/TemperatureController/TemperatureControllerTests/TemperatureControllerTests.csproj
+  - dotnet test ./Examples/ShakerController/ShakerContollerTests/ShakerContollerTests.csproj
+  - dotnet test ./Examples/MetadataLockController/MetadataLockControllerTests/MetadataLockControllerTests.csproj
+  - echo "Finished running unit tests"
+  stage: test
+variables:
+  BUILD_TYPE: Release
+  GITLAB_ADVANCED_SAST_ENABLED: 'true'
+  GIT_SUBMODULE_STRATEGY: recursive
+  SECURE_LOG_LEVEL: debug

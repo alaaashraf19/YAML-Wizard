@@ -1,0 +1,18 @@
+{
+  "sha": "c9ac0f7c4b729976ff25a5e12b540e654db25d054167364c3e333a4e95ac5cd4",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5618,
+  "description": "Create a GitHub Actions workflow named runtime-build that runs on push and pull request events. The workflow should have a concurrency group that cancels in-progress jobs for non-master and non-release branches. It should have two jobs: build-native-runtime and build-cross-linux-runtime. The build-native-runtime job should run on a matrix of macOS, Ubuntu, and Windows environments, setting up the build environment, Python, and Conan, then configuring, building, installing, testing, and uploading the nncaseruntime build artifact. The build-cross-linux-runtime job should run on Ubuntu, setting up Python, installing the toolchain and QEMU, then configuring, building, installing, testing, and uploading the nncaseruntime build artifact.",
+  "tags": [
+    "github-actions",
+    "workflow",
+    "build",
+    "runtime",
+    "matrix",
+    "conan",
+    "cmake",
+    "ctest",
+    "artifact"
+  ]
+}

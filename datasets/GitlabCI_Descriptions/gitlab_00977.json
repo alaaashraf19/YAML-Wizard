@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_00977",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2229,
+  "description": "Create a GitLab CI pipeline with three stages: test, build, and deploy, using docker:latest as the default image. Add a test_validation job in the test stage that runs on the node:latest image with a redis:4.0.0 service, caches the node_modules/ directory, runs npm ci and npm ci --prefix client in before_script, then executes npm test and npm run lint:test. Add a build_push job in the build stage that runs only on the master branch, uses a docker:dind service (command dockerd-entrypoint.sh, entrypoint env -u DOCKER_HOST), sets DOCKER_DRIVER=overlay2, DOCKER_HOST=tcp://docker:2375/, DOCKER_TLS_CERTDIR='', logs in to the registry with ${REGISTRY_USER} and ${REGISTRY_PASSWORD}, builds the image aossie/carbonfootprint-api:production with the build arguments REACT_APP_SENTRY_DSN, REACT_APP_AUTH0_DOMAIN, REACT_APP_AUTH0_CLIENT_ID, REACT_APP_AUTH0_CALLBACK_URL, REACT_APP_AUTH0_TOKEN_ENDPOINT, REACT_APP_AUTH0_API_ENDPOINT, REACT_APP_GOOGLE_CLIENT_ID, REACT_APP_GOOGLE_FIT_SCOPES, and pushes it. Add a deploy_application job in the deploy stage that runs only on master and must be triggered manually, installs openssh-client, configures an SSH key from $DEPLOY_SERVER_PRIVATE_KEY, adds $DEPLOYMENT_SERVER_IP to known hosts, writes a .env file containing API_TEST_KEY, DB_HOST, DB_PORT, DB_USER, DB_PASS, DB_NAME, MICROSOFT_MAPS_KEY, AUTH0_JWKS_URI, AUTH0_ISSUER, REDIS_HOST, REDIS_PORT, WHITELISTED_DOMAINS, SENTRY_DSN, AUTH0_CLIENT_ID, AUTH0_CLIENT_SECRET, GOOGLE_FIT_API_ENDPOINT, copies .env and docker-compose.yml to the remote server via scp, and SSHes into the server to stop docker-compose, remove the web container, pull the new image, and bring the stack up.",
+  "tags": [
+    "docker",
+    "dind",
+    "node",
+    "npm",
+    "redis",
+    "ssh-deploy",
+    "environment-variables",
+    "ci-cd"
+  ]
+}

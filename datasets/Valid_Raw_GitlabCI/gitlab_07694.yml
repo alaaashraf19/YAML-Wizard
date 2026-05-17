@@ -1,0 +1,154 @@
+a11y:
+  before_script:
+  - export a11y_urls=$(cat environment_url.txt)
+  dependencies:
+  - deploy
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "push"
+  stage: confidenceCheck
+browser_performance:
+  dependencies:
+  - deploy
+  except:
+  - schedules
+  only:
+    refs:
+    - master
+  stage: confidenceCheck
+  variables:
+    URL: https://plaudit.pub
+build_extension:
+  artifacts:
+    expire_in: 1 month
+    paths:
+    - extension/web-ext-artifacts/
+  except:
+  - schedules
+  image: node:10
+  only:
+    changes:
+    - extension/**/*
+    refs:
+    - master
+    - merge_requests
+  script:
+  - export WORKSPACE_NAME=`echo $CI_COMMIT_REF_SLUG | cut -c 1-26 | sed -e 's/-$//'`
+  - if [[ $CI_COMMIT_REF_NAME == "master" ]]; then export SUBDOMAIN="www"; else export
+    SUBDOMAIN="$WORKSPACE_NAME-review"; fi;
+  - export APP_URL="https://$SUBDOMAIN.plaudit.pub"
+  - cd extension
+  - yarn
+  - if [[ $CI_COMMIT_REF_NAME != "master" ]]; then node tag_prerelease_version.js;
+    fi;
+  - yarn run build
+  - if [[ $CI_COMMIT_REF_NAME == "master" ]]; then export CHANNEL="listed"; else export
+    CHANNEL="unlisted"; fi;
+  - yarn run web-ext sign --artifacts-dir web-ext-artifacts --channel="$CHANNEL" --id="${WEBEXTENSION_UUID}"
+    --api-key="$WEB_EXT_API_KEY" --api-secret="$WEB_EXT_API_SECRET" | sed -e "s|$WEB_EXT_API_KEY|***|g"
+    | sed -e "s|$WEB_EXT_API_SECRET|***|g" || [ $CI_COMMIT_REF_NAME == "master" ]
+  - unset WEB_EXT_API_KEY; unset WEB_EXT_API_SECRET;
+  - if [[ $CI_COMMIT_REF_NAME == "master" ]]; then yarn run web-ext build --artifacts-dir
+    web-ext-artifacts; node publish_chrome.js; else echo "Not publishing to the Chrome
+    web store as we are not on the master branch."; fi;
+  stage: deploy
+code_quality:
+  stage: confidenceCheck
+dast:
+  allow_failure: true
+  dependencies:
+  - deploy
+deploy:
+  artifacts:
+    expire_in: 1 hour
+    paths:
+    - environment_url.txt
+  except:
+  - schedules
+  script:
+  - echo "Render should be deploying the app while this pipeline is running."
+  - if [[ $CI_COMMIT_REF_NAME == "master" || $CI_COMMIT_REF_NAME == "preview" ]];
+    then sleep 5m; fi;
+  - if [[ $CI_COMMIT_REF_NAME == "master" ]]; then echo "https://plaudit.pub" > environment_url.txt;
+    else echo "https://preview.plaudit.pub" > environment_url.txt; fi;
+  stage: deploy
+e2e:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - e2e-tests/playwright-report/
+    reports:
+      junit: e2e-tests/test-results.xml
+    when: always
+  dependencies:
+  - deploy
+  except:
+  - schedules
+  image: mcr.microsoft.com/playwright:v1.49.1-jammy
+  parallel: 7
+  script:
+  - wipCommits=`git log --grep=^WIP`; if [ -n "$wipCommits" ] && [ "$CI_COMMIT_REF_NAME"
+    != "master" ]; then echo "WIP commits detected; skipping tests."; exit 0; fi
+  - export APP_URL=`cat environment_url.txt`
+  - cd e2e-tests
+  - npm ci
+  - npm test -- --shard=$CI_NODE_INDEX/$CI_NODE_TOTAL
+  stage: confidenceCheck
+export_archive.org:
+  image: python:3
+  only:
+  - schedules
+  script:
+  - wget --output-document=endorsements.csv --no-verbose https://plaudit.pub/api/export/endorsements.csv
+  - pip3 install internetarchive
+  - echo "[s3]" > ia.ini
+  - echo "access = $IA_ACCESS_KEY_ID" >> ia.ini
+  - echo "secret = $IA_SECRET_ACCESS_KEY" >> ia.ini
+  - export DATE=`date "+%Y-%m-%d %H:%M:%S"`
+  - export DATE_SLUG=`date "+%Y-%m-%d_%Hh"`
+  - ia --config-file ia.ini --log upload plaudit.pub_endorsement_export_$DATE_SLUG
+    endorsements.csv --remote-name=plaudit-endorsements-$DATE_SLUG.csv --metadata="title:Plaudit.pub
+    endorsements export $DATE." --metadata="mediatype:data" --metadata="date:$DATE"
+    --metadata="source:https://plaudit.pub" --metadata="licenseurl:https://creativecommons.org/publicdomain/zero/1.0/"
+    --metadata="collection:opensource_media"
+  stage: scheduled
+export_crossref:
+  image: alpine
+  only:
+  - schedules
+  script:
+  - apk add --no-cache wget
+  - wget --output-document=- --content-on-error --no-verbose https://plaudit.pub/api/export/crossref
+  stage: scheduled
+include:
+- template: SAST.gitlab-ci.yml
+- template: Security/DAST.gitlab-ci.yml
+- template: Code-Quality.gitlab-ci.yml
+- template: Verify/Browser-Performance.gitlab-ci.yml
+- template: Verify/Accessibility.gitlab-ci.yml
+reuse:
+  except:
+  - schedules
+  image:
+    entrypoint:
+    - ''
+    name: fsfe/reuse:0.10.0
+  script:
+  - reuse lint
+  stage: confidenceCheck
+sast:
+  stage: confidenceCheck
+stages:
+- scheduled
+- prepare
+- test
+- provision
+- deploy
+- confidenceCheck
+- dast
+test:
+  image: node:20
+  script:
+  - cd website
+  - npm ci
+  - npm run lint
+  stage: test

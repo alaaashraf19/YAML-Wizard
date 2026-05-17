@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_10915",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 316,
+  "description": "Create a GitLab CI pipeline using the jkosgei/chrome Docker image and a before_script that runs npm -v, node -v, pwd and ls -l for every job. Define two stages: dependences and tests. In the dependences stage add an install job that runs npm install and stores the node_modules/ directory as an artifact that expires in one week. In the tests stage add a tests job that runs npm install chromedriver, then npm run test and npm run e2e. No caches, services, or deployment targets are configured.",
+  "tags": [
+    "node",
+    "npm",
+    "chrome",
+    "e2e",
+    "tests",
+    "dependences"
+  ]
+}

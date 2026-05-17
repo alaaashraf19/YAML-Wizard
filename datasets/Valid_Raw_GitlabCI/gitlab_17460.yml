@@ -1,0 +1,10 @@
+build:
+  artifacts:
+    paths:
+    - target/release/espota-server
+  script:
+  - cargo build --release
+  stage: build
+image: rust:latest
+stages:
+- build

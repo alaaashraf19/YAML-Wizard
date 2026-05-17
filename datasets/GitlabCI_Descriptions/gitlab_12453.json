@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_12453",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 449,
+  "description": "Create a GitLab CI pipeline that uses the ruby:2.7 Docker image and sets the variable JEKYLL_ENV to production. Define a global before_script that runs make prepare. Add a test job in the test stage with its own before_script executing apt update -y -qq && apt install -y imagemagick bash nodejs npm followed by make prepare, then runs make site and bundle exec jekyll build -d test, stores the test directory as an artifact, and is excluded from the master branch. Add a pages job in the deploy stage that runs bundle exec jekyll build -d public, publishes the public directory as a pages artifact, and runs only on the master branch. This pipeline builds the site with Jekyll and deploys it to GitLab Pages.",
+  "tags": [
+    "ruby",
+    "jekyll",
+    "pages",
+    "test",
+    "apt",
+    "imagemagick",
+    "nodejs",
+    "npm",
+    "make"
+  ]
+}

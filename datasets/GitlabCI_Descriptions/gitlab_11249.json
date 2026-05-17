@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_11249",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 185,
+  "description": "Create a GitLab CI pipeline that uses the node:8-slim Docker image and caches the node_modules directory. Define a before_script that runs npm install for every job. Add a single build stage with a pages job that runs npm run build, then publishes the public/ directory as a pages artifact. The job has no special rules, services, or variables.",
+  "tags": [
+    "node",
+    "npm",
+    "gitlab-pages",
+    "node8",
+    "cache"
+  ]
+}

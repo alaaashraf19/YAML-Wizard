@@ -1,0 +1,16 @@
+before_script:
+- flutter pub get
+- flutter clean
+build:
+  only:
+  - merge_requests
+  script:
+  - flutter build aot
+  stage: build
+  tags:
+  - shared
+image: cirrusci/flutter:stable
+stages:
+- build
+- analyze
+- test

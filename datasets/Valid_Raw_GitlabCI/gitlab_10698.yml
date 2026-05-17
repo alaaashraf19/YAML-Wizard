@@ -1,0 +1,70 @@
+cache:
+  paths:
+  - node_modules/
+deploy-alpha:
+  environment: alpha
+  only:
+  - alpha
+  script:
+  - git config --global user.email "${NPM_EMAIL}"
+  - git config --global user.name "${NPM_USERNAME}"
+  - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" >> .npmrc
+  - npm version "$(node -p "require('./package.json').version+'-'+require('uuid').v4()")"
+    -m "Patch release"
+  - npm publish --tag next
+  stage: deploy
+deploy-major:
+  environment: major
+  only:
+  - master
+  script:
+  - git config --global user.email "${NPM_EMAIL}"
+  - git config --global user.name "${NPM_USERNAME}"
+  - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" >> .npmrc
+  - npm version major
+  - npm publish
+  stage: deploy
+  when: manual
+deploy-minor:
+  environment: minor
+  only:
+  - master
+  script:
+  - git config --global user.email "${NPM_EMAIL}"
+  - git config --global user.name "${NPM_USERNAME}"
+  - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" >> .npmrc
+  - npm version minor
+  - npm publish
+  - git push origin master
+  stage: deploy
+  when: manual
+deploy-patch:
+  environment: patch
+  only:
+  - master
+  script:
+  - git config --global user.email "${NPM_EMAIL}"
+  - git config --global user.name "${NPM_USERNAME}"
+  - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" >> .npmrc
+  - npm version patch
+  - npm publish
+  stage: deploy
+  when: manual
+image: node:8.2.1
+setup-dist:
+  artifacts:
+    paths:
+    - dist
+  script:
+  - npm install
+  - npm run dist
+  stage: setup
+stages:
+- setup
+- test
+- deploy
+test:
+  script:
+  - npm install
+  - npm test
+  stage: test

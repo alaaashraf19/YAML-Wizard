@@ -1,0 +1,45 @@
+name: Main
+on:
+  push:
+    branches-ignore:
+      - 'releases/**'
+    paths-ignore:
+    - '**.md'
+    - '.github/workflows/release.yml'
+    - '.gitignore'
+    - 'data/translations/**'
+  pull_request:
+    paths-ignore:
+    - '**.md'
+    - '.github/workflows/release.yml'
+    - '.gitignore'
+    - 'data/translations/**'
+jobs:
+  Main:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-18.04]
+        include:
+          - os: ubuntu-18.04
+            CXXFLAGS: '-Wall -Wextra -pedantic -Werror'
+    steps:
+    - name: Clone repo
+      uses: actions/checkout@v2.2.0
+      with:
+        submodules: recursive
+
+    - name: Install dependent apt packages
+      if: runner.os == 'Linux'
+      run: |
+        sudo apt-get update
+        sudo apt-get install qttools5-dev libpolkit-qt5-1-dev
+        wget http://launchpadlibrarian.net/590905036/extra-cmake-modules_5.92.0-0ubuntu1_amd64.deb
+        sudo dpkg -i extra-cmake-modules_5.92.0-0ubuntu1_amd64.deb
+
+    - name: Build
+      run: |
+        mkdir build
+        cd build
+        cmake ..
+        cmake --build . --parallel 2

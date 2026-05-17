@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_11910",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 204,
+  "description": "Create a GitLab CI pipeline that uses the node:latest Docker image. Define a single stage called deploy and add a job named pages that runs in this stage. In the pages job execute the before_script commands `cd presentation` and `npm install`, then run `npm run deploy` followed by `mv public ../public`; publish the resulting `public/` directory as a GitLab Pages artifact, and configure the job to run only on the master branch.",
+  "tags": [
+    "node",
+    "npm",
+    "gitlab-pages",
+    "deploy",
+    "master-only"
+  ]
+}

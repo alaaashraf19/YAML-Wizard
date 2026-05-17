@@ -1,0 +1,16 @@
+all_tests:
+  only:
+  - master
+  script:
+  - export DB_HOST=postgres
+  - export DB_TYPE=docker
+  - apt-get update
+  - apt-get install netcat --assume-yes
+  - sh ./setup.sh
+  - sh ./run_tests.sh
+  - sh ./run_coverage.sh
+  - sh ./deploy.sh
+  when: on_success
+image: python:3.6
+services:
+- postgres:latest

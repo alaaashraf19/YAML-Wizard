@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_08069",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1514,
+  "description": "Create a GitLab CI pipeline with a .pre stage and a test stage using the rust:1.80 Docker image (prepare:lockfile uses rust:1). Define a prepare:lockfile job in .pre that runs CARGO_RESOLVER_INCOMPATIBLE_RUST_VERSIONS=fallback cargo generate-lockfile and publishes Cargo.lock as an artifact. In the test stage add a build:wasm32-unknown-unknown job that runs rustc -Vv && cargo -Vv, adds the wasm32-unknown-unknown target, then executes cargo test --no-run --target wasm32-unknown-unknown --all --features serde-serialize. Add a check:x86_64-apple-darwin job that installs the x86_64-apple-darwin target and runs cargo check --target=x86_64-apple-darwin --verbose --all --features serde-serialize. Add a test:i686-unknown-linux-gnu job that installs i386 architecture packages, adds the i686-unknown-linux-gnu target, sets PKG_CONFIG_ALLOW_CROSS=1, and runs cargo test --verbose --target=i686-unknown-linux-gnu --lib --features serde-serialize. Finally, add a test:x86_64-unknown-linux-gnu job that installs libudev-dev and other X11/SSL dependencies, adds the default target, and runs cargo test --verbose --all --features serde-serialize. Set global variables CARGO_HOME to $CI_PROJECT_DIR/cargo and GIT_SUBMODULE_STRATEGY to normal.",
+  "tags": [
+    "rust",
+    "wasm",
+    "cross-compilation",
+    "cargo",
+    "test",
+    "lockfile",
+    "x86_64-apple-darwin",
+    "i686-linux-gnu",
+    "docker-image"
+  ]
+}

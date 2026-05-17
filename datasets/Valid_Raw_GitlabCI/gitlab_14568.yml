@@ -1,0 +1,28 @@
+before_script:
+- mkdir -p /go/src/gitlab.com/pkuyken /go/src/_/builds
+- cp -r $CI_PROJECT_DIR /go/src/gitlab.com/pkuyken/hexmap-generator
+- ln -s /go/src/gitlab.com/pkuyken /go/src/_/builds/pkuyken
+- make dep
+build:
+  script:
+  - make
+  stage: build
+cache:
+  paths:
+  - /apt-cache
+  - /go/src/github.com
+  - /go/src/golang.org
+  - /go/src/google.golang.org
+  - /go/src/gopkg.in
+image: golang:1.9.2
+lint_code:
+  script:
+  - make lint
+  stage: test
+stages:
+- test
+- build
+unit_tests:
+  script:
+  - make test
+  stage: test

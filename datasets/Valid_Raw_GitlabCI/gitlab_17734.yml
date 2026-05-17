@@ -1,0 +1,27 @@
+cache:
+  key: $CI_PROJECT_NAME
+  paths:
+  - $HOME/.cache/pip
+include:
+- file: /ci/sast.gitlab-ci.yml
+  project: thelabnyc/gitlab-ci-templates
+stages:
+- test
+test_python35:
+  image: python:3.5
+  script:
+  - pip install tox
+  - tox -e 'py35-django{111,200,210}'
+  stage: test
+test_python36:
+  image: python:3.6
+  script:
+  - pip install tox
+  - tox -e 'py36-django{111,200,210}'
+  stage: test
+test_python37:
+  image: python:3.7
+  script:
+  - pip install tox
+  - tox -e 'py37-django{200,210}'
+  stage: test

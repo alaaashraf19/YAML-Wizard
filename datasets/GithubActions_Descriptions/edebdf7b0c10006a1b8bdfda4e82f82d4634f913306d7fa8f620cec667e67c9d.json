@@ -1,0 +1,15 @@
+{
+  "sha": "edebdf7b0c10006a1b8bdfda4e82f82d4634f913306d7fa8f620cec667e67c9d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1548,
+  "description": "Create a GitHub Actions workflow named abidiff that runs on push and pull request events. Use an ubuntu-latest job with a debian:testing container that conditionally skips pull requests from forked repositories. Install dependencies, checkout current and previous code revisions, build both using meson and ninja, and then run abidiff to compare the ABI of the current and previous builds.",
+  "tags": [
+    "c++",
+    "meson",
+    "ninja",
+    "abidiff",
+    "ubuntu",
+    "debian"
+  ]
+}

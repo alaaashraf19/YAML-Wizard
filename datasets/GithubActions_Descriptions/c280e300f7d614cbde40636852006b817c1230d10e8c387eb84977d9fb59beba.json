@@ -1,0 +1,15 @@
+{
+  "sha": "c280e300f7d614cbde40636852006b817c1230d10e8c387eb84977d9fb59beba",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2337,
+  "description": "Create a GitHub Actions workflow named MacOS Build/Test Pyne that runs on MacOS environments. The workflow should trigger on manual dispatch, pull requests that do not modify certain paths, and pushes to those same paths. The workflow should utilize a matrix strategy to test on macOS 13 and 14, setting up Xcode, checking out the repository, installing Miniconda, and then building and testing Pyne using a series of bash commands.",
+  "tags": [
+    "macos",
+    "conda",
+    "miniconda",
+    "xcode",
+    "python",
+    "tests"
+  ]
+}

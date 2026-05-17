@@ -1,0 +1,16 @@
+{
+  "sha": "05f6a19bfe8bc984ef5a01e94838716d70f21a6c9e7c91f01ec798f90a869530",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1114,
+  "description": "Create a GitHub Actions workflow named windows-wheel-builder that runs on pull requests, pushes, and daily on a schedule. Set up a windows-latest job with read permissions to repository contents, using cmd shell. The job should check out the repository with submodules, set up a Miniconda environment with Mambaforge, build a Python wheel by running a batch script, and test the wheel with another batch script.",
+  "tags": [
+    "python",
+    "windows",
+    "conda",
+    "mambaforge",
+    "s3",
+    "aws",
+    "wheels"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "0577cc23703dd1ffdbf1bc03a8c03de0b8f4325815e761dd26d1c235e04caa10",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1023,
+  "description": "Create a GitHub Actions workflow named macos that runs on push and pull request events. Use a matrix job strategy to build on macOS 11 and 12 environments with read-only permissions. For each environment, check out the repository, then perform Release and Debug builds with CMake, and run tests with CTest. Additionally, run Bazel tests with the ci configuration.",
+  "tags": [
+    "macos",
+    "cmake",
+    "bazel",
+    "tests",
+    "matrix"
+  ]
+}

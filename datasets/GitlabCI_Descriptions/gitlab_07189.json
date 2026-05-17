@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_07189",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1091,
+  "description": "Create a GitLab CI pipeline that uses the alpine:latest Docker image and defines three stages: build, package, and deploy. In the build stage add a compile-test job that runs echo \"Build $CI_COMMIT_SHA in branch $CI_COMMIT_REF_SLUG with tag $CI_COMMIT_TAG\" and a static-analysis job that runs echo \"Static Code Analysis, parallel run with compiling\". In the package stage add a build-docker-image job that runs echo \"Build $CI_COMMIT_SHA in branch $CI_COMMIT_REF_SLUG with tag $CI_COMMIT_TAG\", then cat README.md > README-$CI_COMMIT_SHA.md, then echo \"Version $CI_COMMIT_SHA\" >> README-$CI_COMMIT_SHA.md, and publishes README-$CI_COMMIT_SHA.md as an artifact. In the deploy stage add three jobs: deploy-to-development runs only for refs matching the regex /-M\\./, echoes \"Deploy build\" +$CI_COMMIT_SHA+ \" to development server\" and cats the generated README file; deploy-to-testing runs only for refs matching /-RC\\./, echoes \"Deploy build\" +$CI_COMMIT_SHA+ \" to testing server\" and cats the README; deploy-to-production runs only for refs matching /-RELEASE$/, is manual, echoes \"Deploy build\" +$CI_COMMIT_SHA+ \" to production server\" and cats the README.",
+  "tags": [
+    "alpine",
+    "docker",
+    "build",
+    "package",
+    "deploy",
+    "static-analysis",
+    "artifact",
+    "regex-triggers"
+  ]
+}

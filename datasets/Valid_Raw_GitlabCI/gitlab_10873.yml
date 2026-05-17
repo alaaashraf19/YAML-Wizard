@@ -1,0 +1,119 @@
+blue:
+  environment:
+    name: prodblue
+    url: http://$CI_PROJECT_PATH_SLUG-prod-blue.$KUBE_DOMAIN
+  only:
+  - master
+  script:
+  - command deploy
+  stage: production
+  when: manual
+build:
+  only:
+  - branches
+  script:
+  - command build
+  stage: build
+canary:
+  environment:
+    name: prodblue
+    url: http://$CI_PROJECT_PATH_SLUG-prod-blue.$KUBE_DOMAIN
+  only:
+  - master
+  script:
+  - command canary
+  stage: canary
+  when: manual
+coveralls-integration-test:
+  script:
+  - exit 0
+  stage: test
+cucumber-mysql-acceptance-test:
+  script:
+  - exit 0
+  stage: test
+cucumber-postgres-acceptance-test:
+  script:
+  - exit 0
+  stage: test
+green:
+  environment:
+    name: prodgreen
+    url: http://$CI_PROJECT_PATH_SLUG-green.$KUBE_DOMAIN
+  only:
+  - master
+  script:
+  - command deploy
+  stage: production
+  when: manual
+image: registry.gitlab.com/gitlab-examples/kubernetes-deploy
+review:
+  environment:
+    name: review/$CI_COMMIT_REF_NAME
+    on_stop: stop_review
+    url: http://$CI_PROJECT_PATH_SLUG-$CI_ENVIRONMENT_SLUG.$KUBE_DOMAIN
+  except:
+  - master
+  only:
+  - branches
+  script:
+  - command deploy
+  stage: review
+rspec-mysql-unit-test:
+  script:
+  - exit 0
+  stage: test
+rspec-postgres-unit-test:
+  script:
+  - exit 0
+  stage: test
+rubocop-static-analysis-test:
+  script:
+  - exit 0
+  stage: test
+sast:
+  script:
+  - exit 0
+  stage: test
+simplecov-code-coverage:
+  script:
+  - exit 0
+  stage: test
+stages:
+- build
+- test
+- doc
+- review
+- staging
+- canary
+- production
+- cleanup
+staging:
+  environment:
+    name: staging
+    url: http://$CI_PROJECT_PATH_SLUG-staging.$KUBE_DOMAIN
+  only:
+  - master
+  script:
+  - command deploy
+  stage: staging
+stop_review:
+  allow_failure: true
+  environment:
+    action: stop
+    name: review/$CI_COMMIT_REF_NAME
+  except:
+  - master
+  only:
+  - branches
+  script:
+  - command destroy
+  stage: cleanup
+  variables:
+    GIT_STRATEGY: none
+  when: manual
+tanuki-docs:
+  script:
+  - exit 0
+  stage: doc
+variables: null

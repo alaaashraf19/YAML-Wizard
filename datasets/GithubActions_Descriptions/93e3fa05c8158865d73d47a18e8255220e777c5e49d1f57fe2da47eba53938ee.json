@@ -1,0 +1,17 @@
+{
+  "sha": "93e3fa05c8158865d73d47a18e8255220e777c5e49d1f57fe2da47eba53938ee",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 20427,
+  "description": "Create a GitHub Actions workflow named Automated Test Build that runs on every push to the master branch and on pull requests to master. The workflow has two jobs: build-windows and build-linux. The build-windows job runs on a Windows environment with a matrix strategy for different Windows configurations, while the build-linux job runs on an Ubuntu environment with a matrix strategy for different Ubuntu configurations. Both jobs check out the repository, update submodules, download and extract dependencies, and build the project using premake and MSBuild.",
+  "tags": [
+    "windows",
+    "linux",
+    "ubuntu",
+    "github-actions",
+    "premake",
+    "msbuild",
+    "ci",
+    "build"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "c8c9a41518b58714f4835e22aaf50ecfebff9b9e3f29bd94db5119e238480bcd",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 6029,
+  "description": "Create a GitHub Actions workflow named Ubuntu Debug that runs on push and pull request events. Use a matrix strategy to test on ubuntu-20.04, setting up a job with two Elasticsearch services (versions 8.11.1 and 7.17.15). Install dependencies, checkout code recursively, configure the build with ccache and CMake, load ccache from cache, build the project, run unit tests with a 15-minute timeout, and perform additional tests on program arguments and node functionality.",
+  "tags": [
+    "ubuntu",
+    "debug",
+    "elasticsearch",
+    "cmake",
+    "ccache",
+    "tests"
+  ]
+}

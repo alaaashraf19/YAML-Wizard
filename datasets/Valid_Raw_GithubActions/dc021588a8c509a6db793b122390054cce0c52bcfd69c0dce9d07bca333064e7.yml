@@ -1,0 +1,70 @@
+name: Source package
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -qq swig libpcsclite-dev
+          python -m pip install --upgrade pip
+          pip install poetry
+          poetry install
+
+      - name: Run unit tests
+        run: poetry run pytest
+
+      - name: Create source package
+        run: |
+          # poetry will by default set all timestamps to 0, which Debian doesn't allow
+          export SOURCE_DATE_EPOCH=$(git show --no-patch --format=%ct)
+          poetry build
+          mkdir artifacts
+          mv dist/yubikey_manager-*.tar.gz artifacts/
+          mv dist/yubikey_manager-*.whl artifacts/
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: yubikey-manager-source-package
+          path: artifacts
+
+  docs:
+    runs-on: ubuntu-latest
+    name: Build sphinx documentation
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.13
+
+      - name: Install python dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -qq swig libpcsclite-dev
+          python -m pip install --upgrade pip
+          pip install poetry
+          poetry install
+
+      - name: Build sphinx documentation
+        run: poetry run make -C docs/ html
+
+      - name: Upload documentation
+        uses: actions/upload-artifact@v4
+        with:
+          name: yubikey-manager-docs
+          path: docs/_build/html

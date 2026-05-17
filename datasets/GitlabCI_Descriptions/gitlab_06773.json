@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_06773",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 640,
+  "description": "Create a GitLab CI pipeline that uses the tmaier/docker-compose:latest Docker image with a docker:dind service and sets DOCKER_DRIVER=overlay2. Define a single test stage and three jobs: test_api, test_app, and test_e2e. In test_api run \"docker-compose -f ci-composer.yml up --build -d\" then \"docker-compose -f ci-composer.yml exec -T api bundle exec rake test\". In test_app run \"docker-compose -f ci-composer.yml up --build -d\" then \"docker-compose -f ci-composer.yml exec -T app npm run test-all\". In test_e2e run \"docker-compose -f ci-composer.yml up --build -d\", then \"docker-compose -f ci-composer.yml exec -T app npm run build-e2e\" and finally \"docker-compose -f ci-composer.yml exec -T e2e npm run test\". All jobs run in the test stage with no additional caches, artifacts, or rules.",
+  "tags": [
+    "docker-compose",
+    "dind",
+    "ruby",
+    "rake",
+    "npm",
+    "e2e",
+    "test"
+  ]
+}

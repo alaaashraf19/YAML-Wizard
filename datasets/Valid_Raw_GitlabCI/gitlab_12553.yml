@@ -1,0 +1,20 @@
+cache:
+  paths:
+  - node_modules/
+  - vendor/couchbase-lite-core
+cppcheck:
+  script:
+  - cppcheck C
+image: registry.gitlab.com/mpapp-public/couchbase-lite-node:latest
+test:
+  script:
+  - ./vendor/couchbase-lite-core/build_cmake/scripts/build_unix.sh
+  - npm install
+  - node-gyp configure build
+  - tsc
+  - LD_LIBRARY_PATH=./vendor/couchbase-lite-core/build_cmake/unix npm test
+tslint:
+  script:
+  - tslint test/*.ts src/*.ts
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive

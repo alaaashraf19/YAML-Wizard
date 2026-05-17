@@ -1,0 +1,20 @@
+{
+  "sha": "gitlab_09069",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 12021,
+  "description": "Create a GitLab CI pipeline for post‑deployment migrations that runs only when the pipeline source is \"pipeline\" or \"trigger\" and the variable POSTDEPLOY_PIPELINE is \"true\". Define stages: post_deploy:prepare, post_deploy:start (production and staging), post_deploy:qa:staging, post_deploy:finish (production and staging), and post_deploy:track (production and staging). Add a fetch-migrations-artifact job in the prepare stage that echoes the pending‑migrations JSON into a dotenv artifact, and a fetch-post-migrations trigger job that depends on an external deployer project with FETCH_PENDING_MIGRATIONS=true. Add a post_deploy_migrations:prepare job that runs `bundle exec rake 'post_deploy_migrations:prepare'`; notify jobs (notify_start, notify_success, notify_failure) that run `bundle exec rake 'post_deploy_migrations:notify'` on success or failure; metric jobs for environment_lock_state and environment_state that run `bundle exec rake \"metrics:environment_lock_state[${DEPLOY_ENVIRONMENT}, ${LOCK_STATE}]\"` and `bundle exec rake \"metrics:environment_state[${DEPLOY_ENVIRONMENT}, ${ENV_STATE}]\"` with LOCK_STATE/ENV_STATE set for start, success, and failure; trigger jobs post_deploy_migrations:gprd and post_deploy_migrations:gstg that invoke the deployer project with variables DEPLOY_ENVIRONMENT, DEPLOY_USER, POSTDEPLOY_MIGRATIONS, TRIGGER_REF, and CHECKMODE. Add a qa:smoke:post_deploy_migrations:gstg job that triggers the staging quality project with SMOKE_ONLY='true', and tracking jobs (track_running, track_failed, track_success) that run `bundle exec rake 'post_deploy_migrations:track_deployment'` with DEPLOY_STATUS set to running, failed, or success. All jobs extend common setup and token includes, use the release tag, allow_failure where specified, resource_group to serialize metric updates, and rules that check CI_PIPELINE_SOURCE and POSTDEPLOY_PIPELINE with when: on_success or on_failure as appropriate.",
+  "tags": [
+    "ruby",
+    "rake",
+    "post-deploy",
+    "metrics",
+    "environment-lock",
+    "environment-state",
+    "qa",
+    "track",
+    "notify",
+    "trigger",
+    "gitlab-ci"
+  ]
+}

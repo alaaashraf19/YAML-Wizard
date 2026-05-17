@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_06189",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 128,
+  "description": "Create a GitLab CI pipeline that uses the node:latest Docker image. Define a single stage called validate. Add a before_script that changes directory to the validator folder and runs yarn to install dependencies. Add a job named validate in the validate stage that executes the command yarn start. No caches, artifacts, services, variables, or special rules are required.",
+  "tags": [
+    "node",
+    "yarn",
+    "validation",
+    "gitlab-ci"
+  ]
+}

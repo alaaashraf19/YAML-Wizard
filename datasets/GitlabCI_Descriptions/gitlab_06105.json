@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_06105",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 3772,
+  "description": "Create a GitLab CI pipeline that runs all jobs in a single build stage using the registry.gitlab.com/datadrivendiscovery/images/testing:$IMAGE_TAG Docker image (or the primitives image for the test_pipelines job) with a parallel matrix over IMAGE_TAG values ubuntu-bionic-python36, ubuntu-bionic-python37, ubuntu-bionic-python38. Define variables DEPENDENCY_REF=master, GIT_STRATEGY=clone, and GIT_SUBMODULE_STRATEGY=recursive. The git_check job runs before_script git lfs fetch --all then ./git-check.sh; the style_check job runs before_script git lfs fetch --all then pycodestyle $(./list_primitives.py --files); the test_pipelines job runs before_script git lfs fetch --all, git -C /data/datasets show -s, git -C /data/datasets_public show -s, ls -al /data/static_files, then pip3 install --upgrade --upgrade-strategy only-if-needed -e \"git+https://gitlab.com/datadrivendiscovery/d3m.git@$DEPENDENCY_REF#egg=d3m\", pip3 install -e .[opencv-headless], ./run_pipelines.sh and stores the results directory as an artifact named results-$CI_JOB_ID. The tests and tests_with_optimize jobs each run before_script docker info and git lfs fetch --all, use a docker‑in‑docker service registry.gitlab.com/datadrivendiscovery/images/docker:19-dind with DOCKER_HOST=tcp://docker:2375, install the d3m package and test primitives via pip3, run pip3 check, iterate over primitives with a for loop calling python3 -m d3m primitive describe, then execute ./run_tests.py; the optimized variant also sets PYTHONOPTIMIZE=true. The type_check job runs before_script git lfs fetch --all then pip3 install --upgrade --upgrade-strategy only-if-needed -e \"git+https://gitlab.com/datadrivendiscovery/d3m.git@$DEPENDENCY_REF#egg=d3m\", pip3 install -e .[opencv-headless], and finally mypy --install-types --non-interactive $(./list_primitives.py --files).",
+  "tags": [
+    "git-lfs",
+    "python-ubuntu-bionic",
+    "docker-dind",
+    "mypy",
+    "pip3",
+    "d3m",
+    "parallel-matrix",
+    "gitlab-ci"
+  ]
+}

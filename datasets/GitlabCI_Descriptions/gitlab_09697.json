@@ -1,0 +1,21 @@
+{
+  "sha": "gitlab_09697",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 7114,
+  "description": "Create a GitLab CI pipeline that defines a cache keyed by CI_JOB_NAME storing .ccache/ and sets global variables CCACHE_BASEDIR, CCACHE_COMPILERCHECK, CCACHE_DIR, DEBIAN_FRONTEND, USE_CCACHE. Add an alma-9 job (image almalinux:9, extends .when_sched, allow_failure, interruptible) running dnf -y install epel-release; dnf -y install -y eatmydata; eatmydata -- dnf -y install dnf-plugins-core; eatmydata -- dnf config-manager --set-enabled crb; eatmydata -- dnf -y install diffutils python3-scons bc ncurses-devel qt5-qtbase-devel pps-tools-devel libnsl2-devel bluez-libs-devel dbus-devel libusbx-devel gtk3-devel python3-pyserial python3-cairo python3-gobject-base ccache; eatmydata -- ln -sv scons-3 /usr/bin/scons&&ln -sv python3 /usr/bin/python; eatmydata -- .ci-build/build.sh and uses SCONSOPTS=qt=yes xgps=yes, triggered only on schedule. Add alpine-3 (image alpine:3, stage .pre, extends .when_sched) running apk update; apk add scons libcap-dev ncurses-dev build-base bash linux-headers musl-dev ccache; .ci-build/build.sh; add fedora-latest (image fedora:latest, extends .when_sched) running dnf install -y eatmydata; eatmydata -- dnf install -y ccache diffutils bluez-libs-devel dbus-devel gcc-c++ ncurses-devel python3-setuptools qt5-qtbase-devel scons pps-tools-devel; eatmydata .ci-build/build.sh with SCONSOPTS=qt=yes xgps=yes; add freebsd (tags freebsd, timeout 2h, extends .when_sched, runs only if $HAVE_FREEBSD==\"true\") executing .ci-build/build.sh; add mips64le-linux (tags mips64le linux, runs only if $HAVE_MIPS64LE_LINUX==\"true\") executing .ci-build/build.sh; add sparc64-linux (tags sparc64 linux, timeout 1h10m, runs only if $HAVE_SPARC64_LINUX==\"true\") executing .ci-build/build.sh; add pages (image alpine:latest, extends .when_push) running apk update && apk add python3 asciidoctor scons rsync musl-dev gcc; gem install rouge; mkdir .pages; WEBSITE=.public scons website=.pages website; mv .public public; find public -type f -regex '.*\\.(htm|html|txt|text|js|css)$' -exec gzip -f -k {} \\;; ls -lR public and publishing the public/ directory as a pages artifact on push. Add debian-experimental:clang, debian-experimental:gcc, debian-unstable:clang, debian-unstable:minimal, scan-build and coverity jobs (all extend .debian_build or .when_sched) using various debian:experimental, debian:unstable, or debian:latest images, installing eatmydata, installing ${PACKAGES} (including optional EXPERIMENTAL_PACKAGES), running eatmydata -- .ci-build/build.sh, setting SCONSOPTS=qt=yes xgps=yes (or extensive minimal options), with allow_failure true where noted; coverity also downloads and runs the Coverity analysis, archives cov-int as an artifact; scan-build archives scan_build as an artifact with 1‑week expiry; all these jobs trigger on schedule.",
+  "tags": [
+    "debian",
+    "almalinux",
+    "alpine",
+    "fedora",
+    "freebsd",
+    "mips64le",
+    "sparc64",
+    "coverity",
+    "pages",
+    "scan-build",
+    "scons",
+    "ccache"
+  ]
+}

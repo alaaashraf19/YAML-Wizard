@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_03939",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 242,
+  "description": "Create a GitLab CI pipeline that uses the default Docker image (e.g., ruby) and runs a before_script to update apt, install sqlite3, libsqlite3-dev and nodejs, then prints the Ruby version and path, installs Bundler without documentation, and runs bundle install with parallel jobs. Define a single job named rspec in the default test stage. The rspec job executes the command bundle exec rspec to run the test suite. No caches, artifacts, or special rules are defined.",
+  "tags": [
+    "ruby",
+    "rspec",
+    "bundler",
+    "sqlite",
+    "nodejs",
+    "apt-get"
+  ]
+}

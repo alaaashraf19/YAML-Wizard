@@ -1,0 +1,22 @@
+before_script:
+- dotnet restore
+build:
+  script:
+  - cd $build_path
+  - dotnet build
+  stage: build
+  variables:
+    build_path: $project/src/$project
+image: microsoft/dotnet:latest
+stages:
+- build
+- test
+test:
+  script:
+  - cd $test_path
+  - dotnet test
+  stage: test
+  variables:
+    test_path: $project/test/$project.Tests
+variables:
+  project: NewTypes

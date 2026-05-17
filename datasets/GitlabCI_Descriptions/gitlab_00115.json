@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_00115",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2563,
+  "description": "Create a GitLab CI pipeline using the ubuntu:xenial Docker image (with ubuntu:jammy for jammy jobs) and an apt cache stored in apt-cache/ keyed by apt-cache. Define three stages: build, test, and deploy. In the build stage add a build_amd64 job that runs the global before_script then executes `export PYTHON=python3`, `meson build -Db_coverage=true`, `cd build`, and `ninja`, and archives the whole repository as an artifact; also add a build_jammy_amd64 job that uses the ubuntu:jammy image and runs the same script and artifacts. In the test stage add a test_amd64 job depending on build_amd64 that runs `cd build`, `chmod a+rw -R .`, `sudo -u tester ninja test`, `sudo -u tester ninja coverage-html`, and `sudo ninja install`, publishing the repository as an artifact, and a test_jammy_amd64 job using ubuntu:jammy with identical commands depending on build_jammy_amd64. Finally, add a pages job in the deploy stage that runs only on the master branch, depends on test_amd64, creates a public directory, copies the coverage report and documentation into it, and publishes the public/ folder as a GitLab Pages artifact.",
+  "tags": [
+    "ubuntu",
+    "meson",
+    "ninja",
+    "gitlab-pages",
+    "apt-cache",
+    "build",
+    "test",
+    "deploy"
+  ]
+}

@@ -1,0 +1,75 @@
+cache:
+  key:
+    files:
+    - package.json
+    - package-lock.json
+    prefix: $CI_COMMIT_REF_SLUG
+  paths:
+  - node_modules
+  - build
+include:
+- file: Taranta.gitlab-ci.yml
+  project: MaxIV/gitlab-ci-templates
+js-lint:
+  artifacts:
+    paths:
+    - build
+    when: always
+  before_script:
+  - apk add make git bash
+  - make js-install
+  image: node:${JS_NODE_VERSION}-alpine
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    when: never
+  - exists:
+    - package.json
+  script:
+  - make js-lint;
+  stage: lint
+js-test:
+  artifacts:
+    name: $CI_PROJECT_NAME-$CI_JOB_ID
+    paths:
+    - build
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: build/reports/cobertura-coverage.xml
+      junit: build/reports/junit.xml
+    when: always
+  before_script:
+  - apk add make git bash
+  - make js-install
+  coverage: /All files[^|]*\|[^|]*\s+([\d\.]+)/
+  image: node:${JS_NODE_VERSION}-alpine
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    when: never
+  - exists:
+    - package.json
+    - '**/*.test.*'
+  script:
+  - make js-test
+  stage: test
+stages:
+- lint
+- test
+- pre-build
+- build
+- deploy
+tagging:
+  artifacts:
+    paths:
+    - package.json
+    when: always
+  before_script:
+  - apk add npm git bash
+  image: node:${JS_NODE_VERSION}-alpine
+  needs: []
+  script:
+  - npm version $(git describe --tags) --git-tag-version=false
+  stage: pre-build
+variables:
+  DEPLOY_FRONTEND: 'true'
+  JS_NODE_VERSION: 22

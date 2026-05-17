@@ -1,0 +1,14 @@
+{
+  "sha": "8e8c5e5fc5ab78a6e850eee2dd2477e66fb4a67f7685d14def35e149c8869f79",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 714,
+  "description": "Create a GitHub Actions workflow named build that runs on push events across multiple environments. Use a matrix strategy to compile on various OS (Windows, Ubuntu 16.04, 18.04, 20.04, macOS), architectures (x86, x64), and modes (debug, release), excluding certain combinations. For each job, check out the repository with submodules, set up luamake for the specified architecture, and run luamake in the specified mode.",
+  "tags": [
+    "lua",
+    "luamake",
+    "matrix",
+    "cross-platform",
+    "build"
+  ]
+}

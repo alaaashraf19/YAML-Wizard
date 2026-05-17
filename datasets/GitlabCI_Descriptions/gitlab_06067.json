@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_06067",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 693,
+  "description": "Create a GitLab CI pipeline using the starefossen/ruby-node:latest Docker image with a postgres:latest service and a cache of vendor/ruby. Define a global before_script that runs ruby -v, installs bundler with gem install bundler --no-ri --no-rdoc, installs gems via bundle install -j $(nproc) --path vendor, and executes bundle exec rails db:migrate and bundle exec rails db:seed for every job. Add an rspec job in the test stage that runs bundle exec rspec spec, inherits the before_script and uses the DATABASE_URL variable pointing to the PostgreSQL service. Add a deploy job of type deploy in the deploy stage that runs gem install dpl and dpl --provider=heroku --app=$HEROKU_APP_NAME --api-key=$HEROKU_PRODUCTION_KEY, targets the production environment, and is limited to the master branch.",
+  "tags": [
+    "ruby",
+    "rails",
+    "rspec",
+    "heroku",
+    "postgres",
+    "bundler",
+    "dpl"
+  ]
+}

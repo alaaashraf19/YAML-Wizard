@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_14522",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 740,
+  "description": "Create a GitLab CI pipeline using the golang:latest Docker image and define a REPO_NAME variable set to gitlab.com/phinicota/godoit. Add a before_script that creates the GOPATH source directory, symlinks the project, changes into it, and runs go get -v -d ./... for all jobs. Define two stages, test then build. In the test stage add a format job that runs test -z $(go fmt $(go list ./... | grep -v /vendor/)), then go vet $(go list ./... | grep -v /vendor/), then go test -v -race -coverprofile=cover.out $(go list ./... | grep -v /vendor/) && go tool cover -func=cover.out. In the build stage add a compile job that runs go build -race -ldflags \"-extldflags '-static'\" -o $CI_PROJECT_DIR/godoit $REPO_NAME/cmd/godoit, and publishes the resulting godoit binary as an artifact. Cache the Go module directories /go/src/github.com and /go/src/gopkg.in.",
+  "tags": [
+    "go",
+    "golang",
+    "cache",
+    "build",
+    "test"
+  ]
+}

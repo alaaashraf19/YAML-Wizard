@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_13673",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 175,
+  "description": "Create a GitLab CI pipeline using the node:10-stretch Docker image. Define a global before_script that runs \"apt-get update -qq && apt-get install -y -qq firefox-esr\", then \"npm install\", and finally \"npm install ember-cli -g\" for every job. Add an ember_test job (which runs in the default test stage) that executes the command \"ember test\". No caches, artifacts, services, or special rules are required.",
+  "tags": [
+    "node",
+    "ember",
+    "npm",
+    "firefox",
+    "ember-test"
+  ]
+}

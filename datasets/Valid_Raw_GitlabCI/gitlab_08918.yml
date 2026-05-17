@@ -1,0 +1,584 @@
+accessibility-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_ACCESSIBILITY
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/accessibility.yml
+acquisition-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_ACQUISITION
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/acquisition.yml
+activation-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_ACTIVATION
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/activation.yml
+agent_foundations-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_AGENT_FOUNDATIONS
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/agent_foundations.yml
+ai_framework-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_AI_FRAMEWORK
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/ai_framework.yml
+analytics_instrumentation-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_ANALYTICS_INSTRUMENTATION
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/analytics_instrumentation.yml
+anti-abuse-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_ANTI_ABUSE
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/anti-abuse.yml
+api-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_API
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/api.yml
+authentication-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_AUTHENTICATION
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/authentication.yml
+authorization-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_AUTHORIZATION
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/authorization.yml
+build-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_BUILD
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/build.yml
+cells_infrastructure-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_CELLS_INFRASTRUCTURE
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/cells_infrastructure.yml
+ci_functions_platform-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_CI_FUNCTIONS_PLATFORM
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/ci_functions_platform.yml
+ci_platform-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_CI_PLATFORM
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/ci_platform.yml
+cloud_cost_utilization-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_CLOUD_COST_UTILIZATION
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/cloud_cost_utilization.yml
+code_creation-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_CODE_CREATION
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/code_creation.yml
+code_review-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_CODE_REVIEW
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/code_review.yml
+compliance-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_COMPLIANCE
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/compliance.yml
+composition_analysis-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_COMPOSITION_ANALYSIS
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/composition_analysis.yml
+container_registry-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_CONTAINER_REGISTRY
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/container_registry.yml
+custom_models-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_CUSTOM_MODELS
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/custom_models.yml
+database_frameworks-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_DATABASE_FRAMEWORKS
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/database_frameworks.yml
+database_operations-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_DATABASE_OPERATIONS
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/database_operations.yml
+dataops-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_DATAOPS
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/dataops.yml
+design_system-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_DESIGN_SYSTEM
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/design_system.yml
+duo_chat-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_DUO_CHAT
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/duo_chat.yml
+dynamic_analysis-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_DYNAMIC_ANALYSIS
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/dynamic_analysis.yml
+editor_extensions-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_EDITOR_EXTENSIONS
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/editor_extensions.yml
+engagement-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_ENGAGEMENT
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/engagement.yml
+environment_automation-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_ENVIRONMENT_AUTOMATION
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/environment_automation.yml
+environments-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_ENVIRONMENTS
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/environments.yml
+fulfillment_platform-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_FULFILLMENT_PLATFORM
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/fulfillment_platform.yml
+geo-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_GEO
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/geo.yml
+git-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_GIT
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/git.yml
+gitaly-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_GITALY
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/gitaly.yml
+global_search-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_GLOBAL_SEARCH
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/global_search.yml
+import-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_IMPORT
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/import.yml
+knowledge-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_KNOWLEDGE
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/knowledge.yml
+mlops-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_MLOPS
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/mlops.yml
+mobile_devops-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_MOBILE_DEVOPS
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/mobile_devops.yml
+networking_and_incident_management-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_NETWORKING_AND_INCIDENT_MANAGEMENT
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/networking_and_incident_management.yml
+observability-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_OBSERVABILITY
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/observability.yml
+operate-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_OPERATE
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/operate.yml
+optimize-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_OPTIMIZE
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/optimize.yml
+organizations-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_ORGANIZATIONS
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/organizations.yml
+package_registry-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_PACKAGE_REGISTRY
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/package_registry.yml
+pipeline_authoring-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_PIPELINE_AUTHORING
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/pipeline_authoring.yml
+pipeline_execution-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_PIPELINE_EXECUTION
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/pipeline_execution.yml
+pipeline_security-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_PIPELINE_SECURITY
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/pipeline_security.yml
+platform_insights-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_PLATFORM_INSIGHTS
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/platform_insights.yml
+product_planning-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_PRODUCT_PLANNING
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/product_planning.yml
+project_management-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_PROJECT_MANAGEMENT
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/project_management.yml
+provision-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_PROVISION
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/provision.yml
+pubsec_services-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_PUBSEC_SERVICES
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/pubsec_services.yml
+release-and-deploy-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_RELEASE_AND_DEPLOY
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/release-and-deploy.yml
+remote_development-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_REMOTE_DEVELOPMENT
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/remote_development.yml
+runner_core-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_RUNNER_CORE
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/runner_core.yml
+runners_platform-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_RUNNERS_PLATFORM
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/runners_platform.yml
+runway-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_RUNWAY
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/runway.yml
+seat_management-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_SEAT_MANAGEMENT
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/seat_management.yml
+secret_detection-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_SECRET_DETECTION
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/secret_detection.yml
+security_infrastructure-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_SECURITY_INFRASTRUCTURE
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/security_infrastructure.yml
+security_insights-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_SECURITY_INSIGHTS
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/security_insights.yml
+security_platform_management-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_SECURITY_PLATFORM_MANAGEMENT
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/security_platform_management.yml
+security_policies-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_SECURITY_POLICIES
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/security_policies.yml
+source_code-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_SOURCE_CODE
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/source_code.yml
+static_analysis-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_STATIC_ANALYSIS
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/static_analysis.yml
+subscription_management-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_SUBSCRIPTION_MANAGEMENT
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/subscription_management.yml
+switchboard-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_SWITCHBOARD
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/switchboard.yml
+tenant_services-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_TENANT_SERVICES
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/tenant_services.yml
+utilization-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_UTILIZATION
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/utilization.yml
+vulnerability_research-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_VULNERABILITY_RESEARCH
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/vulnerability_research.yml
+workflow_catalog-merge-requests-needing-attention:
+  extends: .run
+  rules:
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION
+  - if: $TRIAGE_MERGE_REQUESTS_NEEDING_ATTENTION_WORKFLOW_CATALOG
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/merge-requests-needing-attention.yml.erb/workflow_catalog.yml

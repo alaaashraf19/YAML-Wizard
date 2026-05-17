@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_07990",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1135,
+  "description": "Create a GitLab CI pipeline with two stages: build and publish. In the build stage add a build_page job that uses the image registry.gitlab.com/gbraad/sitegen:latest, runs the script steps: git clone https://gitlab.com/gbraad/blog-content.git content --depth 1; mkdir -p themes; git clone https://gitlab.com/gbraad/blog-theme.git themes/gbraad --depth 1; pelican‑themes --symlink `pwd`/themes/gbraad; git clone https://github.com/getpelican/pelican-plugins plugins --depth 1 --recursive; pip install disqus-python; make publish; mv output public. The job stores the public directory as an artifact. In the same pipeline add a pages job that runs in the publish stage, uses the image registry.gitlab.com/gbraad/docker:git, runs only on the master branch, and publishes the public directory as a GitLab Pages artifact. Also add a publish job in the publish stage using the same docker image, which changes into the public directory, initializes a git repository, adds a remote named github using the secret $GITHUB_TOKEN, adds all files, configures user.email \"me@gbraad.nl\" and user.name \"Gerard Braad\", commits with message 'Deployed by GitLab: https://gitlab.com/gbraad/blog', renames the branch to gh-pages, and pushes to the GitHub repository, forcing deletion of the remote gh-pages branch if needed.",
+  "tags": [
+    "pelican",
+    "gitlab-pages",
+    "docker",
+    "github-deploy",
+    "publish",
+    "static-site"
+  ]
+}

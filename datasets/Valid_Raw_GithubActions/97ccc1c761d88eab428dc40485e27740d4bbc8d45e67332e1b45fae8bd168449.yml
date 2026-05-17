@@ -1,0 +1,189 @@
+name: CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["main"]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: ["main"]
+
+# See https://docs.github.com/en/actions/using-jobs/using-concurrency#example-using-a-fallback-value
+concurrency:
+  group: ${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: ${{ matrix.config }} on ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Release builds
+          - os: macos-15
+            config: "release"
+            # We want to test C++ and Swift only (in each direction)
+            cross_test_flags: "--all-cross --filter cpp --filter swift --rfilter Ice/exceptions"
+          - os: ubuntu-24.04
+            config: "release"
+            cross_test_flags: "--all-cross --rfilter Ice/exceptions"
+          - os: ubuntu-24.04-arm
+            config: "release"
+            build_flags: "SKIP=csharp" # Skip C# on ARM as .NET compiler keeps crashing
+            test_flags: "--rfilter=java/Ice/udp --rfilter=csharp" # Remove rfilter once https://github.com/zeroc-ice/ice/issues/3389 is fixed
+          - os: windows-2022
+            config: "release"
+            build_flags: "/p:Platform=x64"
+            test_flags: "--platform=x64"
+          - os: windows-2022
+            config: "cpp-win32-release"
+            working_directory: "cpp"
+            build_flags: "/p:Platform=Win32"
+            msbuild_project: "msbuild/ice.proj"
+            test_flags: "--platform=Win32"
+
+          # Debug builds
+          - os: macos-15
+            config: "debug"
+            build_flags: "OPTIMIZE=no"
+            test_flags: "--swift-config=debug"
+          - os: ubuntu-24.04
+            config: "debug"
+            build_flags: "OPTIMIZE=no"
+          # TODO - figure out how to properly install debug Python
+          - os: windows-2022
+            config: "debug"
+            working_directory: "cpp"
+            build_flags: "/p:Platform=x64 /p:Configuration=Debug"
+            test_flags: "--platform=x64 --config=Debug"
+            msbuild_project: "msbuild/ice.proj"
+
+          # iOS
+          - os: macos-15
+            config: "ios"
+            build_flags: "PLATFORMS='macosx iphonesimulator' CONFIGS='static shared' LANGUAGES='cpp swift'"
+            # TODO swift/Ice/udp doesn't work on CI
+            test_flags: "--languages='cpp,swift' --platform=iphonesimulator --controller-app --rfilter=swift/Ice/udp"
+            build_cpp_and_python: true
+
+          # Static builds
+          - os: ubuntu-24.04
+            config: "static"
+            build_flags: "CONFIGS=static"
+            test_flags: "--config=static --filter=Ice/ --filter=IceDiscovery/"
+            working_directory: "cpp"
+
+          # MATLAB
+          - os: ubuntu-24.04
+            config: "matlab"
+            working_directory: "matlab"
+            build_cpp_and_python: true
+          - os: windows-2022
+            config: "matlab"
+            working_directory: "matlab"
+            build_flags: "/p:Platform=x64"
+            msbuild_project: "msbuild/ice.proj"
+            test_flags: "--platform=x64"
+            build_cpp_and_python: true
+
+          # Android
+          - os: ubuntu-24.04
+            config: "android"
+            working_directory: "java"
+            test_flags: "--android --controller-app"
+            build_cpp_and_python: true
+            build_android_controller: true
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Dependencies
+        uses: ./.github/actions/setup-dependencies
+        with:
+          use_matlab: ${{ matrix.config == 'matlab' }}
+
+      # See https://learn.microsoft.com/en-us/windows/win32/wer/collecting-user-mode-dumps
+      - name: Enable Windows crash dumps
+        run: |
+          reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps" /v DumpType /t REG_DWORD /d 2 /f
+          reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps" /v DumpFolder /t REG_EXPAND_SZ /d ${{ github.workspace }}\LocalDumps /f
+          reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\Windows Error Reporting" /v DontShowUI /t REG_DWORD /d 1 /f
+        shell: powershell
+        if: runner.os == 'Windows'
+
+      - name: Build ${{ matrix.config }} on ${{ matrix.os }}
+        uses: ./.github/actions/build
+        timeout-minutes: 90
+        with:
+          working_directory: ${{ matrix.working_directory || '.' }}
+          build_cpp_and_python: ${{ matrix.build_cpp_and_python || false }}
+          build_android_controller: ${{ matrix.build_android_controller || false }}
+          build_flags: ${{ matrix.build_flags || '' }}
+          msbuild_project: ${{ matrix.msbuild_project || 'ice.proj' }}
+
+      - name: Test ${{ matrix.config }} on ${{ matrix.os }}
+        uses: ./.github/actions/test
+        timeout-minutes: 45
+        with:
+          working_directory: ${{ matrix.working_directory || '.' }}
+          flags: ${{ matrix.test_flags }}
+        # Don't test matlab on Windows (see https://github.com/zeroc-ice/ice/issues/3524)
+        if: matrix.config != 'matlab' || runner.os != 'Windows'
+
+      - name: Cross Test ${{ matrix.config }} on ${{ matrix.os }}
+        uses: ./.github/actions/test
+        timeout-minutes: 30
+        with:
+          working_directory: ${{ matrix.working_directory || '.' }}
+          flags: ${{ matrix.cross_test_flags }}
+        if: matrix.cross_test_flags != ''
+
+      - name: Generate API Reference
+        uses: ./.github/actions/documentation
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-s3-code-bucket: ${{ secrets.AWS_S3_CODE_BUCKET }}
+        if: matrix.config == 'release' && runner.os == 'macOS'
+
+      - name: Upload test logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-logs-${{ matrix.config }}-${{ matrix.os }}
+          path: ${{ matrix.working_directory || '.' }}/**/*.log
+          if-no-files-found: ignore
+        if: always()
+
+      - name: Upload Linux core dumps
+        uses: actions/upload-artifact@v4
+        with:
+          name: core-dumps-${{ matrix.config }}-${{ matrix.os }}
+          path: /var/lib/apport/coredump/*
+          if-no-files-found: ignore
+        if: runner.os == 'Linux' && always()
+
+      - name: Upload macOS crash diagnostics
+        uses: actions/upload-artifact@v4
+        with:
+          name: crash-diagnostics-${{ matrix.config }}-${{ matrix.os }}
+          path: ~/Library/Logs/DiagnosticReports/*.ips
+          if-no-files-found: ignore
+        if: runner.os == 'macOS' && always()
+
+      - name: Upload Windows crash dumps
+        uses: actions/upload-artifact@v4
+        with:
+          name: crash-dumps-${{ matrix.config }}-${{ matrix.os }}
+          path: ${{ github.workspace }}/LocalDumps/*
+          if-no-files-found: ignore
+        if: runner.os == 'Windows' && always()
+
+      - name: Upload Android crashdata
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-logs-${{ matrix.config }}-${{ matrix.os }}
+          path: /tmp/android-runner/
+        if: matrix.config == 'android' && always()

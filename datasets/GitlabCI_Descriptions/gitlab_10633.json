@@ -1,0 +1,21 @@
+{
+  "sha": "gitlab_10633",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1678,
+  "description": "Create a GitLab CI pipeline using the node:lts Docker image with three stages: test, build, and deploy. In the test stage add an audit job that runs the command npm audit. In the build stage add build-darwin, build-linux, and build-win32 jobs that each execute a before_script of apt-get update, apt-get install zip -y, npm install -g electron-packager, npm install -g electron-installer-zip, npm ci; then run npm run package-darwin and npm run package-darwin-m1 for build-darwin, npm run package-linux for build-linux, and dpkg --add-architecture i386, apt-get update, apt-get install wine32 wine64 -y, npm run package-win32 for build-win32, store the release/ directory as an artifact, and run only on tags or the master branch. In the deploy stage add publish-darwin, publish-linux, and publish-win32 jobs that first run a before_script downloading butler with curl -L -o /tmp/butler.zip https://broth.itch.ovh/butler/linux-amd64/LATEST/archive/default, unzip /tmp/butler.zip -d /usr/bin, chmod +x /usr/bin/butler, butler -V; then depend on their respective build job and run npm run publish-darwin for publish-darwin, npm run publish-linux and npm run publish-linux-32bit for publish-linux, and npm run publish-win32 and npm run publish-win32-32bit for publish-win32, and run only on tags. All jobs are tagged with docker and the deploy jobs publish the built releases to Itch.io using the butler CLI.",
+  "tags": [
+    "node",
+    "electron",
+    "npm",
+    "docker",
+    "itch",
+    "butler",
+    "darwin",
+    "linux",
+    "win32",
+    "build",
+    "deploy",
+    "test"
+  ]
+}

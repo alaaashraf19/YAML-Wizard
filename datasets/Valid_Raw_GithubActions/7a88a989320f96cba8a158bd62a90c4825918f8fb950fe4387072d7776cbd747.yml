@@ -1,0 +1,45 @@
+name: "Release checksums"
+
+on:
+  release:
+    types:
+      - published
+
+jobs:
+  build:
+    name: "Release checksums"
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Get the version
+        id: get_version
+        run: |
+          VERSION=${GITHUB_REF/refs\/tags\//}
+          echo ::set-output name=VERSION::$VERSION
+          STABLE_VERSION=$(cat dist/STABLE_VERSION)
+          if [[ $VERSION == "$STABLE_VERSION"* ]]; then
+            echo ::set-output name=ISBETA::false
+          else
+            echo ::set-output name=ISBETA::true
+          fi
+
+      - name: Download assets
+        uses: hecrj/download-release-action@ef523a951deebec6b821266175f7547906d87073
+        with:
+          output: downloads
+
+      - name: Download assets and generate checksums
+        run: |
+          cd downloads
+          shasum -a 256 *.* > cpeditor-${{ steps.get_version.outputs.VERSION }}-sha256-checksums.txt
+
+      - name: Upload checksums
+        uses: softprops/action-gh-release@v1
+        with:
+          prerelease: ${{ steps.get_version.outputs.ISBETA }}
+          name: CP Editor ${{ steps.get_version.outputs.VERSION }}
+          files: downloads/cpeditor-${{ steps.get_version.outputs.VERSION }}-sha256-checksums.txt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

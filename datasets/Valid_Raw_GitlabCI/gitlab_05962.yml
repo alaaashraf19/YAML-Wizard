@@ -1,0 +1,15 @@
+.helpers: "function nsr () {\n    \"$@\"\n    if [[ $? -ne 0 ]]; then exit 1; fi\n\
+  }\n"
+before_script:
+- "function nsr () {\n    \"$@\"\n    if [[ $? -ne 0 ]]; then exit 1; fi\n}\n"
+job01:
+  image: cutecom/cutecom-devel-opensuse
+  script:
+  - nsr ./run-clang-format.py -r .
+  - cmake .
+  - make
+job02:
+  image: cutecom/cutecom-devel-debian
+  script:
+  - cmake .
+  - make

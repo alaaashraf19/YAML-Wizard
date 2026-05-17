@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_17996",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 168,
+  "description": "Create a GitLab CI pipeline that uses the cytopia/ansible:latest Docker image and defines a PLAYBOOK variable set to ./playbook.yml. Define a single stage named test. Add a lint job in the test stage that executes the command ansible-playbook --syntax-check --list-tasks $PLAYBOOK. The job runs on all branches, produces no artifacts or caches, and has no additional services.",
+  "tags": [
+    "ansible",
+    "lint",
+    "syntax-check",
+    "gitlab-ci"
+  ]
+}

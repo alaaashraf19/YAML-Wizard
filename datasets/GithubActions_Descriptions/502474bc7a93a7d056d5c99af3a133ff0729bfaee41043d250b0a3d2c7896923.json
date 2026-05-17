@@ -1,0 +1,19 @@
+{
+  "sha": "502474bc7a93a7d056d5c99af3a133ff0729bfaee41043d250b0a3d2c7896923",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 18737,
+  "description": "Create a complex GitHub Actions workflow named VCMI that triggers on push to beta, master, and develop branches, on pull requests, and on workflow dispatch. The workflow has a build job with a matrix strategy that runs on multiple platforms (Linux, macOS, Windows, Android, iOS) with various configurations, including different Qt versions, compilers, and test settings. The job checks out the repository, prepares the CI environment, installs dependencies with Conan and vcpkg, configures and builds the project with CMake, and runs tests.",
+  "tags": [
+    "cmake",
+    "conan",
+    "vcpkg",
+    "qt",
+    "android",
+    "ios",
+    "macos",
+    "windows",
+    "linux",
+    "github-actions"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "20555e682d34c38218d23f3472fca09aab228878487cfe896f04acebd2904930",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2768,
+  "description": "Create a GitHub Actions workflow named Release that triggers on push to master or tags matching v*, on pull requests to master, and manually. The workflow has two jobs: one to check the version on tag pushes and another to build and publish Docker images to DockerHub and GitHub Container Registry if the version check passes or is skipped.",
+  "tags": [
+    "docker",
+    "release",
+    "github-actions",
+    "poetry",
+    "dockerhub",
+    "ghcr"
+  ]
+}

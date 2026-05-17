@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_16374",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 860,
+  "description": "Create a GitLab CI pipeline that uses the php:latest Docker image and caches the vendor/ directory. Include a global before_script that runs apt-get update -yqq, installs git sqlite3 libcurl4-gnutls-dev libicu-dev libmcrypt-dev libvpx-dev libjpeg-dev libpng-dev libxpm-dev zlib1g-dev libfreetype6-dev libxml2-dev libexpat1-dev libbz2-dev libgmp3-dev libldap2-dev unixodbc-dev libpq-dev libsqlite3-dev libaspell-dev libsnmp-dev libpcre3-dev libtidy-dev, executes docker-php-ext-install mbstring pdo_mysql curl json intl gd xml zip bz2 opcache, downloads Composer via curl and installs dependencies with php composer.phar install, copies .env.testing.ci to .env, generates a Laravel key with php artisan key:generate and caches the config with php artisan config:cache. Define two stages, syntax and testing. Add a lint job in the syntax stage that runs ./vendor/bin/phpcs --error-severity=1 --warning-severity=8 --extensions=php. Add a test job in the testing stage that runs php vendor/bin/phpunit --coverage-text --colors=never.",
+  "tags": [
+    "php",
+    "composer",
+    "laravel",
+    "phpunit",
+    "phpcs",
+    "cache",
+    "apt",
+    "docker-php-ext-install"
+  ]
+}

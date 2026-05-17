@@ -1,0 +1,400 @@
+name: ActionsCI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build-ubuntu:
+    runs-on: ubuntu-24.04
+    steps:
+    - uses: actions/checkout@main
+    - name: apt
+      run: |
+        sudo apt-get update -qq
+        sudo apt install -y --no-install-recommends pkg-config qmake6 qt6-base-dev qt6-base-dev-tools qt6-tools-dev-tools qt6-declarative-dev libqt6sql6-mysql libqt6sql6-psql libqt6sql6-odbc libqt6sql6-sqlite libqt6core6 libqt6qml6 libqt6xml6 libpq5 libodbc2 libmongoc-dev libbson-dev gcc g++ clang make cmake
+    - name: qmake version
+      run: |
+        sudo rm -f /usr/bin/qmake
+        sudo ln -sf /usr/bin/qmake6 /usr/bin/qmake
+        qmake -v
+    - name: configure for debug
+      run: |
+        ./configure --prefix=/usr/local --spec=linux-g++ --enable-debug
+    - name: make for debug
+      run: |
+        make -j4 -C src
+        sudo make -C src install
+        make -j4 -C tools
+        sudo make -C tools install
+    - name: configure
+      run: |
+        ./configure --prefix=/usr/local --spec=linux-g++
+    - name: make
+      run: |
+        make -j4 -C src
+        sudo make -C src install
+        make -j4 -C tools
+        sudo make -C tools install
+    - name: version
+      run: |
+        treefrog -v
+        tspawn --show-drivers
+    - name: apt for test
+      run: |
+        sudo apt install -y --no-install-recommends redis-server memcached
+        sudo service redis-server start
+        sudo service memcached start
+    - name: testall.sh
+      run: |
+        $GITHUB_WORKSPACE/src/test/testall.sh
+    - name: tmaketest
+      run: |
+        cd $GITHUB_WORKSPACE/tools/tmake/test
+        qmake tmaketest.pro
+        make -j4
+        ./tmaketest.sh
+    - name: releasetest
+      run: |
+        $GITHUB_WORKSPACE/tools/test/releasetest/releasetest
+
+  build-ubuntu-sharedlink:
+    runs-on: ubuntu-24.04
+    steps:
+    - uses: actions/checkout@main
+    - name: apt
+      run: |
+        sudo apt-get update -qq
+        sudo apt install -y --no-install-recommends pkg-config qmake6 qt6-base-dev qt6-base-dev-tools qt6-tools-dev-tools qt6-declarative-dev libqt6sql6-mysql libqt6sql6-psql libqt6sql6-odbc libqt6sql6-sqlite libqt6core6 libqt6qml6 libqt6xml6 libpq5 libodbc2 libmongoc-dev libbson-dev liblz4-dev gcc g++ clang make cmake
+    - name: qmake version
+      run: |
+        sudo rm -f /usr/bin/qmake
+        sudo ln -sf /usr/bin/qmake6 /usr/bin/qmake
+        qmake -v
+    - name: configure for debug
+      run: |
+        ./configure --prefix=/usr/local --enable-shared-mongoc --enable-shared-lz4 --spec=linux-clang --enable-debug
+    - name: make for debug
+      run: |
+        make -j4 -C src
+        sudo make -C src install
+        make -j4 -C tools
+        sudo make -C tools install
+    - name: configure
+      run: |
+        ./configure --prefix=/usr/local --enable-shared-mongoc --enable-shared-lz4 --spec=linux-clang
+    - name: make
+      run: |
+        make -j4 -C src
+        sudo make -C src install
+        make -j4 -C tools
+        sudo make -C tools install
+    - name: version
+      run: |
+        treefrog -v
+        tspawn --show-drivers
+    - name: apt for test
+      run: |
+        sudo apt install -y --no-install-recommends redis-server memcached
+        sudo service redis-server start
+        sudo service memcached start
+    - name: testall.sh
+      run: |
+        $GITHUB_WORKSPACE/src/test/testall.sh
+    - name: tmaketest
+      run: |
+        cd $GITHUB_WORKSPACE/tools/tmake/test
+        qmake tmaketest.pro
+        make -j4
+        ./tmaketest.sh
+    - name: releasetest
+      run: |
+        $GITHUB_WORKSPACE/tools/test/releasetest/releasetest
+
+  build-ubuntu22:
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@main
+    - name: apt
+      run: |
+        sudo apt-get update -qq
+        sudo apt install -y --no-install-recommends pkg-config qmake6 qt6-base-dev qt6-base-dev-tools qt6-tools-dev-tools qt6-declarative-dev libqt6sql6-mysql libqt6sql6-psql libqt6sql6-odbc libqt6sql6-sqlite libqt6core6 libqt6qml6 libqt6xml6 libpq5 libodbc2 libmongoc-dev libbson-dev liblz4-dev gcc g++ clang make cmake
+    - name: qmake version
+      run: |
+        sudo rm -f /usr/bin/qmake
+        sudo ln -sf /usr/bin/qmake6 /usr/bin/qmake
+        qmake -v
+    - name: configure for debug
+      run: |
+        ./configure --prefix=/usr/local --spec=linux-g++ --enable-debug
+    - name: make for debug
+      run: |
+        make -j4 -C src
+        sudo make -C src install
+        make -j4 -C tools
+        sudo make -C tools install
+    - name: configure
+      run: |
+        ./configure --prefix=/usr/local --spec=linux-g++
+    - name: make
+      run: |
+        make -j4 -C src
+        sudo make -C src install
+        make -j4 -C tools
+        sudo make -C tools install
+    - name: version
+      run: |
+        treefrog -v
+        tspawn --show-drivers
+    - name: apt for test
+      run: |
+        sudo apt install -y --no-install-recommends redis-server memcached
+        sudo service redis-server start
+        sudo service memcached start
+    - name: testall.sh
+      run: |
+        $GITHUB_WORKSPACE/src/test/testall.sh
+    - name: tmaketest
+      run: |
+        cd $GITHUB_WORKSPACE/tools/tmake/test
+        qmake tmaketest.pro
+        make -j4
+        ./tmaketest.sh
+    - name: releasetest
+      run: |
+        $GITHUB_WORKSPACE/tools/test/releasetest/releasetest
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@main
+    - name: Homebrew
+      run: |
+        which pkg-config || brew install pkg-config
+        brew install qt6 jq
+    - name: configure for debug
+      run: |
+        ./configure --prefix=/usr/local --enable-debug
+    - name: build for debug
+      run: |
+        make -j4 -C src
+        sudo make -C src install
+        make -j4 -C tools
+        sudo make -C tools install
+    - name: configure
+      run: |
+        ./configure --prefix=/usr/local
+    - name: build
+      run: |
+        make -j4 -C src
+        sudo make -C src install
+        make -j4 -C tools
+        sudo make -C tools install
+    - name: version
+      run: |
+        treefrog -v
+        tspawn --show-drivers
+
+  build-macos-sharedlink:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@main
+    - name: Homebrew
+      run: |
+        which pkg-config || brew install pkg-config
+        brew install qt6 jq mongo-c-driver gflags glog lz4
+    - name: configure for debug
+      run: |
+        ./configure --prefix=/usr/local --enable-shared-mongoc --enable-shared-glog --enable-shared-lz4 --enable-debug
+    - name: build for debug
+      run: |
+        make -j4 -C src
+        sudo make -C src install
+        make -j4 -C tools
+        sudo make -C tools install
+    - name: configure
+      run: |
+        ./configure --prefix=/usr/local --enable-shared-mongoc --enable-shared-glog --enable-shared-lz4
+    - name: build
+      run: |
+        make -j4 -C src
+        sudo make -C src install
+        make -j4 -C tools
+        sudo make -C tools install
+    - name: version
+      run: |
+        treefrog -v
+        tspawn --show-drivers
+    - name: Homebrew for test
+      run: |
+        brew install redis memcached
+        brew services start redis
+        brew services start memcached
+    - name: testall.sh
+      run: |
+        $GITHUB_WORKSPACE/src/test/testall.sh
+    - name: releasetest
+      run: |
+        $GITHUB_WORKSPACE/tools/test/releasetest/releasetest
+
+  build-windows-qt68-msvc2022:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@main
+    - name: Setup msbuild
+      uses: microsoft/setup-msbuild@v2
+      with:
+        vs-version: '[17,18)'  # 17.xx
+        msbuild-architecture: x64
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v4
+      with:
+        version:      6.8
+        host:         windows
+        target:       desktop
+        setup-python: false
+    - name: Install tools
+      run: |
+        choco install sqlite -y
+        choco install cmake -y
+    - name: Debug build
+      shell: cmd
+      run: |
+        call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+        set CL=/MP
+        qmake -version
+        call configure.bat --enable-debug
+        cd src
+        nmake
+        nmake install
+        cd ..\tools
+        nmake
+        nmake install
+    - name: Module test
+      shell: cmd
+      run: |
+        cd src/test
+        call testall.bat
+    - name: Release build
+      shell: cmd
+      run: |
+        call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+        set CL=/MP
+        call configure.bat
+        cd src
+        nmake
+        nmake install
+        cd ..\tools
+        nmake
+        nmake install
+    - name: Release test
+      working-directory: tools\test\releasetest
+      run: |
+        .\releasetest.bat
+
+  build-windows-qt68-msvc2019:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@main
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v4
+      with:
+        version:      6.8
+        host:         windows
+        target:       desktop
+        setup-python: false
+    - name: Install VisualStudio tools
+      run: |
+        choco install visualstudio2019community -y
+        choco install visualstudio2019-workload-nativedesktop -y
+        choco install sqlite -y
+        choco install cmake -y
+    - name: Debug build
+      shell: cmd
+      run: |
+        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
+        set CL=/MP
+        qmake -version
+        call configure.bat --enable-debug
+        cd src
+        nmake
+        nmake install
+        cd ..\tools
+        nmake
+        nmake install
+    - name: Module test
+      shell: cmd
+      run: |
+        cd src/test
+        call testall.bat
+    - name: Release build
+      shell: cmd
+      run: |
+        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
+        set CL=/MP
+        call configure.bat
+        cd src
+        nmake
+        nmake install
+        cd ..\tools
+        nmake
+        nmake install
+    - name: Release test
+      working-directory: tools\test\releasetest
+      run: |
+        .\releasetest.bat
+
+  build-windows-qt65-msvc2019:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@main
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v4
+      with:
+        version:      6.5.2
+        host:         windows
+        target:       desktop
+        arch:         win64_msvc2019_64
+        setup-python: false
+    - name: Install VisualStudio tools
+      run: |
+        choco install visualstudio2019community -y
+        choco install visualstudio2019-workload-nativedesktop -y
+        choco install sqlite -y
+        choco install cmake -y
+    - name: Debug build
+      shell: cmd
+      run: |
+        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
+        set CL=/MP
+        qmake -version
+        call configure.bat --enable-debug
+        cd src
+        nmake
+        nmake install
+        cd ..\tools
+        nmake
+        nmake install
+    - name: Module test
+      shell: cmd
+      run: |
+        cd src/test
+        call testall.bat
+    - name: Release build
+      shell: cmd
+      run: |
+        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
+        set CL=/MP
+        call configure.bat
+        cd src
+        nmake
+        nmake install
+        cd ..\tools
+        nmake
+        nmake install
+    - name: Release test
+      working-directory: tools\test\releasetest
+      run: |
+        .\releasetest.bat

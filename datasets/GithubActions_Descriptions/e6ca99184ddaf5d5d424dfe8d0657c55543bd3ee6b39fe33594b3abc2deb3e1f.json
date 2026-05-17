@@ -1,0 +1,16 @@
+{
+  "sha": "e6ca99184ddaf5d5d424dfe8d0657c55543bd3ee6b39fe33594b3abc2deb3e1f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2788,
+  "description": "Create a GitHub Actions workflow named ubuntu that runs on every push and pull request. Use a matrix strategy to test on multiple Ubuntu versions with different compilers and non-ASCII settings. For each job, check out the repository, configure the compiler, and run CMake-based builds in both Release and Debug configurations, as well as Bazel tests.",
+  "tags": [
+    "ubuntu",
+    "gcc",
+    "clang",
+    "cmake",
+    "bazel",
+    "matrix",
+    "ci"
+  ]
+}

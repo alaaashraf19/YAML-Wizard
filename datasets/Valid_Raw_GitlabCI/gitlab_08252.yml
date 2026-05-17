@@ -1,0 +1,19 @@
+image: ruby:2.5-alpine
+pages:
+  artifacts:
+    expire_in: 1 hour
+    paths:
+    - public
+  cache:
+    paths:
+    - vendor
+  only:
+  - master
+  script:
+  - apk add --update build-base nodejs tzdata
+  - gem install bundler --no-ri --no-rdoc
+  - ruby --version
+  - gem --version
+  - bundle --version
+  - bundle install --path vendor --retry=3
+  - rake build

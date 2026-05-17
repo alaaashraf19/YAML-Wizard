@@ -1,0 +1,471 @@
+.change_build_dir: &id001
+- rm -Rf build
+- mkdir build
+- cd build
+.ubuntu_curr_builder:
+  before_script: &id002
+  - export CCACHE_DIR="${CI_PROJECT_DIR}/.ccache"
+  - export CCACHE_BASEDIR="${CI_PROJECT_DIR}"
+  - export CCACHE_COMPILERCHECK="content"
+  cache: &id003
+    key: ${CI_JOB_NAME}-${CI_COMMIT_REF_SLUG}
+    paths:
+    - .ccache
+    policy: pull-push
+  image: registry.gitlab.com/synsense-sys-int/inivation/infra/docker-files/ubuntu:rolling
+  rules: &id004
+  - if: $CI_MERGE_REQUEST_ID
+  - if: $CI_COMMIT_BRANCH
+  script: &id005
+  - *id001
+  - cmake -DCMAKE_INSTALL_PREFIX=/usr -DENABLE_STATIC=1 -DENABLE_OPENCV=1 -DENABLE_SERIALDEV=1
+    -DEXAMPLES_INSTALL=1 ..
+  - make -j1 -s
+  stage: build
+.version_name: &id006
+- export VERSION_NAME=$([[ -z "${RELEASE_VERSION}"  ]] && echo "${CI_COMMIT_TAG}"
+  || echo "${RELEASE_VERSION}")
+basic_syntax_check_clang:
+  before_script: *id002
+  cache: *id003
+  image: registry.gitlab.com/synsense-sys-int/inivation/infra/docker-files/ubuntu:rolling
+  rules: *id004
+  script:
+  - cmake -DCMAKE_INSTALL_PREFIX=/usr -DENABLE_OPENCV=1 -DENABLE_SERIALDEV=1 .
+  - find include/ -type f -iname '*.hpp' | sort -u > headers.txt
+  - find include/ -type f -iname '*.h' | sort -u >> headers.txt
+  - for h in $(cat headers.txt) ; do echo "\nChecking === ${h}\n\n" ; ${CXX} -std=c++17
+    -O2 -pipe "${h}" $(pkg-config --cflags opencv4) ; rm -f "${h}.gch" ; done
+  stage: build
+  variables:
+    CC: clang-15
+    CXX: clang++-15
+build_macos_arm:
+  cache:
+    key: ${CI_JOB_NAME}-${CI_COMMIT_REF_SLUG}
+    paths:
+    - .ccache
+    policy: pull-push
+  rules:
+  - if: $CI_MERGE_REQUEST_ID
+  - if: $CI_COMMIT_BRANCH
+  script:
+  - *id001
+  - /opt/homebrew/bin/cmake -DCMAKE_INSTALL_PREFIX=/opt/homebrew -DENABLE_STATIC=1
+    -DENABLE_OPENCV=1 -DENABLE_SERIALDEV=1 -DEXAMPLES_INSTALL=1 ..
+  - make -j4
+  - if [[ "${CI_COMMIT_BRANCH}" != "master" ]] ; then exit 0; fi
+  - rm -Rf /opt/homebrew/lib/${CI_PROJECT_NAME}.so* /opt/homebrew/include/${CI_PROJECT_NAME}/
+    /opt/homebrew/include/${CI_PROJECT_NAME}cpp/ /opt/homebrew/lib/cmake/${CI_PROJECT_NAME}/
+    /opt/homebrew/share/caer/
+  - make install
+  stage: build
+  tags:
+  - macos
+  - build
+  - arm
+  variables:
+    CCACHE_BASEDIR: ${CI_PROJECT_DIR}
+    CCACHE_COMPILERCHECK: content
+    CCACHE_DIR: ${CI_PROJECT_DIR}/.ccache
+    PATH: /opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin
+build_macos_intel:
+  cache:
+    key: ${CI_JOB_NAME}-${CI_COMMIT_REF_SLUG}
+    paths:
+    - .ccache
+    policy: pull-push
+  rules:
+  - if: $CI_MERGE_REQUEST_ID
+  - if: $CI_COMMIT_BRANCH
+  script:
+  - *id001
+  - arch -x86_64 /usr/local/bin/cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DENABLE_STATIC=1
+    -DENABLE_OPENCV=1 -DENABLE_SERIALDEV=1 -DEXAMPLES_INSTALL=1 ..
+  - make -j4
+  - if [[ "${CI_COMMIT_BRANCH}" != "master" ]] ; then exit 0; fi
+  - rm -Rf /usr/local/lib/${CI_PROJECT_NAME}.so* /usr/local/include/${CI_PROJECT_NAME}/
+    /usr/local/include/${CI_PROJECT_NAME}cpp/ /usr/local/lib/cmake/${CI_PROJECT_NAME}/
+    /usr/local/share/caer/
+  - make install
+  stage: build
+  tags:
+  - macos
+  - build
+  - x86_64
+  variables:
+    CCACHE_BASEDIR: ${CI_PROJECT_DIR}
+    CCACHE_COMPILERCHECK: content
+    CCACHE_DIR: ${CI_PROJECT_DIR}/.ccache
+    PATH: /usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin
+build_ubuntu_1804:
+  before_script: *id002
+  cache: *id003
+  image: registry.gitlab.com/synsense-sys-int/inivation/infra/docker-files/ubuntu:18.04
+  rules: *id004
+  script: *id005
+  stage: build
+  variables:
+    CC: gcc-13
+    CXX: g++-13
+build_ubuntu_2004:
+  before_script: *id002
+  cache: *id003
+  image: registry.gitlab.com/synsense-sys-int/inivation/infra/docker-files/ubuntu:20.04
+  rules: *id004
+  script: *id005
+  stage: build
+  variables:
+    CC: gcc-13
+    CXX: g++-13
+build_ubuntu_2204:
+  before_script: *id002
+  cache: *id003
+  image: registry.gitlab.com/synsense-sys-int/inivation/infra/docker-files/ubuntu:22.04
+  rules: *id004
+  script: *id005
+  stage: build
+  variables:
+    CC: gcc-13
+    CXX: g++-13
+build_ubuntu_2404:
+  before_script: *id002
+  cache: *id003
+  image: registry.gitlab.com/synsense-sys-int/inivation/infra/docker-files/ubuntu:24.04
+  rules: *id004
+  script: *id005
+  stage: build
+  variables:
+    CC: gcc-13
+    CXX: g++-13
+build_ubuntu_curr_clang15:
+  before_script: *id002
+  cache: *id003
+  image: registry.gitlab.com/synsense-sys-int/inivation/infra/docker-files/ubuntu:rolling
+  rules: *id004
+  script: *id005
+  stage: build
+  variables:
+    CC: clang-15
+    CXX: clang++-15
+build_ubuntu_curr_clang16:
+  before_script: *id002
+  cache: *id003
+  image: registry.gitlab.com/synsense-sys-int/inivation/infra/docker-files/ubuntu:rolling
+  rules: *id004
+  script: *id005
+  stage: build
+  variables:
+    CC: clang-16
+    CXX: clang++-16
+build_ubuntu_curr_clang17:
+  before_script: *id002
+  cache: *id003
+  image: registry.gitlab.com/synsense-sys-int/inivation/infra/docker-files/ubuntu:rolling
+  rules: *id004
+  script: *id005
+  stage: build
+  variables:
+    CC: clang-17
+    CXX: clang++-17
+build_ubuntu_curr_clang18:
+  before_script: *id002
+  cache: *id003
+  image: registry.gitlab.com/synsense-sys-int/inivation/infra/docker-files/ubuntu:rolling
+  rules: *id004
+  script: *id005
+  stage: build
+  variables:
+    CC: clang-18
+    CXX: clang++-18
+build_ubuntu_curr_clang19:
+  before_script: *id002
+  cache: *id003
+  image: registry.gitlab.com/synsense-sys-int/inivation/infra/docker-files/ubuntu:rolling
+  rules: *id004
+  script: *id005
+  stage: build
+  variables:
+    CC: clang-19
+    CXX: clang++-19
+build_ubuntu_curr_gcc10:
+  before_script: *id002
+  cache: *id003
+  image: registry.gitlab.com/synsense-sys-int/inivation/infra/docker-files/ubuntu:rolling
+  rules: *id004
+  script: *id005
+  stage: build
+  variables:
+    CC: gcc-10
+    CXX: g++-10
+build_ubuntu_curr_gcc11:
+  before_script: *id002
+  cache: *id003
+  image: registry.gitlab.com/synsense-sys-int/inivation/infra/docker-files/ubuntu:rolling
+  rules: *id004
+  script: *id005
+  stage: build
+  variables:
+    CC: gcc-11
+    CXX: g++-11
+build_ubuntu_curr_gcc12:
+  before_script: *id002
+  cache: *id003
+  image: registry.gitlab.com/synsense-sys-int/inivation/infra/docker-files/ubuntu:rolling
+  rules: *id004
+  script: *id005
+  stage: build
+  variables:
+    CC: gcc-12
+    CXX: g++-12
+build_ubuntu_curr_gcc13:
+  before_script: *id002
+  cache: *id003
+  image: registry.gitlab.com/synsense-sys-int/inivation/infra/docker-files/ubuntu:rolling
+  rules: *id004
+  script: *id005
+  stage: build
+  variables:
+    CC: gcc-13
+    CXX: g++-13
+build_ubuntu_curr_gcc13_arm32:
+  before_script: *id002
+  cache: *id003
+  image: registry.gitlab.com/synsense-sys-int/inivation/infra/docker-files/ubuntu:rolling_arm32
+  rules:
+  - if: $CI_COMMIT_BRANCH == "master"
+  script:
+  - *id001
+  - cmake -DCMAKE_INSTALL_PREFIX=/usr -DENABLE_STATIC=1 -DENABLE_OPENCV=1 -DENABLE_SERIALDEV=1
+    -DEXAMPLES_INSTALL=1 ..
+  - make -j4 -s
+  stage: build
+  tags:
+  - docker
+  - ubuntu
+  - build
+  - qemu
+  variables:
+    CC: gcc-13
+    CXX: g++-13
+    UNW_ARM_UNWIND_METHOD: 4
+build_ubuntu_curr_gcc13_arm64:
+  before_script: *id002
+  cache: *id003
+  image: registry.gitlab.com/synsense-sys-int/inivation/infra/docker-files/ubuntu:rolling_arm64
+  rules:
+  - if: $CI_COMMIT_BRANCH == "master"
+  script:
+  - *id001
+  - cmake -DCMAKE_INSTALL_PREFIX=/usr -DENABLE_STATIC=1 -DENABLE_OPENCV=1 -DENABLE_SERIALDEV=1
+    -DEXAMPLES_INSTALL=1 ..
+  - make -j4 -s
+  stage: build
+  tags:
+  - docker
+  - ubuntu
+  - build
+  - qemu
+  variables:
+    CC: gcc-13
+    CXX: g++-13
+build_ubuntu_curr_gcc14:
+  before_script: *id002
+  cache: *id003
+  image: registry.gitlab.com/synsense-sys-int/inivation/infra/docker-files/ubuntu:rolling
+  rules: *id004
+  script: *id005
+  stage: build
+  variables:
+    CC: gcc-14
+    CXX: g++-14
+build_ubuntu_curr_gcc9:
+  before_script: *id002
+  cache: *id003
+  image: registry.gitlab.com/synsense-sys-int/inivation/infra/docker-files/ubuntu:rolling
+  rules: *id004
+  script: *id005
+  stage: build
+  variables:
+    CC: gcc-9
+    CXX: g++-9
+build_windows:
+  before_script:
+  - export CCACHE_DIR="$(pwd)/.ccache"
+  - export CCACHE_BASEDIR="$(pwd)"
+  cache:
+    key: ${CI_JOB_NAME}-${CI_COMMIT_REF_SLUG}
+    paths:
+    - .ccache
+    policy: pull-push
+  rules:
+  - if: $CI_MERGE_REQUEST_ID
+  - if: $CI_COMMIT_BRANCH
+  script:
+  - source /usr/bin/init-paths
+  - *id001
+  - cmake -G "MSYS Makefiles" -DCMAKE_INSTALL_PREFIX=/mingw64 -DENABLE_STATIC=1 -DENABLE_OPENCV=1
+    -DENABLE_SERIALDEV=1 -DEXAMPLES_INSTALL=1 ..
+  - make -j8
+  - if [[ "${CI_COMMIT_BRANCH}" != "master" ]] ; then exit 0; fi
+  - rm -Rf /mingw64/lib/${CI_PROJECT_NAME}.dll* /mingw64/include/${CI_PROJECT_NAME}/
+    /mingw64/include/${CI_PROJECT_NAME}cpp/ /mingw64/lib/cmake/${CI_PROJECT_NAME}/
+    /mingw64/share/caer/
+  - make install
+  stage: build
+  tags:
+  - windows
+  - build
+  variables:
+    CC: gcc
+    CCACHE_COMPILERCHECK: content
+    CXX: g++
+    MSYSTEM: MINGW64
+default:
+  interruptible: true
+pages:
+  artifacts:
+    paths:
+    - public
+  cache:
+    key: ${CI_JOB_NAME}
+    paths:
+    - docs/build
+    policy: pull-push
+  image: registry.gitlab.com/synsense-sys-int/inivation/infra/docker-files/ubuntu:docs
+  interruptible: false
+  resource_group: ${CI_JOB_NAME}
+  rules:
+  - if: $CI_COMMIT_TAG
+  - if: $CI_COMMIT_BRANCH
+  script:
+  - cd docs
+  - python3 docs-build.py "${CI_COMMIT_REF_NAME}" "${CI_DEFAULT_BRANCH}"
+  - cp -R build ../public
+  stage: build
+  tags:
+  - docker
+  - ubuntu
+  - build
+  variables:
+    GIT_STRATEGY: clone
+pre-commit_check:
+  before_script:
+  - pre-commit install
+  image: registry.gitlab.com/synsense-sys-int/inivation/infra/docker-files/ubuntu:rolling
+  rules:
+  - if: $CI_COMMIT_BRANCH
+  script:
+  - pre-commit run -a
+  stage: build
+release_arch:
+  before_script:
+  - mkdir -p ~/.ssh/
+  - cp "${GITCI_SSH_KEY}" ~/.ssh/id_ed25519
+  - chmod 0600 ~/.ssh/id_ed25519
+  - ssh-keyscan gitlab.com >> ~/.ssh/known_hosts
+  - ssh-keyscan aur.archlinux.org >> ~/.ssh/known_hosts
+  - cp "${GITCI_SSH_CONF}" ~/.gitconfig
+  - *id006
+  image: registry.gitlab.com/synsense-sys-int/inivation/infra/docker-files/archlinux:latest
+  interruptible: false
+  needs:
+  - release_archive_submodules
+  rules:
+  - if: $CI_COMMIT_TAG
+  - if: $CI_PIPELINE_SOURCE == "web" && $RELEASE == "Arch" && $RELEASE_VERSION
+  script:
+  - cd packaging/linux/
+  - ./arch-release.sh --pkg-name "${CI_PROJECT_NAME}" --pkg-version "${VERSION_NAME}"
+  stage: deploy
+release_archive_submodules:
+  image: registry.gitlab.com/synsense-sys-int/inivation/infra/docker-files/ubuntu:rolling
+  interruptible: false
+  rules:
+  - if: $CI_COMMIT_TAG
+  - if: $CI_PIPELINE_SOURCE == "web" && $RELEASE && $RELEASE_VERSION
+  script:
+  - if [[ -n "${RELEASE}" ]] ; then exit 0; fi
+  - git-archive-all "${CI_PROJECT_NAME}-${CI_COMMIT_TAG}.zip"
+  - 'curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file "${CI_PROJECT_NAME}-${CI_COMMIT_TAG}.zip"
+    "${PACKAGE_REGISTRY_URL}/${CI_COMMIT_TAG}/${CI_PROJECT_NAME}-${CI_COMMIT_TAG}.zip"'
+  - git-archive-all "${CI_PROJECT_NAME}-${CI_COMMIT_TAG}.tar.gz"
+  - 'curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file "${CI_PROJECT_NAME}-${CI_COMMIT_TAG}.tar.gz"
+    "${PACKAGE_REGISTRY_URL}/${CI_COMMIT_TAG}/${CI_PROJECT_NAME}-${CI_COMMIT_TAG}.tar.gz"'
+  - aws s3 cp "${CI_PROJECT_NAME}-${CI_COMMIT_TAG}.zip" "s3://release.inivation.com/libcaer/${CI_PROJECT_NAME}-${CI_COMMIT_TAG}.zip"
+  - aws s3 cp "${CI_PROJECT_NAME}-${CI_COMMIT_TAG}.tar.gz" "s3://release.inivation.com/libcaer/${CI_PROJECT_NAME}-${CI_COMMIT_TAG}.tar.gz"
+  stage: deploy
+  variables:
+    GIT_STRATEGY: clone
+release_fedora:
+  before_script:
+  - mkdir -p ~/.config/
+  - cp "${COPR_API_KEY}" ~/.config/copr
+  - *id006
+  image: registry.gitlab.com/synsense-sys-int/inivation/infra/docker-files/fedora:latest
+  interruptible: false
+  needs:
+  - release_archive_submodules
+  rules:
+  - if: $CI_COMMIT_TAG
+  - if: $CI_PIPELINE_SOURCE == "web" && $RELEASE == "Fedora" && $RELEASE_VERSION
+  script:
+  - cd packaging/fedora-source-package/
+  - ./packageFedora.sh --pkg-name "${CI_PROJECT_NAME}" --pkg-version "${VERSION_NAME}"
+  - copr-cli build --nowait inivation/inivation "${CI_PROJECT_NAME}-${VERSION_NAME}-0.fc36.src.rpm"
+  stage: deploy
+release_gentoo_brew:
+  before_script:
+  - mkdir -p ~/.ssh/
+  - cp "${GITCI_SSH_KEY}" ~/.ssh/id_ed25519
+  - chmod 0600 ~/.ssh/id_ed25519
+  - ssh-keyscan gitlab.com >> ~/.ssh/known_hosts
+  - cp "${GITCI_SSH_CONF}" ~/.gitconfig
+  - *id006
+  image: registry.gitlab.com/synsense-sys-int/inivation/infra/docker-files/gentoo:latest
+  interruptible: false
+  needs:
+  - release_archive_submodules
+  rules:
+  - if: $CI_COMMIT_TAG
+  - if: $CI_PIPELINE_SOURCE == "web" && $RELEASE == "GentooBrew" && $RELEASE_VERSION
+  script:
+  - cd packaging/linux/
+  - ./gentoo-release.sh --pkg-name "${CI_PROJECT_NAME}" --pkg-version "${VERSION_NAME}"
+    --pkg-category "dev-libs"
+  - ./brew-release.sh --pkg-name "${CI_PROJECT_NAME}" --pkg-version "${VERSION_NAME}"
+  stage: deploy
+release_ubuntu:
+  before_script:
+  - gpg --pinentry-mode loopback --passphrase "${PPA_GPG_KEY_PASS}" --import "${PPA_GPG_KEY}"
+  - echo -e "5\ny\n" | gpg --no-tty --command-fd 0 --edit-key "${PPA_GPG_KEY_ID}"
+    trust quit
+  - *id006
+  image: registry.gitlab.com/synsense-sys-int/inivation/infra/docker-files/ubuntu:rolling
+  interruptible: false
+  needs:
+  - release_archive_submodules
+  rules:
+  - if: $CI_COMMIT_TAG
+  - if: $CI_PIPELINE_SOURCE == "web" && $RELEASE == "Ubuntu" && $RELEASE_VERSION
+  script:
+  - cd packaging/ubuntu-source-package/
+  - ./packageUbuntu.sh --pkg-name "${CI_PROJECT_NAME}" --pkg-version "${VERSION_NAME}"
+    --distro bionic --gpg-key-id "${PPA_GPG_KEY_ID}" --gpg-key-pass "${PPA_GPG_KEY_PASS}"
+    --upload
+  - sleep 60
+  - ./packageUbuntu.sh --pkg-name "${CI_PROJECT_NAME}" --pkg-version "${VERSION_NAME}"
+    --distro focal --gpg-key-id "${PPA_GPG_KEY_ID}" --gpg-key-pass "${PPA_GPG_KEY_PASS}"
+    --upload
+  - sleep 60
+  - ./packageUbuntu.sh --pkg-name "${CI_PROJECT_NAME}" --pkg-version "${VERSION_NAME}"
+    --distro jammy --gpg-key-id "${PPA_GPG_KEY_ID}" --gpg-key-pass "${PPA_GPG_KEY_PASS}"
+    --upload
+  - sleep 60
+  - ./packageUbuntu.sh --pkg-name "${CI_PROJECT_NAME}" --pkg-version "${VERSION_NAME}"
+    --distro noble --gpg-key-id "${PPA_GPG_KEY_ID}" --gpg-key-pass "${PPA_GPG_KEY_PASS}"
+    --upload
+  stage: deploy
+variables:
+  GIT_SUBMODULE_STRATEGY: normal
+  PACKAGE_REGISTRY_URL: ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${CI_PROJECT_NAME}

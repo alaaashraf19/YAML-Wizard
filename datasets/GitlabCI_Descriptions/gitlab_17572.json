@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_17572",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 8642,
+  "description": "Create a GitLab CI pipeline with the global image tgalopin/maven-javafx and stages build, test, report, and deploy. Add a Wiki2PDF job (runs on triggers or web) that prints a banner, runs `apt-get update -y`, installs rubygems and the gems kramdown, prawn, prawn-table, clones the project wiki, creates tmp, uploads, and http directories, extracts wiki upload and HTTP/HTTPS image links with grep, creates necessary folders, downloads the resources with wget, converts all *.md files to PDF using `kramdown $0 --output pdf > $0.pdf`, and moves the PDFs, uploads, http and tmp folders into a wikis directory, storing all untracked files as artifacts. Add a maven_jar job in the build stage that echoes a message, `cd Notes`, runs `mvn jfx:jar -B -Dmaven.test.skip=true`, and echoes completion. Add a maven_native job also in build that runs only on release tags, echoes, `cd Notes`, runs `mvn jfx:native -B -Dmaven.test.skip=true`, and echoes. Add a maven_test job in the test stage that echoes, `cd Notes`, runs `mvn test -B`, echoes, and uploads the Surefire reports under Notes/target/surefire-reports/ as artifacts. Add a reports job in the report stage using the node:4.2.2 image, runs only on master, depends on maven_test, `cd ./scripts`, runs `npm install`, then `./loc.sh` and `./test.sh`, and publishes scripts/loc and scripts/test as artifacts. Finally, add a pages job in the deploy stage that runs only on master, depends on reports, creates `public/loc/`, moves `scripts/loc/` and `scripts/test/` into `public/`, and publishes the public directory as a GitLab Pages artifact with a 14‑day expiration.",
+  "tags": [
+    "wiki2pdf",
+    "ruby",
+    "kramdown",
+    "maven",
+    "javafx",
+    "node",
+    "npm",
+    "gitlab-pages"
+  ]
+}

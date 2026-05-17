@@ -1,0 +1,16 @@
+{
+  "sha": "454ecdfb4244705e0886ee255d4a9f98eb3e42eb389827071730ba584c6987b1",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2624,
+  "description": "Create a GitHub Actions workflow named CI that runs on push to main, on pull requests to any branch, and on a weekly schedule. The workflow has three jobs: build, no-optional-deps, and upstream-dev. The build job runs on a matrix of Python versions 3.8, 3.9, 3.10 and OS ubuntu-latest, setting up a Miniconda environment, installing dependencies, running tests with pytest and coverage, and uploading coverage to Codecov. The no-optional-deps and upstream-dev jobs run on ubuntu-latest, setting up a Miniconda environment and running tests with pytest.",
+  "tags": [
+    "python",
+    "conda",
+    "miniconda",
+    "pytest",
+    "codecov",
+    "ci",
+    "ubuntu"
+  ]
+}

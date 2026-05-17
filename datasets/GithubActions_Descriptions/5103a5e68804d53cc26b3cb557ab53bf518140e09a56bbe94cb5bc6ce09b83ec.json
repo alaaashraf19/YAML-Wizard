@@ -1,0 +1,16 @@
+{
+  "sha": "5103a5e68804d53cc26b3cb557ab53bf518140e09a56bbe94cb5bc6ce09b83ec",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2111,
+  "description": "Create a GitHub Actions workflow named ROS 2 CI that runs on pull requests to the ros2 and ros2/* branches. The workflow should have two jobs: test_environment running on macOS-latest and windows-latest for ROS 2 distributions dashing, eloquent, and foxy; and test_environment_linux running on ubuntu-latest with a matrix of ROS 2 distributions and Docker images. Each job should set up the ROS environment and run build and test steps.",
+  "tags": [
+    "ros2",
+    "ci",
+    "macos",
+    "windows",
+    "ubuntu",
+    "docker",
+    "tests"
+  ]
+}

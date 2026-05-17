@@ -1,0 +1,180 @@
+.deploy_to_env:
+  before_script:
+  - mkdir -p ~/.ssh && chmod 0700 ~/.ssh
+  - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
+  - chmod 644 ~/.ssh/known_hosts
+  cache:
+    paths:
+    - .pip/
+    - .pypoetry/
+  except:
+    refs:
+    - template
+    variables:
+    - $DPT_AUTO_DEPLOY_ENABLED != "true"
+    - $CI_JOB_MANUAL != "true" && $CI_COMMIT_MESSAGE =~ /skip[\- ]?deploy/
+    - $CI_JOB_MANUAL != "true" && $CI_COMMIT_MESSAGE =~ /no[\- ]?deploy/
+  stage: deploy
+  tags:
+  - office
+  variables:
+    ANSIBLE_CONFIG: ansible-ci.cfg
+    PIP_CACHE_DIR: ${CI_PROJECT_DIR}/.pip
+    POETRY_CACHE_DIR: ${CI_PROJECT_DIR}/.pypoetry
+.deploy_to_test:
+  extends: .deploy_to_env
+  script:
+  - ./scripts/deploy/autodeploy.sh ${DPT_AUTO_DEPLOY_ENVIRONMENT} ${DPT_AUTO_DEPLOY_HOSTNAME}
+    ${DPT_AUTO_DEPLOY_TEST_VAULT_PASSWORD} ${CI_COMMIT_SHA}
+  variables:
+    ANSIBLE_CONFIG: ansible-ci.cfg
+    DPT_AUTO_DEPLOY_ENVIRONMENT: test
+    DPT_AUTO_DEPLOY_HOSTNAME: '{{ cookiecutter.test_host }}'
+    PIP_CACHE_DIR: ${CI_PROJECT_DIR}/.pip
+    POETRY_CACHE_DIR: ${CI_PROJECT_DIR}/.pypoetry
+.publish_image:
+  except:
+  - template
+  needs: []
+  script:
+  - ./scripts/images/publish-prod-image.sh ${PUBLISH_NAME} ${PUBLISH_DOCKER_FILE}
+  stage: build
+before_script:
+- docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+build_compose_file:
+  except:
+  - template
+  needs: []
+  script:
+  - make settings
+  - ./scripts/images/prod-version-env.sh >> .env
+  - docker compose -f docker-compose.production.yml build
+  stage: build
+deploy_to_live:
+  extends: .deploy_to_env
+  only:
+  - tags
+  script:
+  - ./scripts/deploy/create-sentry-release.sh
+  - ./scripts/deploy/autodeploy.sh ${DPT_AUTO_DEPLOY_ENVIRONMENT} ${DPT_AUTO_DEPLOY_HOSTNAME}
+    ${DPT_AUTODEPLOY_LIVE_VAULT_PASSWORD} ${CI_COMMIT_SHA}
+  - ./scripts/deploy/finalize-sentry-release.sh
+  variables:
+    ANSIBLE_CONFIG: ansible-ci.cfg
+    DPT_AUTO_DEPLOY_ENVIRONMENT: live
+    DPT_AUTO_DEPLOY_HOSTNAME: production.{{ cookiecutter.live_domain_name }}
+    PIP_CACHE_DIR: ${CI_PROJECT_DIR}/.pip
+    POETRY_CACHE_DIR: ${CI_PROJECT_DIR}/.pypoetry
+deploy_to_test:
+  extends: .deploy_to_test
+  only:
+  - master
+image: registry.gitlab.com/thorgate-public/django-project-template/ci:latest
+manual_deploy_to_test:
+  extends: .deploy_to_test
+  when: manual
+publish_django:
+  extends: .publish_image
+  variables:
+    PUBLISH_DOCKER_FILE: Dockerfile-django.production
+    PUBLISH_NAME: django
+publish_node:
+  extends: .publish_image
+  variables:
+    PUBLISH_DOCKER_FILE: Dockerfile-node.production
+    PUBLISH_NAME: node
+services:
+- docker:dind
+stages:
+- test
+- test-cypress
+- build
+- deploy
+test-cypress:
+  except:
+    refs:
+    - template
+    variables:
+    - $CI_COMMIT_MESSAGE =~ /tests skip/
+    - $CI_COMMIT_MESSAGE =~ /test skip/
+    - $CI_COMMIT_MESSAGE =~ /\[no tests?\]/
+  script:
+  - make settings
+  - make cypress CYPRESS_DEFAULT_COMMAND_TIMEOUT=${CYPRESS_DEFAULT_COMMAND_TIMEOUT}
+  stage: test-cypress
+  tags:
+  - thorgate
+test-django:
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: '{{ cookiecutter.repo_name }}/coverage.xml'
+      junit: '{{ cookiecutter.repo_name }}/report.xml'
+  cache:
+    key: django-cache
+    paths:
+    - .data/pycache/pip
+    - .data/pycache/pypoetry
+    policy: pull-push
+  coverage: /^TOTAL.*\s+(\d+\%)$/
+  except:
+    refs:
+    - template
+    variables:
+    - $CI_COMMIT_MESSAGE =~ /tests skip/
+    - $CI_COMMIT_MESSAGE =~ /test skip/
+    - $CI_COMMIT_MESSAGE =~ /\[no tests?\]/
+  script:
+  - make settings
+  - docker compose build django
+  - make run-python cmd='entrypoint.sh -- echo "Installed dependencies"'
+  - make lint-py
+  - make coverage-py
+  - make ruff-lint-ci
+  - make patch-coverage-py-paths
+  stage: test
+  tags:
+  - thorgate
+test-node:
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: webapp/coverage/cobertura-coverage.xml
+      junit: webapp/coverage/junit.xml
+  cache:
+    key: ci-node-cache
+    paths:
+    - .data/node_modules
+    - .data/yarn
+    policy: pull-push
+  coverage: /All\sfiles.*?\s+(\d+(?:.\d+)?)/
+  except:
+    refs:
+    - template
+    variables:
+    - $CI_COMMIT_MESSAGE =~ /tests skip/
+    - $CI_COMMIT_MESSAGE =~ /test skip/
+    - $CI_COMMIT_MESSAGE =~ /\[no tests?\]/
+  script:
+  - make settings
+  - docker compose build node
+  - make node-install
+  - make lint-js
+  - make coverage-js
+  - make patch-coverage-js-paths
+  stage: test
+  tags:
+  - thorgate
+variables:
+  ANSIBLE_CONFIG: ansible-ci.cfg
+  COMPOSE_DOCKER_CLI_BUILD: '1'
+  CYPRESS_DEFAULT_COMMAND_TIMEOUT: 60000
+  DOCKER_BUILDKIT: '1'
+  DOCKER_DRIVER: overlay2
+  DPT_AUTO_DEPLOY_ENABLED: 'true'
+  DPT_VENV_CACHING: '1'
+  EDIT_SETTINGS: 'no'
+  POSTGRES_PASSWORD: '{{ cookiecutter.repo_name }}'
+  POSTGRES_USER: '{{ cookiecutter.repo_name }}'

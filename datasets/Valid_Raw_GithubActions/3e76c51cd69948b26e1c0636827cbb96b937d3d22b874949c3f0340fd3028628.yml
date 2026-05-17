@@ -1,0 +1,101 @@
+name: Linux distro build
+
+on: push
+
+jobs:
+  buster:
+    name: Debian Buster
+    runs-on: ubuntu-latest
+    container:
+      image: debian:buster
+
+    steps:
+      - name: Install git
+        run: |
+          apt-get update -qq
+          apt-get install -qq --force-yes git
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
+
+      - name: Dependencies
+        run: |
+          ./ci/buster.deps.sh
+
+      - name: Build
+        run: |
+          ./ci/buster.build.sh
+
+  fedora:
+    name: Fedora 33
+    runs-on: ubuntu-latest
+    container:
+      image: fedora:33
+
+    steps:
+      - name: Install git
+        run: |
+          dnf install git
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
+
+      - name: Dependencies
+        run: |
+          ./ci/fedora.deps.sh
+
+      - name: Build
+        run: |
+          ./ci/fedora.build.sh
+
+  suseleap:
+    name: OpenSUSE Leap
+    runs-on: ubuntu-latest
+    container:
+      image: opensuse/leap:latest
+
+    steps:
+      - name: Install git
+        run: |
+          zypper install git
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
+
+      - name: Dependencies
+        run: |
+          ./ci/suse.deps.sh
+
+      - name: Build
+        run: |
+          ./ci/suse.build.sh
+
+  susetumbleweed:
+    name: OpenSUSE Leap
+    runs-on: ubuntu-latest
+    container:
+      image: opensuse/tumbleweed:latest
+
+    steps:
+      - name: Install git
+        run: |
+          zypper install git
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
+
+      - name: Dependencies
+        run: |
+          ./ci/suse.deps.sh
+
+      - name: Build
+        run: |
+          ./ci/suse.build.sh

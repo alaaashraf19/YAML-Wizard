@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_10560",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 735,
+  "description": "Create a GitLab CI pipeline using the node:8 Docker image, with a global before_script that installs the now CLI globally via npm install -g now --unsafe-perm. Define three stages: ver, init, and deploy. In the ver stage add a ver job that runs node --version and whoami. In the init stage add an init job that runs npm install. In the deploy stage add two jobs: deploy_production (runs only on the master branch, sets the production environment at https://docs.iota.org/ and executes now -t ${NOW_TOKEN} --team iota, now -t ${NOW_TOKEN} --team iota alias -A ci-prod.json, then echo \"Deployed to production server\"); and deploy_staging (runs only on the develop branch, sets the staging environment at https://docs.staging.iota.org/ and runs now -t ${NOW_TOKEN} --team iota, now -t ${NOW_TOKEN} --team iota alias -A ci-staging.json, then echo \"Deployed to staging server\").",
+  "tags": [
+    "node",
+    "now-cli",
+    "deployment",
+    "staging",
+    "production",
+    "gitlab-ci"
+  ]
+}

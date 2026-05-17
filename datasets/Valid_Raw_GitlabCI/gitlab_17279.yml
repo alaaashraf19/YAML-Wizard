@@ -1,0 +1,15 @@
+cache:
+  paths:
+  - node_modules/
+image: node:latest
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - npm install
+  - npm run build:prod
+  - mv dist public
+  stage: deploy

@@ -1,0 +1,64 @@
+build:
+  before_script:
+  - docker info
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+  script:
+  - docker build -t $CONTAINER_CI_IMAGE .
+  - docker push $CONTAINER_CI_IMAGE
+  stage: build
+deploy-dev:
+  image: cdrx/rancher-gitlab-deploy
+  only:
+  - develop
+  script:
+  - upgrade --environment dev --stack acropole-dev --service bot
+  stage: deploy
+deploy-prod:
+  image: cdrx/rancher-gitlab-deploy
+  only:
+  - master
+  script:
+  - upgrade --environment dev --stack acropole --service bot
+  stage: deploy
+image: docker:latest
+release-image-dev:
+  before_script:
+  - docker info
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+  only:
+  - develop
+  script:
+  - docker pull $CONTAINER_CI_IMAGE
+  - docker tag $CONTAINER_CI_IMAGE $CONTAINER_DEV_IMAGE
+  - docker push $CONTAINER_DEV_IMAGE
+  stage: release
+release-image-prod:
+  before_script:
+  - docker info
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+  only:
+  - master
+  script:
+  - docker pull $CONTAINER_CI_IMAGE
+  - docker tag $CONTAINER_CI_IMAGE $CONTAINER_RELEASE_IMAGE
+  - docker push $CONTAINER_RELEASE_IMAGE
+  stage: release
+services:
+- docker:dind
+stages:
+- build
+- test
+- release
+- deploy
+test:
+  before_script:
+  - docker info
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+  script:
+  - docker pull $CONTAINER_CI_IMAGE
+  - docker run -e APP_ENV=testing $CONTAINER_CI_IMAGE
+  stage: test
+variables:
+  CONTAINER_CI_IMAGE: registry.gitlab.com/one-more/acropole/ci:$CI_COMMIT_REF_SLUG
+  CONTAINER_DEV_IMAGE: registry.gitlab.com/one-more/acropole/dev:latest
+  CONTAINER_RELEASE_IMAGE: registry.gitlab.com/one-more/acropole:latest

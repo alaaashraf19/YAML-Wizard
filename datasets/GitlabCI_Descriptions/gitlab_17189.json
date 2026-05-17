@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_17189",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 270,
+  "description": "Create a GitLab CI pipeline with two stages: test and deploy, and a global before_script that runs `make clean` then `make check` before every job. Add a test_job in the test stage that runs the shell command `script/ci/test` and is tagged with `slashdeploy`. Add a deploy_job in the deploy stage that runs the shell command `script/ci/deploy`, is tagged with `slashdeploy`, runs only on the master branch, and deploys to the production environment. No Docker image, services, caches, or artifacts are defined.",
+  "tags": [
+    "make",
+    "test",
+    "deploy",
+    "production",
+    "slashdeploy"
+  ]
+}

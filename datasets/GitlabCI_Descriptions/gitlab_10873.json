@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_10873",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1962,
+  "description": "Create a GitLab CI pipeline using the registry.gitlab.com/gitlab-examples/kubernetes-deploy Docker image and the stages build, test, doc, review, staging, canary, production, and cleanup. Add a build job in the build stage that runs `command build` on all branches. Add test jobs (coveralls-integration-test, cucumber-mysql-acceptance-test, cucumber-postgres-acceptance-test, rspec-mysql-unit-test, rspec-postgres-unit-test, rubocop-static-analysis-test, sast, simplecov-code-coverage) in the test stage each executing `exit 0`. Add a tanuki-docs job in the doc stage that runs `exit 0`. Add a review job in the review stage that runs `command deploy`, creates a review environment named `review/$CI_COMMIT_REF_NAME` with URL `http://$CI_PROJECT_PATH_SLUG-$CI_ENVIRONMENT_SLUG.$KUBE_DOMAIN` and an on‑stop action `stop_review`, runs on branches except master, and pairs with a manual stop_review job in the cleanup stage that runs `command destroy` with GIT_STRATEGY none. Add staging, canary, blue, and green jobs in their respective stages (staging, canary, production) that run on the master branch only, set environment names and URLs (prodblue, prodgreen, staging), execute `command deploy` (or `command canary` for canary), and are manual where specified.",
+  "tags": [
+    "kubernetes-deploy",
+    "review",
+    "staging",
+    "canary",
+    "production",
+    "manual",
+    "test",
+    "doc",
+    "cleanup"
+  ]
+}

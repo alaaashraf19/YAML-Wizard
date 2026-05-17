@@ -1,0 +1,47 @@
+create-html:
+  artifacts:
+    expire_in: 4 weeks
+    paths:
+    - public
+  before_script:
+  - git submodule sync --recursive
+  - git submodule update --init --recursive
+  image: registry.gitlab.com/oer/emacs-reveal/emacs-reveal:9.17.4
+  only:
+  - master
+  script:
+  - emacs --batch --load elisp/publish.el
+  - find public -type f -regex '.*\.\(html\|js\|css\)$' -exec gzip -f -k {} \;
+  - mkdir public/pdfs
+  - chmod 777 public/pdfs
+  - find "$(pwd -P)/public" -type f -regex '.*/Operating-Systems-[A-Za-z-]+\.html'
+    > public/pdfs/urls.txt
+  stage: build
+generate-pdf:
+  artifacts:
+    expire_in: 4 weeks
+    paths:
+    - public
+  image: registry.gitlab.com/oer/emacs-reveal/selenium-chrome
+  only:
+  - master
+  script:
+  - python3 "/root/selenium-print-pdf.py" "$(pwd -P)/public/pdfs/urls.txt" selenium__standalone-chrome
+    "$(pwd -P)/public/pdfs"
+  services:
+  - selenium/standalone-chrome
+  stage: selenium
+pages:
+  artifacts:
+    expire_in: 4 weeks
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - echo "Dummy"
+  stage: deploy
+stages:
+- build
+- selenium
+- deploy

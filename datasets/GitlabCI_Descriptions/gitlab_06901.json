@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_06901",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 3063,
+  "description": "Create a GitLab CI pipeline using the docker:latest image with a docker:dind service, define variables DIMG_BACKEND, DIMG_FRONTEND, DOCKER_DRIVER, MAVEN_OPTS and SPRING_PROFILES_ACTIVE, and set up the stages build, test, docker-build, docker-test, and docker-release. In the build stage add a maven-build job (image maven:3-jdk-8-alpine) that runs `mvn package -B -Dnews-api.apikey=$NEWS_APIKEY`, caches the .m2/ directory under key rest-mvn, and publishes the JAR files in news‑rest/target/*.jar as artifacts, and a news-frontend-build job (image node:8-alpine) that `cd news-frontend`, runs `npm install` and `./node_modules/@angular/cli/bin/ng build`, caches news‑frontend/node_modules under key news-frontend, and stores the dist folder as an artifact. In the test stage add a maven-test job (same Maven image) executing `mvn integration-test -B -Dnews-api.apikey=$NEWS_APIKEY` with the same cache, and a news-frontend-test job (image registry.gitlab.com/dmejer/node-chrome-docker-img:master) that starts Xvfb, sets DISPLAY, `cd news-frontend`, removes package-lock.json, runs `npm install` and `./node_modules/@angular/cli/bin/ng test --watch=false --browsers ChromeHeadless`. In the docker-build stage add news-frontend-docker-build and news-rest-docker-build jobs that each run a before_script to log in to registry.gitlab.com, then `docker build -t $DIMG_FRONTEND:latest news-frontend/` (or `$DIMG_BACKEND:latest news-rest/`) and `docker push` the latest tag. In the docker-test stage add news-frontend-docker-test and news-rest-docker-test jobs that pull the latest images and run containers (`docker run -e NEWS_API_URL=\"http://localhost:8080\" -d $DIMG_FRONTEND:latest` and `docker run -p 8080:8080 -e news-api.apikey=\"$NEWS_APIKEY\" -d $DIMG_BACKEND:latest`). Finally, in the docker-release stage add news-frontend-docker-release and news-rest-docker-release jobs that run only on the master branch, pull the latest images, retag them with `$CI_COMMIT_REF_SLUG`, and push the versioned tags to the GitLab Container Registry.",
+  "tags": [
+    "maven",
+    "node",
+    "docker",
+    "dind",
+    "angular",
+    "spring",
+    "gitlab-ci",
+    "ci-cd"
+  ]
+}

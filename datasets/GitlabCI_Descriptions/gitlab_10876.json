@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_10876",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2199,
+  "description": "Create a GitLab CI pipeline using the ros:humble Docker image and a WS_NAME variable set to rdl_ws. Define two stages: test and pages. In the test stage add a build_and_test job that sets GIT_STRATEGY to none, retries once, and runs the following script steps in order: apt update -qq -y; apt install -qq -y lcov gcovr; rosdep update; mkdir -p $WS_NAME/src && cd $WS_NAME/src; git clone -b ${CI_COMMIT_REF_NAME} ${CI_REPOSITORY_URL}; cp rdl/.clang-format $HOME; cd .. && rosdep install --from-paths src -i -y --as-root apt:false; colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS=\"--coverage\" -DCMAKE_CXX_OUTPUT_EXTENSION_REPLACE=ON; colcon test; colcon test-result --verbose; cd src/$CI_PROJECT_NAME && doxygen Doxyfile; cd $CI_PROJECT_DIR/$WS_NAME; mv src/$CI_PROJECT_NAME/doxygen/ $CI_PROJECT_DIR; export LCOVDIR=$CI_PROJECT_DIR/$WS_NAME/lcov; mkdir -p $LCOVDIR; lcov -c --exclude \"install\" --initial --directory build --output-file ${LCOVDIR}/initialcoverage.info; lcov -c --directory build --output-file ${LCOVDIR}/testcoverage.info; lcov -a ${LCOVDIR}/initialcoverage.info -a ${LCOVDIR}/testcoverage.info --o ${LCOVDIR}/fullcoverage.info; lcov -e ${LCOVDIR}/fullcoverage.info \"$CI_PROJECT_DIR/$WS_NAME/src/*\" --output-file ${LCOVDIR}/projectcoverage.info; genhtml $LCOVDIR/projectcoverage.info --output-directory $LCOVDIR/coverage --branch-coverage -p $CI_PROJECT_DIR/$WS_NAME; mv $LCOVDIR/coverage $CI_PROJECT_DIR; gcovr --xml-pretty --exclude-unreachable-branches --print-summary -o $CI_PROJECT_DIR/coverage.xml --root $CI_PROJECT_DIR/$WS_NAME; cd $CI_PROJECT_DIR. The job uploads coverage/ and doxygen/ as artifacts (expire in 1 day) and publishes a Cobertura coverage report from coverage.xml, with a coverage regex, and runs only for merge requests targeting master or commits on master. In the pages stage add a pages job that depends on build_and_test, runs only on master, creates a public directory, moves the coverage and doxygen directories into public, and publishes the public/ folder as a GitLab Pages artifact.",
+  "tags": [
+    "ros",
+    "colcon",
+    "coverage",
+    "cobertura",
+    "doxygen",
+    "gitlab-pages",
+    "lcov",
+    "gcovr"
+  ]
+}

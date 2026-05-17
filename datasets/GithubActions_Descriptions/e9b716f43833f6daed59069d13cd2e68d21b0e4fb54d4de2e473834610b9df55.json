@@ -1,0 +1,14 @@
+{
+  "sha": "e9b716f43833f6daed59069d13cd2e68d21b0e4fb54d4de2e473834610b9df55",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1969,
+  "description": "Create a GitHub Actions workflow named CI for general build that triggers on push to master and tags matching v*, on pull requests to master, on workflow dispatch, and on release creation. The workflow should run on a matrix of ubuntu-latest, macos-latest, and windows-latest environments with different architectures. For each job, check out the code, configure and build the project using cmake, run tests with ctest, package with cpack, and upload build artifacts and release assets.",
+  "tags": [
+    "cmake",
+    "cross-platform",
+    "ci",
+    "release",
+    "artifacts"
+  ]
+}

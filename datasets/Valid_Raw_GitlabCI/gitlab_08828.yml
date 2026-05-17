@@ -1,0 +1,16 @@
+create-bug-release-post-triage:
+  extends: .run
+  rules:
+  - if: $BUG_RELEASE_POST_TRIAGE
+  - if: $BUG_RELEASE_POST_TRIAGE_CREATE
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/bug-release-post-triage.yml.erb/create.yml
+verify-bug-release-post-triage:
+  extends: .run
+  rules:
+  - if: $BUG_RELEASE_POST_TRIAGE
+  - if: $BUG_RELEASE_POST_TRIAGE_VERIFY
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/generated/bug-release-post-triage.yml.erb/verify.yml

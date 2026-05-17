@@ -1,0 +1,17 @@
+before_script:
+- python -V
+- pip install -r requirements.txt
+cache:
+  paths:
+  - ~/.cache/pip/
+image: python:latest
+services:
+- mysql:latest
+- postgres:latest
+test:
+  script:
+  - python manage.py test
+  variables:
+    DATABASE_URL: postgresql://postgres:postgres@postgres:5432/$POSTGRES_DB
+variables:
+  POSTGRES_DB: database_name

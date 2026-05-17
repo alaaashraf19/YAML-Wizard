@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_04613",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 623,
+  "description": "Create a GitLab CI pipeline that runs a before_script executing `docker info` for every job and defines three stages: build_image, reduce_image_size, and upload. In the build_image stage add four jobs: build_odoo8_branch_on_trusty runs `docker build -t ubuntu1404-odoo8 -f ubuntu-14-04/8.0/Dockerfile .`; build_odoo9_branch_on_trusty runs `docker build -t ubuntu1404-odoo9 -f ubuntu-14-04/9.0/Dockerfile .`; build_odoo_saas10_branch_on_trusty runs `docker build -t ubuntu1404-saas10 -f ubuntu-14-04/saas-10/Dockerfile .`; and build_odoo_saas9_branch_on_trusty runs `docker build -t ubuntu1404-saas9 -f ubuntu-14-04/saas-9/Dockerfile .`. No caches, artifacts, or conditional rules are defined, and the pipeline does not deploy any images.",
+  "tags": [
+    "docker",
+    "odoo",
+    "ubuntu-14-04",
+    "ci",
+    "build-image"
+  ]
+}

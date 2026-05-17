@@ -1,0 +1,46 @@
+build:
+  artifacts:
+    paths:
+    - app/build/outputs/
+  before_script:
+  - chmod +x CI/android_sdk.sh
+  - ./CI/android_sdk.sh
+  - export ANDROID_HOME=$PWD/android-sdk-linux
+  - chmod +x ./gradlew
+  image: openjdk:8-jdk
+  script:
+  - ./gradlew assembleDebug
+  stage: deploy
+  tags:
+  - linux
+  - docker
+pages:
+  artifacts:
+    paths:
+    - public
+  script:
+  - mv app/build/reports/jacoco/testDebugUnitTestCoverage/html/ public/
+  stage: deploy
+stages:
+- test
+- deploy
+unitTest:app:
+  artifacts:
+    paths:
+    - app/build/reports/
+  before_script:
+  - chmod +x CI/android_sdk.sh
+  - ./CI/android_sdk.sh
+  - export ANDROID_HOME=$PWD/android-sdk-linux
+  - chmod +x ./gradlew
+  image: openjdk:8-jdk
+  script:
+  - ./gradlew lint
+  - ./gradlew --stacktrace test
+  - ./gradlew testDebugUnitTestCoverage
+  - cat app/build/reports/jacoco/testDebugUnitTestCoverage/html/index.html
+  stage: test
+variables:
+  ANDROID_BUILD_TOOLS: 26.0.2
+  ANDROID_SDK_TOOLS: 24.4.1
+  ANDROID_TARGET_SDK: '26'

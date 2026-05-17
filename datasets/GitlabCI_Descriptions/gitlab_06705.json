@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_06705",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2447,
+  "description": "Create a GitLab CI pipeline with three stages: test, performance_audit, and release, using the Docker image registry.gitlab.com/denkmal/docker-denkmal-build:v1.1.0 for most jobs and cypress/browsers:node10.16.0-chrome77 for the lighthouse job. Add a deploy-preview job in the test stage that runs npm install -g netlify-cli@2.6.6, then yarn install, yarn run generate, and netlify deploy --site=\\\"$NETLIFY_SITE\\\" --auth=\\\"$NETLIFY_AUTH_TOKEN\\\" --dir=dist/ --message=\\\"$CI_COMMIT_MESSAGE\\\"; it runs on all branches except master when CI_PROJECT_NAMESPACE equals \\\"denkmal\\\". Add a deploy-production job in the release stage that runs npm install -g firebase-tools@6.7.1, then yarn install, yarn run generate, and firebase deploy --project \\\"${FIREBASE_PROJECT}\\\" --token \\\"${FIREBASE_TOKEN}\\\" --message \\\"$CI_COMMIT_MESSAGE\\\" --non-interactive; it runs only on the master branch when CI_PROJECT_NAMESPACE equals \\\"denkmal\\\". Include a lint job in the test stage that runs yarn install and yarn run lint, skipping scheduled pipelines, and a lighthouse job in the performance_audit stage that runs yarn global add @lhci/cli@0.3.x and lhci autorun --upload.target=temporary-public-storage --collect.settings.chromeFlags=\\\"--no-sandbox\\\"; both also skip schedules. Finally, add a test job in the test stage that runs podman-compose up -d, podman ps -a, yarn install, yarn run serve &, yarn run generate, yarn run specs, moves ./dist to ./build/dist-mock in after_script, and always archives build/dist-mock, test/logs/*, and test/screenshots/* as artifacts for one week, using the defined global variables for API URLs and tokens.",
+  "tags": [
+    "docker",
+    "netlify",
+    "firebase",
+    "lighthouse",
+    "cypress",
+    "lint",
+    "test",
+    "performance-audit",
+    "deploy-preview",
+    "deploy-production"
+  ]
+}

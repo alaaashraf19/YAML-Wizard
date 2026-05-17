@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_18447",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2224,
+  "description": "Create a GitLab CI pipeline using the docker:latest image with a docker:dind service and DOCKER_DRIVER=overlay2. Define stages build, release, and deploy, and a before_script that runs docker info, logs into the GitLab registry, installs nodejs, npm and the Heroku CLI via npm. In the build stage add a build job that pulls $CACHE_IMAGE or $RC_IMAGE, builds $BUILD_IMAGE with --pull and --cache-from $CACHE_IMAGE and $RC_IMAGE, tags it, and pushes it, using variables BUILD_IMAGE, CACHE_IMAGE, RC_IMAGE. In the release stage add three jobs: cache-image (runs on all branches except tags and master), rc-image (runs only on master), and versioned-image (runs only on tags); each pulls $BASE_TAG image, retags it to $RELEASE_TAG, and pushes it, using the shared script that runs docker image pull \"$CI_REGISTRY_IMAGE:$BASE_TAG\", docker image tag \"$CI_REGISTRY_IMAGE:$BASE_TAG\" \"$CI_REGISTRY_IMAGE:$RELEASE_TAG\", and docker image push \"$CI_REGISTRY_IMAGE:$RELEASE_TAG\" with appropriate variables. In the deploy stage add staging-app (runs on master, manual) and production-app (runs on tags, manual) jobs that log into the Heroku registry, pull the image $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA, tag it as $HEROKU_REGISTRY/$HEROKU_APP_NAME/web, push it, and release the container to Heroku with heroku container:release web -a iris-system, setting HEROKU_APP_NAME to the respective staging or production app name.",
+  "tags": [
+    "docker",
+    "docker-dind",
+    "heroku",
+    "ci-cd",
+    "release",
+    "deploy",
+    "build"
+  ]
+}

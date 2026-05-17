@@ -1,0 +1,11 @@
+before_script:
+- flutter channel beta
+- flutter upgrade
+image: cirrusci/flutter
+stages:
+- test
+unitTests:
+  script:
+  - flutter test test/widget_test.dart
+  stage: test
+variables: null

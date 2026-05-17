@@ -1,0 +1,21 @@
+{
+  "sha": "gitlab_09128",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2037,
+  "description": "Create a GitLab CI pipeline with stages test, build_image, warmup, deploy, QA and a global ruby:2.5-alpine image. In the test stage define an rspec job that runs on ruby:2.5-alpine, installs build-base git curl jq via apk, runs bundle install, then executes bundle exec rspec --color --format documentation, and a rubocop job that also installs build-base, runs bundle install and executes bundle exec rubocop; both jobs are excluded on trigger pipelines. In the build_image stage add a build_image job that runs on the docker:git image with a docker:dind service, runs ./bin/docker \"${CI_REGISTRY_IMAGE}:latest\", and only runs on the master branch (excluding triggers). In the warmup stage add a warmup job that extends the .takeoff_deploy template, uses the ${CI_REGISTRY_IMAGE}:latest image, runs /app/bin/ci_deploy, is limited to manual or trigger runs with variables $DEPLOY_ENVIRONMENT == 'gstg' and SSH/Chef credentials, and sets TAKEOFF_WARMUP=1. In the deploy stage add a deploy job extending .takeoff_deploy that also runs /app/bin/ci_deploy on the same image but only when SSH and Chef variables are present, and in the QA stage add a QA job that uses the gitlab-qa-alpine image with a docker:1.13-dind service, installs the gitlab-qa gem at version $GITLAB_QA_VERSION, runs gitlab-qa Test::Instance::Staging -- --tag smoke, and is triggered manually or by a trigger when $DEPLOY_ENVIRONMENT == \"gstg\" and required QA tokens are set.",
+  "tags": [
+    "ruby",
+    "rspec",
+    "rubocop",
+    "docker",
+    "dind",
+    "gitlab-qa",
+    "takeoff",
+    "deploy",
+    "qa",
+    "build-image",
+    "warmup",
+    "test"
+  ]
+}

@@ -1,0 +1,60 @@
+package-plugin:
+  artifacts:
+    paths:
+    - hydra.zip
+    - project_cleaner.py
+    - hydra.xml
+  script:
+  - echo plugin > hydra/build.txt
+  - echo     branch/tag:$CI_COMMIT_REF_NAME >> hydra/build.txt
+  - echo     commit:$CI_COMMIT_SHORT_SHA >> hydra/build.txt
+  - python release.py --ensure-version
+  - python release.py --qgis-xml
+  - python release.py --archive
+  stage: package
+stages:
+- test
+- package
+test-linux:
+  after_script:
+  - cd $CI_PROJECT_DIR
+  - sudo rm -rf hydra/server/build
+  - sudo rm -rf hydra/server/hydra_server.egg-info
+  script:
+  - python3 -m project_cleaner -t
+  - cd hydra/server/
+  - sudo pip install --break-system-packages .
+  - sudo rm -rf build hydra_server.egg-info
+  - cd $CI_PROJECT_DIR
+  - test -f /tmp/.X99-lock || Xvfb :99
+  - export DISPLAY=:99
+  - export PATH=/usr/lib/postgresql/13/bin:$PATH
+  - python3 -m venv --system-site-packages venv
+  - venv/bin/pip install -r hydra/requirements.txt
+  - venv/bin/pip install pytest==8.4.0
+  - venv/bin/python -m pytest -v --terrain-in-tmp tests/
+  stage: test
+  tags:
+  - linux
+test-windows:
+  script:
+  - CHCP 65001
+  - set PYTHONPATH=
+  - set PYTHONHOME=
+  - cd hydra\server\
+  - C:\PROGRA~1\hydra\languagepack\v1\Python-3.7\python.exe -m pip install .
+  - call "%ProgramFiles%\QGIS 3.28.15\bin\o4w_env.bat"
+  - set PATH=%OSGEO4W_ROOT%\apps\Qt5\bin;%OSGEO4W_ROOT%\apps\qgis-ltr\bin;"C:\Program
+    Files\7-Zip";%PATH%
+  - set PYTHONPATH=%USERPROFILE%\AppData\Roaming\QGIS\QGIS3\profiles\default;%CI_PROJECT_DIR%;%OSGEO4W_ROOT%\apps\qgis-ltr\python\plugins;%OSGEO4W_ROOT%\apps\qgis-ltr\python;%PYTHONPATH%
+  - set QT_PLUGIN_PATH=%OSGEO4W_ROOT%\apps\Qt5\plugins
+  - set PGSERVICEFILE=%USERPROFILE%\.pg_service.conf
+  - rmdir /s /q %APPDATA%\Python\Python39\site-packages
+  - pip install --force-reinstall .
+  - cd ..\..
+  - pip install -r hydra/requirements.txt
+  - pip install pytest==8.4.0
+  - python -W ignore::DeprecationWarning -m pytest -v tests
+  stage: test
+  tags:
+  - hyd-app-v3

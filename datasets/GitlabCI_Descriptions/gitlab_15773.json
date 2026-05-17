@@ -1,0 +1,12 @@
+{
+  "sha": "gitlab_15773",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 139,
+  "description": "Create a GitLab CI pipeline that runs npm install as a before_script, and defines two jobs in the default test stage named test:0.12 and test:latest. The test:0.12 job uses the node:0.12 Docker image and executes the shell command npm test. The test:latest job uses the node:latest Docker image and also runs npm test, with no caches, artifacts, or special rules defined.",
+  "tags": [
+    "node",
+    "npm",
+    "test"
+  ]
+}

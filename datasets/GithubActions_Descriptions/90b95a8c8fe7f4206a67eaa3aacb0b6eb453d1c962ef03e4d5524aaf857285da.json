@@ -1,0 +1,15 @@
+{
+  "sha": "90b95a8c8fe7f4206a67eaa3aacb0b6eb453d1c962ef03e4d5524aaf857285da",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2952,
+  "description": "Create a GitHub Actions workflow that builds wheels for a Python project on multiple platforms and releases them to PyPI. The workflow should trigger on published releases and use a matrix strategy to build wheels on macOS, Ubuntu, and Windows. It should install dependencies, build wheels using cibuildwheel, and upload the resulting wheels as artifacts. A second job should download the artifacts and publish the wheels to PyPI using the PyPI API token from secrets.",
+  "tags": [
+    "python",
+    "release",
+    "cibuildwheel",
+    "pypi",
+    "wheels",
+    "multi-platform"
+  ]
+}

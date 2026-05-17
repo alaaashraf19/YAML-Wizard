@@ -1,0 +1,14 @@
+{
+  "sha": "56fffb09db3f6d99cd1f0fad7ba4cc3d65505c74e97475d42bef08e85eb70bdf",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 773,
+  "description": "Create a CodeQL GitHub Actions workflow that analyzes code on every push to the master branch, on pull requests to master, and weekly on a scheduled basis. Run the analysis on a matrix of Windows, macOS, and Ubuntu environments with read permissions for actions and contents, and write permissions for security events. The workflow checks out the repository, initializes CodeQL for C++ with a custom config file, sets up luamake, runs luamake, and performs the CodeQL analysis.",
+  "tags": [
+    "codeql",
+    "cpp",
+    "luamake",
+    "schedule",
+    "security"
+  ]
+}

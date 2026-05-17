@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_09852",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2041,
+  "description": "Create a GitLab CI pipeline with two stages (build and test). Define a global before_script that installs luajit and luarocks, then add a build job (stage build) that echoes a message, runs `luajit ./bin/construct.lua --source src --output titanium.lua`, stores `titanium.lua` as an artifact named `devel_${CI_BUILD_NAME}_${CI_BUILD_REF_NAME}`, runs in the production environment, and is excluded for tags. Add a build-release job (stage build) that installs ruby and curl, echoes messages, runs `luajit ./bin/construct.lua --source src --output titanium.lua` and `luajit ./bin/construct.lua --source src --output titanium.min.lua --minify`, executes `ruby bin/commentParse.rb`, builds a request body with `echo -n data= > body`, appends base64 output of `rubyout`, appends the deployment key and tag, and posts it via `curl --data \"@body\" http://harryfelton.web44.net/titanium/deliverDocs.php`; this job publishes `titanium.lua` and `titanium.min.lua` as artifacts named `release_${CI_BUILD_REF_NAME}`, runs in the release environment, and only runs on tags. Add a test job (stage test) that reuses the shared before_script (installing luajit, luarocks, cmake, luabitop, luafilesystem, penlight, luv, luaposix and cloning two repositories), depends on the build job, is excluded for tags, echoes a message and runs `luajit emu/cli.lua . bin/ci/run_test.lua titanium.lua tml`. Finally, add a test-release job (stage test) with the same before_script, depends on build-release, runs only on tags, echoes a message and runs `luajit emu/cli.lua . bin/ci/run_test.lua titanium.lua tml` followed by `luajit emu/cli.lua . bin/ci/run_test.lua titanium.min.lua tml`.",
+  "tags": [
+    "lua",
+    "luajit",
+    "luarocks",
+    "cmake",
+    "build",
+    "test",
+    "release",
+    "ruby",
+    "curl"
+  ]
+}

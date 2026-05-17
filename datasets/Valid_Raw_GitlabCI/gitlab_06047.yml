@@ -1,0 +1,99 @@
+nightly-gcc-mpi:
+  allow_failure: true
+  image: fedora:31
+  rules:
+  - if: $CI_PIPELINE_SOURCE == 'schedules'
+  - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    when: never
+  script:
+  - module load mpi/openmpi-x86_64
+  - mpirun --version
+  - export FFLAGS="-I/usr/lib64/gfortran/modules"
+  - python setup --mpi --blas=none --lapack=none --explicit-libs="-lopenblas -llapack"
+    --type=release -DENABLE_PDE=ON -DSITE=GitLab -DBUILDNAME=$CI_COMMIT_REF_NAME-gcc-mpi
+  - cd build
+  - export CTEST_MAKE_NUM_PROCS=4
+  - ctest --output-on-failure -L dalton -M Nightly -T Build -T Test -T Submit
+  tags:
+  - parallel
+  variables:
+    DALTON_LAUNCHER: mpirun -n 4 --allow-run-as-root --oversubscribe --bind-to none
+    OMP_NUM_THREADS: '1'
+nightly-gcc-mpi-int64:
+  allow_failure: true
+  image: fedora:31
+  rules:
+  - if: $CI_PIPELINE_SOURCE == 'schedules'
+  - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    when: never
+  script:
+  - dnf install -y -q lapack64 lapack64-devel
+  - module load mpi/openmpi-x86_64
+  - mpirun --version
+  - python setup --int64 --mpi --blas=none --lapack=none --explicit-libs="-lopenblas64
+    -llapack64_" --type=release -DSITE=GitLab -DBUILDNAME=$CI_COMMIT_REF_NAME-gcc-mpi-int64
+  - cd build
+  - export CTEST_MAKE_NUM_PROCS=4
+  - ctest --output-on-failure -L dalton -M Nightly -T Build -T Test -T Submit
+  tags:
+  - parallel
+  variables:
+    DALTON_LAUNCHER: mpirun -n 4 --allow-run-as-root --oversubscribe --bind-to none
+    OMP_NUM_THREADS: '1'
+nightly-gcc-serial:
+  allow_failure: true
+  image: fedora:31
+  rules:
+  - if: $CI_PIPELINE_SOURCE == 'schedules'
+  - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    when: never
+  script:
+  - export FFLAGS="-I/usr/lib64/gfortran/modules"
+  - python setup --blas=none --lapack=none --explicit-libs="-lopenblas -llapack" --type=release
+    -DENABLE_PDE=ON -DSITE=GitLab -DBUILDNAME=$CI_COMMIT_REF_NAME-gcc-serial
+  - cd build
+  - export CTEST_MAKE_NUM_PROCS=4
+  - ctest -j 4 --output-on-failure -L dalton -M Nightly -T Build -T Test -T Submit
+  tags:
+  - parallel
+  variables:
+    DALTON_LAUNCHER: ''
+    OMP_NUM_THREADS: '1'
+nightly-intel:
+  allow_failure: true
+  before_script:
+  - dnf upgrade -y -q
+  - dnf install -y -q gcc gcc-c++ gcc-gfortran git make cmake python python3 redhat-rpm-config
+    findutils which procps-ng coreutils
+  - mv maintenance/oneAPI.repo /etc/yum.repos.d
+  - dnf install -y intel-oneapi-compiler-fortran intel-oneapi-compiler-dpcpp-cpp-and-cpp-classic
+    intel-oneapi-mkl intel-oneapi-mpi intel-oneapi-mpi-devel
+  - set +e
+  - . /opt/intel/inteloneapi/setvars.sh
+  - set -e
+  - uname -a
+  - lscpu
+  - free -h
+  - ifx --version
+  - icc --version
+  - icpc --version
+  - mpirun --version
+  - python3 --version
+  - git --version
+  - cmake --version
+  image: fedora:32
+  rules:
+  - if: $CI_PIPELINE_SOURCE == 'schedules'
+  - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    when: never
+  script:
+  - python setup --fc=mpiifx --cc=mpiicc --cxx=mpiicpc --mpi --mkl=sequential --type=release
+    -DSITE=GitLab -DBUILDNAME=$CI_COMMIT_REF_NAME-intel-mpi
+  - cd build
+  - export CTEST_MAKE_NUM_PROCS=4
+  - ctest --output-on-failure -L dalton -M Nightly -T Build -T Test -T Submit
+  tags:
+  - parallel
+  variables:
+    DALTON_LAUNCHER: mpirun -n 4
+    OMP_NUM_THREADS: '1'

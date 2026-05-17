@@ -1,0 +1,23 @@
+before_script:
+- apt update -yqq
+- apt install -yqq --no-install-recommends libgtk-4-dev
+image: rust:latest
+lint:clippy:
+  script:
+  - rustup component add clippy
+  - cargo clippy -- --deny warnings
+  stage: lint
+lint:fmt:
+  before_script:
+  - rustup component add rustfmt-preview
+  script: cargo fmt -- --check
+  stage: lint
+stages:
+- lint
+- test
+test:debug:
+  script: make MODE=debug test
+  stage: test
+test:release:
+  script: make MODE=release test
+  stage: test

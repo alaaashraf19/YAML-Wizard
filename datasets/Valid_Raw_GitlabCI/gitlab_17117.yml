@@ -1,0 +1,32 @@
+build:
+  artifacts:
+    paths:
+    - dist
+  image: node:17-alpine3.12
+  script:
+  - npm install
+  - npm run build
+  stage: build
+  variables:
+    NODE_OPTIONS: --openssl-legacy-provider
+include:
+- template: Code-Quality.gitlab-ci.yml
+stages:
+- build
+- test
+test:
+  image: node:17-alpine3.12
+  script:
+  - npm install
+  - npm run test
+  services:
+  - mongo:5.0
+  stage: test
+  variables:
+    API_PORT: 3000
+    ENV: dev
+    JWT_SECRET: secret
+    MONGODB_HOST: mongo
+    MONGO_INITDB_ROOT_PASSWORD: example
+    MONGO_INITDB_ROOT_USERNAME: myuser
+    NODE_OPTIONS: --openssl-legacy-provider

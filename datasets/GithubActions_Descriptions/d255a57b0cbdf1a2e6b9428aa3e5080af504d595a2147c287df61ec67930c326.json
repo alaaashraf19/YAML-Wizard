@@ -1,0 +1,18 @@
+{
+  "sha": "d255a57b0cbdf1a2e6b9428aa3e5080af504d595a2147c287df61ec67930c326",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3850,
+  "description": "Create a GitHub Actions workflow named Passenger CI tests that runs on push to stable-* and feature/* branches and on pull requests to those branches. The workflow has five jobs: cxx for C++ unit tests on macos-latest and ubuntu-latest, integration for integration tests on macos-latest and ubuntu-latest, language for unit tests on macos-latest and ubuntu-latest for Node.js and Ruby, homebrew_packaging for Homebrew packaging unit tests on macos-latest, and source_packaging for source packaging unit tests on ubuntu-latest. Each job checks out the repository, sets up the host, runs tests with or without Docker, and uploads test logs as artifacts.",
+  "tags": [
+    "passenger",
+    "ci",
+    "tests",
+    "cpp",
+    "integration",
+    "nodejs",
+    "ruby",
+    "homebrew",
+    "packaging"
+  ]
+}

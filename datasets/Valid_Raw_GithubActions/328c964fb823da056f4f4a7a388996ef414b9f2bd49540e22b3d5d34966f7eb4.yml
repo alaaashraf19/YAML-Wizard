@@ -1,0 +1,39 @@
+name: CodeQL Analysis
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: '0 8 * * *'
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        id: checkout_repo
+        uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
+
+      - name: Initialize CodeQL
+        id: init_codeql
+        uses: github/codeql-action/init@v3
+        with:
+          languages: cpp
+          queries: security-and-quality
+          config-file: ./.github/workflows/codeql-config.yml
+
+      - name: Build project
+        id: build_project
+        shell: pwsh
+        run: |
+          .\DownloadDeps.cmd
+          .\BuildAll.vs2022.cmd x64 -ci
+
+      - name: Perform CodeQL Analysis
+        id: analyze_codeql
+        uses: github/codeql-action/analyze@v3
+
+# Built with ❤ by [Pipeline Foundation](https://pipeline.foundation)

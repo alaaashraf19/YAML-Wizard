@@ -1,0 +1,47 @@
+before_script:
+- apt-get update -qq
+- export DEBIAN_FRONTEND=noninteractive
+- apt-get install -y tzdata
+- ln -fs /usr/share/zoneinfo/America/New_York /etc/localtime
+- dpkg-reconfigure --frontend noninteractive tzdata
+- apt-get -qq -y install build-essential python3  python3-dev gsl-bin libgsl-dev  python3-coverage
+  openmpi-bin libopenmpi-dev python3-pkgconfig cython3 libhdf5-openmpi-103-1 libhdf5-openmpi-dev
+  hdf5-tools git  python3-pip python3-sphinx python3-sphinxcontrib.programoutput python3-nbsphinx
+  python3-msmb-theme python3-venv twine
+build:
+  script:
+  - python3 --version
+  - python3 -m venv $VENV_DIR
+  - source $VENV_DIR/bin/activate
+  - pip install --upgrade pip
+  - pip install coverage
+  - pip install ../pNbody
+  - cd tests
+  - ./coverage.sh
+  - ./test_make_docs.sh
+  stage: build
+builddoc:
+  artifacts:
+    paths:
+    - public
+  only:
+  - pushes
+  script:
+  - cd Doc
+  - make clean
+  - make html
+  - cd ..
+  - mkdir -p public
+  - mkdir -p public/Doc
+  - mv Doc/_build/html/* public/Doc
+  stage: build
+cache:
+  paths:
+  - $VENV_DIR
+  - .cache/pip
+image: ubuntu:latest
+stages:
+- build
+- test
+variables:
+  VENV_DIR: .venv

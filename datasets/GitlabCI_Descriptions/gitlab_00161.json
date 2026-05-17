@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_00161",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 698,
+  "description": "Create a GitLab CI pipeline with a single Deploy stage and a before_script that changes to /home/gitlab-runner/deploy, fetches the latest commit, checks out the branch $CI_COMMIT_REF_NAME and pulls it. Add a Digital Ocean job in the Deploy stage that runs manually on branches, uses the tag deploy, and executes /usr/local/bin/dep/deployer.phar deploy digital-ocean --branch=\"$CI_COMMIT_REF_NAME\". Add a Google Cloud job similarly that runs manually on branches and runs /usr/local/bin/dep/deployer.phar deploy google-cloud-platform --branch=\"$CI_COMMIT_REF_NAME\". Add a Tag All job that runs manually on tags, uses the tag deploy, and runs /usr/local/bin/dep/deployer.phar deploy all --tag=\"$CI_COMMIT_TAG\".",
+  "tags": [
+    "digital-ocean",
+    "google-cloud",
+    "manual-deploy",
+    "gitlab-ci",
+    "deploy"
+  ]
+}

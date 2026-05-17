@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_00750",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 214,
+  "description": "Create a GitLab CI pipeline that uses the python:3 Docker image and defines a single stage called deploy. Add a deploy job that runs only for tag pipelines, executes `pip install -U twine setuptools wheel`, then `python setup.py bdist_wheel`, and finally `twine upload -u \"$PYPI_USER\" -p \"$PYPI_PASS\" dist/*` to publish the built wheel to PyPI using the PYPI_USER and PYPI_PASS secret variables. The job is assigned to the deploy stage and has no caches or artifacts.",
+  "tags": [
+    "python",
+    "pypi",
+    "twine",
+    "deploy",
+    "tags"
+  ]
+}

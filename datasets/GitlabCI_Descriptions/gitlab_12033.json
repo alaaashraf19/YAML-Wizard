@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_12033",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 100,
+  "description": "Create a GitLab CI pipeline that uses the node:latest Docker image and caches the node_modules/ directory. Define a single job called test that runs in the default test stage. In the test job execute the commands 'yarn install' followed by 'yarn test'. No services, artifacts, variables, or conditional rules are required.",
+  "tags": [
+    "node",
+    "yarn",
+    "cache",
+    "test"
+  ]
+}

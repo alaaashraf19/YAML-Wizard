@@ -1,0 +1,16 @@
+{
+  "sha": "467282e7f13124efc18f9e028451d81c5b2e5b0b9dd3f711f278c836a433820f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1890,
+  "description": "Create a reusable GitHub Actions workflow named Build Template that accepts board and max_size inputs. Run a single ubuntu-latest job that checks out code, sets up Python 3.11, installs UV, compiles a board with specific examples, checks the compiled program size against the provided limit, inspects the binary, generates a timestamp and random hex, uploads the build log as an artifact, and fails if the build status is not successful.",
+  "tags": [
+    "python",
+    "reusable-workflow",
+    "uv",
+    "compile",
+    "size-check",
+    "artifact",
+    "build-log"
+  ]
+}

@@ -1,0 +1,18 @@
+before_script:
+- npm install
+cache:
+  paths:
+  - node_modules/
+image: node:10.6.0
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - npm run build:prod
+  - mkdir .public
+  - cp -r dist/* .public
+  - mv .public public
+  stage: deploy

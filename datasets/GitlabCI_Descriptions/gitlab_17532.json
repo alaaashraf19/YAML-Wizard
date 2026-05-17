@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_17532",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1097,
+  "description": "Create a GitLab CI pipeline that uses the gcc Docker image and defines a single test stage. Add a job named utils:linux that runs in the test stage. In its before_script, execute a conditional exit if CI_COMMIT_REF_NAME equals \"synced/master\", then run apt-get update -qq, apt-get install -y -qq bc cmark exiftool git-annex groff libnumber-bytes-human-perl libxml2-utils sqlite3 texlive-base tzdata, echo environment variables, list timezone files, test date formatting with TZ=CET, TZ=EST and TZ=UTC, configure git user.name and user.email, set git safe.directory, clone https://gitlab.com/oyvholm/suuid.git, cd into suuid, run script -e -q -c \"make test install\", return to the parent directory and remove the cloned repository; finally, in script export PATH=$(pwd):$PATH, run make, make test and make test-clean. No caches, artifacts, services, or special rules are defined.",
+  "tags": [
+    "gcc",
+    "make",
+    "test",
+    "linux"
+  ]
+}

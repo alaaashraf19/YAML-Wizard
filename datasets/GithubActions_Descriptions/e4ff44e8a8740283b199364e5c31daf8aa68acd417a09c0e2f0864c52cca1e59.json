@@ -1,0 +1,15 @@
+{
+  "sha": "e4ff44e8a8740283b199364e5c31daf8aa68acd417a09c0e2f0864c52cca1e59",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1060,
+  "description": "Create a GitHub Actions workflow named Python package that runs on every pull request. Use a matrix strategy to test on multiple Python versions (3.6, 3.7, 3.8) and platforms (ubuntu-latest, macos-latest, windows-latest) in parallel. For each job, check out the repository, set up the corresponding Python version, install dependencies with poetry, run tests and linters, and upload coverage to Codecov on Linux.",
+  "tags": [
+    "python",
+    "pull-request",
+    "matrix",
+    "codecov",
+    "poetry",
+    "tests"
+  ]
+}

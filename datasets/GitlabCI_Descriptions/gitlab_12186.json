@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_12186",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 3847,
+  "description": "Create a GitLab CI pipeline with a docs stage containing two jobs. The sync_discovery_yml_from_hub job runs a before_script that sets git user.email and user.name, then executes echo commands and a curl to download discovery.yml from $DISCOVERY_URL, writes a header, appends the file to src/meltano/core/bundle/discovery.yml, adds it to git, creates a branch named auto-discovery-sync-$(date +%Y-%m-%d) when on a master/main branch (or uses the current branch otherwise), commits with a message including the URL and date, and pushes to the repository using the $CI_COMMITS_GITLAB_TOKEN; it runs manually, has a variable DISCOVERY_URL, and is excluded from tag pipelines. The version_bump_trigger job also configures git user, installs changelog-cli and bumpversion via pip, then runs echo commands to detect the current version with bumpversion, extracts the new version from the branch name, determines the bump type (major, minor, or patch) by comparing to dry‑run outputs, generates a changelog entry with \"changelog release --$BUMP_TYPE --yes\", adds CHANGELOG.md, bumps the version and creates a tag with bumpversion, and pushes the updates back to the repository; it runs only on release branches (via .only:release-branches) and is excluded from tag pipelines.",
+  "tags": [
+    "git",
+    "discovery-sync",
+    "version-bump",
+    "changelog",
+    "bumpversion",
+    "manual"
+  ]
+}

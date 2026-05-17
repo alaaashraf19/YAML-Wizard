@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_05520",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 542,
+  "description": "Create a GitLab CI pipeline using the briandawn/clojurebridgemn:latest Docker image, caching the .boot/, .m2/ and .lein/ directories and defining the variables BOOT_AS_ROOT='yes', BOOT_HOME=.boot/, LEIN_HOME=.lein/ and MAVEN_OPTS='-Dmaven.repo.local=.m2'. Define two stages: build and deploy. Add a test-build job in the build stage that runs the shell command 'boot build-prod' and is excluded from the master branch. Add a pages job in the deploy stage that runs 'boot build-prod', then 'mv target/public ./public', creates the ACME challenge directory with 'mkdir -p public/.well-known/acme-challenge', moves any letsencrypt files using 'mv letsencrypt/* public/.well-known/acme-challenge/', publishes the public/ directory as a Pages artifact, runs only on the master branch and not on schedules.",
+  "tags": [
+    "clojure",
+    "boot",
+    "lein",
+    "maven",
+    "gitlab-pages",
+    "deploy",
+    "build"
+  ]
+}

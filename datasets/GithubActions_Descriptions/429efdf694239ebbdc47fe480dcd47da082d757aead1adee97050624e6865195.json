@@ -1,0 +1,15 @@
+{
+  "sha": "429efdf694239ebbdc47fe480dcd47da082d757aead1adee97050624e6865195",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1453,
+  "description": "Create a GitHub Actions workflow named CI/CD that runs on push to master and develop branches and on pull requests to these branches. Use a build job with a matrix strategy to test on multiple OS and Python versions, including ubuntu-latest, macos-latest, and windows-latest with Python 3.9, and additional Python versions 3.5-3.8 and pypy3 on ubuntu-latest. For each job, check out the code, set up Python, install dependencies with make install, run tests with make test or nosetests, and upload coverage to Codecov for ubuntu-latest with Python 3.9.",
+  "tags": [
+    "python",
+    "ci",
+    "cd",
+    "matrix",
+    "coverage",
+    "codecov"
+  ]
+}

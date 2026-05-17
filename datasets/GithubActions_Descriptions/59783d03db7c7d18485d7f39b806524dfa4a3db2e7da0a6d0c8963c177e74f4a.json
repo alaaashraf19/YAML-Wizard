@@ -1,0 +1,15 @@
+{
+  "sha": "59783d03db7c7d18485d7f39b806524dfa4a3db2e7da0a6d0c8963c177e74f4a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1890,
+  "description": "Create a GitHub Actions workflow named Windows that runs on every push to the master branch and on pull requests to master. Use a single windows-latest job that checks out the repository, sets up the MSVC development environment, configures CMake with Release build type and tests enabled, builds the project, starts a TLS offloader proxy to mimic a non-secure ClickHouse instance, and runs the C++ unit tests with a specified filter.",
+  "tags": [
+    "windows",
+    "cmake",
+    "clickhouse",
+    "cpp",
+    "tests",
+    "tls"
+  ]
+}

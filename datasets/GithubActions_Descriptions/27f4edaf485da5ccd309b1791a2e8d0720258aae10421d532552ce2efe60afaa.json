@@ -1,0 +1,15 @@
+{
+  "sha": "27f4edaf485da5ccd309b1791a2e8d0720258aae10421d532552ce2efe60afaa",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 984,
+  "description": "Create a GitHub Actions workflow named build and test on ubuntus that can be triggered manually. The workflow should run on a matrix of ubuntu-18.04 and ubuntu-20.04. For each OS, check out the repository, retrieve gtest, install dependencies with apt-get, configure CMake, and then run tests with ctest in multiple configurations: gcc debug mode, gcc portable file mode, and clang release mode.",
+  "tags": [
+    "ubuntu",
+    "cmake",
+    "gcc",
+    "clang",
+    "ctest",
+    "matrix"
+  ]
+}

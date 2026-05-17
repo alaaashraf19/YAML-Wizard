@@ -1,0 +1,16 @@
+{
+  "sha": "187f55c9002c9fd88a498a078c9be2fc5775b26466822416d597c10f53c5a3a5",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 9607,
+  "description": "Create a GitHub Actions workflow named Continuous Integration that runs on every push to any branch and tag matching v*.*.*, and on pull requests to the develop branch. The workflow uses a concurrency group to cancel in-progress jobs and consists of three jobs: cpp-matrix, build, and docs. The cpp-matrix job generates a test matrix for C++ compilers and standards. The build job uses the test matrix to build and test the code with various compilers, standards, and configurations, and uploads packages to GitHub. The docs job publishes documentation to the gh-pages branch.",
+  "tags": [
+    "cpp",
+    "github-actions",
+    "ci",
+    "cd",
+    "ubuntu",
+    "docs",
+    "release"
+  ]
+}

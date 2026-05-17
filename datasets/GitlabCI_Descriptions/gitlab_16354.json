@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_16354",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1237,
+  "description": "Create a GitLab CI pipeline with two stages, test and deploy. In the test stage add a UnitTest job that uses the python:3.6 Docker image, runs before_script commands: wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add, echo \\\"deb http://dl.google.com/linux/chrome/deb/ stable main\\\" > /etc/apt/sources.list.d/google.list, pip install -r requirements.txt, python manage.py migrate --run-syncdb, python manage.py makemigrations, python manage.py migrate, apt-get update -qq && apt-get install -y -qq unzip, apt-get install -y google-chrome-stable, apt-get install -y xvfb, wget https://chromedriver.storage.googleapis.com/2.32/chromedriver_linux64.zip, unzip chromedriver_linux64.zip, python manage.py collectstatic --no-input, python manage.py runserver 8000 &, then script commands: coverage run --include='app_*/*' manage.py test and coverage report -m, and it runs only on_success. In the deploy stage add a Deployment job that uses the ruby:2.4 image, before_script installs the dpl gem and the Heroku CLI via wget -qO- https://cli-assets.heroku.com/install-ubuntu.sh | sh, then script runs dpl --provider=heroku --app=$HEROKU_APPNAME --api-key=$HEROKU_APIKEY, exports HEROKU_API_KEY=$HEROKU_APIKEY, and executes heroku run --app $HEROKU_APPNAME migrate, targeting the Heroku production environment with name production and URL $HEROKU_APP_HOST.",
+  "tags": [
+    "python-3.6",
+    "ruby-2.4",
+    "heroku",
+    "dpl",
+    "coverage",
+    "chrome",
+    "gitlab-ci"
+  ]
+}

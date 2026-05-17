@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_07192",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2861,
+  "description": "Create a GitLab CI pipeline using the ubuntu:20.04 Docker image with mariadb:latest and postgres:14 services, and define MySQL and PostgreSQL credential variables. In the build stage add a build_nightly job that runs the global before_script `bash ci/docker_install.sh`, then `apt-get install rsync npm nodejs wget make`, `npm install -g npm@^8.0.0`, `make`, `version=nightly make appstore`, and `mv /tmp/build/phonetrack-nightly.tar.gz ./`, stores `phonetrack-nightly.tar.gz` as an artifact, and runs only on refs named build. In the test stage add a phpunit_tests job that uses the `php:$PHP_VERSION` image, runs the same global before_script, and for each matrix combination of DATABASE (pgsql, mysql, sqlite), PHP_VERSION (7.4, 8.0, 8.1) and SERVER_VERSION (stable25, master) executes conditional `docker-php-ext-install` for the selected database, sets DB_HOST/DB_USER/DB_PASSWORD, copies the repo to `/tmp/phonetrack`, clones the Nextcloud server at `$SERVER_VERSION`, patches the autoloader, moves the app into the Nextcloud apps folder, runs `php occ maintenance:install` with the database parameters, enables the phonetrack app, disables maintenance mode, and runs `phpunit` (with Xdebug coverage only for sqlite + master + PHP 8.1); it archives the `coverage` directory as an artifact and runs on refs master or test. In the deploy stage add a pages job that depends on phpunit_tests, runs its own before_script `echo 'nothing to install for pages jobs'`, then `sleep 5`, `mkdir public`, `mv coverage public/`, and publishes the `public/` directory as a GitLab Pages artifact, running only on the master branch.",
+  "tags": [
+    "ubuntu-20.04",
+    "php",
+    "nextcloud",
+    "phonetrack",
+    "gitlab-pages",
+    "docker",
+    "mariadb",
+    "postgres",
+    "matrix-testing",
+    "make"
+  ]
+}

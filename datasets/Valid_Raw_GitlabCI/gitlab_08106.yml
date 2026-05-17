@@ -1,0 +1,10 @@
+before_script:
+- ci/install-chrome
+- npm install
+cache:
+  paths:
+  - node_modules/
+image: node:latest
+test:
+  script:
+  - xvfb-run -a npm test

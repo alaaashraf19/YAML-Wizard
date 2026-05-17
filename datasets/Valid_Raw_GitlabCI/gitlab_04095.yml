@@ -1,0 +1,22 @@
+chefspec:
+  script:
+  - chef exec rspec spec
+  stage: unit
+cookstyle:
+  script:
+  - chef exec cookstyle .
+  stage: lint
+foodcritic:
+  script:
+  - chef exec foodcritic .
+  stage: lint
+image: chef/chefdk
+services:
+- docker:dind
+stages:
+- lint
+- unit
+- functional
+variables:
+  DOCKER_HOST: tcp://docker:2375
+  KITCHEN_LOCAL_YAML: .kitchen.dokken.yml

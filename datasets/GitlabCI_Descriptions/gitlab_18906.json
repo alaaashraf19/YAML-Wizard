@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_18906",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 370,
+  "description": "Create a GitLab CI pipeline using the node:8 Docker image. Define a cache keyed by $CI_BUILD_REF_NAME that stores the node_modules/ directory and includes untracked files. Add a deploy stage with a build_and_deploy_job that runs only on the master branch, sets the production environment with URL https://www.buytwitter.org, runs a before_script to globally install gulp, then executes npm install -q, copies config-prod.js to config.js, runs gulp build and gulp deploy. No services or artifacts are defined.",
+  "tags": [
+    "node",
+    "gulp",
+    "npm",
+    "deploy",
+    "production",
+    "cache"
+  ]
+}

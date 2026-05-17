@@ -1,0 +1,21 @@
+build:
+  script:
+  - cargo build
+  stage: build
+image: scorpil/rust:stable
+pages:
+  artifacts:
+    paths:
+    - public
+  script:
+  - cargo doc
+  - cp -r target/doc public
+  stage: deploy
+stages:
+- build
+- test
+- deploy
+test:
+  script:
+  - cargo test
+  stage: test

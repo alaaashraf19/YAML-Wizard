@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_04483",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1604,
+  "description": "Create a GitLab CI pipeline that uses the golang:stretch Docker image and defines the variables CGO_CFLAGS, GOARCH, GOHOSTOS, and REPO_NAME. Add a before_script that updates apt, installs libhwloc-dev, libgl1-mesa-dev, ocl-icd-opencl-dev, libwebkit2gtk-4.0-dev and cmake, creates a symlink from /builds to $GOPATH/src/gitlab.com, and changes directory to the project path. Define three stages: prepare, build, and deploy. In the prepare stage, create a dep job that runs go get -u github.com/golang/dep/cmd/dep and dep ensure -vendor-only, and a libhash job that runs cmake -Hhash -Bhash/build and cmake --build hash/build, both storing all untracked files as artifacts for one week. In the build stage, add a compile job that runs go get -u github.com/gobuffalo/packr/..., go generate, sets TAG, CI_COMMIT_TAG, VERSION variables, builds the binary with go build -ldflags \"-s -w -X main.VERSION=$VERSION\", packages it with tar cjf blockforge-$VERSION-$GOHOSTOS-$GOARCH.tar.bz2 blockforge, computes its sha256sum, and uploads the tarball as an artifact, and also add a test job that runs go fmt, go vet, and go test -race on all non‑vendor packages. Finally, in the deploy stage, add an upload job that runs a curl command to upload the generated tarball to Bintray using the $BINTRAY_APIKEY and only executes on tag pipelines.",
+  "tags": [
+    "golang",
+    "go",
+    "cmake",
+    "bintray",
+    "docker-image",
+    "prepare-stage",
+    "build-stage",
+    "deploy-stage"
+  ]
+}

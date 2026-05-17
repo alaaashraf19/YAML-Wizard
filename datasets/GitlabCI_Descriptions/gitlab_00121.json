@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_00121",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1770,
+  "description": "Create a GitLab CI pipeline with three stages: build, test, and docs. In the build stage add a .build-shell job (tags build and shell) that runs cmake -D TRILINOS_PATH:PATH=$TRILINOS_PATH -D LIBXC_PATH:PATH=$LIBXC_PATH -D GSL_PATH:PATH=$GSL_PATH -D CMAKE_CXX_FLAGS:STRING=\"-std=c++11 -O2 -Wno-unused-parameter -Wno-sign-compare -I${MPI_INCLUDE_PATH}\" -D ENABLE_CI:BOOL=FALSE ./ and then make -j2, and stores the resulting ace directory as an artifact for 1 day. Also in the build stage add a build-docker job (tags build, docker) using the ace-molecule-build:latest image that runs cmake -D TRILINOS_PATH:PATH=/usr/local -D LIBXC_PATH:PATH=/opt/etsf -D MKL_PATH:PATH=/opt/intel/mkl -D CMAKE_CXX_FLAGS:STRING=\"-std=c++11 -fopenmp -O3 -w\" . and make -j8, publishing the ace directory as a 1‑day artifact. In the test stage add an acceptance-test job (tag test) using ace-molecule-build:latest that cd's into test/acceptance-test and runs python3 run-test.py --notemp, always uploading any *.log files from that directory as a 1‑week artifact, and a run-cpplint job (tag test) also on ace-molecule-build:latest that runs cpplint with recursive excludes and filters, redirects output to cpplint.log, allows failure, and always stores cpplint.log as a 1‑week artifact while echoing the last five lines after the job. Finally, in the docs stage add a build-docs job (tag docs) using ace-molecule-build:latest that exports GIT_NUMBER from git commands, runs doxygen Doxyfile, and keeps the generated doxygen directory as an artifact.",
+  "tags": [
+    "c++",
+    "cmake",
+    "make",
+    "docker",
+    "ace-molecule-build",
+    "cpplint",
+    "doxygen",
+    "python3",
+    "gitlab-ci"
+  ]
+}

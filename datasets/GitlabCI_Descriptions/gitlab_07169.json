@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_07169",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1001,
+  "description": "Create a GitLab CI pipeline with two stages: build and deploy. Use the eclipse-temurin:21 Docker image for the build job, which sets GRADLE_OPTS variable to -Dorg.gradle.daemon=false, runs ./gradlew publish --stacktrace, and stores the generated Maven repository as an artifact named emc-$CI_COMMIT_SHORT_SHA-snapshot containing the maven directory. Use the node:latest Docker image for the deploy job, which runs only on tag 1.21.5, belongs to resource_group production, and before the script installs git, openssh-client and rsync, starts ssh-agent, adds the SSH_PRIVATE_KEY, configures SSH known hosts for gitlab.com, and sets git user.email and user.name from variables GIT_EMAIL and GIT_NAME. The deploy job depends on the build job, clones the remote repository git@gitlab.com:EMC-Framework/maven.git into maven-remote, rsyncs the local maven directory into it, commits with message \"EMC snapshot $CI_COMMIT_SHORT_SHA\" and pushes the changes.",
+  "tags": [
+    "java",
+    "gradle",
+    "maven",
+    "node",
+    "ssh",
+    "rsync",
+    "gitlab-ci"
+  ]
+}

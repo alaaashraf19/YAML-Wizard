@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_12542",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1593,
+  "description": "Create a GitLab CI pipeline with three stages: test, build, and pages. Use the ubuntu:focal image for a shellcheck job in the test stage that runs apt-get -qq update, apt-get -qq -y install shellcheck, and shellcheck docker/entrypoint.sh. In the build stage define three binary jobs (binary-amd64, binary-arm64, binary-arm7) using golang:latest, each setting GOARCH (and GOARM for arm7) variables, then executing go get github.com/signal-golang/textsecure, cd into the module cmd/textsecure directory, go build, and mv the resulting binary to $CI_PROJECT_DIR/signal-${GOARCH}${GOARM}, and publishing $CI_PROJECT_DIR/signal-* as artifacts. Also add a docker-multiarch job using docker:latest that runs only on the master branch, installs bash via apk, and runs bash .gitlab-ci/docker.sh with BUILDX_VERSION 0.6.1, DOCKER_DRIVER overlay2, and PLATFORMS linux/amd64,linux/arm64,linux/arm/v7, tagged with multiarch. Finally, add a pages job in the pages stage using alpine:latest that installs git and openssl via apk, downloads Hugo 0.62.1, extracts it, runs hugo version, updates git submodules, builds the site in docs with hugo, moves the generated public directory to $CI_PROJECT_DIR, and publishes the public folder as an artifact.",
+  "tags": [
+    "go",
+    "golang",
+    "docker",
+    "multiarch",
+    "pages",
+    "hugo",
+    "shellcheck",
+    "ubuntu",
+    "alpine",
+    "binary"
+  ]
+}

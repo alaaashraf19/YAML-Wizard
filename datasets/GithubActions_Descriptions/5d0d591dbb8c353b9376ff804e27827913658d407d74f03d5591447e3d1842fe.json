@@ -1,0 +1,14 @@
+{
+  "sha": "5d0d591dbb8c353b9376ff804e27827913658d407d74f03d5591447e3d1842fe",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1049,
+  "description": "Create a GitHub Actions workflow named AUR Build Test that runs on push and pull request events. Use a matrix job that runs on ubuntu-latest to build packages from different AUR paths. For each package, check out the repository with submodules and a full fetch depth, update the package version in the PKGBUILD files, build the package using the pkgbuild-action, and upload the resulting package file as an artifact.",
+  "tags": [
+    "aur",
+    "makepkg",
+    "github-actions",
+    "ubuntu",
+    "package-build"
+  ]
+}

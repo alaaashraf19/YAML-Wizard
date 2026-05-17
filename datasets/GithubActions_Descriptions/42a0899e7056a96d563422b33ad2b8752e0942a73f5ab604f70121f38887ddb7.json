@@ -1,0 +1,15 @@
+{
+  "sha": "42a0899e7056a96d563422b33ad2b8752e0942a73f5ab604f70121f38887ddb7",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3152,
+  "description": "Create a GitHub Actions workflow that runs on push, pull request, and merge group events, with concurrency control to cancel in-progress runs. The workflow tests C++ code in a matrix job with two ubuntu-latest environments, one with memory leak checking and one without. Each job checks out the repository, sets up Python 3.11 and MPI, installs dependencies, downloads libtorch, and runs various tests with specific environment variables.",
+  "tags": [
+    "c++",
+    "mpi",
+    "tensorflow",
+    "libtorch",
+    "pytest",
+    "codecov"
+  ]
+}

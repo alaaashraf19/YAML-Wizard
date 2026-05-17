@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_14516",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 3107,
+  "description": "Create a GitLab CI pipeline with a single build stage that defines six jobs: ubuntu-22.04-s390x-all-linux, ubuntu-22.04-s390x-all-system, ubuntu-22.04-s390x-alldbg, ubuntu-22.04-s390x-clang, ubuntu-22.04-s390x-notcg, and ubuntu-22.04-s390x-tci, all extending .custom_runner_template and running on runners tagged ubuntu_22.04 and s390x. Each job has no needs and is triggered only when the project namespace is \"qemu-project\" and the branch matches ^staging or when the $S390X_RUNNER_AVAILABLE variable is true; the alldbg, clang, notcg, and tci jobs are manual and allow failure. In every job the script starts with \"mkdir build\" and \"cd build\", then runs \"../configure\" with job‑specific options (e.g., --enable-debug --disable-system --disable-tools --disable-docs for all-linux, --disable-user for all-system, --enable-debug for alldbg, --cc=clang --cxx=clang++ --enable-ubsan for clang, --disable-tcg for notcg, --enable-tcg-interpreter for tci) and aborts printing config.log and meson logs on failure. After configuration each job runs \"make --output-sync -j`nproc`\"; the all-linux job also runs \"make --output-sync check-tcg\" and \"make --output-sync -j`nproc` check\", the all-system and clang jobs run \"make --output-sync -j`nproc` check\", the alldbg job runs \"make clean\" before the build and then \"make --output-sync -j`nproc` check\", and the tci job only builds without any check step. No artifacts, caches, or deployment targets are defined.",
+  "tags": [
+    "ubuntu-22.04",
+    "s390x",
+    "qemu",
+    "make",
+    "clang",
+    "tcg",
+    "debug"
+  ]
+}

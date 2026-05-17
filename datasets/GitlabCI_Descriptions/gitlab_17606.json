@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_17606",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2435,
+  "description": "Create a GitLab CI pipeline using the Docker image registry.gitlab.com/tagbottle/tagbottle.com:v1 with a global before_script that runs `yarn install` and a cache keyed by ${CI_COMMIT_REF_SLUG} pulling node_modules, functions/node_modules and hosting/node_modules. Define three stages install, build, and deploy; the install job uses a pull‑push cache and runs `yarn install`. In the build stage add a doc release job (build:doc:release) that on branches master, alpha, beta runs `cd documents && yarn run build` and stores documents/docs/.vuepress/dist as a one‑week artifact; a functions job (build:functions) that on all other branches runs `cd functions && yarn lint && yarn run build`; a functions release job (build:functions:release) on master/alpha/beta runs `cd functions && yarn run build` and archives functions/dist; a hosting job (build:hosting) on non‑release branches runs `cd hosting && yarn lint && yarn generate`; and a hosting release job (build:hosting:release) on release branches runs `cd hosting && DEPLOY_TARGET=$CI_COMMIT_REF_NAME yarn run generate` and saves hosting/dist as a one‑week artifact. In the deploy stage add three Firebase deploy jobs (deploy:alpha, deploy:beta, deploy:dev) that each depend on the hosting and functions release artifacts, run only on their respective branches (alpha, beta, master), set FIREBASE_PROJECT_ID to the appropriate tagbottle‑* value, and execute `yarn -s firebase deploy --project \"$FIREBASE_PROJECT_ID\" --token \"$FIREBASE_TOKEN\"`. Finally add a pages job that runs on master, alpha, beta, depends on build:doc:release, moves the built docs to a public folder, and publishes it as a one‑week artifact for GitLab Pages.",
+  "tags": [
+    "node",
+    "yarn",
+    "firebase",
+    "gitlab-ci",
+    "docker",
+    "pages",
+    "cache"
+  ]
+}

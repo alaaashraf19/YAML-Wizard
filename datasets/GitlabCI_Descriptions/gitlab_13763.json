@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_13763",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 181,
+  "description": "Create a GitLab CI pipeline that uses the python:3 Docker image and defines a single job named pages in the default test stage. The pages job should run only on push events and execute the exact commands: cd documents, pip install -r requirements.txt, mkdocs build, and mv site ../public. It must publish the resulting ../public directory as an artifact with path public, which GitLab Pages will serve. No services, caches, or extra variables are required.",
+  "tags": [
+    "python",
+    "mkdocs",
+    "pages",
+    "pip",
+    "gitlab-pages"
+  ]
+}

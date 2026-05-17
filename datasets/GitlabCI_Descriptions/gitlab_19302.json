@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_19302",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 777,
+  "description": "Create a GitLab CI pipeline that defines four jobs—JRuby 9.1, Ruby 2.2, Ruby 2.3, and Ruby 2.4—each running in the default test stage. Use the jruby:9.1-alpine image for the JRuby job and ruby:2.2-alpine, ruby:3.3-alpine, ruby:2.4-alpine images for the respective Ruby jobs. In every job run a before_script that installs ragel and build-base via apk, conditionally adds openjdk8 when the INSTALL_OPENJDK variable is true, installs bundler with gem, prints ruby, gem, and bundler versions, and runs bundle install --path vendor --retry=3, caching the vendor/ruby directory. Then execute the script command bundle exec rake. Set the variable INSTALL_OPENJDK to \"true\" only for the JRuby 9.1 job. No additional rules, artifacts, or deployment targets are defined.",
+  "tags": [
+    "jruby-9-1",
+    "ruby-2-2",
+    "ruby-2-3",
+    "ruby-2-4",
+    "bundler",
+    "rake",
+    "alpine",
+    "apk"
+  ]
+}

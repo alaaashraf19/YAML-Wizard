@@ -1,0 +1,10 @@
+amd64-centos9-container:
+  extends: .container_job_template
+  variables:
+    NAME: centos9
+amd64-fedora-container:
+  extends: .container_job_template
+  variables:
+    NAME: fedora
+include:
+- local: /.gitlab-ci.d/container-template.yml

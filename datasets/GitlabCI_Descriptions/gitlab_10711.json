@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_10711",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 303,
+  "description": "Create a GitLab CI pipeline using the ruby:latest Docker image and a before_script that runs apt-get update -qy, apt-get install -y nodejs npm, and node -v && npm -v before each job. Define a single pages job in the default test stage that executes npm ci, gem install bundler:1.17.3, bundle install, bundle exec middleman build --verbose, and mv build public. Configure the job to publish the public/ directory as a Pages artifact and to run only on the master branch. No caches or services are needed.",
+  "tags": [
+    "ruby",
+    "nodejs",
+    "npm",
+    "bundler",
+    "middleman",
+    "gitlab-pages"
+  ]
+}

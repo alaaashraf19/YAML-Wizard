@@ -1,0 +1,14 @@
+before_script:
+- bash ci/docker_install.sh > /dev/null
+coding style:
+  image: php:7.0
+  script:
+  - vendor/bin/phpcs
+unit tests:php7.0:
+  image: php:7.0
+  script:
+  - vendor/bin/kahlan --coverage
+unit tests:php7.1:
+  image: php:7.1
+  script:
+  - vendor/bin/kahlan --coverage

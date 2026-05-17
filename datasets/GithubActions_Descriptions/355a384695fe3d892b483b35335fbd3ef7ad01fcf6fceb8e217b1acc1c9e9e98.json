@@ -1,0 +1,14 @@
+{
+  "sha": "355a384695fe3d892b483b35335fbd3ef7ad01fcf6fceb8e217b1acc1c9e9e98",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1096,
+  "description": "Create a GitHub Actions workflow named CI that runs on every push to the master branch and on pull requests to the master branch. The workflow should have two jobs: build-linux and build-windows. The build-linux job runs on ubuntu-20.04, checks out the repository with submodules, installs dependencies, and builds the project using cmake and ninja. The build-windows job runs on windows-latest, checks out the repository with submodules, installs dependencies using vcpkg, and builds the project using cmake.",
+  "tags": [
+    "ci",
+    "cmake",
+    "ubuntu",
+    "windows",
+    "tests"
+  ]
+}

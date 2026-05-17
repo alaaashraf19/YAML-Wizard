@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_10556",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 209,
+  "description": "Create a GitLab CI pipeline that uses the node:6 Docker image. Define a deploy stage with a publish job that runs only for tags and pipeline triggers. In the publish job execute the commands: echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}' > .npmrc, npm install, npm run build, and npm publish --access=public, and set the stage to deploy. No services, caches, or artifacts are defined. The job publishes the built package to the public npm registry.",
+  "tags": [
+    "node",
+    "npm",
+    "publish",
+    "docker-node6",
+    "gitlab-ci"
+  ]
+}

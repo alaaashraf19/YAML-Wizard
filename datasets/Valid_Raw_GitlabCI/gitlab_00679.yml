@@ -1,0 +1,61 @@
+.accessibility:
+  image: registry.gitlab.com/azae/docker/pa11y
+  script:
+  - pa11y-ci --sitemap http://ajiro/sitemap.xml --config pa11y.conf
+  services:
+  - alias: ajiro
+    name: $CONTAINER_NAME
+  stage: test
+.build:
+  image: docker:latest
+  script:
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+  - docker build -t $CONTAINER_NAME .
+  - docker push $CONTAINER_NAME
+  services:
+  - docker:dind
+  stage: build
+.linkchecker:
+  image: registry.gitlab.com/azae/docker/linkchecker
+  script:
+  - linkchecker --anchors --ignore-url="^mailto:" https://ajiro/
+  services:
+  - alias: ajiro
+    name: $CONTAINER_NAME
+  stage: test
+.url_count:
+  image: debian
+  script:
+  - apt-get -y update && apt-get -y install wget xmlstarlet
+  - NEW=$(wget https://ajiro/sitemap.xml -q --no-check-certificate -O - | xmlstarlet
+    sel --template --value-of "//*[local-name()='loc']/text()" | wc -l)
+  - ACTUAL=$(wget https://ajiro.fr/sitemap.xml -q -O - | xmlstarlet sel --template
+    --value-of "//*[local-name()='loc']/text()" | wc -l)
+  - test $NEW -ge $ACTUAL
+  services:
+  - alias: ajiro
+    name: $CONTAINER_NAME
+  stage: test
+publish:
+  image: debian:sid
+  only:
+  - master
+  script:
+  - apt-get update && apt-get install -y hugo curl rclone && apt-get clean
+  - hugo_env=production hugo --destination=public/
+  - hugo --buildDrafts --buildFuture --baseURL=http://ajiro.fr/draft/ --destination=public/draft/
+  - VERSION="2.6.0"
+  - curl -o /usr/local/bin/scw -L "https://github.com/scaleway/scaleway-cli/releases/download/v${VERSION}/scaleway-cli_${VERSION}_linux_amd64"
+  - chmod +x /usr/local/bin/scw
+  - /usr/local/bin/scw init secret-key=$SCW_SECRET_KEY send-telemetry=true install-autocomplete=false
+    with-ssh-key=false
+  - mkdir -p /root/.config/rclone
+  - /usr/local/bin/scw object config get type=rclone >> $HOME/.config/rclone/rclone.conf
+  - rclone sync public/ scaleway:ajiro.fr/
+  stage: deploy
+stages:
+- build
+- test
+- deploy
+variables:
+  CONTAINER_NAME: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME

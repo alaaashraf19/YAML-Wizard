@@ -1,0 +1,75 @@
+Buid:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - ./*.gem
+  script:
+  - bundle install
+  - rake set_git_tag
+  - rake
+  - gem build jekyll-plantuml-url.gemspec
+  stage: build
+  tags:
+  - docker
+Release_Production:
+  dependencies:
+  - Release_Staging
+  environment: production
+  except:
+  - branches
+  only:
+  - tags
+  script:
+  - ls -la
+  - mkdir -pv ~/.gem
+  - export Fail=0
+  - touch ~/.gem/credentials
+  - chmod 0600 ~/.gem/credentials
+  - 'echo -e "---\n:rubygems_api_key: $GEM_API_PUSH\n" >> ~/.gem/credentials'
+  - gem push *.gem && echo Success || export Fail=1
+  - rm -f ~/.gem/credentials
+  - '[ "$Fail" -eq 0 ]'
+  stage: production
+  tags:
+  - docker
+  variables:
+    GIT_STRATEGY: none
+  when: manual
+Release_Staging:
+  artifacts:
+    paths:
+    - ./*.gem
+  environment: staging
+  except:
+  - branches
+  script:
+  - ls -la
+  stage: staging
+  tags:
+  - docker
+  variables:
+    GIT_STRATEGY: none
+image: ruby:2.3
+stages:
+- build
+- test
+- staging
+- production
+test:
+  script:
+  - gem install jekyll bundler rake
+  - export myGem=`ls *.gem`
+  - export git_version=`git describe --tags --always`
+  - export gem_version="$(sed s/-/\./g <<<$git_version)"
+  - gem install "./$myGem"
+  - mkdir test; cd test
+  - jekyll new test_plantuml
+  - cd test_plantuml
+  - echo "gem \"jekyll-plantuml-url\", \"$gem_version\"" >> Gemfile
+  - echo -e "gems:\n  - jekyll-plantuml-url\n" >> _config.yml
+  - echo "{% plantuml %}\n[First] - [Second]\n{% endplantuml %}\n" >> index.md
+  - bundle install
+  - bundle exec jekyll build
+  stage: test
+  tags:
+  - docker

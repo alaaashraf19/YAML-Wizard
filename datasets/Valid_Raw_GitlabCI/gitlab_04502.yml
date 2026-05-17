@@ -1,0 +1,27 @@
+build:
+  script:
+  - npm install
+  - npm run build
+  stage: build
+cache:
+  paths:
+  - node_modules/
+deploy-prod:
+  script:
+  - npm install
+  - npm run build
+  - node_modules/.bin/surge build react-16-presentation.surge.sh
+  stage: deploy
+  when: manual
+deploy-test:
+  script:
+  - npm install
+  - npm run build
+  - node_modules/.bin/surge build qa-react-16-presentation.surge.sh
+  stage: test
+  when: manual
+image: node:latest
+stages:
+- build
+- test
+- deploy

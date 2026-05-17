@@ -1,0 +1,74 @@
+before_script:
+- git submodule update --init
+- test -f /usr/lib/x86_64-linux-gnu/libOpenCL.so || ln -s libOpenCL.so.1 /usr/lib/x86_64-linux-gnu/libOpenCL.so
+build-clang-cuda:
+  artifacts:
+    paths:
+    - build/clang-cuda/
+  image: omos/argon2-gpu:zesty-cuda
+  script:
+  - export COMPILER=clang
+  - export CUDA=cuda
+  - . scripts/ci-build.sh
+  stage: build
+build-clang-nocuda:
+  artifacts:
+    paths:
+    - build/clang-nocuda/
+  script:
+  - export COMPILER=clang
+  - export CUDA=nocuda
+  - . scripts/ci-build.sh
+  stage: build
+build-gcc-cuda:
+  artifacts:
+    paths:
+    - build/gcc-cuda/
+  image: omos/argon2-gpu:zesty-cuda
+  script:
+  - export COMPILER=gcc
+  - export CUDA=cuda
+  - . scripts/ci-build.sh
+  stage: build
+build-gcc-nocuda:
+  artifacts:
+    paths:
+    - build/gcc-nocuda/
+  script:
+  - export COMPILER=gcc
+  - export CUDA=nocuda
+  - . scripts/ci-build.sh
+  stage: build
+image: omos/argon2-gpu:zesty-nocuda
+stages:
+- build
+- test
+test-clang-nocuda:
+  dependencies:
+  - build-clang-nocuda
+  - update-pocl
+  script:
+  - export COMPILER=clang
+  - export CUDA=nocuda
+  - . scripts/ci-test.sh
+  stage: test
+test-gcc-nocuda:
+  dependencies:
+  - build-gcc-nocuda
+  - update-pocl
+  script:
+  - export COMPILER=gcc
+  - export CUDA=nocuda
+  - . scripts/ci-test.sh
+  stage: test
+update-pocl:
+  artifacts:
+    paths:
+    - pocl/
+  cache:
+    key: pocl-build
+    paths:
+    - pocl/
+  script:
+  - . scripts/ci-update-pocl.sh
+  stage: build

@@ -1,0 +1,14 @@
+{
+  "sha": "147a941a93ef46bbddddcf0e85bf83ee76de8499ed1718e1bc29497016ff1e23",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2092,
+  "description": "Create a GitHub Actions workflow named Specific Targets CI that runs on push to the master branch and on pull requests to master that affect specific files. The workflow should have two jobs, one for GCC 4.8 and one for GCC 12, each running in a separate container with the respective compiler. For each job, install the required compiler and dependencies, install CMake 3.26.3, configure and build the project, and run tests.",
+  "tags": [
+    "gcc",
+    "cmake",
+    "ci",
+    "ubuntu",
+    "tests"
+  ]
+}

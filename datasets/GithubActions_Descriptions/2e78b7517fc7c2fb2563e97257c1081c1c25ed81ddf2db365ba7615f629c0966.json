@@ -1,0 +1,14 @@
+{
+  "sha": "2e78b7517fc7c2fb2563e97257c1081c1c25ed81ddf2db365ba7615f629c0966",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 679,
+  "description": "Create a GitHub Actions workflow named Release that triggers on published releases. Use an ubuntu-latest job that checks out the code, sets up QEMU and Buildx with debug flags, logs in to Docker Hub using DOCKERHUB_USERNAME and DOCKERHUB_TOKEN from secrets, and then builds the Docker image by running the build.sh script in the contrib/docker directory with the release argument.",
+  "tags": [
+    "docker",
+    "release",
+    "qemu",
+    "buildx",
+    "hub"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "dbc7355641fc283b87a6e2eb3cffd4ea7ff50e14db4e59b39283ca41cc17340b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3466,
+  "description": "Create a GitHub Actions workflow named Windows MinGW x64 that runs on push to master branch and on pull requests. The workflow should trigger on push to master branch, ignoring changes to markdown files and docs, and on pull request opened and synchronize events, also ignoring markdown files and docs. It should have a concurrency group based on workflow and ref, cancelling any in-progress jobs. The workflow should run on an ubuntu-22.04 environment, checking out code, creating a build environment with required packages, configuring CMake, building the project, and uploading the package as an artifact. Additionally, it should move and process artifacts, and push them to another repository under certain conditions.",
+  "tags": [
+    "mingw",
+    "cmake",
+    "ubuntu",
+    "github-actions",
+    "artifact-upload",
+    "repository-push"
+  ]
+}

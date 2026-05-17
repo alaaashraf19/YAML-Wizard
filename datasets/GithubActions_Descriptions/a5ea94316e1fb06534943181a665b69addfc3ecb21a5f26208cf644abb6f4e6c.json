@@ -1,0 +1,14 @@
+{
+  "sha": "a5ea94316e1fb06534943181a665b69addfc3ecb21a5f26208cf644abb6f4e6c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2577,
+  "description": "Create a GitHub Actions workflow named Deploy to Steam that triggers on push with tags matching *-r* and on workflow dispatch with required version and optional steam_branch inputs. The workflow should have four jobs: three for building depot files on Linux and Windows, and one for deploying to Steam. The deploy job depends on the three build jobs, downloads and stages the depot files, and uses steam-deploy to upload to Steam with credentials from secrets.",
+  "tags": [
+    "steam",
+    "deploy",
+    "workflows",
+    "github-actions",
+    "ubuntu"
+  ]
+}

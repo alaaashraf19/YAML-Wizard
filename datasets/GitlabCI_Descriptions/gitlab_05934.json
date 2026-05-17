@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_05934",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 352,
+  "description": "Create a GitLab CI pipeline with two stages: test and deploy. In the test stage add a run_all_tests job that uses the openjdk:11-jdk-slim Docker image, runs chmod +x gradlew then ./gradlew test. In the deploy stage add a deploy_to_development job that runs on the development environment, uses the ruby:2.5 image, installs the dpl gem with gem install dpl and deploys to Heroku via dpl --provider=heroku --api-key=$HEROKU_API_KEY --app=$HEROKU_APP_NAME, and is limited to branch pipelines only.",
+  "tags": [
+    "ruby",
+    "heroku",
+    "dpl",
+    "openjdk",
+    "gradle",
+    "java",
+    "deployment",
+    "test"
+  ]
+}

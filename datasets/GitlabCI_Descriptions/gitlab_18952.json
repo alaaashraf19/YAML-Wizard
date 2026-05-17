@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_18952",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1084,
+  "description": "Create a GitLab CI pipeline that prepares a ROS Indigo Catkin workspace by using a global before_script that creates ~/catkin_ws/src, runs catkin_init_workspace if needed, initializes or updates a .rosinstall with wstool, removes any existing $CI_PROJECT_NAME symlink, merges $ROSINSTALL_FILE if present, runs wstool up, and updates submodules in space_robotics_challenge. Define variables CI_SOURCE_PATH as $CI_PROJECT_DIR, ROS_DISTRO as indigo, and ROS_PARALLEL_JOBS as -j8 -l6. Add a build stage with a job named indigo-master that runs on runners tagged ros, executes source /opt/ros/$ROS_DISTRO/setup.bash, cd ~/catkin_ws, deletes devel/ and build/ directories, runs catkin_make with optional $CATKIN_OPTIONS, sources devel/setup.bash, runs catkin_make again, and stores the public directory as an artifact. Configure the indigo-master job to run only on the master branch.",
+  "tags": [
+    "ros",
+    "catkin",
+    "indigo",
+    "ci",
+    "catkin-make",
+    "wstool"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_12492",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 255,
+  "description": "Create a GitLab CI pipeline that uses the docker:latest Docker image with a docker:dind service and defines a PACKAGE_NAME variable set to gitlab.com/monetha/reputation-go-sdk. Add a single job named \"build and test\" (default stage) that runs the commands \"apk --no-cache add bash\" and then \"bash -x ./scripts/build.sh\". Configure the job to publish the .cover/ directory as an artifact that expires after one month. No additional stages, caches, or rules are required.",
+  "tags": [
+    "docker",
+    "dind",
+    "bash",
+    "artifact",
+    "go-sdk"
+  ]
+}

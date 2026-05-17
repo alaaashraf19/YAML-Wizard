@@ -1,0 +1,21 @@
+cache:
+  paths:
+  - ./node_modules
+image: node:10-alpine
+pages:
+  artifacts:
+    paths:
+    - public
+  before_script:
+  - npm install swagger-ui-dist@3.22.1
+  only:
+  - master
+  script:
+  - mkdir public
+  - cp -rp node_modules/swagger-ui-dist/* public
+  - cp -rp $DOCS_FOLDER/* public
+  - sed -i "s#https://petstore\.swagger\.io/v2/swagger\.json#$SPEC_TO_DISPLAY#g" public/index.html
+  stage: deploy
+variables:
+  DOCS_FOLDER: api-docs
+  SPEC_TO_DISPLAY: my-project_specification_0.0.1.json

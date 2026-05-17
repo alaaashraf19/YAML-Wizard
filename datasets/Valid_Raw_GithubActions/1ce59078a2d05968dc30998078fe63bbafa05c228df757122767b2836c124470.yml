@@ -1,0 +1,104 @@
+---
+name: Linux Build
+
+# yamllint disable-line rule:truthy
+on:
+  - push
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: ${{matrix.buildname}}
+    runs-on: ${{matrix.os}}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            buildname: Linux-GCC
+            compiler: g++
+            compiler_package: g++
+            with_qt6: false
+            with_native_notifications: true
+            cmake_preset: Debug
+
+          - os: ubuntu-22.04
+            buildname: Linux-Clang
+            compiler: clang++
+            compiler_package: clang
+            with_qt6: false
+            with_native_notifications: true
+            cmake_preset: Debug
+
+          - os: ubuntu-latest
+            buildname: Qt 6
+            compiler: g++
+            compiler_package: g++
+            with_qt6: true
+            with_native_notifications: false
+            coverage: true
+            cmake_preset: Debug
+            compiler_flags: >-
+              --coverage
+              -fprofile-arcs
+              -ftest-coverage
+              -fprofile-abs-path
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+          fetch-depth: 1
+
+      - name: Enable ccache
+        uses: hendrikmuhs/ccache-action@v1.2
+        with:
+          key: ${{ github.job }}-${{ matrix.os }}
+
+      - name: Set up ccache
+        run: |
+          export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
+
+      - name: Install dependencies
+        uses: nick-invision/retry@v3
+        env:
+          WITH_QT6: '${{matrix.with_qt6}}'
+        with:
+          timeout_minutes: 10
+          retry_wait_seconds: 30
+          max_attempts: 3
+          command: >-
+            '${{github.workspace}}/utils/github/install-linux.sh'
+            '${{matrix.compiler_package}}'
+
+      - name: Build with CMake
+        uses: lukka/run-cmake@v10
+        with:
+          configurePreset: '${{ matrix.cmake_preset }}'
+          buildPreset: '${{ matrix.cmake_preset }}'
+          configurePresetAdditionalArgs: >-
+            [
+            '-DCMAKE_CXX_COMPILER=${{matrix.compiler}}',
+            '-DCMAKE_CXX_FLAGS=${{matrix.compiler_flags}}',
+            '-DCMAKE_C_FLAGS=${{matrix.compiler_flags}}',
+            '-DWITH_QT6=${{matrix.with_qt6}}',
+            '-DWITH_NATIVE_NOTIFICATIONS=${{matrix.with_native_notifications}}'
+            ]
+
+      - name: Create gnupg directory for tests
+        run: mkdir -p ~/.gnupg && chmod go-rwx ~/.gnupg
+
+      - name: Run tests
+        working-directory: '${{runner.workspace}}/install/copyq/${{ matrix.cmake_preset }}/bin'
+        run: '${{github.workspace}}/utils/github/test-linux.sh'
+
+      - name: Update coverage
+        if: matrix.coverage
+        env:
+          COVERALLS_REPO_TOKEN: '${{secrets.COVERALLS_REPO_TOKEN}}'
+        run: >-
+          '${{github.workspace}}/utils/github/coverage-linux.sh'
+          '${{runner.workspace}}/build/copyq/${{ matrix.cmake_preset }}'

@@ -1,0 +1,14 @@
+{
+  "sha": "06a76516a1e9d9f0db85feeac7f07260f3f824e5842286cf42fa8cf9ff273736",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2646,
+  "description": "Create a GitHub Actions workflow named build that runs on push and pull request events. The workflow should have multiple jobs for different environments: linux, macos, and wasm. For linux, run on a matrix of debian and ubuntu targets, setting up dependencies and running make commands. For macos, run on a matrix of macos targets, setting up dependencies and running make commands. For wasm, run on ubuntu-22.04, setting up emscripten and running make commands.",
+  "tags": [
+    "multi-os",
+    "matrix",
+    "emscripten",
+    "make",
+    "cross-platform"
+  ]
+}

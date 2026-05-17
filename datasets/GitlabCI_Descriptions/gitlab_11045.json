@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_11045",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 781,
+  "description": "Create a GitLab CI pipeline using the node:9 Docker image with a before_script that runs `node -v`, `npm -v`, and installs client dependencies via `cd client && npm install && cd ..`. Define three stages: test, client_build, and deploy. Add a client_lint job in the test stage that runs `cd client` then `npm run lint`. Add a client_build job in the client_build stage that runs `cd client` then `npm run build`, and publish the `client/dist` directory as an artifact that expires in 2 weeks. Add a server_deploy job in the deploy stage that runs `cp -r client/dist server/static`, `cd server`, `git init`, `git config user.name \"Gitlab CI\"`, `git config user.email \"mui.kaien@dhs.sg\"`, `git add . && git commit -m \"deploy from gitlab\"`, `git remote add heroku https://heroku:$HEROKU_API_KEY@git.heroku.com/sccl-dictionary.git`, and `git push heroku master -f`; this job only runs on the master or web branches and stores the `server` directory as an artifact expiring in 2 weeks, deploying to Heroku.",
+  "tags": [
+    "node",
+    "npm",
+    "client-build",
+    "lint",
+    "heroku-deploy",
+    "gitlab-ci"
+  ]
+}

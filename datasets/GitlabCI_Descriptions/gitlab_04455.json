@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_04455",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 934,
+  "description": "Create a GitLab CI pipeline that uses the python:3.7.4 Docker image with a mdillon/postgis service (alias postgis) and defines POSTGRES_DB, POSTGRES_USER, POSTGRES_PASSWORD variables. Apply a global before_script that runs bash scripts/prepare_gitlab_ci.sh, sources /root/.bashrc, executes nvm use node, runs make setup-node, and installs Python dependencies via pip3 install -r requirements.txt. Define a test stage with a test job that runs source test/useci then make test, runs only on master and merge_requests, saves the htmlcov/ directory as an artifact and captures coverage using the regex /TOTAL.+ ([0-9]{1,3}%)/. In the deploy stage add a pages job that depends on test, runs only on master and merge_requests, creates a public/ folder, moves htmlcov/ into it, and publishes public/ as a pages artifact expiring in 30 days. Also add deploy-staging and deploy-production jobs of type deploy that both need test; deploy-staging runs make deploy-staging only on merge_requests, while deploy-production runs make deploy-prod on master and tags.",
+  "tags": [
+    "python-3.7",
+    "postgis",
+    "test",
+    "pages",
+    "deploy",
+    "make",
+    "coverage"
+  ]
+}

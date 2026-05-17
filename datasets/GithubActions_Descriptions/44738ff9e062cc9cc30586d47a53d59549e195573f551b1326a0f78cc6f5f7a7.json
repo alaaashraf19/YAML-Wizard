@@ -1,0 +1,14 @@
+{
+  "sha": "44738ff9e062cc9cc30586d47a53d59549e195573f551b1326a0f78cc6f5f7a7",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 7415,
+  "description": "Create a GitHub Actions workflow named Release with concurrency set to build. The workflow triggers on push events with tags matching *. It consists of three jobs: build, test, and publish. The build job builds a Docker image, the test job runs tests using the image, and the publish job publishes the image to Docker Hub and creates a release with binaries.",
+  "tags": [
+    "docker",
+    "github-actions",
+    "release",
+    "tests",
+    "dotnet"
+  ]
+}

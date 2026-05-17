@@ -1,0 +1,15 @@
+{
+  "sha": "fedbcf72f768002cb24c00545e2d0d3815d30670e24317bde44a8ec84f4d67ec",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1197,
+  "description": "Create a daily GitHub Actions workflow named test-p4c-ubuntu-18.04 that runs at midnight UTC and on push and pull request events to the main branch. The workflow should have a job that runs on ubuntu-20.04, checks out the repository with submodules and full fetch depth, uses ccache, builds with a custom script, and runs specific tests with ctest, but only if the workflow is triggered by a schedule or a pull request with the p4tc label.",
+  "tags": [
+    "ubuntu",
+    "gcc",
+    "ctest",
+    "p4tc",
+    "schedule",
+    "ccache"
+  ]
+}

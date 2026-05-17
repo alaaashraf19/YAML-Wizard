@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_04479",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 180,
+  "description": "Create a GitLab CI pipeline that uses the logstash:2.3.2 Docker image for a job named logstash-2.3.2. Add a global before_script that runs `logstash-plugin install --development` and then copies the local patterns directory to `/etc/logstash/patterns`. In the logstash-2.3.2 job execute the script `./tests/bin/run-tests.sh all y`. Use the default stage (test) and do not define any caches, artifacts, services, or rules.",
+  "tags": [
+    "logstash",
+    "plugin-install",
+    "custom-patterns",
+    "run-tests",
+    "ci"
+  ]
+}

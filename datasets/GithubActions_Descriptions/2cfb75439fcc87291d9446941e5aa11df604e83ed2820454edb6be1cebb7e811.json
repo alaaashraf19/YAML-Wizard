@@ -1,0 +1,15 @@
+{
+  "sha": "2cfb75439fcc87291d9446941e5aa11df604e83ed2820454edb6be1cebb7e811",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1737,
+  "description": "Create a GitHub Actions workflow named OS X that runs on pull requests and pushes to the master branch, excluding changes to .github/workflows. The workflow should also be triggerable manually. It should have two jobs, build_meson and build_cmake, both running on macos-14. Each job checks out the code, installs meson or cmake and ninja, installs dependencies with brew, configures the build project, builds it, and runs tests.",
+  "tags": [
+    "osx",
+    "macos",
+    "meson",
+    "cmake",
+    "tests",
+    "ci"
+  ]
+}

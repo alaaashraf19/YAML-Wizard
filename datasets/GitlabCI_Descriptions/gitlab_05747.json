@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_05747",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1761,
+  "description": "Create a GitLab CI pipeline with six stages: test, build, deploy-staging, test-staging, deploy-prod, and test-prod. Cache the vendor/ directory and run all jobs on runners tagged catalog. In the build stage add a build-image job that runs `docker build -t enxebre/catalog:$CI_BUILD_REF .` then `docker push enxebre/catalog:$CI_BUILD_REF`. In the test stage add three jobs: unit-test with a before_script `bundle install --path=vendor` and script `bundle exec rake unit`; linting that runs `echo true`; and consumer-driven-contracts with a before_script `bundle install --path=vendor` and script `bundle exec rake consumer_driven_contracts` followed by `bundle exec rake pact:publish`. In the test-staging stage add integration-smoke-tests-staging and performance-smoke-tests-staging jobs, each running `echo true`. In the test-prod stage add integration-smoke-tests-prod and performance-smoke-tests-prod jobs, each running `echo true`, limited to the master branch and marked manual. In the deploy-staging stage add deploy-service-staging with script `helm upgrade catalog-st charts/catalog/ --set ImageTag=$CI_BUILD_REF,IngressDomain=staging.178.62.64.127.nip.io --install --namespace staging`. In the deploy-prod stage add deploy-service-prod with environment name prod, URL http://catalog.prod.178.62.64.127.nip.io, script `helm upgrade catalog-pr charts/catalog/ --set ImageTag=$CI_BUILD_REF,IngressDomain=prod.178.62.64.127.nip.io --install --namespace prod`, limited to master and manual.",
+  "tags": [
+    "docker",
+    "helm",
+    "ruby",
+    "bundle",
+    "pact",
+    "catalog"
+  ]
+}

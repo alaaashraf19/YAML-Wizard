@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_06875",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 614,
+  "description": "Create a GitLab CI pipeline with two stages: image and deploy. In the image stage add a build job that uses the gcr.io/kaniko-project/executor:debug Docker image with an empty entrypoint, runs the command `/kaniko/executor --context \"${CI_PROJECT_DIR}\" --dockerfile \"${CI_PROJECT_DIR}/Dockerfile\" --destination \"${CI_REGISTRY_IMAGE}:${CI_COMMIT_TAG}\"` to build and push a Docker image, and is triggered only when the commit tag matches the regex ^image-v.+. In the deploy stage add a pages job that uses the image `${CI_REGISTRY_IMAGE}:image-v1` with an empty entrypoint, runs `make` then `echo \"PDFs generated, well done machine!\"`, stores the `public/` directory as an artifact, and runs only on the default branch and when manually started. Publish the `public/` artifact as GitLab Pages.",
+  "tags": [
+    "kaniko",
+    "docker",
+    "gitlab-pages",
+    "make",
+    "manual",
+    "image-build"
+  ]
+}

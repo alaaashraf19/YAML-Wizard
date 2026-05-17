@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_06668",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 577,
+  "description": "Create a GitLab CI pipeline that uses the docker image with a docker:dind service and defines a single deploy stage. Add a before_script that runs `apk add --update py-pip` then `pip install docker-compose`. Define a deploy job (tagged docker) that runs only on the master branch, uses the variables DOCKER_CERT_PATH, DOCKER_HOST and DOCKER_TLS_VERIFY, creates the $DOCKER_CERT_PATH directory, writes the $CA, $CLIENT_CERT and $CLIENT_KEY secrets to ca.pem, cert.pem and key.pem, executes `docker-compose build` and `docker-compose up -d --force-recreate`, and finally removes the $DOCKER_CERT_PATH directory. No caches or artifacts are defined.",
+  "tags": [
+    "docker",
+    "dind",
+    "docker-compose",
+    "deploy",
+    "gitlab-ci"
+  ]
+}

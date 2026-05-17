@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_19300",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 957,
+  "description": "Create a GitLab CI pipeline that runs a Ruby test suite on multiple Ruby versions and JRuby using Alpine Docker images. Define a cache for the vendor/ruby directory to speed up bundler installs. In the default test stage add a JRuby 9.1 job (image jruby:9.1-alpine) that sets INSTALL_OPENJDK=true and runs before_script commands: apk add --update ragel build-base; if [ \"$INSTALL_OPENJDK\" == \"true\" ]; then apk add openjdk8; fi; gem install bundler --no-document; ruby --version; gem --version; bundle --version; bundle install --path vendor --retry=3, then script command: bundle exec rake. Add Ruby 2.3, 2.4, 2.5, 2.6, and 2.7 jobs (images ruby:2.3-alpine, ruby:2.4-alpine, ruby:2.5-alpine, ruby:2.6-alpine, ruby:2.7-alpine) that use the same before_script and script steps without the INSTALL_OPENJDK variable. All jobs inherit the cache and run on every push by default.",
+  "tags": [
+    "ruby",
+    "jruby",
+    "alpine",
+    "bundler",
+    "rake",
+    "cache"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "65eae42aad1989ef010b5f7337b0bc7f56fd2515f78335aff839ed38e67e5136",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1903,
+  "description": "Create a GitHub Actions workflow named CPP CI that runs on every pull request, ignoring changes to markdown files and Dockerfiles. The workflow should have a concurrency group that cancels in-progress workflows for the same pull request. It should have two jobs, build_ubuntu and build_windows, each running on a different environment, with a build matrix for Debug and Release configurations. For each job, install dependencies, checkout the repository with submodules, build the project with cmake, and run unit tests.",
+  "tags": [
+    "cpp",
+    "cmake",
+    "ubuntu",
+    "windows",
+    "tests",
+    "ci"
+  ]
+}

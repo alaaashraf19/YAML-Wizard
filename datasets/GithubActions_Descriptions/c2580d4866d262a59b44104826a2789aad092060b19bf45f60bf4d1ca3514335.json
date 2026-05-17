@@ -1,0 +1,14 @@
+{
+  "sha": "c2580d4866d262a59b44104826a2789aad092060b19bf45f60bf4d1ca3514335",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3470,
+  "description": "Create a GitHub Actions workflow that runs on every pull request. The workflow should have a concurrency group based on the workflow and head reference, cancelling any in-progress jobs. It should have multiple jobs for different environments: Ubuntu, VisualStudio, MacOS, FreeBSD, and OpenBSD. Each job should check out the code, install necessary packages, and then compile and test using meson.",
+  "tags": [
+    "meson",
+    "multi-os",
+    "multi-config",
+    "c++",
+    "ci"
+  ]
+}

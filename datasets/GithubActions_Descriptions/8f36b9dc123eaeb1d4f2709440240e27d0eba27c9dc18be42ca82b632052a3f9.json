@@ -1,0 +1,15 @@
+{
+  "sha": "8f36b9dc123eaeb1d4f2709440240e27d0eba27c9dc18be42ca82b632052a3f9",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2892,
+  "description": "Create a GitHub Actions workflow named Documentation that runs on every push to any branch and on pull requests to the master branch. Use a single ubuntu-18.04 job that checks out the repository, sets up Node.js 10, installs required tools and dependencies, runs markdownlint on the docs, checks assets, builds the GitBook, generates PDFs, and deploys to GitHub Pages if the PDF generation fails to download pre-generated PDFs, and if the workflow runs on a push to the master branch.",
+  "tags": [
+    "nodejs",
+    "gitbook",
+    "pdf",
+    "github-pages",
+    "docs",
+    "ubuntu"
+  ]
+}

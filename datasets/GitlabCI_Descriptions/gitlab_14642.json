@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_14642",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1233,
+  "description": "Create a GitLab CI pipeline using the ruby:2.3 Docker image with redis:latest and postgres:latest services and a cache of vendor/ruby. Define a before_script that runs ruby -v, installs bundler, rails, heroku, pg, rubocop, rspec, rake gems and runs bundle install for all jobs. Add a rspec job (default stage) that sets DATABASE_URL to the postgres service, runs rake db:migrate RAILS_ENV=test and bundle exec rspec spec, and stores the coverage/ directory as an artifact. Add a rubocop job (default stage) that runs rubocop. Add a rails job (default stage) that sets DATABASE_URL, runs rails db:migrate, rails db:seed and rails test. Add a production deploy job that runs gem install dpl and dpl --provider=heroku --app=mralfred with the provided API key, and a staging deploy job that does the same for the mralfred-staging app; both are type deploy. Finally add a pages job in the deploy stage that depends on rspec, moves coverage/ to public/, and publishes the public/ directory as a pages artifact expiring in 30 days.",
+  "tags": [
+    "ruby",
+    "rails",
+    "rspec",
+    "rubocop",
+    "heroku",
+    "dpl",
+    "postgres",
+    "redis",
+    "gitlab-pages",
+    "cache"
+  ]
+}

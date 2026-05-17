@@ -1,0 +1,14 @@
+{
+  "sha": "f41da3444282566bef0cdf4af7c0b0b11b612bce17dc11f990ff3c55291b5bd4",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1932,
+  "description": "Create a GitHub Actions workflow named Linting that runs on pull requests and pushes to the master branch. The workflow should have two jobs: iwyu and format. The iwyu job runs on an ubuntu-latest container with a debian:sid-slim image, installing dependencies, checking out the source with submodules, configuring and building with CMake and Clang 19, and checking the build output for IWYU errors. The format job runs on ubuntu-24.04, checks out the source, and runs clang-format-15 on C/C++ files with a file style, checking for changes.",
+  "tags": [
+    "linting",
+    "clang",
+    "cmake",
+    "ubuntu",
+    "format"
+  ]
+}

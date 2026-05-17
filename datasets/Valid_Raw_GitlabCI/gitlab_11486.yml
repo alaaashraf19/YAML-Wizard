@@ -1,0 +1,13 @@
+build:
+  artifacts:
+    paths:
+    - build/*.elf
+  before_script:
+  - apt update && apt -y install make autoconf gcc-arm-none-eabi
+  cache:
+    paths:
+    - build/*.o
+  script:
+  - make
+  stage: build
+image: gcc

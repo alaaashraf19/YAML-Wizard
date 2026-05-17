@@ -1,0 +1,14 @@
+{
+  "sha": "1ade9c8de6a17a0da9ab79a9fc6ced2312e0b874623dfdd762c572d80734e7de",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1024,
+  "description": "Create a GitHub Actions workflow named Universal test that can be triggered manually. The workflow should run a build job on a matrix of operating systems including various Windows, Ubuntu, and macOS versions. For each job, check out the repository with submodules, configure CMake in a specific directory, build the project, and then run tests with different commands depending on whether the job is running on Windows or not.",
+  "tags": [
+    "cmake",
+    "cross-platform",
+    "tests",
+    "matrix",
+    "workflow-dispatch"
+  ]
+}

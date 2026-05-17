@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_08124",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 115,
+  "description": "Create a GitLab CI pipeline that uses the Docker image registry.gitlab.com/gitlab-com/runbooks. Define a single job called test that runs in the default test stage and executes the shell command /prometheus/promtool check-rules alerts/*.rules. The pipeline has no additional services, variables, caches, artifacts, or rules, and runs the check on every pipeline execution.",
+  "tags": [
+    "prometheus",
+    "promtool",
+    "runbooks",
+    "gitlab-ci"
+  ]
+}

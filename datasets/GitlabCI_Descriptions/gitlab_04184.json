@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_04184",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 91,
+  "description": "Create a GitLab CI pipeline that uses the blang/latex Docker image. Define a single job named build that runs the command latexmk -pdf. The job should collect all generated PDF files (matching *.pdf) as artifacts. It runs in the default stage with no additional services, caches, variables, or rules.",
+  "tags": [
+    "latex",
+    "latexmk",
+    "pdf",
+    "gitlab-ci"
+  ]
+}

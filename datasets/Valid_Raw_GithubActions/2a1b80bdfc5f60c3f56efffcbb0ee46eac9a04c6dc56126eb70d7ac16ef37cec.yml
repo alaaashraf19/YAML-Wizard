@@ -1,0 +1,77 @@
+name: C++ CI
+
+on: [push]
+
+jobs:
+
+  build_windows:
+    runs-on: windows-latest
+    steps:
+      - name: Clone source
+        run: git clone --recursive https://github.com/uNetworking/uWebSockets.git
+      - name: Install Deno
+        run: iwr https://deno.land/x/install/install.ps1 -useb | iex
+      - name: Install libuv
+        run: vcpkg install libuv:x64-windows
+      - uses: ilammy/msvc-dev-cmd@v1
+      - name: Build examples
+        run: |
+          cd uWebSockets
+          cp C:\vcpkg\installed\x64-windows\bin\uv.dll uv.dll
+          $Env:CFLAGS='-D WIN32_LEAN_AND_MEAN -I C:/vcpkg/packages/libuv_x64-windows/include'
+          $Env:LDFLAGS='-L C:/vcpkg/packages/libuv_x64-windows/lib'
+          $Env:CC='clang'
+          $Env:CXX='clang++'
+          $Env:WITH_LIBUV='1'
+          $Env:EXEC_SUFFIX='.exe'
+          $Env:WITH_ZLIB='0'
+          $Env:WITH_LTO='0'
+          make -C uSockets
+          nmake -f shim
+          ls
+      - name: Run unit tests
+        run: $Env:CC='clang'; $Env:CXX='clang++'; make -C uWebSockets/tests
+      - name: Run smoke test
+        run: |
+          cd uWebSockets
+          Start-Process -NoNewWindow .\Crc32
+          sleep 1
+          deno run --allow-net tests\smoke.mjs
+          Stop-Process -Name Crc32
+
+
+  build_linux:
+
+    runs-on: ubuntu-20.04
+    
+    steps:
+    - name: Clone source
+      run: git clone --recursive https://github.com/uNetworking/uWebSockets.git
+    - name: Build source
+      run: make -C uWebSockets
+    - name: List binaries
+      run: ls uWebSockets
+    - name: Install Deno
+      run: curl -fsSL https://deno.land/x/install/install.sh | sh
+    - name: Run smoke test
+      run: make -C uWebSockets/tests smoke
+    - name: Run unit tests
+      run: make -C uWebSockets/tests
+      
+  build_osx:
+
+    runs-on: macos-latest
+    
+    steps:
+    - name: Clone source
+      run: git clone --recursive https://github.com/uNetworking/uWebSockets.git
+    - name: Build source
+      run: make -C uWebSockets
+    - name: List binaries
+      run: ls uWebSockets
+    - name: Install Deno
+      run: curl -fsSL https://deno.land/x/install/install.sh | sh
+    - name: Run smoke test
+      run: make -C uWebSockets/tests smoke
+    - name: Run unit tests
+      run: make -C uWebSockets/tests

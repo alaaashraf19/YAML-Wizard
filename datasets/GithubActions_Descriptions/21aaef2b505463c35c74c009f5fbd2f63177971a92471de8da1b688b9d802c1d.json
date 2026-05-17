@@ -1,0 +1,15 @@
+{
+  "sha": "21aaef2b505463c35c74c009f5fbd2f63177971a92471de8da1b688b9d802c1d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2113,
+  "description": "Create a GitHub Actions workflow named build sakura that runs on push and pull request events for master, feature/*, and release/* branches, excluding certain paths. The workflow should have a single job called build that runs on a windows-latest environment with a matrix strategy for Debug and Release configurations across Win32 and x64 platforms. The job should check out the code, set up MSBuild, build the solution using build-sln.bat, and upload the resulting zip artifacts.",
+  "tags": [
+    "msbuild",
+    "windows",
+    "build",
+    "ci",
+    "zip",
+    "artifacts"
+  ]
+}

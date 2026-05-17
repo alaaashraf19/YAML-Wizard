@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_17932",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 446,
+  "description": "Create a GitLab CI pipeline that uses the najeraoscar/latex-emacs-min Docker image, runs ./installs.sh as a global before_script, and sets GIT_SUBMODULE_STRATEGY to recursive. Add a test job in the test stage that executes emacs --batch -Q --script genfiles.el then cd doc; hugo, always archives the doc/public and org-cv-exports directories as artifacts, and runs on every branch except master. Add a pages job in the deploy stage that runs the same emacs and hugo commands, moves the generated public folder to ../public/, publishes the public/ directory as a Pages artifact, and only runs on the master branch.",
+  "tags": [
+    "latex",
+    "emacs",
+    "hugo",
+    "gitlab-pages",
+    "submodule"
+  ]
+}

@@ -1,0 +1,18 @@
+image: node:6
+publish:
+  before_script:
+  - npm install --quiet https://gitlab.com/bahmutov/semantic-release-gitlab.git#8f519e9
+  except:
+  - branches
+  only:
+  - /^release-/
+  script:
+  - NODE_DEBUG=request DEBUG=semantic-release-*,conventional-* $(npm bin)/semantic-release-gitlab
+  stage: deploy
+stages:
+- test
+- deploy
+test:
+  script:
+  - npm test
+  stage: test

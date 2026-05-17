@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_08827",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 20278,
+  "description": "Create a GitLab CI pipeline that adds a single 'report' stage containing a series of jobs named '<component>-bug-prioritization' (e.g., accessibility-bug-prioritization, acquisition-bug-prioritization, activation-bug-prioritization, etc.). Each job extends a hidden '.run' template (which provides the Docker image, script and any caches), and is triggered only when both the global variable $TRIAGE_BUG_PRIORITIZATION_REPORT and the component‑specific variable $TRIAGE_BUG_PRIORITIZATION_REPORT_<COMPONENT> are set. In each job set the variable TRIAGE_POLICY_FILE to the path 'policies/generated/bug-prioritization.yml.erb/<component>.yml' matching the job name. No explicit artifacts, caches, or deployment targets are defined in these jobs; they rely on the inherited '.run' configuration for execution.",
+  "tags": [
+    "bug-prioritization",
+    "report-stage",
+    "gitlab-ci",
+    "triage",
+    "extends"
+  ]
+}

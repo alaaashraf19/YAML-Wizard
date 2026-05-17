@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_17244",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 144,
+  "description": "Create a GitLab CI pipeline that uses the alpine:latest Docker image. Define a deploy stage with a pages job that runs the command cp README.md public/README.md, publishes the public/ directory as a GitLab Pages artifact, and is limited to the master branch. Ensure the job is named pages and targets the GitLab Pages deployment target.",
+  "tags": [
+    "alpine",
+    "pages",
+    "gitlab-pages",
+    "copy-readme",
+    "deploy"
+  ]
+}

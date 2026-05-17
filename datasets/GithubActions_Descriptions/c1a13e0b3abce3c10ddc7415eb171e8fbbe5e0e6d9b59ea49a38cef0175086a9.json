@@ -1,0 +1,15 @@
+{
+  "sha": "c1a13e0b3abce3c10ddc7415eb171e8fbbe5e0e6d9b59ea49a38cef0175086a9",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1883,
+  "description": "Create a GitHub Actions workflow that builds and tests Windows wheels on push to master and test branches, and on repository creation. Use a single windows-latest job that checks out the code, cythonizes, and then runs tests across multiple Python versions (3.6 to 3.10) for both amd64 and x86 architectures, finally uploading the resulting wheels as an artifact.",
+  "tags": [
+    "windows",
+    "wheels",
+    "python",
+    "tests",
+    "cython",
+    "github-actions"
+  ]
+}

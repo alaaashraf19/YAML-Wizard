@@ -1,0 +1,68 @@
+.build_template:
+  artifacts: &id001
+    paths:
+    - build/
+  dependencies: &id002 []
+  script: &id004
+  - yarn build
+  - gzip -k -6 $(find build/ -type f)
+  stage: build
+.deploy_template:
+  script: &id006
+  - yarn firebase use default
+  - yarn firebase deploy --only hosting:$DEPLOY_ENV -m "Pipeline $CI_PIPELINE_ID,
+    Build $CI_BUILD_ID" --non-interactive
+  stage: deploy
+.preview_job:
+  only: &id003
+  - master
+.production_job:
+  only: &id005
+  - /^release-.*$/
+before_script:
+- yarn install
+build-preview:
+  artifacts: *id001
+  dependencies: *id002
+  only: *id003
+  script: *id004
+  stage: build
+  variables:
+    DEPLOY_ENV: preview
+build-production:
+  artifacts: *id001
+  dependencies: *id002
+  only: *id005
+  script: *id004
+  stage: build
+  variables:
+    DEPLOY_ENV: production
+cache:
+  paths:
+  - node_modules/
+deploy-preview:
+  dependencies:
+  - build-preview
+  environment:
+    name: preview
+    url: https://preview.regexper.com
+  only: *id003
+  script: *id006
+  stage: deploy
+  variables:
+    DEPLOY_ENV: preview
+deploy-production:
+  dependencies:
+  - build-production
+  environment:
+    name: production
+    url: https://regexper.com
+  only: *id005
+  script: *id006
+  stage: deploy
+  variables:
+    DEPLOY_ENV: production
+image: node:latest
+stages:
+- build
+- deploy

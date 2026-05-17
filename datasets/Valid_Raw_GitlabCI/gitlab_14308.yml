@@ -1,0 +1,18 @@
+image: python:3.7-alpine
+pages:
+  artifacts:
+    paths:
+    - public
+  rules:
+  - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+  script:
+  - pip install -U sphinx
+  - sphinx-build -b html . public
+  stage: deploy
+test:
+  rules:
+  - if: $CI_COMMIT_REF_NAME != $CI_DEFAULT_BRANCH
+  script:
+  - pip install -U sphinx
+  - sphinx-build -b html . public
+  stage: test

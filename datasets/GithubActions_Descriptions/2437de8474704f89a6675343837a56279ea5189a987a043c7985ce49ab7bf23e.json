@@ -1,0 +1,16 @@
+{
+  "sha": "2437de8474704f89a6675343837a56279ea5189a987a043c7985ce49ab7bf23e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1428,
+  "description": "Create a GitHub Actions workflow named Test that runs on push, pull request, workflow dispatch, and a scheduled cron job. Use an ubuntu-latest job matrix to test with Python 3.7, 3.8, and 3.9. For each Python version, check out the code, set up Python, start a Postgresql service, install dependencies with poetry, run unit tests with pytest, and upload coverage to Codecov.",
+  "tags": [
+    "python",
+    "postgresql",
+    "poetry",
+    "pytest",
+    "codecov",
+    "tests",
+    "ubuntu"
+  ]
+}

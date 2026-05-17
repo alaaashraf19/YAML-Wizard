@@ -1,0 +1,15 @@
+{
+  "sha": "955621df4fc72feabce0b29de7ce6f660a13fbabaf759587cc47ffa5ffa7314c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3241,
+  "description": "Create a GitHub Actions workflow named Test that runs on push to master, main, and cran/* branches, on pull requests, on a scheduled cron job, and on workflow dispatch. The workflow has two jobs: lantern which uses a reusable workflow and check which runs on a matrix of different OS, R version, and runner configurations. The check job depends on the lantern job and runs a series of steps to download lantern artifacts, set up R, install dependencies, and check the R package.",
+  "tags": [
+    "r",
+    "github-actions",
+    "lantern",
+    "workflow-reuse",
+    "matrix-job",
+    "r-package"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "0c2eb8d72f40820c8ba5866826950c2fd2720a2b57a9b6a731e639bbb84eef9a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 936,
+  "description": "Create a GitHub Actions workflow named C/C++ CI that runs on every push to the master branch and on pull requests to master. Use a single ubuntu-latest job that checks out the repository, updates apt, installs required packages, runs autogen.sh, configures with --enable-static, builds with make -j4, runs make distcheck -j4, and uploads the resulting Linux 64-bit build artifact.",
+  "tags": [
+    "c",
+    "cpp",
+    "ci",
+    "ubuntu",
+    "autotools",
+    "make"
+  ]
+}

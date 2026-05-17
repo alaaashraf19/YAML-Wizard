@@ -1,0 +1,18 @@
+{
+  "sha": "14d7293d13c994df56c258093d350676f9c662039512593226bea8825f25493f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3096,
+  "description": "Create a GitHub Actions workflow named Build that runs on every push to main and on pull requests to main. Use a matrix strategy with multiple jobs across different environments, including Ubuntu and MacOS, with various compilers like gcc, g++, clang, and clang++. For each job, check out the repository, then perform a series of steps including compiler info, CMake build or compilation, and running tests and examples. Upload code coverage if specified.",
+  "tags": [
+    "github-actions",
+    "matrix",
+    "ubuntu",
+    "macos",
+    "gcc",
+    "clang",
+    "cmake",
+    "tests",
+    "coverage"
+  ]
+}

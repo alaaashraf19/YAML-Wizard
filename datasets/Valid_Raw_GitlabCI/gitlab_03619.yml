@@ -1,0 +1,35 @@
+bintray:publish:
+  before_script:
+  - export GRADLE_USER_HOME=`pwd`/.gradle
+  - chmod +x ./gradlew
+  cache:
+    paths:
+    - build
+    - .gradle
+  only:
+  - tags
+  script:
+  - ./gradlew bintrayUpload
+  stage: publish
+image: adoptopenjdk/openjdk8-openj9:alpine
+stages:
+- test
+- publish
+test:
+  artifacts:
+    reports:
+      junit: ./*/build/test-results/test/TEST-*.xml
+  before_script:
+  - export GRADLE_USER_HOME=`pwd`/.gradle
+  - chmod +x ./gradlew
+  cache:
+    paths:
+    - build
+    - .gradle
+  script:
+  - ./gradlew check --no-daemon
+  - chmod +x ./scripts/coverage.sh
+  - ./scripts/coverage.sh
+  stage: test
+variables:
+  GRADLE_OPTS: -Dorg.gradle.daemon=false

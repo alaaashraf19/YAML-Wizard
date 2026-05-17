@@ -1,0 +1,12 @@
+{
+  "sha": "gitlab_09556",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 66,
+  "description": "Create a GitLab CI pipeline with a global before_script that executes `echo wait a sec`. Add a job called test1 (using the default stage) that runs the command `echo hello!`. The pipeline does not specify a Docker image, services, caches, artifacts, or any rules, so it runs on the default runner environment for all branches.",
+  "tags": [
+    "echo",
+    "before-script",
+    "simple-pipeline"
+  ]
+}

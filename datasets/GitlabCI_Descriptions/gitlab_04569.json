@@ -1,0 +1,21 @@
+{
+  "sha": "gitlab_04569",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 5362,
+  "description": "Create a GitLab CI pipeline with stages lint_test_coverage, build-aws, build, release, and deploy. In the lint_test_coverage stage add a test job using python:3.6 that runs cd backend && pip install -r requirements.txt, flake8, and pytest --cov with a postgres:latest service and appropriate DB variables; add a test_unit job using node:10.14.2-jessie that runs cd frontend && npm install, npm run lint, npm run test:unit; and a test_e2e job using cypress/base:10 that runs cd frontend, npm install, apt install httping, npm run serve &, a loop waiting for httping, and $(npm bin)/cypress run. In the build-aws stage add a build-ecr job using docker:latest that installs curl, jq, python, pip, installs awscli, logs into AWS ECR, builds backend and nginx images with tags $REPOSITORY_URL/...:$CI_COMMIT_SHORT_SHA and pushes them. In the build stage add build-backend, build-nginx, build-traefik, and build-vuepress jobs (docker:stable, only on develop, with docker:dind) that each log in to the GitLab registry and build/push their respective images using $CI_REGISTRY_IMAGE/...:$CI_COMMIT_REF_SLUG. In the release stage add release-backend, release-traefik, release-vuepress, and release-nginx jobs (docker:latest, docker:dind) that pull the slug‑tagged images, retag them as latest, and push them. Finally, in the deploy stage add a deploy- job (docker:stable) that configures TLS certificates, logs in to the registry, and runs docker stack deploy --with-registry-auth --compose-file=docker-stack.yml verbose-equals-true-stack using a TCP Docker host, and a deploy-ssh job (docker:stable) that sets up an SSH key and runs docker stack deploy -c docker-stack.yml verbose-equals-true-stack via SSH.",
+  "tags": [
+    "docker",
+    "docker-build",
+    "ecr",
+    "gitlab-ci",
+    "cypress",
+    "pytest",
+    "flake8",
+    "node",
+    "python",
+    "postgres",
+    "ssh-deploy",
+    "docker-swarm"
+  ]
+}

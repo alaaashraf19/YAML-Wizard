@@ -1,0 +1,56 @@
+build:
+  artifacts:
+    paths:
+    - rpm/
+    - '*.spec'
+  image: gioxa/ruby-rpm-build-centos
+  script:
+  - mkdir -pv rpm
+  - export spec=ruby.spec
+  - export tar=ruby-${version}.tar.gz
+  - 'copy --if_value=$CI_COMMIT_TAG --from_text="${CI_COMMIT_TAG}" --to_var=version
+
+    '
+  - export dl_url="${raw_url}/${version}/ruby.spec"
+  - echo $dl_url
+  - echo $version
+  - "# just in case\nif [ -f \"$spec\" ] ; then\n  rm -f $spec\nfi\n"
+  - "STATUSCODE=$(curl -L --silent --output $spec --write-out \"%{http_code}\" $dl_url);\n\
+    if [[ \"${STATUSCODE}\" -ne \"200\" ]]; then\n   echo \"http error=$STATUSCODE\"\
+    ;\n   rm -f $spec;\n   [[ 1 -eq 0 ]] ;\nelse\n    ls -la $spec;\nfi;\n"
+  - mkdir -p ~/rpmbuild/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS}
+  - cp ruby.spec ~/rpmbuild/SPECS/
+  - cd ~/rpmbuild/SOURCES
+  - export src_url="https://cache.ruby-lang.org/pub/ruby/ruby-${version}.tar.gz"
+  - echo $src_url
+  - "STATUSCODE=$(curl -L -o $tar --silent --write-out \"%{http_code}\" $src_url);\n\
+    if [[ \"${STATUSCODE}\" -ne \"200\" ]]; then\n   echo \"http error=$STATUSCODE\"\
+    ;\n   rm -f $tar;\n   [[ 1 -eq 0 ]] ;\nelse\n    ls -la $tar;\nfi;\n"
+  - rpmbuild --quiet -bb ../SPECS/$spec
+  - cp ../RPMS/x86_64/* ${CI_PROJECT_DIR}/rpm
+  stage: build
+  tags:
+  - odagrun
+  variables:
+    GIT_CACHE_STRATEGY: push-pull
+    ODAGRUN_POD_SIZE: large
+deploy:
+  environment:
+    name: production
+    url: https://repo.deployctl.com
+  script:
+  - deployctl repo_add
+  stage: deploy
+  tags:
+  - deployctl-gioxapp.com
+  variables:
+    GIT_STRATEGY: none
+stages:
+- build
+- deploy
+variables:
+  DEPLOY_REPO_PATH: /
+  DEPLOY_REPO_URL: https://repo.deployctl.com
+  raw_url: https://raw.githubusercontent.com/feedforce/ruby-rpm
+  url: https://github.com/jgm/pandoc
+  version: 2.5.3

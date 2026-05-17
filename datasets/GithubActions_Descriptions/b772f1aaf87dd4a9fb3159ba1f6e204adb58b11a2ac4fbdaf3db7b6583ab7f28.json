@@ -1,0 +1,16 @@
+{
+  "sha": "b772f1aaf87dd4a9fb3159ba1f6e204adb58b11a2ac4fbdaf3db7b6583ab7f28",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3419,
+  "description": "Create a GitHub Actions workflow named Clang Tests that runs on push and pull request events. The workflow has three jobs: osx-qmake, docker-qbs, and linux-qmake. The osx-qmake job runs on macos-10.15, installs Qt5, checks out the code, and runs qmake and make with different C++ standards. The docker-qbs job runs on ubuntu-latest, checks out the code, and builds and tests with Docker using different images. The linux-qmake job runs on different Ubuntu versions, caches and installs Qt, sets up Clang, checks out the code, and runs qmake and make with different Qt versions, Clang versions, and C++ standards.",
+  "tags": [
+    "clang",
+    "qt",
+    "qmake",
+    "docker",
+    "ubuntu",
+    "macos",
+    "tests"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_10764",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 109,
+  "description": "Create a GitLab CI pipeline that uses the javastreets/jbake:base-2.6.0 Docker image. Add a pages job (running in the default stage) that executes the shell command `jbake . public` to generate the site. Configure the job to publish the generated `public/` directory as a GitLab Pages artifact, with no additional services, caches, or trigger rules.",
+  "tags": [
+    "jbake",
+    "java",
+    "gitlab-pages",
+    "static-site"
+  ]
+}

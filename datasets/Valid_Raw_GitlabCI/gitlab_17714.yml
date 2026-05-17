@@ -1,0 +1,356 @@
+.build:
+  artifacts:
+    expire_in: 30 days
+    paths:
+    - build/
+  image: openjdk:${JAVA_VERSION}-jdk
+  needs: []
+  rules:
+  - when: on_success
+  script:
+  - export "VERSION=$(./version.sh)"
+  - 'echo "Version: ${VERSION}"'
+  - ./gradlew installDist
+  stage: build
+.docker-buildx:
+  before_script:
+  - podman login --username "${CI_DEPENDENCY_PROXY_USER}" --password "${CI_DEPENDENCY_PROXY_PASSWORD}"
+    "${CI_DEPENDENCY_PROXY_SERVER}"
+  - podman login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
+  - export VERSION="$(./version.sh | sed 's#+#-#g' | sed 's#/#-#g')"
+  - DOCKER_PLATFORM=$(echo "${PLATFORM:6}" | sed 's#/#-#g')
+  needs: []
+  rules:
+  - if: $CI_PROJECT_NAMESPACE == "signald" && $CI_COMMIT_REF_PROTECTED == "true"
+    when: on_success
+  - allow_failure: true
+    when: manual
+  script:
+  - podman build --platform "${PLATFORM}" --build-arg "CI_BUILD_REF_NAME=${CI_BUILD_REF_NAME}"
+    --build-arg "CI_COMMIT_SHA=${CI_COMMIT_SHA}" -t "${CI_REGISTRY_IMAGE}:${VERSION}-${DOCKER_PLATFORM}-non-root"
+    -f "${CONTAINERFILE:-Containerfile}" .
+  - sed -i "s#FROM .*#FROM ${CI_REGISTRY_IMAGE}:${VERSION}-${DOCKER_PLATFORM}-non-root#g"
+    uid-transition.Containerfile
+  - podman build --platform "${PLATFORM}" --build-arg "CI_BUILD_REF_NAME=${CI_BUILD_REF_NAME}"
+    --build-arg "CI_COMMIT_SHA=${CI_COMMIT_SHA}" -t "${CI_REGISTRY_IMAGE}:${VERSION}-${DOCKER_PLATFORM}"
+    -f "uid-transition.Containerfile" .
+  - podman push "${CI_REGISTRY_IMAGE}:${VERSION}-${DOCKER_PLATFORM}-non-root"
+  - podman push "${CI_REGISTRY_IMAGE}:${VERSION}-${DOCKER_PLATFORM}"
+  stage: build docker
+  tags:
+  - docker-builder
+.testserver:
+  variables: &id001
+    POSTGRES_PASSWORD: test
+build:
+  extends: .build
+  parallel:
+    matrix:
+    - JAVA_VERSION:
+      - 11
+      - 12
+      - 13
+      - 14
+      - 15
+      - 16
+      - 17
+build deb aarch64-unknown-linux-gnu:
+  artifacts:
+    expire_in: 30 days
+    paths:
+    - signald_*
+  before_script:
+  - export VERSION="$(./version.sh)"
+  - echo "Building signald version $VERSION"
+  - 'sed -i ''s/^Architecture:.*/Architecture: arm64/g'' debian/control'
+  image: registry.gitlab.com/signald/infrastructure/signald-builder-arm64-v8:010941fc
+  needs: []
+  rules:
+  - if: $CI_PROJECT_PATH == "signald/signald" && $CI_COMMIT_REF_PROTECTED == "true"
+    when: on_success
+  - allow_failure: true
+    when: manual
+  script:
+  - gbp dch --ignore-branch --debian-tag="%(version)s" --git-author --new-version="${VERSION}"
+  - dpkg-buildpackage -b
+  - mv ../signald_* .
+  stage: build deb
+  tags:
+  - arm-builder
+build deb x86_64-unknown-linux-gnu:
+  artifacts:
+    expire_in: 30 days
+    paths:
+    - signald_*
+  before_script:
+  - export VERSION="$(./version.sh)"
+  - echo "Building signald version $VERSION"
+  - 'sed -i ''s/^Architecture:.*/Architecture: amd64/g'' debian/control'
+  image: registry.gitlab.com/signald/infrastructure/signald-builder-x86:d5e68709
+  needs: []
+  rules:
+  - if: $CI_PROJECT_PATH == "signald/signald" && $CI_COMMIT_REF_PROTECTED == "true"
+    when: on_success
+  - allow_failure: true
+    when: manual
+  script:
+  - gbp dch --ignore-branch --debian-tag="%(version)s" --git-author --new-version="${VERSION}"
+  - dpkg-buildpackage -b
+  - mv ../signald_* .
+  stage: build deb
+build java11 aarch64-unknown-linux-gnu:
+  extends: .build
+  variables:
+    JAVA_VERSION: 11
+    SIGNALD_TARGET: aarch64-unknown-linux-gnu
+build java11 x86_64-unknown-linux-gnu:
+  extends: .build
+  variables:
+    JAVA_VERSION: 11
+clang-format:
+  before_script:
+  - apt-get update && apt-get install -y clang-format-11 git python3 wget make
+  image: debian:buster-backports
+  needs: []
+  rules:
+  - when: on_success
+  script:
+  - tools/format.sh
+  stage: lint
+container amd64:
+  extends: .docker-buildx
+  variables:
+    PLATFORM: linux/amd64
+container arm64:
+  extends: .docker-buildx
+  variables:
+    PLATFORM: linux/arm64/v8
+container manifest:
+  before_script:
+  - sudo apt-get update && sudo apt-get install -y podman
+  - podman login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
+  - if [[ "${CI_COMMIT_REF_PROTECTED}" == "true" ]]; then podman login -u ${DOCKER_HUB_USERNAME}
+    -p ${DOCKER_HUB_PASSWORD} docker.io; fi
+  - export VERSION="$(./version.sh | sed 's#+#-#g' | sed 's#/#-#g')"
+  needs:
+  - container amd64
+  - container arm64
+  rules:
+  - if: $CI_PROJECT_PATH == "signald/signald" && $CI_COMMIT_BRANCH
+    when: on_success
+  - allow_failure: true
+    when: manual
+  script:
+  - "for platform in amd64 arm64-v8; do\n  set -x\n  podman pull --quiet \"${CI_REGISTRY_IMAGE}:${VERSION}-${platform}\"\
+    \n  podman pull --quiet \"${CI_REGISTRY_IMAGE}:${VERSION}-${platform}-non-root\"\
+    \n  set +x\ndone\n"
+  - tools/podman-multiarch-manifest.sh "${CI_REGISTRY_IMAGE}:${VERSION}" "${CI_REGISTRY_IMAGE}:${VERSION}"-{amd64,arm64-v8}
+  - tools/podman-multiarch-manifest.sh "${CI_REGISTRY_IMAGE}:${VERSION}-non-root"
+    "${CI_REGISTRY_IMAGE}:${VERSION}"-{amd64,arm64-v8}-non-root
+  - "if [ \"${CI_COMMIT_REF_PROTECTED}\" == \"true\" ]; then\n  set -x\n\n  for platform\
+    \ in amd64 arm64-v8; do\n    podman tag \"${CI_REGISTRY_IMAGE}:${VERSION}-${platform}\"\
+    \ \"docker.io/signald/signald:${VERSION}-${platform}\"\n    podman push --quiet\
+    \ \"docker.io/signald/signald:${VERSION}-${platform}\"\n\n    podman tag \"${CI_REGISTRY_IMAGE}:${VERSION}-${platform}-non-root\"\
+    \ \"docker.io/signald/signald:${VERSION}-${platform}-non-root\"\n    podman push\
+    \ --quiet \"docker.io/signald/signald:${VERSION}-${platform}-non-root\"\n  done\n\
+    \n  tools/podman-multiarch-manifest.sh \"${CI_REGISTRY_IMAGE}:unstable\" \"${CI_REGISTRY_IMAGE}:${VERSION}\"\
+    -{amd64,arm64-v8}\n  tools/podman-multiarch-manifest.sh \"docker.io/signald/signald:unstable\"\
+    \ \"docker.io/signald/signald:${VERSION}\"-{amd64,arm64-v8}\n\n  # count commits\
+    \ since last tag\n  commits=\"$(git rev-list $(git describe --always --abbrev=0\
+    \ HEAD)..HEAD --count)\"\n  if [ \"${commits}\" = \"0\" ]; then # an actual release\n\
+    \    tools/podman-multiarch-manifest.sh \"docker.io/signald/signald:${VERSION}\"\
+    \ \"docker.io/signald/signald:${VERSION}\"-{amd64,arm64-v8}\n    tools/podman-multiarch-manifest.sh\
+    \ \"docker.io/signald/signald:${VERSION}-non-root\" \"docker.io/signald/signald:${VERSION}\"\
+    -{amd64,arm64-v8}-non-root\n    tools/podman-multiarch-manifest.sh \"docker.io/signald/signald:stable\"\
+    \ \"docker.io/signald/signald:${VERSION}\"-{amd64,arm64-v8}\n    tools/podman-multiarch-manifest.sh\
+    \ \"docker.io/signald/signald:latest\" \"docker.io/signald/signald:${VERSION}\"\
+    -{amd64,arm64-v8}\n    tools/podman-multiarch-manifest.sh \"${CI_REGISTRY_IMAGE}:stable\"\
+    \ \"${CI_REGISTRY_IMAGE}:${VERSION}\"-{amd64,arm64-v8}\n    tools/podman-multiarch-manifest.sh\
+    \ \"${CI_REGISTRY_IMAGE}:latest\" \"${CI_REGISTRY_IMAGE}:${VERSION}\"-{amd64,arm64-v8}\n\
+    \    tools/podman-multiarch-manifest.sh \"docker.io/finn/signald:${VERSION}\"\
+    \  \"docker.io/signald/signald:${VERSION}\"-{amd64,arm64-v8}\n    tools/podman-multiarch-manifest.sh\
+    \ \"docker.io/finn/signald:latest\" \"docker.io/signald/signald:${VERSION}\"-{amd64,arm64-v8}\n\
+    \  fi\n\n  set +x # to avoid printing tokens\n  echo \"Authenticating to dockerhub\
+    \ to delete temporary tags\"\n  token=$(curl -sfd \"{\\\"username\\\": \\\"${DOCKER_HUB_USERNAME}\\\
+    \", \\\"password\\\": \\\"${DOCKER_HUB_PASSWORD}\\\"}\" -H \"Content-Type: application/json\"\
+    \ https://hub.docker.com/v2/users/login/ | jq -r '.token')\n  for platform in\
+    \ amd64 arm64-v8; do\n    echo \"deleting tag ${VERSION}-${platform}\"\n    curl\
+    \ --fail -s -X DELETE -H \"Authorization: JWT ${token}\" https://hub.docker.com/v2/repositories/signald/signald/tags/${VERSION}-${platform}/\n\
+    \n    echo \"deleting tag ${VERSION}-${platform}-non-root\"\n    curl --fail -s\
+    \ -X DELETE -H \"Authorization: JWT ${token}\" https://hub.docker.com/v2/repositories/signald/signald/tags/${VERSION}-${platform}-non-root/\n\
+    \  done\n\n  echo \"image pushed to docker.io/signald/signald:${VERSION} and ${CI_REGISTRY_IMAGE}:${VERSION}\"\
+    \nfi\n"
+  stage: publish
+  tags:
+  - docker-builder
+publish debian packages:
+  image: registry.gitlab.com/signald/infrastructure/signald-builder-x86:d5e68709
+  needs:
+  - build deb x86_64-unknown-linux-gnu
+  - build deb aarch64-unknown-linux-gnu
+  rules:
+  - if: $CI_PROJECT_PATH == "signald/signald" && $CI_COMMIT_REF_PROTECTED == "true"
+      && $CI_COMMIT_BRANCH
+    when: on_success
+  script:
+  - tools/aptly-publish.sh
+  stage: publish
+  tags:
+  - deb-signer
+  variables:
+    DISTRIBUTION: unstable
+publish stable debian packages:
+  allow_failure: true
+  image: registry.gitlab.com/signald/infrastructure/signald-builder-x86:d5e68709
+  needs:
+  - build deb x86_64-unknown-linux-gnu
+  - build deb aarch64-unknown-linux-gnu
+  rules:
+  - if: $CI_PROJECT_PATH == "signald/signald" && $CI_COMMIT_REF_PROTECTED == "true"
+      && $CI_COMMIT_TAG
+    when: on_success
+  script:
+  - tools/aptly-publish.sh
+  stage: publish
+  tags:
+  - deb-signer
+  variables:
+    DISTRIBUTION: stable
+release:
+  before_script:
+  - apt update
+  - apt install -y python3-requests
+  image: debian:latest
+  only:
+  - tags
+  script:
+  - python3 ./tools/release/ci-create.py
+  stage: release
+signald.org:
+  needs:
+  - validate protocol
+  only:
+  - main
+  stage: downstreams
+  trigger: signald/signald.org
+signald.org-branch:
+  artifacts:
+    expire_in: 1 month
+    expose_as: signald dot org preview
+    paths:
+    - public
+  before_script:
+  - echo 'deb http://deb.debian.org/debian buster-backports main' > /etc/apt/sources.list.d/backports.list
+  - apt-get update && apt-get install -t buster-backports -y hugo golang-go
+  - apt-get install -y jq locales python3 python3-requests python3-pip openjdk-11-jdk-headless
+    curl git
+  - apt install -y --allow-downgrades libcurl3-gnutls/stable
+  - pip3 install anybadge
+  - sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
+  - git clone https://gitlab.com/signald/signald.org
+  image: debian
+  needs:
+  - build java11 x86_64-unknown-linux-gnu
+  - artifacts: true
+    job: build:x86
+    project: signald/signald-go
+    ref: main
+  rules:
+  - if: $CI_COMMIT_REF_PROTECTED == "false" && $CI_PROJECT_PATH == "signald/signald"
+  script:
+  - mkdir -p signald.org/content/signaldctl/reference
+  - SIGNALDCTL_PUBLIC_DOC_MODE=on ./signaldctl doc -o md ./signald.org/content/signaldctl/reference
+  - build/install/signald/bin/signald --dump-protocol | jq . > ./signald.org/content/protocol.json
+  - cd signald.org
+  - go run generate.go < content/protocol.json
+  - mkdir -p themes/hugo-geekdoc/
+  - curl -L https://github.com/thegeeklab/hugo-geekdoc/releases/latest/download/hugo-geekdoc.tar.gz
+    | tar -xz -C themes/hugo-geekdoc/ --strip-components=1
+  - python3 ./generate-badges.py
+  - sed -i "s#https://signald.org#https://signald.gitlab.io/-/signald/-/jobs/${CI_JOB_ID}/artifacts/public/#"
+    config.toml
+  - hugo
+  - mv public ../public
+  stage: docs
+stages:
+- lint
+- build
+- test
+- build deb
+- build docker
+- publish
+- docs
+- downstreams
+- release
+unit tests aarch64-unknown-linux-gnu:
+  before_script:
+  - apt update && apt install -y make openjdk-11-jdk-headless
+  image: debian
+  needs: []
+  rules:
+  - if: $CI_PROJECT_PATH == "signald/signald" && $CI_COMMIT_REF_PROTECTED == "true"
+    when: on_success
+  - allow_failure: true
+    when: manual
+  script:
+  - ./gradlew test
+  stage: test
+  tags:
+  - arm-builder
+  variables: *id001
+unit tests x86:
+  artifacts:
+    paths:
+    - build/reports/tests/test
+    reports:
+      junit: build/test-results/test/**/TEST-*.xml
+    when: always
+  before_script:
+  - cp tools/log4j2.xml src/main/resources/log4j2.xml
+  image: openjdk:11-jdk
+  needs: []
+  rules:
+  - when: on_success
+  script:
+  - ./gradlew test
+  stage: test
+  variables: *id001
+unit tests x86_64-apple-darwin:
+  after_script:
+  - rm -rf ~/.config/signald
+  before_script:
+  - apt update && apt install -y make openjdk-11-jdk-headless
+  image: debian
+  needs: []
+  rules:
+  - if: $CI_PROJECT_PATH == "signald/signald" && $CI_COMMIT_REF_PROTECTED == "true"
+    when: on_success
+  - allow_failure: true
+    when: manual
+  script:
+  - export PATH=/usr/local/opt/openjdk/bin:$PATH
+  - ./gradlew cleanTest test
+  stage: test
+  tags:
+  - darwin-builder
+validate protocol:
+  allow_failure: true
+  artifacts:
+    expire_in: 1 year
+    paths:
+    - protocol.json
+    reports:
+      metrics: metrics.txt
+  before_script:
+  - apt-get update && apt-get install -y openjdk-11-jdk-headless
+  image: golang:latest
+  needs:
+  - build java11 x86_64-unknown-linux-gnu
+  rules:
+  - when: on_success
+  script:
+  - build/install/signald/bin/signald --dump-protocol > protocol.json
+  - go run ./tools/protocol-validator < protocol.json
+  stage: docs
+variables:
+  DOCKER_TLS_CERTDIR: /certs

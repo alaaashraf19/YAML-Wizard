@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_14397",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 614,
+  "description": "Create a GitLab CI pipeline with two stages named page and container. In the page stage add a build job that uses the node:7.3.0 Docker image, runs the commands `npm install --save-dev`, `NODE_ENV=production npm run-script build`, and `cp dist/* ./static`, and publishes artifacts named `cookery-${CI_BUILD_REF_NAME}` containing the ./static directory and ./index.html file. In the container stage add a docker job that uses the docker:latest image with the docker:dind service, is limited to the master branch, and executes `mkdir -p dist`, `docker build -f Dockerfile -t ${CI_REGISTRY_IMAGE}:latest ./`, `docker login -u gitlab-ci-token -p ${CI_BUILD_TOKEN} ${CI_REGISTRY}`, and `docker push ${CI_REGISTRY_IMAGE}:latest`. Both jobs are tagged to run on Docker-enabled runners. The pipeline pushes the built image to the GitLab Container Registry.",
+  "tags": [
+    "node",
+    "npm",
+    "docker",
+    "dind",
+    "container-registry",
+    "static-artifacts"
+  ]
+}

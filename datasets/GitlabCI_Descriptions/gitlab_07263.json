@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_07263",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 219,
+  "description": "Create a GitLab CI pipeline that uses the rust:latest Docker image and a single build stage. Add a job named build in the build stage that runs `cd rsget_cli` then `cargo build --release`, caches the directory rsget_cli/target/, and publishes the binary rsget_cli/target/release/rsget_cli as an artifact. No services, variables, or conditional rules are required.",
+  "tags": [
+    "rust",
+    "cargo",
+    "build",
+    "artifact",
+    "cache"
+  ]
+}

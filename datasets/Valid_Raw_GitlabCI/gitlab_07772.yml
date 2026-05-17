@@ -1,0 +1,12 @@
+cache:
+  paths:
+  - .gitlab-ci-stack/
+image: debian:stable-slim
+stack_test:
+  script:
+  - apt-get --quiet update
+  - apt-get --quiet --assume-yes install curl
+  - curl -sSL https://get.haskellstack.org/ | sh
+  - stack --stack-root $PWD/.gitlab-ci-stack test --only-dependencies --no-run-tests
+    --install-ghc
+  - stack --stack-root $PWD/.gitlab-ci-stack test

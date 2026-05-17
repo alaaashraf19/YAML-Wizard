@@ -1,0 +1,49 @@
+before_script:
+- python -V
+- pip install virtualenv
+- virtualenv venv
+- source venv/bin/activate
+- pip install .
+- mkdir -p public
+cache:
+  paths:
+  - .cache/pip
+  - venv/
+image: python:latest
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - pip install sphinx sphinx-rtd-theme recommonmark
+  - cd doc ; make html
+  - cp -r _build/html/* ../public/
+  stage: deploy
+pylint:
+  artifacts:
+    paths:
+    - public/pylint.svg
+  script:
+  - pip install pylint pylint-exit anybadge
+  - pylint --output-format=text pytemplate/ tests/*.py | tee pylint.txt || pylint-exit
+    $?
+  - score=$(sed -n 's/^Your code has been rated at \([-0-9.]*\)\/.*/\1/p' pylint.txt)
+  - echo "Pylint score was $score"
+  - anybadge --value=$score --file=public/pylint.svg pylint
+  stage: test and quality
+stages:
+- test and quality
+- deploy
+test:
+  script: python setup.py test
+  stage: test and quality
+variables:
+  PIP_CACHE_DIR: $CI_PROJECT_DIR/.cache
+wheel:
+  artifacts:
+    paths:
+    - dist/*.whl
+  script: python setup.py bdist_wheel
+  stage: deploy

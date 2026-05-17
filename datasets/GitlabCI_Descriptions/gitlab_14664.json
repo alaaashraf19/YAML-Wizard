@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_14664",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1200,
+  "description": "Create a GitLab CI pipeline with stages test and deploy and define the variables ANDROID_BUILD_TOOLS, ANDROID_SDK_TOOLS, ANDROID_TARGET_SDK. In the test stage add a unitTest:API job that uses the php:7.0 image, runs `chmod +x CI/install_phpunit.sh`, `CI/install_phpunit.sh > /dev/null`, `composer install -d ./API`, then `phpunit API/test/BatikTest.php`, caches the path API/vendor/, and produces no artifacts. Also in the test stage add a unitTest:app job that uses the openjdk:8-jdk image, runs `chmod +x CI/android_sdk.sh`, `./CI/android_sdk.sh`, `export ANDROID_HOME=$PWD/android-sdk-linux`, `chmod +x ./gradlew`, then `./gradlew test`, `./gradlew testDebugUnitTestCoverage`, `cat app/build/reports/jacoco/testDebugUnitTestCoverage/html/index.html`, and stores the directory app/build/reports/ as artifacts. In the deploy stage add a build job that uses the openjdk:8-jdk image, runs `chmod +x CI/android_sdk.sh`, `./CI/android_sdk.sh`, `export ANDROID_HOME=$PWD/android-sdk-linux`, `chmod +x ./gradlew`, then `./gradlew assembleDebug`, and publishes app/build/outputs/ as artifacts. Also in the deploy stage add a pages job that moves the Jacoco HTML report from app/build/reports/jacoco/testDebugUnitTestCoverage/html/ to a public/ folder and publishes the public/ directory as the GitLab Pages artifact, all jobs running on linux docker runners.",
+  "tags": [
+    "android",
+    "openjdk8",
+    "php7",
+    "composer",
+    "phpunit",
+    "gradle",
+    "jacoco",
+    "gitlab-pages",
+    "docker",
+    "linux"
+  ]
+}

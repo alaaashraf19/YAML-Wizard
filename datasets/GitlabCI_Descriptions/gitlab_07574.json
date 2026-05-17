@@ -1,0 +1,20 @@
+{
+  "sha": "gitlab_07574",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2966,
+  "description": "Create a GitLab CI pipeline with stages test, package, deploy, and pages. Add a build_env job in the package stage using the registry.gitlab.com/finding-ray/docker-alpine-curl:latest image, running only on the dev branch, that executes `curl --request POST --form token=${ANTI_ARM_ENV_TOKEN} --form ref=master --form variables[DEV_BRANCH]=true https://gitlab.com/api/v4/projects/2905142/trigger/builds`. Add a package job in the package stage using the python image, running on master and dev, that runs `apt-get --yes update && apt-get --yes install lsb-release`, `bash setup.sh`, and `python setup.py sdist bdist_wheel`, and publishes the dist/ directory as an artifact named `${CI_PROJECT_NAME}_${CI_PIPELINE_ID}`. Add a pages job in the pages stage using the python image, running only on master, that runs `apt-get --yes update && apt-get --yes install lsb-release`, `bash setup.sh`, `pip install -r test-requirements.txt`, `python setup.py test`, `python setup.py docs`, moves coverage and docs into a public/ folder, copies install.sh and requirements.txt there, and publishes public/ as the GitLab Pages artifact. Add a release_env job in the deploy stage using the docker-alpine-curl image, running only on master, that runs `curl --request POST --form token=${ANTI_ARM_ENV_TOKEN} --form ref=master https://gitlab.com/api/v4/projects/2905142/trigger/builds`. Add multiple test jobs in the test stage: test_armv7l (image python, only runners, allow_failure, runs `bash setup.sh`, `pip3 install -r test-requirements.txt`, `python3 setup.py test`); test_install_debian_x86 (image debian, runs `bash install.sh`); test_install_rpi_3.4.4 (image resin/raspberrypi2-python:3.4.4, runs `bash install.sh`); test_install_rpi_3.5.1 (image resin/raspberrypi2-python:3.5.1, runs `bash install.sh`); test_install_ubuntu_x86 (image ubuntu, runs `bash install.sh`); test_rpi (image registry.gitlab.com/finding-ray/antikythera:latest, runs `apt-get --yes update && apt-get --yes install lsb-release`, `bash setup.sh`, `pip3 install -r test-requirements.txt`, `python3 setup.py test`); test_ubuntu (image ubuntu, runs `apt-get --yes update && apt-get --yes install python3 python3-venv lsb-release`, `mkdir -p ~/.virtualenv`, `python3 -m venv ~/.virtualenv/antikythera`, `source ~/.virtualenv/antikythera/bin/activate`, `bash setup.sh`, `pip install -r test-requirements.txt`, `python setup.py test`, `python setup.py docs`, `python setup.py install`); and test_x86 (image python, runs `apt-get --yes update && apt-get --yes install lsb-release`, `bash setup.sh`, `pip install -r test-requirements.txt`, `python setup.py test`).",
+  "tags": [
+    "docker-alpine-curl",
+    "python",
+    "apt",
+    "pages",
+    "test",
+    "package",
+    "deploy",
+    "rpi",
+    "debian",
+    "ubuntu",
+    "antikythera"
+  ]
+}

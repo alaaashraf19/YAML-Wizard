@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_07132",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1350,
+  "description": "Create a GitLab CI pipeline with two stages: test and deploy. In the test stage define four jobs: test:codecov using python:3.7-alpine that runs apk add build-base libffi-dev libcrypto1.0, creates a symlink for libcrypto, installs development requirements, installs codecov, runs coverage run --source=rundeck_resources -m unittest discover -b tests/, generates coverage.xml, and uploads to Codecov with codecov --token=$CODECOV_TOKEN; this job runs only on the master branch of the elazkani/rundeck-resources project. Add test:python35 using python:3.5-alpine that runs the same apk, symlink, pip install -r requirements/development.txt, and coverage run command. Add test:python36 using python:3.6-alpine with identical script steps. Add test:python37 using python:3.7-alpine that runs the same script steps but is excluded from the master branch. No caches, artifacts, services, or deployment targets are defined.",
+  "tags": [
+    "python",
+    "alpine",
+    "coverage",
+    "codecov",
+    "unittest",
+    "gitlab-ci"
+  ]
+}

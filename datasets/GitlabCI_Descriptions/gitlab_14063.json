@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_14063",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 849,
+  "description": "Create a GitLab CI pipeline using the rust:latest Docker image and set CARGO_HOME to $CI_PROJECT_DIR/cargo. Define a global before_script that runs apt-get update -qq and apt-get install -qq build-essential curl git. Add a linux job that caches the cargo/ and target/ directories, then executes cargo build followed by make tests. Add a redox job with its own before_script that updates apt, installs build-essential curl git gnupg software-properties-common apt-transport-https, adds the Redox toolchain repository, installs x86-64-unknown-redox-gcc, switches rustup to nightly-2018-07-18, adds the x86_64-unknown-redox target, sets CC to x86_64-unknown-redox-gcc, caches cargo/ and target/, and runs cargo build --target x86_64-unknown-redox. No artifacts, caches beyond the specified paths, or special rules are defined.",
+  "tags": [
+    "rust",
+    "cargo",
+    "make",
+    "redox",
+    "linux",
+    "ci"
+  ]
+}

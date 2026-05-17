@@ -1,0 +1,14 @@
+{
+  "sha": "36a39be5ba7df1af3faae83c283a3cef1604bf7172d7f91a27e69cae1deecda1",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 10346,
+  "description": "Create a GitHub Actions workflow named CI Build&Release that triggers on push events with tags matching 'v*'. The workflow should have three jobs: build-windows, build-android, and release-pkg. The build-windows job should run on a windows-latest environment with a matrix strategy for different targets, architectures, editions, and compilers. The build-android job should run on an ubuntu-latest environment with a matrix strategy for different editions. The release-pkg job should depend on the previous two jobs and create a release with uploaded assets.",
+  "tags": [
+    "windows",
+    "android",
+    "release",
+    "github-actions",
+    "yaml"
+  ]
+}

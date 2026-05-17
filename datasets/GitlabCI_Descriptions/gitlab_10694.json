@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_10694",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 556,
+  "description": "Create a GitLab CI pipeline that runs a global before_script `bundle install` and defines five test jobs for different Ruby versions. In the default test stage add jobs `test:2.5`, `test:3.0`, `test:3.1`, and `test:3.2` each using the Docker images `ruby:2.5`, `ruby:3.0`, `ruby:3.1`, `ruby:3.2` respectively and executing the command `bundle exec rake`. Add a `test:latest` job also in the test stage using `ruby:latest` that runs `CODE_COV=TRUE bundle exec rake` and stores the `coverage/` directory as an artifact. Add a `pages` job in the deploy stage that depends on `test:latest`, runs `mv coverage/ public/`, publishes the `public/` directory as a pages artifact that expires in 30 days, and is limited to the `master` branch. Use the default stages (test then deploy) and no additional caches.",
+  "tags": [
+    "ruby",
+    "bundle",
+    "rake",
+    "coverage",
+    "gitlab-pages",
+    "deploy"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_09802",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 112,
+  "description": "Create a GitLab CI pipeline with a single stage called build and a job named build that runs in the build stage. The build job should execute the shell command `docker build . -t haoict/searchable-book`. It must only run on the master branch using an only rule. No specific Docker image or services are defined, so the default runner image is used, and there are no caches, artifacts, or deployment targets configured.",
+  "tags": [
+    "docker",
+    "build",
+    "master-only",
+    "searchable-book"
+  ]
+}

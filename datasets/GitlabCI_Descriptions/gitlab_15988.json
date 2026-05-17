@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_15988",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 321,
+  "description": "Create a GitLab CI pipeline that uses the Docker image registry.gitlab.com/role_unit/role_unit_containers:build with a docker:dind service. Define a hidden job template .test_template that runs the shell command `RU_ENV_IMAGE=${CI_JOB_NAME/*_/} tests/bash_unit tests/tests_ru_tst`. Add a job named single_debian10 that extends .test_template, runs in the default test stage, and sets the variables DEBIAN_FRONTEND=noninteractive, DOCKER_DRIVER=overlay2, and STORAGE_DRIVER=vfs. No additional stages, artifacts, caches, or rules are defined.",
+  "tags": [
+    "docker",
+    "dind",
+    "bash-unit",
+    "debian10",
+    "role-unit"
+  ]
+}

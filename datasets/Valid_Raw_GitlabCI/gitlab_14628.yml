@@ -1,0 +1,83 @@
+before_script: &id001
+- .ci/note.sh
+- apk upgrade -U
+- adduser -D build
+codespell:
+  script:
+  - .ci/codespell.sh
+  stage: lint
+deploy:
+  before_script:
+  - apk -q add openssh-client rsync
+  environment:
+    name: deploy
+  only:
+  - master
+  script:
+  - mkdir "${HOME}/.ssh"
+  - echo "${SSH_HOST_KEY}" > "${HOME}/.ssh/known_hosts"
+  - echo "${SSH_PRIVATE_KEY}" > "${HOME}/.ssh/id_ed25519"
+  - chmod 700 "${HOME}/.ssh/id_ed25519"
+  - rsync -hrvz --delete -e "ssh -p ${SSH_PORT}" public/ "${SSH_HOST}":/var/www/docs.postmarketos.org/pmbootstrap/
+  stage: deploy
+docs:
+  artifacts:
+    paths:
+    - public
+  script:
+  - apk add py3-sphinx py3-sphinx_rtd_theme
+  - .ci/docs.sh
+  stage: lint
+image: alpine:latest
+mr-settings:
+  before_script:
+  - *id001
+  - apk -q add python3
+  - wget -q 'https://gitlab.com/postmarketOS/ci-common/-/raw/master/check_mr_settings.py'
+  rules:
+  - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+  script:
+  - python3 ./check_mr_settings.py
+  stage: lint
+mypy:
+  script:
+  - .ci/mypy.sh
+  stage: lint
+pytest:
+  after_script:
+  - cp /home/build/.local/var/pmbootstrap/log_testsuite.txt .
+  - cp /home/build/.local/var/pmbootstrap/log.txt .
+  artifacts:
+    paths:
+    - log_testsuite.txt
+    - log.txt
+    when: on_failure
+  script:
+  - apk -q add git
+  - su build -c 'git config --global user.email ci@ci'
+  - su build -c 'git config --global user.name CI'
+  - 'echo ''build ALL=(ALL) NOPASSWD: ALL'' >> /etc/sudoers'
+  - .ci/pytest.sh
+  stage: test
+ruff:
+  script:
+  - .ci/ruff.sh
+  stage: lint
+shellcheck:
+  script:
+  - .ci/shellcheck.sh
+  stage: lint
+stages:
+- lint
+- deploy
+- test
+vermin:
+  script:
+  - .ci/vermin.sh
+  stage: lint
+workflow:
+  rules:
+  - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+  - if: $CI_COMMIT_BRANCH == 'master'
+  - if: $CI_COMMIT_BRANCH == 'wip'
+  - if: $CI_COMMIT_BRANCH == 'docs'

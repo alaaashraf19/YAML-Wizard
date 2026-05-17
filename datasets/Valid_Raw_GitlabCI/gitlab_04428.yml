@@ -1,0 +1,45 @@
+.test_common:
+  before_script: &id001
+  - apt-get update --quiet --quiet --yes
+  - apt-get install --quiet --quiet --yes ${_APT_PACKAGE_NAMES}
+  - python3 -m pip --quiet install tox
+  stage: test
+cache:
+  paths:
+  - .cache/
+image: python
+stages:
+- test
+test_python310:
+  before_script: *id001
+  image: python:3.10
+  script: python3 -m tox -e py310
+  stage: test
+test_python38:
+  before_script: *id001
+  image: python:3.8
+  script: python3 -m tox -e py38
+  stage: test
+test_python39:
+  before_script: *id001
+  image: python:3.9
+  script: python3 -m tox -e py39
+  stage: test
+variables:
+  DEBIAN_FRONTEND: noninteractive
+  XDG_CACHE_HOME: ${CI_PROJECT_DIR}/.cache
+  _APT_PACKAGE_NAMES: 'gfortran
+
+    graphviz
+
+    libopenblas-dev
+
+    python3-dev
+
+    python3-numpy
+
+    python3-pip
+
+    python3-scipy
+
+    '

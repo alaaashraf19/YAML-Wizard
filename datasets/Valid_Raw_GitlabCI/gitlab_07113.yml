@@ -1,0 +1,83 @@
+before_script:
+- apt-get update -qq && apt-get install -y -qq sshpass
+build app:
+  artifacts:
+    paths:
+    - public
+  except:
+  - resepteille-kuvat
+  script:
+  - npm rebuild node-sass
+  - npm run build
+  - rm -rf public
+  - mv build public
+  stage: build
+build nightly:
+  artifacts:
+    paths:
+    - public
+  only:
+  - resepteille-kuvat
+  script:
+  - npm rebuild node-sass
+  - npm run build-nightly
+  - rm -rf public
+  - mv build public
+  stage: build
+cache:
+  paths:
+  - node_modules/
+deploy to nightly:
+  only:
+  - resepteille-kuvat
+  script:
+  - cd public/
+  - ls
+  - rm api/utils/environment.php
+  - echo "<?php \$servername = \"${SQL_SERVER_IP}\"; \$username = \"${SQL_USERNAME}\";
+    \$password = \"${SQL_PASSWORD}\"; \$database = \"${SQL_NIGHTLY_DATABASE_NAME}\";
+    ?>" > api/utils/environment.php
+  - sshpass -V
+  - export SSHPASS=$SSH_PASSWORD
+  - sshpass -e scp -o stricthostkeychecking=no -r . grfzhffh@hotelli01.domainhotelli.fi:/home3/grfzhffh/reseptit-nightly.veerola.fi
+  stage: deploy
+deploy to reseptisovellus:
+  only:
+  - production
+  script:
+  - cd public/
+  - ls
+  - rm api/utils/environment.php
+  - echo "<?php \$servername = \"${SQL_SERVER_IP}\"; \$username = \"${SQL_USERNAME}\";
+    \$password = \"${SQL_PASSWORD}\"; \$database = \"${SQL_DATABASE_NAME}\"; ?>" >
+    api/utils/environment.php
+  - sshpass -V
+  - export SSHPASS=$SSH_PASSWORD
+  - sshpass -e scp -o stricthostkeychecking=no -r . grfzhffh@hotelli01.domainhotelli.fi:/home3/grfzhffh/reseptit.veerola.fi
+  stage: deploy
+image: node:21
+integration tests:
+  artifacts:
+    paths:
+    - cypress
+    when: on_failure
+  image: cypress/base:14
+  script:
+  - npm rebuild node-sass
+  - npm install cypress
+  - npm run ci
+  stage: test
+  when: manual
+stages:
+- preparation
+- test
+- build
+- deploy
+staging:
+  script:
+  - npm install
+  stage: preparation
+unit tests:
+  script:
+  - npm run test
+  stage: test

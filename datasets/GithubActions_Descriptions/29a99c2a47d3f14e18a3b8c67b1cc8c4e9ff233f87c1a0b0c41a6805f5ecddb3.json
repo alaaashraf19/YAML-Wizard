@@ -1,0 +1,14 @@
+{
+  "sha": "29a99c2a47d3f14e18a3b8c67b1cc8c4e9ff233f87c1a0b0c41a6805f5ecddb3",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1084,
+  "description": "Create a GitHub Actions workflow named Release drafter that runs on push to the main branch, on pull request opened, reopened or synchronized, and on workflow dispatch. The workflow should update a release draft and requires read permissions to repository contents. For a specific repository owner, it uses an ubuntu-latest job with write permissions to create a GitHub Release and update pull requests. It utilizes the release-drafter action with a GitHub token from secrets.",
+  "tags": [
+    "github-release",
+    "release-draft",
+    "autolabeler",
+    "workflow-dispatch",
+    "permissions"
+  ]
+}

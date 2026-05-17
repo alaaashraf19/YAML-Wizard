@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_05496",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 371,
+  "description": "Create a GitLab CI pipeline that uses the node:6.10.3 Docker image. Define three stages: ver, init, and tests. In the ver stage add a version job that runs node --version and whoami. In the init stage add an init job that runs npm cache clean, rm -rf node-modules, npm install -g mocha, npm install -g istanbul, and npm install. In the tests stage add a run_tests job that runs npm install -g mocha, npm install -g istanbul, npm install, and npm test.",
+  "tags": [
+    "node",
+    "npm",
+    "mocha",
+    "istanbul",
+    "tests"
+  ]
+}

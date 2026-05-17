@@ -1,0 +1,14 @@
+{
+  "sha": "5c83f45ef313aeb46e577f0e2f91f7073c59d0797dc00fc042ccd29e0378c1bf",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1747,
+  "description": "Create a GitHub Actions workflow named bins that runs on push to the master branch, excluding changes to the docs directory. The workflow can also be triggered by a workflow call with optional inputs for lnav_version_number and upload_url. In an ubuntu-latest job running in a tstack/lnav-build:1 container, checkout the code, run the entrypoint.sh script, and then optionally build a musl package if lnav_version_number is provided. Upload a build artifact and a musl-binary archive to a release if upload_url is provided.",
+  "tags": [
+    "github-actions",
+    "release-workflow",
+    "musl",
+    "linux",
+    "zip-archive"
+  ]
+}

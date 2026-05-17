@@ -1,0 +1,15 @@
+{
+  "sha": "8ce99597b4813260bc2549f3e7c7df97fa9a1b5f3a3e35a6e7913f36b0c7770b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1906,
+  "description": "Create a GitHub Actions workflow named Weekly Build that runs weekly on a scheduled cron job and on workflow dispatch. The workflow has two jobs: darglint and build_posix. The darglint job runs on a single OS with Python 3.9, checks out the code, sets up Python, installs dependencies, and runs nox darglint. The build_posix job runs on multiple OS and Python versions, checks out the code, sets up Python, installs dependencies, and runs nox with specific Python versions.",
+  "tags": [
+    "python",
+    "weekly",
+    "build",
+    "nox",
+    "darglint",
+    "github-actions"
+  ]
+}

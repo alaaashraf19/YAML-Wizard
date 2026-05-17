@@ -1,0 +1,81 @@
+build:
+  after_script:
+  - docker rmi ${IMG_NAME}
+  allow_failure: false
+  only:
+  - develop
+  - master
+  script:
+  - docker login -u gitlab-ci-token -p ${CI_JOB_TOKEN} registry.gitlab.com
+  - docker build -t ${IMG_NAME} -f $(pwd)/web/Dockerfile ./web
+  - docker push ${IMG_NAME}
+  stage: build
+  tags:
+  - build
+  variables:
+    IMG_NAME: ${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_SLUG}
+deploy_dev:
+  allow_failure: false
+  before_script:
+  - docker login -u gitlab-ci-token -p ${CI_JOB_TOKEN} registry.gitlab.com
+  - docker pull ${IMG_NAME}
+  environment:
+    name: staging
+    url: ${ENV_DEV_URL}
+  only:
+  - develop
+  script:
+  - echo DEV_MODE="1" > .env
+  - env | grep ENV_DEV_URL >> .env
+  - env | grep DEV_API_ID >> .env
+  - env | grep DEV_API_SECRET >> .env
+  - env | grep SENTRY_TOKEN >> .env
+  - docker-compose -f docker-compose.develop.yml up -d --force-recreate
+  stage: deploy_dev
+  tags:
+  - deploy_dev
+  variables:
+    IMG_NAME: ${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_SLUG}
+  when: on_success
+deploy_prod:
+  allow_failure: false
+  before_script:
+  - docker login -u gitlab-ci-token -p ${CI_JOB_TOKEN} registry.gitlab.com
+  - docker pull ${IMG_NAME}
+  environment:
+    name: production
+    url: ${ENV_PROD_URL}
+  only:
+  - master
+  script:
+  - env | grep ENV_PROD_URL >> .env
+  - env | grep PROD_API_ID > .env
+  - env | grep PROD_API_SECRET >> .env
+  - env | grep SENTRY_TOKEN >> .env
+  - docker-compose -f docker-compose.master.yml up -d --force-recreate
+  stage: deploy_prod
+  tags:
+  - deploy_prod
+  variables:
+    IMG_NAME: ${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_SLUG}
+  when: manual
+stages:
+- test
+- build
+- deploy_dev
+- deploy_prod
+test:
+  allow_failure: false
+  only:
+  - develop
+  script:
+  - chmod a+x ./web/tests/test.sh && ./web/tests/test.sh
+  stage: test
+  tags:
+  - test
+  variables:
+    FLASK_DEBUG: 1
+variables:
+  GIT_CHECKOUT: 'true'
+  GIT_DEPTH: '1'
+  GIT_STRATEGY: clone

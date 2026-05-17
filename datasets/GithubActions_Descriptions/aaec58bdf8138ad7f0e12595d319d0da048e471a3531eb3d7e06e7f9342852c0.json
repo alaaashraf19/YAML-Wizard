@@ -1,0 +1,17 @@
+{
+  "sha": "aaec58bdf8138ad7f0e12595d319d0da048e471a3531eb3d7e06e7f9342852c0",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 6794,
+  "description": "Create a GitHub Actions workflow named Linux that runs on every pull request, push, and published release. The workflow has three jobs: build, test, and build-with-python, and build-aarch64. The build job runs on an ubuntu-latest container with a centos:7 image, installing dependencies, building and testing ninja in debug and release modes, and uploading artifacts. The test job runs on ubuntu-latest with an ubuntu:20.04 image, testing ninja with GCC and Clang. The build-with-python job runs on ubuntu-latest with various ubuntu images, building ninja with Python. The build-aarch64 job builds ninja on aarch64 architecture.",
+  "tags": [
+    "linux",
+    "ninja",
+    "cmake",
+    "ubuntu",
+    "aarch64",
+    "tests",
+    "release",
+    "artifacts"
+  ]
+}

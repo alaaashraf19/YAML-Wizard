@@ -1,0 +1,13 @@
+{
+  "sha": "38f3b3ab9103ba9ac6917277557ce84e6ad7b72dc99d25a7973c7451856c450e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 649,
+  "description": "Create a GitHub Actions workflow named Master that runs on push to the master branch. Configure it to clean old workflow runs and build a project. The cleaning job should delete previous runs, retaining only 2 runs, while the build job uses a reusable workflow from build.yaml with inherited secrets.",
+  "tags": [
+    "github-actions",
+    "workflow-cleanup",
+    "reusable-workflow",
+    "ubuntu"
+  ]
+}

@@ -1,0 +1,6 @@
+build:
+  extends: .serverless:build:image
+deploy:
+  extends: .serverless:deploy:image
+include:
+  template: Serverless.gitlab-ci.yml

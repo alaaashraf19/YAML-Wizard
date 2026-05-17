@@ -1,0 +1,30 @@
+cache:
+  paths:
+  - vendor/bundle
+  - node_modules
+image: ruby:2.5.3
+production:
+  only:
+  - master
+  script:
+  - gem install dpl
+  - dpl --provider=heroku --app=mind-projects --api-key=$HEROKU_PRODUCTION_API_KEY
+  stage: deploy
+services:
+- postgres:10.1
+stages:
+- test
+- deploy
+test:
+  script:
+  - apt-get update -qy
+  - apt-get install -y nodejs
+  - bundle install --path /cache
+  - bundle exec rake db:create RAILS_ENV=test
+  - bundle exec rspec
+  stage: test
+variables:
+  BUNDLE_PATH: vendor/bundle
+  DB_HOST: postgres
+  DB_PASSWORD: postgres
+  DB_USER: postgres

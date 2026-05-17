@@ -1,0 +1,16 @@
+{
+  "sha": "036f51bd5c912ab63a3a8f09e52f57d50fc8a21c8e0c07a2ef23e2bd0e491b24",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2564,
+  "description": "Create a GitHub Actions workflow that runs on every pull request. The workflow should have two jobs: 'test' and 'test-32bit'. The 'test' job runs on a matrix of ubuntu-latest, macos-latest, and windows-latest with Python versions 3.8 to 3.12, and runs unit tests for indexed_gzip with different arguments. The 'test-32bit' job runs on a 32-bit ubuntu container with Python 3.9 and runs similar unit tests.",
+  "tags": [
+    "python",
+    "tests",
+    "matrix",
+    "ubuntu",
+    "macos",
+    "windows",
+    "indexed_gzip"
+  ]
+}

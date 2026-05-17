@@ -1,0 +1,16 @@
+{
+  "sha": "4cba70190b7657dc8c4377acb33ccca0a586e75f83ae3fad165c2687915fc717",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2284,
+  "description": "Create a GitHub Actions workflow named macOS that runs on every push to the master branch and on pull requests to master. The workflow has two jobs: test and package-dmg. The test job runs on macOS, checks out the code, sets up build variables, installs Qt 5.15.2, sets up dependencies, builds the project with tests, and runs tests. The package-dmg job depends on test, runs on macOS, and performs similar setup before building, packaging, notarizing, and uploading a DMG file.",
+  "tags": [
+    "macos",
+    "qt",
+    "build",
+    "test",
+    "package",
+    "dmg",
+    "notarize"
+  ]
+}

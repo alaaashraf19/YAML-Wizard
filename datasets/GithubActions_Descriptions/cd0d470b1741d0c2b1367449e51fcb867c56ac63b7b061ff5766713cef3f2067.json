@@ -1,0 +1,16 @@
+{
+  "sha": "cd0d470b1741d0c2b1367449e51fcb867c56ac63b7b061ff5766713cef3f2067",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1899,
+  "description": "Create a GitHub Actions workflow named SHARPy Tests that runs on push to specific Python files, library files, and workflow files, and on pull requests to main, develop, and rc* branches. Use an ubuntu-latest job with a Python 3.10.8 matrix that checks out the repository, sets up Python and GCC, installs Mamba, and then performs a complex installation and testing process including building and installing the package, running unit tests with coverage, and uploading the coverage to Codecov.",
+  "tags": [
+    "python",
+    "tests",
+    "coverage",
+    "codecov",
+    "ubuntu",
+    "gcc",
+    "mamba"
+  ]
+}

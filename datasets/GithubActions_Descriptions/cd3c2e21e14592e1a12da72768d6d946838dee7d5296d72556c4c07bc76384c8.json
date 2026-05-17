@@ -1,0 +1,15 @@
+{
+  "sha": "cd3c2e21e14592e1a12da72768d6d946838dee7d5296d72556c4c07bc76384c8",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3313,
+  "description": "Create a GitHub Actions workflow named Fedora that runs on push and pull request events. Use an ubuntu-latest job with a matrix strategy for gcc and clang compilers. For each compiler, run a Docker container with a Fedora image to install dependencies, build, and deploy the project. Distinguish between release and daily builds based on the Git reference.",
+  "tags": [
+    "fedora",
+    "docker",
+    "gcc",
+    "clang",
+    "ubuntu",
+    "ci"
+  ]
+}

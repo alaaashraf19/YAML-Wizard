@@ -1,0 +1,15 @@
+{
+  "sha": "82c0d841c58b6f5b24a79876a975c692e5455c895ff6cb3d5638b3cd1acbf88c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 633,
+  "description": "Create a nightly GitHub Actions workflow named nightly-neon-unstable that runs on a scheduled cron job and allows manual dispatch. The workflow should set up environment variables for building, then run a single ubuntu-latest job in a container using the kdeneon/plasma:unstable image. In this job, prepare the source code, install dependencies using a script, and perform the build using another script.",
+  "tags": [
+    "kde",
+    "neon",
+    "unstable",
+    "nightly",
+    "cron",
+    "docker"
+  ]
+}

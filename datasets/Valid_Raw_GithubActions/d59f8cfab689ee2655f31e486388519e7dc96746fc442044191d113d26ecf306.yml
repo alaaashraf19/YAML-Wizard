@@ -1,0 +1,127 @@
+name: 'Emscripten'
+
+env:
+  LIBRARIES_BRANCH: libraries-OS-COMPILER
+  DEPLOY_MESSAGE:
+    "Push artifact from GitHub Actions build ${{ github.run_number }} with id ${{ github.run_id }}
+
+     - nCine artifact from branch 'BRANCH_NAME' with commit id ${{ github.sha }}"
+  DEPLOY_BRANCH: nCine-BRANCH_NAME-OS-COMPILER
+
+on: [push, workflow_dispatch]
+
+jobs:
+  Emscripten:
+    strategy:
+      fail-fast: false
+      matrix:
+        BuildType: [Debug, Release, DevDist, LuaDist]
+
+    runs-on: 'ubuntu-24.04'
+
+    steps:
+    - name: 'Checkout Code'
+      uses: actions/checkout@v4
+
+    - name: 'Install Emscripten SDK'
+      run: |
+        sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 10
+
+        cd ..
+        git clone https://github.com/emscripten-core/emsdk.git
+        cd emsdk
+        ./emsdk install latest
+        ./emsdk activate latest
+
+    - name: 'Unshallow Git Repository for Versioning'
+      if: matrix.BuildType == 'DevDist' || matrix.BuildType == 'LuaDist'
+      run: |
+        git fetch --unshallow || true
+
+    - name: 'Download nCine-libraries Artifacts and nCine-data'
+      run: |
+        export OS=emscripten
+        export CC=emcc
+
+        export LIBRARIES_BRANCH=`echo $LIBRARIES_BRANCH | sed 's/OS/'"$OS"'/'`
+        export LIBRARIES_BRANCH=`echo $LIBRARIES_BRANCH | sed 's/COMPILER/'"$CC"'/'`
+
+        cd ..
+        git clone https://github.com/nCine/nCine-libraries-artifacts.git
+        cd nCine-libraries-artifacts
+        git checkout $LIBRARIES_BRANCH
+        LIBRARIES_FILE=$(ls -t | head -n 1) && tar xpzf $LIBRARIES_FILE
+        mv nCine-external-emscripten ..
+        cd ..
+        rm -rf nCine-libraries-artifacts
+
+        git clone https://github.com/nCine/nCine-data.git
+
+    - name: 'CMake Configuration, Make and Test'
+      if: matrix.BuildType != 'DevDist' && matrix.BuildType != 'LuaDist'
+      run: |
+        source ../emsdk/emsdk_env.sh
+
+        # Not using emcmake to avoid issue #10028 with CMAKE_CROSSCOMPILING_EMULATOR path
+        cmake -B ../nCine-buildtests-${{ matrix.BuildType }} -D CMAKE_BUILD_TYPE=${{ matrix.BuildType }} -D NCINE_OPTIONS_PRESETS=UnitTests -D CMAKE_CROSSCOMPILING_EMULATOR=$EMSDK_NODE -D CMAKE_TOOLCHAIN_FILE=$EMSDK/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake
+
+        make -j $(getconf _NPROCESSORS_ONLN) -C ../nCine-buildtests-${{ matrix.BuildType }}
+        cd ../nCine-buildtests-${{ matrix.BuildType }}
+        ctest -j $(getconf _NPROCESSORS_ONLN) --build-config ${{ matrix.BuildType }}
+
+    - name: 'CMake Configuration'
+      run: |
+        source ../emsdk/emsdk_env.sh
+
+        if [[ "${{ matrix.BuildType }}" == "DevDist" || "${{ matrix.BuildType }}" == "LuaDist" ]]; then
+          export CMAKE_ARGS="-B ../nCine-build-${{ matrix.BuildType }} -D CMAKE_BUILD_TYPE=Release -D NCINE_OPTIONS_PRESETS=${{ matrix.BuildType }}"
+        else
+          export CMAKE_ARGS="-B ../nCine-build-${{ matrix.BuildType }} -D CMAKE_BUILD_TYPE=${{ matrix.BuildType }}"
+        fi
+
+        emcmake cmake $CMAKE_ARGS
+
+    - name: 'Make'
+      run: |
+        make -j $(getconf _NPROCESSORS_ONLN) -C ../nCine-build-${{ matrix.BuildType }}
+
+    - name: 'Package'
+      if: matrix.BuildType == 'DevDist' || matrix.BuildType == 'LuaDist'
+      run: |
+        make package -C ../nCine-build-${{ matrix.BuildType }}
+
+    - name: 'Push Artifacts'
+      if: matrix.BuildType == 'DevDist' || matrix.BuildType == 'LuaDist'
+      env:
+        PUBLIC_REPO_TOKEN: ${{ secrets.PUBLIC_REPO_TOKEN }}
+      run: |
+        git config --global user.email "actions@github.com"
+        git config --global user.name "GitHub Actions"
+
+        export BRANCH_NAME=$(git describe --tags --exact-match 2> /dev/null || git symbolic-ref -q --short HEAD || git rev-parse --short HEAD)
+        export DEPLOY_MESSAGE=`sed 's/BRANCH_NAME/'"$BRANCH_NAME"'/' <<< "$DEPLOY_MESSAGE"`
+
+        export OS=emscripten
+        export CC=emcc
+        export PACKAGE_EXT=tar.gz
+
+        cd ../nCine-build-${{ matrix.BuildType }}
+        echo -e "include(CPackConfig.cmake)\nexecute_process(COMMAND \${CMAKE_COMMAND} -E echo_append \"\${CPACK_PACKAGE_NAME}\")" > package_name.cmake
+        export PACKAGE_NAME=$(cmake -P package_name.cmake)
+        echo -e "include(CPackConfig.cmake)\nexecute_process(COMMAND \${CMAKE_COMMAND} -E echo_append \"\${CPACK_PACKAGE_FILE_NAME}\")" > package_file_name.cmake
+        export PACKAGE_FILE_NAME=$(cmake -P package_file_name.cmake)
+
+        cd ..
+        export DEPLOY_BRANCH=`echo $DEPLOY_BRANCH | sed 's/BRANCH_NAME/'"$BRANCH_NAME"'/'`
+        export DEPLOY_BRANCH=`echo $DEPLOY_BRANCH | sed 's/OS/'"$OS"'/'`
+        export DEPLOY_BRANCH=`echo $DEPLOY_BRANCH | sed 's/COMPILER/'"$CC"'/'`
+        git clone https://$PUBLIC_REPO_TOKEN@github.com/nCine/nCine-artifacts.git >/dev/null 2>&1
+        cd nCine-artifacts
+        git checkout $DEPLOY_BRANCH || git checkout --orphan $DEPLOY_BRANCH
+        git reset
+        git clean -f
+        git rm $PACKAGE_NAME-*.$PACKAGE_EXT || true
+        mv -f ../nCine-build-${{ matrix.BuildType }}/$PACKAGE_FILE_NAME.$PACKAGE_EXT .
+        git add $PACKAGE_FILE_NAME.$PACKAGE_EXT
+        git commit --amend -m "$DEPLOY_MESSAGE" || git commit -m "$DEPLOY_MESSAGE"
+        git push --force || git push --set-upstream origin $DEPLOY_BRANCH

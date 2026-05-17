@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_04828",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 673,
+  "description": "Create a GitLab CI pipeline with two stages, test and build, and define a global variable MONGO_URI=mongodb://mongo/SaunaDB. Set a cache that preserves the node_modules/ directory. In the test stage add a robotTest job that uses the node:latest Docker image, runs on the mongo:latest service, is limited to runners tagged 'testi', executes before_script commands 'pm2 start app/index.js' and 'pm2 start app/main.js', then runs 'firefox -v' and 'robot robot', and finally runs after_script commands 'pm2 stop index' and 'pm2 stop main'. In the build stage add a build_image job that uses the docker:git image with the docker:dind service, runs on runners tagged 'rankaisumetodit', and executes the commands 'docker login -u Rankaisija -p runneri123 registry.gitlab.com', 'docker build -t registry.gitlab.com/casette/sauna-project:release .', and 'docker push registry.gitlab.com/casette/sauna-project:release'.",
+  "tags": [
+    "node",
+    "docker",
+    "mongo",
+    "pm2",
+    "robot-framework",
+    "cache"
+  ]
+}

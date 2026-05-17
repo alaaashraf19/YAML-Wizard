@@ -1,0 +1,30 @@
+name: NetBSD
+
+on: workflow_dispatch
+
+jobs:
+  build:
+    runs-on: macos-12
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build
+        uses: cross-platform-actions/action@v0.13.0
+        with:
+          operating_system: netbsd
+          architecture: x86-64
+          version: '9.2'
+          shell: bash
+          run: |
+            sudo pkgin -y install cmake git qt6-qtbase qt6-qtsvg || true
+            cat /var/db/pkgin/pkg_install-err.log
+            cmake . -DCMAKE_BUILD_TYPE=Release -DUSE_TESTS=ON -DUSE_LTO=ON
+            cmake --build . --config Release
+            ./lib/test/spotify-qt-lib-test
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: spotify-qt
+          path: ./spotify-qt

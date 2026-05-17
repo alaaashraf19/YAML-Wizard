@@ -1,0 +1,23 @@
+before_script:
+- apt-get update -y
+- apt-get install sudo -y
+- adduser --disabled-password --gecos '' docker
+- adduser docker sudo
+- echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+image: queeno/ubuntu-desktop
+release:
+  artifacts:
+    paths:
+    - run
+    - src
+    - configsets
+  script:
+  - echo "Collecting artifacts"
+  stage: release
+stages:
+- test
+- release
+test:
+  script:
+  - ./run common dev desktop server
+  stage: test

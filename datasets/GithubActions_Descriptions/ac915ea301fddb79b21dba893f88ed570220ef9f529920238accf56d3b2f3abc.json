@@ -1,0 +1,15 @@
+{
+  "sha": "ac915ea301fddb79b21dba893f88ed570220ef9f529920238accf56d3b2f3abc",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1340,
+  "description": "Create a GitHub Actions workflow named Build LLVM nightly that runs on push to the master branch, on pull requests to the master branch, and on a scheduled cron job. The workflow should run on an ubuntu-22.04 environment with a ubuntu:rolling container, installing LLVM 17 and building it from source with cmake and make, then running pytest on the build.",
+  "tags": [
+    "llvm",
+    "ubuntu",
+    "cmake",
+    "make",
+    "tests",
+    "nightly"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_17734",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 504,
+  "description": "Create a GitLab CI pipeline that caches pip files in $HOME/.cache/pip using a cache key of $CI_PROJECT_NAME and includes the SAST template from thelabnyc/gitlab-ci-templates/ci/sast.gitlab-ci.yml. Define a single stage named test. Add three jobs: test_python35 using the python:3.5 image that runs pip install tox then tox -e 'py35-django{111,200,210}'; test_python36 using the python:3.6 image that runs pip install tox then tox -e 'py36-django{111,200,210}'; and test_python37 using the python:3.7 image that runs pip install tox then tox -e 'py37-django{200,210}'. All jobs belong to the test stage and have no additional rules.",
+  "tags": [
+    "python",
+    "tox",
+    "django",
+    "pip-cache",
+    "sast",
+    "gitlab-ci-templates"
+  ]
+}

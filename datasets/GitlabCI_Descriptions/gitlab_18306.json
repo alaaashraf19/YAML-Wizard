@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_18306",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 14554,
+  "description": "Create a GitLab CI pipeline that uses the docker:$DOCKER_VERSION image with a docker:$DOCKER_VERSION-dind service (insecure registry) and caches the \"cache/\" directory for integration tests. Define stages build1, build2 and e2e, and add build jobs (build:ascn, build:haproxy, build:klarlack, build:prometheus_varnish_exporter, build:varnish, build:controller) that each run a before_script installing make and logging into $CI_REGISTRY, pull the previous image, then execute \"cd container && make <image>\" (where <image> is ascn, haproxy, klarlack, prometheus_varnish_exporter, varnish or controller); after each build, tag the image as $CI_REGISTRY_IMAGE/varnish-ingress/$IMAGE:$CI_COMMIT_SHA and $CI_REGISTRY_IMAGE/varnish-ingress/$IMAGE:$CI_COMMIT_REF_NAME and push both tags. Add a large set of integration-test jobs (dev:*, example:*, etc.) that extend .integration-tests, install wget, curl, varnish, make, bash, haproxy, download and install kind, kubectl and helm, create a kind cluster, login to the registry, pull and retag the built images, load them into kind, then run \"cd deploy && make deploy verify\" (or similar make commands per example) with a cache of \"cache/\", a matrix over VARNISH values, retry up to 2, and depend on the controller build. Configure rules so build jobs trigger on changes to relevant container files, provide manual variants with \"when: manual\", and make the push_to_docker job run only on tag pipelines, logging in and pushing the haproxy image to the GitLab Container Registry. Deploy built images to the GitLab Container Registry and run integration tests against a Kubernetes (kind) cluster.",
+  "tags": [
+    "docker",
+    "make",
+    "kind",
+    "helm",
+    "integration-tests",
+    "gitlab-ci",
+    "varnish-ingress"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "sha": "d109a2710c5beadc2c420c60bfdd7f880f47721dc6c19500b1b1292e6313beb3",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5442,
+  "description": "Create a GitHub Actions workflow named Embedded build that runs on every push. The workflow has three jobs: rpi64, which builds and uploads a Raspberry Pi 64-bit image using an Arch Linux container; rpi_test, which prepares a sysroot, installs build tools, and builds a Raspberry Pi Bookworm ARMHF image; and an optional commented job for Raspberry Pi 32-bit. Each job checks out the repository, installs dependencies, and uploads the build as an artifact.",
+  "tags": [
+    "raspberry-pi",
+    "embedded",
+    "arch-linux",
+    "ubuntu",
+    "cross-compilation",
+    "cmake",
+    "qt6"
+  ]
+}

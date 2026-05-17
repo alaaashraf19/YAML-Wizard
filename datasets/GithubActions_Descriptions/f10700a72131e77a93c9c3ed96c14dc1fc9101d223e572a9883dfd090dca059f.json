@@ -1,0 +1,13 @@
+{
+  "sha": "f10700a72131e77a93c9c3ed96c14dc1fc9101d223e572a9883dfd090dca059f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 698,
+  "description": "Create a GitHub Actions workflow named Misc builder that can be triggered manually with a dispatch event. The workflow should accept two inputs: buildname with a default of 'erlang' and version with a default of '24.1.6'. Run a job named Buildmisc on an 'admin' runner with a dynamic name based on the inputs. In this job, update infrastructure by pulling the latest changes from a git repository and then run a one-off script with the provided build name and version.",
+  "tags": [
+    "dispatch",
+    "dynamic-job-name",
+    "script-runner",
+    "git-pull"
+  ]
+}

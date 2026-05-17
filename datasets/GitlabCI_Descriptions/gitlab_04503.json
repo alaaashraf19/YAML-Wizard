@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_04503",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 857,
+  "description": "Create a GitLab CI pipeline that runs a global before_script installing curl, openjdk8 and bash via apk, downloads sbt‑1.1.6.tgz from https://piccolo.link, extracts it under /opt and removes the archive. Define a single stage called build and a build job that uses the docker:stable image, runs only on tag pipelines, and uses the docker:dind service with DOCKER_DRIVER=overlay2 and DOCKER_HOST=tcp://docker:2375/. In the build job execute the following script steps: prepend /root/bin,$SBT_HOME/bin and $JAVA_HOME/bin to PATH; cd /builds/boardcrew/instalador; set CONTAINER_VERSION=$(grep \"version\" build.sbt | cut -d \\\" -f2 | head -1); run sbt --error -mem 2000 docker:publishLocal; docker login -u ${REGISTRY_USERNAME} -p ${REGISTRY_PASSWORD}; docker tag instalador:${CONTAINER_VERSION} boardcrew/instalador:${CONTAINER_VERSION}; docker push boardcrew/instalador:${CONTAINER_VERSION}. The job is tagged with docker.",
+  "tags": [
+    "docker",
+    "docker-in-docker",
+    "sbt",
+    "java",
+    "ci-tags",
+    "build"
+  ]
+}

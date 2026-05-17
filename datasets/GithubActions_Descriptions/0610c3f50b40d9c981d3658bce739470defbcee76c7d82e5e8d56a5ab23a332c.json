@@ -1,0 +1,14 @@
+{
+  "sha": "0610c3f50b40d9c981d3658bce739470defbcee76c7d82e5e8d56a5ab23a332c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2793,
+  "description": "Create a GitHub Actions workflow named Visual Studio 2019 that runs on every pull request and push to the master branch. Use two parallel jobs, build_cmake and build_meson, both running on a windows-2019 environment. In build_cmake, check out the code, set up msbuild, restore or install vcpkg, install various dependencies, and then configure and build a project using cmake. In build_meson, check out the code, set up Python 3.x, install meson and ninja, prepare the MSVC environment, and then configure, build, and test a project using meson.",
+  "tags": [
+    "visual-studio",
+    "windows",
+    "cmake",
+    "meson",
+    "ci"
+  ]
+}

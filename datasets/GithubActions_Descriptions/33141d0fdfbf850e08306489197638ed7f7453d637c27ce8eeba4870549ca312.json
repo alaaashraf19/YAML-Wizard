@@ -1,0 +1,17 @@
+{
+  "sha": "33141d0fdfbf850e08306489197638ed7f7453d637c27ce8eeba4870549ca312",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1441,
+  "description": "Create a GitHub Actions workflow named build that runs on push and pull request events. Use a matrix strategy to run three jobs in parallel: one on ubuntu-latest with g++ and clang++ compilers, one on windows-latest with Visual Studio 16 2019 generator, and one on macOS-latest. For each job, check out the repository, compile tests with cmake and a build tool, and run tests with ctest, all within a build directory.",
+  "tags": [
+    "cmake",
+    "ctest",
+    "matrix",
+    "ubuntu",
+    "windows",
+    "macos",
+    "tests",
+    "compiler-tests"
+  ]
+}

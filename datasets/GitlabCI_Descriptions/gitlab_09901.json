@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_09901",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 169,
+  "description": "Create a GitLab CI pipeline using the base:lts Docker image with a global before_script that runs the command date. Add a pages job that runs in the default stage, executes the script VERSION=\"1.0\", publishes the public/ directory as an artifact, and includes a rule to run only when $CI_COMMIT_REF_NAME equals $CI_DEFAULT_BRANCH.",
+  "tags": [
+    "base",
+    "pages",
+    "artifact",
+    "default-branch"
+  ]
+}

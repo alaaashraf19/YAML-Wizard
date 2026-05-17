@@ -1,0 +1,14 @@
+{
+  "sha": "32ed53471e0b65978e17770825d7a3d13dcae0865c1a5efd9b75549c4a02dbcc",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1659,
+  "description": "Create a GitHub Actions workflow named Continuous Integration that runs on every pull request. The workflow should have three jobs: CI_Ubuntu and CI_Windows that run in parallel with different configurations, and Formatting. The CI_Ubuntu job runs on an ubuntu-latest container with a novelrt-build image, checks out the code, and runs a CI build script. The CI_Windows job runs on a windows-latest environment, checks out the code, runs a machine setup script, and then runs a CI build script. The Formatting job checks code formatting using clang-format-lint-action and uploads a patch if the check fails.",
+  "tags": [
+    "continuous-integration",
+    "ubuntu",
+    "windows",
+    "clang-format",
+    "matrix-build"
+  ]
+}

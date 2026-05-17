@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_05407",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 151,
+  "description": "Create a GitLab CI pipeline that uses the clojure:latest Docker image with no additional services. Define a single job named pages in the default stage that executes the shell commands `lein with-profile prod do sass4clj once` and `lein cljsbuild once`. Configure the job to publish the public/ directory as a GitLab Pages artifact. Set the job to run only on the master branch.",
+  "tags": [
+    "clojure",
+    "leiningen",
+    "sass4clj",
+    "cljsbuild",
+    "gitlab-pages",
+    "master-branch"
+  ]
+}

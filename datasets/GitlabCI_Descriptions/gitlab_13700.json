@@ -1,0 +1,21 @@
+{
+  "sha": "gitlab_13700",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 4898,
+  "description": "Create a GitLab CI pipeline with a single test stage that runs option‑tester jobs on many platforms including Debian (stable, testing, unstable, oldoldstable, i386), Alpine (edge and latest), CentOS Stream 9, Fedora latest, OpenSUSE Leap, Ubuntu (devel, latest, rolling), Gentoo, FreeBSD, macOS, and a make‑tarball job. For each job specify the Docker image (e.g., debian:stable-slim, alpine:edge, quay.io/centos/centos:stream9, fedora:latest, opensuse/leap, ubuntu:devel, $CI_REGISTRY/ntpsec/ntpsec/debian-stable), any before_script that installs build dependencies (apt‑get update && apt‑get install…, apk add…, dnf install…, yum install…, emerge‑webrsync && emerge…, zypper install…), and the exact script commands (apt‑get update; DEBIAN_FRONTEND=noninteractive apt‑get install …; PYTHON=python2 bash tests/option-tester.sh; PYTHON=python3 bash tests/option-tester.sh; or simply PYTHON=python3 bash tests/option-tester.sh; plus the make‑tarball sequence apt‑get update, install git and asciidoctor, ln -svf /usr/bin/python{3,}, ./waf configure build --enable-doc --enable-man, cd devel&&/bin/sh make-tarball). All jobs run in the test stage, have a rule to run only when $CI_PIPELINE_SOURCE == \"schedule\" (FreeBSD and macOS also require branch and project path conditions), use appropriate tags (gitlab-org, freebsd, saas-macos-medium-m1), and the Debian‑unstable, Ubuntu‑devel, and Alpine‑edge jobs are marked allow_failure: true. No caches, artifacts, or deployment targets are defined.",
+  "tags": [
+    "option-tester",
+    "debian",
+    "alpine",
+    "centos",
+    "fedora",
+    "opensuse",
+    "ubuntu",
+    "gentoo",
+    "freebsd",
+    "macos",
+    "make-tarball",
+    "schedule"
+  ]
+}

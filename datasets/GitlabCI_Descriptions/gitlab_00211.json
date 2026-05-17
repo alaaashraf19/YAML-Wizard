@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_00211",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 126,
+  "description": "Create a GitLab CI pipeline that uses the java:7 Docker image and runs a before_script installing Maven with apt-get update -y, apt-get install maven -y, and verifying the installation with mvn -version. Define a test job named \"test\" that runs in the default test stage and executes the shell command mvn clean test. No additional services, caches, artifacts, or conditional rules are required.",
+  "tags": [
+    "java",
+    "maven",
+    "gitlab-ci",
+    "test"
+  ]
+}

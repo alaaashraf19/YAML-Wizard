@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_09836",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 353,
+  "description": "Create a GitLab CI pipeline using the node:10 Docker image. Define two stages: test and deploy. In the test stage add a test job that caches node_modules/, runs yarn install, then yarn test -- --coverage, and finally yarn run eslint src. In the deploy stage add a pages job that also caches node_modules/, runs yarn install, yarn build, removes any existing public directory, moves the build output to public, publishes the public/ folder as a Pages artifact, and only runs on the master branch. The pipeline should publish the built site via GitLab Pages.",
+  "tags": [
+    "node",
+    "yarn",
+    "gitlab-pages",
+    "eslint",
+    "coverage"
+  ]
+}

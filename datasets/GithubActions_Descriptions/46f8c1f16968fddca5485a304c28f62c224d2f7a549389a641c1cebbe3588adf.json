@@ -1,0 +1,14 @@
+{
+  "sha": "46f8c1f16968fddca5485a304c28f62c224d2f7a549389a641c1cebbe3588adf",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1346,
+  "description": "Create a GitHub Actions workflow named freebsd that runs on push and pull request events. Use a single ubuntu-latest job that checks out the repository, then runs a cross-platform action in a FreeBSD 13.2 VM with a 180-minute timeout. In the VM, update pkg to the latest version, install required packages, set up the build with meson, compile with ninja, and run meson tests for the waybar suite.",
+  "tags": [
+    "freebsd",
+    "cross-platform",
+    "meson",
+    "github-actions",
+    "waybar"
+  ]
+}

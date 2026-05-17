@@ -1,0 +1,17 @@
+{
+  "sha": "008856160d4326b3d3992f4960490c604b11cb0a67c1358020e54ecf24d80a2d",
+  "provider": "groq",
+  "model": "llama-3.3-70b-versatile",
+  "yaml_bytes": 4499,
+  "description": "Create a GitHub Actions CI workflow that runs on every push, pull request, and monthly. The workflow has three jobs: build-linux, build-flatpak, and build-windows. The build-linux job builds the project on ubuntu-18.04 with Release and Debug configurations. The build-flatpak job builds the project under Flatpak. The build-windows job builds the project on windows-2019 with Release and Debug configurations and optional COF. Each job checks out the repository, installs dependencies, generates the build system, builds the project, and uploads artifacts. On tag pushes, the workflow prepares and releases the built artifacts.",
+  "tags": [
+    "ci",
+    "linux",
+    "windows",
+    "flatpak",
+    "cmake",
+    "rust",
+    "github-actions",
+    "monthly-schedule"
+  ]
+}

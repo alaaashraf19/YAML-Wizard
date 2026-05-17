@@ -1,0 +1,50 @@
+before_script:
+- bash ci/docker_install.sh > /dev/null
+package:
+  artifacts:
+    paths:
+    - release.zip
+  image: tetraweb/php
+  script:
+  - apt-get update
+  - apt-get install zip unzip
+  - cd api
+  - composer install --no-dev
+  - cd ../ci
+  - bash build_zip.sh
+  stage: package
+  when: manual
+stages:
+- validate
+- test
+- package
+validate:5.4:
+  image: php:5.4
+  script:
+  - bash ci/php_lint.sh ./
+  stage: validate
+validate:5.5:
+  image: php:5.5
+  script:
+  - bash ci/php_lint.sh ./
+  stage: validate
+validate:5.6:
+  image: php:5.6
+  script:
+  - bash ci/php_lint.sh ./
+  stage: validate
+validate:7.0:
+  image: php:7.0
+  script:
+  - bash ci/php_lint.sh ./
+  stage: validate
+validate:7.1:
+  image: php:7.1
+  script:
+  - bash ci/php_lint.sh ./
+  stage: validate
+validate:7.2:
+  image: php:7.2
+  script:
+  - bash ci/php_lint.sh ./
+  stage: validate

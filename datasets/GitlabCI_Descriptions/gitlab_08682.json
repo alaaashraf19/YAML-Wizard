@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_08682",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 410,
+  "description": "Create a GitLab CI pipeline that uses the node:10 Docker image and defines two stages: build and test. In the build stage add a build job that runs the command npm install, caches the node_modules/ directory, and publishes node_modules/ as an artifact that expires in 1 week. In the test stage add a test job that runs npm test and a validate job that runs npm run validate; both jobs use the node:10 image and are tagged with docker and shared runners. Enable a global cache for the path node_modules/.",
+  "tags": [
+    "node",
+    "npm",
+    "build",
+    "test",
+    "cache"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_10328",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 268,
+  "description": "Create a GitLab CI pipeline that uses the node:alpine Docker image and caches the node_modules/ directory. Define a deploy stage with a publish job that runs npm install in a before_script, then echoes \"//registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN\" > ~/.npmrc and executes npm publish --tag latest. Configure the job to run only on the master branch and on tags, and to be excluded for trigger pipelines. Use the NPM_AUTH_TOKEN secret variable for authentication.",
+  "tags": [
+    "node",
+    "npm",
+    "publish",
+    "docker",
+    "cache",
+    "gitlab-ci"
+  ]
+}

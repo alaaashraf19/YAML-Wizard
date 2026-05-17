@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_09856",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 502,
+  "description": "Create a GitLab CI pipeline with a variable S3_BUCKET_NAME set to primeros-pasos-de-python and two stages named pages and deploy. In the pages stage define a pages job that uses the node:8.11.4 Docker image, caches the node_modules/ directory, runs the before_script commands `npm install gitbook-cli -g` and `gitbook install`, then executes `gitbook build . public` and stores the resulting public/ folder as an artifact, and restricts the job to the master branch. In the deploy stage define a deploy job that uses the python:latest Docker image, runs only on the master branch, and runs the script commands `pip install awscli` followed by `aws s3 cp ./ s3://$S3_BUCKET_NAME/public --recursive --include \"/public/*\"` to upload the public files to the specified S3 bucket.",
+  "tags": [
+    "python",
+    "node",
+    "gitbook",
+    "awscli",
+    "s3",
+    "pages",
+    "deploy",
+    "master-only"
+  ]
+}

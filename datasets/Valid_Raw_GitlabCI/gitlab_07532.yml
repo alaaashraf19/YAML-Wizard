@@ -1,0 +1,52 @@
+after_script:
+- rm -f $GRADLE_USER_HOME/caches/modules-2/modules-2.lock
+- rm -fr $GRADLE_USER_HOME/caches/*/plugin-resolution/
+cache:
+  paths:
+  - .gradle/wrapper
+  - .gradle/caches
+pages:
+  artifacts:
+    name: ${CI_PROJECT_PATH}_${CI_JOB_STAGE}_${CI_JOB_ID}_${CI_COMMIT_REF_NAME}_${CI_COMMIT_SHA}
+    paths:
+    - metadata/
+    - public/
+    - repo/index-v1.json
+    - repo/index.xml
+    - tmp/apkcache.json
+    - unsigned/
+    when: always
+  image: registry.gitlab.com/fdroid/fdroidserver:buildserver-bookworm
+  script:
+  - apt-get update
+  - apt-get -qy install jq
+  - updated_after=$(date --date='4 hours ago' --utc --iso-8601=minutes)
+  - echo "Only considering pipelines since $updated_after"
+  - 'running_pipelines=$(curl --silent "PRIVATE-TOKEN: $PERSONAL_ACCESS_TOKEN" "https://gitlab.com/api/v4/projects/2167965/pipelines?status=running&updated_after=$updated_after")
+
+    '
+  - echo $running_pipelines | jq
+  - if [ "$(echo $running_pipelines | jq .[1])" = null ]; then echo "no other job
+    running"; else echo "Pipeline already running, exiting."; exit 0; fi
+  - apt-get dist-upgrade
+  - apt-get install python3-github python3-gitlab python3-defusedxml python3-javaproperties
+    python3-requests-cache python3-venv python3-wheel
+  - test -d fdroidserver || mkdir fdroidserver
+  - git ls-remote https://gitlab.com/fdroid/fdroidserver.git master
+  - curl --silent https://gitlab.com/fdroid/fdroidserver/-/archive/master/fdroidserver-master.tar.gz
+    | tar -xz --directory=$CI_PROJECT_DIR/fdroidserver --strip-components=1
+  - export PATH="$CI_PROJECT_DIR/fdroidserver:$PATH"
+  - export PYTHONPATH="$CI_PROJECT_DIR/fdroidserver:$CI_PROJECT_DIR/fdroidserver/examples"
+  - export PYTHONUNBUFFERED=true
+  - export GRADLE_USER_HOME=$PWD/.gradle
+  - rm -rf $GRADLE_USER_HOME/fdroid
+  - mkdir -p $GRADLE_USER_HOME/fdroid
+  - git ls-remote https://gitlab.com/fdroid/gradle-plugins.git master
+  - curl --silent https://gitlab.com/fdroid/gradle-plugins/-/archive/master/gradle-plugins-master.tar.gz
+    | tar -xz --directory=$GRADLE_USER_HOME/fdroid --strip-components=1
+  - git ls-remote https://gitlab.com/fdroid/issuebot.git master
+  - curl --silent https://gitlab.com/fdroid/issuebot/-/archive/master/issuebot-master.tar.gz
+    | tar -xz --strip-components=1
+  - python3 -m venv --system-site-packages --clear issuebot-env
+  - . issuebot-env/bin/activate
+  - ./issuebot.py

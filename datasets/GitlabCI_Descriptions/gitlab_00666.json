@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_00666",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 291,
+  "description": "Create a GitLab CI pipeline that uses the ruby:2.3 Docker image and caches the vendor/ directory. Define a JEKYLL_ENV variable set to production and run bundle install --path vendor in a before_script. Add a deploy stage with a pages job that runs `bundle exec jekyll build -d public/ && gzip -k -6 $(find public/ -type f)`, publishes the public/ directory as a pages artifact, and is limited to the main branch. The pipeline should deploy the built site to GitLab Pages.",
+  "tags": [
+    "ruby",
+    "jekyll",
+    "bundler",
+    "gitlab-pages",
+    "gzip",
+    "cache"
+  ]
+}

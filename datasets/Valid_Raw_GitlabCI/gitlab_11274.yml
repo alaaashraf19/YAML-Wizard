@@ -1,0 +1,57 @@
+build-backend:
+  artifacts:
+    expire_in: 30 mins
+    paths:
+    - backend/out
+  dependencies:
+  - test-backend
+  image: mcr.microsoft.com/dotnet/sdk:5.0
+  script:
+  - cd backend
+  - dotnet restore
+  - dotnet publish EternalGroveApi/EternalGroveApi.csproj -c Release -o out
+  stage: build
+build-frontend:
+  artifacts:
+    expire_in: 30 mins
+    paths:
+    - frontend/build
+  dependencies:
+  - test-frontend
+  image: node:lts-alpine
+  script:
+  - cd frontend
+  - npm install --silent
+  - npx react-scripts build
+  stage: build
+deploy-frontend:
+  dependencies:
+  - build-frontend
+  image: python:latest
+  only:
+  - release
+  script:
+  - pip install awscli
+  - aws s3 rm s3://www.eternalgrove.net/ --recursive
+  - aws s3 cp frontend/build s3://www.eternalgrove.net/ --grants read=uri=http://acs.amazonaws.com/groups/global/AllUsers
+    --recursive
+  stage: deploy
+stages:
+- test
+- build
+- deploy
+test-backend:
+  image: mcr.microsoft.com/dotnet/sdk:5.0
+  script:
+  - cd backend
+  - dotnet restore
+  - dotnet test Tests/Games.UnitTests/Games.UnitTests.csproj
+  - dotnet test Tests/Records.UnitTests/Records.UnitTests.csproj
+  stage: test
+test-frontend:
+  image: node:lts-alpine
+  script:
+  - cd frontend
+  - npm install --silent
+  - npx react-scripts test --watchAll=false
+  stage: test

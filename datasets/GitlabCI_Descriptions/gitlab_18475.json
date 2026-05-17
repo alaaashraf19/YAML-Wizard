@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_18475",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 119,
+  "description": "Create a GitLab CI pipeline that runs a before_script to execute `apt-get update -qq && apt-get install -y -qq gtk+3.0 gtksourceview-3.0`. Define a single job called saedit that runs the shell command `make all`. Use the default Docker image (no explicit image), no custom stages, caches, artifacts, or rules, so the job runs on every pipeline execution.",
+  "tags": [
+    "apt",
+    "gtk3",
+    "gtksourceview",
+    "make",
+    "ci"
+  ]
+}

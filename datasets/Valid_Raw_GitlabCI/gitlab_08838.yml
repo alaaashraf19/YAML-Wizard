@@ -1,0 +1,14 @@
+close-old-triage-reports:
+  extends: .run
+  rules:
+  - if: $TRIAGE_CLOSE_OLD_TRIAGE_REPORTS
+  stage: close-reports
+  variables:
+    TRIAGE_POLICY_FILE: policies/stages/close-reports/close-old-triage-reports.yml
+close-reports-resources-moved-to-next-milestone:
+  extends: .run
+  rules:
+  - if: $TRIAGE_CLOSE_REPORTS_RESOURCES_MOVED_TO_NEXT_MILESTONE
+  stage: close-reports
+  variables:
+    TRIAGE_POLICY_FILE: policies/stages/close-reports/close-reports-resources-moved-to-next-milestone.yml

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_17748",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 570,
+  "description": "Create a GitLab CI pipeline with a single test stage containing a job named test_python37. The job runs a before_script that removes docker-compose.override.yml, sets COMPOSE_PROJECT_NAME to \"vaulthelpers${CI_JOB_ID}\", pulls and builds the Docker Compose services with --pull. In the script it defines a shell function run_tox_tests that starts the postgres and vault services in the background, waits 10 seconds, runs tox -e \"$1\" inside the test service, then stops and removes containers, and then invokes this function for the environments py37-django111, py37-django220, and py37-django300. The job is tagged with docker-compose and has no explicit image, caches, artifacts, or conditional rules.",
+  "tags": [
+    "docker-compose",
+    "tox",
+    "django",
+    "python37",
+    "postgres",
+    "test"
+  ]
+}

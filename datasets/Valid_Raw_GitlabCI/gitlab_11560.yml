@@ -1,0 +1,19 @@
+before_script:
+- apk update
+- apk add doxygen
+- apk add ttf-freefont graphviz
+image: alpine
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - doxygen satnogs-rotator-firmware.doxyfile
+  - mv doxygen_files/html/ public/
+test:
+  except:
+  - master
+  script:
+  - doxygen satnogs-rotator-firmware.doxyfile

@@ -1,0 +1,34 @@
+name: clang
+on:
+  push:
+    branches: [ master, development, pull-request/* ]
+  pull_request:
+    branches: [ master, pull-request/* ]
+
+jobs:
+
+  build-clang-cpp20-linux-stl:
+    name: Clang C++20 Linux - STL
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-22.04]
+
+    steps:
+    - uses: actions/checkout@v3
+
+    # Temporary fix. See https://github.com/actions/runner-images/issues/8659
+    - name: Install newer Clang
+      run: |
+        wget https://apt.llvm.org/llvm.sh
+        chmod +x ./llvm.sh
+        sudo ./llvm.sh 17
+
+    - name: Build
+      run: |
+        clang-17 --version
+        clang++-17 --version
+        make
+
+#    - name: Run tests
+#      run: ./test/etl_tests

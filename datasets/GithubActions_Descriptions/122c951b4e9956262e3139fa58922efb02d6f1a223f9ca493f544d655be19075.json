@@ -1,0 +1,15 @@
+{
+  "sha": "122c951b4e9956262e3139fa58922efb02d6f1a223f9ca493f544d655be19075",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1199,
+  "description": "Create a GitHub Actions workflow named Test that runs on push and on a scheduled cron job. Configure a single ubuntu-latest job with read-only repository permissions and write ID token permissions. The job should use a matrix strategy to test with Python 3.8, 3.9, 3.10, and 3.11. For each matrix entry, check out the repository, install Poetry, set up Python with Poetry caching, install dependencies, configure AWS credentials using an OIDC role, and run tests with tox.",
+  "tags": [
+    "python",
+    "tox",
+    "aws",
+    "github-actions",
+    "cron",
+    "poetry"
+  ]
+}

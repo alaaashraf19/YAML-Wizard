@@ -1,0 +1,49 @@
+build:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - node_modules/
+  script:
+  - npm install
+  stage: build
+  tags:
+  - docker
+  - shared
+cache:
+  paths:
+  - node_modules/
+image: node:boron
+stages:
+- build
+- test
+test:
+  artifacts:
+    paths:
+    - selenium/
+    when: always
+  script:
+  - apt-get update -q -y
+  - apt-get --yes install libnss3
+  - apt-get --yes install libgconf-2-4
+  - export CHROME_DEB="google-chrome-stable_65.0.3325.181-1_amd64.deb"
+  - export CHROME_URL="https://s3.amazonaws.com/gitlab-google-chrome-stable/${CHROME_DEB}"
+  - curl --silent --show-error --fail -O $CHROME_URL
+  - dpkg -i ./$CHROME_DEB || true
+  - apt-get install -f -y
+  - rm -f $CHROME_DEB
+  - npm install chromedriver@2.36.0 -g
+  - npm install https://gitlab.com/gitlab-org/gitlab-selenium-server.git -g
+  - nohup chromedriver --port=4444 --url-base=wd/hub &
+  - nohup gitlab-selenium-server &
+  - npm test
+  - mkdir -p selenium/ && curl -s http://localhost:4545/logs.tar.gz | tar -xvzf -
+    -C selenium/
+  - mkdir -p selenium/ && curl http://localhost:4545/server-log --output selenium/server-log.txt
+  stage: test
+  tags:
+  - docker
+  - shared
+  variables:
+    GITLAB_TARGET_SELENIUM_REMOTE_URL: http://localhost:4444/wd/hub
+    SELENIUM_REMOTE_URL: http://localhost:4545/wd/hub
+variables: null

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_11941",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 301,
+  "description": "Create a GitLab CI pipeline that uses the node:14.18.1-alpine Docker image and caches the Yarn directories (.yarn/cache/, .yarn/unplugged/, .yarn/build-state.yml). Define a single job named ci in the default test stage that runs: apk add --no-cache git make python3 util-linux, then yarn install --immutable, yarn build, and yarn dlx git-is-clean. Configure the job to upload any files matching dist/public_ip_display-*.zip as artifacts. No services or special triggers are required.",
+  "tags": [
+    "node",
+    "yarn",
+    "apk",
+    "cache",
+    "artifact"
+  ]
+}

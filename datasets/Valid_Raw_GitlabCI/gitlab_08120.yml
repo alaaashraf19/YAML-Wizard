@@ -1,0 +1,37 @@
+build ci image:
+  image: docker:latest
+  only:
+  - /\Aci-image\/.*/
+  script:
+  - '[[ -z $CI_REGISTRY ]] || docker login --username ${CI_REGISTRY_USER} --password
+    ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}'
+  - '[[ -z $CI_REGISTRY ]] || docker pull ${CI_IMAGE_LATEST} || echo ''No latest image,
+    will not use cache'''
+  - docker build --build-arg PROMETHEUS_VERSION=${PROMETHEUS_VERSION} --cache-from
+    ${CI_IMAGE_LATEST} -t ${CI_IMAGE} -f dockerfiles/ci/Dockerfile .
+  - docker tag ${CI_IMAGE} ${CI_IMAGE_LATEST}
+  - '[[ -z $CI_REGISTRY ]] || docker push ${CI_IMAGE}'
+  - '[[ -z $CI_REGISTRY ]] || docker push ${CI_IMAGE_LATEST}'
+  - '[[ -z $CI_REGISTRY ]] || docker logout ${CI_REGISTRY}'
+  services:
+  - docker:dind
+  stage: ci_prepare
+  tags:
+  - docker
+  variables:
+    DOCKER_DRIVER: overlay2
+    DOCKER_HOST: tcp://docker:2375/
+rules check:
+  image: $CI_IMAGE
+  script:
+  - ls rules/*.rules.yml >/dev/null 2>&1 && promtool check rules rules/*.rules.yml
+    || echo 'No files to check!'
+  stage: test
+stages:
+- ci_prepare
+- test
+variables:
+  CI_IMAGE: $CI_REGISTRY_IMAGE/ci:$CI_IMAGE_VERSION
+  CI_IMAGE_LATEST: $CI_REGISTRY_IMAGE/ci:latest
+  CI_IMAGE_VERSION: '0.1'
+  PROMETHEUS_VERSION: 2.0.0

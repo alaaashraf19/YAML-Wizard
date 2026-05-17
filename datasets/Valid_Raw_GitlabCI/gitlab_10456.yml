@@ -1,0 +1,22 @@
+before_script:
+- cd devenv
+event-store-prepare:
+  artifacts:
+    paths:
+    - build/
+  script:
+  - docker-compose build
+  - docker-compose run -u $UID:$GROUPS --rm event-store-prepare
+  stage: build
+event-store-test:
+  dependencies:
+  - event-store-prepare
+  script:
+  - docker-compose run -u $UID:$GROUPS --rm event-store-test
+  stage: test
+image: gitlab/dind:latest
+services:
+- docker:dind
+stages:
+- build
+- test

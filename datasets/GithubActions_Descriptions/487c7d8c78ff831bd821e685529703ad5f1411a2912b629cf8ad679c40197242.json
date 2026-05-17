@@ -1,0 +1,15 @@
+{
+  "sha": "487c7d8c78ff831bd821e685529703ad5f1411a2912b629cf8ad679c40197242",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3456,
+  "description": "Create a GitHub Actions workflow named MSVC that runs on every push to the master branch and on pull requests to master. The workflow has two jobs, build-with-vcpkg-integration and build-without-vcpkg-integration, both running on a Windows 2022 environment. The first job checks out the repository, sets up MSBuild, integrates vcpkg, and then builds multiple projects with msbuild in both Debug and Release configurations. It also packages the binaries into a 7z archive and uploads it as an artifact. The second job does a similar build without vcpkg integration.",
+  "tags": [
+    "msvc",
+    "msbuild",
+    "vcpkg",
+    "windows",
+    "build",
+    "ci"
+  ]
+}

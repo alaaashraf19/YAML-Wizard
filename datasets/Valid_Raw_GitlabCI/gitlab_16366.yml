@@ -1,0 +1,40 @@
+cache:
+  paths:
+  - /root/.m2/repository/
+image: maven:3.3.9-jdk-8
+maven_deploy:
+  only:
+  - master
+  script:
+  - echo "Deploy project with maven"
+  - cd seen-retrofit-bom
+  - mvn --settings ../settings.xml deploy
+  - cd ..
+  - mvn --settings settings.xml deploy
+  stage: deploy
+maven_deploy_javadoc:
+  only:
+  - master
+  script:
+  - echo "Deploy source with maven"
+  - mvn --settings settings.xml javadoc:jar deploy
+  stage: deploy
+maven_deploy_source:
+  only:
+  - master
+  script:
+  - echo "Deploy source with maven"
+  - mvn --settings settings.xml source:jar deploy
+  stage: deploy
+maven_test:
+  script:
+  - echo "Building project with maven"
+  - cd seen-retrofit-bom
+  - mvn --settings ../settings.xml deploy
+  - cd ..
+  - mvn --settings ./settings.xml verify
+  stage: test
+stages:
+- build
+- test
+- deploy

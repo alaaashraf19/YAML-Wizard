@@ -1,0 +1,14 @@
+{
+  "sha": "6938539dd38626b0fe6216079e6f6e49e484f316c7740b43dc9fc171d249c09a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1215,
+  "description": "Create a GitHub Actions workflow named MacOS that runs on every push. Use a single macOS-latest job that checks out the repository, installs Qt 6.8.0, builds Laigter with qmake and make, and packages it with macdeployqt. Upload the resulting laigter-mac.zip artifact and, if the push is a tag, upload it as a GitHub release.",
+  "tags": [
+    "macos",
+    "qt",
+    "build",
+    "packaging",
+    "github-releases"
+  ]
+}

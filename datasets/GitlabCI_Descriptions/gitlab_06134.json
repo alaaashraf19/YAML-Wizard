@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_06134",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 241,
+  "description": "Create a GitLab CI pipeline with two stages: build and deploy. In the build stage add a job named build-data that uses the node:10 Docker image, runs npm ci in before_script and then npm test in script. In the deploy stage add a pages job that uses the default alpine:latest image, runs exit 0, and publishes the public/ directory as an artifact. The pages job is limited to the master branch only.",
+  "tags": [
+    "node",
+    "npm",
+    "alpine",
+    "gitlab-pages",
+    "build",
+    "deploy"
+  ]
+}

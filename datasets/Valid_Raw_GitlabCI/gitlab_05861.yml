@@ -1,0 +1,8 @@
+slides:
+  artifacts:
+    name: $CI_JOB_NAME
+    paths:
+    - slides.pdf
+  image: aergus/latex
+  script:
+  - make

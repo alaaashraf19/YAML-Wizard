@@ -1,0 +1,33 @@
+before_script:
+- echo ${TF_VAR_private_key} > private.key
+- apk add --no-cache unzip wget ca-certificates
+- update-ca-certificates
+- wget -q https://releases.hashicorp.com/terraform/0.10.8/terraform_0.10.8_linux_amd64.zip
+  -O /terraform.zip
+- unzip /terraform.zip -d /
+- /terraform init -input=false
+deploy_development:
+  environment:
+    name: development
+    url: https://gitlab.com
+  only:
+  - master
+  script:
+  - /terraform apply
+  stage: deploy
+development:
+  except:
+  - master
+  script:
+  - /terraform plan
+  stage: planning
+image: alpine:latest
+stages:
+- planning
+- deploy
+variables:
+  TF_VAR_abuango_pub_key: ''
+  TF_VAR_aws_access_key: ''
+  TF_VAR_aws_secret_key: ''
+  TF_VAR_do_dev_token: ''
+  TF_VAR_private_key: ''

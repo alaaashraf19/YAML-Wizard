@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_06184",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 257,
+  "description": "Create a GitLab CI pipeline with three jobs: test-neovim, test-vim-7.4, and test-vim-latest. Each job runs in the default test stage, uses its specified Docker image (lambdalisue/neovim-ci for test-neovim, thinca/vim:v7.4 for both Vim jobs), changes directory to tests, and executes bash runtests.sh. No caches, artifacts, or special rules are defined.",
+  "tags": [
+    "neovim",
+    "vim",
+    "ci",
+    "tests"
+  ]
+}

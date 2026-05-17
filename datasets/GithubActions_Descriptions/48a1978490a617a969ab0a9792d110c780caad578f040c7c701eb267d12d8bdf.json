@@ -1,0 +1,17 @@
+{
+  "sha": "48a1978490a617a969ab0a9792d110c780caad578f040c7c701eb267d12d8bdf",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2332,
+  "description": "Create a GitHub Actions workflow named Passenger generic binaries tests CI tests. The workflow should trigger on push to stable-* and feature/* branches and on pull requests to those branches. It should have two jobs, build_linux and build_macos, each running on a different OS and building binaries for x86_64 and aarch64 architectures. Each job should check out the repository, set up environment variables, and run scripts to build and test binaries. The build_linux job should use docker/setup-qemu-action and docker/setup-buildx-action, while the build_macos job should install Ruby using rvm and run additional preparation scripts.",
+  "tags": [
+    "passenger",
+    "binaries",
+    "tests",
+    "ci",
+    "linux",
+    "macos",
+    "docker",
+    "ruby"
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "sha": "5645e8fbd10b21d776b681a885357dbfde43d5fc97ae47c80a6296c172b36648",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2424,
+  "description": "Create a GitHub Actions workflow that runs on push and pull request to main and vnext branches, as well as on page build and release creation events. The workflow has two jobs: test and docs. The test job runs on a matrix of OS, Python version, and Mambaforge URL, setting up Miniconda, installing the package and its test dependencies, running tests with pytest, and uploading test results. The docs job builds the documentation using Sphinx and uploads it as an artifact.",
+  "tags": [
+    "python",
+    "conda",
+    "miniconda",
+    "mambaforge",
+    "pytest",
+    "sphinx",
+    "docs",
+    "tests",
+    "ubuntu",
+    "macos",
+    "windows"
+  ]
+}

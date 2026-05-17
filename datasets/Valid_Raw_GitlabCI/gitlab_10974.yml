@@ -1,0 +1,49 @@
+before_script:
+- npm install
+cache:
+  paths:
+  - node_modules/
+image: node:8.9.4
+lint:
+  script:
+  - npm run lint
+  stage: lint
+  tags:
+  - docker
+pages:
+  allow_failure: true
+  artifacts:
+    paths:
+    - public
+  only:
+  - tags
+  script:
+  - mkdir public
+  - mv coverage/ public/
+  stage: report
+release_test:
+  allow_failure: true
+  artifacts:
+    expire_in: 7 days
+    paths:
+    - coverage/
+  only:
+  - tags
+  script:
+  - npm t
+  stage: release_test
+  tags:
+  - docker
+stages:
+- lint
+- test
+- release_test
+- report
+test:
+  except:
+  - tags
+  script:
+  - npm t
+  stage: test
+  tags:
+  - docker

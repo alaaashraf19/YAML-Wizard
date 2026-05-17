@@ -1,0 +1,57 @@
+.build: &id003
+  only: &id001
+  - tags
+  script: &id002
+  - make "$CI_JOB_NAME"
+  - github-release upload --tag "${VERSION}" --name "$(basename *.xz)" --file *.xz
+  - git clean -fdx
+  stage: build
+.build_manual:
+  allow_failure: true
+  only: *id001
+  script: *id002
+  stage: build
+  when: manual
+before_script:
+- export CHANGES=$(git tag -l --format="%(contents)" "$CI_COMMIT_TAG")
+- export DESCRIPTION=$(echo -e "${CHANGES}\n\n${PIPELINE_URL}")
+debian-bookworm-minimal-arm64: *id003
+draft:
+  only:
+  - tags
+  script:
+  - github-release release --tag "${VERSION}" --name "$RELEASE_NAME" --description
+    "$DESCRIPTION" --target "$CI_COMMIT_SHA" --draft
+  stage: draft
+image: ayufan/rock64-dockerfiles:bookworm
+pre-release:
+  environment:
+    name: pre-release
+    url: https://github.com/$GITHUB_USER/$GITHUB_REPO/releases/tag/$CI_COMMIT_TAG
+  only:
+  - tags
+  script:
+  - github-release edit --tag "${VERSION}" --name "$RELEASE_NAME" --description "$DESCRIPTION"
+    --pre-release
+  stage: pre-release
+release:
+  environment:
+    name: release
+    url: https://github.com/$GITHUB_USER/$GITHUB_REPO/releases/tag/$CI_COMMIT_TAG
+  only:
+  - tags
+  script:
+  - github-release edit --tag "${VERSION}" --name "$RELEASE_NAME" --description "$DESCRIPTION"
+  stage: release
+  when: manual
+stages:
+- draft
+- build
+- pre-release
+- release
+variables:
+  GITHUB_REPO: linux-rootfs
+  GITHUB_USER: ayufan-rock64
+  PIPELINE_URL: $CI_PROJECT_URL/pipelines/$CI_PIPELINE_ID
+  RELEASE_NAME: '${CI_COMMIT_TAG}: gitlab-ci-linux-rootfs-${CI_PIPELINE_ID}'
+  VERSION: ${CI_COMMIT_TAG}

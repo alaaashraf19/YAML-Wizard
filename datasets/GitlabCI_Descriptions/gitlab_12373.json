@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_12373",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 175,
+  "description": "Create a GitLab CI pipeline using the python:alpine Docker image and a before_script that runs pip install mkdocs-material. Define a single deploy-stage job named pages that executes the script commands mkdocs build then mv site public, publishes the public/ directory as a pages artifact, and is limited to the master branch via an only rule, targeting GitLab Pages deployment.",
+  "tags": [
+    "python",
+    "alpine",
+    "mkdocs",
+    "pages",
+    "gitlab-pages"
+  ]
+}

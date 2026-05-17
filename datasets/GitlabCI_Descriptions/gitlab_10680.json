@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_10680",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1453,
+  "description": "Create a GitLab CI pipeline with default test stage jobs and a deploy stage for GitLab Pages, using the gcc, gcc:4.8, gcc (latest) and jianann/ubuntu-clang Docker images. Add a pages job that runs only on the master branch, uses the gcc image, runs apt-get update, installs doxygen, executes autoreconf -i, ./configure, makes the docs, moves docs/out/html to a public/ folder, and publishes the public directory as an artifact. Add a test_clang_6_0_0 job in the test stage with the jianann/ubuntu-clang image that updates apt, installs autoconf and libtool, prints clang and clang++ versions, runs autoreconf -i, creates a build directory, configures with CC=clang CXX=clang++ --prefix=$pwd/build, then runs make, make check, make install, make dist-gzip and make distcheck. Add a test_gcc_4_8 job using gcc:4.8 that creates a tmp directory, downloads Boost 1.67.0, extracts it, copies the boost headers to /usr/include, runs autoreconf --install, configures with --prefix=$pwd/build, then runs make, make check, make install, make dist-gzip and make distcheck. Finally, add test_gcc_latest (gcc image) that installs doxygen, runs autoreconf -i, configures with --prefix=$pwd/build and performs the full make, check, install, dist-gzip, distcheck sequence, and test_gcc_latest_vpath (gcc image) that runs autoreconf -i, creates a build/gcc subdirectory, runs ../../configure there, and then executes the same make, check, install, dist-gzip, distcheck steps.",
+  "tags": [
+    "gcc",
+    "gcc-4.8",
+    "clang",
+    "gitlab-pages",
+    "doxygen",
+    "autotools",
+    "boost",
+    "make",
+    "distcheck"
+  ]
+}

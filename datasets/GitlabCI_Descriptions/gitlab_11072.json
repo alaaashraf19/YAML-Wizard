@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_11072",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 5189,
+  "description": "Create a GitLab CI pipeline with stages lint, test, build, release, and deploy. Add a flake8 lint job using the python:3 image that installs flake8 then runs flake8 ./lib/pylib/ and triggers on merge‑request events, any branch commit, but not on version tags. Add a shellcheck lint job using koalaman/shellcheck-alpine that prints its version then runs shellcheck -s bash -x -a --color -e \"SC1090,SC1091,SC2034\" ./bin/* ./lib/*.bash with the same rules. Add two test jobs named tests:ubuntu:20.04 and tests:ubuntu:22.04 using ubuntu:20.04 and ubuntu:22.04 images; each creates a .cache directory, installs ruby, git, locales, adds an odoo user, configures sudo, runs bash install-system.bash and then sudo -u odoo -HE bashcov tests/test.bash, stores coverage reports in a coverage artifact that expires in 3 days and always uploads, and triggers on merge‑request events and branch commits. Add three build jobs: build:package:branch:dev (manual, runs on merge‑request events, uses ubuntu:22.04, installs ruby and fpm, runs bash scripts/build_packages.bash \"$CI_COMMIT_REF_NAME\", then uploads the generated .deb to the package registry), build:package:branch:master (runs on the master branch, same steps without manual), and build:package:tag (runs on tags matching ^v\\d.*, runs scripts/build_packages.bash without arguments, and uploads the .deb using the tag name). Add a do_release:tag job in the release stage using the release‑cli image that installs coreutils, echoes a preparation message, splits CHANGELOG.md, and creates a GitLab release with a package asset linking to the uploaded .deb. Finally add a pages job in the deploy stage using ubuntu:20.04 that installs python3‑pip, mkdocs and mkdocs‑cinder, runs bash scripts/build_docs.bash, and publishes the public/ directory as a Pages artifact, only on the master branch. Cache the .cache directory per job.",
+  "tags": [
+    "ubuntu",
+    "ruby",
+    "fpm",
+    "bashcov",
+    "flake8",
+    "shellcheck",
+    "gitlab-release",
+    "pages",
+    "mkdocs",
+    "ci"
+  ]
+}

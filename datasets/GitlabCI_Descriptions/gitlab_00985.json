@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_00985",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 433,
+  "description": "Create a GitLab CI pipeline using the java:8 Docker image and a before_script that runs apt-get update -y, apt-get install apt-transport-https -y, adds the sbt repository with echo \"deb http://dl.bintray.com/sbt/debian /\" | tee -a /etc/apt/sources.list.d/sbt.list, imports the GPG key via apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 642AC823, updates apt again, installs sbt=0.13.8 with apt-get install sbt=0.13.8 -y, and finally runs sbt sbtVersion. Add a test job (default stage) that executes sbt clean coverage test end-to-end:test scalastyle coverageReport and then sbt coverageAggregate. The pipeline does not define any caches, artifacts, or special rules.",
+  "tags": [
+    "java",
+    "sbt",
+    "scala",
+    "coverage",
+    "scalastyle",
+    "gitlab-ci"
+  ]
+}

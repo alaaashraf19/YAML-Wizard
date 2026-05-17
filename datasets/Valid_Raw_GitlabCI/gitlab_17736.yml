@@ -1,0 +1,61 @@
+cache:
+  key: $CI_PROJECT_NAME
+  paths:
+  - $HOME/.cache/pip
+precommit:
+  cache:
+    paths:
+    - ${PRE_COMMIT_HOME}
+  image: python:3
+  script:
+  - pip3 install pre-commit
+  - pre-commit run --all-files
+  stage: test
+  variables:
+    PRE_COMMIT_HOME: ${CI_PROJECT_DIR}/.cache/pre-commit
+publish_gitlab_release:
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  release:
+    description: Release $CI_COMMIT_TAG. Tagged by $GITLAB_USER_LOGIN
+    name: Release $CI_COMMIT_TAG
+    ref: $CI_COMMIT_TAG
+    tag_name: $CI_COMMIT_TAG
+  rules:
+  - if: $CI_COMMIT_TAG && $CI_COMMIT_REF_PROTECTED
+  script:
+  - echo 'release job'
+  stage: release
+publish_pkg:
+  image: python:3.9
+  rules:
+  - if: $CI_COMMIT_TAG && $CI_COMMIT_REF_PROTECTED
+  script:
+  - pip install twine
+  - python setup.py sdist bdist_wheel
+  - export TWINE_USERNAME=__token__
+  - export TWINE_PASSWORD=${PYPI_TOKEN}
+  - python -m twine upload --repository-url https://upload.pypi.org/legacy/ dist/*
+  - export TWINE_USERNAME=gitlab-ci-token
+  - export TWINE_PASSWORD=${CI_JOB_TOKEN}
+  - python -m twine upload --repository-url https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/packages/pypi
+    dist/*
+  stage: release
+stages:
+- test
+- release
+test:
+  image: $IMAGE
+  parallel:
+    matrix:
+    - IMAGE: python:3.7
+      TOX_ENVS: py37-django{220,300,310,320}
+    - IMAGE: python:3.8
+      TOX_ENVS: py38-django{220,300,310,320}
+    - IMAGE: python:3.9
+      TOX_ENVS: py39-django{220,300,310,320}
+    - IMAGE: pypy:3
+      TOX_ENVS: pypy3-django{220,300,310,320}
+  script:
+  - pip install tox
+  - tox -e $TOX_ENVS
+  stage: test

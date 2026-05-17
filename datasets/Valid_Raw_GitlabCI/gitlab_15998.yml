@@ -1,0 +1,44 @@
+before_script:
+- echo "Job $CI_JOB_NAME"
+- echo ${CI_OPEN_MERGE_REQUESTS}
+- apt-get -y update
+- apt-get install -y git gcc make git libreadline-dev libbsd-dev readline-common
+- submodules/get-submodules.sh
+default:
+  image: ubuntu:20.04
+  retry:
+    exit_codes: 100
+    max: 2
+    when:
+    - api_failure
+    - runner_system_failure
+    - unknown_failure
+    - scheduler_failure
+make:
+  artifacts:
+    expire_in: 40 minutes
+    paths:
+    - src/librosie/binaries
+    - build/*
+  only:
+  - dev
+  - release
+  - master
+  script: make LUADEBUG=1 && make test
+  stage: build
+stages:
+- build
+variables:
+  GIT_STRATEGY:
+    description: 'fetch: get all new commts since the last fetch/clone, clone: get
+      fresh repository with given GIT_DEPTH. Use clone if the repository in a runner
+      has been damaged'
+    value: clone
+  GIT_SUBMODULE_STRATEGY:
+    description: 'normal: get 1 level of git submodules, none: get no submodules,
+      recursive: get all levels of submodules'
+    options:
+    - none
+    - normal
+    - recursive
+    value: none

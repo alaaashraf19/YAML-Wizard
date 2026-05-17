@@ -1,0 +1,25 @@
+{
+  "sha": "gitlab_19040",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 9596,
+  "description": "Create a GitLab CI pipeline with stages tools, tests, pre-deploy, and deploy using the wpdesknet/* Docker images. In the tools stage add a churn metrics job (image wpdesknet/phpunit-woocommerce:0-0, manual, allow_failure, runs `composer require bmitch/churn-php`, `composer update --no-progress`, `vendor/bin/churn run classes inc`, and stores the phpmetric directory as an artifact) and a phpmetric metrics job (image wpdesknet/phpunit-woocommerce:0-0, manual, allow_failure, runs `composer require phpmetrics/phpmetrics`, `composer update --no-progress`, `php ./vendor/bin/phpmetrics --report-html=phpmetric .`, and archives the phpmetric folder as an artifact). In the tests stage add unit test lastest (image wpdesknet/phpunit-woocommerce:0-0, runs on non‑tag commits, executes `echo ${WPDESK_CI_VERSION}`, `ls -l`, `php --version`, `cat /tmp/wordpress-develop/src/wp-includes/version.php`, `cat /tmp/woocommerce/woocommerce.php`, `composer update --no-progress`, `vendor/bin/phpunit --configuration phpunit-unit.xml --no-coverage`), unit test lastest coverage (only tags, same commands with `--coverage-text --colors=never`), acceptance test (image wpdesknet/node, manual, allow_failure, runs `composer update --no-progress --no-dev`, optional `tests/acceptance/prepare.sh`, sets MYSQL_IP and WOOTESTS_IP from /etc/hosts, fetches init script via wget, clones tests repo, `npm install`, `npm install -g grunt-cli`, updates webdriver‑manager, creates screenshot folder, runs `grunt chrome-${CI_PROJECT_NAME}`, with mysql:5.6, wpdesknet/apache-woocommerce:latest and selenium/standalone-chrome services, and always uploads acceptance logs), and a matrix of integration test jobs for various PHP/WooCommerce versions (images wpdesknet/phpunit-woocommerce:0-0,1-1,2-2,2-3,3-0,4-0, each with mysql:5.6 service, runs `echo ${WPDESK_CI_VERSION}`, `ls -l`, `php --version`, `cat` files, `composer update --no-progress`, optional `tests/integration/prepare.sh`, and `vendor/bin/phpunit --configuration phpunit-integration.xml` with or without coverage, some triggered only on tags, others excluded from tags, all allow_failure). In the pre‑deploy stage add build to deploy (image wpdesknet/phpunit-woocommerce:4-0, only tags, runs `echo ${WPDESK_CI_VERSION}`, `php --version`, `ls -l`, `/tmp/set_version.sh ${CI_COMMIT_REF_NAME}`, prepares a release directory, copies project files, runs `composer install --no-dev --no-progress --optimize-autoloader`, removes development files, zips the release, and publishes the release folder and zip as artifacts) and apigen docs (image wpdesknet/apigen, only tags, runs `echo ${WPDESK_CI_VERSION}`, `ls -l`, `/app/vendor/bin/apigen generate`, `php /app/hooks-docs.php ${CI_PROJECT_DIR}`, and stores the docs folder as an artifact). In the deploy stage add deploy to demo, deploy to repository, and deploy to shop (all use wpdesknet/amazon-svn-deploy image, depend on the build jobs, only on tags, manual with retry 2, run `echo ${WPDESK_CI_VERSION}` followed by their respective `/tmp/deploy_*.sh` scripts, and post a Slack webhook message), and a pages job (only tags, moves the generated docs to a public directory, posts a Slack webhook, and publishes the public folder as a pages artifact).",
+  "tags": [
+    "phpunit",
+    "wordpress",
+    "docker",
+    "integration-tests",
+    "unit-tests",
+    "acceptance-tests",
+    "deployment",
+    "slack",
+    "apigen",
+    "phpmetrics",
+    "churn",
+    "tools",
+    "pre-deploy",
+    "deploy",
+    "pages",
+    "wpdesknet"
+  ]
+}

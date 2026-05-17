@@ -1,0 +1,14 @@
+{
+  "sha": "2d73cccddbd0c7fcdab84ef8d817c8f29bd901c6aacb8afb526dec6177a9237a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3353,
+  "description": "Create a GitHub Actions workflow named CMake that runs on every push and pull request. Use a matrix job that runs on ubuntu-20.04 with various configurations, including Debug and Release builds, dynamic and static linking, and x64-linux triplet. The job checks out the repository with submodules, installs the latest CMake, restores vcpkg and its artifacts from the cache, configures and builds the project with CMake, lists build files, runs tests, and installs the project.",
+  "tags": [
+    "cmake",
+    "ubuntu",
+    "vcpkg",
+    "matrix",
+    "tests"
+  ]
+}

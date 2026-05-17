@@ -1,0 +1,11 @@
+before_script:
+- docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+- export IMAGE=$CI_REGISTRY_IMAGE:${CI_COMMIT_TAG:-$CI_COMMIT_REF_SLUG}
+build:
+  script:
+  - docker build -t ${IMAGE} .
+  - docker push ${IMAGE}
+  stage: build
+image: docker:latest
+stages:
+- build

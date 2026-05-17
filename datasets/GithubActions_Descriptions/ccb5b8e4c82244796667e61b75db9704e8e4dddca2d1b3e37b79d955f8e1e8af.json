@@ -1,0 +1,15 @@
+{
+  "sha": "ccb5b8e4c82244796667e61b75db9704e8e4dddca2d1b3e37b79d955f8e1e8af",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3167,
+  "description": "Create a GitHub Actions workflow named Eternity Build that runs on push to the master branch, on pull requests to the master branch, and on workflow dispatch. The workflow should have two jobs: build-windows and build-macos. The build-windows job runs on a windows-latest environment, checks out the code with submodules, configures CMake for 64-bit and 32-bit builds, builds the project, and archives the release build. The build-macos job runs on a macos-latest environment, checks out the code with submodules, configures CMake for ARM and Intel builds, builds the project, adds text files, creates a DMG image, and archives the ARM release build.",
+  "tags": [
+    "cmake",
+    "windows",
+    "macos",
+    "build",
+    "release",
+    "github-actions"
+  ]
+}

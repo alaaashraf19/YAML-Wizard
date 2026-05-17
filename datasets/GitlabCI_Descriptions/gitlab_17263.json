@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_17263",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 97,
+  "description": "Create a GitLab CI pipeline with a single deploy stage containing a pages job. The pages job runs the shell command pwd, collects the public/ directory as an artifact, and is restricted to run only on the master branch. No custom Docker image or services are specified, so the default runner image is used.",
+  "tags": [
+    "pages",
+    "deploy",
+    "artifact",
+    "master"
+  ]
+}

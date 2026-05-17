@@ -1,0 +1,14 @@
+{
+  "sha": "879d9baf0383b3227245e7610479408b77874d64a9404cdc25e13a47b7d3b95d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1641,
+  "description": "Create a GitHub Actions workflow named Feelpp PKG CI that runs on push to the develop branch and can be triggered manually with optional inputs for parallel jobs and skipping the build. The workflow uses a matrix strategy to run a build job across multiple Linux distributions, including various Ubuntu and Debian versions, with some jobs allowed to continue on error. Each job uses a reusable workflow with inputs from the matrix and workflow dispatch.",
+  "tags": [
+    "ci",
+    "ubuntu",
+    "debian",
+    "matrix",
+    "reusable-workflow"
+  ]
+}

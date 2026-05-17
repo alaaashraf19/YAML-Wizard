@@ -1,0 +1,223 @@
+.configure:
+  before_script:
+  - curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+  - source $HOME/.cargo/env
+  - "cat <<EOF > ~/.condarc\nchannel_priority: strict\nchannels:\n  - conda-forge\n\
+    \  - ostrokach-forge\n  - defaults\nEOF\n"
+  - source /opt/conda/etc/profile.d/conda.sh
+  - conda activate base
+  - conda update -yq conda
+  extends:
+  - .skip-custom-pipelines
+.install-conda:
+  script: &id003
+  - "cat <<EOF > ~/.condarc\nchannel_priority: strict\nchannels:\n  - conda-forge\n\
+    \  - ostrokach-forge\n  - defaults\nEOF\n"
+  - curl -s -L https://github.com/conda-forge/miniforge/releases/download/4.9.2-5/Mambaforge-4.9.2-5-Linux-x86_64.sh
+    > miniconda.sh
+  - openssl dgst -sha256 miniconda.sh | grep 7f0ad0c2f367751f7878d25a7bc1b4aa48b8dcea864daf9bc09acb595102368b
+  - sh miniconda.sh -b -p /opt/conda
+  - source /opt/conda/etc/profile.d/conda.sh
+.install-gcloud:
+  script: &id002
+  - 'echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt
+    cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+
+    '
+  - apt-get install -y -qq -o=Dpkg::Use-Pty=0 apt-transport-https ca-certificates
+    gnupg
+  - curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring
+    /usr/share/keyrings/cloud.google.gpg add -
+  - apt-get update -y -qq -o=Dpkg::Use-Pty=0
+  - apt-get install -y -qq -o=Dpkg::Use-Pty=0 "google-cloud-sdk=343.*"
+  - gcloud auth activate-service-account --key-file="${GCLOUD_SERVICE_ACCOUNT_FILE}"
+  - gcloud --quiet config set project ostrokach-data
+  - gcloud --quiet config set compute/zone us-central1-b
+.install-ssh-client:
+  script: &id001
+  - which ssh-agent || ( apt-get install -y -qq -o=Dpkg::Use-Pty=0 openssh-client
+    -y )
+  - eval $(ssh-agent -s)
+  - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+  - mkdir -p ~/.ssh
+  - chmod 700 ~/.ssh
+  - echo "$KNOWN_HOSTS" >> ~/.ssh/known_hosts
+.pages:
+  artifacts:
+    paths:
+    - public
+  dependencies:
+  - build
+  extends:
+  - .configure
+  script:
+  - conda create -n test -q -c file://${CI_PROJECT_DIR}/conda-bld "python=3.9"
+  - conda activate test
+  - python -m pip install -r docs/requirements.txt
+  - mkdocs build docs
+  stage: test
+.skip-custom-pipelines:
+  except:
+    variables:
+    - $UPDATE_TABLES
+    - $CREATE_BIGQUERY
+build:
+  artifacts:
+    paths:
+    - conda-bld
+  extends:
+  - .configure
+  script:
+  - mkdir -p "${CI_PROJECT_DIR}/conda-bld"
+  - conda build "${CI_PROJECT_DIR}/.conda" --output-folder "${CI_PROJECT_DIR}/conda-bld"
+  stage: build
+create-bigquery:
+  before_script:
+  - apt-get update -y -qq -o=Dpkg::Use-Pty=0
+  - apt-get install -y -qq -o=Dpkg::Use-Pty=0 curl gettext-base gzip openssl rsync
+  - *id001
+  - *id002
+  image: ubuntu:20.04
+  only:
+    variables:
+    - $CREATE_BIGQUERY
+  script:
+  - if [[ -d /share/data/uniparc ]] ; then cd /share/data/uniparc ; else mkdir output
+    ; rsync -rpv strokach@conda-envs.proteinsolver.org:/share/data/uniparc/ output/
+    ; cd output ; fi
+  - bq load --project_id=ostrokach-data --source_format=PARQUET --replace --clustering_fields
+    uniparc_id ostrokach-data:uniparc.uniparc uniparc.parquet
+  - bq load --project_id=ostrokach-data --source_format=PARQUET --replace --clustering_fields
+    database,uniparc_id ostrokach-data:uniparc.domain domain.parquet
+  - bq load --project_id=ostrokach-data --source_format=PARQUET --replace --clustering_fields
+    db_type,uniparc_id,xref_id ostrokach-data:uniparc.xref xref.parquet
+  - for property in component gene_name ncbi_gi ncbi_taxonomy_id pdb_chain protein_name
+    proteome_id uniprot_kb_accession ; do echo ${property} ; bq load --project_id=ostrokach-data
+    --source_format=PARQUET --replace --clustering_fields uniparc_id,xref_id ostrokach-data:uniparc.${property}
+    ${property}.parquet ; done
+  stage: start
+  tags:
+  - 3tb
+  timeout: 6 hours
+default:
+  image: condaforge/linux-anvil-cos7-x86_64:latest
+deploy-cargo:
+  dependencies: []
+  extends:
+  - .configure
+  only:
+  - tags
+  script:
+  - cargo publish --no-verify
+  stage: deploy
+deploy-conda:
+  dependencies:
+  - build
+  extends:
+  - .configure
+  only:
+  - tags
+  script:
+  - anaconda -t $ANACONDA_TOKEN upload $CI_PROJECT_DIR/conda-bld/*/*.tar.bz2 -u ostrokach-forge
+    --no-progress
+  stage: deploy
+deploy-package:
+  dependencies:
+  - test
+  extends:
+  - .configure
+  only:
+  - tags
+  script:
+  - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file $CI_PROJECT_DIR/package/uniparc_xml_parser
+    "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${CI_PROJECT_NAME}/${PACKAGE_VERSION}/uniparc_xml_parser"
+
+    '
+  stage: deploy
+destroy-bigquery:
+  before_script:
+  - apt-get update -y -qq -o=Dpkg::Use-Pty=0
+  - apt-get install -y -qq -o=Dpkg::Use-Pty=0 curl gettext-base gzip openssl rsync
+  - *id002
+  dependencies:
+  - create-bigquery
+  image: ubuntu:20.04
+  only:
+    variables:
+    - $CREATE_BIGQUERY
+  script:
+  - bq rm -f -t ostrokach-data:uniparc.uniparc
+  - bq rm -f -t ostrokach-data:uniparc.domain
+  - bq rm -f -t ostrokach-data:uniparc.xref
+  - for property in component gene_name ncbi_gi ncbi_taxonomy_id pdb_chain protein_name
+    proteome_id uniprot_kb_accession ; do echo ${property} ; bq rm -f -t ostrokach-data:uniparc.${property}
+    ; done
+  stage: stop
+  start_in: 2 days
+  when: delayed
+generate-parquet-files:
+  before_script:
+  - apt-get update -y -qq -o=Dpkg::Use-Pty=0
+  - apt-get install -y -qq -o=Dpkg::Use-Pty=0 curl gettext-base gzip openssl rsync
+  - *id001
+  - *id003
+  image: ubuntu:20.04
+  only:
+    variables:
+    - $UPDATE_TABLES
+  script:
+  - conda activate base
+  - mamba install 'python=3.9' pyarrow uniparc_xml_parser
+  - (while true ; do sleep 120; ls -lSh uniparc_all.xml.gz ; done) &
+  - monitor_pid=$!
+  - curl -O -C - --retry 999 --retry-max-time 0 --no-progress-meter ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/uniparc/uniparc_all.xml.gz
+  - kill $monitor_pid
+  - mkdir uniparc && cd uniparc
+  - zcat ../uniparc_all.xml.gz | uniparc_xml_parser
+  - if [[ -d /share/data/uniparc ]] ; then OUTPUT_DIR=/share/data/uniparc ; else OUTPUT_DIR=$(pwd)
+    ; fi
+  - python ../scripts/csv_to_parquet.py -q -f uniparc.tsv -o "${OUTPUT_DIR}/uniparc.parquet"
+    -c uniparc_id,sequence,sequence_length,sequence_checksum
+  - python ../scripts/csv_to_parquet.py -q -f domain.tsv -o "${OUTPUT_DIR}/domain.parquet"
+    -c uniparc_id,database,database_id,interpro_name,interpro_id,domain_start,domain_end
+  - python ../scripts/csv_to_parquet.py -q -f xref.tsv -o "${OUTPUT_DIR}/xref.parquet"
+    -c uniparc_id,xref_id,db_type,db_id,version_i,active,version,created,last
+  - for property in component gene_name ncbi_gi ncbi_taxonomy_id pdb_chain protein_name
+    proteome_id uniprot_kb_accession ; do echo ${property} ; python ../scripts/csv_to_parquet.py
+    -q -f ${property}.tsv -o "${OUTPUT_DIR}/${property}.parquet" -c uniparc_id,xref_id,property,value
+    ; done
+  - if [[ ! -d /share/data/uniparc ]] ; then rsync -rpv --chmod=ug=rwX,o=rX *.parquet
+    strokach@conda-envs.proteinsolver.org:/share/data/uniparc/ ; fi
+  tags:
+  - 3tb
+  timeout: 3 days
+  variables:
+    KUBERNETES_CPU_LIMIT: '4.0'
+    KUBERNETES_CPU_REQUEST: '0.7'
+    KUBERNETES_EPHEMERAL_STORAGE_LIMIT: 3T
+    KUBERNETES_EPHEMERAL_STORAGE_REQUEST: 2T
+    KUBERNETES_MEMORY_LIMIT: 4.0G
+    KUBERNETES_MEMORY_REQUEST: 0.9G
+stages:
+- start
+- stop
+- build
+- test
+- deploy
+test:
+  artifacts:
+    paths:
+    - package/
+  dependencies:
+  - build
+  extends:
+  - .configure
+  script:
+  - conda create -n test -q -c file://${CI_PROJECT_DIR}/conda-bld "python=3.9" ${CI_PROJECT_NAME}
+  - conda activate test
+  - uniparc_xml_parser --help
+  - mkdir package/
+  - cp $(which uniparc_xml_parser) package/
+  stage: test
+variables:
+  PACKAGE_VERSION: 0.2.1

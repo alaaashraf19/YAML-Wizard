@@ -1,0 +1,17 @@
+{
+  "sha": "9f240b5b93b7c670b6c80cefb346be3817b6911050e75074183a384d1ff8aaad",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2860,
+  "description": "Create a GitHub Actions workflow named Build, Check, and Test that runs on every pull request. The workflow consists of two jobs: build_and_test and update_testmondata. The build_and_test job runs on a matrix of OS and Python versions, checks out the code, installs dependencies with pipenv, lints with flake8, checks codestyle and docstyle, and runs incremental tests with pytest. The update_testmondata job fetches testmondata files, moves them to the correct location, and pushes the updated testmondata file to the pull request branch.",
+  "tags": [
+    "python",
+    "pytest",
+    "testmon",
+    "pipenv",
+    "flake8",
+    "pycodestyle",
+    "pydocstyle",
+    "github-actions"
+  ]
+}

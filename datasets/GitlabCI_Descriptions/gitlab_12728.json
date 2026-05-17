@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_12728",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2572,
+  "description": "Create a GitLab CI pipeline with a UT_VERSION variable set to '20.04' and three stages: lint, release, and build. In the lint stage define a commitlint job using the myii/ssf-commitlint:11 image that runs `git remote add upstream https://gitlab.com/myii/ut-tweak-tool.git`, `git fetch --all`, and `commitlint --from \"$(git merge-base upstream/master HEAD)\" --to \"${CI_COMMIT_SHA}\" --verbose`; an eslint job using cytopia/eslint:latest (entrypoint /bin/ash -c) that runs `eslint .`; a shellcheck job using koalaman/shellcheck-alpine:latest that runs `shellcheck --version` and `find . -type f \\( -iname *.sh -o -iname *.bash -o -iname *.ksh \\) | xargs shellcheck`; and a yamllint job using cytopia/yamllint:latest (entrypoint /bin/ash -c) that runs `yamllint -s .`. In the build stage add three click jobs (focal_amd64_click, focal_arm64_click, focal_armhf_click) each using the image `clickable/ci-${UT_VERSION}-<arch>` (amd64, arm64, armhf) that inherit a before_script which checks if the branch is master, otherwise extracts VERSION from CMakeLists.txt, appends a timestamp and runs `sh bin/pre-commit_semantic-release.sh ${VERSION}`, then executes `grep \"set(VERSION\" CMakeLists.txt`, `grep \"readonly property var appVersion\" src/app/qml/main.qml`, and `clickable build`; each job stores its respective `*.click` files as artifacts (paths per architecture) with a one‑week expiry. In the release stage add a semantic-release job using myii/ssf-semantic-release-gitlab:17.3 image, limited to the master branch of the parent repository (master@myii/ut-tweak-tool), that runs `semantic-release`.",
+  "tags": [
+    "clickable",
+    "lint",
+    "release",
+    "semantic-release",
+    "commitlint",
+    "eslint",
+    "shellcheck",
+    "yamllint"
+  ]
+}

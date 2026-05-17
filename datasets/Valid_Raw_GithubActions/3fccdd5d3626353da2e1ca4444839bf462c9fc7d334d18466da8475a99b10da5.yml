@@ -1,0 +1,90 @@
+name: build
+
+on:
+  push:
+    branches:
+      - '*'
+#      - '!compile_time_ninja_check_74'
+  pull_request:
+    branches:
+      - '*'
+#      - '!compile_time_ninja_check_74'
+
+jobs:
+  clang-format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: DoozyX/clang-format-lint-action@v0.5
+        with:
+          source: '.'
+          exclude: './third_party'
+          clangFormatVersion: 9
+  build:
+    env:
+      BUILD_DIR: ${{ github.workspace }}/buildspace
+      NINJA_BUILD_DIR: ${{ github.workspace }}/../buildspace
+    strategy:
+      fail-fast: false
+      matrix:
+        buildtype: [
+          windows-latest,
+          windows-latest (clangcl),
+          windows-2016,
+          ubuntu-latest,
+          ubuntu-latest-ninja,
+          macOS-latest,
+          macOS-latest-ninja,
+        ]
+        include:
+        - buildtype: windows-latest
+          os: windows-latest
+          generator: '"Visual Studio 16 2019"'
+
+        - buildtype: windows-latest (clangcl)
+          os: windows-latest
+          generator: '"Visual Studio 16 2019" -T "clangcl"'
+
+        - buildtype: windows-2016
+          os: windows-2016
+          generator: '"Visual Studio 15 2017"' 
+
+        - buildtype: ubuntu-latest
+          os: ubuntu-latest
+          generator: '"Unix Makefiles"'
+
+        - buildtype: ubuntu-latest-ninja
+          os: ubuntu-latest
+          generator: '"Ninja"'
+          env:
+            BUILD_DIR: ${{ env.NINJA_BUILD_DIR }}
+
+        - buildtype:  macOS-latest
+          os: macOS-latest
+          generator: '"Unix Makefiles"'  
+
+        - buildtype:  macOS-latest-ninja
+          os: macOS-latest
+          generator: '"Ninja"'
+          env:
+            BUILD_DIR: ${{ env.NINJA_BUILD_DIR }}
+
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@master
+    - uses: seanmiddleditch/gha-setup-ninja@v1
+      if: matrix.generator == '"Ninja"'
+    - name: make build space
+      run: |
+        mkdir ${{ env.BUILD_DIR }}
+    - name: cmake
+      run: |
+        cmake --version
+        cmake -G ${{ matrix.generator }} ${{ github.workspace }}
+      working-directory: ${{ env.BUILD_DIR }}
+    - name: build
+      run: cmake --build .
+      working-directory: ${{ env.BUILD_DIR }}
+    - name: test
+      run: ctest --verbose --parallel 4 -C Debug
+      working-directory: ${{ env.BUILD_DIR }}

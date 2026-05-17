@@ -1,0 +1,21 @@
+.error:
+  extends: .info
+  variables:
+    message: /!\ This job must fail /!\
+    success: 'false'
+.info:
+  script: 'docker run mbentley/figlet -tf $font $message
+
+    eval $success
+
+    '
+  stage: info
+  variables:
+    font: big
+    message: This is only a base information stage
+    success: 'true'
+.warning:
+  allow_failure: true
+  extends: .error
+  variables:
+    message: This is only a warning !

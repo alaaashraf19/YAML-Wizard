@@ -1,0 +1,16 @@
+{
+  "sha": "bd4422cd21270568024ebccd94d168f35ef89a45e42458d71a85cacbf809d415",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1476,
+  "description": "Create a GitHub Actions workflow named Passenger RPM packaging tests that runs on push and pull request events to stable-* and feature/* branches. Define a matrix of Linux distributions and architectures, then for each combination, check out the repository, set up QEMU and Buildx, run tests with ./dev/ci/tests/rpm/run, and upload the resulting RPM packages as artifacts.",
+  "tags": [
+    "rpm",
+    "packaging",
+    "tests",
+    "ubuntu",
+    "docker",
+    "qemu",
+    "buildx"
+  ]
+}

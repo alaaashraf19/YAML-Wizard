@@ -1,0 +1,81 @@
+default:
+  tags:
+  - gitlab-org-docker
+include:
+- ci_files/variables.yml
+- ci_files/final_images.yml
+- template: Jobs/Container-Scanning.gitlab-ci.yml
+- local: .gitlab/ci/rules.gitlab-ci.yml
+- local: .gitlab/ci/workflow-rules.gitlab-ci.yml
+- local: .gitlab/ci/common.gitlab-ci.yml
+- local: .gitlab/ci/images.gitlab-ci.yml
+- template: Security/Dependency-Scanning.gitlab-ci.yml
+- component: ${CI_SERVER_FQDN}/gitlab-org/components/danger-review/danger-review@2.1.0
+  inputs:
+    job_stage: prepare
+  rules:
+  - if: $CI_SERVER_HOST == "gitlab.com"
+issue-bot:
+  image: ${CI_REGISTRY}/${GITLAB_NAMESPACE}/distribution/issue-bot:latest
+  rules:
+  - if: $CI_COMMIT_REF_PROTECTED != "true"
+    when: never
+  - if: $CI_PROJECT_PATH == $CNG_QA_PROJECT_PATH
+    when: never
+  - when: on_failure
+  script: /issue-bot
+  stage: report
+  variables:
+    ISSUE_BOT_LABELS_EXTRA: group::build,type::maintenance,maintenance::pipelines
+stages:
+- test
+- prepare
+- prepare:phase-zero
+- prepare:phase-one
+- prepare:phase-two
+- prepare:phase-three
+- prepare:phase-four
+- phase-zero
+- phase-one
+- phase-two
+- phase-three
+- phase-four
+- phase-five
+- phase-six
+- final-list
+- sync
+- release
+- container-scanning
+- report
+- cleanup
+variables:
+  ARCH_LIST: amd64,arm64
+  AUTO_DEPLOY_BRANCH_REGEX: ^[0-9]+-[0-9]+-auto-deploy-[0-9]+$
+  AUTO_DEPLOY_TAG_REGEX: ^[0-9]+\.[0-9]+\.[0-9]+\+[a-z0-9]{7,}$
+  BUILDKIT_IMAGE: moby/buildkit:v0.26.2
+  BUILDX_CLUSTER_NAME: ''
+  BUILDX_CLUSTER_ZONE: ''
+  BUILDX_CPU: '2'
+  BUILDX_CPU_LIMIT: '2'
+  BUILDX_GCLOUD_PROJECT: ''
+  BUILDX_MEMORY: 5G
+  BUILDX_MEMORY_LIMIT: 5G
+  BUILDX_SA_JSON: ''
+  CNG_CANONICAL_PROJECT_PATH: gitlab-org/build/CNG
+  CNG_DEV_PROJECT_PATH: gitlab/charts/components/images
+  CNG_QA_PROJECT_PATH: gitlab-org/build/CNG-mirror
+  CNG_SECURITY_PROJECT_PATH: gitlab-org/security/charts/components/images
+  COM_CNG_REGISTRY_PATH: gitlab-org/build/cng
+  COM_REGISTRY: registry.gitlab.com
+  CONTAINER_VERSION_SUFFIX: $CI_PIPELINE_CREATED_AT
+  COSIGN_YES: 'true'
+  DISABLE_BUILDX_CLUSTER: 'false'
+  DISABLE_BUILDX_ZSTD: 'true'
+  DNF_OPTS: --disableplugin=subscription-manager
+  DOCKER_VERSION: 28.5.1
+  FF_DISABLE_UMASK_FOR_DOCKER_EXECUTOR: 'true'
+  FORCE_BUILDX_ZSTD: 'false'
+  HIGH_CAPACITY_RUNNER_TAG: gitlab-org-docker
+  RAILS_CACHE_SUFFIX: '20230622'
+  WF_AUTO_DEPLOY_TAG_REGEX: /^[0-9]+\.[0-9]+\.[0-9]+\+[a-z0-9]{7,}$/
+  ZSTD_COMPRESSION_LEVEL: 10

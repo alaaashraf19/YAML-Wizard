@@ -1,0 +1,44 @@
+.minimal-job:
+  dependencies: []
+  extends:
+  - .default-tags
+  - .default-retry
+  - .default-only
+  - .only-code-changes
+cache gems:
+  artifacts:
+    paths:
+    - vendor/cache
+  dependencies:
+  - setup-test-env
+  extends:
+  - .default-tags
+  - .default-retry
+  - .default-cache
+  - .default-before_script
+  - .only-code-qa-changes
+  needs:
+  - setup-test-env
+  only:
+    refs:
+    - master
+    - tags
+    variables:
+    - $CI_SERVER_HOST == "gitlab.com" && $CI_PROJECT_NAMESPACE == "gitlab-org"
+  script:
+  - bundle package --all --all-platforms
+  stage: test
+  variables:
+    SETUP_DB: 'false'
+gitlab_git_test:
+  extends: .minimal-job
+  script:
+  - spec/support/prepare-gitlab-git-test-for-commit --check-for-changes
+no_ee_check:
+  extends: .minimal-job
+  only:
+    variables:
+    - $CI_SERVER_HOST == "gitlab.com" && $CI_PROJECT_NAME == "gitlab-foss"
+    - $CI_SERVER_HOST == "dev.gitlab.org" && $CI_PROJECT_NAME == "gitlabhq"
+  script:
+  - scripts/no-ee-check

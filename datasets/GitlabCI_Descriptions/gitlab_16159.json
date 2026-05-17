@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_16159",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2021,
+  "description": "Create a GitLab CI pipeline with stages prepare, build, deploy, and doc, using the default Docker image and running a global before_script that executes `whoami` and `ls` for every job. In the prepare stage add a `prepare-cuda-default` job that makes a `build-cuda-default` directory, runs `cmake ..` with flags `-DCMAKE_BUILD_TYPE=Default -DDOXYGEN_ENABLE=true -DENABLE_TEST=true -DCMAKE_CXX_COMPILER=g++-5 -DCMAKE_C_COMPILER=gcc-5 -DNDIMS=2 -DRNG_ENGINE=well` and stores the `build-cuda-default/` directory as a `cmake-cuda-default` artifact, and a `prepare-default` job that creates `build-default`, runs `cmake ..` with `-DCMAKE_BUILD_TYPE=Default -DDOXYGEN_ENABLE=true -DENABLE_TEST=true` and saves `build-default/` as a `cmake-default` artifact. In the build stage add `build-cuda-default` (depending on `prepare-cuda-default`) that changes into `build-cuda-default`, runs `cmake ..` then `make -j4 VERBOSE=1` and publishes the `sphinx`, `conf.ini`, and `tests/` directories as a `build-cuda-default` artifact, and `build-default` (depending on `prepare-default`) that similarly runs `cmake ..` and `make -j4 VERBOSE=1` and archives its `sphinx`, `conf.ini`, and `tests/` as a `build-default` artifact. In the deploy stage add `test-cuda-default` (depending on `build-cuda-default`) that runs `ctest --output-on-failure --output-log test.log` inside `build-cuda-default/tests` and saves `test.log` as a `test` artifact, and `test-default` (depending on `build-default`) that runs the same `ctest` command in `build-default/tests` and stores its `test.log`. In the doc stage add a `build-doc` job (depending on `prepare-default`) that runs `make doc` inside `build-default`, then uploads the generated documentation with `lftp -e \"set ssl:verify-certificate no; mirror -R doc filippoleonardi.ch/sphinx/doc && exit\" -u $U_TOKEN,$P_TOKEN $H_TOKEN`, and publishes the `doc/` and `doc.html` files as a `doc` artifact.",
+  "tags": [
+    "cmake",
+    "make",
+    "ctest",
+    "lftp",
+    "prepare",
+    "build",
+    "deploy",
+    "doc",
+    "cuda",
+    "sphinx"
+  ]
+}

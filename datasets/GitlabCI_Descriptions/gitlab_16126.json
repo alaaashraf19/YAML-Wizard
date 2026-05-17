@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_16126",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 627,
+  "description": "Create a GitLab CI pipeline with a global before_script that updates apt, installs nodejs, checks npm version, installs gulp-cli globally, installs gulp as a dev dependency, and verifies gulp version. Define stages build and test, and a cache keyed by ${CI_COMMIT_REF_SLUG} that stores node_modules/. Add a build job that runs only on the master branch, uses the debian runner tags, and executes sudo npm install, sudo gulp, and sudo rsync -av --delete dist /var/www/html/simple-use-ci. Add a test-deb job in the test stage with debian tags that runs echo test debian. Add a test-s1 job in the test stage that runs echo start test. Add a test-win job in the test stage with windows tags that runs echo test win.",
+  "tags": [
+    "nodejs",
+    "gulp",
+    "deb",
+    "windows",
+    "rsync",
+    "cache"
+  ]
+}

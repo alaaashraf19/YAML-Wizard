@@ -1,0 +1,8 @@
+before_script:
+- python -V
+- pip install pipenv
+image: python:latest
+test:
+  script:
+  - pipenv sync --dev
+  - pipenv run lint

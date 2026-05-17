@@ -1,0 +1,175 @@
+after_script:
+- tar -czf .bin-cache.tar.gz /go/bin || true
+- tar -czf .pkg-cache.tar.gz /go/pkg || true
+before_script:
+- rm -rf /go/bin || true
+- tar -xzf .bin-cache.tar.gz -C / || true
+- rm -rf /go/pkg || true
+- tar -xzf .pkg-cache.tar.gz -C / || true
+build-linux:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - depcharge-linux
+  dependencies:
+  - init
+  image: golang:1-alpine
+  script:
+  - export VERSION=$(cat VERSION.txt)
+  - if [ -n "${CI_COMMIT_TAG-}" ]; then export EXTRA_FLAGS="-w -s"; fi
+  - go build -ldflags="$EXTRA_FLAGS -X main.version=$VERSION" -o depcharge-linux .
+  stage: build
+  variables:
+    CGO_ENABLED: 0
+    GOARCH: amd64
+    GOOS: linux
+build-mac:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - depcharge-mac
+  dependencies:
+  - init
+  image: golang:1-alpine
+  only:
+  - develop
+  - master
+  - tags
+  script:
+  - export VERSION=$(cat VERSION.txt)
+  - go build -a -ldflags="-w -s -X main.version=$VERSION" -o depcharge-mac .
+  stage: build
+  variables:
+    CGO_ENABLED: 0
+    GOARCH: amd64
+    GOOS: darwin
+build-win:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - depcharge.exe
+  dependencies:
+  - init
+  image: golang:1-alpine
+  only:
+  - develop
+  - master
+  - tags
+  script:
+  - export VERSION=$(cat VERSION.txt)
+  - go build -a -ldflags="-w -s -X main.version=$VERSION" .
+  stage: build
+  variables:
+    CGO_ENABLED: 0
+    GOARCH: amd64
+    GOOS: windows
+cache:
+  paths:
+  - .bin-cache.tar.gz
+  - .pkg-cache.tar.gz
+  policy: pull
+gofmt:
+  cache: {}
+  image: golang:1-stretch
+  script:
+  - "if [[ $(gofmt -s -d *.go) ]]; then\n  gofmt -s -d *.go\n  echo \"gofmt changes\
+    \ detected\"\n  exit -1\nfi\n"
+  stage: test
+golint:
+  dependencies:
+  - init
+  image: golang:1-stretch
+  script:
+  - golint -set_exit_status
+  stage: test
+image: alpine:latest
+init:
+  artifacts:
+    expire_in: 10 minutes
+    paths:
+    - VERSION.txt
+    - src/
+  cache:
+    paths:
+    - .bin-cache.tar.gz
+    - .pkg-cache.tar.gz
+    policy: push
+  image: golang:1-stretch
+  script:
+  - go install golang.org/x/lint/golint
+  - go build -o depcharge
+  - ./depcharge -h
+  - export VERSION=$(echo $CI_COMMIT_SHA| cut -c1-7)
+  - export VERSION=$(if [ -z $CI_COMMIT_TAG ]; then echo $VERSION ; else echo $CI_COMMIT_TAG.$VERSION;
+    fi)
+  - echo -n $VERSION | tee VERSION.txt
+  - echo
+  stage: init
+pages:
+  artifacts:
+    paths:
+    - public
+  dependencies:
+  - test
+  image: alpine:latest
+  only:
+  - develop
+  script:
+  - mkdir public
+  - mv coverage.html public/index.html
+  stage: release
+release:
+  cache: {}
+  dependencies:
+  - build-linux
+  - build-mac
+  - build-win
+  image: registry.gitlab.com/centerorbit/release-github
+  only:
+  - develop
+  - master
+  - tags
+  script:
+  - git checkout master
+  - git push https://centerorbit:$GITHUB_ACCESS_TOKEN@github.com/centerorbit/depcharge.git
+  - git push --tags https://centerorbit:$GITHUB_ACCESS_TOKEN@github.com/centerorbit/depcharge.git
+  - if [ -z $CI_COMMIT_TAG ]; then export PRE_RELEASE="true" ; else unset PRE_RELEASE
+    ; fi
+  - export TAG=$(if [ -z $CI_COMMIT_TAG ]; then echo $CI_COMMIT_SHA | cut -c1-7 ;
+    else echo $CI_COMMIT_TAG; fi)
+  - export UPLOAD_URL=$(php /var/code/createRelease.php)
+  - export RELEASE_NAME="depcharge-linux-x64"
+  - mv depcharge-linux depcharge
+  - zip -m $RELEASE_NAME.zip depcharge
+  - php /var/code/uploadBinary.php
+  - export RELEASE_NAME="depcharge-mac-x64"
+  - mv depcharge-mac depcharge
+  - zip -m $RELEASE_NAME.zip depcharge
+  - php /var/code/uploadBinary.php
+  - export RELEASE_NAME="depcharge-win-x64"
+  - zip -m $RELEASE_NAME.zip depcharge.exe
+  - php /var/code/uploadBinary.php
+  stage: release
+  variables:
+    ACCESS_TOKEN: $GITHUB_ACCESS_TOKEN
+    OWNER: centerorbit
+    REPO: depcharge
+stages:
+- init
+- test
+- build
+- release
+test:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - coverage.html
+  coverage: '/coverage: \d+\.\d+\%/'
+  dependencies:
+  - init
+  image: golang:1-stretch
+  script:
+  - . ./scripts/create-coverage.sh
+  stage: test
+  variables:
+    COVER_STRICT: 'true'

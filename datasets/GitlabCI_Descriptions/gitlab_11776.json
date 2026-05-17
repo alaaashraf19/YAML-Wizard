@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_11776",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 264,
+  "description": "Create a GitLab CI pipeline that uses the node:latest Docker image and defines a single stage named pages. Add a pages job that runs in the pages stage, executes the commands npm install --only=dev, npm install --global grunt-cli, grunt, mkdir public, and mv {img,css,js,lib,plugin}/ index.html public/. Configure the job to publish the public/ directory as an artifact and to run only on the master branch, deploying the output to GitLab Pages.",
+  "tags": [
+    "node",
+    "npm",
+    "grunt",
+    "gitlab-pages",
+    "pages"
+  ]
+}

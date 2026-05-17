@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_08053",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 764,
+  "description": "Create a GitLab CI pipeline using the docker:latest image with the docker:dind service and a node:alpine image for the build job. Define a DOCKER_REGISTRY variable set to registry.gitlab.com/gfelbing and a DOCKER_IMAGE variable as $DOCKER_REGISTRY/annotate:latest. Add a build stage with a build job that runs on node:alpine, executes BASEDIR=$(pwd), then cd $BASEDIR/server && npm install && npm run clean && npm run build, and cd $BASEDIR/client && npm install && npm run build; the job archives server/build and client/build as artifacts named build-$CI_BUILD_REF, expires in 1 day, includes untracked files, and runs on_success. Add a deploy stage with a deploy job that depends on build, runs only on the master branch, logs in to the registry with docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com, builds the image with docker build -t $DOCKER_IMAGE . and pushes it with docker push $DOCKER_IMAGE.",
+  "tags": [
+    "docker",
+    "dind",
+    "node",
+    "npm",
+    "docker-registry",
+    "gitlab-ci",
+    "build-artifacts"
+  ]
+}

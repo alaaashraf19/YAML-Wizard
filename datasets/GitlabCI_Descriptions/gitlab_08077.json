@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_08077",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 4296,
+  "description": "Create a GitLab CI pipeline with stages build, install, test, deploy, and cleanup and set global variables DISTRO_RELEASE=7, DOCKER_NAMESPACE=gioxa, GIT_CACHE_STRATEGY=pull, ODAGRUN_IMAGE_LICENSES=MIT, ODAGRUN_IMAGE_REFNAME=centos7-ruby-node, ODAGRUN_IMAGE_TITLE=\"BuildImage CentOS-7 node ruby bundle npm yarn with locale and i18n for CI with odagrun.\", and ODAGRUN_IMAGE_VENDOR=\"Gioxa Ltd\". In the build stage add a build_base job using the gioxa/imagebuilder-c7 image (retry 1) that runs `export OS_CONFIG=make_os.conf`, `make_os`, and `registry_push --rootfs --config --ISR --name=$CI_PIPELINE_ID --reference=base` with job variables GIT_CACHE_STRATEGY=push-pull, ODAGRUN_POD_SIZE=medium and a WORK_SPACES definition for repocache. In the install stage add an install_bundle job using the image ImageStream/$CI_PIPELINE_ID:base (retry 1) that runs a series of gem installs (`gem install bundler --no-ri --no-rdoc`, `gem install pkg-config --no-ri --no-rdoc`, `gem install nokogiri --no-ri --no-rdoc -- --use-system-libs`, `gem install ffi --no-ri --no-rdoc -- --use-system-libs`, `gem install concurrent-ruby --no-ri --no-rdoc -- --use-system-libs`, `gem install thread_safe --no-ri --no-rdoc -- --use-system-libs`, `gem install eventmachine --no-ri --no-rdoc -- --use-system-libs`, `gem install fspath --no-ri --no-rdoc -- --use-system-libs`, `gem install rb-fsevent --no-ri --no-rdoc -- --use-system-libs`, `gem install rb-inotify --no-ri --no-rdoc -- --use-system-libs`, `gem install ruby_dep --no-ri --no-rdoc -- --use-system-libs`, `gem install listen --no-ri --no-rdoc -- --use-system-libs`, `gem install rake --no-ri --no-rdoc -- --use-system-libs`), then `export GEM_LIST=$(gem list)`, copy commands to set ODAGRUN_IMAGE_VERSION and DOCKER_CONFIG_YML, substitute the image description, and finally `registry_push --rootfs=/ --from_ISR --from_name=$CI_PIPELINE_ID --from_reference=base --ISR --name=$CI_PIPELINE_ID --reference=bundle --u2g /builds/.gems` with ODAGRUN_POD_SIZE=medium and a push WORK_SPACES. In the test stage add a test job using the image ImageStream/$CI_PIPELINE_ID:bundle (retry 1) that runs `echo $PATH`, `gem env`, `ruby --version`, `node --version`, `npm --version`, `gem --version`, `bundle --version`, `yarn --version`, `npm install -g hello-world-server`, `ls -laC /builds/.npm-packages/bin`, creates a Gemfile containing a source line, ruby version line, and `gem \"hello_world_gem\"`, then runs `bundle install` and lists `/builds/.gems/bin`. In the deploy stage add a push-image job using the scratch image, restricted to the master branch and tags, running in the production environment (retry 1) that executes `copy --from_text=\"${ODAGRUN_IMAGE_VERSION}\" --to_term --quiet`, `copy --from_text=\"${ODAGRUN_IMAGE_DESCRIPTION}\" --to_term --quiet`, `DockerHub_set_description --allow-fail --image=$DOCKER_NAMESPACE/$ODAGRUN_IMAGE_REFNAME --set-private=no`, `registry_push --from_image=ImageStream/$CI_PIPELINE_ID:bundle --image=$DOCKER_NAMESPACE/$ODAGRUN_IMAGE_REFNAME:${ODAGRUN_IMAGE_VERSION} --skip_label`, `registry_tag_image --image=${DOCKER_NAMESPACE}/${ODAGRUN_IMAGE_REFNAME}:${ODAGRUN_IMAGE_VERSION} --tag=latest`, and `MicroBadger_Update --allow-fail --image=$DOCKER_NAMESPACE/$ODAGRUN_IMAGE_REFNAME` with GIT_STRATEGY=none and a pull WORK_SPACES. Finally, add a cleanup job in the cleanup stage using the scratch image, set to always run and allow failure, that runs `ImageStream_delete --name=$CI_PIPELINE_ID --allow-fail` with GIT_STRATEGY=none and a clean WORK_SPACES.",
+  "tags": [
+    "centos7",
+    "ruby",
+    "node",
+    "gem",
+    "odagrun",
+    "docker-registry",
+    "ci",
+    "build",
+    "test",
+    "deploy"
+  ]
+}

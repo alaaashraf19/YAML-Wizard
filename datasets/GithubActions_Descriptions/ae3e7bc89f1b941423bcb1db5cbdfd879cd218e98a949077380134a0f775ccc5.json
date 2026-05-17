@@ -1,0 +1,14 @@
+{
+  "sha": "ae3e7bc89f1b941423bcb1db5cbdfd879cd218e98a949077380134a0f775ccc5",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2710,
+  "description": "Create a GitHub Actions workflow named release that triggers on push of tags matching v[0-9]* and on workflow dispatch. The workflow runs on ubuntu-20.04, checks out the code, sets up Python 3.10, verifies that the source code and git tag version numbers match, installs build requirements, builds the package, publishes it to PyPI using a secret PyPI API token, and creates or updates a GitHub release with changelog link.",
+  "tags": [
+    "python",
+    "release",
+    "pypi",
+    "github-release",
+    "tags"
+  ]
+}

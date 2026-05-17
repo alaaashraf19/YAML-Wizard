@@ -1,0 +1,15 @@
+{
+  "sha": "e8ead65be3c4c0d0a84150b0cb5c6f220c5276750ad8f78c8128845014ed62c8",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1113,
+  "description": "Create a GitHub Actions workflow named Test Workflow that runs on push to the master branch and on pull requests to master. Use a matrix job that runs on ubuntu-latest with multiple Python versions (2, 3.6, 3.7, 3.8), setting up a SQL Server service. For each job, check out the repository, set up the corresponding Python version, install dependencies including freetds-dev and requirements-dev.txt, build and install the package, run tests with pytest, and build a wheel.",
+  "tags": [
+    "python",
+    "tests",
+    "sql-server",
+    "ubuntu",
+    "matrix",
+    "pytest"
+  ]
+}

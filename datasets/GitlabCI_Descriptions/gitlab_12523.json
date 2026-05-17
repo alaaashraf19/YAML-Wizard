@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_12523",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2538,
+  "description": "Create a GitLab CI pipeline with stages testing, release, and post-release, a global Maven cache at .m2/repository keyed by $CI_PROJECT_NAME, and Maven variables MAVEN_CLI_OPTS, MAVEN_NO_TESTS, and MAVEN_OPTS. In the testing stage add three verify jobs (verify:jdk11, verify:jdk14, verify:jdk8) each using the Docker images maven:3.6-jdk-11-slim, maven:3.6-jdk-14, and maven:3.6-jdk-8-alpine respectively, running a before_script that creates .m2/repository and writes a minimal settings.xml, then executing 'mvn ${MAVEN_CLI_OPTS} verify' followed by an awk command that calculates coverage from target/site/jacoco-ut/jacoco.csv, collecting JUnit reports from target/surefire-reports/TEST-*.xml as artifacts, reporting coverage with the regex /([0-9]{1,3}[.][0-9][0-9]) % covered/, and skipping the job when the commit message matches [silent-ignore] or [maven-release-plugin]. The verify:jdk11 job also expires its artifacts after 5 minutes and includes all files under target/site/**/* as artifact paths. In the post-release stage add a pages job using the ruby:2.5 image that runs 'cd docs', 'bundle install --path vendor', builds the site with 'bundle exec jekyll build -d public', moves the public directory up, copies the JaCoCo HTML report from '../target/site/jacoco-ut' into the public folder, and finally triggers another pipeline via a curl POST to the GitLab API with $CI_JOB_TOKEN; it caches docs/vendor/, depends on verify:jdk11, publishes the public/ directory as a pages artifact, runs only on the master branch, and is excluded when the commit message matches the same silent-ignore patterns.",
+  "tags": [
+    "maven",
+    "java",
+    "jdk11",
+    "jdk14",
+    "jdk8",
+    "gitlab-pages",
+    "jekyll",
+    "ruby",
+    "coverage",
+    "ci"
+  ]
+}

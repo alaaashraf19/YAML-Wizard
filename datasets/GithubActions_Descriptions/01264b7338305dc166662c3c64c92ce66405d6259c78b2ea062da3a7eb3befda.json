@@ -1,0 +1,15 @@
+{
+  "sha": "01264b7338305dc166662c3c64c92ce66405d6259c78b2ea062da3a7eb3befda",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2048,
+  "description": "Create a GitHub Actions workflow named Coverage Reports that runs on a schedule and on workflow dispatch with a label input. The workflow has two jobs: coverage_test and finish. The coverage_test job runs on ubuntu-20.04 with a matrix of TEST_USE_ROCKSDB values, checks out the repository with submodules, installs dependencies, builds and tests the code, and uploads coverage reports to Coveralls. The finish job waits for coverage_test to complete and then finalizes the coverage report.",
+  "tags": [
+    "coverage",
+    "rocksdb",
+    "ubuntu",
+    "gcc",
+    "qt5",
+    "coveralls"
+  ]
+}

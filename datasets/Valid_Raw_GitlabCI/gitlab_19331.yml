@@ -1,0 +1,159 @@
+.audit_rules:
+  rules: &id001
+  - allow_failure: true
+    if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^(master|production|preprod|development)$/
+  - allow_failure: false
+    if: $CI_COMMIT_BRANCH =~ /^(master|production|preprod|development)$/
+  - allow_failure: false
+    if: $CI_COMMIT_TAG =~ /^release\//
+.container_build_rules:
+  rules: &id002
+  - if: $CI_PROJECT_ROOT_NAMESPACE != "xxllnc" && $CI_PROJECT_ROOT_NAMESPACE != "zaaksysteem"
+    when: never
+  - if: $CI_MERGE_REQUEST_ID
+    when: never
+  - if: $CI_COMMIT_TAG =~ /^release\//
+  - if: $CI_COMMIT_BRANCH =~ /^(master|production|preprod|development)$/
+.docker_login: &id003
+- docker login -u "${BUILD_USERNAME}" -p "${BUILD_PASSWORD}" $CI_REGISTRY
+.release:
+  rules: &id004
+  - if: $CI_MERGE_REQUEST_ID
+    when: never
+  - if: $CI_COMMIT_TAG =~ /^release\//
+  stage: Release
+  tags: &id005
+  - mintlab
+Audit frontend/client:
+  image: node:latest
+  rules: *id001
+  script:
+  - cd client && npx improved-yarn-audit --min-severity high --exclude ${AUDIT_ANGULAR},${AUDIT_WEBPACK_DEV_SERVER}
+  stage: check
+Audit frontend/frontend:
+  image: node:latest
+  rules: *id001
+  script:
+  - cd frontend && npx improved-yarn-audit --min-severity high --exclude ${AUDIT_ANGULAR},${AUDIT_WEBPACK_DEV_SERVER}
+  stage: check
+Build API:
+  rules: *id002
+  script:
+  - *id003
+  - docker build --pull -f docker/Dockerfile.backend -t "${CONTAINER_URL_API}:${CI_COMMIT_REF_SLUG}"
+    --target production .
+  - docker push "${CONTAINER_URL_API}:${CI_COMMIT_REF_SLUG}"
+  stage: build
+  tags:
+  - mintlab
+Build API2CSV:
+  rules: *id002
+  script:
+  - *id003
+  - docker build --pull -f docker/Dockerfile.api2csv -t ${CONTAINER_URL_API2CSV}:${CI_COMMIT_REF_SLUG}
+    .
+  - docker push ${CONTAINER_URL_API2CSV}:${CI_COMMIT_REF_SLUG}
+  stage: build
+  tags:
+  - mintlab
+Build Frontend:
+  rules: *id002
+  script:
+  - *id003
+  - docker build --pull --target production -f docker/Dockerfile.frontend -t ${CONTAINER_URL_FRONTEND}:${CI_COMMIT_REF_SLUG}
+    .
+  - docker push "${CONTAINER_URL_FRONTEND}:${CI_COMMIT_REF_SLUG}"
+  stage: build
+  tags:
+  - mintlab
+OpenAPI Lint:
+  image:
+    entrypoint:
+    - ''
+    name: wework/speccy
+  rules:
+  - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^(master|production|preprod|development)$/
+  - if: $CI_COMMIT_BRANCH =~ /^(master|production|preprod|development)$/
+  - if: $CI_COMMIT_TAG =~ /^release\//
+  script:
+  - speccy lint share/apidocs/v1/swagger/index.yaml
+  stage: check
+Prepare Build Frontend:
+  artifacts:
+    reports:
+      cyclonedx:
+      - cyclonedx.json
+  cache:
+    paths:
+    - ./node_modules/.cache
+  image: node:erbium
+  rules: *id002
+  script:
+  - npm install
+  - node_modules/@cyclonedx/bom/bin/make-bom.js --output cyclonedx.json
+  stage: build
+  tags:
+  - mintlab
+Push container images:
+  rules: *id002
+  script:
+  - *id003
+  - skopeo copy --all "docker://${CONTAINER_URL_API}:${CI_COMMIT_REF_SLUG}" "docker://${CONTAINER_URL_API}:${CI_COMMIT_REF_SLUG}-ci-${CI_PIPELINE_IID}"
+  - skopeo copy --all "docker://${CONTAINER_URL_FRONTEND}:${CI_COMMIT_REF_SLUG}" "docker://${CONTAINER_URL_FRONTEND}:${CI_COMMIT_REF_SLUG}-ci-${CI_PIPELINE_IID}"
+  - skopeo copy --all "docker://${CONTAINER_URL_API2CSV}:${CI_COMMIT_REF_SLUG}" "docker://${CONTAINER_URL_API2CSV}:${CI_COMMIT_REF_SLUG}-ci-${CI_PIPELINE_IID}"
+  stage: deploy
+  tags:
+  - mintlab
+Push to AWS ECR (API):
+  rules: *id004
+  script:
+  - \[ -z "$ECR_REPOSITORY_URL_API" \] && echo "No ECR repository url set for API!"
+    && exit 1
+  - $(aws ecr get-login --no-include-email --region "$AWS_ECR_REGION")
+  - skopeo copy --all "docker://${CONTAINER_URL_API}:${CI_COMMIT_REF_SLUG}" "docker://$ECR_REPOSITORY_URL_API:$CI_COMMIT_REF_SLUG"
+  stage: Release
+  tags: *id005
+Push to AWS ECR (API2CSV):
+  rules: *id004
+  script:
+  - \[ -z "$ECR_REPOSITORY_URL_API2CSV" \] && echo "No ECR repository url set for
+    API2CSV!" && exit 1
+  - $(aws ecr get-login --no-include-email --region "$AWS_ECR_REGION")
+  - skopeo copy --all "docker://${CONTAINER_URL_API2CSV}:${CI_COMMIT_REF_SLUG}" "docker://$ECR_REPOSITORY_URL_API2CSV:$CI_COMMIT_REF_SLUG"
+  stage: Release
+  tags: *id005
+Push to AWS ECR (Frontend):
+  rules: *id004
+  script:
+  - \[ -z "$ECR_REPOSITORY_URL_FRONTEND" \] && echo "No ECR repository url set for
+    Frontend!" && exit 1
+  - $(aws ecr get-login --no-include-email --region "$AWS_ECR_REGION")
+  - skopeo copy --all "docker://${CONTAINER_URL_FRONTEND}:${CI_COMMIT_REF_SLUG}" "docker://$ECR_REPOSITORY_URL_FRONTEND:$CI_COMMIT_REF_SLUG"
+  stage: Release
+  tags: *id005
+Test API:
+  rules: *id002
+  script:
+  - *id003
+  - docker pull "${CONTAINER_URL_API}:${CI_COMMIT_REF_SLUG}"
+  - docker run --rm "${CONTAINER_URL_API}:${CI_COMMIT_REF_SLUG}" prove -l -It/lib
+    --formatter TAP::Formatter::Console
+  stage: test
+  tags:
+  - mintlab
+default:
+  image: ${BUILDER_CONTAINER}:master
+stages:
+- check
+- build
+- test
+- deploy
+- Release
+variables:
+  AUDIT_ANGULAR: GHSA-89mq-4x47-5v83,GHSA-xvch-5gv4-984h,GHSA-7mwh-4pqv-wmr8
+  AUDIT_WEBPACK_DEV_SERVER: GHSA-cf66-xwfp-gvc4
+  BUILD_PASSWORD: ${CI_JOB_TOKEN}
+  BUILD_USERNAME: ${CI_REGISTRY_USER}
+  CONTAINER_URL_API: ${CI_REGISTRY_IMAGE}/api
+  CONTAINER_URL_API2CSV: ${CI_REGISTRY_IMAGE}/api2csv
+  CONTAINER_URL_FRONTEND: ${CI_REGISTRY_IMAGE}/frontend

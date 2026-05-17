@@ -1,0 +1,14 @@
+{
+  "sha": "c02070a38b161846f4224951e14fbb10f2ad3de086c2e6891d3872d7e58377f7",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1092,
+  "description": "Create a GitHub Actions workflow named Run Tests that runs on every push to main and on pull requests to main. The workflow should have two jobs: lint and build. The lint job runs on ubuntu-latest, checks out the repository, sets up Python 3.10, installs lint dependencies, and runs the lint script. The build job runs on ubuntu-latest, depends on lint, and uses a matrix strategy to test with Python 3.10, 3.11, 3.12, and 3.13. For each Python version, it checks out the repository, sets up Python, installs test dependencies, and runs the test script.",
+  "tags": [
+    "python",
+    "tests",
+    "linting",
+    "ubuntu",
+    "matrix"
+  ]
+}

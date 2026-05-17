@@ -1,0 +1,15 @@
+{
+  "sha": "0fa82bc3e833630ea7768144b10a451ba5fac6068045b19fc766bc72dd701920",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1201,
+  "description": "Create a GitHub Actions workflow named Marketplace - Vultr that runs on release publication with concurrency control. The workflow has two jobs: validate and publish. The validate job checks out the repository and validates a Packer template using hashicorp/packer-github-actions. The publish job depends on validate, checks out the repository, injects slug variables, initializes and builds the Packer template with variables and secrets.",
+  "tags": [
+    "packer",
+    "vultr",
+    "github-actions",
+    "release",
+    "validation",
+    "build"
+  ]
+}

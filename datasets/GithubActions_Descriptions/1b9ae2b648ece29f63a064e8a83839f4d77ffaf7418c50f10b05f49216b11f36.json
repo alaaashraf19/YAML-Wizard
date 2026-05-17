@@ -1,0 +1,15 @@
+{
+  "sha": "1b9ae2b648ece29f63a064e8a83839f4d77ffaf7418c50f10b05f49216b11f36",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1400,
+  "description": "Create a GitHub Actions workflow named On PRs - Mac Special Builds that runs on workflow dispatch and pull requests, excluding changes to markdown files. Use a macos-latest job to check out the repository, install dependencies including googletest, build the project with Clang in Release mode with sanitizers, and run tests with ctest.",
+  "tags": [
+    "macos",
+    "clang",
+    "release",
+    "sanitizers",
+    "tests",
+    "cmake"
+  ]
+}

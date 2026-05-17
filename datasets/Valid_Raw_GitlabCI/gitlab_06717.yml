@@ -1,0 +1,69 @@
+deploy:
+  dependencies:
+  - rpm
+  environment:
+    name: production
+  script:
+  - deployctl repo_add
+  stage: deploy
+  tags:
+  - deployctl-gioxapp.com
+  variables:
+    GIT_STRATEGY: none
+prepare:
+  artifacts:
+    paths:
+    - init.d.service
+    - systemd.service
+    - config/
+    - bin/
+    - scripts/
+  cache:
+    paths:
+    - ${package}-${version}.linux-${source_arch}.tar.gz
+  script:
+  - rm -rf bin && mkdir -pv bin
+  - "if [ ! -f \"${package}-${version}.linux-${source_arch}.tar.gz\" ] ; then\n  curl\
+    \ -o \"${package}-${version}.linux-${source_arch}.tar.gz\" -L \"${url}/releases/download/v${version}/${package}-${version}.linux-${source_arch}.tar.gz\"\
+    \nelse\n  echo \"already have source\"\nfi\n"
+  - tar -xf "${package}-${version}.linux-${source_arch}.tar.gz"
+  - mv "${package}-${version}.linux-${source_arch}/${package}" bin/
+  - sed -i -e "s|package=mypackage|package=${package}|" scripts/*
+  - sed -i -e "s|package_name|${package}|g" init.d.service
+  - sed -i -e "s|package_name|${package}|g" systemd.service
+  stage: build
+rpm:
+  artifacts:
+    paths:
+    - rpm/
+  image: registry.gitlab.com/gitlab-org/gitlab-ci-multi-runner:ci-1.8
+  script:
+  - ls -la {./,config/,scripts}
+  - rm -rf rpm && mkdir rpm
+  - 'fpm -s dir -t rpm -n ${package} -v ${version} -p rpm/${package}-${version}-1.${rpm_arch}.rpm
+    --rpm-compression bzip2 --rpm-os linux --force --url ${url} --description "${description}"
+    --license "${license}" --provides ${package} --replaces ${package} --before-install
+    scripts/preinst.sh --after-install scripts/postinst.sh --before-remove scripts/prerm.sh
+    -a ${rpm_arch} bin/=/usr/bin/ init.d.service=/etc/${package}/service/ systemd.service=/etc/${package}/service/
+    config/=/etc/${package}/
+
+    '
+  stage: package
+  tags:
+  - docker
+  variables:
+    GIT_STRATEGY: none
+stages:
+- build
+- package
+- deploy
+variables:
+  DEPLOY_REPO_PATH: /
+  DEPLOY_REPO_URL: https://repo.deployctl.com
+  description: bla bla
+  license: MIT
+  package: $CI_PROJECT_NAME
+  rpm_arch: x86_64
+  source_arch: amd64
+  url: https://github.com/namespace/project_name
+  version: 0.0.0

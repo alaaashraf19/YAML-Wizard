@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_11565",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1417,
+  "description": "Create a GitLab CI pipeline using the Docker image registry.gitlab.com/libtiff/libtiff-ci-ubuntu24.04:latest as the default and defining three stages: build, static-analysis, and pages. In the build stage add an autoconf-current job that runs sh build/gitlab-ci autoconf, saves the distribution directory as an artifact named distribution, and runs cat autoconf-build/test/test-suite.log as an after_script; also add an autoconf-old job that uses the image registry.gitlab.com/libtiff/libtiff-ci-ubuntu22.04:latest, runs sh build/gitlab-ci autoconf-minimal, and has the same after_script. Also in the build stage add cmake-makefiles-current, cmake-makefiles-current-static, cmake-makefiles-old (using the Ubuntu22.04 image), and cmake-ninja-current jobs, each executing sh build/gitlab-ci cmake \"Unix Makefiles\" Release, sh build/gitlab-ci cmake \"Unix Makefiles\" Release static, sh build/gitlab-ci cmake \"Unix Makefiles\" Release, and sh build/gitlab-ci cmake \"Ninja\" Debug respectively. In the static-analysis stage add a coverity job that runs only on the master branch, uses the image registry.gitlab.com/libtiff/libtiff-ci-ubuntu24.04-coverity:latest, and runs sh build/gitlab-ci coverity \"Ninja\" Debug. In the pages stage add a pages job that runs only on master, runs sh build/gitlab-ci cmake \"Ninja\" Debug then cp -r cmake-install/share/doc/tiff/manual/html public, and publishes the public directory as an artifact named $CI_PROJECT_NAME-$CI_JOB_NAME.",
+  "tags": [
+    "autoconf",
+    "cmake",
+    "makefiles",
+    "ninja",
+    "coverity",
+    "pages",
+    "libtiff",
+    "docker-image",
+    "static-analysis"
+  ]
+}

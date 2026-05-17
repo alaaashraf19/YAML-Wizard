@@ -1,0 +1,12 @@
+master:
+  image: python:3.13
+  script:
+  - apt-get update -qq && apt-get install -y -qq libenchant-2-2
+  - pip install mypy interrogate pytest coverage types-pygments
+  - pip install -e .
+  - pip list
+  - coverage run -m pytest -k "not jj"
+  - coverage report -i --fail-under=61
+  - mypy -p spelltinkle
+  - flake8 spelltinkle
+  - interrogate -v -m -i -f 2.0 spelltinkle -e spelltinkle/test

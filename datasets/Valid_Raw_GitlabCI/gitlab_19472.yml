@@ -1,0 +1,27 @@
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+  - .npm/
+  - node_modules/
+image: node:12
+pages:
+  artifacts:
+    paths:
+    - public
+  before_script:
+  - npm i npm@latest -g
+  - npm ci
+  only:
+  - master
+  script:
+  - npm run build
+  stage: deploy
+test:
+  before_script:
+  - npm i npm@latest -g
+  - npm ci --cache .npm --prefer-offline
+  - git config --global user.email "test@example.com"
+  - git config --global user.name "Visual Fiha CI Tests"
+  script:
+  - npm test
+  stage: test

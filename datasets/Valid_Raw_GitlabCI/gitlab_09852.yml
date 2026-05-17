@@ -1,0 +1,71 @@
+.job_template:
+  before_script: &id001
+  - apt-get update && apt-get -y install luajit luarocks cmake
+  - luarocks install luabitop
+  - luarocks install luafilesystem
+  - luarocks install penlight
+  - luarocks install luv |& egrep -v '^tar'
+  - luarocks install luaposix
+  - git clone https://github.com/CoderPuppy/cc-emu emu --branch for-ci
+  - git clone https://github.com/CoderPuppy/ComputercraftLua emu/cc --branch ci
+before_script:
+- apt-get update && apt-get -y install luajit luarocks
+- luarocks install luafilesystem
+build:
+  artifacts:
+    name: devel_${CI_BUILD_NAME}_${CI_BUILD_REF_NAME}
+    paths:
+    - titanium.lua
+  environment: production
+  except:
+  - tags
+  script:
+  - echo "Running development build. Not building minified"
+  - luajit ./bin/construct.lua --source src --output titanium.lua
+  stage: build
+build-release:
+  artifacts:
+    name: release_${CI_BUILD_REF_NAME}
+    paths:
+    - titanium.lua
+    - titanium.min.lua
+  environment: release
+  only:
+  - tags
+  script:
+  - apt-get -y install ruby curl
+  - echo "Running release build. Building minified"
+  - luajit ./bin/construct.lua --source src --output titanium.lua
+  - luajit ./bin/construct.lua --source src --output titanium.min.lua --minify
+  - echo "Searching for documentation"
+  - ruby bin/commentParse.rb
+  - echo "Publishing documentation"
+  - echo -n data= > body
+  - base64 rubyout >> body
+  - echo -n "&key=$DEPLOY_DOCUMENTATION_KEY&tag=$CI_BUILD_TAG" >> body
+  - curl --data "@body" http://harryfelton.web44.net/titanium/deliverDocs.php
+  stage: build
+stages:
+- build
+- test
+test:
+  before_script: *id001
+  dependencies:
+  - build
+  except:
+  - tags
+  script:
+  - echo "Testing development build"
+  - luajit emu/cli.lua . bin/ci/run_test.lua titanium.lua tml
+  stage: test
+test-release:
+  before_script: *id001
+  dependencies:
+  - build-release
+  only:
+  - tags
+  script:
+  - echo "Testing release builds"
+  - luajit emu/cli.lua . bin/ci/run_test.lua titanium.lua tml
+  - luajit emu/cli.lua . bin/ci/run_test.lua titanium.min.lua tml
+  stage: test

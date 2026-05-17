@@ -1,0 +1,18 @@
+{
+  "sha": "657bad86fc743d67a7bdbadc2d53a9819d832397223d792d6858c5e6dae786ac",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2697,
+  "description": "Create a GitHub Actions workflow named Compile that runs on push and pull request events. Use a single windows-latest job that sets up MSBuild, enables the Developer Command Prompt, checks out the repository, and then performs a series of compilation, build, and packaging steps for a C# and C++ project, including restoring NuGet packages, building and publishing .NET projects, compiling ASI and dependencies with CMake and Ninja, and generating native definitions for Lua. Finally, prepare the project for distribution, copy files to an Inno source folder, compile an installer with Inno Setup, and upload artifacts including the distribution, installer, and symbols.",
+  "tags": [
+    "windows",
+    "msbuild",
+    "dotnet",
+    "cmake",
+    "ninja",
+    "lua",
+    "innosetup",
+    "installer",
+    "artifacts"
+  ]
+}

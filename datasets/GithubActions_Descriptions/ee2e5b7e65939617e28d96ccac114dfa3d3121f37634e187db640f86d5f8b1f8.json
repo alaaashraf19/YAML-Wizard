@@ -1,0 +1,15 @@
+{
+  "sha": "ee2e5b7e65939617e28d96ccac114dfa3d3121f37634e187db640f86d5f8b1f8",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2351,
+  "description": "Create a GitHub Actions workflow named Coverity that runs weekly on Thursdays at 18:00 UTC. Trigger on push to branch ghact with tags v*.*.*, ignoring README.md and CONTRIBUTING.md, and on pull requests to the master branch. Set up a windows-latest job with MinGW, install required libraries, download and cache Coverity scan tools, configure CMake, build with Coverity, and submit the results to Coverity.",
+  "tags": [
+    "coverity",
+    "mingw",
+    "windows",
+    "cmake",
+    "github-actions",
+    "scheduled"
+  ]
+}

@@ -1,0 +1,154 @@
+.fips_verify_component:
+  component: gitlab.com/gitlab-org/cloud-native/container-dependencies-finder/rpm-verify-fips@main
+.fips_verify_inputs:
+  allow_failure: true
+  authenticate_registry: false
+  job_stage: container-scanning
+include:
+- component: gitlab.com/gitlab-org/cloud-native/container-dependencies-finder/rpm-verify-fips@main
+  inputs:
+    allow_failure: true
+    authenticate_registry: false
+    container_image: ${CI_REGISTRY_IMAGE}/certificates:${CI_COMMIT_REF_SLUG}-fips
+    job_prefix: certificates
+    job_stage: container-scanning
+- component: gitlab.com/gitlab-org/cloud-native/container-dependencies-finder/rpm-verify-fips@main
+  inputs:
+    allow_failure: true
+    authenticate_registry: false
+    container_image: ${CI_REGISTRY_IMAGE}/cfssl-self-sign:${CI_COMMIT_REF_SLUG}-fips
+    job_prefix: cfssl-self-sign
+    job_stage: container-scanning
+- component: gitlab.com/gitlab-org/cloud-native/container-dependencies-finder/rpm-verify-fips@main
+  inputs:
+    allow_failure: true
+    authenticate_registry: false
+    container_image: ${CI_REGISTRY_IMAGE}/gitaly:${CI_COMMIT_REF_SLUG}-fips
+    job_prefix: gitaly
+    job_stage: container-scanning
+- component: gitlab.com/gitlab-org/cloud-native/container-dependencies-finder/rpm-verify-fips@main
+  inputs:
+    allow_failure: true
+    authenticate_registry: false
+    container_image: ${CI_REGISTRY_IMAGE}/gitlab-base:${CI_COMMIT_REF_SLUG}-fips
+    job_prefix: gitlab-base
+    job_stage: container-scanning
+- component: gitlab.com/gitlab-org/cloud-native/container-dependencies-finder/rpm-verify-fips@main
+  inputs:
+    allow_failure: true
+    authenticate_registry: false
+    container_image: ${CI_REGISTRY_IMAGE}/gitlab-container-registry:${CI_COMMIT_REF_SLUG}-fips
+    job_prefix: gitlab-container-registry
+    job_stage: container-scanning
+- component: gitlab.com/gitlab-org/cloud-native/container-dependencies-finder/rpm-verify-fips@main
+  inputs:
+    allow_failure: true
+    authenticate_registry: false
+    container_image: ${CI_REGISTRY_IMAGE}/gitlab-openbao:${CI_COMMIT_REF_SLUG}-fips
+    job_prefix: gitlab-openbao
+    job_stage: container-scanning
+- component: gitlab.com/gitlab-org/cloud-native/container-dependencies-finder/rpm-verify-fips@main
+  inputs:
+    allow_failure: true
+    authenticate_registry: false
+    container_image: ${CI_REGISTRY_IMAGE}/gitlab-exporter:${CI_COMMIT_REF_SLUG}-fips
+    job_prefix: gitlab-exporter
+    job_stage: container-scanning
+- component: gitlab.com/gitlab-org/cloud-native/container-dependencies-finder/rpm-verify-fips@main
+  inputs:
+    allow_failure: true
+    authenticate_registry: false
+    container_image: ${CI_REGISTRY_IMAGE}/gitlab-geo-logcursor:${CI_COMMIT_REF_SLUG}-fips
+    job_prefix: gitlab-geo-logcursor
+    job_stage: container-scanning
+- component: gitlab.com/gitlab-org/cloud-native/container-dependencies-finder/rpm-verify-fips@main
+  inputs:
+    allow_failure: true
+    authenticate_registry: false
+    container_image: ${CI_REGISTRY_IMAGE}/gitlab-kas:${CI_COMMIT_REF_SLUG}-fips
+    job_prefix: gitlab-kas
+    job_stage: container-scanning
+- component: gitlab.com/gitlab-org/cloud-native/container-dependencies-finder/rpm-verify-fips@main
+  inputs:
+    allow_failure: true
+    authenticate_registry: false
+    container_image: ${CI_REGISTRY_IMAGE}/gitlab-agentk:${CI_COMMIT_REF_SLUG}-fips
+    job_prefix: gitlab-agentk
+    job_stage: container-scanning
+- component: gitlab.com/gitlab-org/cloud-native/container-dependencies-finder/rpm-verify-fips@main
+  inputs:
+    allow_failure: true
+    authenticate_registry: false
+    container_image: ${CI_REGISTRY_IMAGE}/gitlab-mailroom:${CI_COMMIT_REF_SLUG}-fips
+    job_prefix: gitlab-mailroom
+    job_stage: container-scanning
+- component: gitlab.com/gitlab-org/cloud-native/container-dependencies-finder/rpm-verify-fips@main
+  inputs:
+    allow_failure: true
+    authenticate_registry: false
+    container_image: ${CI_REGISTRY_IMAGE}/gitlab-pages:${CI_COMMIT_REF_SLUG}-fips
+    job_prefix: gitlab-pages
+    job_stage: container-scanning
+- component: gitlab.com/gitlab-org/cloud-native/container-dependencies-finder/rpm-verify-fips@main
+  inputs:
+    allow_failure: true
+    authenticate_registry: false
+    container_image: ${CI_REGISTRY_IMAGE}/gitlab-rails-ee:${CI_COMMIT_REF_SLUG}-fips
+    job_prefix: gitlab-rails-ee
+    job_stage: container-scanning
+- component: gitlab.com/gitlab-org/cloud-native/container-dependencies-finder/rpm-verify-fips@main
+  inputs:
+    allow_failure: true
+    authenticate_registry: false
+    container_image: ${CI_REGISTRY_IMAGE}/gitlab-ruby:${CI_COMMIT_REF_SLUG}-fips
+    job_prefix: gitlab-ruby
+    job_stage: container-scanning
+- component: gitlab.com/gitlab-org/cloud-native/container-dependencies-finder/rpm-verify-fips@main
+  inputs:
+    allow_failure: true
+    authenticate_registry: false
+    container_image: ${CI_REGISTRY_IMAGE}/gitlab-shell:${CI_COMMIT_REF_SLUG}-fips
+    job_prefix: gitlab-shell
+    job_stage: container-scanning
+- component: gitlab.com/gitlab-org/cloud-native/container-dependencies-finder/rpm-verify-fips@main
+  inputs:
+    allow_failure: true
+    authenticate_registry: false
+    container_image: ${CI_REGISTRY_IMAGE}/gitlab-sidekiq-ee:${CI_COMMIT_REF_SLUG}-fips
+    job_prefix: gitlab-sidekiq-ee
+    job_stage: container-scanning
+- component: gitlab.com/gitlab-org/cloud-native/container-dependencies-finder/rpm-verify-fips@main
+  inputs:
+    allow_failure: true
+    authenticate_registry: false
+    container_image: ${CI_REGISTRY_IMAGE}/gitlab-toolbox-ee:${CI_COMMIT_REF_SLUG}-fips
+    job_prefix: gitlab-toolbox-ee
+    job_stage: container-scanning
+- component: gitlab.com/gitlab-org/cloud-native/container-dependencies-finder/rpm-verify-fips@main
+  inputs:
+    allow_failure: true
+    authenticate_registry: false
+    container_image: ${CI_REGISTRY_IMAGE}/gitlab-webservice-ee:${CI_COMMIT_REF_SLUG}-fips
+    job_prefix: gitlab-webservice-ee
+    job_stage: container-scanning
+- component: gitlab.com/gitlab-org/cloud-native/container-dependencies-finder/rpm-verify-fips@main
+  inputs:
+    allow_failure: true
+    authenticate_registry: false
+    container_image: ${CI_REGISTRY_IMAGE}/gitlab-workhorse-ee:${CI_COMMIT_REF_SLUG}-fips
+    job_prefix: gitlab-workhorse-ee
+    job_stage: container-scanning
+- component: gitlab.com/gitlab-org/cloud-native/container-dependencies-finder/rpm-verify-fips@main
+  inputs:
+    allow_failure: true
+    authenticate_registry: false
+    container_image: ${CI_REGISTRY_IMAGE}/kubectl:${CI_COMMIT_REF_SLUG}-fips
+    job_prefix: kubectl
+    job_stage: container-scanning
+- component: gitlab.com/gitlab-org/cloud-native/container-dependencies-finder/rpm-verify-fips@main
+  inputs:
+    allow_failure: true
+    authenticate_registry: false
+    container_image: ${CI_REGISTRY_IMAGE}/gitlab-zoekt:${CI_COMMIT_REF_SLUG}-fips
+    job_prefix: gitlab-zoekt
+    job_stage: container-scanning

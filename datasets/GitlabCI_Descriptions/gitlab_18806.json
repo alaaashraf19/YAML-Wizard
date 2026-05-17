@@ -1,0 +1,25 @@
+{
+  "sha": "gitlab_18806",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 5501,
+  "description": "Create a GitLab CI pipeline with stages code_standarts, test, release, and publish using the default Ubuntu image registry.gitlab.com/vstconsulting/images:ubuntu-v4 and a Node20 image for JavaScript jobs. Add a code_style job (stage code_standarts) that runs a conditional before_script to set TOX_ARGS, then executes `tox $TOX_ARGS` with TOX_ENVS=flake,pylint, triggered on master, release branches, merge‑request or web events. Add a functional_test job (stage test) that needs code_style, runs in parallel for TOX_ENVS=py310-install and py312-coverage, uses the same before_script and runs `tox $TOX_ARGS`. Add a js_style job (stage code_standarts) using the node20-tests image, runs `yarn install --pure-lockfile --mutex network` then `yarn lint`, with identical rules. Add a pages job (stage release) that builds docs with `tox -e builddoc $TOX_ARGS`, moves the output to a public directory, and publishes the public/ artifact only on the developer branch with Git credentials. Add a release_pypi job (stage release) that runs `tox -c tox_build.ini $TOX_ARGS` and uploads packages via `twine upload -u ${PYPI_UPLOAD_NAME} -p ${PYPI_UPLOAD_PASSWORD} $(find dist/*.{tar.gz,whl})`, storing dist/ as an artifact; add a release job (stage release) that configures the git remote using GIT_ACCESS_USER/PASSWORD and runs `bash autorelease.sh` on master. Finally, add a publish_docker job (stage publish) that logs into Docker Hub and exports images with Werf commands, running only on tagged commits with Docker credentials, and a publish_release job (stage publish) that pushes the tag to GitHub and runs `tox -e release`, allowing failure and depending on release_pypi.",
+  "tags": [
+    "ubuntu",
+    "tox",
+    "python",
+    "node",
+    "yarn",
+    "lint",
+    "code-style",
+    "test",
+    "parallel",
+    "pages",
+    "pypi",
+    "twine",
+    "docker",
+    "werf",
+    "github",
+    "release"
+  ]
+}

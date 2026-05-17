@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_09073",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 473,
+  "description": "Create a GitLab CI pipeline that uses the .with-bundle and .common-ci-tokens includes (providing a Ruby image with Bundler) and defines a single job named security_release:process_security_target_issues. Place this job in the security_release:process stage and have it run the exact shell command `bundle exec rake 'security:process_security_target_issues'`. Add a rule so the job only executes when the pipeline source is schedule, pipeline, web, or api **and** the variable SECURITY_RELEASE_PIPELINE equals \"process\". No caches, artifacts, or deployment targets are defined for this job.",
+  "tags": [
+    "ruby",
+    "bundler",
+    "rake",
+    "security",
+    "pipeline"
+  ]
+}

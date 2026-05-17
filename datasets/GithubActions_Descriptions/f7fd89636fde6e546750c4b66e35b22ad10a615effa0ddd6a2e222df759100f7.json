@@ -1,0 +1,15 @@
+{
+  "sha": "f7fd89636fde6e546750c4b66e35b22ad10a615effa0ddd6a2e222df759100f7",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2101,
+  "description": "Create a GitHub Actions workflow named CI that runs on every push to any branch and on pull requests to the master branch. The workflow should have two jobs: lint and test. The lint job should run on ubuntu-latest with a matrix of Python versions 3.8, 3.9, and 3.10, and perform linting with flake8, black, and isort, as well as type checking with mypy. The test job should also run on ubuntu-latest with a matrix of Python versions 3.7, 3.8, 3.9, and 3.10, and perform testing with pytest and coverage checking.",
+  "tags": [
+    "python",
+    "ci",
+    "linting",
+    "testing",
+    "coverage",
+    "ubuntu"
+  ]
+}

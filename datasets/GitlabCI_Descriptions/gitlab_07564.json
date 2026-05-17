@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_07564",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 635,
+  "description": "Create a GitLab CI pipeline using the docker:stable image globally and a docker:dind service, with DOCKER_DRIVER=overlay2 and DOCKER_HOST=tcp://docker:2375/. Define stages build and publish. Add a build_binary job in the build stage that uses the golang:1.10 image, runs `make gitlab-init`, then changes directory to /go/src/gitlab.com/fenrirunbound/pipeline-queue and runs `make install vendor build`, then runs `make gitlab-archive`, and stores the resulting files as artifacts in the artifacts/ path. Add a build_image job in the build stage that runs `docker info` and `apk add make` in before_script, then executes `make docker` to build a Docker image. Add a publish_image job in the publish stage that runs `apk add make` in before_script, is limited to the master branch of fenrirunbound/pipeline-queue, and runs `make docker-publish` to push the built image to the registry.",
+  "tags": [
+    "go",
+    "golang",
+    "docker",
+    "dind",
+    "make",
+    "pipeline-queue",
+    "publish"
+  ]
+}

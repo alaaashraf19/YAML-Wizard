@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_05971",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 307,
+  "description": "Create a GitLab CI pipeline that uses the ubuntu:xenial Docker image. Define a single stage called test and a job named job_name that runs in this stage. The job should execute the following shell commands in order: apt-get update -qyy, apt-get install -qyy git, git clone https://github.com/Skyrimus/arm-eabi-4.8-google-mt6580, git clone https://github.com/Skyrimus/DarkTornado_pixi3_5_3.18.35, ls, pwd, cd /../../, ls. The job is tagged with gitlab-org and has no caches, artifacts, or special rules.",
+  "tags": [
+    "ubuntu",
+    "git",
+    "clone",
+    "test"
+  ]
+}

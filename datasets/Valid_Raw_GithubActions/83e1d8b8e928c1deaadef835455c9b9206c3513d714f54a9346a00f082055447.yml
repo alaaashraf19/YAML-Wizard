@@ -1,0 +1,113 @@
+name: Test
+
+on:
+  workflow_call:
+    inputs:
+      dfhack_repo:
+        type: string
+        default: DFHack/dfhack
+      dfhack_ref:
+        type: string
+      scripts_repo:
+        type: string
+        default: DFHack/scripts
+      scripts_ref:
+        type: string
+      structures_repo:
+        type: string
+        default: DFHack/df-structures
+      structures_ref:
+        type: string
+
+jobs:
+  build-windows:
+    name: Windows MSVC
+    uses: ./.github/workflows/build-windows.yml
+    with:
+      dfhack_repo: ${{ inputs.dfhack_repo }}
+      dfhack_ref: ${{ inputs.dfhack_ref }}
+      scripts_repo: ${{ inputs.scripts_repo }}
+      scripts_ref: ${{ inputs.scripts_ref }}
+      structures_repo: ${{ inputs.structures_repo }}
+      structures_ref: ${{ inputs.structures_ref }}
+      artifact-name: test-msvc
+      cache-id: test
+      docs: true
+      html: false
+      tests: true
+
+  build-linux:
+    name: Linux gcc-${{ matrix.gcc }}
+    uses: ./.github/workflows/build-linux.yml
+    with:
+      dfhack_repo: ${{ inputs.dfhack_repo }}
+      dfhack_ref: ${{ inputs.dfhack_ref }}
+      scripts_repo: ${{ inputs.scripts_repo }}
+      scripts_ref: ${{ inputs.scripts_ref }}
+      structures_repo: ${{ inputs.structures_repo }}
+      structures_ref: ${{ inputs.structures_ref }}
+      artifact-name: test-gcc-${{ matrix.gcc }}
+      cache-id: test
+      stonesense: ${{ matrix.plugins == 'all' }}
+      extras: ${{ matrix.plugins == 'all' }}
+      docs: true
+      html: false
+      tests: true
+      gcc-ver: ${{ matrix.gcc }}
+    secrets: inherit
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+        - gcc: 10
+          plugins: "default"
+        - gcc: 12
+          plugins: "all"
+
+  test-windows:
+    name: Run Windows test suite
+    needs: build-windows
+    uses: ./.github/workflows/test-suite.yml
+    with:
+      dfhack_repo: ${{ inputs.dfhack_repo }}
+      dfhack_ref: ${{ inputs.dfhack_ref }}
+      os: windows
+      compiler: msvc
+      plugins: default
+      config: default
+
+  test-windows-empty:
+    name: Run Windows test suite (empty config)
+    needs: build-windows
+    uses: ./.github/workflows/test-suite.yml
+    with:
+      dfhack_repo: ${{ inputs.dfhack_repo }}
+      dfhack_ref: ${{ inputs.dfhack_ref }}
+      os: windows
+      compiler: msvc
+      plugins: default
+      config: empty
+
+  test-linux:
+    name: Run Linux test suite
+    needs: build-linux
+    uses: ./.github/workflows/test-suite.yml
+    with:
+      dfhack_repo: ${{ inputs.dfhack_repo }}
+      dfhack_ref: ${{ inputs.dfhack_ref }}
+      os: ubuntu
+      compiler: gcc-10
+      plugins: default
+      config: default
+
+  test-linux-gcc-12-all-plugins:
+    name: Run Linux test suite (gcc-12, all plugins)
+    needs: build-linux
+    uses: ./.github/workflows/test-suite.yml
+    with:
+      dfhack_repo: ${{ inputs.dfhack_repo }}
+      dfhack_ref: ${{ inputs.dfhack_ref }}
+      os: ubuntu
+      compiler: gcc-12
+      plugins: all
+      config: default

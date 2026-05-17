@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_13626",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 156,
+  "description": "Create a GitLab CI pipeline that uses the vvakame/review:5.4 Docker image. Define a single job called build-pdf (which runs in the default stage) and assign it the docker runner tag. In the job script execute ./setup.sh followed by npm run pdf. Publish the generated articles/ReVIEW-Template.pdf file as a job artifact.",
+  "tags": [
+    "docker",
+    "npm",
+    "pdf",
+    "review",
+    "artifact"
+  ]
+}

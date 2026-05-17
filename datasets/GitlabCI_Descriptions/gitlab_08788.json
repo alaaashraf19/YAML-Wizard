@@ -1,0 +1,25 @@
+{
+  "sha": "gitlab_08788",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 6656,
+  "description": "Create a GitLab CI pipeline with stages test, smoke_test, and deploy, using a cache of vendor/ruby keyed by Gemfile.lock and setting FF_DISABLE_UMASK_FOR_DOCKER_EXECUTOR and RUST_VERSION variables. In the test stage add a .test-job using the ruby:${RUBY_VERSION} image that runs 'ls -al lib/prometheus/client', checks the file mode of lib/prometheus/client.rb, executes 'bundle exec rake spec', and then runs 'cargo nextest run' in ext/fast_mmaped_file_rs; also add archlinux:ruby:3.0 (archlinux/archlinux:base) which installs git, gcc, clang, make, ruby and bundler, installs Rust, compiles with 'bundle exec rake compile', and runs 'bundle exec rake spec'; add builder:almalinux_8 (registry.gitlab.com/gitlab-org/gitlab-omnibus-builder/almalinux_8:${BUILDER_IMAGE_REVISION}) and builder:centos_7 (registry.gitlab.com/gitlab-org/gitlab-omnibus-builder/centos_7:${BUILDER_IMAGE_REVISION}) both running 'bundle exec rake spec' after installing Rust and compiling; add i386/debian:bookworm (i386/debian:bookworm) that installs i386 toolchain, Rust for i686, compiles and runs the same spec script; add a ruby matrix job that runs on ruby 3.1‑3.4 with RUST_VERSION 1.73.0 and 1.89.0, using the ruby:${RUBY_VERSION} image and executing the same script as .test-job, and a ruby-head job on rubylang/ruby:master-debug-dev with allow_failure. Also in test add clippy check (debian:bookworm-slim) installing Rust clippy and running 'cargo clippy --manifest-path ext/fast_mmaped_file_rs/Cargo.toml', rustfmt check (debian:bookworm-slim) installing rustfmt and running 'cargo fmt --manifest-path ext/fast_mmaped_file_rs/Cargo.toml -- --check', parsing Address-Sanitizer (ruby:3.1) that runs rspec, compiles with address sanitizer, prepares DB files, sets LD_PRELOAD and ASAN options, and runs the parse binary, and rspec Address-Sanitizer (ruby:3.1) that performs the same compile and rspec steps with sanitizer flags. Add a fuzzbert job using ruby:3.2 that runs 'bundle exec fuzzbert fuzz/**/fuzz_*.rb --handler PrintAndExitHandler --limit 10000'. In the deploy stage add a pages job using ruby:3.1 that runs only on the master branch, moves the coverage directory to public, and publishes the public/ directory as a pages artifact with a 30‑day expiry. All test jobs upload the coverage/ directory as artifacts.",
+  "tags": [
+    "ruby",
+    "rust",
+    "archlinux",
+    "almalinux",
+    "centos",
+    "i386",
+    "debian",
+    "clippy",
+    "rustfmt",
+    "address-sanitizer",
+    "fuzzbert",
+    "pages",
+    "matrix",
+    "cache",
+    "coverage",
+    "gitlab-ci"
+  ]
+}

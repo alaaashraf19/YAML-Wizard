@@ -1,0 +1,26 @@
+{
+  "sha": "gitlab_10635",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 6281,
+  "description": "Create a GitLab CI pipeline with stages lint, build, test, docs, build-prod, and deploy, using openjdk:8-jdk as the default image and overriding with node:6.11-alpine for REST and website jobs, ubuntu:xenial for the Haskell build, debian:jessie for Haskell lint, haskell:8.0.2 for Haskell tests, alpine:3.6 for the final deployment, and the Android jobs inherit the default image. In the build stage, android-assembleDebug runs a before_script that creates a gradle user home, updates apt, installs wget unzip lib32stdc++6 lib32z1, downloads and unpacks the Android SDK, sets ANDROID_HOME and PATH, accepts licenses, makes gradlew executable, then executes ./gradlew assembleDebug --console=plain with a cache keyed on the branch; android-deploy repeats the same setup, cd's into JTime-android, writes $GOOGLE_PLAY_JSON_PUBLISHER_FILE to a JSON file, decodes $ANDROID_KEY_FILE to android.jks, runs ./gradlew publishRelease, removes the temporary files, stores JTime-android/build/outputs as artifacts, runs only on the production branch, and deploys to the android-beta environment. The docs stage runs android-dokka which installs wget, downloads the dokka‑fatjar.jar, and runs java -jar dokka‑fatjar.jar on the Kotlin sources with Android links, outputting HTML to a dokka directory that is saved as a named artifact expiring in two months. The lint stage includes rest-api-lint (node:6.11-alpine, cd JTime-rest/, yarn install, yarn run lint), website-lint (cd JTime-rest/client/jtime-website, yarn install, yarn run lint), and servant-rest-api-lint (debian:jessie, apt‑get curl, cd JTime-servant, curl the hlint script and execute it); the test stage includes android-unittest (same Android setup, sed edit of styles.xml, ./gradlew test, allow_failure), rest-api-unittest (same setup, apk add jq, modify server/datasources.json with jq, yarn test), servant-rest-api-test (haskell:8.0.2, cd JTime-servant, stack test), and website-unittest (node:6.11, apt‑get wget, add Google Chrome repo, install google-chrome-stable, yarn test), each using their respective caches. In the build‑prod stage, servant-rest-api-build runs on ubuntu:xenial, installs software‑properties-common, adds the GHC PPA, installs ghc‑8.0.2, cabal, make, git, zlib1g-dev, downloads and extracts Stack, then cd's into JTime-servant, runs stack setup and stack build, copies the resulting jtime‑servant‑exe to the project root as an artifact, and runs only on master or production branches. Finally, the deploy stage rest-api-and-website-deploy runs on alpine:3.6 after the servant and website builds, installs openssh-client, bash, tar, jq, rsync, moves the executable, injects $GOOGLE_CLIENT_ID and $GOOGLE_MAPS_KEY into settings.json via jq, packages the service into a .keter file, starts ssh‑agent, adds the $SSH_PRIVATE_KEY, configures known hosts, rsyncs the website build to the static root on $REST_API_HOST_STRING, and scp's the .keter file to the Keter incoming directory, deploying to the website environment with URL https://jtime.ismail-s.com.",
+  "tags": [
+    "android",
+    "gradle",
+    "dokka",
+    "node",
+    "yarn",
+    "rest-api",
+    "website",
+    "haskell",
+    "ghc",
+    "stack",
+    "ubuntu",
+    "debian",
+    "alpine",
+    "lint",
+    "test",
+    "deploy",
+    "ci"
+  ]
+}

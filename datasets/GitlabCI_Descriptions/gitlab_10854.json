@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_10854",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 225,
+  "description": "Create a GitLab CI pipeline using the ubuntu:18.04 Docker image and set the variable GIT_SUBMODULE_STRATEGY to recursive. Define a global before_script that runs apt-get update && apt-get -y install git cmake build-essential for all jobs. Add a job named current_version in the default test stage that executes the script commands: mkdir build, cd build, cmake .., and make. No caches, artifacts, services, or special rules are required.",
+  "tags": [
+    "ubuntu",
+    "cmake",
+    "make",
+    "git-submodules",
+    "build"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "62d5f11621961f0fe6bde18efc7483fb1486cddda41e21c84d8f26da67de87bf",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 470,
+  "description": "Create a GitHub Actions workflow named Test that runs on every pull request and push. Use a job matrix to test on both ubuntu-latest and macos-latest environments. In each job, check out the repository with full history, install Nix using the cachix action, and then run nix-build with a specific architecture-dependent check.",
+  "tags": [
+    "nix",
+    "tests",
+    "matrix",
+    "ubuntu",
+    "macos"
+  ]
+}

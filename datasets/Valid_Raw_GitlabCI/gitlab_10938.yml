@@ -1,0 +1,12 @@
+deploy:
+  environment:
+    name: production
+    url: http://localhost:30080
+  script:
+  - echo "fake deploy"
+  stage: deploy
+image: registry.gitlab.com/gitlab-examples/kubernetes-deploy
+stages:
+- deploy
+variables:
+  GIT_STRATEGY: none

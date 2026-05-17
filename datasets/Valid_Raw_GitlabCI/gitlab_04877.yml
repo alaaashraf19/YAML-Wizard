@@ -1,0 +1,17 @@
+before_script:
+- bundle_install
+image: ruby:2.1
+job1:
+  only:
+  - master
+  script:
+  - execute-script-for-job1
+  stage: build
+  tags:
+  - docker
+services:
+- postgres
+stages:
+- build
+- test
+- deploy

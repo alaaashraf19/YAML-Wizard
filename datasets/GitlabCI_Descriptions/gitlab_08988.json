@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_08988",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 23480,
+  "description": "Create a GitLab CI pipeline with a single stage named report. Define a job for each team (e.g., accessibility-team-summary, acquisition-team-summary, activation-team-summary, ai_framework-team-summary, analytics_instrumentation-team-summary, anti-abuse-team-summary, api-team-summary, authentication-team-summary, authorization-team-summary, build-team-summary, etc.) that extends the shared .run template, runs in the report stage, and sets the variable TRIAGE_POLICY_FILE to the corresponding policies/generated/team-summary.yml.erb/<team>.yml file. Each job uses rules: if $EXCLUDE_TRIAGE_TEAM_SUMMARY_<TEAM> is true then never run; otherwise run when $TRIAGE_TEAM_SUMMARY is true or $TRIAGE_TEAM_SUMMARY_<TEAM> is true. The jobs inherit all scripts and environment from the .run template, so no explicit script commands are listed in the jobs themselves.",
+  "tags": [
+    "team-summary",
+    "triage",
+    "report",
+    "gitlab-ci"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_12007",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1299,
+  "description": "Create a GitLab CI pipeline using the debian:latest Docker image with a global before_script that echoes a message, prints the date, updates apt, upgrades packages, installs apt-utils, tree, procps, psmisc, rsyslog, wget, git, python3, build-essential, python3-dev, python3-pip, and starts rsyslog. Define two stages: lint and test. In the lint stage add a lint_python job that runs pip3 install pylama pylint pycodestyle pydocstyle, then runs pylama --skip=\"build/*\" --ignore=C901,E111,E114,E221,E501, runs pycodestyle with a long ignore list on the current directory, runs pylint --rcfile=.pylintrc *.py, and runs pydocstyle with a detailed ignore list on all files. Also add lint_shellcheck-bin and lint_shellcheck-root jobs that each install shellcheck via apt and then run LC_ALL=C.UTF-8 shellcheck --format=gcc --external-sources bin/* (for the former) or *.sh (for the latter). In the test stage add a test_new job that echoes a start marker, executes ./vincent2.sh -t, echoes a completion marker, and uploads sungyc.out as an artifact that expires in one week.",
+  "tags": [
+    "debian",
+    "lint",
+    "python",
+    "shellcheck",
+    "test",
+    "ci"
+  ]
+}

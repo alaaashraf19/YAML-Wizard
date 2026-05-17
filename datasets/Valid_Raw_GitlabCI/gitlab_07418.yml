@@ -1,0 +1,26 @@
+before_script:
+- bundle install
+image: ruby:3.4
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  - sommerfest-2025
+  script:
+  - bundle exec jekyll build -d public
+  stage: deploy
+test:
+  artifacts:
+    paths:
+    - test
+  except:
+  - master
+  - sommerfest-2025
+  script:
+  - bundle exec jekyll build -d test
+  stage: test
+variables:
+  JEKYLL_ENV: production
+  LC_ALL: C.UTF-8

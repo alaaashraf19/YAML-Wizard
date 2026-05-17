@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_08250",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2449,
+  "description": "Create a GitLab CI pipeline that uses the ruby:3.3.7 Docker image and defines two stages: test and perform. In the test stage add a test job that runs `gem install bundler:2.4.12`, `bundle`, and `bundle exec rspec --format=documentation`, and only runs when $CI_PIPELINE_SOURCE != \"schedule\". Also add test_create, test_update, and verify_projects jobs that each run `gem install bundler:2.4.12`, `bundle`, then respectively `bundle exec ruby retrospective.rb create --dry-run --force --read-token=\"$GITLAB_BOT_API_TOKEN\" --write-token=\"$GITLAB_WRITE_API_TOKEN\" --all-teams`, `bundle exec ruby retrospective.rb update --dry-run --force --read-token=\"$GITLAB_BOT_API_TOKEN\" --write-token=\"$GITLAB_WRITE_API_TOKEN\" --all-teams`, and `bundle exec bin/verify_projects --bot-token=$GITLAB_BOT_API_TOKEN`, all gated by the same rule. In the perform stage add a force-create job and a force-update job that are manual when the branch is master, first verify that the TEAM_NAME variable is set, then install bundler, run `bundle`, and execute `bundle exec ruby retrospective.rb create ...` or `update ...` with `--force` and token variables. Also add a perform job that runs on master, exports DRY_RUN_ARG, FORCE_ARG, and CMD_ARG from pipeline variables, installs bundler, runs `bundle`, and then runs `bundle exec ruby retrospective.rb $CMD_ARG $FORCE_ARG $DRY_RUN_ARG --read-token=\"$GITLAB_BOT_API_TOKEN\" --write-token=\"$GITLAB_WRITE_API_TOKEN\" --all-teams`. No caches, artifacts, or deployment targets are defined.",
+  "tags": [
+    "ruby",
+    "bundler",
+    "rspec",
+    "gitlab-ci",
+    "manual",
+    "master-branch",
+    "retrospective",
+    "test",
+    "perform"
+  ]
+}

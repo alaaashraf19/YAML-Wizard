@@ -1,0 +1,41 @@
+# SPDX-License-Identifier: MIT-0
+
+---
+name: ci
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  schedule:
+    - cron: '0 12 * * *'
+concurrency:
+  # Cancel previous CI runs when additional commits are added to a pull request.
+  # This will not cancel CI runs associated with `schedule` or `push`.
+  group: ${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+jobs:
+  cmake_installed:
+    uses: ./.github/workflows/cmake_installed.yml
+  ament_cmake_installed:
+    uses: ./.github/workflows/ament_cmake_installed.yml
+  bazel_download:
+    uses: ./.github/workflows/bazel_download.yml
+  catkin_installed:
+    uses: ./.github/workflows/catkin_installed.yml
+  cmake_installed_apt:
+    uses: ./.github/workflows/cmake_installed_apt.yml
+  file_sync:
+    name: file sync
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: setup
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: file_sync test
+        run: python ./private/test/file_sync_test.py

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_11950",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 678,
+  "description": "Create a GitLab CI pipeline with two stages: build and deploy. In the build stage add a job named build that uses the docker image with a docker:dind service, runs a before_script to docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com, caches the vendor directory, executes chmod +x ./build.sh && ./build.sh, and uploads package/*.tgz and package/docs as artifacts, running on runners tagged docker and linux. In the deploy stage add a job named npm that uses the node:6 image, runs only on the master branch, creates an .npmrc file with //registry.npmjs.org/:_authToken=${NPM_TOKEN}, then finds all *.tgz files and publishes them with npm publish, targeting the npm registry. Also in the deploy stage add a pages job that uses the busybox image, runs only on master, moves ./package/docs to ./public, and publishes the public directory as a GitLab Pages artifact.",
+  "tags": [
+    "docker",
+    "node6",
+    "npm-publish",
+    "gitlab-pages",
+    "dind",
+    "build-artifacts"
+  ]
+}

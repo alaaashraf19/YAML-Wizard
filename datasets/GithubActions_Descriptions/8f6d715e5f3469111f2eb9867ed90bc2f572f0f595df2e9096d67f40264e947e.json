@@ -1,0 +1,15 @@
+{
+  "sha": "8f6d715e5f3469111f2eb9867ed90bc2f572f0f595df2e9096d67f40264e947e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2233,
+  "description": "Create a GitHub Actions workflow named CI that runs on push to master and tags, and on pull requests. The workflow has two jobs: tests and publish. The tests job runs on multiple Python versions, checks out the code, installs dependencies, runs pre-commit and tests, and uploads results to Codecov. The publish job depends on tests, runs on the latest Python version, and publishes the package to PyPI if the tag matches the module version.",
+  "tags": [
+    "python",
+    "ci",
+    "tests",
+    "codecov",
+    "pypi",
+    "release"
+  ]
+}

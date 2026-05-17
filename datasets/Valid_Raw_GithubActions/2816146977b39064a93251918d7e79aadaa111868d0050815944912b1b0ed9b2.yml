@@ -1,0 +1,15 @@
+name: Android
+
+on:
+  pull_request:
+  push:
+
+jobs:
+  build:
+    runs-on: [ubuntu-latest]
+    container:
+      image: registry.gitlab.com/jhasse/android-ndk-docker:r25c
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build
+      run: make -C android

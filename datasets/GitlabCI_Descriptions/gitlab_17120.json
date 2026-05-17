@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_17120",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 406,
+  "description": "Create a GitLab CI pipeline that uses the docker.nix-community.org/nixpkgs/nix-flakes Docker image. Define a hidden job template .hydra-cli that runs the two shell commands: `nix run --inputs-from ./. nixpkgs#hydra-cli -- -H https://hydra.nix-community.org` and `jobset-wait simple-nixos-mailserver \\\"${jobset}\\\"`. Add a hydra-master job extending .hydra-cli, limited to the master branch, with variable jobset set to \\\"master\\\". Add a hydra-pr job extending .hydra-cli, limited to merge requests, with variable jobset set to $CI_MERGE_REQUEST_IID. Both jobs inherit the script and run in the default stage.",
+  "tags": [
+    "nix",
+    "hydra-cli",
+    "docker",
+    "gitlab-ci",
+    "merge-requests",
+    "master"
+  ]
+}

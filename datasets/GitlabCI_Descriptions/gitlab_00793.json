@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_00793",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 211,
+  "description": "Create a GitLab CI pipeline using the maven:3.2.5-jdk-8 Docker image, with stages build and deploy. Add a build_job in the build stage that runs mvn clean install verify -B -Dgpg.skip=true then displays the JaCoCo coverage report by catting /builds/allima/my-similarity-project/target/site/jacoco/index.html. No services, caches, artifacts, or special rules are defined, and the deploy stage is left empty for future jobs.",
+  "tags": [
+    "maven",
+    "java",
+    "jacoco",
+    "build"
+  ]
+}

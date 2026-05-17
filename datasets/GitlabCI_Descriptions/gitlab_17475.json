@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_17475",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 202,
+  "description": "Create a GitLab CI pipeline that uses the themattrix/tox Docker image. Set a before_script that runs `pyenv global $(pyenv global | grep \"^3.5\")` and installs development dependencies with `pip install -r requirements_dev.txt`. Define a single stage named static_check and a job called static_check that runs in this stage and executes `flake8 .`. No caches, artifacts, services, or special rules are needed.",
+  "tags": [
+    "tox",
+    "flake8",
+    "static-check",
+    "python-3.5"
+  ]
+}

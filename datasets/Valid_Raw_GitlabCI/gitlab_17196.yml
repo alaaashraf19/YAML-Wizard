@@ -1,0 +1,21 @@
+before_script:
+- make clean
+- make check
+- script/ci/configure-vault
+deploy_job:
+  only:
+  - master
+  script:
+  - script/ci/deploy
+  stage: deploy
+  tags:
+  - slashdeploy
+stages:
+- test
+- deploy
+test_job:
+  script:
+  - script/ci/test
+  stage: test
+  tags:
+  - slashdeploy

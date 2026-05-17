@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_08318",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 3658,
+  "description": "Create a GitLab CI pipeline using the image ${PUBLIC_BUILDER_IMAGE_REGISTRY}/gitlab_provisioner:${BUILDER_IMAGE_REVISION} with stages check, create, configure, test, cleanup-prep, and cleanup and the variables defined in the file. In the check stage add ansible-lint (runs \"cd ansible\" then \"ansible-lint pg_ha.yml\" on pushes and merge requests), shellcheck (runs \"apt-get install -y shellcheck\" and \"find \\\"${SRC_PATH}\\\"/scripts/* -type f \\( ! -iname \\\"*.md\\\" \\) | xargs -I {} shellcheck {}\" on pushes and merge requests), and terraform-validate (runs \"${SRC_PATH}/scripts/deploy/validate-provisioner\" on pushes and merge requests). In the create stage add terraform-apply (creates \"${PIPELINE_ARTIFACTS_PATH}\" then runs \"${SRC_PATH}/scripts/deploy/provision-cluster\", stores that directory as an artifact, and runs only on trigger pipelines). In the configure stage add ansible-playbook (inherits the common before_script that exports environment variables and assembles inventory, then runs \"${SRC_PATH}/scripts/deploy/run-orchestration\" with one retry). In the test stage add gitlab-qa (uses the gitlab-qa-alpine-ruby-2.7 image with docker:stable-dind service, installs the gitlab-qa gem, logs into the registry, sources \"${QA_IP_FILE}\", sets GITLAB_QA_DEV_ACCESS_TOKEN, and runs \"gitlab-qa Test::Instance::Any \\\"${QA_IMAGE}\\\" \\\"http://${APPLICATION_PUBLIC_IP}/\\\"\", runs in parallel 5, allows failure, and uploads the qa directory as an artifact for six months). In the cleanup-prep stage add fetch-logs (creates a gitlab-logs folder, runs \"${SRC_PATH}/scripts/deploy/fetch-cluster-logs\", always uploads \"ansible/gitlab-logs\" as an artifact for one week, allows failure, and runs on triggers), and in the cleanup stage add terraform-destroy (runs \"${SRC_PATH}/scripts/deploy/deprovision-cluster\", is delayed by one day, runs only on triggers, and has no artifacts).",
+  "tags": [
+    "ansible",
+    "terraform",
+    "gitlab-qa",
+    "shellcheck",
+    "docker",
+    "ci-pipeline"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_17238",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 956,
+  "description": "Create a GitLab CI pipeline using the docker:latest image with a docker:dind service and define the variables DOCKER_DRIVER, EXTRA_BAZEL_ARGS, TAG, TAG_MAJOR, TAG_MINOR, VCS_REF and VERSION as in the YAML. Add a single stage called build and a job named image-build that runs in this stage. In the image-build job execute the exact script commands: docker build --build-arg BUILD_DATE=${BUILD_DATE} --build-arg VCS_REF=${VCS_REF} --build-arg VERSION=${VERSION} --build-arg \"EXTRA_BAZEL_ARGS=${EXTRA_BAZEL_ARGS}\" --rm -t smizy/keras:${TAG} .; docker images | grep keras; docker login -u $DOCKER_USER -p $DOCKER_PASS; docker tag smizy/keras:${TAG} smizy/keras; docker tag smizy/keras:${TAG} smizy/keras:${TAG_MINOR}; docker push smizy/keras:${TAG}; docker push smizy/keras:${TAG_MINOR}; docker push smizy/keras:latest; docker logout; apk --no-cache add curl; curl -X POST 'https://hooks.microbadger.com/images/smizy/keras/pyM26dwHzHStGaBNdc2xQpQI-EI='; and only the build stage is defined. This pipeline builds the Docker image with the provided build arguments, tags it with multiple versions, pushes all tags to Docker Hub, installs curl, and notifies Microbadger via webhook.",
+  "tags": [
+    "docker",
+    "docker-dind",
+    "docker-hub",
+    "microbadger",
+    "apk",
+    "ci"
+  ]
+}

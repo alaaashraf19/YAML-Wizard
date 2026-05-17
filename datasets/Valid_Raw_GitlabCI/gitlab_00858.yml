@@ -1,0 +1,52 @@
+.tox:
+  before_script:
+  - pip install tox
+  image: python:latest
+  script:
+  - tox
+  variables:
+    TOXENV: py
+before_script:
+- python -V
+black:
+  extends: .tox
+  variables:
+    TOXENV: black
+flake8:
+  extends: .tox
+  variables:
+    TOXENV: flake8
+isort:
+  extends: .tox
+  variables:
+    TOXENV: isort
+pages:
+  artifacts:
+    paths:
+    - public
+  image: python:latest
+  only:
+  - master
+  script:
+  - pip install sphinx sphinx-rtd-theme
+  - cd doc ; make html
+  - mv build/html/ ../public/
+run:
+  artifacts:
+    paths:
+    - dist/*.whl
+  extends: test
+  script:
+  - python setup.py bdist_wheel
+  - pip install dist/*
+test:
+  extends: .tox
+  image: $IMAGE
+  parallel:
+    matrix:
+    - IMAGE:
+      - python:3.6
+      - python:3.7
+      - python:3.8
+      - python:3.9
+      - python:3.10

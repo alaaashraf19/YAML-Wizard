@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_17264",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 774,
+  "description": "Create a GitLab CI pipeline with stages build, test, and deploy. In the build stage add a build job that runs ./scripts/build and archives ./site.tgz as an artifact that expires in one week on success. In the test stage add dev, my, qa, and uat jobs that each run ./scripts/deploy $CI_JOB_NAME (or $GITLAB_USER_LOGIN for my) followed by ./scripts/test with the same variable, where dev, my, and qa are manual, and uat runs only on the master branch. In the deploy stage add a prod job that runs ./scripts/deploy $CI_JOB_NAME and ./scripts/test $CI_JOB_NAME, is manual, and only runs on the master branch. Add a pages job that runs ./pages and publishes the public/ directory as an artifact.",
+  "tags": [
+    "build",
+    "test",
+    "deploy",
+    "manual",
+    "pages",
+    "gitlab-ci"
+  ]
+}

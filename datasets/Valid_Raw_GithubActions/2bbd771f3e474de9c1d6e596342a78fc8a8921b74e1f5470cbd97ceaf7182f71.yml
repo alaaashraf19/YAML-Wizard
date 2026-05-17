@@ -1,0 +1,14 @@
+name: CI on main branch
+
+on:
+  push:
+    branches: [$default_branch]
+  pull_request:
+    branches: [$default_branch]
+
+jobs:
+  lint:
+    uses: ./.github/workflows/lint.yaml
+
+  test:
+    uses: ./.github/workflows/test.yaml

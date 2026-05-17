@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_10805",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 562,
+  "description": "Create a GitLab CI pipeline with a single stage called tests. Add a python2.7 job that uses the python:2.7 Docker image, runs pip install -r dev_requirements.txt in before_script and then executes nosetests --with-coverage --cover-package=pyOutlook. Add a python3.5 job that uses the python:3.5 image, runs the same pip install command before_script and then runs nosetests --with-coverage --cover-package=pyOutlook. Add a python3.6 job that uses the python:3.6 image, also runs pip install -r dev_requirements.txt before_script and then nosetests --with-coverage --cover-package=pyOutlook. No caches, artifacts, or conditional rules are defined.",
+  "tags": [
+    "python-2.7",
+    "python-3.5",
+    "python-3.6",
+    "nosetests",
+    "coverage",
+    "gitlab-ci"
+  ]
+}

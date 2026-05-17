@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_00224",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 183,
+  "description": "Create a GitLab CI pipeline with a single job named pages that runs in the deploy stage using the node:latest Docker image. Configure the job to run only on the master branch. In the script execute the exact commands: npm ci, npm run build, mv public public-vue, and mv dist public. Publish the public directory as a pages artifact by setting artifacts paths to public.",
+  "tags": [
+    "node",
+    "npm",
+    "pages",
+    "deploy",
+    "master"
+  ]
+}

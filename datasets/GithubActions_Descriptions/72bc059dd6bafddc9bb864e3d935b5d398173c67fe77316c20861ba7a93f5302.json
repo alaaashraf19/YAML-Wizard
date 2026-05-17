@@ -1,0 +1,16 @@
+{
+  "sha": "72bc059dd6bafddc9bb864e3d935b5d398173c67fe77316c20861ba7a93f5302",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3282,
+  "description": "Create a nightly GitHub Actions workflow named nightly-opensuse that runs on a scheduled cron job and allows manual dispatch. The workflow should set up an ubuntu-latest environment with an opensuse/leap container, install dependencies, prepare the source code, build and install Calamares using cmake and make, and send a notification on success or failure to a Matrix room.",
+  "tags": [
+    "opensuse",
+    "calamares",
+    "cmake",
+    "make",
+    "nightly",
+    "github-actions",
+    "matrix-notify"
+  ]
+}

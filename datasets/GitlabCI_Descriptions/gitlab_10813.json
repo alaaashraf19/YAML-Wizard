@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_10813",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 267,
+  "description": "Create a GitLab CI pipeline that uses the alpine:latest Docker image. Define a deploy stage with a pages job that runs the exact shell commands: mkdir public, ln -s slides.html index.html, and find -maxdepth 1 -not -path '*.git*' -not -path './public*' -not -path '.' -exec mv '{}' public \\; to move all top‑level files except .git and the public directory into public. The job should publish the public/ directory as a GitLab Pages artifact. Configure the pages job to run only on the master branch.",
+  "tags": [
+    "alpine",
+    "gitlab-pages",
+    "deploy",
+    "artifact",
+    "static-site"
+  ]
+}

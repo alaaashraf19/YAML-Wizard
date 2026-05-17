@@ -1,0 +1,14 @@
+{
+  "sha": "497b2c587f9c5e40734e5afae3a59893245667ffd954bd5d98b7f5125ab3f4b8",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2518,
+  "description": "Create a GitHub Actions workflow named Standard Build and Test that runs on manual dispatch, pull requests to any branch except when specific paths are modified, and push events to the develop branch excluding certain paths. The workflow uses an ubuntu-latest environment and runs a matrix of jobs with different combinations of pymoab, dagmc, openmc, and hdf5 configurations. Each job uses a custom container image, checks out the repository, sets up environment variables based on the matrix configuration, builds PyNE with custom flags, and runs tests using a travis-run-tests.sh script.",
+  "tags": [
+    "python",
+    "test",
+    "build",
+    "matrix",
+    "github-actions"
+  ]
+}

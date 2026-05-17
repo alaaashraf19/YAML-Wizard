@@ -1,0 +1,16 @@
+{
+  "sha": "995882bf496377ca45aa0a6a575b141ae579f8fecbf90178ab5945e3129198d5",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 11813,
+  "description": "Create a GitHub Actions workflow for C++ linting and unit testing. The workflow should trigger on pull requests to specific branches and allow manual triggering. It should have multiple jobs for linting C++ code, testing rdsn with different sanitizers (Release, ASAN, LSAN, UBSAN), and testing Pegasus. Each job should run on an ubuntu-latest environment with a specific container image and perform steps like checking out code, rebuilding third-parties, compiling, and unit testing.",
+  "tags": [
+    "cpp",
+    "github-actions",
+    "linting",
+    "unit-testing",
+    "asan",
+    "lsan",
+    "ubsan"
+  ]
+}

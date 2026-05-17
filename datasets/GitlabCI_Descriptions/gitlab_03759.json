@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_03759",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 289,
+  "description": "Create a GitLab CI pipeline that uses the miktex/miktex Docker image and defines a single build stage named compile-pdfs. In the compile-pdfs job, run a before_script that moves all project files into /miktex/work, then execute the script commands: cd /miktex/work and bash compile.sh, and finally run an after_script that changes to /miktex/work and copies the Bin directory back to the project directory. The job should publish an artifact containing the Bin/ directory, retained for 60 days. No caches, services, or conditional rules are required.",
+  "tags": [
+    "miktex",
+    "pdf",
+    "latex",
+    "compile",
+    "gitlab-ci"
+  ]
+}

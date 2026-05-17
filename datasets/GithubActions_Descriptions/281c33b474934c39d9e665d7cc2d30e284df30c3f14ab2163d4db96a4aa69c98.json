@@ -1,0 +1,16 @@
+{
+  "sha": "281c33b474934c39d9e665d7cc2d30e284df30c3f14ab2163d4db96a4aa69c98",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5878,
+  "description": "Create a GitHub Actions workflow named cmake that runs on push and pull request events. The workflow should have multiple jobs for different platforms: linux, macos, mingw32-cross, mingw64-cross, and windows. Each job should check out the repository, set up dependencies, configure, build, and install using cmake. The linux job should run on multiple debian and ubuntu containers, the macos job on macos-latest with different frameworks options, and the mingw jobs on multiple debian and ubuntu containers with mingw-w64. The build artifacts should be uploaded for each job.",
+  "tags": [
+    "cmake",
+    "cross-platform",
+    "ubuntu",
+    "debian",
+    "macos",
+    "mingw",
+    "windows"
+  ]
+}

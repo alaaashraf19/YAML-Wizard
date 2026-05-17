@@ -1,0 +1,75 @@
+only_serial:
+  image: python:latest
+  script:
+  - apt update -q
+  - apt install -qy libkim-api-dev pkg-config cmake gfortran
+  - kim-api-collections-management install user `cat gitlab-ci-openkim-models.txt`
+  - cd ..
+  - echo $PWD
+  - python --version
+  - pkg-config --version
+  - python -m pip install --upgrade pip
+  - python -m pip install pytest
+  - export PATH=$PATH:$HOME/.local/bin
+  - git clone https://gitlab.com/ase/ase.git
+  - cd ase
+  - python -m pip install --user .
+  - echo $PATH
+  - cd $CI_PROJECT_DIR
+  - python -m pip install --user --verbose .
+  - ls -lh $HOME/.local/bin
+  - cd Python/asap3/test
+  - python --version
+  - pytest -v --slow
+  - cd $CI_PROJECT_DIR/Test
+  - python OpenKIM_EMT_GitLab_CI.py
+py3.9_pypi_ase:
+  image: python:3.9
+  script:
+  - apt-get update -qy
+  - apt-get install -qy openmpi-bin libopenmpi-dev
+  - cd ..
+  - echo $PWD
+  - python --version
+  - export PATH=$PATH:$HOME/.local/bin
+  - python -m pip install ase
+  - python -m pip install pytest
+  - echo $PATH
+  - cd $CI_PROJECT_DIR
+  - python -m pip install --user .
+  - ls -lh $HOME/.local/bin
+  - cd Python/asap3/test
+  - python --version
+  - pytest -v
+  - export OMPI_MCA_btl_vader_single_copy_mechanism=none
+  - mpirun --allow-run-as-root --oversubscribe -np 2 pytest -v
+  - cd $CI_PROJECT_DIR/Test
+  - mpirun --allow-run-as-root --oversubscribe -np 2 python parallel/ase_before_asap.py
+py_latest_development_ase:
+  image: python:latest
+  script:
+  - apt update -q
+  - apt install -qy openmpi-bin libopenmpi-dev libkim-api-dev pkg-config cmake
+  - kim-api-collections-management install user `cat gitlab-ci-openkim-models.txt`
+  - cd ..
+  - echo $PWD
+  - python --version
+  - pkg-config --version
+  - python -m pip install --upgrade pip
+  - python -m pip install pytest
+  - export PATH=$PATH:$HOME/.local/bin
+  - git clone https://gitlab.com/ase/ase.git
+  - python -m pip install --user ase/
+  - echo $PATH
+  - cd $CI_PROJECT_DIR
+  - python -m pip install --user --verbose .
+  - ls -lh $HOME/.local/bin
+  - python Test/python_dot_h_first.py . --compiler=mpicxx --exclude OpenKIMexport
+  - cd Python/asap3/test
+  - python --version
+  - pytest -v
+  - export OMPI_MCA_btl_vader_single_copy_mechanism=none
+  - mpirun --allow-run-as-root --oversubscribe -np 2 pytest -v --slow
+  - cd $CI_PROJECT_DIR/Test
+  - mpirun --allow-run-as-root --oversubscribe -np 2 python parallel/ase_before_asap.py
+  - python OpenKIM_EMT_GitLab_CI.py

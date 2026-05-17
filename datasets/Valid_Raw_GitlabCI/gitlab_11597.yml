@@ -1,0 +1,78 @@
+build-api-image:
+  image: docker:latest
+  script:
+  - docker login -u gitlab-ci-token -p "$CI_BUILD_TOKEN" "$CI_REGISTRY"
+  - cd ask-jocko-api
+  - docker build -t "$CI_REGISTRY_IMAGE/api:$CI_COMMIT_REF_NAME" .
+  - docker push "$CI_REGISTRY_IMAGE/api:$CI_COMMIT_REF_NAME"
+  services:
+  - docker:dind
+  stage: build
+build-service-image:
+  image: docker:latest
+  script:
+  - docker login -u gitlab-ci-token -p "$CI_BUILD_TOKEN" "$CI_REGISTRY"
+  - cd twit-service
+  - docker build -t "$CI_REGISTRY_IMAGE/twit-service:$CI_COMMIT_REF_NAME" .
+  - docker push "$CI_REGISTRY_IMAGE/twit-service:$CI_COMMIT_REF_NAME"
+  services:
+  - docker:dind
+  stage: build
+build-ui-image:
+  image: docker:latest
+  script:
+  - docker login -u gitlab-ci-token -p "$CI_BUILD_TOKEN" "$CI_REGISTRY"
+  - cd UI-node
+  - docker build -t "$CI_REGISTRY_IMAGE/ui:$CI_COMMIT_REF_NAME" .
+  - docker push "$CI_REGISTRY_IMAGE/ui:$CI_COMMIT_REF_NAME"
+  services:
+  - docker:dind
+  stage: build
+image: starefossen/ruby-node:latest
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - mkdir public
+  - cd UI-coming-soon
+  - bundle install
+  - bundle exec jekyll build -d public
+  - mv public/* ../public
+  stage: deploy
+prepare:
+  script:
+  - echo 'Prepare jobs'
+  stage: setup
+stages:
+- setup
+- test
+- build
+- deploy
+start-deploy:
+  script:
+  - echo 'Deploy started'
+  stage: deploy
+  variables:
+    GIT_CHECKOUT: 'false'
+test:jekyll:
+  artifacts:
+    paths:
+    - UI-coming-soon/test
+  except:
+  - master
+  script:
+  - cd UI-coming-soon
+  - bundle install
+  - bundle exec jekyll build -d test
+  stage: test
+test:node:
+  script:
+  - echo 'Run tests job'
+  stage: test
+variables:
+  APP_NAME: notset
+  JEKYLL_ENV: production
+  NODE_ENV: test

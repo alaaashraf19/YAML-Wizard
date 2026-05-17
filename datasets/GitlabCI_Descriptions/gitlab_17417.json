@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_17417",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2941,
+  "description": "Create a GitLab CI pipeline that runs a global before_script installing sudo, ssh, git, upgrading apt, installing python-catkin-tools, build-essential and libeigen3-dev, then creates a workspace directory and clones the srrg_hbst repository. Define a single build stage with eight jobs. In catkin_ubuntu_16_04_ros_kinetic_debug (image osrf/ros:kinetic-desktop-full-xenial) install libqglviewer-dev, link the srrg_hbst_examples source, and run catkin build srrg_hbst_examples -DCMAKE_BUILD_TYPE=DEBUG; the catkin_ubuntu_16_04_ros_kinetic_release job repeats the same steps with -DCMAKE_BUILD_TYPE=RELEASE. The catkin_ubuntu_18_04_ros_melodic_debug and catkin_ubuntu_18_04_ros_melodic_release jobs use the osrf/ros:melodic-desktop-full-bionic image, install libqglviewer-dev-qt5, link the source, and run catkin build with DEBUG or RELEASE respectively. The make_ubuntu_16_04_ros_kinetic_debug and make_ubuntu_16_04_ros_kinetic_release jobs (kinetic image) install libqglviewer-dev, set HBST_ROOT, create a build directory under /builds/srrg-software/srrg_hbst_examples, run cmake .. with DEBUG or RELEASE, then make -j1; the make_ubuntu_18_04_ros_melodic_debug and make_ubuntu_18_04_ros_melodic_release jobs perform the same steps using libqglviewer-dev-qt5 on the melodic image. No caches, artifacts, or conditional rules are defined.",
+  "tags": [
+    "ros",
+    "catkin",
+    "cmake",
+    "make",
+    "kinetic",
+    "melodic",
+    "ubuntu-16-04",
+    "ubuntu-18-04"
+  ]
+}

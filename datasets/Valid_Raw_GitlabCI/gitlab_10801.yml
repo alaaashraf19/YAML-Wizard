@@ -1,0 +1,15 @@
+before_script:
+- apt-get update -qy
+- apt-get install -y nodejs
+- bundle install --path vendor
+cache:
+  paths:
+  - vendor/
+image: ruby:2.1
+pages:
+  artifacts:
+    paths:
+    - public
+  script:
+  - bundle exec jekyll build -d public/
+  stage: deploy

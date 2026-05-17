@@ -1,0 +1,16 @@
+{
+  "sha": "54fa405328dd469c968d8d8eb9feaa45cdbf6531e0fec86b7f4f708ec3c6dbdd",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1862,
+  "description": "Create a GitHub Actions workflow named CI: Build Test that runs on push and pull request events. Use a matrix strategy to build and test on windows-latest, ubuntu-latest, and macos-latest environments with Qt 5.15.2. For each OS, check out the repository with submodules, set up the Qt environment, download and configure clang-tidy if necessary, build the project with cmake, and upload the resulting binary as an artifact.",
+  "tags": [
+    "qt",
+    "cmake",
+    "clang-tidy",
+    "multi-os",
+    "ci",
+    "build",
+    "test"
+  ]
+}

@@ -1,0 +1,158 @@
+name: generate bundles
+
+on: [push]
+
+jobs:
+  build-win:
+    name: build windows packages
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        architecture: ["x64"]
+        ai_ready: [0, 1]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Put current date into a variable
+        run: |
+          $DATE=& Get-Date -format yyyy-MM-dd
+          echo "DATE=$DATE" >> $env:GITHUB_ENV
+
+      - name: Put current commit hash in a variable
+        run: |
+          $COMMIT=$(git rev-parse HEAD)
+          echo "COMMIT=$COMMIT" >> $env:GITHUB_ENV
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: 3.12
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+
+      - name: install venv and sync dependencies
+        run: |
+          uv sync --all-extras
+
+      - name: Get InVesalius version
+        run: |
+          $INVESALIUS_VERSION=$(uv run python -c "import importlib.metadata; print(importlib.metadata.version('invesalius'))")
+          echo "INVESALIUS_VERSION=$INVESALIUS_VERSION" >> $env:GITHUB_ENV
+
+      - name: copy .pyd files to invesalius_cy
+        run: |
+          Copy-Item -Path invesalius_cy\Release\* -Destination invesalius_cy -Recurse -Force
+
+      - name: Download mandible ai weight
+        if: ${{ matrix.ai_ready == 1 }}
+        uses: suisei-cn/actions-download-file@818d6b7dc8fe73f2f924b6241f2b1134ca1377d9
+        with:
+          url: "https://raw.githubusercontent.com/invesalius/weights/main/mandible_ct/mandible_jit_ct.pt"
+          target: ./ai/mandible_jit_ct/
+
+      - name: Download cranioplasty binary ai weight
+        if: ${{ matrix.ai_ready == 1 }}
+        uses: suisei-cn/actions-download-file@818d6b7dc8fe73f2f924b6241f2b1134ca1377d9
+        with:
+          url: "https://raw.githubusercontent.com/invesalius/weights/main/cranioplasty_jit_ct_binary/cranioplasty_jit_ct_binary.pt"
+          target: ./ai/cranioplasty_jit_ct_binary/
+
+      - name: Download cranioplasty gray ai weight
+        if: ${{ matrix.ai_ready == 1 }}
+        uses: suisei-cn/actions-download-file@818d6b7dc8fe73f2f924b6241f2b1134ca1377d9
+        with:
+          url: "https://raw.githubusercontent.com/invesalius/weights/main/cranioplasty_jit_ct_gray/cranioplasty_jit_ct_gray.pt"
+          target: ./ai/cranioplasty_jit_ct_gray/
+
+      - name: Download trachea ai weight
+        if: ${{ matrix.ai_ready == 1 }}
+        uses: suisei-cn/actions-download-file@818d6b7dc8fe73f2f924b6241f2b1134ca1377d9
+        with:
+          url: "https://github.com/tfmoraes/deep_trachea_torch/releases/download/v1.0/weights.pt"
+          target: ./ai/trachea_ct/
+
+      - name: Fix trachea name ai weight
+        if: ${{ matrix.ai_ready == 1 }}
+        run: |
+          move ./ai/trachea_ct/weights.pt ./ai/trachea_ct/trachea_ct.pt
+
+      - name: Download brain ai weight
+        if: ${{ matrix.ai_ready == 1 }}
+        uses: suisei-cn/actions-download-file@818d6b7dc8fe73f2f924b6241f2b1134ca1377d9
+        with:
+          url: "https://github.com/tfmoraes/deepbrain_torch/releases/download/v1.1.0/weights.pt"
+          target: ./ai/brain_mri_t1/
+
+      - name: Fix brain name ai weight
+        if: ${{ matrix.ai_ready == 1 }}
+        run: |
+          move ./ai/brain_mri_t1/weights.pt ./ai/brain_mri_t1/brain_mri_t1.pt
+
+      - name: Generate InVesalius .exe file
+        run: |
+          cp ./bundle_tools/win/app.spec ./  
+          uv run pyinstaller app.spec --clean --noconfirm
+          mkdir installer
+
+      - name: Generate InVesalius installer - win64 ai-ready build
+        run: ISCC.exe /Oinstaller /F"invesalius-3.1_nightly_ai-ready_win64" /DMyAppVersion=${{ env.INVESALIUS_VERSION }} ./bundle_tools/win/generate_installer.iss
+
+      - name: Generate InVesalius installer - win64 normal build
+        run: ISCC.exe /Oinstaller /F"invesalius-3.1_nightly_win64" /DMyAppVersion=${{ env.INVESALIUS_VERSION }} ./bundle_tools/win/generate_installer.iss
+
+      - name: Show files
+        run: |
+          cd ./installer
+          dir
+      - name: Upload artifact of package normal file
+        if: ${{ matrix.ai_ready == 0}}
+        uses: actions/upload-artifact@v4
+        with:
+          overwrite: true
+          name: invesalius_package_exe_normal
+          retention-days: 2
+          path: ./installer/*.exe
+
+      - name: Upload artifact of package ai-ready file
+        if: ${{ matrix.ai_ready == 1}}
+        uses: actions/upload-artifact@v4
+        with:
+          overwrite: true
+          name: invesalius_package_exe_ai-ready
+          retention-days: 2
+          path: ./installer/*.exe
+
+  publish_packages:
+    name: publish packages
+    needs: build-win
+    runs-on: windows-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: invesalius_package_exe_normal
+          path: ./
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: invesalius_package_exe_ai-ready
+          path: ./
+
+      - name: Message
+        run: |
+          dir
+      - name: Update Nightly Release
+        uses: andelf/nightly-release@main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: nightly
+          name: "Nightly"
+          draft: false
+          prerelease: true
+          body: |
+            This is a nightly release InVesalius.
+            It's unstable compared to the official releases, **use it with caution**!
+          files: |
+            ./invesalius-3.1_nightly_ai-ready_win64.exe
+            ./invesalius-3.1_nightly_win64.exe

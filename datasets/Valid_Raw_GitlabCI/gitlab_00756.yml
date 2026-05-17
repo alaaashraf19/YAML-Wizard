@@ -1,0 +1,27 @@
+before_script:
+- /usr/local/bin/install-quicklisp
+- for asd in *.asd ; do ln -s "$(readlink -f "$asd")" /root/quicklisp/local-projects/
+  ; done
+ccl:
+  image: clfoundation/ccl:latest
+  script:
+  - echo "$INVOCATION" | ccl
+  variables:
+    EXIT: (ccl:quit 1)
+sbcl:
+  image: clfoundation/sbcl:latest
+  script:
+  - echo "$INVOCATION" | sbcl --disable-debugger
+  variables:
+    EXIT: (sb-ext:exit :code 1)
+stages:
+- test
+variables:
+  DEPENDENCIES: (ql:quickload (list "cl-json" "alexandria" "closer-mop" "local-time"
+    "fiveam"))
+  INVOCATION: '(progn (ql:quickload :cl-json-object) $DEPENDENCIES (declaim (optimize
+    (debug 3) (safety 3))) (handler-bind ((warning (lambda (e) (format t "~A~%" e)
+    (invoke-restart (quote muffle-warning)))) (t (lambda (e) (format t "Error: ~A~%Exiting~%"
+    e) (finish-output) $EXIT))) $TEST_COMMAND))'
+  QUICKLISP_ADD_TO_INIT_FILE: 'true'
+  TEST_COMMAND: (asdf:operate (quote asdf:test-op) :cl-json-object)

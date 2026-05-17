@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_10334",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 562,
+  "description": "Create a GitLab CI pipeline using the ruby:2.5.1 Docker image with a cache of vendor/ruby and a before_script that runs ruby -v, apt-get update -q && apt-get install nodejs -yqq, gem install bundler --no-ri --no-rdoc, and bundle install -j $(nproc) --path vendor. Define a test stage containing an rspec job that executes bundle exec rspec spec, uses the redis:latest service, and sets the REDIS_URL variable to redis://redis:6379. Add a rubocop job in the same test stage that runs bundle exec rubocop. Include a deploy job of type deploy targeting the production environment that runs gem install dpl followed by dpl --provider=heroku --app=$HEROKU_APP_NAME --api-key=$HEROKU_PRODUCTION_KEY.",
+  "tags": [
+    "ruby",
+    "rspec",
+    "rubocop",
+    "redis",
+    "heroku",
+    "dpl",
+    "cache",
+    "deploy"
+  ]
+}

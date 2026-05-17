@@ -1,0 +1,16 @@
+{
+  "sha": "e1afa2d911727f59d39f72743a77c6150dbd9464191b4028996cf739f39c1066",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5307,
+  "description": "Create a GitHub Actions workflow named build that runs on push events. The workflow has two jobs: one for Windows and one for Linux. The Windows job runs on a Windows 2022 environment, checks out the repository, creates and builds DX11 and DX12 projects, and clones various plugins. The Linux job runs on an Ubuntu 20.04 environment, checks out the repository, installs dependencies, downloads 3rd-party libraries, and builds the project using gmake.",
+  "tags": [
+    "windows",
+    "linux",
+    "gmake",
+    "msbuild",
+    "plugins",
+    "3rdparty",
+    "build"
+  ]
+}

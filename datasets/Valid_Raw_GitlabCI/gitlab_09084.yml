@@ -1,0 +1,27 @@
+.if-security-release-release-preparation:
+  if: ($CI_PIPELINE_SOURCE =~ /^(pipeline|web|api)$/) && ($SECURITY_RELEASE_PIPELINE
+    =~ /^(release_preparation|true)$/)
+.security-release-release-preparation-base:
+  extends: .common-job-setup
+  needs:
+  - security_release_release_preparation:start
+  rules:
+  - if: ($CI_PIPELINE_SOURCE =~ /^(pipeline|web|api)$/) && ($SECURITY_RELEASE_PIPELINE
+      =~ /^(release_preparation|true)$/)
+  stage: security_release:release_preparation
+security_release_release_preparation:blog_post:
+  extends:
+  - .security-release-release-preparation-base
+  - .common-ci-tokens
+  script:
+  - bundle exec rake 'release:patch_blog_post'
+security_release_release_preparation:start:
+  extends: .common-job-setup
+  needs: []
+  rules:
+  - if: ($CI_PIPELINE_SOURCE =~ /^(pipeline|web|api)$/) && ($SECURITY_RELEASE_PIPELINE
+      =~ /^(release_preparation|true)$/)
+  script:
+  - bundle exec rake 'security:release_preparation:start'
+  stage: security_release:release_preparation:start
+  when: manual

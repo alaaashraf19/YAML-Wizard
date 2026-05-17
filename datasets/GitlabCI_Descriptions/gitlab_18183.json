@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_18183",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 245,
+  "description": "Create a GitLab CI pipeline that uses the tsgkadot/sphinx-plantuml:latest Docker image. Define a single stage named build. Add a pages job that runs in the build stage, is tagged with docker, executes the shell commands \"pip install -r requirements.txt -U\" and \"sphinx-build -b html ./source public\", and publishes the resulting public/ directory as a GitLab Pages artifact that expires after one week. No services, caches, or special rules are required.",
+  "tags": [
+    "sphinx",
+    "plantuml",
+    "gitlab-pages",
+    "docker",
+    "python"
+  ]
+}

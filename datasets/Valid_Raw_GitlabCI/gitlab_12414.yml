@@ -1,0 +1,27 @@
+before_script:
+- echo "before script"
+build_job1:
+  script:
+  - echo "build job1"
+  stage: build
+build_job2:
+  script:
+  - echo "build job2"
+  stage: build
+cleanup:
+  script:
+  - echo "clean up"
+  stage: clean
+deploy:
+  script:
+  - echo "deploy, password is $PASSWORD"
+  stage: build
+stages:
+- build
+- test
+- clean
+- deploy
+testing:
+  script:
+  - echo "testing envionment is $ENVIRONMENT"
+  stage: test

@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_06834",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1557,
+  "description": "Create a GitLab CI pipeline that uses the ruby:2.3 Docker image and defines four stages: build, test, staging, and production. In the build stage add a Buid job (tagged with docker) that runs `bundle install`, `rake set_git_tag`, `rake`, and `gem build jekyll-plantuml-url.gemspec`, then publishes all generated *.gem files as artifacts (expire in 1 week). In the test stage add a test job (docker) that installs `jekyll`, `bundler`, and `rake` via `gem install jekyll bundler rake`, extracts the built gem name and git tag version, installs the gem, creates a new Jekyll site, appends the gem with the derived version to the Gemfile, adds the gem to `_config.yml`, writes a simple PlantUML diagram to `index.md`, runs `bundle install` and `bundle exec jekyll build`. In the staging stage add a Release_Staging job (docker) that runs only for non‑branch pipelines, lists files, stores the *.gem files as artifacts, sets `GIT_STRATEGY=none`, and runs on the staging environment. In the production stage add a Release_Production job (docker) that depends on Release_Staging, runs only for tags and must be triggered manually, sets `GIT_STRATEGY=none`, creates a temporary `~/.gem/credentials` file containing the `$GEM_API_PUSH` secret, pushes the *.gem files with `gem push *.gem`, cleans up the credentials file, and fails the job if the push fails, running on the production environment.",
+  "tags": [
+    "ruby",
+    "bundler",
+    "rake",
+    "gem",
+    "jekyll",
+    "plantuml",
+    "docker",
+    "staging",
+    "production"
+  ]
+}

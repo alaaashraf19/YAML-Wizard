@@ -1,0 +1,74 @@
+centos:
+  allow_failure: true
+  before_script:
+  - sudo yum install -y m4
+  image: ocaml/opam:centos
+  script: export OC_NOTEST=true; ./gitlab-ci.sh system
+  stage: real
+debian:
+  allow_failure: true
+  before_script:
+  - sudo apt-get update && sudo apt-get install -y m4
+  image: ocaml/opam:debian
+  script: export OC_NOTEST=true; ./gitlab-ci.sh system
+  stage: real
+fedora:
+  allow_failure: true
+  before_script:
+  - sudo dnf install -y m4
+  image: ocaml/opam:fedora
+  script: export OC_NOTEST=true; ./gitlab-ci.sh system
+  stage: real
+ocaml_402:
+  allow_failure: true
+  before_script:
+  - sudo apk update && sudo apk add m4
+  image: ocaml/opam:alpine_ocaml-4.02.3
+  script: ./gitlab-ci.sh
+  stage: other_version
+ocaml_403:
+  allow_failure: false
+  before_script:
+  - sudo apk update && sudo apk add m4
+  image: ocaml/opam:alpine_ocaml-4.03.0
+  script: ./gitlab-ci.sh
+  stage: test
+ocaml_403_flambda:
+  allow_failure: true
+  before_script:
+  - sudo apk update && sudo apk add m4
+  image: ocaml/opam:alpine_ocaml-4.03.0_flambda
+  script: ./gitlab-ci.sh
+  stage: other_version
+ocaml_404:
+  allow_failure: true
+  before_script:
+  - sudo apk update && sudo apk add m4
+  image: ocaml/opam:alpine_ocaml-4.04.0
+  script: ./gitlab-ci.sh
+  stage: other_version
+ocaml_404_flambda:
+  allow_failure: true
+  before_script:
+  - sudo apk update && sudo apk add m4
+  image: ocaml/opam:alpine_ocaml-4.04.0_flambda
+  script: ./gitlab-ci.sh
+  stage: other_version
+opensuse:
+  allow_failure: true
+  before_script:
+  - sudo zypper --non-interactive up && sudo zypper --non-interactive in m4
+  image: ocaml/opam:opensuse
+  script: export OC_NOTEST=true; ./gitlab-ci.sh system
+  stage: real
+stages:
+- test
+- other_version
+- real
+ubuntu:
+  allow_failure: true
+  before_script:
+  - sudo apt-get update && sudo apt-get install -y m4
+  image: ocaml/opam:ubuntu
+  script: export OC_NOTEST=true; ./gitlab-ci.sh system
+  stage: real

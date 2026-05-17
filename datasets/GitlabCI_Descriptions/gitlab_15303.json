@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_15303",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 161,
+  "description": "Create a GitLab CI pipeline that uses the rust Docker image and defines a single stage called test. Add a job named test that runs in the test stage, executes the command cargo test, caches the target/ directory between runs, and uploads the compiled binary at target/debug/rust-client as an artifact. No additional services, variables, or rules are required.",
+  "tags": [
+    "rust",
+    "cargo",
+    "test",
+    "cache",
+    "artifact",
+    "gitlab-ci"
+  ]
+}

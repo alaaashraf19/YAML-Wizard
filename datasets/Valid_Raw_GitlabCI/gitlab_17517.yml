@@ -1,0 +1,55 @@
+.default:
+  before_script:
+  - ./gitlab-ci/setup.sh
+  cache:
+    key: $CI_BUILD_NAME
+    paths:
+    - vendor/bundle/
+  stage: test
+  variables:
+    BUNDLE_CACHE: vendor/bundle/
+pages:
+  artifacts:
+    paths:
+    - public
+  except:
+  - tags
+  extends: .default
+  image: ruby
+  only:
+  - master
+  script:
+  - bundle exec yard
+  stage: deploy
+stages:
+- test
+- deploy
+test:
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage/coverage.xml
+  coverage: /LOC \(([\d.]+)%\) covered/
+  extends: .default
+  image: $IMAGE
+  parallel:
+    matrix:
+    - IMAGE:
+      - ruby:2.1
+      - ruby:2.2
+      - ruby:2.3
+      - ruby:2.4
+      - ruby:2.5
+      - ruby:2.6
+      - ruby:2.7
+      - ruby:3.0
+      - ruby:3.1
+      - ruby:3.2
+      - ruby:3.3
+      - ruby:3.4
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  script:
+  - bundle exec rspec

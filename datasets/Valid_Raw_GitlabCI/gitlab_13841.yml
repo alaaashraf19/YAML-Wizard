@@ -1,0 +1,47 @@
+before_script:
+- corepack enable
+- yarn install --frozen-lockfile
+cache:
+  paths:
+  - node_modules/
+  - .yarn
+image: node:18
+pages:
+  artifacts:
+    paths:
+    - public
+  before_script:
+  - corepack enable
+  - yarn install --frozen-lockfile
+  only:
+  - main
+  script:
+  - yarn run build
+  - rm -rf public
+  - mv build public
+  stage: deploy
+update_stops_data:
+  before_script:
+  - corepack enable
+  - yarn install --frozen-lockfile
+  - which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )
+  - eval $(ssh-agent -s)
+  - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+  - mkdir -p ~/.ssh
+  - chmod 700 ~/.ssh
+  - ssh-keyscan gitlab.com >> ~/.ssh/known_hosts
+  - chmod 644 ~/.ssh/known_hosts
+  - git config --global user.email "ci@omgtransit.com"
+  - git config --global user.name "OMG Transit CI"
+  only:
+  - schedules
+  - web
+  script:
+  - yarn run update-stops
+  - git remote set-url origin git@gitlab.com:omgtransit/omgtransit.git
+  - git checkout $CI_COMMIT_REF_NAME
+  - git add src/static/transit_stops.json
+  - "if git diff --staged --quiet; then\n  echo \"No changes to stops data\"\nelse\n\
+    \  COMMIT_DATE=$(date '+%Y-%m-%d')\n  git commit -m \"Update stops data $COMMIT_DATE\
+    \ (CI) [skip ci]\"\n  git push origin $CI_COMMIT_REF_NAME\nfi\n"
+  stage: build

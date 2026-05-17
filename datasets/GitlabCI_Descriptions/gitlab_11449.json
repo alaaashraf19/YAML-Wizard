@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_11449",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1092,
+  "description": "Create a GitLab CI pipeline using the php:7-cli Docker image as the default and a composer:1.3.2 image for the build job. Define three stages: build, test, and deploy. In the build stage add a composer job that runs `composer install --no-interaction --ansi --prefer-dist --optimize-autoloader --ignore-platform-reqs`, stores the vendor/ directory as an artifact that expires in 24h, and uses the composer:1.3.2 image. In the test stage add a unit tests job that echoes 'Hello Nette Camp' and then echoes 'All tests passed!'. In the deploy stage add a dev job that installs ssh, creates and secures ~/.ssh, starts the ssh-agent, adds the $DEPLOYER_PRIVATE_KEY, and runs `vendor/bin/dep deploy $CI_ENVIRONMENT_SLUG --revision=\"$CI_COMMIT_SHA\"` targeting the dev environment at http://dev.nettecamp.entry.do, and add a prod job with the same script that runs only on the master branch and deploys to the prod environment at http://prod.nettecamp.entry.do.",
+  "tags": [
+    "php",
+    "composer",
+    "deployer",
+    "unit-tests",
+    "dev",
+    "prod",
+    "gitlab-ci"
+  ]
+}

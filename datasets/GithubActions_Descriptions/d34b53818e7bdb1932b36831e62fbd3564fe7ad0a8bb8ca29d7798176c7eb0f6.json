@@ -1,0 +1,15 @@
+{
+  "sha": "d34b53818e7bdb1932b36831e62fbd3564fe7ad0a8bb8ca29d7798176c7eb0f6",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3194,
+  "description": "Create a GitHub Actions workflow named 'CI: run TCMalloc test' that runs on push to master and main branches, on pull request open and synchronize, and on merge group checks requested, as well as on workflow dispatch with an optional debug input. The workflow checks for changed files, then tests with TCMalloc on an ubuntu-24.04 environment if code changes are detected or if the workflow is dispatched. It checks out the repository, sets up Bazel and Python with caching, installs dependencies, and runs C++ tests with tcmalloc.",
+  "tags": [
+    "tcmalloc",
+    "bazel",
+    "python",
+    "ubuntu",
+    "tests",
+    "ci"
+  ]
+}

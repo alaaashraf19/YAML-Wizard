@@ -1,0 +1,14 @@
+{
+  "sha": "174f0c3f241c756641893e9aa80ce6e59f4cfa59b3c444532050b03f2bab6c63",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 880,
+  "description": "Create a GitHub Actions workflow named Update hard-coded version that can be triggered manually. The workflow should run on an ubuntu-latest environment for branches matching refs/heads/hotfix/v* or refs/heads/release/v*. It checks out the repository using a provided token, extracts the version from the branch name, saves it to a file, and then commits and pushes the changes with an updated version message.",
+  "tags": [
+    "github-actions",
+    "versioning",
+    "workflow-dispatch",
+    "ubuntu",
+    "commit"
+  ]
+}

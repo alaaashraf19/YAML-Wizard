@@ -1,0 +1,45 @@
+before_script:
+- export APT_CACHE_DIR=`pwd`/apt-cache && mkdir -pv $APT_CACHE_DIR
+- apt-get update -yq && apt-get -o dir::cache::archives="$APT_CACHE_DIR" install -y
+  pkg-config libexiv2-dev
+- apt-get -o dir::cache::archives="$APT_CACHE_DIR" install -y libegl1-mesa libgl1-mesa-dev
+  libxss1
+- apt-get -o dir::cache::archives="$APT_CACHE_DIR" install -y lcov gcovr xvfb
+- export PKG_CONFIG_PATH="$(qmake -query QT_INSTALL_LIBS)/pkgconfig":${PKG_CONFIG_PATH}
+build_desktop:
+  artifacts:
+    paths:
+    - build/
+    - staging/
+  script:
+  - STAGING="$PWD/staging"
+  - export PKG_CONFIG_PATH="$STAGING/lib/pkgconfig:$PKG_CONFIG_PATH"
+  - cd libauthentication && mkdir build && cd build
+  - qmake PREFIX="$STAGING" CONFIG+=debug CONFIG+=nomake_tests ..
+  - make -j4 install
+  - cd ../..
+  - mkdir build
+  - cd build
+  - PREFIX="$STAGING" qmake CONFIG+=debug CONFIG+=coverage CONFIG+=desktop ..
+  - make -j4
+  stage: build
+cache:
+  key: apt-cache
+  paths:
+  - apt-cache/
+image: mardy/qt:5.9
+test_desktop:
+  artifacts:
+    paths:
+    - build/coverage-html/
+  dependencies:
+  - build_desktop
+  script:
+  - STAGING="$PWD/staging"
+  - export PKG_CONFIG_PATH="$STAGING/lib/pkgconfig:$PKG_CONFIG_PATH"
+  - find build | xargs touch
+  - cd build
+  - LD_LIBRARY_PATH="$STAGING/lib:$LD_LIBRARY_PATH" make coverage-html
+  stage: test
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive

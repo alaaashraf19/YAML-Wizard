@@ -1,0 +1,15 @@
+{
+  "sha": "7b9d34e715b0eb18fedeb7f70960b27b9bd6d5e4068190b78c3107bad780b9a8",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3403,
+  "description": "Create a scheduled GitHub Actions workflow named Test: chart that runs on weekdays at 21:00 and can be manually triggered. The workflow checks for repository activity within the last 24 hours and only proceeds with chart tests if the repository is active. It uses an ubuntu-latest environment to check out the repository, install dependencies, build OMNeT++ and INET, clone the INET media repository, run chart tests, and upload test results as artifacts.",
+  "tags": [
+    "github-actions",
+    "scheduled-workflow",
+    "ubuntu",
+    "omnetpp",
+    "inet",
+    "chart-tests"
+  ]
+}

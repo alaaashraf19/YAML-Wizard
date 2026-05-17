@@ -1,0 +1,16 @@
+{
+  "sha": "11037719219340b357877c8050f1e5c755e52699fe0f66ec7b88a6560b2cc43a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2891,
+  "description": "Create a GitHub Actions workflow named Tests that runs on push to master and on pull requests, excluding changes to documentation and certain files. Use a matrix strategy to run tests on multiple Python versions and environments, including Ubuntu and macOS. For each job, check out the code, set up Python, cache tox environments, install dependencies, and run unit tests with tox.",
+  "tags": [
+    "python",
+    "tests",
+    "matrix",
+    "ubuntu",
+    "macos",
+    "tox",
+    "codecov"
+  ]
+}

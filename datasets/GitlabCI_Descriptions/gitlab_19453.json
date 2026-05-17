@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_19453",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 987,
+  "description": "Create a GitLab CI pipeline using the node:11 Docker image with two stages: test and deploy. In the test stage add a test_all job that runs `yarn` then `yarn test`. In the deploy stage add three jobs: npm_canary, npm_latest, and npm_next. The npm_canary job runs only on the master branch, sets the npm auth token, runs `yarn`, `yarn build`, sets VERSION_HASH from the commit SHA and runs `node tools/versionHash`, then changes directory to npm/effector and publishes with `npm publish`, targeting the npm_canary environment at https://www.npmjs.com/package/@effector/canary. The npm_latest job also runs only on master, echoes a message with `echo \"publish npm latest\"`, runs `yarn`, sets the npm auth token, and publishes the latest version with `node tools/build publish latest` to the npm environment at https://www.npmjs.com/package/effector. The npm_next job runs only on master, is manual, echoes a message with `echo \"publish npm next\"`, runs `yarn`, sets the npm auth token, and publishes the next version with `node tools/build publish next` to the same npm environment.",
+  "tags": [
+    "node",
+    "yarn",
+    "npm",
+    "canary",
+    "latest",
+    "next",
+    "deploy",
+    "test"
+  ]
+}

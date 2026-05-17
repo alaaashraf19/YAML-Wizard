@@ -1,0 +1,19 @@
+{
+  "sha": "6adf713653e4fef49afee240c4c982f06023cb00ea546269c6da2552cb8c7e9d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 10177,
+  "description": "Create a GitHub Actions workflow named Build Python Package that runs on push, pull request, and workflow dispatch events. The workflow should have a single version 1.0.0rc4 and trigger three jobs: build-linux on ubuntu-latest, build-windows on windows-latest, and a temporarily disabled build-macos job. The linux job should checkout, create a Docker image, install LLVM 14.0, and build and upload wheel packages for Python 3.9 through 3.13. The windows job should set up Python, install build and other dependencies, build and repair wheel packages for Python 3.9 through 3.13, and upload them as artifacts.",
+  "tags": [
+    "python",
+    "github-actions",
+    "ci",
+    "build",
+    "package",
+    "docker",
+    "llvm",
+    "windows",
+    "ubuntu",
+    "macos"
+  ]
+}

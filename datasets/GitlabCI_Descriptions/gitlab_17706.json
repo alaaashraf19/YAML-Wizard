@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_17706",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 605,
+  "description": "Create a GitLab CI pipeline using the node:latest Docker image with a before_script that updates apt, installs rubygems and ruby-dev, and runs npm install, and caches the node_modules directory. Define three stages: build, test, and deploy. In the build stage add a client_build job that runs npm run build. In the test stage add a jest job that runs npm t and a lint job that runs npm run lint. In the deploy stage add a staging job that runs only on the master branch, executes gem install dpl and dpl --provider=heroku --app=staging-thebastedo --api-key=$HEROKU_KEY, and a production job that runs only on tags, executes gem install dpl and dpl --provider=heroku --app=thebastedo --api-key=$HEROKU_KEY.",
+  "tags": [
+    "node",
+    "npm",
+    "jest",
+    "lint",
+    "heroku",
+    "dpl",
+    "ruby"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_12686",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 441,
+  "description": "Create a GitLab CI pipeline that uses the jangrewe/gitlab-ci-android Docker image. Define two stages: build and test. In the build stage add a build job that runs the before_script commands `export GRADLE_USER_HOME=$(pwd)/.gradle`, `chmod +x ./gradlew`, `apt-get --quiet update --yes`, and `apt-get --quiet install --yes wget`, then executes `./gradlew assembleDebug` and publishes `app/build/outputs/apk/debug/app-debug.apk` as an artifact. Cache the `.gradle/` directory using the key `${CI_PROJECT_ID}`. In the test stage add a unitTests job that runs `./gradlew test`.",
+  "tags": [
+    "android",
+    "gradle",
+    "apk",
+    "unit-tests",
+    "gitlab-ci-android"
+  ]
+}

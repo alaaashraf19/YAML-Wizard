@@ -1,0 +1,16 @@
+{
+  "sha": "98fef3eb9e700e5b038ca475099757604e3bf781e62224d37880b814ff1b0155",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 9527,
+  "description": "Create a GitHub Actions workflow named GLideN64 that triggers on push, pull request, and workflow dispatch events. The workflow has three jobs: Linux, Windows, and Release. The Linux job runs on ubuntu-latest, checks out the repository, installs necessary packages, and builds GLideN64 for x64 Mupen64Plus-CLI and x64 Mupen64Plus-Qt. The Windows job runs on windows-latest, checks out the repository, sets up the environment, and builds GLideN64 for various Project64 and Mupen64Plus configurations. The Release job runs on ubuntu-latest, downloads artifacts from the Linux and Windows jobs, repackages them, and creates a release with the artifacts.",
+  "tags": [
+    "gliden64",
+    "mupen64plus",
+    "project64",
+    "ubuntu",
+    "windows",
+    "release",
+    "artifacts"
+  ]
+}

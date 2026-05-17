@@ -1,0 +1,71 @@
+.build:
+  script: &id001
+  - mvn $MAVEN_CLI_OPTS -P $PROFILE package
+  stage: build
+.main:
+  variables: &id002
+    PROFILE: main
+.neighborhood:
+  variables: &id003
+    PROFILE: neighborhood
+.probe:
+  variables: &id004
+    PROFILE: probe-station
+.shop:
+  variables: &id005
+    PROFILE: shop
+.test:
+  artifacts: &id006
+    paths:
+    - ProbeStationAgent/target/surefire-reports
+    when: always
+  script: &id007
+  - mvn $MAVEN_CLI_OPTS -P $PROFILE test
+  stage: test
+build:main:
+  script: *id001
+  stage: build
+  variables: *id002
+build:neighborhood:
+  script: *id001
+  stage: build
+  variables: *id003
+build:probe:
+  script: *id001
+  stage: build
+  variables: *id004
+build:shop:
+  script: *id001
+  stage: build
+  variables: *id005
+cache:
+  paths:
+  - $CI_PROJECT_DIR/.m2/repository/
+  - target/
+image: maven:latest
+stages:
+- build
+- test
+test:main:
+  artifacts: *id006
+  script: *id007
+  stage: test
+  variables: *id002
+test:neighborhood:
+  artifacts: *id006
+  script: *id007
+  stage: test
+  variables: *id003
+test:probe:
+  artifacts: *id006
+  script: *id007
+  stage: test
+  variables: *id004
+test:shop:
+  artifacts: *id006
+  script: *id007
+  stage: test
+  variables: *id005
+variables:
+  MAVEN_CLI_OPTS: ''
+  MAVEN_OPTS: -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository -DargLine="-Djdk.net.URLClassPath.disableClassPathURLCheck=true"

@@ -1,0 +1,15 @@
+{
+  "sha": "2d6b48ee9c8e0637079111b5bee4132bfdd26db2a90abf2e77344725a4b7d899",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3507,
+  "description": "Create a GitHub Actions workflow named Test package that runs on push, pull request, and workflow dispatch events. The workflow has three jobs: prepare, lint, and test. The prepare job creates a matrix of Python, Django, and database versions. The lint job checks code migrations and translations. The test job uses the matrix from prepare, sets up a Python environment, installs dependencies, runs tests with coverage, and uploads the coverage report to Codecov.",
+  "tags": [
+    "python",
+    "django",
+    "tests",
+    "coverage",
+    "codecov",
+    "github-actions"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_19216",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 452,
+  "description": "Create a GitLab CI pipeline with three jobs named test, staging, and production using the runner's default Docker image and no extra services. In the test job (default stage) run the exact commands: export DATABASE_URL=postgres://postgres:@postgres:5432/python-test-app, apt-get update -qy, apt-get install -y python-dev python-pip, and pip install -r requirements.txt. In the staging job (deploy stage) run apt-get update -qy, apt-get install -y ruby-dev, and gem install dpl, and configure it to run only on the master branch. In the production job (deploy stage) run the same three commands and configure it to run only on Git tags.",
+  "tags": [
+    "ruby",
+    "dpl",
+    "python",
+    "pip",
+    "postgres",
+    "gitlab-ci"
+  ]
+}

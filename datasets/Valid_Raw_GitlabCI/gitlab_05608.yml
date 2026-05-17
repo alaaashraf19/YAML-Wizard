@@ -1,0 +1,20 @@
+cache:
+  paths:
+  - node_modules/
+image: node:8
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - cd /builds/cn-ds/web-app
+  - npm install
+  - npm run build
+  - mkdir www
+  - mv public/* www/
+  - rm -R public
+  - mkdir public
+  - mv dist/* public/
+  stage: deploy

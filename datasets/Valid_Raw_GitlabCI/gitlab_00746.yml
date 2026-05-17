@@ -1,0 +1,11 @@
+deploy:
+  only:
+  - tags
+  script:
+  - pip install -U twine setuptools wheel
+  - python setup.py bdist_wheel
+  - twine upload -u $PYPI_USER -p $PYPI_PASS dist/*
+  stage: deploy
+image: python:3
+stages:
+- deploy

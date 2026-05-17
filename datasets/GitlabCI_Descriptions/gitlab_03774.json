@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_03774",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 348,
+  "description": "Create a GitLab CI pipeline that uses the continuumio/miniconda3 Docker image to build the Python package atomap version 0.0.7 defined by the given conda recipe. Define two stages, build and release, and cache the conda package directory at ~/.conda/pkgs. In the build stage add a build_package job that runs `conda install -y conda-build`, applies the `remove_setup_py_hyperspy.patch` from the source directory, executes `conda-build .` to produce a .tar.bz2 artifact, and always stores the built package as an artifact. In the release stage add a publish_anaconda job that runs `anaconda upload --user $ANACONDA_USER --token $ANACONDA_TOKEN dist/*.tar.bz2` and only triggers on git tags. Both jobs share the same image, inherit the cache, and the pipeline defines PACKAGE_NAME and PACKAGE_VERSION variables for the package metadata.",
+  "tags": [
+    "conda",
+    "python",
+    "atomap",
+    "package",
+    "gitlab-ci",
+    "anaconda"
+  ]
+}

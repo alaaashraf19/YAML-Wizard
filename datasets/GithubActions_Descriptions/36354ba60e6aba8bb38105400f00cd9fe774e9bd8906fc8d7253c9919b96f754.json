@@ -1,0 +1,14 @@
+{
+  "sha": "36354ba60e6aba8bb38105400f00cd9fe774e9bd8906fc8d7253c9919b96f754",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 10127,
+  "description": "Create a GitHub Actions workflow that builds and publishes Docker images for PyNE-CI. The workflow should trigger on manual dispatch and push to docker/* and .github/workflows/docker_publish.yml. It should build and push two Docker images to ghcr.io, cache Docker layers locally, and then build and push additional images with various combinations of pymoab, dagmc, openmc, and hdf5. Finally, it should test the images, and if the tests pass, copy the images from ghcr.io with :ci_testing tags to :latest and :stable tags.",
+  "tags": [
+    "docker",
+    "github-actions",
+    "pyne-ci",
+    "ubuntu",
+    "ghcr"
+  ]
+}

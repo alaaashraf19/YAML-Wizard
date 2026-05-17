@@ -1,0 +1,15 @@
+{
+  "sha": "1e1afee0b45246b8e7c951b79f46a39d6e373259ddbbeccfde862e112c430154",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1617,
+  "description": "Create a GitHub Actions workflow named CI that runs on push to the master branch and on pull requests to master. Use four jobs to build on different environments: build-linux on ubuntu-20.04, build-windows on windows-latest, build-emscripten on ubuntu-20.04 with emsdk, and build-macos on macos-latest. For each job, check out the repository with submodules, then build using cmake.",
+  "tags": [
+    "cmake",
+    "ci",
+    "ubuntu",
+    "windows",
+    "macos",
+    "emscripten"
+  ]
+}

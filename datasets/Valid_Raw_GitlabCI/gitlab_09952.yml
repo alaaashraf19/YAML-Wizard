@@ -1,0 +1,11 @@
+image: rust:latest
+stages:
+- test
+test:
+  script:
+  - export RUST_BACKTRACE=1
+  - apt-get update
+  - apt-get install -y protobuf-compiler libseccomp-dev llvm-dev libclang-dev clang
+    cmake gcc g++
+  - cargo test -- --test-threads=1
+  stage: test

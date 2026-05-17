@@ -1,0 +1,15 @@
+{
+  "sha": "1035850d880093729849cd6da506874e40d26182fcccdee7ef0bae3625029b71",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2740,
+  "description": "Create a GitHub Actions workflow named Release Linux that triggers on push events with any tag. The workflow should run on an ubuntu-16.04 environment, checking out the code, initializing submodules, installing Python 3.7 and Qt, building the project with CMake, determining the version and whether it's a beta release, creating an AppImage package, and archiving the full source code. Finally, release the AppImage and source archive as a draft GitHub release, with a prerelease flag based on the version.",
+  "tags": [
+    "linux",
+    "release",
+    "qt",
+    "cmake",
+    "appimage",
+    "github-release"
+  ]
+}

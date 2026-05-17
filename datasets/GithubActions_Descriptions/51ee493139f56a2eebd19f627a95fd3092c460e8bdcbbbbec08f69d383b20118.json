@@ -1,0 +1,15 @@
+{
+  "sha": "51ee493139f56a2eebd19f627a95fd3092c460e8bdcbbbbec08f69d383b20118",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3722,
+  "description": "Create a GitHub Actions workflow that runs on push, pull request, and merge group events, with concurrency control to cancel in-progress jobs. The workflow has two jobs: 'testcc' running on ubuntu-22.04 that checks out code, sets up Python 3.11, installs dependencies, and runs tests with matrix strategy for memory leak checking; and 'pass' that depends on 'testcc' and always passes.",
+  "tags": [
+    "c++",
+    "python",
+    "tests",
+    "ubuntu",
+    "concurrency",
+    "codecov"
+  ]
+}

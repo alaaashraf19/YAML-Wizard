@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_04474",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 227,
+  "description": "Create a GitLab CI pipeline with a deploy stage containing a pages job that runs only on the master branch. The pages job should execute the exact shell commands: mkdir -p .public/terraform/aws, cp terraform/aws/README.html .public/terraform/aws/, cp -Rf www/* .public, and mv .public public. It must publish the resulting public directory as a GitLab Pages artifact (paths: public) and use the default Docker image with no additional services. Ensure the job is limited to the master branch via an only rule.",
+  "tags": [
+    "pages",
+    "gitlab-pages",
+    "static-site",
+    "deploy"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_05764",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 325,
+  "description": "Create a GitLab CI pipeline with a single build stage and a global before_script that echoes the $CI_REGISTRY_IMAGE variable. Add an alpine-docker job that uses the alpine Docker image, runs ./setup.sh, and belongs to the build stage. Add a centos-docker job that uses the centos image, runs ./setup.sh, and belongs to the build stage. Add debian-docker and ubuntu-docker jobs that use the debian and ubuntu images respectively, each executing ./setup.sh in the build stage, with no caches, artifacts, or conditional rules.",
+  "tags": [
+    "alpine",
+    "centos",
+    "debian",
+    "ubuntu",
+    "docker",
+    "setup"
+  ]
+}

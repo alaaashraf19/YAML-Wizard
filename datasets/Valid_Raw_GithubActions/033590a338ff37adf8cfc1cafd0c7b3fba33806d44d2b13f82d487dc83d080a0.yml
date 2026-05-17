@@ -1,0 +1,26 @@
+name: repository-check
+
+on:
+  push:
+
+jobs:
+  code-style:
+    runs-on: ubuntu-20.04
+
+    steps:
+
+    - name: Install dependencies
+      run: |
+        sudo apt update
+        sudo apt install clang-format
+
+    - name: Checkout BioDynaMo
+      uses: actions/checkout@v3
+
+    - name: Run clang-format code style check
+      run: |
+        ./util/housekeeping/run-clang-format.sh $(pwd) clang-format 0 $(./util/housekeeping/get-all-src-files.sh .)
+
+    - name: Check if Copyright information is correct
+      run: |
+        ./util/housekeeping/check-copyright.sh util/housekeeping/copyright_cpp.txt $(util/housekeeping/get-all-src-files.sh .)

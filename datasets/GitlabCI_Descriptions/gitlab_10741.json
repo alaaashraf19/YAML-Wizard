@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_10741",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 222,
+  "description": "Create a GitLab CI pipeline that runs a single job called build using the haskell:8.4 Docker image. Define a variable STACK_ROOT set to ${CI_PROJECT_DIR}/.stack. In the build job (default stage) execute the commands: stack config set system-ghc --global true and then stack build --ghc-options -j3. Cache the directories .stack, .stack-work, and target between runs. No additional stages, artifacts, or rules are required.",
+  "tags": [
+    "haskell",
+    "stack",
+    "docker",
+    "cache",
+    "gitlab-ci"
+  ]
+}

@@ -1,0 +1,146 @@
+.configure:
+  before_script:
+  - "cat <<EOF > ~/.condarc\nchannel_priority: strict\nchannels:\n  - conda-forge\n\
+    \  - bioconda\n  - omnia\n  - kimlab\n  - ostrokach-forge\n  - defaults\nEOF\n"
+  - source /opt/conda/etc/profile.d/conda.sh
+build:
+  artifacts:
+    paths:
+    - conda-bld
+  extends:
+  - .configure
+  parallel:
+    matrix:
+    - PYTHON_VERSION:
+      - '3.10'
+      - '3.9'
+  script:
+  - conda install -yq conda conda-build conda-verify conda-forge-pinning
+  - cd "${CI_PROJECT_DIR}/.ci/conda"
+  - 'conda build . --variant-config-files /opt/conda/conda_build_config.yaml --variants
+    "{python: [${PYTHON_VERSION}], numpy: [1.16], python_impl: [cpython]}" --no-test
+    --output-folder "$CI_PROJECT_DIR/conda-bld"
+
+    '
+  stage: build
+default:
+  image: condaforge/linux-anvil-cos7-x86_64:latest
+deploy:
+  before_script:
+  - conda install twine -yq --no-channel-priority
+  dependencies:
+  - build
+  script:
+  - for i in $CI_PROJECT_DIR/conda-bld/linux-64/*.whl ; do echo $i ; if [[ $i = *"-linux_x86_64.whl"
+    ]]; then mv "${i}" "${i%%-linux_x86_64.whl}-manylinux1_x86_64.whl" ; fi ; done
+  - if [[ ${PACKAGE_VERSION} = *"dev"* ]] ; then anaconda -t $ANACONDA_TOKEN upload
+    $CI_PROJECT_DIR/conda-bld/linux-64/*.tar.bz2 -u kimlab --label dev --force --no-progress
+    ; fi
+  - if [[ -n ${CI_COMMIT_TAG} ]] ; then anaconda -t $ANACONDA_TOKEN upload $CI_PROJECT_DIR/conda-bld/linux-64/*.tar.bz2
+    -u kimlab --no-progress ; twine upload $CI_PROJECT_DIR/conda-bld/linux-64/*.whl
+    || true ; fi
+  stage: deploy
+docs:
+  artifacts:
+    paths:
+    - public
+  coverage: /^TOTAL.* (\d+\%)/
+  dependencies:
+  - build
+  - test
+  extends:
+  - .configure
+  script:
+  - conda create -n test -y -q -c "file://${CI_PROJECT_DIR}/conda-bld" "python=${PYTHON_VERSION}"
+    "${CI_PROJECT_NAME}" nbconvert ipython ipykernel pandoc
+  - conda activate test
+  - pip install -q sphinx sphinx_rtd_theme recommonmark nbsphinx coverage
+  - (cd docs && sphinx-apidoc ../$CI_PROJECT_NAME -o api/generated -TeMP)
+  - sphinx-build docs public
+  - coverage combine coverage/
+  - coverage report || true
+  - coverage html || true
+  - mv htmlcov public/ || true
+  stage: post-test
+  variables:
+    PYTHON_VERSION: '3.10'
+lint:
+  extends:
+  - .configure
+  script:
+  - cd $(dirname ${CI_CONFIG_PATH})
+  - conda install -yq "python=${PYTHON_VERSION}" isort flake8 black mypy
+  - python -m isort ${CI_PROJECT_NAME} --check --diff
+  - python -m flake8
+  - python -m black --config pyproject.toml --check .
+  - python -m mypy -p ${CI_PROJECT_NAME} || true
+  stage: lint
+  variables:
+    PYTHON_VERSION: '3.10'
+pages:
+  artifacts:
+    paths:
+    - public
+  before_script:
+  - sudo yum install -y -q unzip
+  dependencies:
+  - docs
+  except:
+  - triggers
+  only:
+  - master
+  - tags
+  script:
+  - mv public "v${PACKAGE_VERSION%.dev}"
+  - mkdir public
+  - mv "v${PACKAGE_VERSION%.dev}" public/
+  - 'for tag in $(git tag) ; do echo ${tag} ; curl -L --header "JOB-TOKEN: $CI_JOB_TOKEN"
+    "https://gitlab.com/${CI_PROJECT_NAME}/${CI_PROJECT_NAMESPACE}/-/jobs/artifacts/${tag}/download?job=docs"
+    -o artifact-${tag}.zip || continue ; unzip artifact-${tag}.zip -d public || continue
+    ; rm -rf public/${tag} ; mv public/public public/${tag} ; done'
+  stage: deploy
+stages:
+- lint
+- build
+- test
+- post-test
+- deploy
+test:
+  artifacts:
+    paths:
+    - coverage/.coverage.${SUBPKG_NAME}
+    - conda-bld
+    when: always
+  dependencies:
+  - build
+  extends:
+  - .configure
+  parallel:
+    matrix:
+    - PYTHON_VERSION:
+      - '3.10'
+      - '3.9'
+      SUBPKG_NAME:
+      - db_tools
+      - df_tools
+      - ml_tools
+      - py_tools
+      - sequence_tools
+      - structure_tools
+      - system_tools
+  script:
+  - find ${CI_PROJECT_DIR}/conda-bld
+  - conda index ${CI_PROJECT_DIR}/conda-bld
+  - ls -al ${CI_PROJECT_DIR}/conda-bld/linux-64
+  - conda create -n test -y -q -c "file://${CI_PROJECT_DIR}/conda-bld" "python=${PYTHON_VERSION}"
+    ${CI_PROJECT_NAME} weblogo pillow muscle pytest pytest-cov hypothesis
+  - conda activate test
+  - PKG_INSTALL_DIR=$(python -c "import kmtools.${SUBPKG_NAME}; print(kmtools.${SUBPKG_NAME}.__path__[0])")
+  - rm -rf kmtools
+  - python -m pytest -c setup.cfg --cov="${PKG_INSTALL_DIR}" --cov-config=setup.cfg
+    --color=yes "tests/${SUBPKG_NAME}/"
+  - mkdir coverage
+  - mv .coverage coverage/.coverage.${SUBPKG_NAME}
+  stage: test
+variables:
+  PACKAGE_VERSION: 0.2.9

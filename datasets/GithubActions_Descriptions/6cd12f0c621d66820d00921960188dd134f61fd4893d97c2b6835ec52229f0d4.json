@@ -1,0 +1,18 @@
+{
+  "sha": "6cd12f0c621d66820d00921960188dd134f61fd4893d97c2b6835ec52229f0d4",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 25275,
+  "description": "Create a GitHub Actions workflow named continuous-integration that runs on every push and pull request. The workflow should have two jobs, Linux and Windows, running on ubuntu-22.04, ubuntu-24.04-arm, and windows-latest environments respectively. The Linux job should update APT, install dependencies, set up Vulkan SDK, and then check out repositories, get dependencies, build AppImage, run test suites with various renderers, and upload test outputs and artifacts. The Windows job should set up Python, download tools, clone and check out repositories, configure and install the project, and then embed source indexes into PDBs.",
+  "tags": [
+    "github-actions",
+    "ci",
+    "linux",
+    "windows",
+    "vulkan",
+    "opengl",
+    "opengles",
+    "appimage",
+    "testing"
+  ]
+}

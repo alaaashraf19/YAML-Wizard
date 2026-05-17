@@ -1,0 +1,26 @@
+name: CMake
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: get gtest
+      working-directory: ${{github.workspace}}/compcmake
+      run: ./get_gtest.sh
+
+    - name: Configure CMake
+      working-directory: ${{github.workspace}}/compcmake
+      run: ./generate.sh
+
+    - name: Test
+      working-directory: ${{github.workspace}}/compcmake/ninja_debug
+      run: ctest -V

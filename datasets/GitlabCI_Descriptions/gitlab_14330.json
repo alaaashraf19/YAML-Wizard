@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_14330",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 716,
+  "description": "Create a GitLab CI pipeline using the docker:stable image with a docker:dind service, defining CONTAINER_IMAGE as registry.gitlab.com/$CI_PROJECT_PATH and DOCKER_DRIVER as overlay2. Add a single build stage named build that runs in the build stage and uses a before_script to log in to the GitLab Container Registry with docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com. In the build job execute the following script commands in order: docker pull $CONTAINER_IMAGE:latest || true; docker build --cache-from $CONTAINER_IMAGE:latest --tag $CONTAINER_IMAGE:$CI_BUILD_REF --tag $CONTAINER_IMAGE:latest .; test -n \"$CI_BUILD_TAG\" && docker tag $CONTAINER_IMAGE:$CI_BUILD_REF $CONTAINER_IMAGE:$CI_BUILD_TAG || true; docker push $CONTAINER_IMAGE:$CI_BUILD_REF; docker push $CONTAINER_IMAGE:latest; test -n \"$CI_BUILD_TAG\" && docker push $CONTAINER_IMAGE:$CI_BUILD_TAG || true. The pipeline has no caches, artifacts, or conditional rules.",
+  "tags": [
+    "docker",
+    "dind",
+    "docker-build",
+    "gitlab-registry",
+    "ci"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_17160",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 557,
+  "description": "Create a GitLab CI pipeline using the docker:latest image with a docker:dind service and define variables CONTAINER_RELEASE_IMAGE, CONTAINER_TEST_IMAGE, DOCKER_DRIVER. Add a before_script that logs in to registry.gitlab.com with the gitlab-ci-token and $CI_BUILD_TOKEN. Define a build stage with a build job that runs in the build stage, executes `docker run --rm -v \"$(pwd):/src\" -v /var/run/docker.sock:/var/run/docker.sock -e COMPRESS_BINARY=true centurylink/golang-builder $CONTAINER_TEST_IMAGE` and then `docker push $CONTAINER_TEST_IMAGE`. The job has no additional rules, caches, or artifacts and runs on every pipeline.",
+  "tags": [
+    "docker",
+    "docker-dind",
+    "golang-builder",
+    "registry-login",
+    "ci-build-token"
+  ]
+}

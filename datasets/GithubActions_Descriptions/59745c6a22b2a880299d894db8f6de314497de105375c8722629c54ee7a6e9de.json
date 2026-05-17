@@ -1,0 +1,16 @@
+{
+  "sha": "59745c6a22b2a880299d894db8f6de314497de105375c8722629c54ee7a6e9de",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 983,
+  "description": "Create a GitHub Actions workflow named tests that runs on every push to the master branch. Use a macOS-latest job that checks out the repository, removes a dump directory, sets up Python 3.8, installs dependencies from requirements.txt, installs Chromium and MongoDB, runs tests with pytest and coverage, and uploads the coverage report to Codecov using a CODECOV_TOKEN from secrets.",
+  "tags": [
+    "python",
+    "tests",
+    "macos",
+    "chromium",
+    "mongodb",
+    "codecov",
+    "pytest"
+  ]
+}

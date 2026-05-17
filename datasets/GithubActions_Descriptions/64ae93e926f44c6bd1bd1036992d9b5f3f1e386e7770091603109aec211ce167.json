@@ -1,0 +1,15 @@
+{
+  "sha": "64ae93e926f44c6bd1bd1036992d9b5f3f1e386e7770091603109aec211ce167",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2566,
+  "description": "Create a daily GitHub Actions workflow named macOS System CI that runs at 3 am and on pull requests to the master branch. Use a macos-latest job to install dependencies, cache pyenv, install Python 3.6.9 if necessary, checkout the repository, cache third-party packages, build BioDynaMo with specific CMake flags, run system tests, and notify Slack with the job status.",
+  "tags": [
+    "macos",
+    "ci",
+    "system-tests",
+    "slack",
+    "cmake",
+    "python"
+  ]
+}

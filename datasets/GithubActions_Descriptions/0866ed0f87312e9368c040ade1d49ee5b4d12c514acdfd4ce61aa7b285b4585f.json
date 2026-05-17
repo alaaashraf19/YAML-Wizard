@@ -1,0 +1,14 @@
+{
+  "sha": "0866ed0f87312e9368c040ade1d49ee5b4d12c514acdfd4ce61aa7b285b4585f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 780,
+  "description": "Create a GitHub Actions workflow named Lint that runs on workflow dispatch, push to master branch excluding tags starting with v, and pull requests to master. The workflow has two jobs: generic and rust. The generic job runs on ubuntu-latest, checks out the repository, and executes two lint scripts. The rust job runs on ubuntu-latest with a defi/ain-builder:latest container, checks out the repository, and performs Rust format and Clippy checks.",
+  "tags": [
+    "linting",
+    "ubuntu",
+    "rust",
+    "workflow-dispatch",
+    "github-actions"
+  ]
+}

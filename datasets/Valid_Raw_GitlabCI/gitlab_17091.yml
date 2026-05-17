@@ -1,0 +1,9 @@
+image: alpine:latest
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script: echo "Does this even need to have anything in it?"
+  stage: deploy

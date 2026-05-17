@@ -1,0 +1,16 @@
+{
+  "sha": "ffe196d0c04e30bb8917079d052a33a882377d5b520391b35cf2d12f382cfe0a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2719,
+  "description": "Create a GitHub Actions workflow named Build and Test Wheel that runs on every push. The workflow should have two jobs: build_wheel_x86_64 and build_wheel_aarch64. The build_wheel_x86_64 job should build and test wheels on multiple Python versions and operating systems (ubuntu-latest and windows-latest), while the build_wheel_aarch64 job should build and test wheels on aarch64 architecture with multiple Python versions using a manylinux2014_aarch64 Docker image. Both jobs should upload the resulting wheels as artifacts and deploy them to PyPI.",
+  "tags": [
+    "python",
+    "wheel",
+    "pypi",
+    "tests",
+    "docker",
+    "aarch64",
+    "x86_64"
+  ]
+}

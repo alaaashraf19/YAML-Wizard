@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_07433",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 193,
+  "description": "Create a GitLab CI pipeline that uses a global before_script to run apt-get update && apt-get -y install cmake naturaldocs python3-markdown. Define a single stage named deploy. Add a pages job in the deploy stage that runs the shell command ./rebuild.sh. Configure the job to publish the public/ directory as an artifact and to run only on the main branch.",
+  "tags": [
+    "apt-get",
+    "cmake",
+    "naturaldocs",
+    "markdown",
+    "gitlab-pages",
+    "deploy"
+  ]
+}

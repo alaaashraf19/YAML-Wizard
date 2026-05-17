@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_19476",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 285,
+  "description": "Create a GitLab CI pipeline that uses the node:alpine Docker image and caches the node_modules/ directory. Define a single build job (default stage) that runs only on the master branch, executes the shell commands: apk update, apk upgrade, apk add zip, yarn, npm run bundle, cd chromeExtension, and zip -9 -r ../chromeExtension.zip . -x *.map. The job should archive the resulting chromeExtension.zip as an artifact. No additional services or deployment targets are required.",
+  "tags": [
+    "node",
+    "alpine",
+    "yarn",
+    "npm",
+    "chrome-extension",
+    "zip",
+    "apk"
+  ]
+}

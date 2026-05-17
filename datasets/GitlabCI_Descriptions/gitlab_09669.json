@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_09669",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 20891,
+  "description": "Create a GitLab CI pipeline with stages bootstrap, build, test, archive, and .pre using the default image $CI_REGISTRY/$BUILD_IMAGES_PROJECT and variant images for Debian, Fedora, Fedora-cross, Fedora-doc, Fedora-nettle, and MinGW. Define .bootstrap (stage bootstrap) that runs devel/preserve-timestamp stamp.pre-bootstrap and SUBMODULE_NOFETCH=1 ./bootstrap --copy --skip-po, storing untracked artifacts for 1 day; .build jobs (stage build) that run make -j$BUILDJOBS and make -j$BUILDJOBS -C tests check TESTS=\"\" after configuring with dash ./configure and appropriate flags; .test jobs (stage test) that run make -j$CHECKJOBS check, produce .log artifacts on failure, and include specialized test jobs such as fedora-abicoverage/test, fedora-cross/*/test, fedora-docdist/test, fedora-i686/test, fedora-interop/test, and mingw/*/test with binfmt_misc mounting and cross‑compilation environment variables. Add .archive jobs for mingw32/archive and mingw64/archive (stage archive) that copy DLLs, strip binaries, and package win${arch_bits}-build/ as artifacts; include commit-check (stage .pre) that installs apk packages and runs devel/check_if_signed, devel/indent-gnutls, devel/check-headers.sh, and git diff, running only on non‑master branches. Use a cache keyed by $CI_JOB_NAME-ver46 pointing to cache/, set interruptible true in default, and configure needs, dependencies, variables, and manual triggers as defined for each job (e.g., fedora-cross/* builds are manual, fedora-interop/test allows failure, and coverage reports are generated in fedora-abicoverage/test).",
+  "tags": [
+    "gitlab-ci",
+    "cross-build",
+    "mingw",
+    "fedora",
+    "debian",
+    "coverage",
+    "artifact",
+    "cache"
+  ]
+}

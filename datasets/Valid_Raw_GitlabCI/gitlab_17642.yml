@@ -1,0 +1,29 @@
+build:
+  artifacts:
+    paths:
+    - build/
+  script:
+  - mkdir build
+  - cd build
+  - cmake ../src
+  - make
+  stage: build
+image: owitzia/tucker
+pages:
+  artifacts:
+    paths:
+    - public
+  script:
+  - doxygen doxygen/Doxyfile
+  - mv doxygen/documentation/html/ public/
+test:
+  dependencies:
+  - build
+  script:
+  - cd build
+  - ctest --output-on-failure
+  stage: test
+variables:
+  OMPI_ALLOW_RUN_AS_ROOT: 1
+  OMPI_ALLOW_RUN_AS_ROOT_CONFIRM: 1
+  OMPI_MCA_rmaps_base_oversubscribe: 1

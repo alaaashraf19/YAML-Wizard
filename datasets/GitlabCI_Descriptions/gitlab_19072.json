@@ -1,0 +1,20 @@
+{
+  "sha": "gitlab_19072",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1347,
+  "description": "Create a GitLab CI pipeline that uses the custom Docker image dev.gitlab.org:5005/gitlab/gitlab-build-images:ruby-2.6.3-golang-1.11-git-2.22-chrome-73.0-node-12.x-yarn-1.16-postgresql-9.6-graphicsmagick-1.3.33 and runs `date` in an after_script. Include the local CI fragments .gitlab/ci/global.gitlab-ci.yml, .gitlab/ci/cng.gitlab-ci.yml, .gitlab/ci/docs.gitlab-ci.yml, .gitlab/ci/frontend.gitlab-ci.yml, .gitlab/ci/memory.gitlab-ci.yml, .gitlab/ci/pages.gitlab-ci.yml, .gitlab/ci/qa.gitlab-ci.yml, .gitlab/ci/reports.gitlab-ci.yml, .gitlab/ci/rails.gitlab-ci.yml, .gitlab/ci/review.gitlab-ci.yml, .gitlab/ci/setup.gitlab-ci.yml, .gitlab/ci/test-metadata.gitlab-ci.yml, and .gitlab/ci/yaml.gitlab-ci.yml. Define the stages prepare, quick-test, test, review-prepare, review, qa, post-test, and pages, and set variables such as BUILD_ASSETS_IMAGE='false', ELASTIC_URL, various KNAPSACK_RSPEC_SUITE_REPORT_PATH values, NODE_ENV=test, RAILS_ENV=test, SIMPLECOV='true', GET_SOURCES_ATTEMPTS='3', GIT_DEPTH='20', and GIT_SUBMODULE_STRATEGY=none. The included files will provide jobs for each stage using the defined image and variables.",
+  "tags": [
+    "ruby",
+    "rails",
+    "docker-image",
+    "includes",
+    "knapsack",
+    "elastic",
+    "postgresql",
+    "node",
+    "yarn",
+    "qa",
+    "pages"
+  ]
+}

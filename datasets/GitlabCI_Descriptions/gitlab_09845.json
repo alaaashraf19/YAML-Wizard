@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_09845",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 224,
+  "description": "Create a GitLab CI pipeline that uses the node:9.9.0 Docker image and caches the node_modules/ directory. Define a single pages job that runs in the default stage, executes the commands: yarn, then PUBLIC_URL='/bytebeat-sequencer' yarn build, then mv public _public, then mv build public. The job publishes the public/ directory as a Pages artifact and is limited to the master branch. No additional services, variables, or stages are defined.",
+  "tags": [
+    "node",
+    "yarn",
+    "gitlab-pages",
+    "cache-node-modules",
+    "public-url",
+    "master-only"
+  ]
+}

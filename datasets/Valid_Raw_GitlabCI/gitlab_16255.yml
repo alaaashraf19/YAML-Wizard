@@ -1,0 +1,17 @@
+before_script:
+- npm install
+image: node:8
+release:
+  script:
+  - npm run src:build
+  - echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}'>.npmrc
+  - npm run release
+  stage: release
+stages:
+- test
+- release
+test:
+  script:
+  - npm run src:build
+  - npm run test:coverage
+  stage: test

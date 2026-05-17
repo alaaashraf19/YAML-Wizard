@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_14584",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 207,
+  "description": "Create a GitLab CI pipeline that defines two stages named \"validate yaml syntax\" and \"network validation with behave\". Add a lint job in the \"validate yaml syntax\" stage that executes the command `bash linter.sh`. Add a behave job in the \"network validation with behave\" stage that executes the command `bash .behave.sh`. The pipeline does not specify a Docker image, services, caches, artifacts, or any conditional rules.",
+  "tags": [
+    "lint",
+    "behave",
+    "yaml-validation",
+    "network-validation",
+    "gitlab-ci"
+  ]
+}

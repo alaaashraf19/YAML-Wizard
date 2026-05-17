@@ -1,0 +1,88 @@
+name: Linux
+
+on:
+  schedule:
+    - cron: '0 0 * * 1'
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+env:
+  BUILD_TYPE: Release
+  CLICKHOUSE_SERVER_IMAGE: "clickhouse/clickhouse-server:22.3"
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        compiler: [clang-6, gcc-7, gcc-8, gcc-9]
+        ssl: [ssl_ON, ssl_OFF]
+        include:
+        - compiler: clang-6
+          INSTALL: clang-6.0
+          C_COMPILER: clang-6.0
+          CXX_COMPILER: clang++-6.0
+
+        - compiler: gcc-7
+          INSTALL: gcc-7 g++-7
+          C_COMPILER: gcc-7
+          CXX_COMPILER: g++-7
+
+        - compiler: gcc-8
+          INSTALL: gcc-8 g++-8
+          C_COMPILER: gcc-8
+          CXX_COMPILER: g++-8
+
+        - compiler: gcc-9
+          INSTALL: gcc-9 g++-9
+          C_COMPILER: gcc-9
+          CXX_COMPILER: g++-9
+
+        - ssl: ssl_ON
+          INSTALL_SSL: libssl-dev
+          EXTRA_CMAKE_FLAGS: -DWITH_OPENSSL=ON
+
+        - ssl: ssl_OFF
+          EXTRA_CMAKE_FLAGS: -DWITH_OPENSSL=OFF
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: sudo apt-get install -y docker cmake ${{ matrix.INSTALL }} ${{ matrix.INSTALL_SSL }}
+
+    - name: Install dependencies - Docker
+      run: |
+        sudo apt remove -y docker docker-engine docker.io containerd runc
+        sudo apt install -y apt-transport-https ca-certificates curl gnupg lsb-release
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+        echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+        sudo apt update -q
+        sudo apt install docker-ce docker-ce-cli containerd.io
+
+    - name: Configure CMake
+      run: |
+        cmake \
+          -DCMAKE_C_COMPILER=${{ matrix.C_COMPILER}} \
+          -DCMAKE_CXX_COMPILER=${{ matrix.CXX_COMPILER}} \
+          -B ${{github.workspace}}/build \
+          -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DBUILD_TESTS=ON \
+          ${{ matrix.EXTRA_CMAKE_FLAGS }}
+
+    - name: Build
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target all
+
+    - name: Test - Start ClickHouse server in background
+      run: |
+        docker pull ${CLICKHOUSE_SERVER_IMAGE}
+        docker run -d --name clickhouse -p 9000:9000 ${CLICKHOUSE_SERVER_IMAGE}
+        docker ps -a
+        docker stats -a --no-stream
+        ## Check and wait until CH is ready to accept connections
+        docker exec clickhouse bash -c 'for i in {1..10}; do echo checking if clickhouse server is started  attempt \#$i; if ( grep -q "<Information> Application: Ready for connections." /var/log/clickhouse-server/clickhouse-server.log ); then echo seems like clickhouse server is started; exit 0; fi; sleep 1; done; exit -1'
+
+    - name: Test
+      working-directory: ${{github.workspace}}/build/ut
+      run: ./clickhouse-cpp-ut

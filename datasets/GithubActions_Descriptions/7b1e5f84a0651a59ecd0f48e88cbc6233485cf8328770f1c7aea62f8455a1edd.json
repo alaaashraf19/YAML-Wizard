@@ -1,0 +1,17 @@
+{
+  "sha": "7b1e5f84a0651a59ecd0f48e88cbc6233485cf8328770f1c7aea62f8455a1edd",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5231,
+  "description": "Create a nightly GitHub Actions workflow named FBGEMM_GPU Nightly Build that triggers on pull requests to main, pushes to main, a daily cron job, and manual dispatch. The workflow builds FBGEMM_GPU on CPU hosts in a matrix of Python and CUDA versions, uploads the artifacts, then tests and publishes the artifacts on GPU hosts with matching Python and CUDA versions.",
+  "tags": [
+    "fbgemm",
+    "gpu",
+    "pytorch",
+    "cuda",
+    "pypi",
+    "nightly",
+    "linux",
+    "github-actions"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_06194",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 390,
+  "description": "Create a GitLab CI pipeline using the fsharp:netcore Docker image with a global before_script that runs dotnet restore for every job. Define variables project=Source and tests=Tests, and two stages build and test. In the build stage add a build job that sets build_path to $project, changes directory to $build_path, and runs dotnet build. In the test stage add a test job that sets test_path to $tests, changes directory to $test_path, runs dotnet add package coverlet.msbuild and then dotnet test /p:CollectCoverage=true, with no caches, artifacts, or rules.",
+  "tags": [
+    "dotnet",
+    "fsharp",
+    "coverlet",
+    "gitlab-ci",
+    "build",
+    "test"
+  ]
+}

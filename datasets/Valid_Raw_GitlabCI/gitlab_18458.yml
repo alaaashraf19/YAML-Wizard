@@ -1,0 +1,22 @@
+build:
+  artifacts:
+    paths:
+    - dist/
+    - package.json
+    - semantic.json
+    - theme.config
+  before_script:
+  - rm -rf dist/
+  - apt-get update -y
+  - apt-get install -y gettext
+  - envsubst < package.json.template > package.json
+  script:
+  - cp defaults/* .
+  - npm install
+  - mv semantic/dist/ dist/
+  stage: build
+image: node
+stages:
+- build
+variables:
+  VERSION: $VERSION

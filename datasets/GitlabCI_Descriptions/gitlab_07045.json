@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_07045",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 287,
+  "description": "Create a GitLab CI pipeline using the node Docker image and caching the node_modules directory. Define a single stage called deploy and a job named pages that runs in this stage. The job should execute the global before_script `npm install` then run the script commands `npm run deploy`, `echo 'Nothing to do...'`, `mkdir -p ./public/`, and `cp -r ./dist/ index.html ./public/`. It should publish the `public` directory as a pages artifact and only run on the master branch.",
+  "tags": [
+    "node",
+    "npm",
+    "pages",
+    "cache",
+    "gitlab-pages",
+    "deploy"
+  ]
+}

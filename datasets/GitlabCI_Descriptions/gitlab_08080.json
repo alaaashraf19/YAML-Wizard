@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_08080",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 4654,
+  "description": "Create a GitLab CI pipeline with stages pass_one, pass_two, test, deploy, and cleanup. In the pass_one stage add a build_rootfs:pass_one job using the centos:7.5.1804 image (tagged odagrun) that exports target and BASE variables, sets OS_CONFIG=pass_one.conf, creates the rootfs directory, runs ./make_rootfs, defines ODAGRUN_IMAGE_REFNAME, and pushes the rootfs with registry_push --rootfs=$target --name=pass-one --ISR --reference=$CI_PIPELINE_ID. In the pass_two stage add a build_rootfs:pass_two job using the ImageStream/pass-one:$CI_PIPELINE_ID image (tagged odagrun) that exports target and BASE, sets OS_CONFIG=pass_two.conf, runs ./build_fake and ./make_rootfs, copies metadata via several copy commands, and pushes the rootfs with registry_push --rootfs=$target --reference=$CI_PIPELINE_ID --ISR --config. In the test stage add a test_build-image-IS-registry job using the ImageStream:$CI_PIPELINE_ID image (tagged odagrun) that runs id -u, fakeroot -- id -u, sets FAKE_ARCH, verifies fake architecture with LD_PRELOAD, checks fakechroot behavior, prints yum and rpm versions, and confirms the presence of /usr/sbin/glibc-fake. In the deploy stage add a push-image-tags job (environment production) using the scratch image (tagged odagrun) that pushes the built image with registry_push commands, tags it as latest with registry_tag_image, updates Docker Hub description with DockerHub_set_description, and updates MicroBadger with MicroBadger_update. Finally, add a cleanup job that always runs, uses the scratch image (tagged odagrun), allows failure, and deletes intermediate ImageStreams with ImageStream_delete commands.",
+  "tags": [
+    "odagrun",
+    "centos",
+    "scratch",
+    "image-stream",
+    "registry-push",
+    "fakechroot",
+    "ci-pipeline"
+  ]
+}

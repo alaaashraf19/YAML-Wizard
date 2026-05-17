@@ -1,0 +1,14 @@
+{
+  "sha": "2b2ec1b028ddbd43ee23ac041c2f3dc139a4774f3c37fabcdde3d6e4ce0b281d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1955,
+  "description": "Create a GitHub Actions workflow named CI that runs on every push and pull request. Use two ubuntu-latest jobs: one for the website and one for android. The website job checks out the repository, sets up Node.js 8.x, installs dependencies with yarn, builds the website, and deploys to gh-pages if the push is to the master branch. The android job checks out the repository, installs dependencies, sets up the android environment, and builds and tests the android project.",
+  "tags": [
+    "nodejs",
+    "yarn",
+    "android",
+    "gh-pages",
+    "ci"
+  ]
+}

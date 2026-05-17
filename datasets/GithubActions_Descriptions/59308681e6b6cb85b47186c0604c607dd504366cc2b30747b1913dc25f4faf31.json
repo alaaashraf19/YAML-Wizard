@@ -1,0 +1,14 @@
+{
+  "sha": "59308681e6b6cb85b47186c0604c607dd504366cc2b30747b1913dc25f4faf31",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1027,
+  "description": "Create a GitHub Actions workflow named Linux_x86_64_test that runs on push to the master branch, on pull request open and synchronize events, and on workflow dispatch. Use an ubuntu-latest job that checks out the repository with full history, installs dependencies with apt-get, caches the CMake build folder, builds tests with CMake and make, runs tests with CTest, and uploads results to Codecov.",
+  "tags": [
+    "linux",
+    "cmake",
+    "tests",
+    "codecov",
+    "ubuntu"
+  ]
+}

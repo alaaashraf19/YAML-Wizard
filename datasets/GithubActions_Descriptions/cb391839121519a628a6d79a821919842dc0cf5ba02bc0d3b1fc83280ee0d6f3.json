@@ -1,0 +1,15 @@
+{
+  "sha": "cb391839121519a628a6d79a821919842dc0cf5ba02bc0d3b1fc83280ee0d6f3",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2443,
+  "description": "Create a GitHub Actions workflow named CI that runs on every push to master and tags, and on pull requests to any branch. The workflow consists of two jobs: test and lint. The test job uses a matrix strategy to run tests in multiple tox environments with different Python versions, installs dependencies, runs tox, and uploads results to Codecov. The lint job also uses a matrix strategy to run linters in multiple tox environments, installs dependencies, and runs tox, allowing the checklinks environment to fail.",
+  "tags": [
+    "python",
+    "tox",
+    "tests",
+    "linting",
+    "codecov",
+    "ubuntu"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "sha": "c40412880f5d5fab2536633340aace77c905a32935d98baffdc494a611b1af85",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1846,
+  "description": "Create a GitHub Actions workflow named Functional Tests that runs on every push and on pull requests to the master branch. Use multiple ubuntu-18.04 jobs that each start a MongoDB service, check out the repository, and then run a functional test using a Docker container with the image fiware/orion-ci:rpm7. Each job runs a different set of tests by setting environment variables FT_FROM_IX and FT_TO_IX.",
+  "tags": [
+    "docker",
+    "mongodb",
+    "functional-tests",
+    "ubuntu"
+  ]
+}

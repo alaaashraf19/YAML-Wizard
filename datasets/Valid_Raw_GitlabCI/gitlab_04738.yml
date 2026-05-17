@@ -1,0 +1,17 @@
+before_script:
+- pip install "poetry==$POETRY_VERSION"
+- poetry install --no-interaction --no-ansi
+cache:
+  paths:
+  - ~/.cache/pip/
+image: python:3.8-slim
+services:
+- postgres:12
+test:
+  script:
+  - ./manage.py test
+variables:
+  PIP_DISABLE_PIP_VERSION_CHECK: 'on'
+  POETRY_VERSION: 1.0.9
+  POETRY_VIRTUALENVS_CREATE: 'false'
+  POSTGRES_HOST_AUTH_METHOD: trust

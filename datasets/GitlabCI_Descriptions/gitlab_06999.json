@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_06999",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 3151,
+  "description": "Create a GitLab CI pipeline with three stages: format, test, and deploy, using a global cache at $CI_PROJECT_DIR/.cache and MySQL root password variable. In the format stage add two jobs: format_golang_rc using golang:rc-alpine and format_golang_stable using golang:1.14-alpine; each runs before_script to create $CI_PROJECT_DIR/.cache and /go/pkg/mod, copies the cache, installs git, build-base and bash via apk, then executes go fmt $(go list ./... | grep -v /vendor/) and go vet $(go list ./... | grep -v /vendor/), and after_script copies /go/pkg/mod back to the cache. In the test stage add buildandtest_golang_rc (golang:rc-stretch) and buildandtest_golang_stable (golang:1.14-stretch) jobs, both with a mysql:5.7 service, that before_script set up the caches, then run cd $CI_PROJECT_DIR, go version, go install github.com/axw/gocov/gocov, cd $CI_PROJECT_DIR/setup/deploy, execute bash deployServer-rc.sh or bash deployServer-stable.sh followed by bash deployClient.sh, return to the project root, generate HTML coverage with go tool cover -html=allcoverage-rc.out -o allcoverage-rc.html (or stable), convert and report with gocov convert allcoverage-rc.out | gocov report, and store the resulting allcoverage-rc.html or allcoverage-stable.html as a one‑week artifact. In the deploy stage add deploy_server_image using the docker image with a docker:dind service that runs docker version, installs py-pip, python-dev, libffi-dev, openssl-dev, gcc, libc-dev and make via apk, installs docker-compose with pip, builds the server with docker-compose build, builds a Docker image tagged $CI_REGISTRY_IMAGE:latest, conditionally tags it with $CI_BUILD_TAG, logs into $CI_REGISTRY with CI credentials, and pushes the tagged image to the GitLab Container Registry.",
+  "tags": [
+    "golang",
+    "docker",
+    "mysql",
+    "coverage",
+    "format",
+    "ci"
+  ]
+}

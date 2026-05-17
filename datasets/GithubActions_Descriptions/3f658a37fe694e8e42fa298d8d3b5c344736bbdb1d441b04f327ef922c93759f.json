@@ -1,0 +1,14 @@
+{
+  "sha": "3f658a37fe694e8e42fa298d8d3b5c344736bbdb1d441b04f327ef922c93759f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 6747,
+  "description": "Create a GitHub Actions workflow named generate bundles that triggers on push events. The workflow has two jobs: build-win and publish_packages. The build-win job runs on a windows-latest environment with a matrix strategy for x64 architecture and ai_ready variations. It checks out the repository, sets up environment variables, installs uv and dependencies, and generates InVesalius packages with PyInstaller. The publish_packages job depends on build-win, downloads artifacts, and updates a nightly release with the generated packages.",
+  "tags": [
+    "windows",
+    "pyinstaller",
+    "invesalius",
+    "ai",
+    "nightly-release"
+  ]
+}

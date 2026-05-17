@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_07702",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 195,
+  "description": "Create a GitLab CI pipeline that uses the cm0x4d/ubuntu-qt5-cmake Docker image. Include a before_script that runs apt-get update -y and apt-get install -y libsdl2-dev libwayland-dev. Define a single stage called build and a job named job1 in that stage that executes qmake compositor.pro followed by make. No caches, artifacts, services, or special rules are required.",
+  "tags": [
+    "ubuntu-qt5",
+    "cmake",
+    "qmake",
+    "make",
+    "build"
+  ]
+}

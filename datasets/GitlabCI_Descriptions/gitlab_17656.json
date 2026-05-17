@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_17656",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 7577,
+  "description": "Create a GitLab CI pipeline with stages unit-test, build, docker-package, analyse, deploy-review, functional-test, tags-production, to-production, and cleanup, using a global before_script that sets PROJECT_VERSION from PROJECT_VERSION.txt and echoes it, and defining variables for backend and frontend container image names. In the build stage add backend_build_image (image bigtruedata/sbt:0.13.15-2.11) with a cache keyed by $CI_BUILD_REF_NAME-ts-tile-backend for sbt directories, artifacting components/ts-tile-backend/target/docker, and running \"cd components/ts-tile-backend/ && VERSION=$PROJECT_VERSION sbt docker:stage\", and backend_publish_docker_image (image docker:latest, service docker:dind) in the docker-package stage that cd's to the staged Docker files, builds with \"docker build -t $BACKEND_CONTAINER_LOCAL_IMAGE .\", tags to $BACKEND_CONTAINER_BRANCH_IMAGE, logs in to $CI_REGISTRY, and pushes the image. In the build stage also add frontend_build_dist (image node:8) with a cache and artifacts for dist and node_modules keyed by $CI_BUILD_REF_NAME-ts-frontend, running \"cd components/ts-frontend && npm install && ./node_modules/@angular/cli/bin/ng build --prod && rm -r dist/assets/dev-data\", and in docker-package add frontend_publish_docker_image (image docker:latest, service docker:dind) that copies the dist to the infra config, builds with \"docker build -t $FRONTEND_CONTAINER_LOCAL_IMAGE .\", tags to $FRONTEND_CONTAINER_BRANCH_IMAGE, logs in, and pushes; also add frontend_test_unit (image alexmass/node-chrome-headless:8) with the same cache, retry 2, running \"cd components/ts-frontend && npm install && ./node_modules/@angular/cli/bin/ng test --single-run=true --browsers ChromeHeadless --watch=false\". In the tags-production stage add master_tag_docker_image (image docker:latest, service docker:dind, only on master) that logs in, pulls both backend and frontend branch images, tags each with unique, latest, and $PROJECT_VERSION tags, and pushes all tags; also add sonar (image emeraldsquad/sonar-scanner:1.0.0, only on branches) running \"sonar-scanner -Dsonar.login=$SONAR_LOGIN\" with node_modules as an artifact, and tile_backend_test_unit (image bigtruedata/sbt:0.13.15-2.11) with a cache keyed by $CI_BUILD_REF_NAME-ts-tile-backend running \"cd components/ts-tile-backend/ && sbt clean test\", plus test_deployed (image python:3, only on branches except master) that cd's to test/api-system-test, installs requirements, deletes .pyc files, and runs \"pytest --cache-clear src\" using TS_BACKEND variable pointing to the review backend URL. Finally, in deploy-review add start_review (image registry.gitlab.com/terrasubmersa/terra-submersa-portal/docker-compose:17-dind, only on branches) that sets COMPOSE_PROJECT_NAME, DOCKER_ENV_NETWORK, DOCKER_TS_VERSION, logs in, brings down any existing stack, pulls and brings up the compose services, creating a review environment named review/${CI_BUILD_REF_NAME} with a URL, and in cleanup add stop_review (same image, only on branches, manual) that stops and removes the review environment, while in to-production add deploy-to-production (same image, only on master, manual) that sets the same variables and runs \"docker-compose -f docker-compose.yml up -d\" in components/ts-infra to deploy to production.",
+  "tags": [
+    "sbt",
+    "docker",
+    "docker-compose",
+    "node",
+    "angular",
+    "sonar",
+    "review",
+    "production",
+    "cache",
+    "ci"
+  ]
+}

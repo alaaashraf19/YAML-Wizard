@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_12346",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 311,
+  "description": "Create a GitLab CI pipeline that defines a unit_tests job in the default test stage using the runner's default Docker image. In its before_script it runs apt-get update -qq && apt-get install -y -qq ninja-build python3-pip libpng-dev libcairo2-dev libx11-dev libgtest-dev valgrind, then installs Meson with pip3 install meson. The script creates a build directory, runs meson --buildtype=debug .. && ninja to build, then executes meson test followed by meson test --wrap=valgrind to run tests under Valgrind. No services, caches, artifacts, or conditional rules are defined.",
+  "tags": [
+    "c++",
+    "meson",
+    "ninja",
+    "valgrind",
+    "unit-tests"
+  ]
+}

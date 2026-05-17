@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_16036",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 182,
+  "description": "Create a GitLab CI pipeline that uses the default runner image and runs a global before_script to install pandoc with `apt-get update -qq && apt-get install -y -qq pandoc`. Define a single stage called deploy and add a job named pages that runs in this stage, executes the shell commands `make clean` and then `make`, publishes the `public` directory as an artifact, and is limited to the master branch via an only rule.",
+  "tags": [
+    "make",
+    "pandoc",
+    "gitlab-pages",
+    "deploy",
+    "apt-get"
+  ]
+}

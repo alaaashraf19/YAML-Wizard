@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_00931",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2175,
+  "description": "Create a GitLab CI pipeline with stages build and post-build, using ruby:2.5 for Ruby jobs and alpine:latest for the pages job. Define a PANDOC_VERSION variable set to \"2.2\". In the build stage add a build-docbook job that runs ruby -v and bundle install --path vendor, caches vendor/ruby under key ruby, executes cd article-sciences-du-design and two bundle exec asciidoctor commands to generate DocBook XML, and stores the resulting build/*.xml files as artifacts for 2 weeks. Also in the build stage add a build-html job that uses the same Ruby setup, runs cd article-sciences-du-design and a bundle exec asciidoctor command to produce HTML5 files, and archives build/*.html for 2 weeks. In the post-build stage add a build-docx job that downloads and installs pandoc version ${PANDOC_VERSION}, caches the .deb file, runs cd article-sciences-du-design, copies jpg files, and converts the generated DocBook XML to DOCX with pandoc, publishing build/*.docx and *.jpg as artifacts. Finally, add a pages job that runs on the master and 20-reduction branches, uses alpine:latest, creates a public directory, copies the HTML and jpg assets into it, and publishes the public folder as the Pages artifact.",
+  "tags": [
+    "ruby",
+    "asciidoctor",
+    "docbook",
+    "docx",
+    "pandoc",
+    "html",
+    "pages",
+    "alpine",
+    "gitlab-ci"
+  ]
+}

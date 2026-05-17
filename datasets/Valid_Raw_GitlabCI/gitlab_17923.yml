@@ -1,0 +1,37 @@
+before_script:
+- apt-get update -yqq
+- apt-get install -yqq --no-install-recommends curl build-essential cmake pkg-config
+- rustup default nightly
+- rustc --version && cargo --version
+- ./ci/install_sdk
+fmt:
+  before_script:
+  - rustup default nightly
+  - rustup component add rustfmt-preview
+  - rustc --version && cargo --version
+  script:
+  - cargo fmt --all -- --check
+  stage: lint
+image: rust
+linux-x86_64-dynamic:
+  artifacts:
+    expire_in: 1 month
+    name: linux-x86_64-dynamic
+    paths:
+    - bin/*
+    when: on_success
+  script:
+  - cargo build --all --verbose
+  - cargo build --all --verbose --release
+  - mkdir -p ./bin
+  - mv ./target/debug/cant-touch-this ./bin/cant-touch-this-debug
+  - mv ./target/release/cant-touch-this ./bin/cant-touch-this
+  stage: build
+stages:
+- lint
+- test
+- build
+test:
+  script:
+  - cargo test --all --verbose
+  stage: test

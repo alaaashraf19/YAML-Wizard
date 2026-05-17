@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_12675",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2348,
+  "description": "Create a GitLab CI pipeline that defines the stages test, doc, publish, and deploy and sets the variables GIT_SSL_NO_VERIFY='1' and GIT_SUBMODULE_STRATEGY=recursive. In the test stage add a coverage job using the peer23peer/mtipy_cov:latest image that runs pip install --trusted-host www.coolprop.dreamhosters.com --process-dependency-links --pre -e . and pip install -r cov-requirements.txt, then executes py.test --cov=MTIpython --cov-report html:coverage MTIpython/testsuite/ and coverage report -m, and stores the coverage/ directory as a one‑week‑old artifact; also add a unittest job with peer23peer/mtipy:latest that runs pip install --trusted-host www.coolprop.dreamhosters.com --process-dependency-links --pre -e . and python -m unittest discover -s ./MTIpython/testsuite/ -t ./MTIpython/testsuite/, publishing MTIpython/testsuite/*.log as a one‑week artifact; and add a pylint job with peer23peer/mtipy_cov:latest that runs the same two pip install commands and then python Tools/scripts/pylint2rst.py --folder=pylint, publishing the pylint/ folder as a one‑week artifact. In the doc stage add a pages job using peer23peer/mtipy_sphinx:latest, with before_script pip install --trusted-host www.coolprop.dreamhosters.com --process-dependency-links --pre -e . and pip install -r sphinx-requirements.txt, that depends on coverage and pylint, runs only on develop, master, and prof branches, cleans previous builds, builds HTML and LaTeX with make, moves the generated HTML to public/, copies pylint HTML into public/pylint, moves coverage into public/, and stores the public/ and Documentation/_build/latex directories as artifacts. In the publish stage add a pdf job using peer23peer/mtipy_pdf:latest that runs only on develop, master, and prof, executes chmod 755 Tools/scripts/build_pdf.bash and Tools/scripts/build_pdf.bash, depends on pages, and publishes MTIpython.pdf as an artifact. Finally, in the deploy stage add a release job using peer23peer/mtipy:latest that runs only on develop, master, and prof, builds a wheel with python setup.py bdist_wheel, moves the resulting *.whl to the project root, and stores the wheel file as an artifact.",
+  "tags": [
+    "python",
+    "pytest",
+    "coverage",
+    "sphinx",
+    "pdf",
+    "pylint",
+    "wheel",
+    "gitlab-ci"
+  ]
+}

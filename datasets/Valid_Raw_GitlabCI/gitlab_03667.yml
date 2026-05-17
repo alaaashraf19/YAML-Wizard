@@ -1,0 +1,49 @@
+before_script:
+- yum install -y make
+- make ci-prepare-env
+cache:
+  key: chef-rkt
+  paths:
+  - .cache/
+image: centos:7
+kitchen default:
+  script:
+  - make kitchen KITCHEN_INSTANCE='^default-'
+  stage: test
+kitchen packages:
+  script:
+  - make kitchen KITCHEN_INSTANCE='^packages-'
+  stage: test
+kitchen testing packages:
+  allow_failure: true
+  only:
+  - master
+  script:
+  - make kitchen KITCHEN_INSTANCE='^testing-packages-'
+  stage: test
+kitchen without-sudo:
+  script:
+  - make kitchen KITCHEN_INSTANCE='^without-sudo-'
+  stage: test
+lint:
+  script:
+  - make lint
+  stage: spec
+release:
+  only:
+  - /^v[[:digit:]]*\.[[:digit:]]*\.[[:digit:]]*$/
+  script:
+  - make deploy
+  stage: deploy
+spec:
+  script:
+  - make spec
+  stage: spec
+stages:
+- spec
+- test
+- deploy
+variables:
+  CHEFDK_FILE: chefdk-0.15.16-1.el7.x86_64.rpm
+  CHEFDK_SHA256: c94718d25fc64ec098cf2a89d81da03112a14530594ab3e81b0c7fbd7ef2f149
+  CHEFDK_URL: https://packages.chef.io/stable/el/7/chefdk-0.15.16-1.el7.x86_64.rpm

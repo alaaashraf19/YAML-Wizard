@@ -1,0 +1,15 @@
+{
+  "sha": "159108929e86aa79337fc258dda9a193fd9d6e49137d1fea080ed53a15f51555",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1235,
+  "description": "Create a GitHub Actions workflow named p4c-lint that runs on push to main, on pull requests to main, and on merge groups to main. The workflow should cancel any in-progress runs for the same pull request or reference, except for the main branch. Use an ubuntu-22.04 job with specific environment variables, checking out submodules recursively, setting up Python, using ccache, and then building and running various linters and formatters.",
+  "tags": [
+    "ubuntu",
+    "linting",
+    "formatting",
+    "python",
+    "c++",
+    "ci"
+  ]
+}

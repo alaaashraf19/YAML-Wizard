@@ -1,0 +1,16 @@
+{
+  "sha": "d14ac4efdd484e636d08e29bc1b55cbbd55409ebe84e24b72eb3f1ec5101fd8d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4263,
+  "description": "Create a GitHub Actions workflow named CI that runs on push to the master branch. The workflow has three jobs: product, demo, and integration. The product job runs on ubuntu-latest, checks out the repository, sets up Python, downloads Android Python builds, installs requirements, builds the product, and uploads the Maven repository. The demo job depends on product, runs on ubuntu-latest, checks out the repository, sets up Python, downloads the Maven repository, gets a keystore, and builds and uploads the APK. The integration job depends on product, runs on a matrix of OS and AGP versions, checks out the repository, sets up Python with extra versions, downloads the Maven repository, installs requirements, and runs tests.",
+  "tags": [
+    "python",
+    "android",
+    "gradle",
+    "maven",
+    "ci",
+    "ubuntu",
+    "tests"
+  ]
+}

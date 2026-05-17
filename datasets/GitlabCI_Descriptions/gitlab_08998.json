@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_08998",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 6439,
+  "description": "Create a GitLab CI pipeline with stages build, secrets, deploy, and health-check, using the variables DEPLOY_IMAGE, KUBE_CONTEXT and KUBE_NAMESPACE. In the build stage add a build:triage-web job that uses the gcr.io/kaniko-project/executor:v1.7.0-debug image (entrypoint disabled), runs a before_script to create /kaniko/.docker and write a Docker registry auth JSON, then executes \"/kaniko/executor --context=${CI_PROJECT_DIR} --dockerfile=${CI_PROJECT_DIR}/Dockerfile.rack --destination=${TRIAGE_WEB_IMAGE_PATH} --cache=true\"; it triggers on any changes to config/**, triage/**, lib/**, spec/**, .gitlab/ci/triage-web.yml or Dockerfile.rack via the .rules-general rules. In the secrets stage add a deploy:secrets job that prepares the production environment, uses the ${DEPLOY_IMAGE} image, runs a before_script to set the kubectl context, and then runs a series of kubectl create secret generic commands for GITLAB_WEBHOOK_TOKEN, GITLAB_BOT_API_TOKEN_ON_COM, GITLAB_BOT_API_TOKEN_ON_DEV, GITLAB_DASHBOARD_TOKEN, SENTRY_DSN, GITLAB_SDK_APP_ID, SLACK_WEBHOOK_URL, USER_ACCOUNT_CSV_URL, ALT_PROJECT_ID_FOR_CI_TITLE_LABEL, DISCORD_WEBHOOK_PATH_COMMUNITY_MR_REQUEST_REVIEW, DISCORD_WEBHOOK_PATH_COMMUNITY_MR_HELP, DISCORD_WEBHOOK_PATH_COMMUNITY_MR_HANDOFF, COMMON_ROOM_API_TOKEN, GOOGLE_SERVICE_ACCOUNT_CREDENTIALS_PATH, LEADING_ORGS_TRACKER_SHEET_ID and a secret from file GOOGLE_SERVICE_ACCOUNT_CREDENTIALS; it runs only on default‑branch changes or manually as defined by .rules-deploy. In the deploy stage add a deploy:triage-web job that starts the production environment, needs the build:triage-web job, uses the ${DEPLOY_IMAGE} image, runs a before_script to set the kubectl context, then echoes ${KUBE_NAMESPACE}, applies config/triage-web.yaml, sets the image of deployment/triage-web-deployment to ${TRIAGE_WEB_IMAGE_PATH}, restarts the rollout, and lists all resources; it follows the same .rules-deploy triggers. In the health-check stage add a health-check:container job that defines CONTAINER_NAME as triage-web, uses before_script to export SERVICE_URL, create a Docker network, run the built triage‑web image with required env vars, capture logs to container.log, and then runs a script that invokes \"docker run --rm --net test -v \\\"$PWD:/work\\\" quay.io/curl/curl:latest /work/bin/health-check \\\"${SERVICE_URL}\\\" /work gitlab_webhook_token\", stops the container, removes the network, checks that no health-check-failed file exists, and always stores container.log as an artifact (expire in 31 days).",
+  "tags": [
+    "kaniko",
+    "docker",
+    "kubectl",
+    "secrets",
+    "deploy",
+    "health-check",
+    "gitlab-ci",
+    "triage-web",
+    "production"
+  ]
+}

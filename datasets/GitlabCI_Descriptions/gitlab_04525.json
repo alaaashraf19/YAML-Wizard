@@ -1,0 +1,20 @@
+{
+  "sha": "gitlab_04525",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 835,
+  "description": "Create a GitLab CI pipeline that uses the python:3.6-alpine Docker image and defines two stages: test and deploy, with a global before_script that runs `pip install twine`. In the test stage add a `test` job that runs `python setup.py sdist`, then `pip install dist/*`, `pip install mock unittest2`, installs git via `apk add git`, configures GitLab with `git config gitlab.url \"http://your-server-url\"` and `git config gitlab.token \"your-token\"`, and finally executes `cd gitgitlab && python -m unittest2 test/gitgitlab_test.py`. In the deploy stage add a `deploy_production` job that runs only on tag pipelines, executes `python setup.py sdist` and `twine upload dist/*`, and uses the variables `TWINE_USERNAME=$PRODUCTION_USERNAME` and `TWINE_PASSWORD=$PRODUCTION_PASSWORD` to publish to the default PyPI repository. Also add a `deploy_staging` job that runs on all non‑tag commits, runs `VERSION_APPEND=${CI_JOB_ID} python setup.py sdist` followed by `twine upload --repository-url $REPOSITORY_URL dist/*`, and uses `TWINE_USERNAME=$STAGING_USERNAME` and `TWINE_PASSWORD=$STAGING_PASSWORD` to publish to a custom repository.",
+  "tags": [
+    "python",
+    "pip",
+    "twine",
+    "alpine",
+    "test",
+    "deploy",
+    "pypi",
+    "staging",
+    "production",
+    "unittest2",
+    "gitlab-ci"
+  ]
+}

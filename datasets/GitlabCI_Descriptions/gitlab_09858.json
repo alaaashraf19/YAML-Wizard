@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_09858",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 137,
+  "description": "Create a GitLab CI pipeline that uses the python:latest Docker image. Set a global before_script that runs python --version. Define a single stage named build. Add a build job in the build stage that executes python setup.py sdist bdist_wheel. No caches, artifacts, or special rules are needed.",
+  "tags": [
+    "python",
+    "build",
+    "sdist",
+    "wheel",
+    "gitlab-ci"
+  ]
+}

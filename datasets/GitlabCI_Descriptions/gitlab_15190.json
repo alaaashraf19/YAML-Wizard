@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_15190",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 3709,
+  "description": "Create a GitLab CI pipeline where all jobs run in the default stage. Use the espressofoundation/ubuntu:latest image for the build:pw job, which runs ./configure then make pw and is tagged docker. Add an intel parallel job that loads Intel modules, configures with --enable-openmp, builds with make -j pw cp, sets OMP_NUM_THREADS from SLURM_CPUS_PER_TASK, echoes the processor and thread count, patches the test suite, runs make clean and make run-tests-pw-parallel twice, and is tagged intel. Add three PGI jobs: pgi parallel k80 loads hpc‑sdk and mkl modules, configures with OpenMP and CUDA cc35, builds, sets OMP_NUM_THREADS, runs the same parallel test sequence, copies the resulting pw.x to a filename containing the short commit SHA, and is tagged k80; pgi parallel v100 loads similar modules with CUDA cc70 and CUDA_HOME, performs the same build and test steps, and is tagged galileo and v100; pgi serial k80 configures with --disable-parallel and OpenMP, builds, sets OMP_NUM_THREADS, runs serial pw and cp tests, and is tagged k80. Finally, add a pgi207 power v100 job that loads newer modules, configures with PGI compilers and CUDA, builds, allocates resources via salloc with GPU and memory specifications, sets OMP_NUM_THREADS=8, runs parallel pw and cp tests, then exits, and is tagged marconi100.",
+  "tags": [
+    "ubuntu",
+    "make",
+    "intel",
+    "pgi",
+    "cuda",
+    "slurm",
+    "hpc"
+  ]
+}

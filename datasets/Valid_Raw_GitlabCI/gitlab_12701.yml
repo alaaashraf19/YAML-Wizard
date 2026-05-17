@@ -1,0 +1,7 @@
+test:
+  except:
+  - tags
+  script:
+  - npm install
+  - npm run cover
+  tags: null

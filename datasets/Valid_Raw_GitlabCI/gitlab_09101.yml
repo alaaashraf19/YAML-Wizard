@@ -1,0 +1,89 @@
+.test_images:
+  image: $CI_REGISTRY_IMAGE/${IMAGE_NAMESPACE}:${TEST_IMAGE_TAG}
+  parallel:
+    matrix:
+    - IMAGE_NAMESPACE: base
+    - IMAGE_NAMESPACE: ruby-latest
+delivery-metrics acceptance tests:
+  extends:
+  - .test
+  - .ci-image-com
+  - .common-ci-tokens
+  script:
+  - ./scripts/delivery-metrics.sh build
+  - ./scripts/delivery-metrics.sh run &
+  - while ! docker ps | grep delivery_metrics; do echo 'Waiting for the service container';
+    sleep 1; done
+  - ./scripts/delivery-metrics.sh acceptance-tests
+  timeout: 30m
+  variables:
+    RUNNER_SCRIPT_TIMEOUT: 15m
+go linter:
+  extends:
+  - .test-go
+  - .common-ci-tokens
+  script:
+  - cd metrics
+  - mise install go golangci-lint
+  - golangci-lint run -v --color=always
+  stage: test
+go test:
+  extends:
+  - .test-go
+  - .common-ci-tokens
+  script:
+  - cd metrics
+  - mise install go
+  - go test gitlab.com/gitlab-org/release-tools/metrics/...
+pages:
+  artifacts:
+    paths:
+    - public/
+  dependencies:
+  - specs
+  extends:
+  - .common-ci-tokens
+  rules:
+  - if: $CI_SERVER_HOST == "ops.gitlab.net"
+    when: never
+  - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  script:
+  - mkdir -p public/
+  - mv coverage/ public/
+  stage: coverage
+renovate-user-validate:
+  allow_failure: true
+  extends:
+  - .with-bundle
+  - .test
+  - .common-ci-tokens
+  script:
+  - ./scripts/generate-renovate-reviewers.sh
+  - git diff --exit-code
+  stage: test
+rubocop:
+  extends:
+  - .with-bundle
+  - .test
+  - .common-ci-tokens
+  script:
+  - bundle exec rubocop
+  stage: test
+specs:
+  artifacts:
+    paths:
+    - coverage/assets
+    - coverage/index.html
+    - rspec.xml
+    reports:
+      junit: rspec.xml
+  extends:
+  - .test_images
+  - .with-bundle
+  - .test
+  - .common-ci-tokens
+  script:
+  - git config --global user.email "you@example.com"
+  - git config --global user.name "Your Name"
+  - bundle exec rspec --format progress --format RspecJunitFormatter --out rspec.xml
+  stage: test

@@ -1,0 +1,202 @@
+name: Release
+on:
+  release:
+    types: created
+env:
+  GPG_KEY_ID: 'F903BFACDCEF9A432055CC6F651E1A80B494B6F7'
+
+jobs:
+  pack:
+    name: Pack source tarball
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Create source tarball
+        run: |
+          SOURCE_NAME=$(awk -F/ '{print tolower($NF)}' <<<"${{ github.repository }}")-$(awk -F/ '{print $NF}' <<<"${{ github.ref }}")
+          git ls-files --recurse-submodules | \
+          tar --exclude-vcs --transform "s|^|$SOURCE_NAME/|S" -ca -T - -f ../$SOURCE_NAME-source.tar.gz
+      - name: Upload source tarball
+        uses: AButler/upload-release-assets@v2.0
+        with:
+          files: '../*.tar.gz'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+  release:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-20.04]
+        arch: [amd64, aarch64]
+        include:
+          - os: ubuntu-20.04
+            cmake-defines: '-D CPACK_GENERATOR="DEB;RPM" -D CMAKE_BUILD_TYPE=Release'
+            upload-files: 'build/*.deb;build/*.rpm;package-signing-key.pub'
+    steps:
+    - name: Clone repo
+      uses: actions/checkout@v2.2.0
+      with:
+        submodules: recursive
+
+    - name: Install dependent apt packages
+      if: runner.os == 'Linux' && matrix.arch == 'amd64'
+      run: |
+        sudo apt-get update
+        sudo apt-get install qttools5-dev libpolkit-qt5-1-dev
+        wget http://launchpadlibrarian.net/590905036/extra-cmake-modules_5.92.0-0ubuntu1_amd64.deb
+        sudo dpkg -i extra-cmake-modules_5.92.0-0ubuntu1_amd64.deb
+
+    - name: Import GPG key
+      uses: crazy-max/ghaction-import-gpg@v6
+      with:
+        gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+        passphrase: ${{ secrets.GPG_PASSPHRASE }}
+        fingerprint: ${{ env.GPG_KEY_ID }}
+
+    - name: Configure RPM for signing
+      run: |
+        echo "%_gpg_name ${{ env.GPG_KEY_ID }}" >> ~/.rpmmacros
+        echo "%_signature gpg" >> ~/.rpmmacros
+        echo "%_gpgpath $HOME/.gnupg" >> ~/.rpmmacros
+        echo "%__gpg /usr/bin/gpg" >> ~/.rpmmacros
+
+    - name: Build AMD64
+      if: matrix.arch == 'amd64'
+      run: |
+        cmake -S . -B build ${{ matrix.cmake-defines }}
+        sed -i 's|etc/dbus-1|share/dbus-1|g' build/cmake_install.cmake
+        cmake --build build --target package --parallel 2 --config Release
+
+    - name: Build ARM64
+      uses: uraimo/run-on-arch-action@v2.7.2
+      if: matrix.os == 'ubuntu-20.04' && matrix.arch != 'amd64'
+      with:
+        arch: ${{ matrix.arch }}
+        distro: ubuntu20.04
+        githubToken: ${{ github.token }}
+        dockerRunArgs: --volume "${PWD}:/repo"
+        install: |
+          apt update -y
+          # dpkg-dev for dpkg-shlibdeps
+          apt install -y qttools5-dev libpolkit-qt5-1-dev g++ rpm dpkg-dev apt-transport-https ca-certificates gnupg software-properties-common wget
+          wget http://launchpadlibrarian.net/590905696/extra-cmake-modules_5.92.0-0ubuntu1_arm64.deb
+          dpkg -i extra-cmake-modules_5.92.0-0ubuntu1_arm64.deb
+          wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | tee /etc/apt/trusted.gpg.d/kitware.gpg >/dev/null
+          apt-add-repository 'deb https://apt.kitware.com/ubuntu/ focal main'
+          apt install -y cmake
+
+        run: |
+          cmake -S . -B build ${{ matrix.cmake-defines }}
+          sed -i 's|etc/dbus-1|share/dbus-1|g' build/cmake_install.cmake
+          cmake --build build --target package --parallel 2 --config Release
+
+    - name: Fix permissions for ARM64 build
+      if: matrix.os == 'ubuntu-20.04' && matrix.arch == 'aarch64'
+      run: |
+        sudo chown -R $USER:$USER build
+        sudo chmod -R 755 build
+
+    - name: Install sign packages
+      run: |
+        sudo apt install rpm dpkg-sig
+
+    - name: Sign packages
+      run: |
+        rpm --addsign build/*.rpm
+        dpkg-sig --sign builder build/*.deb
+
+    - name: Export GPG public key
+      run: |
+        gpg --export --armor ${{ env.GPG_KEY_ID }} > package-signing-key.pub
+
+    - name: Upload to Release
+      uses: AButler/upload-release-assets@v2.0
+      with:
+        files: ${{ matrix.upload-files }}
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+  appimage:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-20.04]
+        arch: [amd64]
+        include:
+          - os: ubuntu-20.04
+            bundled-fio: '3.37'
+            cmake-defines: '-D CMAKE_BUILD_TYPE=Release'
+            upload-files: 'build/{*.AppImage,*.AppImage.zsync,*.AppImage.sig}'
+    steps:
+    - name: Clone repo
+      uses: actions/checkout@v2.2.0
+      with:
+        ref: 'legacy'
+        submodules: recursive
+
+    - name: Install dependent packages
+      run: |
+        sudo apt-get update
+        sudo apt-get install python3-pip libaio-dev qt5-default qttools5-dev kde-style-breeze breeze-icon-theme
+        wget http://launchpadlibrarian.net/590905036/extra-cmake-modules_5.92.0-0ubuntu1_amd64.deb
+        sudo dpkg -i extra-cmake-modules_5.92.0-0ubuntu1_amd64.deb
+
+    - name: Import GPG key
+      uses: crazy-max/ghaction-import-gpg@v6
+      with:
+        gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+        passphrase: ${{ secrets.GPG_PASSPHRASE }}
+        fingerprint: ${{ env.GPG_KEY_ID }}
+
+    - name: Install Qt
+      run: |
+        sudo pip3 install setuptools
+        sudo pip3 install aqtinstall
+        sudo aqt install --outputdir /opt/Qt 5.15.1 linux desktop
+
+    - name: Prepare 3rd-party
+      run: |
+        mkdir 3rd-party
+        cd 3rd-party
+        wget https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage
+        chmod +x ./linuxdeployqt-continuous-x86_64.AppImage
+        wget https://github.com/axboe/fio/archive/refs/tags/fio-${{ matrix.bundled-fio }}.tar.gz
+        tar -xzf fio-${{ matrix.bundled-fio }}.tar.gz
+        cd ..
+
+    - name: Build
+      run: |
+        REPO_NAME=$(awk -F/ '{print $NF}' <<<"${{ github.repository }}")
+        APP_VERSION=$(awk -F/ '{print $NF}' <<<"${{ github.ref }}")
+        APPIMAGE_NAME=$REPO_NAME-$APP_VERSION-fio-${{ matrix.bundled-fio }}-x86_64.AppImage
+        mkdir build
+        cd build
+        mkdir appdir
+        echo -e '#!/bin/bash\nHERE="$(dirname "$(readlink -f "${0}")")"\nexport PATH="$HERE/usr/bin/:$PATH"\n$HERE/usr/bin/kdiskmark "$@"' > appdir/AppRun
+        chmod +x ./appdir/AppRun
+        cmake ${{ matrix.cmake-defines }} -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_PREFIX_PATH=/opt/Qt/5.15.1/gcc_64/ ..
+        sed -i "s|XAUTHORITY kdiskmark|XAUTHORITY ./$APPIMAGE_NAME|g" ../src/mainwindow.cpp
+        make DESTDIR=appdir -j$(nproc) install
+        cd ../3rd-party/fio-fio-${{ matrix.bundled-fio }}
+        ./configure --disable-native --build-static
+        make DESTDIR="$(pwd)/../../build/appdir" prefix=/usr install
+        cd ../../build
+        cp -a /usr/share/icons/breeze appdir/usr/share/icons/
+        sudo mkdir /opt/Qt/5.15.1/gcc_64/plugins/styles/
+        sudo cp /usr/lib/x86_64-linux-gnu/qt5/plugins/styles/breeze.so /opt/Qt/5.15.1/gcc_64/plugins/styles/
+        export VERSION=$APP_VERSION-fio-${{ matrix.bundled-fio }}
+        ../3rd-party/linuxdeployqt-continuous-x86_64.AppImage appdir/usr/share/applications/*.desktop -appimage -qmake=/opt/Qt/5.15.1/gcc_64/bin/qmake \
+          -extra-plugins=styles/breeze.so -updateinformation="gh-releases-zsync|${{ github.repository_owner }}|$REPO_NAME|latest|*.zsync"
+
+    - name: Sign AppImage
+      run: |
+        find . -name '*.AppImage' -exec gpg --detach-sign --output {}.sig {} \;
+
+    - name: Upload
+      uses: AButler/upload-release-assets@v2.0
+      with:
+        files: ${{ matrix.upload-files }}
+        repo-token: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_05438",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 18000,
+  "description": "Create a GitLab CI pipeline with three stages: test, build, and deploy. In the test stage define many API and UI jobs (e.g., .API:main:dns, .API:main:libcloud_1/2, .UI:clouds-add-1/2) that use the $TESTS_IMAGE Docker image, run a before_script exporting a TEST variable, echoing the image and settings, decoding $TEST_SETTINGS into test_settings.py, then execute /mist.tests/prepare_env.py with appropriate flags; UI jobs also declare chrome tags, retry on failure, and produce failure artifacts (js_console.log, artifacts/error.png, artifacts/output.mp4). In the build stage add .docker_build_template jobs that use docker:git with docker:dind service, run a before_script that logs into GitLab, external, and Docker Hub registries, then build images from docker/<img> directories and push them via a docker_push helper; also add .docker_retag_template jobs that pull submodule images, retag and push them using the same helpers. In the deploy stage add .deploy_review_template (and .deploy_template) jobs that use dtzar/helm-kubectl:2.10.0, write a values.yaml file, call a deploy() function that creates namespaces, secrets, and runs helm upgrade --install with many --set parameters, then waits for pods and the environment URL to become ready; also include .undeploy_template that runs helm delete --purge. Set appropriate variables (namespace, release, values, etc.), no cache sections, and use rules so test jobs run on all branches, build jobs run on main branch, and deploy jobs run only on merge‑request pipelines or tags.",
+  "tags": [
+    "docker",
+    "helm",
+    "kubernetes",
+    "ci",
+    "test",
+    "ui",
+    "api",
+    "dind",
+    "deployment"
+  ]
+}

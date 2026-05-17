@@ -1,0 +1,16 @@
+{
+  "sha": "880359b8533714a7186cc683ab05ed284f0a3518c4e921b55fca5854f57526ef",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4118,
+  "description": "Create a GitHub Actions workflow named CI that runs on push to master and on pull requests, ignoring .gitignore and README.rst. The workflow has read permissions to repository contents and consists of multiple jobs: build-package, build-docs, lint, unit-test on various OS and Python versions, and coveralls. Each job sets up Python, runs specific make commands, and uploads artifacts or coverage data as needed.",
+  "tags": [
+    "python",
+    "ci",
+    "ubuntu",
+    "tests",
+    "coverage",
+    "docs",
+    "linting"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_04330",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 645,
+  "description": "Create a GitLab CI pipeline that defines a .test_base template installing cmake, runs ./deps/rebar3 eunit, and sets ERLANG_ROCKSDB_OPTS to -DWITH_BUNDLE_LZ4=ON -DWITH_BUNDLE_SNAPPY=ON; use this template for the erlang23, erlang24, and erlang25 jobs, each using the corresponding erlang:23, erlang:24, and erlang:25 Docker images. Define a .shared_libs_test_base template that installs cmake, liblz4-dev, and libsnappy-dev, runs ./deps/rebar3 eunit, and sets ERLANG_ROCKSDB_OPTS to -DWITH_LZ4=ON -DWITH_SNAPPY=ON; apply it to the erlang23_shared_libs job with the erlang:23 image. All jobs run in the default stage without additional caches, artifacts, or rules.",
+  "tags": [
+    "erlang",
+    "rebar3",
+    "cmake",
+    "rocksdb",
+    "shared-libs",
+    "docker"
+  ]
+}

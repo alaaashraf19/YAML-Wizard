@@ -1,0 +1,22 @@
+alpine-docker:
+  image: alpine
+  script:
+  - ./setup.sh
+  stage: build
+before_script:
+- echo $CI_REGISTRY_IMAGE
+centos-docker:
+  image: centos
+  script:
+  - ./setup.sh
+  stage: build
+debian-docker:
+  image: debian
+  script:
+  - ./setup.sh
+  stage: build
+ubuntu-docker:
+  image: ubuntu
+  script:
+  - ./setup.sh
+  stage: build

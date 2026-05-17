@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_07570",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 206,
+  "description": "Create a GitLab CI pipeline that uses the ruby:2.3 Docker image and defines the variable JEKYLL_ENV=production. Add a single deploy stage with a pages job that runs only on the master branch. In the pages job execute the shell commands: rm -rf ./_site/20*, mkdir public, and mv ./_site/* public/. Publish the public/ directory as a GitLab Pages artifact.",
+  "tags": [
+    "ruby",
+    "jekyll",
+    "gitlab-pages",
+    "deploy",
+    "master-only"
+  ]
+}

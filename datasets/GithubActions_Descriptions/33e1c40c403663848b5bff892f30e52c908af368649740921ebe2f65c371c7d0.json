@@ -1,0 +1,15 @@
+{
+  "sha": "33e1c40c403663848b5bff892f30e52c908af368649740921ebe2f65c371c7d0",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3204,
+  "description": "Create a GitHub Actions workflow named Unittests Core that runs on workflow dispatch, push to any branch except release_doc, and pull requests to the develop branch. Use an ubuntu-20.04 job with a matrix strategy to test multiple Python versions (3.7 to 3.12). The workflow should set up the OS, extract the branch name, and display workflow information. It then checks out the core and plugins repositories, sets up Python, upgrades pip, installs dependencies, and runs unit tests using pytest.",
+  "tags": [
+    "python",
+    "unittests",
+    "core",
+    "ubuntu",
+    "pytest",
+    "github-actions"
+  ]
+}

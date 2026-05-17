@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_11757",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 624,
+  "description": "Create a GitLab CI pipeline using the ruby:2.5.1 Docker image and a postgres:latest service, with POSTGRES_DB and POSTGRES_USER variables set for the database. Add a cache for vendor/ruby. Define a before_script that runs apt-get update -qq && apt-get install -y -qq postgresql postgresql-contrib libpq-dev cmake, ruby -v, which ruby, gem install bundler --no-ri --no-rdoc, copies config/database.ci.yml to config/database.yml, runs RAILS_ENV=test bundle install --jobs $(nproc) \"${FLAGS[@]}\", and writes the master key to config/master.key. In the default test stage add a rails job that executes RAILS_ENV=test bundle exec rake db:create db:schema:load. Also add an rspec job that runs RAILS_ENV=test bundle exec rspec, both inheriting the before_script and using the same image and service.",
+  "tags": [
+    "ruby",
+    "rails",
+    "rspec",
+    "postgres",
+    "bundler",
+    "cmake",
+    "apt-get",
+    "cache"
+  ]
+}

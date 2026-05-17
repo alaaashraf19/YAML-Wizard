@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_12526",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2535,
+  "description": "Create a GitLab CI pipeline with three stages testing, release, and post-release, using a Maven cache at .m2/repository and a vendor cache for docs. In the testing stage define three verify jobs (verify:jdk11, verify:jdk14, verify:jdk8) each using the respective Maven Docker images (maven:3.6-jdk-11-slim, maven:3.6-jdk-14, maven:3.6-jdk-8-alpine), with a before_script that creates .m2/repository and writes a minimal settings.xml, a script that runs mvn ${MAVEN_CLI_OPTS} verify then an awk command to compute coverage, an after_script that removes snapshot diffs, and each job uploads JUnit reports from target/surefire-reports/*.xml as artifacts (verify:jdk11 also keeps target/site/**/* for 5 minutes); all three are skipped when the commit message matches [silent-ignore] or [maven-release-plugin]. In the post-release stage add a pages job using ruby:2.5 that runs cd docs, bundle install --path vendor, builds the site with bundle exec jekyll build -d public, moves the generated public directory and the JaCoCo HTML report from target/site/jacoco-ut into the public folder, then triggers a downstream pipeline via a curl POST using $CI_JOB_TOKEN, and publishes the public/ directory as a GitLab Pages artifact; it runs only on the master branch and also skips commits containing [silent-ignore] or [maven-release-plugin]. The pipeline defines variables MAVEN_CLI_OPTS, MAVEN_NO_TESTS, and MAVEN_OPTS for Maven configuration and uses a global cache key $CI_PROJECT_NAME for the Maven repository.",
+  "tags": [
+    "maven",
+    "jdk11",
+    "jdk14",
+    "jdk8",
+    "ruby",
+    "jekyll",
+    "gitlab-pages",
+    "coverage",
+    "cache"
+  ]
+}

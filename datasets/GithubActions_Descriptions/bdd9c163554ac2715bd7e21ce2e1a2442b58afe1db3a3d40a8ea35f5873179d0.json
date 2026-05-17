@@ -1,0 +1,13 @@
+{
+  "sha": "bdd9c163554ac2715bd7e21ce2e1a2442b58afe1db3a3d40a8ea35f5873179d0",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 565,
+  "description": "Create a GitHub Actions workflow named Deploy dev builds of addon that runs on push to the dev branch. Use an ubuntu-latest job that checks out the repository and runs a deploy script in a Docker container using the homeassistant/amd64-builder image, mounting the Docker socket and repository workspace. The script should build and deploy the addon to Docker Hub using credentials from secrets.",
+  "tags": [
+    "docker",
+    "deploy",
+    "dev",
+    "github-actions"
+  ]
+}

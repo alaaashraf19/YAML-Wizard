@@ -1,0 +1,31 @@
+name: Lint
+
+on:
+  pull_request:  # Trigger on PRs to every branch
+    branches:
+      - '*'  # Match every branch (Next line as well)
+      - '*/*'
+
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        ref: ${{ github.event.pull_request.head.sha }}
+
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: 3.x
+
+    - name: Install dependencies
+      run: pip install -U flake8 wheel setuptools
+
+    - name: Run Lint
+      run: flake8 -v
+    - name: Test Distribution
+      run: |
+        python setup.py sdist bdist_wheel
+        pip install -v .

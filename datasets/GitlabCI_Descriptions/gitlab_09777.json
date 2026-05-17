@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_09777",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 307,
+  "description": "Create a GitLab CI pipeline using the image registry.gitlab.com/haboustak/glartifacts/build-env:1.2 with two stages: build and test. In the build stage add a build job that runs python setup.py sdist bdist_wheel and stores the resulting dist/ directory as an artifact. In the test stage add a test job that runs pylint glartifacts --ignore proto -j 8 and then executes su -c \"python -m unittest -v\" postgres to run the unit tests as the postgres user. No caches, services, or conditional rules are defined.",
+  "tags": [
+    "python",
+    "pylint",
+    "unittest",
+    "build-env",
+    "sdist",
+    "wheel"
+  ]
+}

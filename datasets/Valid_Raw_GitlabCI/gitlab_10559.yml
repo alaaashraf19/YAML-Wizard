@@ -1,0 +1,49 @@
+build:
+  allow_failure: false
+  artifacts:
+    expire_in: 3 hrs
+    paths:
+    - build/
+  image: node:alpine
+  only:
+  - tags
+  - triggers
+  retry: 1
+  script:
+  - echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}'>.npmrc
+  - 'sed -i ''s/"version": "0.0.1"/''"\"version\": \"${CI_COMMIT_TAG-0.0.1}\""''/g''
+    ./package.json
+
+    '
+  - npm install
+  - npm install babel-cli
+  - npm run build
+  - npm run minify
+  - mkdir build || ls build
+  - cp index.d.ts ./build/index.d.ts
+  - cp index.js ./build/index.js
+  - cp index.js.map ./build/index.js.map
+  - cp package.json ./build/package.json
+  - cp tsconfig.json ./build/tsconfig.json
+  - cp typedoc.json ./build/typedoc.json
+  - cp package-lock.json ./build/package-lock.json
+  - cp README.md ./build/README.md
+  - cp LICENSE ./build/LICENSE
+  stage: build
+  when: on_success
+publish:
+  allow_failure: false
+  image: node:alpine
+  only:
+  - tags
+  - triggers
+  retry: 1
+  script:
+  - cd ./build
+  - echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}'>.npmrc
+  - npm run publish
+  stage: deploy
+  when: on_success
+stages:
+- build
+- deploy

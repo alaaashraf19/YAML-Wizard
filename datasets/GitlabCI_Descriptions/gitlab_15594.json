@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_15594",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1350,
+  "description": "Create a GitLab CI pipeline with stages build and release and a variable DOCFX_SOURCE_BRANCH_NAME set to $CI_BUILD_REF_NAME. In the build stage add a build_lib_release job using the mcr.microsoft.com/dotnet/core/sdk:3.1-buster image, running only on branches matching the regex `.*-release`, that executes `export BUILD_VERSION=$(echo $CI_COMMIT_REF_NAME | sed 's/\\([0-9]\\+\\.[0-9]\\+\\.[0-9]\\+\\)\\-release$/\\1/g')`, `echo $BUILD_VERSION`, `sed -i -e \"s/0.5.1.0/$BUILD_VERSION.0/g\" build/Rayark.Mast.csproj`, and `./build.sh`, then stores the `pack` directory as an artifact named mast-unity-project for 5 years. Also in the build stage add a build_lib_test job using the same .NET image, excluded from tag pipelines, that simply runs `./build.sh`. Add a document job in the build stage using the alvinsay/docfx:2.32.1 image, also limited to `.*-release` branches, that runs `docfx doc/docfx.json` and `mv doc/_site public`, publishing the `public` folder as a 5‑year artifact. In the release stage add a mast-release job using the bash image, dependent on build_lib_release, limited to `.*-release` branches, that copies `pack/Assets/Plugins/Rayark/Mast/Rayark.Mast.dll` to the job root and publishes `Rayark.Mast.dll` as a 5‑year artifact. Finally, add a pages job using the same docfx image, running only on the master branch, that runs `docfx doc/docfx.json` and `mv doc/_site public`, publishing the `public` directory as the GitLab Pages artifact.",
+  "tags": [
+    "dotnet",
+    "docfx",
+    "bash",
+    "build",
+    "release",
+    "artifacts",
+    "regex-branches",
+    "pages"
+  ]
+}

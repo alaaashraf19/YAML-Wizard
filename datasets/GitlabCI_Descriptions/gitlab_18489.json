@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_18489",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 440,
+  "description": "Create a GitLab CI pipeline that uses the node:8 Docker image with nats:latest and nats-streaming:latest services and sets LOG_LEVEL=error and NODE_ENV=ci variables. Define two stages: test and deploy, and run npm i in a before_script for all jobs. In the test stage add a test job that executes node_modules/.bin/nyc npm test && node_modules/.bin/nyc report --reporter=html --reporter=text-summary and stores the coverage/ directory as an artifact. In the deploy stage add a pages job that depends on test, moves the coverage/ directory into public/ with mv coverage/ public/, and publishes the public/ folder as a GitLab Pages artifact that expires in 30 days.",
+  "tags": [
+    "node",
+    "npm",
+    "nyc",
+    "gitlab-pages",
+    "nats",
+    "coverage"
+  ]
+}

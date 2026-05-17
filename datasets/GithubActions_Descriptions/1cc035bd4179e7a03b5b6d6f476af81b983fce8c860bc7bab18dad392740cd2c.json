@@ -1,0 +1,15 @@
+{
+  "sha": "1cc035bd4179e7a03b5b6d6f476af81b983fce8c860bc7bab18dad392740cd2c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1537,
+  "description": "Create a GitHub Actions workflow named CI_win that runs on push and pull request events. Use a matrix job strategy to build on Windows with MSVC and Visual Studio 17 2022, for both Release and Debug configurations. The job should check out the code, set up CMake, install vcpkg and Ninja, install Asio using vcpkg, configure CMake with the vcpkg toolchain, build the project, and run tests with CTest.",
+  "tags": [
+    "windows",
+    "msvc",
+    "cmake",
+    "vcpkg",
+    "asio",
+    "tests"
+  ]
+}

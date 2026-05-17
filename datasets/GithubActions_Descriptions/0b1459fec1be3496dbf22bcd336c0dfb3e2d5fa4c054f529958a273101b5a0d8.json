@@ -1,0 +1,14 @@
+{
+  "sha": "0b1459fec1be3496dbf22bcd336c0dfb3e2d5fa4c054f529958a273101b5a0d8",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2117,
+  "description": "Create a GitHub Actions workflow named Publish documentation that triggers on push to the master branch and tags starting with v*. Use an ubuntu-22.04 job with write permission to repository contents, check out the code, set up Python 3.x, install dependencies, build documentation with make html, and deploy it to the gh-pages branch. Update the gh-pages branch by checking out the branch, committing changes with a version-specific directory, and pushing changes using a GitHub token.",
+  "tags": [
+    "python",
+    "documentation",
+    "github-pages",
+    "ubuntu",
+    "make"
+  ]
+}

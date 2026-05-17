@@ -1,0 +1,16 @@
+before_script:
+- apk add curl
+- docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+build:
+  script:
+  - docker pull $CONTAINER_IMAGE:latest || true
+  - docker build --cache-from $CONTAINER_IMAGE:latest --tag $CONTAINER_IMAGE:latest
+    .
+  - docker push $CONTAINER_IMAGE:latest
+  stage: build
+  tags:
+  - netsec
+  - docker
+image: docker:stable
+variables:
+  CONTAINER_IMAGE: registry.gitlab.com/$CI_PROJECT_PATH

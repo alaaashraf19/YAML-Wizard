@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_17631",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 170,
+  "description": "Create a GitLab CI pipeline that uses the python:latest Docker image and caches the pip directory at ~/.cache/pip/. Include a before_script that runs python -V, then installs the Python packages bitarray and bitstring via pip. Define a single job named test that runs in the default test stage and executes python setup.py test. No explicit stages, rules, or deployment targets are specified, so the job runs on every pipeline. Ensure the cache is restored for subsequent jobs.",
+  "tags": [
+    "python",
+    "pip",
+    "bitarray",
+    "bitstring",
+    "cache"
+  ]
+}

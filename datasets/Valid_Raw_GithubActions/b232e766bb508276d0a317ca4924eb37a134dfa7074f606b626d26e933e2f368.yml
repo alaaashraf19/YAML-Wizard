@@ -1,0 +1,56 @@
+name: build
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11", "3.12", "3.13", "3.14"]
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+        allow-prereleases: true
+    - name: Install
+      run: |
+        python -mpip install --upgrade pip setuptools wheel coverage[toml] &&
+        python -mpip install . &&
+        python -mpip list
+    - name: Test
+      run: |
+        python -mcoverage run --append --module unittest --buffer &&
+        # Oldest supported versions.
+        python -mpip install docutils==0.12 sphinxcontrib-napoleon==0.7.0 &&
+        if [[ ${{ matrix.python-version }} = 3.7 ]]; then
+          python -mpip install typing_extensions==3.7.4 typing_inspect==0.8.0
+        fi &&
+        python -mcoverage run --append --module unittest --buffer
+    - name: Upload coverage
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-${{ matrix.python-version }}
+        include-hidden-files: true
+        path: .coverage.*
+
+  coverage:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+    - name: Run
+      run: |
+        shopt -s globstar &&
+        GH_TOKEN=${{ secrets.GITHUB_TOKEN }} \
+          gh run download ${{ github.run-id }} -p 'coverage-*' &&
+        python -mpip install --upgrade coverage &&
+        python -mcoverage combine coverage-* &&  # Unifies paths across envs.
+        python -mcoverage annotate &&
+        grep -HnTC2 '^!' **/*,cover | sed s/,cover// &&
+        python -mcoverage report --show-missing

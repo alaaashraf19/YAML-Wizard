@@ -1,0 +1,15 @@
+{
+  "sha": "d3fb2d876aacd5d6405bb5b8d7061cc509ed079084402a625992e680a917a72c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2358,
+  "description": "Create a GitHub Actions workflow named MacOS that runs on push, pull request, and release events, ignoring certain files. The workflow uses a matrix strategy to build on macOS with Qt 5.15.0 and clang_64 architecture. It caches Qt, installs or sets up Qt, checks out the repository, installs packages, builds the project with CMake and Ninja, packages the app with macdeployqt, and uploads the artifact to GitHub.",
+  "tags": [
+    "macos",
+    "qt",
+    "cmake",
+    "ninja",
+    "github-actions",
+    "release-workflow"
+  ]
+}

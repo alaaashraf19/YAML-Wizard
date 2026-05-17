@@ -1,0 +1,15 @@
+{
+  "sha": "95c9b8317222d1af06600ef89e2162e82f83bfb1aa2a04e93933d3c3381a5da5",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4476,
+  "description": "Create a GitHub Actions workflow named Weekly Tests that runs a suite of very-long tests. The workflow should be triggered manually via a workflow dispatch. It consists of multiple jobs: get-date to fetch the current date, get-testlib-very-long-dirs to get directories for testlib-very-long, and two test jobs: testlib-very-long-tests to run very-long tests on self-hosted linux x64 environments and gpu-tests to run GPU tests on a specific container. Each test job should check out the code, cache build results, run tests with specific parameters, and upload test results as artifacts.",
+  "tags": [
+    "github-actions",
+    "testing",
+    "workflow",
+    "self-hosted",
+    "gpu",
+    "linux"
+  ]
+}

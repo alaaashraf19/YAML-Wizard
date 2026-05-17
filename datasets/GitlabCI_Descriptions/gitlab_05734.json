@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_05734",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 234,
+  "description": "Create a GitLab CI pipeline that defines a before_script running \"node -v\" and \"npm version\", sets the NPM_CONFIG_LOGLEVEL variable to warn, and caches the node_modules directory per job using a key of $CI_JOB_NAME. In the test stage, add a test:current job that uses the node:latest Docker image and executes \"npm it\". Also add a test:lts-12 job that uses the node:erbium image and executes \"npm it\". Both jobs inherit the before_script, cache settings, and variable.",
+  "tags": [
+    "node",
+    "npm",
+    "cache",
+    "test"
+  ]
+}

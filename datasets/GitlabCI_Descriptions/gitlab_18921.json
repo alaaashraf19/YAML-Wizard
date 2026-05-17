@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_18921",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1652,
+  "description": "Create a GitLab CI pipeline that uses the maven:3.5.3-jdk-8 Docker image and caches the Maven repository at .m2/repository as well as webapp/node_modules/ and webapp/node/. Define two stages: test and deploy, and set MAVEN_CLI_OPTS and MAVEN_OPTS variables as given. In the test stage add a project_unit_test job that runs mvn test $MAVEN_CLI_OPTS -P unit-test,dbForTesting $MAVEN_OPTS and stores the surefire reports from webapp/target/surefire-reports as artifacts for 2 hours. Also in the test stage add a project_integration_test job that uses the image markhobson/maven-chrome:latest, the mysql:5 service with MYSQL_DATABASE, MYSQL_PASSWORD, MYSQL_ROOT_PASSWORD, MYSQL_USER variables, runs mvn package verify $MAVEN_CLI_OPTS -P integrationTests,frontendCompilation,dbForTesting $MAVEN_OPTS, and on failure uploads the test reports and the built WAR as artifacts for 2 days. In the deploy stage add a project_deploy job that runs mvn package $MAVEN_CLI_OPTS -P production,frontendCompilation $MAVEN_OPTS, publishes the built WAR and database property files as artifacts for 1 week, and only runs on the production and deploy-testing branches.",
+  "tags": [
+    "maven",
+    "java",
+    "war",
+    "mysql",
+    "integration-test",
+    "unit-test",
+    "gitlab-ci"
+  ]
+}

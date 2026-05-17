@@ -1,0 +1,35 @@
+cleanup_job:
+  script:
+  - echo "cleanup"
+  stage: cleanup
+  when: always
+deploy_job:
+  environment:
+    name: production
+    url: https://example.com
+  script:
+  - echo "deploy"
+  stage: deploy
+  when: manual
+image: node:8
+lint:
+  script:
+  - npm run lint
+  stage: test
+npm:install:
+  artifacts:
+    paths:
+    - node_modules
+  script:
+  - npm install
+  stage: install
+stages:
+- install
+- test
+- build
+- deploy
+- cleanup
+test:
+  script:
+  - npm run test
+  stage: test

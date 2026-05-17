@@ -1,0 +1,15 @@
+{
+  "sha": "eb63345cdb2ec2fc0cd6a895d07656808467893bc235dfb8911dc8486118d860",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3704,
+  "description": "Create a reusable GitHub Actions workflow named Feelpp PKG Reusable Workflow that accepts two string inputs: dist and flavor. The workflow has two jobs: activate and build. The activate job runs conditionally based on the inputs and outputs a message. The build job depends on activate, checks out the code, and then builds and publishes various Feelpp packages (Feelpp, toolboxes, MOR, Python, and Docker) based on the inputs and commit message.",
+  "tags": [
+    "feelpp",
+    "reusable-workflow",
+    "ubuntu",
+    "pkg",
+    "docker",
+    "python"
+  ]
+}

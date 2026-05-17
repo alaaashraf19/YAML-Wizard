@@ -1,0 +1,61 @@
+.test_template1:
+  script: &id002
+  - echo "===== Running tests with Python 3"
+  - py -3 -m pip install --no-cache-dir -r requirements.txt
+  - py -3 -m pytest
+before_script:
+- echo "Starting CI Build of $PROJECT_NAME ($CI_BUILD_REPO branch $CI_COMMIT_REF_NAME)"
+lint:
+  script:
+  - echo "===== Running linters"
+  - python2 -m pycodestyle
+  - python2 -m pylint zaber
+  stage: test
+  tags:
+  - host-soft-ci-runner
+publish:
+  only:
+    refs:
+    - master
+    variables:
+    - $PUBLISH_PYTHON_CORE_VERSION
+  script:
+  - echo "===== PUBLISHING RELEASE"
+  - echo "Fetching publication tools..."
+  - cd ..
+  - if [ -d "build_automation" ]; then rm -rf build_automation; fi
+  - git clone --depth 1 --branch master $GIT_SERVER/software-internal/build_automation.git
+  - cd build_automation/publication
+  - python3 ./publish_python_core_library.py $CI_PROJECT_DIR $PUBLISH_PYTHON_CORE_VERSION
+    --live
+  stage: deploy
+  tags:
+  - host-fwee-swci-ubuntu-x64-vm
+  when: manual
+test_linux_64:
+  script: &id001
+  - python2 -m pip install --no-cache-dir -r requirements.txt
+  - python3 -m pip install --no-cache-dir -r requirements.txt
+  - echo "===== Running tests with Python 2"
+  - python2 -m pytest
+  - echo "===== Running tests with Python 3"
+  - python3 -m pytest
+  stage: test
+  tags:
+  - linux-64
+  - py3
+test_osx_64:
+  script: *id001
+  stage: test
+  tags:
+  - osx-64
+  - py3
+test_win10_64:
+  script: *id002
+  stage: test
+  tags:
+  - windows-64
+  - py3
+variables:
+  GIT_SERVER: https://gitlab.izaber.com
+  PROJECT_NAME: core_python

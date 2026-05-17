@@ -1,0 +1,16 @@
+{
+  "sha": "44c1f98eb4001b863ccfb8b8caa48f6227a93c0980a1a3c69e235682ab6cabdd",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4556,
+  "description": "Create a GitHub Actions workflow named build that runs on push to master, pull requests to master, and tag creation. The workflow has three jobs: test, build, and publish. The test job runs on multiple OS and Python versions, installing dependencies and running tests. The build job depends on test, builds the package on multiple OS and Python versions, and uploads artifacts. The publish job depends on build, downloads artifacts, and publishes to PyPI if a tag is created.",
+  "tags": [
+    "python",
+    "github-actions",
+    "ci",
+    "cd",
+    "pypi",
+    "tox",
+    "codecov"
+  ]
+}

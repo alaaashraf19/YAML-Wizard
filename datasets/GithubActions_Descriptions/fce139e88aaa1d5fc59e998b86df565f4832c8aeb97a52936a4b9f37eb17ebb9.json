@@ -1,0 +1,15 @@
+{
+  "sha": "fce139e88aaa1d5fc59e998b86df565f4832c8aeb97a52936a4b9f37eb17ebb9",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1849,
+  "description": "Create a Linux CI GitHub Actions workflow that runs on every push and pull request. The workflow should have a setup job that checks out the repository, syncs submodules, and installs required packages on an ubuntu-latest environment. Four dependent jobs, ubsan, asan, msan, and tsan, should run sequentially after setup, each testing with a different sanitizer (undefined, address, memory, and thread) by building and running et-test with cmake.",
+  "tags": [
+    "linux",
+    "ci",
+    "ubuntu",
+    "sanitizers",
+    "cmake",
+    "gcc"
+  ]
+}

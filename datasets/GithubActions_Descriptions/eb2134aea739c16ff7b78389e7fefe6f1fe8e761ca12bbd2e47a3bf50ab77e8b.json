@@ -1,0 +1,14 @@
+{
+  "sha": "eb2134aea739c16ff7b78389e7fefe6f1fe8e761ca12bbd2e47a3bf50ab77e8b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1470,
+  "description": "Create a GitHub Actions workflow named Build that runs on push and pull request events to branches master and dev, specifically for paths src/**, .gitmodules, and .github/workflows/main.yml. The workflow should have two jobs, build-client and build-server, both running on windows-latest. build-client checks out the repository with submodules, sets up MSBuild and .NET Core 3.1.402, installs dependencies, and builds Impostor.Client. build-server checks out the repository with submodules, sets up .NET Core 5.0.100-rc.1.20452.10, installs dependencies, builds Impostor.Server, and runs tests.",
+  "tags": [
+    "dotnet",
+    "msbuild",
+    "windows",
+    "build",
+    "tests"
+  ]
+}

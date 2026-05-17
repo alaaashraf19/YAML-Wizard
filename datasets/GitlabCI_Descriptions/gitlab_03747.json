@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_03747",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 303,
+  "description": "Create a GitLab CI pipeline that uses the java:8-jdk Docker image, caches the .gradle/wrapper and .gradle/caches directories, and defines a single build stage. Add a build job that runs in the build stage, sets GRADLE_USER_HOME to the .gradle directory via before_script (export GRADLE_USER_HOME=`pwd`/.gradle), executes ./gradlew build install, and stores the resulting JAR files from build/libs/*.jar as artifacts that expire in 1 week. Include an after_script that echoes \"End CI\".",
+  "tags": [
+    "java",
+    "gradle",
+    "jar",
+    "cache",
+    "build"
+  ]
+}

@@ -1,0 +1,83 @@
+before_script:
+- apt-get update --fix-missing && apt-get install -y pandoc
+- pip install -U pip
+- pip install opencv-python-headless pillow
+- pip install torch==1.13.0+cpu torchvision==0.14.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
+- pip install -r develop.txt
+cache:
+  key: $CI_PROJECT_ID
+  paths:
+  - $CI_PROJECT_DIR/pip-cache
+doctest:
+  rules:
+  - if: $CI_COMMIT_TAG
+  - if: $CI_COMMIT_BRANCH == "master"
+  - if: $CI_COMMIT_BRANCH == "develop"
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  script:
+  - make doctest
+  stage: test
+image: python:3.7.16
+lint:
+  script:
+  - make lint
+  stage: test
+pages:
+  artifacts:
+    paths:
+    - public
+  rules:
+  - if: $CI_SHOULD_DEPLOY == "1" && $CI_COMMIT_TAG
+  - if: $CI_SHOULD_DEPLOY == "2" && $CI_COMMIT_BRANCH == "master"
+    when: always
+  script:
+  - pip install IPython
+  - cd docs; make clean html; make html; cd ..
+  - mv docs/.build/html public/
+  stage: deploy
+pypi:
+  rules:
+  - if: $CI_SHOULD_DEPLOY == "1" && $CI_COMMIT_TAG
+  script:
+  - pip install -U twine wheel setuptools build
+  - python -m build
+  - twine check dist/*
+  - twine upload --skip-existing dist/*
+  stage: deploy
+  variables:
+    PYPIBUILD: 1
+    PYPITEST: 0
+pypitest:
+  rules:
+  - if: $CI_SHOULD_DEPLOY == "1" && $CI_COMMIT_BRANCH == "master"
+  script:
+  - pip install -U twine wheel setuptools build
+  - python -m build
+  - twine check dist/*
+  - twine upload --skip-existing --repository-url https://test.pypi.org/legacy/ --password
+    $TEST_TWINE_PASSWORD dist/*
+  stage: deploy
+  variables:
+    PYPIBUILD: 1
+    PYPITEST: 1
+stages:
+- test
+- deploy
+unittest:
+  rules:
+  - if: $CI_COMMIT_TAG
+  - if: $CI_COMMIT_BRANCH == "master"
+  - if: $CI_COMMIT_BRANCH == "develop"
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  script:
+  - make unittest
+  stage: test
+variables:
+  PIP_CACHE_DIR: $CI_PROJECT_DIR/pip-cache
+workflow:
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+    when: never
+  - if: $CI_COMMIT_BRANCH
+  - if: $CI_COMMIT_TAG

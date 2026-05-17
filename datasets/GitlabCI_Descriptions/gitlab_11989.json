@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_11989",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 418,
+  "description": "Create a GitLab CI pipeline that uses the python:3.5 Docker image and defines two stages: build and deploy. In the build stage add a job named build that runs the exact commands: apt-get update && apt-get install -y pandoc, apt-get install -y texlive-latex-base texlive-latex-extra dvipng, pip install sphinx, pip install sphinx_rtd_theme, and make html, then stores the .sphinx-forge directory as an artifact. In the deploy stage add a job named pages that moves .sphinx-forge/_build/html to a public directory with mv .sphinx-forge/_build/html public and publishes the public/ folder as the GitLab Pages artifact. Both jobs run on all branches with no additional triggers.",
+  "tags": [
+    "python-3.5",
+    "sphinx",
+    "pandoc",
+    "latex",
+    "gitlab-pages",
+    "make"
+  ]
+}

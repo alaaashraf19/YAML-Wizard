@@ -1,0 +1,15 @@
+{
+  "sha": "97cd07d0a418d0b7dd4c288b6ec62a083f39e2d152e27c2394c9a639850ba6a6",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1317,
+  "description": "Create a GitHub Actions workflow named build that runs on push and pull request events to the master branch. The workflow should have three jobs: build, cppcheck, and crossbuild, each running on ubuntu-latest. The build job should use a matrix strategy to compile with both clang and gcc, and install dependencies, checkout code, and run a custom script. The cppcheck job should install cppcheck, checkout code, and run a custom script. The crossbuild job should install mingw-w64, checkout code, cross-build with a custom toolchain, and upload the resulting artifacts.",
+  "tags": [
+    "ubuntu",
+    "cross-build",
+    "gcc",
+    "clang",
+    "cppcheck",
+    "mingw"
+  ]
+}

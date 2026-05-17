@@ -1,0 +1,16 @@
+{
+  "sha": "026b36563f832c642887680fb5335ded30c7d462aa322fdb1946ed224a95af7f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3120,
+  "description": "Create a GitHub Actions workflow named CMake (WSL) that runs on push and pull request events to the main branch, excluding certain paths. The workflow uses an ubuntu-latest job with read permissions to repository contents. It checks out the code, sets up Ninja, and then for a matrix of build types (x64-Debug-Linux, x64-Release-Linux) and GCC versions (12, 13, 14), it fetches a vcpkg commit hash, installs vcpkg, configures CMake with vcpkg, builds the project, cleans up, and then configures and builds the project again with shared libraries.",
+  "tags": [
+    "cmake",
+    "wsl",
+    "ubuntu",
+    "gcc",
+    "vcpkg",
+    "ninja",
+    "matrix-build"
+  ]
+}

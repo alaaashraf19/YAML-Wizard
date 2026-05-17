@@ -1,0 +1,10 @@
+before_script:
+- export
+- ip a
+image: dariksde/python-tuerbot:latest
+test:
+  script:
+  - python tuerbot-knopf.py
+  stage: test
+variables:
+  CONTAINER_IMAGE: dariksde/gcc-freifunkks

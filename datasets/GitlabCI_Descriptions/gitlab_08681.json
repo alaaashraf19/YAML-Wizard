@@ -1,0 +1,20 @@
+{
+  "sha": "gitlab_08681",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 4711,
+  "description": "Create a GitLab CI pipeline with stages environment, build, test, review, security, internal, alpha, beta, production, and stop, using the image $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG for most jobs and docker:stable with a docker:dind service for container updates, plus docker:${DOCKER_VERSION} with docker:${DOCKER_VERSION}-dind for security scans. In the build stage define three jobs: buildCreateReleaseNotes (only tags) runs a before_script that wget's artifacts.zip, unzips it, moves www assets, creates android-signing-keystore.jks from $signing_jks_file_hex, sets VERSION_CODE and VERSION_SHA, renames the changelog file, then executes ./ci-scripts/create-changelog-mr.sh; buildDebug runs bundle exec fastlane buildDebug; buildRelease (environment production) runs bundle exec fastlane buildRelease; all three inherit .build_job which adds after_script to delete android-signing-keystore.jks and stores app/build/outputs as artifacts. In the test stage, testDebug depends on buildDebug and runs bundle exec fastlane test using the same image. In the review stage, deployReview (manual, only branches, except master) runs bundle exec fastlane review, publishes appetize-information.json as an artifact and deploy.env as a dotenv report, and creates a review environment named review/$CI_COMMIT_REF_NAME with URL https://appetize.io/app/$APPETIZE_PUBLIC_KEY; stopReview (manual, only branches, except master) stops that environment by installing jq and curl and calling the Appetize DELETE API. In the security stage, dependency_scanning and sast extend .use-docker-in-docker, run always with appropriate DS_DEFAULT_ANALYZERS and FAIL_NEVER variables, and use the docker:${DOCKER_VERSION} image with its dind service. In the environment stage, ensureContainer (allow_failure) runs before_script to enable Docker experimental mode, logs in to the registry, checks for an existing manifest, then inherits .updateContainerJob which logs in, pulls the previous image if any, builds a new image with --cache-from, and pushes it; updateContainer runs only when Dockerfile changes. Finally, promoteAlpha (manual, stage alpha), promoteBeta (manual, stage beta), and promoteProduction (manual, only tags, stage production) extend .promote_job and run bundle exec fastlane promote_internal_to_alpha, promote_alpha_to_beta, and promote_beta_to_production respectively, and publishInternal (manual, stage internal, depends on buildRelease) runs bundle exec fastlane internal after writing the Google Play service account JSON.",
+  "tags": [
+    "android",
+    "fastlane",
+    "docker",
+    "dind",
+    "review",
+    "security",
+    "dependency-scanning",
+    "sast",
+    "promotion",
+    "internal",
+    "ci"
+  ]
+}

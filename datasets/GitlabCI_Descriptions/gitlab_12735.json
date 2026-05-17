@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_12735",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 310,
+  "description": "Create a GitLab CI pipeline that runs a before_script to sync and update all git submodules recursively. Add a build_nodejs job that changes to the nodejs directory, replaces the placeholder HOME with CI_PROJECT_DIR in build-nodejs.sh using sed, and executes the script with sh. Add a build_wget job that changes to the wget directory, performs the same sed replacement in build-wget.sh, and runs it with sh. Both jobs run in the default stage and have no additional services, caches, artifacts, or rules.",
+  "tags": [
+    "git-submodule",
+    "nodejs",
+    "wget",
+    "build",
+    "shell"
+  ]
+}

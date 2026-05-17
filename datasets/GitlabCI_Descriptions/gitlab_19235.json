@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_19235",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 162,
+  "description": "Create a GitLab CI pipeline that defines a single pages job (implicitly in the deploy stage) using the default Docker image. The job must run the commands: git submodule init, git submodule update, mkdir .public, cp -r * .public, and mv .public public. After the script finishes, it should publish the public/ directory as a GitLab Pages artifact. No extra stages, caches, or rules are required.",
+  "tags": [
+    "gitlab-pages",
+    "submodule",
+    "static-site",
+    "pages-job"
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "sha": "gitlab_07483",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 20793,
+  "description": "Create a GitLab CI pipeline that defines a global before_script to set the timezone, disable apt recommends, configure non‑interactive Debian settings, and update the package list, with DEBIAN_FRONTEND=noninteractive and LANG=C.UTF-8 variables. Define stages (test, lint, build, deploy) and add a Build documentation job (stage test) using the debian:bookworm-slim image that installs make, python3‑sphinx, python3‑numpydoc, python3‑pydata‑sphinx‑theme, runs sphinx‑apidoc, sphinx‑autogen and make html, then stores the generated docs/build/html/ as an artifact and runs only when the listed source files change. Add a PUBLISH job (stage deploy) on debian:bookworm-backports that installs androguard, apksigner, curl, JDK, gpg, python3‑asn1crypto, etc., runs the unittest suite, prepares config variables, executes fdroid publish, gpgsign, rsync to a server webroot, and always runs on the same change rules. Include Windows, bandit, black, hooks/pre‑commit, locales, macOS, fedora_latest, debian_testing, buildserver run‑tests, fdroid build, and docker jobs each with their specific Docker or runner images, before_script template, package installations (chocolatey, pip, apt, dnf, brew), scripts (unit tests, lint checks, SDK manager setup, locale compilation, Docker build/tag/push), caches (e.g., .gradle for fdroid build), artifacts (logs, documentation), and rules (branch, tag, or file‑change conditions) as described, and ensure the docker job uses docker:dind service and pushes images only when FDROID_PUSH_DOCKER_IMAGE is set.",
+  "tags": [
+    "debian",
+    "python",
+    "sphinx",
+    "fdroid",
+    "docker",
+    "bandit",
+    "black",
+    "windows",
+    "macos",
+    "fedora",
+    "lint",
+    "build",
+    "ci"
+  ]
+}

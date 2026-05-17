@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_19068",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 274,
+  "description": "Create a GitLab CI pipeline that uses the gcc Docker image and defines two stages: build-dbg and build. In the build-dbg stage add a build-dbg job that runs the shell command `make all -B DEBUG=yes` and stores the resulting binary bin/edil as an artifact named edil-dbg. In the build stage add a build job that runs `make all -B DEBUG=no` and publishes the same bin/edil file as an artifact named edil. No caches, services, or deployment targets are configured.",
+  "tags": [
+    "gcc",
+    "make",
+    "debug",
+    "build"
+  ]
+}

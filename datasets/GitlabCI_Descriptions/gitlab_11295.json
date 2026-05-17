@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_11295",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1320,
+  "description": "Create a GitLab CI pipeline with two stages: prepare and build. In the prepare stage add a prepare:image job that uses the gcr.io/kaniko-project/executor:debug image with an empty entrypoint, runs on any change to Dockerfile (always) and can also be started manually as an allowed‑failure job; it runs mkdir -p /kaniko/.docker, export CONTEXT_PATH=${CI_PROJECT_DIR}, export DOCKERFILE_PATH=${CI_PROJECT_DIR}/Dockerfile, export DESTINATION_PATH=${CI_REGISTRY}/${CI_PROJECT_PATH}:${CI_COMMIT_REF_SLUG}, writes a Docker auth JSON to /kaniko/.docker/config.json, and executes /kaniko/executor --context ${CONTEXT_PATH} --dockerfile ${DOCKERFILE_PATH} --destination ${DESTINATION_PATH}. In the build stage add a build:documents job that uses the image ${CI_REGISTRY}/${CI_PROJECT_PATH}:${CI_COMMIT_REF_SLUG}, runs cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_VERBOSE_MAKEFILE=1 -G \"Unix Makefiles\", then cmake --build . --config Release, then ./build.py, then generates a .gitignore by finding files matching a Russian PDF naming pattern with find ./ -type f -printf \"%P\\n\" | egrep \"[\\u0410-\\u042F]{4}\\.[0-9]{6}\\.[0-9]{3}\\ ([0-9\\u0410-\\u042F]+\\ )?\\([\\u0410-\\u042F\\u0430-\\u044F ]+\\)\\.pdf\" > .gitignore, adds and removes the .gitignore, cleans untracked files, and publishes all untracked files as artifacts. Both jobs are tagged with docker and linux.",
+  "tags": [
+    "cmake",
+    "kaniko",
+    "docker",
+    "gitlab-ci",
+    "build-documents",
+    "prepare-image"
+  ]
+}

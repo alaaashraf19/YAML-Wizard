@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_10356",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 547,
+  "description": "Create a GitLab CI pipeline with two stages, test and deploy, using the rustdocker/rust Docker images. In the test stage add three jobs—beta, nightly, and stable—each using the rustdocker/rust:beta, rustdocker/rust:nightly, and rustdocker/rust:stable images respectively, and each executing the command `cargo test --verbose --jobs 1 --release`. In the deploy stage add a .pages job that runs only on the master branch, uses the rustdocker/rust:stable image, and runs `cargo doc`, then removes any existing public directory, creates a new public directory, and copies the generated documentation from `target/doc/*` into public. The .pages job publishes the public/ directory as a GitLab Pages artifact. No services, caches, or additional variables are defined.",
+  "tags": [
+    "rust",
+    "cargo",
+    "gitlab-pages",
+    "documentation",
+    "test",
+    "rustdocker"
+  ]
+}

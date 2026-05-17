@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_00662",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 4125,
+  "description": "Create a GitLab CI pipeline with global variables COVERAGE='NO', CUDA_AVAILABLE='NO' and GIT_STRATEGY=clone, and two stages: test and deploy. In the test stage add a Ubuntu-clang11-ROCm job using the andreasga/cbctrecon:clang-11-ROCm-x86_64 image (tags linux,docker,rocm,vega,gpu), allow_failure, exporting CC and CXX to /opt/rocm/hip/bin/hipcc, building CUSTOM_CMAKE_FLAGS with OpenMP and HIPSYCL settings, downloading a failing ROCm badge, running ./ci/ci.sh, downloading a passing ROCm badge, and always publishing rocm_pass.svg as an artifact; add a Ubuntu-clang11-prebuild-deps job with the andreasga/cbctrecon:clang-11-x86_64-libDCMTK-ITK-RTK image (tags linux,docker,gpu) that sets CC=/usr/bin/clang, CXX=/usr/bin/clang++, and runs ./ci/ci.sh; add a Ubuntu-gcc10-CUDA job using andreasga/cbctrecon:gcc-10-CUDA-x86_64 (tags linux,docker,cuda,gpu), allow_failure, setting CC=/usr/bin/gcc-10, CXX=/usr/bin/g++-10, downloading a failing CUDA badge, running ./ci/ci.sh, downloading a passing CUDA badge, defining variables COVERAGE='YES' and CUDA_AVAILABLE='YES', and always storing cuda_pass.svg as an artifact; add a Ubuntu-gcc10-coverage-prebuild-deps job with andreasga/cbctrecon:gcc-10-x86_64-libDCMTK-ITK-RTK (tags linux,docker,gpu) that sets CC and CXX to gcc-10 and runs ./ci/ci.sh while setting COVERAGE='YES'; add a Ubuntu-gcc10-superbuild job using andreasga/cbctrecon:gcc-10-x86_64 (tags linux,docker,gpu) that exports CC and CXX to gcc-10 and runs ./ci/ci.sh; add a Ubuntu-icc21-oneAPI job with andreasga/cbctrecon:icc-21-oneAPI-x86_64 (tags linux,docker), allow_failure, preserving the original PATH, sourcing /opt/intel/oneapi/setvars.sh, setting CC=icc and CXX=icpc, downloading a failing oneAPI badge, running ./ci/ci.sh, downloading a passing oneAPI badge, and always publishing oneapi_pass.svg as an artifact; and add a Windows10-msvc2019-CUDA job (tags windows,gpu,shell) that imports the Visual Studio DevShell module, enters the dev shell, sets CUDA_PATH, creates a build directory, runs a lengthy cmake configuration with many flags, builds, installs, tests, and packages the project, finally storing the generated *.msi files as a named artifact. In the deploy stage create a pages job using alpine:3.13, requiring the Ubuntu-gcc10-CUDA, Ubuntu-clang11-ROCm, and Ubuntu-icc21-oneAPI jobs, running only on the master branch, that creates a public directory, copies all *.svg badge files into it, and publishes the public folder as the GitLab Pages artifact.",
+  "tags": [
+    "rocm",
+    "cuda",
+    "oneapi",
+    "windows",
+    "msvc",
+    "docker",
+    "ci",
+    "coverage",
+    "gpu",
+    "pages"
+  ]
+}

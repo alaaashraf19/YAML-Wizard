@@ -1,0 +1,16 @@
+{
+  "sha": "aeb08a4f31601902c4b35b697b65b7f71adeab41474370ef6f92d168e755511d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1932,
+  "description": "Create a GitHub Actions workflow named build that runs on push and pull request events. The workflow has three jobs: build, linting, and deploy. The build job runs on multiple OS and Python versions, installing tox and running tests. The linting job runs on ubuntu-latest, installing tox and running linting tests. The deploy job runs on ubuntu-latest, only on push events with a tag ref, and depends on build and linting jobs, installing wheel, building a package, and publishing it to PyPI.",
+  "tags": [
+    "python",
+    "tox",
+    "tests",
+    "linting",
+    "pypi",
+    "deploy",
+    "github-actions"
+  ]
+}

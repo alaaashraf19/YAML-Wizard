@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_11808",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 286,
+  "description": "Create a GitLab CI pipeline that uses the node:latest Docker image with mysql, redis, and postgres services and caches the node_modules/ directory. Define the default test stage and add a test_async job that runs npm install then node ./specs/start.js ./specs/async.spec.js. Also add a test_db job that runs npm install then node ./specs/start.js ./specs/db-postgres.spec.js. Both jobs run in the test stage, have no artifacts, caches, or rules, and inherit the shared cache configuration.",
+  "tags": [
+    "node",
+    "npm",
+    "mysql",
+    "redis",
+    "postgres",
+    "test"
+  ]
+}

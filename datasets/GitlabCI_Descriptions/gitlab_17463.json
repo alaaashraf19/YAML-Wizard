@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_17463",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 828,
+  "description": "Create a GitLab CI pipeline using the python:3.8 Docker image with two stages: test and release. In the test stage add a job named test that runs on the docker image with a docker:dind service, executes the before_script commands `apk update && apk add git`, `wget https://github.com/earthly/earthly/releases/download/v0.6.20/earthly-linux-amd64 -O /usr/local/bin/earthly`, `chmod +x /usr/local/bin/earthly`, `export FORCE_COLOR=1`, `/usr/local/bin/earthly bootstrap`, and `docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY`, then runs the script `earthly --ci --push -P +pre-commit`. In the release stage add a job named pypi that needs the test job, runs only when the commit tag matches the regex ^v\\d+\\.\\d+\\.\\d+$, sets the variable TWINE_USERNAME to __token__, and runs the script steps `pip install -U twine gitchangelog pystache`, `echo \"\" >> README.md`, `gitchangelog >> README.md`, `python setup.py sdist bdist_wheel`, and `twine upload dist/*`.",
+  "tags": [
+    "python-3.8",
+    "docker",
+    "docker-dind",
+    "earthly",
+    "twine",
+    "pypi",
+    "release",
+    "test",
+    "git-tag"
+  ]
+}

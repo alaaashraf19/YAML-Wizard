@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_05366",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1545,
+  "description": "Create a GitLab CI pipeline that uses the docker:latest image with a docker:dind service, sets DOCKER_DRIVER to overlay2, and defines the variables IMAGE_TAG, IMAGE_PHP_PROD, IMAGE_NGINX_PROD, and VERSION. In the build stage add a build job that runs docker build --pull -t $IMAGE_TAG deploy and then docker push $IMAGE_TAG, with a global before_script that logs in to the registry via docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY. In the test stage add a functional tests job that installs docker-compose using apk and pip, pulls $IMAGE_TAG, brings up deploy/docker-compose.yml, runs composer install inside the php service, and executes ./vendor/bin/codecept run, and also add a test suite job that pulls $IMAGE_TAG, starts a demo container mounting the repository, runs composer install and ./vendor/bin/simple-phpunit inside it, then stops and removes the container. In the build stage also add a production images job that builds the production PHP image with Dockerfile-prod, pushes it, builds the Nginx image with Dockerfile-nginx-prod, and pushes both. In the deploy stage add a manual production job (tagged prod) that runs docker-compose -f deploy/docker-stack.yml up -d, and a pull job (also tagged prod) that pulls $IMAGE_PHP_PROD and $IMAGE_NGINX_PROD.",
+  "tags": [
+    "docker",
+    "dind",
+    "php",
+    "composer",
+    "codecept",
+    "simple-phpunit",
+    "docker-compose",
+    "production",
+    "manual",
+    "ci-registry"
+  ]
+}

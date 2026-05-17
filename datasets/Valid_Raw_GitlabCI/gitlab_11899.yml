@@ -1,0 +1,44 @@
+before_script:
+- yarn config set cache-folder .yarn
+- yarn
+- npm run post-install
+build_android:
+  artifacts:
+    paths:
+    - platforms/android/build/outputs/apk/
+  only:
+  - release
+  script:
+  - ls
+  - npm run android:release
+  - ls ./platforms/android/build/outputs/apk/android*.apk
+  stage: deploy
+build_ios:
+  only:
+  - release
+  script:
+  - ./sh/ionic-login.sh
+  - ls
+  - npm run ios:release:ci
+  - ./sh/ionic-package-ios.sh
+  stage: deploy
+build_web:
+  only:
+  - master
+  script:
+  - npm run lint
+  - npm run scss-lint
+  - npm run test
+  - npm run build
+  - npm run e2e
+  stage: test
+cache:
+  key: $CI_PROJECT_ID
+  paths:
+  - node_modules/
+  - .yarn
+  untracked: true
+image: marcoturi/ionic:latest
+stages:
+- test
+- deploy

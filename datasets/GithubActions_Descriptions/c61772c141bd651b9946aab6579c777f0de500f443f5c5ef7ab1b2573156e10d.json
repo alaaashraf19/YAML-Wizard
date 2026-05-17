@@ -1,0 +1,16 @@
+{
+  "sha": "c61772c141bd651b9946aab6579c777f0de500f443f5c5ef7ab1b2573156e10d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1517,
+  "description": "Create a GitHub Actions workflow named All Tests that can be triggered manually. Run a matrix job across multiple operating systems (ubuntu-latest, windows-latest, macOS-latest) and Python versions (3.6 to 3.10). For each combination, check out the code, set up Python, install pipenv, cache dependencies using a custom cache action with S3, install dependencies if the cache misses, and run pytest with coverage and junit reports.",
+  "tags": [
+    "python",
+    "tests",
+    "matrix",
+    "workflow-dispatch",
+    "s3",
+    "cache",
+    "pytest"
+  ]
+}

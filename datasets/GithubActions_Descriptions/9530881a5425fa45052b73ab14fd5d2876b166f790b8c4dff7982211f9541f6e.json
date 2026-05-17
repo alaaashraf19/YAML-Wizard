@@ -1,0 +1,14 @@
+{
+  "sha": "9530881a5425fa45052b73ab14fd5d2876b166f790b8c4dff7982211f9541f6e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1512,
+  "description": "Create a GitHub Actions workflow named Publish that runs on push to the master branch and allows manual triggering from the Actions tab. Use a single ubuntu-latest job that checks out the repository, sets up environment variables, logs in to Docker Hub, sets up QEMU for multi-platform support, creates a buildx worker node, and builds a Docker image for arm64 and amd64 architectures using a specified Dockerfile and pushing it to Docker Hub.",
+  "tags": [
+    "docker",
+    "github-actions",
+    "multi-platform",
+    "buildx",
+    "dockerhub"
+  ]
+}

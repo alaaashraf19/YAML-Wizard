@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_13684",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 5423,
+  "description": "Create a GitLab CI pipeline with three stages: build, test, and deploy, using the docker:latest image and the docker:dind service for all jobs. Define CI_DEBUG_TRACE and container image variables (CONTAINER_IMAGE_CRYPTOBRED, CONTAINER_IMAGE_ICODROPS, CONTAINER_IMAGE_ITOINVEST, CONTAINER_IMAGE_THECRYPTOADVISER) that include $HUB_USER and $CI_COMMIT_SHA. In the build stage add four jobs (build_cryptobred, build_icodrops, build_itoinvest, build_thecryptoadviser) each running: docker build -t $HUB/$CONTAINER_IMAGE_<NAME> -f <Dockerfile>. then docker login -u $HUB_USER -p $HUB_PASS $HUB and docker push $HUB/$CONTAINER_IMAGE_<NAME>:latest. In the test stage add four jobs (test_cryptobred, test_icodrops, test_itoinvest, test_thecryptoadviser) each running: docker login -u $HUB_USER -p $HUB_PASS $HUB and docker run $HUB/$CONTAINER_IMAGE_<NAME> echo 'echo <name> test passed successfully'. In the deploy stage add four jobs (deploy_cryptobred, deploy_icodrops, deploy_itoinvest, deploy_thecryptoadviser) each with a before_script that creates ~/.ssh, adds $DEPLOY_SERVER_PRIVATE_KEY, starts ssh-agent, adds the key, and adds $DEPLOYMENT_SERVER_IP to known_hosts, using the gitlab/dind:latest image, and a script that ssh to novy@$DEPLOYMENT_SERVER_IP to docker login to $HUB, pull the corresponding image, remove any existing container by name, and run a new container with --restart=always, appropriate --name, and the bot entrypoint (e.g., python3 /root/cryptobred.py).",
+  "tags": [
+    "docker",
+    "dind",
+    "build",
+    "test",
+    "deploy",
+    "telegram-bot",
+    "ssh",
+    "ci"
+  ]
+}

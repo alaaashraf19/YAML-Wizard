@@ -1,0 +1,14 @@
+{
+  "sha": "2c4c5d79e94e8478c732be30f620d7abc4d5473c0580bfd08da2556ede56de9e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 298,
+  "description": "Create a nightly GitHub Actions workflow named Build Nightly Release that runs daily at 2:00 AM. This workflow should only trigger for the zeroc-ice/ice repository and reuse the build-release workflow with channel set to nightly and publish set to true, inheriting secrets.",
+  "tags": [
+    "nightly",
+    "release",
+    "schedule",
+    "github",
+    "workflow-reuse"
+  ]
+}

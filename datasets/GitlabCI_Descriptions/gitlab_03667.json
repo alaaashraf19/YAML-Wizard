@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_03667",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 989,
+  "description": "Create a GitLab CI pipeline using the centos:7 Docker image with a before_script that installs make via yum and runs make ci-prepare-env. Cache the .cache/ directory under the key chef-rkt and define variables CHEFDK_FILE, CHEFDK_SHA256, and CHEFDK_URL with the provided values. Define three stages: spec, test, and deploy. In the test stage add four kitchen jobs: \"kitchen default\" runs make kitchen KITCHEN_INSTANCE='^default-'; \"kitchen packages\" runs make kitchen KITCHEN_INSTANCE='^packages-'; \"kitchen testing packages\" runs make kitchen KITCHEN_INSTANCE='^testing-packages-' and is allowed to fail and only runs on the master branch; \"kitchen without-sudo\" runs make kitchen KITCHEN_INSTANCE='^without-sudo-'. In the spec stage add a lint job that runs make lint and a spec job that runs make spec. In the deploy stage add a release job that runs make deploy and only triggers on tags matching the pattern ^v[[:digit:]]*\\.[[:digit:]]*\\.[[:digit:]]*$.",
+  "tags": [
+    "centos",
+    "make",
+    "chefdk",
+    "kitchen",
+    "lint",
+    "spec",
+    "release"
+  ]
+}

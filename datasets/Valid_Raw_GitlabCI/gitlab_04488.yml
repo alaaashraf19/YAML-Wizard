@@ -1,0 +1,121 @@
+build_docs:
+  artifacts:
+    expire_in: 90 days
+    paths:
+    - docs/html/
+  before_script:
+  - pip3 install "sphinx" sphinx_rtd_theme
+  - cd docs/
+  image: python:3.9-alpine
+  script:
+  - sphinx-build source/ html/
+  stage: build
+build_only:
+  script:
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+  - docker build . --pull --build-arg EXTRA_CMAKE_FLAGS="-DCMAKE_BUILD_TYPE=DEBUG"
+    --build-arg ENABLE_TESTS=
+  stage: build
+build_only_clang_scan_deps:
+  script:
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+  - docker build . --pull --build-arg EXTRA_CMAKE_FLAGS="-DCLANG_SCAN_DEPS=ON -DCMAKE_BUILD_TYPE=DEBUG"
+    --build-arg ENABLE_TESTS=
+  stage: build
+build_only_static:
+  script:
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+  - docker build . --pull --build-arg EXTRA_CMAKE_FLAGS="-DBUILD_STATIC=ON -DCMAKE_BUILD_TYPE=DEBUG"
+    --build-arg MAKE_VERBOSE=1
+  stage: build
+check_formatting:
+  before_script:
+  - apt-get update && apt-get install -y clang-format-6.0 git-core
+  image: ubuntu:bionic
+  script:
+  - echo `which clang-format-6.0`
+  - ln -s `which clang-format-6.0` /usr/bin/clang-format
+  - cd "$CI_PROJECT_DIR"
+  - export CLANG_FORMAT_DIRS="src/ test/"
+  - export CLANG_FORMAT_SINCE_COMMIT="4b825dc642cb6eb9a060e54bf8d69288fbee4904"
+  - linter_errors=$(git-clang-format-6.0 --commit "$CLANG_FORMAT_SINCE_COMMIT" -q
+    --diff --style file --extensions c,cc,cpp,cxx,h  $CLANG_FORMAT_DIRS| grep -v --color=never
+    "no modified files to format" || true)
+  - echo "$linter_errors"
+  - if [[ ! -z "$linter_errors" ]]; then echo "Detected formatting issues; please
+    fix"; exit 1; else echo "Formatting is correct"; exit 0; fi
+  stage: build
+e2e:
+  before_script:
+  - export DOCKER_SOCKET="/var/run/docker.sock"
+  - export DOCKER_HOST="unix://$DOCKER_SOCKET"
+  - export E2E_IMAGE="registry.gitlab.com/buildgrid/buildbox/buildbox-e2e/new-e2e"
+  - DOCKER_TLS_CERTDIR=/certs dockerd-entrypoint.sh &
+  - sleep 3
+  - docker version
+  - docker pull "$E2E_IMAGE"
+  dependencies: []
+  image: docker:dind
+  script:
+  - docker run -v "$DOCKER_SOCKET":"$DOCKER_SOCKET" -v $(pwd):/buildbox-e2e/src/recc
+    "$E2E_IMAGE"
+  services: []
+  stage: test
+image: docker:stable
+pages:
+  artifacts:
+    paths:
+    - public/
+  dependencies:
+  - build_docs
+  only:
+  - master
+  script:
+  - mv docs/html/ public/
+  stage: release
+services:
+- docker:dind
+stages:
+- build
+- test
+- release
+test_cover:
+  artifacts:
+    paths:
+    - public
+  before_script:
+  - pip3 install gcovr pycobertura
+  - curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -
+  - echo "deb [arch=amd64] https://download.docker.com/linux/debian buster stable"
+    > /etc/apt/sources.list.d/docker.list
+  - apt-get update && apt-get install --no-install-recommends docker-ce-cli
+  - export IMAGE_TAG="${CI_PROJECT_NAME}:${CI_COMMIT_SHORT_SHA}_coverage"
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+  - docker build -t "$IMAGE_TAG" . --pull --build-arg ENABLE_TESTS=1 --build-arg RUN_GCOV=1
+  coverage: /^TOTAL.*\ (\d+\.*\d+\%)$/
+  dependencies: []
+  image: python:3-buster
+  script:
+  - export MOUNT_DIR="/builds/$CI_PROJECT_PATH/mnt"
+  - mkdir -p "$MOUNT_DIR"
+  - echo "Copying generated files to CI"
+  - export PROJECT_DIR="recc"
+  - docker run --rm -v "$MOUNT_DIR:/mnt" -t "$IMAGE_TAG" /bin/sh -c "cp -r /$PROJECT_DIR/
+    /mnt/"
+  - cp -r "$MOUNT_DIR/$PROJECT_DIR" "/"
+  - export BUILT_PROJECT_DIR="/$PROJECT_DIR/"
+  - export COVERAGE_DIR="$CI_PROJECT_DIR/public/coverage"
+  - mkdir -p  "$COVERAGE_DIR"
+  - cd "$BUILT_PROJECT_DIR"
+  - export LC_ALL=C.UTF-8 && export LANG=C.UTF-8
+  - gcovr --xml-pretty -g -k -s -o "$COVERAGE_DIR/gcovr.xml"
+  - pycobertura show --format text --output "$COVERAGE_DIR/report.txt" -s "$BUILT_PROJECT_DIR"
+    "$COVERAGE_DIR/gcovr.xml"
+  - echo >> "$COVERAGE_DIR/report.txt"
+  - pycobertura show --format html --output "$COVERAGE_DIR/report.html" -s "$BUILT_PROJECT_DIR"
+    "$COVERAGE_DIR/gcovr.xml"
+  - cat "$COVERAGE_DIR/report.txt"
+  stage: build
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_HOST: tcp://docker:2375

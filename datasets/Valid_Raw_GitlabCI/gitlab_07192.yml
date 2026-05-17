@@ -1,0 +1,95 @@
+before_script:
+- bash ci/docker_install.sh
+build_nightly:
+  artifacts:
+    paths:
+    - phonetrack-nightly.tar.gz
+  only:
+    refs:
+    - build
+  script:
+  - apt-get install rsync npm nodejs wget make
+  - npm install -g npm@^8.0.0
+  - make
+  - version=nightly make appstore
+  - mv /tmp/build/phonetrack-nightly.tar.gz ./
+  stage: build
+image: ubuntu:20.04
+pages:
+  artifacts:
+    paths:
+    - public
+  before_script:
+  - echo 'nothing to install for pages jobs'
+  dependencies:
+  - phpunit_tests
+  only:
+    refs:
+    - master
+  script:
+  - sleep 5
+  - mkdir public
+  - mv coverage public/
+  stage: deploy
+phpunit_tests:
+  artifacts:
+    paths:
+    - coverage
+  coverage: /^\s*Lines:\s*(\d+.\d+)\%/
+  image: php:$PHP_VERSION
+  only:
+    refs:
+    - master
+    - test
+  parallel:
+    matrix:
+    - DATABASE:
+      - pgsql
+      - mysql
+      - sqlite
+      PHP_VERSION:
+      - '7.4'
+      - '8.0'
+      - '8.1'
+      SERVER_VERSION:
+      - stable25
+      - master
+  script:
+  - if [[ "$DATABASE" == "mysql" ]]; then docker-php-ext-install pdo_mysql; DB_HOST="mariadb";
+    DB_USER=$MYSQL_USER; DB_PASSWORD=$MYSQL_ROOT_PASSWORD; fi
+  - if [[ "$DATABASE" == "pgsql" ]]; then docker-php-ext-install pdo_pgsql; DB_HOST="postgres";
+    DB_USER=$POSTGRES_USER; DB_PASSWORD=$POSTGRES_PASSWORD; fi
+  - cp -r . /tmp/phonetrack
+  - mkdir -p /var/www/html ; pushd /var/www/html
+  - git clone https://github.com/nextcloud/server.git --recursive --depth 1 -b $SERVER_VERSION
+    nextcloud
+  - sed -i $'s|if (substr($fullPath, 0, strlen($root) + 1) === $root . \'/\')|if (is_string($root)
+    and substr($fullPath, 0, strlen($root) + 1) === $root . \'/\')|g' nextcloud/lib/autoloader.php
+  - chown -R www-data:www-data nextcloud && pushd nextcloud/apps && mv /tmp/phonetrack
+    ./
+  - php /var/www/html/nextcloud/occ maintenance:install --database "$DATABASE" --database-host
+    "$DB_HOST" --database-name "nextcloud" --database-user "$DB_USER" --database-pass="$DB_PASSWORD"
+    --admin-user "admin" --admin-pass "password"
+  - php /var/www/html/nextcloud/occ app:enable phonetrack
+  - php /var/www/html/nextcloud/occ maintenance:mode --off
+  - "if [[ \"$DATABASE\" == \"sqlite\" ]] && [[ \"$SERVER_VERSION\" == \"master\"\
+    \ ]] && [[ \"$PHP_VERSION\" == \"8.1\" ]]; then\n  popd ; popd ; mkdir coverage\n\
+    \  pecl install xdebug\n  docker-php-ext-enable xdebug\n  phpunit --configuration\
+    \ /var/www/html/nextcloud/apps/phonetrack/phpunit.xml --coverage-text --color=never\
+    \ --coverage-html coverage\nelse\n  phpunit --configuration /var/www/html/nextcloud/apps/phonetrack/phpunit.xml\n\
+    fi\n"
+  stage: test
+services:
+- mariadb:latest
+- postgres:14
+stages:
+- test
+- deploy
+- build
+variables:
+  MYSQL_DATABASE: nextcloud
+  MYSQL_ROOT_PASSWORD: mysql
+  MYSQL_USER: root
+  POSTGRES_DB: nextcloud
+  POSTGRES_PASSWORD: postgres
+  POSTGRES_USER: postgres

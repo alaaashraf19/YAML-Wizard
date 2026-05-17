@@ -1,0 +1,14 @@
+{
+  "sha": "362e028c99aaed3e72c5071875fb7a5ac0d197e58ef359e9dbbad4755e0ebca7",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1105,
+  "description": "Create a GitHub Actions workflow named Fuzz CI that runs on every pull request to the dev branch and on a scheduled cron job every Sunday at midnight. The workflow should have read permission to repository contents and use an ubuntu-latest job with a matrix strategy to test fuzzing with address, undefined, and memory sanitizers. For each sanitizer, build fuzzers for the pcapplusplus project using google/oss-fuzz, run the fuzzers for 600 seconds, and upload any crash artifacts if the build succeeds but the run fails.",
+  "tags": [
+    "fuzzing",
+    "oss-fuzz",
+    "ubuntu",
+    "scheduled",
+    "ci"
+  ]
+}

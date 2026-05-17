@@ -1,0 +1,13 @@
+{
+  "sha": "cbc072046a55e184aea07f988bf43a4a3c4f3abf89f68595db0d618dfe60a0ad",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1670,
+  "description": "Create a GitHub Actions workflow named 'CI: build & verify Python wheels' that runs on push to master and main branches, on pull request open and synchronize, on merge group checks requested, and on workflow dispatch with an optional debug input. The workflow should have read-all permissions and cancel any in-progress runs on the same branch. It should consist of two jobs: one to find changed files and another to build and test wheels if code changes are found or if the workflow is dispatched.",
+  "tags": [
+    "python",
+    "ci",
+    "wheels",
+    "reusable-workflows"
+  ]
+}

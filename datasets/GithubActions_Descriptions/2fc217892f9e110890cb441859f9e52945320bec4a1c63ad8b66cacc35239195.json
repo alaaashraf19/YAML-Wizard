@@ -1,0 +1,14 @@
+{
+  "sha": "2fc217892f9e110890cb441859f9e52945320bec4a1c63ad8b66cacc35239195",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3622,
+  "description": "Create a GitHub Actions workflow named mt32-pi CI that runs on push and pull request events. The workflow has two jobs: build and package. The build job runs on ubuntu-latest, checks out the repository, caches and installs the ARM toolchain, and builds the kernel for multiple Raspberry Pi boards. The package job depends on the build job, caches boot files, downloads built kernels, and uploads an SD card archive. If a tag is pushed, it creates a release package and uploads it to a GitHub release.",
+  "tags": [
+    "raspberry-pi",
+    "arm-toolchain",
+    "github-release",
+    "ci",
+    "ubuntu"
+  ]
+}

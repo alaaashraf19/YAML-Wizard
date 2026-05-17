@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_11802",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2123,
+  "description": "Create a GitLab CI pipeline with a single job named container:security that runs in the test stage using the Docker image aquasec/trivy:${TRIVY_VERSION} with an empty entrypoint. Configure a cache keyed as trivy-cache that stores the .trivycache directory, and always publish artifacts that expire in 15 days containing the container_scanning report gl-container-scanning-report.json. Set the provided variables (e.g., TRIVY_VERSION, TRIVY_SEVERITY_FAIL, TRIVY_PASSWORD, etc.) and execute the following script steps in order: trivy --version; time trivy image --clear-cache; time trivy --download-db-only --no-progress; compute container_namespace, container_image_name, container_tag, full_image_name and image_to_scan; run trivy scans with default, GitLab template, JUnit template outputs, and finally run trivy with --exit-code 1 --severity ${TRIVY_SEVERITY_FAIL} to fail on high severity findings. The job inherits from .base_tpl and has no additional rules, so it runs on every pipeline.",
+  "tags": [
+    "trivy",
+    "container-scanning",
+    "security",
+    "gitlab-ci",
+    "docker"
+  ]
+}

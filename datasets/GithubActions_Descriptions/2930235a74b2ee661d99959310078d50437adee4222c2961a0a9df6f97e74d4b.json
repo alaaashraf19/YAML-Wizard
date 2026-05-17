@@ -1,0 +1,14 @@
+{
+  "sha": "2930235a74b2ee661d99959310078d50437adee4222c2961a0a9df6f97e74d4b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 937,
+  "description": "Create a GitHub Actions workflow named Fuzzers that runs on push to the master branch and on pull requests affecting specific paths. The workflow should only run for the zeromq/libzmq repository and use a matrix strategy to test with different sanitizers. For each sanitizer, build fuzzers using google/oss-fuzz/infra/cifuzz/actions/build_fuzzers and then run them for 300 seconds with google/oss-fuzz/infra/cifuzz/actions/run_fuzzers.",
+  "tags": [
+    "fuzzing",
+    "oss-fuzz",
+    "github-actions",
+    "cifuzz",
+    "sanitizers"
+  ]
+}

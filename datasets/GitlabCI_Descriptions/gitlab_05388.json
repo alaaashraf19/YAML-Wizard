@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_05388",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 774,
+  "description": "Create a GitLab CI pipeline with two stages, docker and build. In the docker stage add a build-docker job that uses the docker:latest image with the docker:dind service, runs a before_script `docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY`, then executes `docker build -t $IMAGE_TAG .` and `docker push $IMAGE_TAG`, defines an IMAGE_TAG variable as $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME, runs only when Dockerfile changes and is excluded if the variable $NO_DOCKER_BUILD is set, and is tagged with docker. In the build stage add a build job that uses the image $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME, depends on the build-docker job, runs `make build-kernel build-rootfs`, always stores artifacts named $CI_COMMIT_REF_SLUG containing *.log and *.deb, runs only when Dockerfile, Makefile, or .config change, and is also tagged docker.",
+  "tags": [
+    "docker",
+    "docker-dind",
+    "make",
+    "kernel-build",
+    "artifact",
+    "gitlab-ci"
+  ]
+}

@@ -1,0 +1,78 @@
+name: build
+
+on: [push, pull_request]
+
+jobs:
+  msvc:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v1
+      with:
+        ref: refs/heads/master
+        fetch-depth: 1
+        submodules : recursive
+    - uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: x86
+    - name: Init
+      run: |
+        choco install -y ninja
+        refreshenv
+    - name: Compile
+      run: |
+        ninja -f ninja\msvc.ninja
+    - name: Upload artifact
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        name: bee
+        path: build/msvc/bin
+
+  mingw:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v1
+      with:
+        ref: refs/heads/master
+        fetch-depth: 1
+        submodules : recursive
+    - name: Init
+      run: |
+        choco install -y msys2
+        refreshenv
+        c:\tools\msys64\usr\bin\bash.exe -lc "pacman --noconfirm -Syu"
+        c:\tools\msys64\usr\bin\bash.exe -lc "pacman --noconfirm -Syu mingw-w64-x86_64-gcc ninja"
+        c:\tools\msys64\usr\bin\bash.exe -lc "pacman --noconfirm -Su"
+    - name: Compile
+      run: |
+        c:\tools\msys64\usr\bin\bash.exe -lc "export PATH=/mingw64/bin:/usr/bin;cd '$PWD';ninja -f ninja/mingw.ninja"
+
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+      with:
+        ref: refs/heads/master
+        fetch-depth: 1
+        submodules : recursive
+    - name: Init
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libreadline-dev ninja-build
+    - name: Compile
+      run: |
+        ninja -f ninja/linux.ninja
+
+  macos:
+    runs-on: macOS-latest
+    steps:
+    - uses: actions/checkout@v1
+      with:
+        ref: refs/heads/master
+        fetch-depth: 1
+        submodules : recursive
+    - name: Init
+      run: |
+        brew install ninja
+    - name: Compile
+      run: |
+        ninja -f ninja/macos.ninja

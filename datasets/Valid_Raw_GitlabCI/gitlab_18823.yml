@@ -1,0 +1,72 @@
+.branch_tests_template:
+  except: &id001
+  - GUI
+  - tags
+  retry: 2
+  script: &id002
+  - tox -e $TOX_ENVS
+  stage: test
+  variables: &id003
+    TOX_ENVS: $CI_BUILD_NAME
+code_style:
+  only:
+  - /^.{0,}issue_.*$/
+  - developer
+  - master
+  retry: 2
+  script:
+  - tox -e flake
+  stage: code_standarts
+image: onegreyonewhite/tox:tox
+publish_pypi:
+  image: onegreyonewhite/tox:centos6
+  only:
+  - tags
+  script:
+  - tox -e build
+  - twine upload -u ${PYPI_UPLOAD_NAME} -p ${PYPI_UPLOAD_PASSWORD} dist/*.tar.gz dist/*.whl
+  stage: release
+py36-coverage-ansible25:
+  except: *id001
+  retry: 2
+  script: *id002
+  stage: test
+  variables: *id003
+py36-install-ansible26:
+  except: *id001
+  retry: 2
+  script: *id002
+  stage: test
+  variables: *id003
+py36-install-ansible27:
+  except: *id001
+  retry: 2
+  script: *id002
+  stage: test
+  variables: *id003
+py37-install-ansible29:
+  except: *id001
+  retry: 2
+  script: *id002
+  stage: test
+  variables: *id003
+release:
+  before_script:
+  - url_host=`echo "${CI_REPOSITORY_URL}" | sed -e "s/https:\/\/gitlab-ci-token:.*@//g"`
+  - git config --global user.name "${GITLAB_USER_NAME}"
+  - git config --global user.email "${GITLAB_USER_EMAIL}"
+  - git remote set-url origin "https://${GIT_ACCESS_USER}:${GIT_ACCESS_PASSWORD}@${url_host}"
+  image: onegreyonewhite/tox:tox
+  only:
+    refs:
+    - master
+    variables:
+    - $GIT_ACCESS_USER
+    - $GIT_ACCESS_PASSWORD
+  script:
+  - bash autorelease.sh
+  stage: release
+stages:
+- code_standarts
+- test
+- release

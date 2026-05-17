@@ -1,0 +1,24 @@
+Deployment:
+  before_script:
+  - gem install dpl
+  environment:
+    name: production
+    url: $HEROKU_APP_HOST
+  image: ruby:2.4
+  script:
+  - dpl --provider=heroku --app=$HEROKU_APPNAME --api-key=$HEROKU_APIKEY
+  stage: deploy
+UnitTest:
+  before_script:
+  - pip install -r requirements.txt
+  - python manage.py makemigrations
+  - python manage.py migrate
+  image: python:3.6
+  script:
+  - coverage run --include='lab_*/*' manage.py test
+  - coverage report -m
+  stage: test
+  when: on_success
+stages:
+- test
+- deploy

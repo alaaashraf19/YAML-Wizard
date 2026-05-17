@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_00707",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1146,
+  "description": "Create a GitLab CI pipeline that runs a before_script echo Starting before each job. Define a single build job (default stage) that executes the following shell commands in order: mkdir -p /tmp/meta-gateway; mv * /tmp/meta-gateway; mv .git /tmp/meta-gateway; repo init -u https://gitlab.com/akavoukis/meta-gateway-manifest.git -b sumo; repo sync -j4; rm -rf poky/meta-gateway; mkdir -p poky/meta-gateway; mv /tmp/meta-gateway poky; mkdir -p poky/build/conf; cp poky/meta-gateway/recipes-core/local_conf/* poky/build/conf/; if [ -d \"/SSTATE_DIR\" ]; then echo \"SSTATE_DIR ?= \\\"/SSTATE_DIR\\\"\" >> poky/build/conf/local.conf; fi; if [ -d \"/DL_DIR\" ]; then echo \"DL_DIR ?= \\\"/DL_DIR\\\"\" >> poky/build/conf/local.conf; fi; cd poky; . oe-init-build-env; bitbake update-image; cp tmp/deploy/images/raspberrypi3-gateway/update-image-raspberrypi3-gateway-*.swu tmp/deploy/images/raspberrypi3-gateway/update-image-raspberrypi3-gateway-latest.swu. The job should publish artifacts that expire after 30 days, named $CI_COMMIT_REF_SLUG, containing the files poky/build/tmp/deploy/images/raspberrypi3-gateway/update-image-raspberrypi3-gateway-latest.swu and all rpi-zigbee-image-raspberrypi3-gateway-*.rootfs.wic files under the same directory.",
+  "tags": [
+    "yocto",
+    "bitbake",
+    "repo",
+    "raspberrypi3",
+    "artifact"
+  ]
+}

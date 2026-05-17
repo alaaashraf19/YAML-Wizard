@@ -1,0 +1,15 @@
+{
+  "sha": "fcc0624ba56b0d594f64827f816c68c618b1ae71e91a77e44b8f628b90cdca0a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3123,
+  "description": "Create a GitHub Actions workflow named Build and tests that runs on a schedule, on pull requests to the master branch, and on workflow dispatch. The workflow has four jobs: build-native, build-cross, fingerprints, and other-tests. The build jobs use a Docker image to build the project in debug and release modes for different platforms. The test jobs download the build artifacts, pull the Docker image, and run tests using the Docker image.",
+  "tags": [
+    "docker",
+    "ubuntu",
+    "tests",
+    "scheduled",
+    "dispatch",
+    "cross-platform"
+  ]
+}

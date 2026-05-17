@@ -1,0 +1,18 @@
+{
+  "sha": "1de64451a26715fe0db4e59bb194fc1ae193def112df98ca5c6a94da81f23094",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1586,
+  "description": "Create a GitHub Actions workflow named Python application that runs on push and pull request events. Use an ubuntu-latest job to set up a Miniforge3 environment with Python 3.11, install dependencies from requirements.txt and extra.txt, and then run various tests including linting with flake8, testing with pytest, and testing notebooks. If tagged, build a distribution and publish it to PyPI using a secret pypi_password.",
+  "tags": [
+    "python",
+    "conda",
+    "miniforge",
+    "pytest",
+    "flake8",
+    "pypa",
+    "pypi",
+    "tests",
+    "notebooks"
+  ]
+}

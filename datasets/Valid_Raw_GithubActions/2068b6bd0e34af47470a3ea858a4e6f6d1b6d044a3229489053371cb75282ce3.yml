@@ -1,0 +1,55 @@
+name: Create latest release
+
+on:
+  push:
+    branches:
+    - 'master'
+
+jobs:
+  latest-release:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        submodules: recursive
+
+    - name: Build
+      uses: docker://ghcr.io/kdab/kdesrc-build:latest
+
+    - name: Delete latest release
+      run: |
+        gh release delete continuous --cleanup-tag || true
+      env:
+        GH_TOKEN: ${{ github.token }}
+
+    - name: Rename artifacts
+      run: |
+        cd ${{ github.workspace }} && mv hotspot-*.AppImage hotspot-continuous.AppImage
+        cd ${{ github.workspace }} && mv hotspot-debuginfo-*.tar.bz2 hotspot-debuginfo-continuous.tar.bz2
+
+    - name: Create latest release
+      uses: ncipollo/release-action@v1
+      with:
+        name: "continuous"
+        tag: "continuous"
+        prerelease: true
+        body: "The newest version directly from the master branch. THIS IS BLEEDING ENDGE AND WILL MOST LIKELY CONTAIN UNKOWN BUGS."
+        token: ${{ secrets.GITHUB_TOKEN }}
+        artifacts: |
+          ${{ github.workspace }}/hotspot-debuginfo-*
+          ${{ github.workspace }}/*.AppImage
+
+    - name: Release latest release
+      run: |
+        gh release edit continuous --draft=false || true
+      env:
+        GH_TOKEN: ${{ github.token }}
+
+    - name: Create release PR
+      uses: googleapis/release-please@v16.10.2
+      with:
+        token: ${{ github.token }}
+        release-type: simple

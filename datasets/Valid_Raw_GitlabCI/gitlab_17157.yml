@@ -1,0 +1,113 @@
+before_script:
+- export GRADLE_USER_HOME=`pwd`/.gradle
+- chmod +x ./gradlew
+build_adept_core:
+  artifacts:
+    paths:
+    - adept-core/build/outputs/aar/
+  only:
+  - master
+  - dev
+  script:
+  - ./gradlew :adept-core:assembleRelease
+  stage: build
+build_adept_extension_experimental:
+  artifacts:
+    paths:
+    - adept-extension-experimental/build/outputs/aar/
+  only:
+  - master
+  - dev
+  script:
+  - ./gradlew :adept-extension-experimental:assembleRelease
+  stage: build
+build_adept_extension_fresco:
+  artifacts:
+    paths:
+    - adept-extension-fresco/build/outputs/aar/
+  only:
+  - master
+  - dev
+  script:
+  - ./gradlew :adept-extension-fresco:assembleRelease
+  stage: build
+build_adept_extension_glide:
+  artifacts:
+    paths:
+    - adept-extension-glide/build/outputs/aar/
+  only:
+  - master
+  - dev
+  script:
+  - ./gradlew :adept-extension-glide:assembleRelease
+  stage: build
+build_adept_extension_picasso:
+  artifacts:
+    paths:
+    - adept-extension-picasso/build/outputs/aar/
+  only:
+  - master
+  - dev
+  script:
+  - ./gradlew :adept-extension-picasso:assembleRelease
+  stage: build
+build_sample:
+  artifacts:
+    paths:
+    - sample/build/outputs/apk/
+  only:
+  - master
+  - dev
+  script:
+  - ./gradlew :sample:assembleRelease
+  stage: build
+cache:
+  key: $CI_COMMIT_REF_SLUG
+  paths:
+  - .gradle/
+deploy_adept_core:
+  only:
+  - master
+  script:
+  - ./gradlew :adept-core:bintrayUpload
+  stage: deploy
+deploy_adept_extension_experimental:
+  only:
+  - master
+  script:
+  - ./gradlew :adept-extension-experimental:bintrayUpload
+  stage: deploy
+deploy_adept_extension_fresco:
+  only:
+  - master
+  script:
+  - ./gradlew :adept-extension-fresco:bintrayUpload
+  stage: deploy
+deploy_adept_extension_glide:
+  only:
+  - master
+  script:
+  - ./gradlew :adept-extension-glide:bintrayUpload
+  stage: deploy
+deploy_adept_extension_picasso:
+  only:
+  - master
+  script:
+  - ./gradlew :adept-extension-picasso:bintrayUpload
+  stage: deploy
+image: javiersantos/android-ci:28.0.2
+stages:
+- build
+- test
+- deploy
+test_adept_core:
+  artifacts:
+    paths:
+    - adept-core/build/
+  only:
+  - master
+  - dev
+  script:
+  - ./gradlew :adept-core:test
+  - ./gradlew :adept-core:jacocoTestReport
+  stage: test

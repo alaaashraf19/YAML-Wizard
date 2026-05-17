@@ -1,0 +1,12 @@
+image: microsoft/dotnet
+pages:
+  artifacts:
+    paths:
+    - public
+  script:
+  - dotnet --version
+  - mkdir public
+  - cd src
+  - dotnet restore
+  - dotnet run
+  - cp *.html ../public

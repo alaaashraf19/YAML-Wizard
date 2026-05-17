@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_09752",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 484,
+  "description": "Create a GitLab CI pipeline with two stages: test and deploy, using the node:12 Docker image for both jobs. In the test stage add a test job that runs \"yarn\" then \"yarn test\". In the deploy stage add a deploy job that runs only on tags, sets the variables PUBLIC_URL, REACT_APP_VERSION, SURGE_LOGIN and SURGE_TOKEN, then runs \"yarn\", \"yarn build\", copies build/index.html to build/200.html, and executes \"node_modules/.bin/surge build genar-radio.surge.sh\" to publish the site to Surge. Include the standard Code-Quality template. No caches or artifacts are defined.",
+  "tags": [
+    "node",
+    "yarn",
+    "surge",
+    "code-quality",
+    "deploy"
+  ]
+}

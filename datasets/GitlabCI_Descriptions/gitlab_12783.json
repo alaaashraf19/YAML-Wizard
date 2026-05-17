@@ -1,0 +1,20 @@
+{
+  "sha": "gitlab_12783",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 5143,
+  "description": "Create a GitLab CI pipeline using the rust Docker image and set RUST_BACKTRACE=1, with a global before_script that cats release files, prints rustc and cargo versions, exports DEBIAN_FRONTEND, CARGO_HOME, APT_ARCHIVES, APT_LISTS, sets APT_OPTIONS, creates the cargo and apt directories, updates apt and installs unixodbc-dev, then changes to the odbc-futures directory. Add a build stage containing a cargo build job that caches the target, .cargo and apt directories (keyed by $CI_JOB_NAME), stores them as artifacts for 30 minutes, runs `cargo test --no-run --color always --all`, and is excluded on tag pipelines. Add a test stage with five jobs—cargo test MSSQL, cargo test MariaDB, cargo test MySQL, cargo test PostgreSQL, and cargo test SQLite—each inheriting the global before_script, defining on‑failure artifacts of *.log* and /tmp/*.log, excluding tags, and each executing its own series of apt‑get, curl, and odbcinst commands to install the appropriate ODBC driver, printing ODBC config files, then running `cargo test` with color and capture flags; each job uses the corresponding service (microsoft/mssql-server-linux, mariadb, mysql, postgres) and sets variables for the driver connection string and any required credentials. Finally, add a deploy stage with a pages job that runs only on the master branch or tags, is manual, runs its own before_script (same as global), executes `cargo doc --color always --no-deps --all`, moves the generated docs to a public directory, gzips the files, publishes the public/ folder as a GitLab Pages artifact (30‑minute expiry), and does not allow failure. Ensure the pipeline respects the defined caches, artifacts, service dependencies, and manual deployment to GitLab Pages.",
+  "tags": [
+    "rust",
+    "cargo",
+    "odbc",
+    "mssql",
+    "mariadb",
+    "mysql",
+    "postgresql",
+    "sqlite",
+    "gitlab-pages",
+    "cache",
+    "artifacts"
+  ]
+}

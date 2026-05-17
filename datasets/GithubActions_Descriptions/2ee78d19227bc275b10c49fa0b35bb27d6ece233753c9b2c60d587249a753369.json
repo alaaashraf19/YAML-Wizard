@@ -1,0 +1,16 @@
+{
+  "sha": "2ee78d19227bc275b10c49fa0b35bb27d6ece233753c9b2c60d587249a753369",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2049,
+  "description": "Create a GitHub Actions workflow named Python tests that runs on push to the master branch and on pull requests to master. Use an ubuntu-latest job with read permission to repository contents, and a matrix strategy to test multiple Python versions (3.8 to 3.12). The workflow should check out the code, install system dependencies, set up Python, install Python dependencies, test building documentation, check code style with ruff, run unit tests with pytest, test sample DMARC reports, test building packages with hatch, and upload coverage to Codecov using a CODECOV_TOKEN from secrets.",
+  "tags": [
+    "python",
+    "tests",
+    "ubuntu",
+    "codecov",
+    "ruff",
+    "pytest",
+    "hatch"
+  ]
+}

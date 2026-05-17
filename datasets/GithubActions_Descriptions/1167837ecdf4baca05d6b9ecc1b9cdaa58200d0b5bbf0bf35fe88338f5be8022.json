@@ -1,0 +1,15 @@
+{
+  "sha": "1167837ecdf4baca05d6b9ecc1b9cdaa58200d0b5bbf0bf35fe88338f5be8022",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5180,
+  "description": "Create a GitHub Actions workflow named build that runs on every push. The workflow has two jobs: one for Windows and one for Linux. The Windows job runs on a windows-2019 environment, checks out the repository, and performs a series of steps to build the Lumix Engine with various plugins, including DX11 and DX12, using Visual Studio 2019. The Linux job runs on an ubuntu-20.04 environment, checks out the repository, installs dependencies, downloads 3rd-party binaries, and builds the engine using gmake.",
+  "tags": [
+    "windows",
+    "linux",
+    "visual-studio",
+    "gmake",
+    "build",
+    "lumix-engine"
+  ]
+}

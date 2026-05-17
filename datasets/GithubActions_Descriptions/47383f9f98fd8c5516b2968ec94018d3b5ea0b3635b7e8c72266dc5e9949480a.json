@@ -1,0 +1,15 @@
+{
+  "sha": "47383f9f98fd8c5516b2968ec94018d3b5ea0b3635b7e8c72266dc5e9949480a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1583,
+  "description": "Create a GitHub Actions workflow named lint-and-test that runs on every push to main and on pull requests to main. Run four parallel jobs on ubuntu-latest: lint-docs, lint-style, lint-typing, and test. Each job checks out the repository, sets up Python, installs hatch, and runs a specific hatch command. The test job uses a matrix strategy to test with multiple Python versions.",
+  "tags": [
+    "python",
+    "linting",
+    "testing",
+    "hatch",
+    "ubuntu",
+    "github-actions"
+  ]
+}

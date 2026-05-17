@@ -1,0 +1,63 @@
+compliance-group:recently-delivered:
+  extends: .run
+  rules:
+  - if: $TRIAGE_COMPLIANCE_RECENTLY_DELIVERED
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/groups/gitlab-org/compliance-group/compliance-recently-delivered.yml
+plan-stage:end-of-release-refinement:
+  extends: .run
+  rules:
+  - if: $TRIAGE_PLAN_STAGE_END_OF_RELEASE_REFINEMENT
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/plan-stage/end-of-release-refinement.yml
+plan-stage:security-issue-check:
+  extends: .run
+  rules:
+  - if: $TRIAGE_PLAN_STAGE_SECURITY_ISSUE_CHECK
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/plan-stage/security-issue-check.yml
+quality:leading-org-report:
+  extends: .run
+  rules:
+  - if: $TRIAGE_LEADING_ORG_REPORT
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/groups/gitlab-org/quality/leading-org-mr-report.yml
+quality:triage-report:
+  extends: .run
+  rules:
+  - if: $TRIAGE_QUALITY_REPORT
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/groups/gitlab-org/quality/quality-triage-report.yml
+security-policies-group:blocked-issues:
+  extends: .run
+  rules:
+  - if: $TRIAGE_SECURITY_POLICIES_BLOCKED_ISSUES
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/groups/gitlab-org/security-policies/blocked-issues.yml
+security-products:community-merge-requests-report:
+  extends: .run
+  rules:
+  - if: $TRIAGE_SECURITY_PRODUCTS_COMMUNITY_MERGE_REQUESTS
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/groups/gitlab-org/security-products/security-products-community-merge-requests.yml
+verify:community-merge-requests-report:
+  extends: .run
+  rules:
+  - if: $TRIAGE_VERIFY_COMMUNITY_MERGE_REQUESTS
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/groups/gitlab-org/verify/community-merge-requests.yml
+verify:component-merge-requests-report:
+  extends: .run
+  rules:
+  - if: $TRIAGE_VERIFY_COMPONENT_MERGE_REQUESTS
+  stage: report
+  variables:
+    TRIAGE_POLICY_FILE: policies/groups/gitlab-org/verify/gitlab-components-contributions.yml

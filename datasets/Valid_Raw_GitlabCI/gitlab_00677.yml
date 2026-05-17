@@ -1,0 +1,7 @@
+image: maven:3-jdk-8
+job1:
+  script: mvn clean package -pl common,engine,endpoint
+  stage: package
+  when: on_success
+stages:
+- package

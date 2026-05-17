@@ -1,0 +1,16 @@
+cache:
+  paths:
+  - node_modules/
+image: node:latest
+services:
+- mysql:latest
+- redis:latest
+- postgres:latest
+test_async:
+  script:
+  - npm install
+  - node ./specs/start.js ./specs/async.spec.js
+test_db:
+  script:
+  - npm install
+  - node ./specs/start.js ./specs/db-postgres.spec.js

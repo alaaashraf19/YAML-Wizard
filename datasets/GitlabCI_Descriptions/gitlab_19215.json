@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_19215",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 719,
+  "description": "Create a GitLab CI pipeline that uses the node:latest Docker image. Add a before_script that runs node -v, npm -v, installs TypeScript, Browserify and browserify-userscript-header globally, checks tsc -v, runs npm install, installs openssh-client if missing, starts ssh-agent, adds the $SSH_PRIVATE_KEY, creates and secures the ~/.ssh directory, adds the host latenight.christianbaum.com to known_hosts, and writes the private key to ~/.ssh/id_rsa. Define a single job named build (default stage) that executes npm run webextension, npm run userscript, and then scp -v red-x.user.js red-x.zip xian@latenight.christianbaum.com:~/red-x-latest/ (ignoring errors). Cache the node_modules directory to speed up subsequent runs. The job uses the SSH_PRIVATE_KEY variable as a secret for the SSH deployment.",
+  "tags": [
+    "node",
+    "typescript",
+    "browserify",
+    "ssh-deploy",
+    "npm",
+    "cache"
+  ]
+}

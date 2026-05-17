@@ -1,0 +1,38 @@
+before_script:
+- if [ -e .gitlab-ci/gitlab-com.R ]; then R < .gitlab-ci/gitlab-com.R; fi
+- R --vanilla -e 'install.packages("remotes", repos = "https://cloud.r-project.org/")'
+- R --vanilla -e 'remotes::install_gitlab("fvafrcu/packager")'
+- R --vanilla -e 'packager::install_deps(path = ".", repos = "http://ftp5.gwdg.de/pub/misc/cran/")'
+- if [ -e .gitlab-ci/apt-script.cl ]; then ./.gitlab-ci/apt-script.cl; fi
+build_and_check:
+  script:
+  - R CMD build --no-manual --no-build-vignettes .
+  stage: build
+coverage:
+  coverage: /^.*\s*Coverage:\s*\d+.\d+\%$/
+  script:
+  - R --vanilla -e 'install.packages("covr", repos = "https://cloud.r-project.org/");
+    covr::package_coverage()'
+  stage: test
+image: rocker/verse:latest
+packager:
+  script:
+  - R --vanilla -e 'packager::rcmdcheck_and_log(".", build_args = c("--no-manual",
+    "--no-build-vignettes"))'
+  stage: check
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - mkdir .public
+  - cp -r * .public
+  - mv .public public
+  stage: deploy
+stages:
+- build
+- check
+- test
+- deploy

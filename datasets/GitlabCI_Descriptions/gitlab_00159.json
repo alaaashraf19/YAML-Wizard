@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_00159",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 219,
+  "description": "Create a GitLab CI pipeline that uses the ruby:2.3 Docker image and caches the vendor/ directory. Include a before_script that runs `bundle install --path vendor`. Define a deploy stage with a `pages` job that runs `bundle exec jekyll build -d public/`. Publish the `public/` directory as a pages artifact and configure the job to run only on the `master` branch.",
+  "tags": [
+    "ruby",
+    "jekyll",
+    "bundle",
+    "gitlab-pages",
+    "deploy"
+  ]
+}

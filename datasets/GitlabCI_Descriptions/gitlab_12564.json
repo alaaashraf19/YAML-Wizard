@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_12564",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1240,
+  "description": "Create a GitLab CI pipeline with three stages (test, build, deploy) and a per‑branch cache of node_modules keyed by ${CI_BUILD_REF_NAME}. Use the mhart/alpine-node:8.4 Docker image for the test and build jobs and ekino/docker-buildbox:latest-dind-aws for all deploy jobs. In the test stage add a test job that runs `npm install`, `npm test -- --coverage`, and `npm run prettier:check`, captures coverage with the regex /All files\\s*\\|\\s*([\\d\\.]+)/, and is limited to branches matching ^(feat\\/|bugfix\\/|hotfix\\/|develop|release|master). In the build stage add a build job that runs `npm install` then `npm run build`, stores the resulting build/ directory as an artifact, and runs only on branches matching ^(develop|release|master). In the deploy stage add three jobs—deploy (development) on the develop branch, deploy-master (production) on master, and deploy-release (release)—each installing awscli via `pip install awscli` and syncing ./build to the respective S3 bucket (s3://dev.nice-app.ml/, s3://nice-app.ml/, s3://release.nice-app.ml/) while setting the appropriate environment name and URL.",
+  "tags": [
+    "node",
+    "npm",
+    "aws-s3",
+    "docker",
+    "cache",
+    "artifacts",
+    "gitlab-ci"
+  ]
+}

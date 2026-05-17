@@ -1,0 +1,25 @@
+before_script:
+- export GRADLE_USER_HOME=`pwd`/.gradle
+bintray:
+  cache:
+    key: $CI_COMMIT_REF_NAME
+    paths:
+    - build
+    - .gradle
+    policy: pull
+  only:
+  - tags
+  script: gradle bintrayUpload
+  stage: deploy
+build:
+  cache:
+    key: $CI_COMMIT_REF_NAME
+    paths:
+    - build
+    - .gradle
+    policy: push
+  script: gradle --build-cache assemble
+  stage: build
+image: gradle:alpine
+variables:
+  GRADLE_OPTS: -Dorg.gradle.daemon=false

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_09020",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 253,
+  "description": "Create a GitLab CI pipeline that includes the template file templates/release-tools-ring-deployment.yml from the project gitlab-com/gl-infra/cells/tissue. Pass the inputs allow_failure set to true, amp_environment set to cellsdev, and ring set to 0 to the included template. Add a workflow rule so the pipeline only runs when $CI_PIPELINE_SOURCE equals \"parent_pipeline\".",
+  "tags": [
+    "include",
+    "template",
+    "workflow",
+    "parent-pipeline",
+    "release-tools"
+  ]
+}

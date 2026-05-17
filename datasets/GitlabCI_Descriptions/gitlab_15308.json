@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_15308",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1309,
+  "description": "Create a GitLab CI pipeline using the node:20 Docker image and including the Dependency-Scanning template, with three stages: test, build, and deploy. In the test stage add a test job that runs `npm ci` then `npm run test` and captures coverage using the regex /^Statements\\s*:\\s*([^%]+)/. In the build stage add a build job that runs `npm ci` followed by `npm run build`. In the deploy stage add three jobs: a docker-next job that runs only on the master branch, uses the docker:latest image with a docker:dind service, logs in to the GitLab Container Registry with `$CI_REGISTRY_USER` and `$CI_JOB_TOKEN`, builds an image tagged `$CI_REGISTRY_IMAGE:next` and pushes it; a docker-tag job that runs only on tags, also uses docker:latest with docker:dind, sets `VERSION=$CI_COMMIT_TAG`, logs in to Docker Hub with `$DOCKER_HUB_USER` and `$DOCKER_HUB_PASSWORD`, builds `ramielcreations/caravaggio:$VERSION`, tags it as latest, and pushes both tags; and an npm job that runs only on tags, configures the npm auth token with `$NPM_TOKEN`, installs with `npm install --unsafe-perm`, and publishes the package with `npm publish --unsafe-perm`. The pipeline also defines workflow rules to trigger on merge‑request events, any branch commit, or any tag commit.",
+  "tags": [
+    "node",
+    "npm",
+    "docker",
+    "dind",
+    "gitlab-registry",
+    "docker-hub",
+    "dependency-scanning",
+    "ci-cd"
+  ]
+}

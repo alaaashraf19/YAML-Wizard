@@ -1,0 +1,28 @@
+build:develop:
+  artifacts:
+    paths:
+    - ./src/DrivenDb.Standard/bin/Debug/netstandard2.0/*.*
+  only:
+  - /develop/
+  script:
+  - ./build.sh build-debug run-tests
+  stage: build
+image: microsoft/dotnet:latest
+release:master:
+  only:
+  - /master/
+  script:
+  - ./build.sh download-semrel download-ezrep build-debug run-tests build-release
+    package-release publish-release tag-release
+  stage: release
+stages:
+- test
+- build
+- release
+test:branch:
+  except:
+  - /master/
+  - /develop/
+  script:
+  - ./build.sh build-debug run-tests
+  stage: test

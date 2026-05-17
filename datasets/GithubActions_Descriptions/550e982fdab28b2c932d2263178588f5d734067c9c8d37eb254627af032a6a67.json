@@ -1,0 +1,14 @@
+{
+  "sha": "550e982fdab28b2c932d2263178588f5d734067c9c8d37eb254627af032a6a67",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3328,
+  "description": "Create a reusable GitHub Actions workflow named Build Template that accepts board, max_size, max_size_apa102, and extra_args as inputs. The workflow runs on ubuntu-latest, checks out the code, installs Python 3.11 and uv, and performs various checks on compiled program size, binary, ELF, and ESP32 symbol analysis for the given board and examples. It also generates a timestamp and random hex, uploads the build log as an artifact, and fails the workflow if any step fails.",
+  "tags": [
+    "python",
+    "esp32",
+    "github-actions",
+    "reusable-workflow",
+    "uv"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_13809",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 949,
+  "description": "Create a GitLab CI pipeline with three jobs: a build job that uses the image registry.gitlab.com/offa/docker-images/${COMPILER}:${VERSION} and runs in a parallel matrix over COMPILER (gcc, clang) and VERSION (gcc:15,14; clang:21,20), executing script/ci_setup.sh then script/ci_build.sh -asan -ubsan; a coverage job that uses the gcc:15 image, runs script/ci_setup.sh and script/ci_build.sh -cov, and captures coverage using the regex /^\\s*lines:\\s*\\d+.\\d+\\%/; and a formatting job that runs on docker:latest with before_script installing git, cloning the clang-format-lint-action repository, building its Docker image, then runs docker run --rm --workdir /src -v ${PWD}:/src clang-format-lint --clang-format-executable /clang-format/clang-format${CLANGFORMAT_VERSION} -r --exclude .git ., using the CLANGFORMAT_VERSION variable set to 19 and the docker:dind service. Also define a global variable GTEST_COLOR='yes'.",
+  "tags": [
+    "gcc",
+    "clang",
+    "docker",
+    "parallel-matrix",
+    "coverage",
+    "clang-format",
+    "ci"
+  ]
+}

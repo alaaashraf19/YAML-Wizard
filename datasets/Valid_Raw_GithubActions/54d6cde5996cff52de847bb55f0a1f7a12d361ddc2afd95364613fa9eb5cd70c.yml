@@ -1,0 +1,250 @@
+name: Build
+
+on:
+  push:
+    branches-ignore:
+      - "dependabot/*"
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  windows:
+    name: Windows ${{ matrix.Configuration }} ${{ matrix.Platform }} (msvc)
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        Configuration: [Debug, Mixed, Release, Release Master Gold]
+        Platform: [x64, x86]
+    steps:
+    - uses: actions/checkout@main
+      with:
+        submodules: recursive
+
+    - uses: microsoft/setup-msbuild@main
+
+    - uses: nuget/setup-nuget@main
+
+    - name: Restore NuGet packages
+      run: nuget restore src\engine.sln
+
+    - name: Build
+      working-directory: src
+      run: msbuild /m /p:Configuration="${{ matrix.Configuration }}" /p:Platform="${{ matrix.Platform }}" engine.sln
+
+    - name: Prepare artifacts
+      shell: cmd
+      run: misc/windows/xr_pack_build.cmd "${{ matrix.Configuration }}" "${{ matrix.Platform }}"
+
+    - name: Upload OpenXRay artifact
+      uses: actions/upload-artifact@main
+      with:
+        name: OpenXRay.${{ matrix.Configuration }} ${{ matrix.Platform }} (github-${{ github.run_number }}).7z
+        path: res/OpenXRay.*.7z
+
+    - name: Upload Symbols
+      uses: actions/upload-artifact@main
+      with:
+        name: Symbols.${{ matrix.Configuration }} ${{ matrix.Platform }} (github-${{ github.run_number }}).7z
+        path: res/Symbols.*.7z
+
+    - name: Upload Utils
+      uses: actions/upload-artifact@main
+      with:
+        name: Utils.${{ matrix.Configuration }} ${{ matrix.Platform }} (github-${{ github.run_number }}).7z
+        path: res/Utils.*.7z
+
+    - name: Update latest-nightly tag
+      uses: EndBug/latest-tag@latest
+      if: github.ref_name == 'dev'
+      id: update-latest-nightly-tag
+      with:
+        ref: latest-nightly
+
+    - name: Publish latest nightly build
+      if: ${{ steps.update-latest-nightly-tag.outcome == 'success' }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: gh release upload --clobber latest-nightly (get-item res/*.*.7z)
+
+  linux:
+    name: ${{ matrix.platform.name }} ${{ matrix.configuration }} ${{ matrix.platform.arch }} (${{ matrix.platform.cc || 'gcc' }})
+    runs-on: ubuntu-latest
+
+    container: ${{ matrix.platform.container || '' }}
+
+    defaults:
+      run:
+        shell: ${{ matrix.platform.shell || 'bash -e {0}' }}
+
+    env:
+      CFLAGS: "-w"
+      CXXFLAGS: "-w"
+
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+        - { name: Ubuntu, arch: amd64,   cc: gcc,   cxx: g++, }
+        - { name: Ubuntu, arch: amd64,   cc: clang, cxx: clang++, }
+        #- { name: Ubuntu, arch: arm64,   container: 'dockcross/linux-arm64', }
+        #- { name: Ubuntu, arch: ppc64el, container: 'dockcross/linux-ppc64le:latest', }
+        - { name: Alpine, arch: x86_64, shell: 'alpine.sh {0}', flags: "-DXRAY_LINKER=mold", }
+        - { name: Alpine, arch: x86,    shell: 'alpine.sh {0}', flags: "-DXRAY_LINKER=mold", }
+        #- { name: Haiku,  arch: x86_64, container: 'haiku/cross-compiler:x86_64-r1beta4', cc: x86_64-unknown-haiku-gcc, cxx: x86_64-unknown-haiku-g++, }
+
+        configuration: [Debug, Release]
+
+    steps:
+    - name: Install latest stable Alpine Linux
+      if: ${{ matrix.platform.name == 'Alpine' }}
+      uses: jirutka/setup-alpine@master
+      with:
+        arch: ${{ matrix.platform.arch }}
+        branch: 'latest-stable'
+        packages: build-base cmake git mold sdl2-dev glew-dev lzo-dev libjpeg-turbo-dev openal-soft-dev libogg-dev libtheora-dev libvorbis-dev
+
+    - name: Install Ubuntu packages
+      if: ${{ matrix.platform.name == 'Ubuntu' }}
+      run: |
+          sudo dpkg --add-architecture ${{ matrix.platform.arch }}
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y \
+              libsdl2-dev:${{ matrix.platform.arch }} \
+              libglew-dev:${{ matrix.platform.arch }} \
+              liblzo2-dev:${{ matrix.platform.arch }} \
+              libjpeg-dev:${{ matrix.platform.arch }} \
+              libopenal-dev:${{ matrix.platform.arch }} \
+              libogg-dev:${{ matrix.platform.arch }} \
+              libtheora-dev:${{ matrix.platform.arch }} \
+              libvorbis-dev:${{ matrix.platform.arch }}
+
+    - name: Set environment variables
+      if: ${{ matrix.platform.cc != '' }}
+      run: |
+        echo "CC=${{ matrix.platform.cc }}" >> $GITHUB_ENV
+        echo "CXX=${{ matrix.platform.cxx }}" >> $GITHUB_ENV
+
+    - uses: actions/checkout@main
+      with:
+        submodules: recursive
+
+    - name: Run CMake
+      run: cmake -B build -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} -DCMAKE_UNITY_BUILD=ON ${{ matrix.platform.flags }}
+
+    - name: Run CMake Build
+      id: cmake-build
+      run: cmake --build build --config ${{ matrix.configuration }} --parallel $(nproc || echo 4)
+
+    - name: Make package
+      if: ${{ steps.cmake-build.outcome == 'success' && matrix.platform.name == 'Ubuntu' }}
+      id: make-package
+      working-directory: build
+      #continue-on-error: true
+      run: |
+        make -j $(nproc || echo 4) package
+        file openxray_1.6.02_*.deb
+
+    - name: Upload OpenXRay artifact
+      if: ${{ steps.make-package.outcome == 'success' }}
+      uses: actions/upload-artifact@main
+      with:
+        name: openxray_1.6.02_${{ matrix.configuration }}_${{ matrix.platform.arch }}_(github-${{ matrix.platform.cc }}-${{ github.run_number }}).deb
+        path: build/openxray_1.6.02_*.deb
+
+  macos:
+    name: macOS ${{ matrix.Configuration }} ${{ matrix.Platform }}
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        Configuration: [Debug, Release]
+
+    steps:
+    - uses: actions/checkout@main
+      with:
+        submodules: recursive
+
+    - name: Install packages
+      run: |
+          brew update
+          brew install sdl2 glew lzo libogg libvorbis theora
+
+    - name: Run CMake
+      run: CFLAGS="-w" CXXFLAGS="-w" cmake -B build -DCMAKE_BUILD_TYPE=${{ matrix.Configuration }} -DCMAKE_UNITY_BUILD=ON
+
+    - name: Run CMake Build
+      run: cmake --build build --config ${{ matrix.Configuration }} --parallel $(sysctl -n hw.ncpu || echo 4)
+
+  bsd:
+    name: ${{ matrix.platform.name }} ${{ matrix.configuration }} ${{ matrix.platform.arch }}
+    runs-on: macos-latest
+    timeout-minutes: 45
+    env:
+      CFLAGS: "-w"
+      CXXFLAGS: "-w"
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+        - { name: FreeBSD, os: freebsd, os-version: 13.2, arch: x86_64,
+            install-cmd: "sudo pkg update && sudo pkg install -y cmake sdl2 glew lzo2 jpeg-turbo openal-soft libogg libtheora libvorbis"
+          }
+        - { name: OpenBSD, os: openbsd, os-version: 7.4,  arch: x86_64,
+            install-cmd: "sudo pkg_add cmake SDL2 glew lzo2 jpeg openal libogg libtheora libvorbis",
+          }
+        #- { name: NetBSD,  os: netbsd,  os-version: 9.3,  arch: x86_64,
+        #    install-cmd: "sudo pkgin -y install cmake SDL2 glew lzo libjpeg-turbo openal-soft libogg libtheora libvorbis",
+        #  }
+        configuration: [Debug, Release]
+
+    steps:
+    - uses: actions/checkout@main
+      with:
+        submodules: recursive
+
+    - name: Setup ${{ matrix.platform.name }} and packages
+      uses: cross-platform-actions/action@v0.22.0
+      with:
+        operating_system: ${{ matrix.platform.os }}
+        architecture: ${{ matrix.platform.arch }}
+        version: ${{ matrix.platform.os-version }}
+        environment_variables: CFLAGS CXXFLAGS
+        shutdown_vm: false
+        sync_files: runner-to-vm
+        run: ${{ matrix.platform.install-cmd }}
+
+    - name: Run CMake
+      uses: cross-platform-actions/action@v0.22.0
+      with:
+        operating_system: ${{ matrix.platform.os }}
+        architecture: ${{ matrix.platform.arch }}
+        version: ${{ matrix.platform.os-version }}
+        environment_variables: CFLAGS CXXFLAGS
+        shutdown_vm: false
+        sync_files: false
+        run: cmake -B build -DCMAKE_BUILD_TYPE=${{ matrix.Configuration }} -DCMAKE_UNITY_BUILD=ON
+
+    - name: Run CMake Build
+      uses: cross-platform-actions/action@v0.22.0
+      with:
+        operating_system: ${{ matrix.platform.os }}
+        architecture: ${{ matrix.platform.arch }}
+        version: ${{ matrix.platform.os-version }}
+        environment_variables: CFLAGS CXXFLAGS
+        shutdown_vm: false
+        sync_files: false
+        run: cmake --build build --config ${{ matrix.Configuration }} --parallel 3
+
+    - name: Finalize
+      uses: cross-platform-actions/action@v0.22.0
+      with:
+        operating_system: ${{ matrix.platform.os }}
+        architecture: ${{ matrix.platform.arch }}
+        version: ${{ matrix.platform.os-version }}
+        environment_variables: CFLAGS CXXFLAGS
+        # sync back is disabled due to:
+        # 1) VM stalls during the process
+        # 2) we don't output artifacts anyway
+        sync_files: false #vm-to-runner
+        run: rm -rf build # reduce amount of files to copy back from VM

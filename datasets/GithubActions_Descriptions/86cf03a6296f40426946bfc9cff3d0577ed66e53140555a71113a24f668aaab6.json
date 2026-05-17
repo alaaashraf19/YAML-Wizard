@@ -1,0 +1,14 @@
+{
+  "sha": "86cf03a6296f40426946bfc9cff3d0577ed66e53140555a71113a24f668aaab6",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 6263,
+  "description": "Create a GitHub Actions workflow named Container Image Deployment CI that triggers on push to master, deploy-* branches, and tags matching v*.*.*. The workflow uses an ubuntu-latest job that waits for a build workflow to complete, then checks out a Git repository over SSH, sets environment variables, creates Docker volumes, starts services with Docker Compose, checks if services are up, and finally cleans up obsolete Docker objects.",
+  "tags": [
+    "github-actions",
+    "docker",
+    "deployment",
+    "ssh",
+    "docker-compose"
+  ]
+}

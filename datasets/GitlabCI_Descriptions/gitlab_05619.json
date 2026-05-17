@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_05619",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1631,
+  "description": "Create a GitLab CI pipeline that includes the external base template, sets a pip cache at $CI_PROJECT_PATH/.cache/pip, and defines DEBIAN_FRONTEND and XDG_CACHE_HOME variables. Add a lint job in the test stage using the python:3.6 image that runs before_script installing setuptools==21, pip==9.0.1, and the coala and coala‑bears packages from GitHub, then executes coala --ci. Add a moban job in the test stage also on python:3.6 that installs moban with the test‑requirements constraint and runs .ci/check_moban.sh. Add four test jobs named tests:3.4, tests:3.5, tests:3.6, and tests:3.7 in the test stage, each using the corresponding python:x‑alpine image, extending a common script that installs git, gcc and musl-dev via apk, installs moban, pins setuptools and pip, installs both test‑requirements.txt and requirements.txt, then runs $PYTHON -m pytest --cov-fail-under=100 followed by $PYTHON -m codecov, and each defines a coverage regex '/Total coverage: \\d+\\.\\d+%/'. All jobs share the pip cache and run on any branch.",
+  "tags": [
+    "python",
+    "pytest",
+    "codecov",
+    "coala",
+    "moban",
+    "alpine",
+    "pip",
+    "cache"
+  ]
+}

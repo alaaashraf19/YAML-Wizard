@@ -1,0 +1,17 @@
+before_script:
+- mix local.rebar --force
+- mix local.hex --force
+- mix deps.get
+image: elixir:latest
+mix:
+  script:
+  - script/test
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - script/docs
+  stage: deploy

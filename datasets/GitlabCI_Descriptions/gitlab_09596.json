@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_09596",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2135,
+  "description": "Create a GitLab CI pipeline with stages test, build, and deploy using ruby:2.6.3 as the default image and a cache keyed by CI_COMMIT_REF_SLUG that stores vendor/ruby. In the test stage define an rspec job that runs the before_script 'gem install bundler --no-document' and 'bundle install -j $(nproc) --path vendor' then executes 'bundle exec rspec spec', and a rubocop job with the same before_script that runs 'bundle exec rubocop'. In the build stage add a build job using the docker:latest image with the docker:dind service, limited to the master branch, that runs 'docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com', 'docker build -t registry.gitlab.com/gitlab-com/support/toolbox/gitlab-support-bot .', and 'docker push registry.gitlab.com/gitlab-com/support/toolbox/gitlab-support-bot'. Also in the build stage add a get_support_team_size job that runs only on master, curls \"https://about.gitlab.com/company/team/team.yml\" into support.yaml, executes a Ruby one‑liner to count Customer Support crew and writes the count to team_size, and publishes team_size as an artifact. In the deploy stage add a deploy job using the google/cloud-sdk image that extends a before_script writing ${GCP_CREDENTIALS} to credentials.json and authenticating with gcloud, needs the team_size artifact, runs only on master, and SSHes to the supportbot VM to login to the registry, stop and remove the existing container, pull the latest image and run it with environment variables SLACK_API_TOKEN, ZD_TOKEN and SUPPORT_TEAM_SIZE=$(cat team_size).",
+  "tags": [
+    "ruby",
+    "docker",
+    "dind",
+    "gcloud",
+    "rspec",
+    "rubocop",
+    "ci-cd",
+    "deploy",
+    "cache"
+  ]
+}

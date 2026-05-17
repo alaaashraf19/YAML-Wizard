@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_10976",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 150,
+  "description": "Create a GitLab CI pipeline that uses the scorpil/rust:nightly Docker image. Add a pages job that runs in the deploy stage, executes the exact commands \"cargo doc --no-deps\" and then \"mv target/doc public\" to generate Rust documentation and move it to the public folder. Configure the job to publish the public/ directory as a GitLab Pages artifact and restrict execution to the master branch only. No additional services, caches, or variables are needed.",
+  "tags": [
+    "rust",
+    "cargo",
+    "documentation",
+    "gitlab-pages"
+  ]
+}

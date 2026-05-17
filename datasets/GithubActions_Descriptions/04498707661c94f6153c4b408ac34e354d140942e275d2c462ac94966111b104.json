@@ -1,0 +1,15 @@
+{
+  "sha": "04498707661c94f6153c4b408ac34e354d140942e275d2c462ac94966111b104",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3221,
+  "description": "Create a GitHub Actions workflow named ci that runs on push to the master branch and on pull requests to master. The workflow has a single job window_build_cpu that runs on windows-latest, checks out the repository, sets up VCPKG with a specific hash, installs common dependencies, downloads Ninja, configures CMake with various options, and then builds and tests the project using CTest.",
+  "tags": [
+    "windows",
+    "cmake",
+    "vcpkg",
+    "ninja",
+    "ctest",
+    "ci"
+  ]
+}

@@ -1,0 +1,25 @@
+custard:
+  after_script:
+  - if [ -f "/var/log/emerge.log" ] ; then mv /var/log/emerge.log .logs; fi
+  - if [ -f "/var/log/emerge-fetch.log" ] ; then mv /var/log/emerge-fetch.log .logs;
+    fi
+  - if [ -d "/var/log/emerge" ] ; then mv /var/log/emerge .logs; fi
+  artifacts:
+    paths:
+    - .logs
+  only:
+    variables:
+    - $CI_COMMIT_MESSAGE =~ /x11-wm\/custard/
+  script:
+  - mkdir -p .logs
+  - echo 'x11-wm/custard test.conf' > /etc/portage/package.env/custard
+  - mkdir -p /etc/portage/package.accept_keywords
+  - echo '=x11-wm/custard-9999 **' > /etc/portage/package.accept_keywords/custard
+  - mkdir -p /etc/portage/package.use/x11-wm
+  - mkdir -p /etc/portage/package.use/x11-libs
+  - echo 'x11-libs/libxcb xkb' > /etc/portage/package.use/x11-libs/libxcb
+  - echo 'x11-wm/custard examples doc' > /etc/portage/package.use/x11-wm/custard
+  - env ACCEPT_KEYWORDS="~*" MAKEOPTS="-j$(($(nproc)+1))" emerge -v --usepkg y --buildpkg
+    y x11-wm/custard::ahrs
+  - rm -rf /usr/portage/packages/x11-wm/custard/*.tbz2
+  stage: test

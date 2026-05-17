@@ -1,0 +1,15 @@
+{
+  "sha": "3cdfb2c2e647c48d129c78cb8d68c41f6b0a0fc22f80f1bac947cb1abe91df74",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1410,
+  "description": "Create a GitHub Actions workflow named Build C library that runs on every push and pull request. Build a C library in an ubuntu-22.04 job, package it with a script, upload the artifact, test the library with another script, and create a release if a tag is pushed. In a separate ubuntu-22.04 job, test building from the C library by downloading the artifact, extracting it, and running a build script. Finally, in an ubuntu-latest job, verify that both previous jobs succeeded.",
+  "tags": [
+    "c",
+    "library",
+    "ubuntu",
+    "release",
+    "tests",
+    "artifacts"
+  ]
+}

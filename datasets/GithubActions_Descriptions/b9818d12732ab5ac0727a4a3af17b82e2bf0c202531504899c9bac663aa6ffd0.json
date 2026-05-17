@@ -1,0 +1,17 @@
+{
+  "sha": "b9818d12732ab5ac0727a4a3af17b82e2bf0c202531504899c9bac663aa6ffd0",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4777,
+  "description": "Create a GitHub Actions workflow named FBGEMM_GPU-CPU Release Build that triggers on push to main, pull requests to main, and manual dispatch. The workflow has two jobs: build_artifact and test_and_publish_artifact. The build_artifact job runs on an amazonlinux:2023 container, sets up the environment, checks out the repository, and builds FBGEMM_GPU for CPU. It then uploads the built wheel as a GHA artifact. The test_and_publish_artifact job downloads the artifact, tests on GPU, and pushes to PyPI if the workflow is not triggered by a pull request or push.",
+  "tags": [
+    "fbgemm",
+    "gpu",
+    "cpu",
+    "release",
+    "build",
+    "test",
+    "pypi",
+    "amazonlinux"
+  ]
+}

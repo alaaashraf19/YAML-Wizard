@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_07089",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 472,
+  "description": "Create a GitLab CI pipeline that uses the default image and installs Lazarus in a before_script with `apt-get update -qq && apt-get install -y -qq lazarus`. Define two stages, build and deploy, and add an after_script that runs `make clean; make distclean; cd deb; make clean;` after every job. In the build stage add a `ulm` job that executes `./configure; make ulm;`. Also in the build stage add `ulm_deb` which runs `./configure;` then `cd deb; make;` and publishes any `deb/*.deb` files as artifacts, and a `ulm_doc` job that runs `./configure; make doc`. In the deploy stage add `ulm_dist` that runs `./configure; make dist;` and stores the resulting `dist/*.tar.gz` files as artifacts.",
+  "tags": [
+    "make",
+    "lazarus",
+    "deb",
+    "dist",
+    "doc",
+    "configure",
+    "build",
+    "deploy"
+  ]
+}

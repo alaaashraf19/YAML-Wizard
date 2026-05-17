@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_12491",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 910,
+  "description": "Create a GitLab CI pipeline using the node:latest Docker image. Include a before_script that runs apt-get -qq update and apt-get install -y jq. Define a single job named \"build and test\" (default stage) that caches the node_modules/ directory, runs npm install, npm run compile, npm run test, extracts ABIs with \"jq '.abi'\" and bytecode with \"jq -r '.bytecode'\" from each build/contracts/*.json file, flattens each contracts/*.sol file using ./node_modules/.bin/truffle‑flattener into an artifacts/ directory, copies the generated .abi and .bin files into artifacts/, and writes a README.md containing the solcjs version and the commit SHA. The job stores the artifacts/ directory as an artifact that expires in one month. No special rules or deployment targets are defined.",
+  "tags": [
+    "node",
+    "npm",
+    "truffle",
+    "solcjs",
+    "jq",
+    "cache",
+    "artifacts"
+  ]
+}

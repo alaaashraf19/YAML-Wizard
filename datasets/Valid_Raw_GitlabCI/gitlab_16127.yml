@@ -1,0 +1,98 @@
+before_script:
+- . .ci/protect-secrets.sh
+- .ci/describe-system.sh
+- . .ci/update-env.sh
+- . .ci/setup-make-parallelity.sh
+build-from-clean:
+  artifacts:
+    expire_in: 99 years
+    paths:
+    - gitlab-build-docker.log
+    - html
+    when: always
+  except: []
+  extends:
+  - build-from-latest
+  only:
+  - master
+  - develop
+  - tags
+  - web
+  retry: 2
+  tags:
+  - big
+  variables:
+    ARTIFACT_BASE: source-clean
+build-from-latest:
+  artifacts:
+    expire_in: 1 month
+    paths:
+    - gitlab-build-docker.log
+    - html
+    when: always
+  except:
+  - master
+  - develop
+  - tags
+  - web
+  script:
+  - apk --update add coreutils rsync
+  - .ci/build-docker.sh | tee gitlab-build-docker.log | .ci/head-tail.sh 1048576
+  - .ci/push-gitlab.sh sagemath-dev
+  - .ci/push-gitlab.sh sagemath
+  - DOCKER_TAG=$CI_COMMIT_SHA .ci/push-gitlab.sh sagemath
+  stage: build
+image: docker:stable
+push-dockerhub:
+  dependencies: []
+  only:
+    refs:
+    - branches
+    - tags
+    variables:
+    - $SECRET_DOCKER_PASS
+  script:
+  - . .ci/pull-gitlab.sh sagemath
+  - sh .ci/push-dockerhub.sh sagemath
+  stage: release
+push-dockerhub-dev:
+  dependencies: []
+  only:
+    refs:
+    - master
+    - develop
+    - tags
+    variables:
+    - $SECRET_DOCKER_PASS
+  script:
+  - . .ci/pull-gitlab.sh sagemath-dev
+  - sh .ci/push-dockerhub.sh sagemath-dev
+  stage: release
+services:
+- docker:stable-dind
+stages:
+- build
+- test
+- release
+test-cli:
+  dependencies: []
+  script:
+  - . .ci/pull-gitlab.sh sagemath
+  - sh .ci/test-cli.sh "$DOCKER_IMAGE"
+  stage: test
+test-dev:
+  dependencies: []
+  script:
+  - . .ci/pull-gitlab.sh sagemath-dev
+  - sh .ci/test-dev.sh "$DOCKER_IMAGE"
+  stage: test
+test-jupyter:
+  dependencies: []
+  script:
+  - . .ci/pull-gitlab.sh sagemath
+  - sh .ci/test-jupyter.sh "$DOCKER_IMAGE" docker
+  stage: test
+variables:
+  DEFAULT_ARTIFACT_BASE: sagemath/sagemath-dev:develop
+  DOCKER_DRIVER: overlay2
+  DOCKER_TAG: $CI_COMMIT_REF_NAME

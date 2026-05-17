@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_12349",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1031,
+  "description": "Create a GitLab CI pipeline that uses the python:3.10 Docker image and defines a global before_script which prints the OS release, shows the Python version, sets DEBIAN_FRONTEND, TZ, QT_QPA_PLATFORM_PLUGIN_PATH and DISPLAY, installs ffmpeg, libsm6, libxext6, libxrender1, libxi6, libfontconfig1, libglib2.0-0, xvfb and a full set of libxcb packages, installs virtualenv via pip, creates a virtual environment in a venv directory, activates it, installs the project with its development extras, starts Xvfb on display :99, and sleeps 3 seconds. Configure a cache for .cache/pip and the venv directory and set the PIP_CACHE_DIR variable to $CI_PROJECT_DIR/.cache/pip. Add a job named test in the default test stage that runs the command \"make coverage\", stores the generated .coverage file as an artifact, and reports total coverage using the regex /(?i)total.*? (100(?:\\.0+)?\\%|[1-9]?\\d(?:\\.\\d+)?\\%)$/.",
+  "tags": [
+    "python-3.10",
+    "make",
+    "coverage",
+    "xvfb",
+    "ffmpeg",
+    "virtualenv",
+    "pip-cache"
+  ]
+}

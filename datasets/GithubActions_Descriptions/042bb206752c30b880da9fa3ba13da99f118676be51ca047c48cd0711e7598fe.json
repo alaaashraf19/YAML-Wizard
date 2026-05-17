@@ -1,0 +1,16 @@
+{
+  "sha": "042bb206752c30b880da9fa3ba13da99f118676be51ca047c48cd0711e7598fe",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2678,
+  "description": "Create a GitHub Actions workflow named Nintendo 3DS that runs on push to master branch, pull requests, releases, and workflow dispatch. The workflow should build DevilutionX in a devkitpro/devkitarm container on an ubuntu-latest environment, handling dependencies and external tools, then upload artifacts. Ensure only one run per workflow and ref can proceed at a time, cancelling in-progress jobs for the same group.",
+  "tags": [
+    "3ds",
+    "devilutionx",
+    "devkitpro",
+    "cmake",
+    "ubuntu",
+    "release",
+    "artifacts"
+  ]
+}

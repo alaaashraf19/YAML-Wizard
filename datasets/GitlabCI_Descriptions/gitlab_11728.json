@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_11728",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 861,
+  "description": "Create a GitLab CI pipeline using the ubuntu:18.04 Docker image. Define a single stage called build and a job named build that runs in this stage. In the before_script, run apt update, then install make cmake libboost-filesystem-dev flex bison gcc g++ git gengetopt bzip2 libdouble-conversion-dev software-properties-common tzdata, and run ldconfig. In the script, create a build directory, cd into it, run cmake .., then make -j4 -O, then make rtest. After the script, run a series of commands to capture the current git revision, clone the ztsdb_dockerfile repository, prepend a comment with the commit URL to the Dockerfile, configure git user name and email, commit the changes with a message containing the revision URL, and push to GitHub using the GITHUB_PWD secret.",
+  "tags": [
+    "ubuntu",
+    "cmake",
+    "make",
+    "gitlab-ci",
+    "github-push"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_05513",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 556,
+  "description": "Create a GitLab CI pipeline that uses the node:carbon Docker image and defines two stages: test and deploy. In the test stage add a test_code job that runs a before_script to download and extract CMake 3.13.4 with wget -qO- \"https://cmake.org/files/v3.13/cmake-3.13.4-Linux-x86_64.tar.gz\" | tar --strip-components=1 -xz -C /usr/local, then executes the script steps: mkdir build, cd build, cmake ../code, cmake --build ., ctest, and cd .. . In the deploy stage add a pages job that caches the node_modules/ directory, runs npm install gitbook-cli -g, gitbook fetch 3.2.3, gitbook install, then builds the site with gitbook build . public, and publishes the public/ folder as a GitLab Pages artifact that expires in one week, but only on the master branch.",
+  "tags": [
+    "node",
+    "gitbook",
+    "cmake",
+    "pages",
+    "test",
+    "deploy",
+    "cache",
+    "npm"
+  ]
+}

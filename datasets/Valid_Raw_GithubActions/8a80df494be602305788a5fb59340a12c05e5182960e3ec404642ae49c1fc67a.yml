@@ -1,0 +1,145 @@
+---
+name: ci
+on:
+  push:
+    branches:
+      - master
+      - test-runner-ci
+    tags-ignore:
+      - '**'
+  pull_request:
+    branches:
+      - master
+jobs:
+
+  compilers:
+    name: Compiler Compatibility / ${{ matrix.config.cc }}
+    runs-on: ubuntu-22.04
+    continue-on-error: true
+    env:
+      CC: ${{ matrix.config.cc }}
+      CXX: ${{ matrix.config.cxx }}
+      CXXPACKAGE: ${{ matrix.config.cxxpackage }}
+      CFLAGS: -std=c11
+      CXXFLAGS: -std=c++14
+    strategy:
+      matrix:
+        config:
+          - cc: clang-9
+            cxx: clang++-9
+            cxxpackage: clang-9
+          - cc: clang-11
+            cxx: clang++-11
+            cxxpackage: clang-11
+          - cc: gcc-9
+            cxx: g++-9
+            cxxpackage: g++-9
+          - cc: gcc-10
+            cxx: g++-10
+            cxxpackage: g++-10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Dependencies
+        run: |
+          sudo `which apt || which apt-get` update
+          sudo `which apt || which apt-get` install \
+            curl \
+            cmake \
+            nasm \
+            $CC \
+            $CXXPACKAGE \
+            gettext \
+            libcurl4-gnutls-dev \
+            libedit-dev \
+            zlib1g-dev \
+            libgl1-mesa-dev \
+            libavutil-dev \
+            libx11-dev \
+            libglu1-mesa-dev \
+            libglew-dev \
+            libavcodec-dev \
+            libavformat-dev \
+            libswresample-dev \
+            libcairo2-dev \
+            libpango1.0-dev \
+            libpng-dev \
+            libjpeg-dev \
+            librtmp-dev \
+            libsdl2-dev \
+            libgnutls28-dev \
+            liblzma-dev
+
+      - name: Run Build
+        run: |
+          export CXX=`echo $CC | sed -e 's/clang/clang++/;s/gcc/g++/'`
+          ./build.sh debug
+  linux:
+    name: Linux / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    continue-on-error: false
+    strategy:
+      matrix:
+        os:
+          - ubuntu-22.04
+          - ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Dependencies
+        run: |
+          sudo `which apt || which apt-get` update
+          sudo `which apt || which apt-get` install \
+            curl \
+            cmake \
+            nasm \
+            gettext \
+            libcurl4-gnutls-dev \
+            libedit-dev \
+            zlib1g-dev \
+            libgl1-mesa-dev \
+            libavutil-dev \
+            libx11-dev \
+            libglu1-mesa-dev \
+            libglew-dev \
+            libavcodec-dev \
+            libavformat-dev \
+            libswresample-dev \
+            libcairo2-dev \
+            libpango1.0-dev \
+            libpng-dev \
+            libjpeg-dev \
+            librtmp-dev \
+            libsdl2-dev \
+            libgnutls28-dev \
+            liblzma-dev
+      - name: Run Build
+        run: ./build.sh
+
+  macos:
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    continue-on-error: false
+    strategy:
+      matrix:
+        os:
+          - macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Dependencies
+        run: |
+          brew install \
+            ninja \
+            nasm \
+            mesa \
+            mesa-glu \
+            xquartz \
+            glew \
+            pango \
+            ffmpeg \
+            sdl2 \
+      - name: Run Build
+        run: |
+          export CPPFLAGS="-I$(brew --prefix)/include${CPPFLAGS+ ${CPPFLAGS}}"
+          export LDFLAGS="-L$(brew --prefix)/lib -Wl,-rpath,$(brew --prefix)/lib${LDFLAGS+ ${LDFLAGS}}"
+          cmake -DCMAKE_BUILD_TYPE=Release -B obj-release -D CMAKE_TRY_COMPILE_TARGET_TYPE="STATIC_LIBRARY" -G Ninja
+          cmake --build obj-release

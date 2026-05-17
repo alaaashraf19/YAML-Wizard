@@ -1,0 +1,23 @@
+cache:
+  paths:
+  - .m2/repository
+image: maven:latest
+kt-deploy:
+  artifacts:
+    name: $CI_JOB_NAME
+    paths:
+    - target/*.jar
+  script:
+  - mvn package
+  stage: deploy
+kt-test:
+  script:
+  - mvn test
+  - cat target/site/jacoco/index.html || true
+  stage: test
+kt-validate:
+  script:
+  - mvn test-compile
+  stage: build
+variables:
+  MAVEN_OPTS: -Dmaven.repo.local=.m2/repository

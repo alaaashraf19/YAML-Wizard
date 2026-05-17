@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_00088",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 521,
+  "description": "Create a GitLab CI pipeline using the ruby:2.4 Docker image, caching vendor/ruby, with a before_script that runs apt-get update -qq && apt-get install -yqq nodejs libpq-dev, then gem install bundler --no-ri --no-rdoc, and finally bundle install -j $(nproc) --path vendor. Define a rails job (default test stage) that uses the postgres:alpine service, sets variables DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSSWORD}@postgres/${POSTGRES_DB}, POSTGRES_DB=test, POSTGRES_PASSSWORD=test-password, POSTGRES_USER=test, RAILS_ENV=test, and executes rails db:migrate, rails db:seed, and rails test. The pipeline should rely on the vendor/ruby cache and does not declare custom stages.",
+  "tags": [
+    "ruby",
+    "rails",
+    "postgres",
+    "bundler",
+    "nodejs",
+    "apt",
+    "cache"
+  ]
+}

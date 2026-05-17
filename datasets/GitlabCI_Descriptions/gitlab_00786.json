@@ -1,0 +1,22 @@
+{
+  "sha": "gitlab_00786",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 6791,
+  "description": "Create a GitLab CI pipeline with stages pre-commit, gitlab, test, deploy, and docker. In the pre-commit stage add a pre-commit-check job using python:3.11-trixie that runs 'pip install pre-commit' and 'pre-commit run --all-files' and only runs on master, branches and merge requests. In the gitlab stage include dependency_scanning, sast and secret_detection jobs (the first runs apt-get update && apt-get install redis-server libmariadb-dev -y, starts redis, python -V and pip install wheel tox). In the test stage add tox jobs for Python 3.8‑3.12 (e.g., test-3.11-all runs 'tox -e py311-all') using the corresponding python:x-trixie images, each publishing coverage.xml as a Cobertura report artifact, and a build-test job that upgrades pip, build, setuptools and runs 'python -m build' storing the dist/* directory as a year‑long artifact. In the deploy stage add deploy_production that runs on tags, upgrades pip, build, setuptools and twine, builds the package with 'python -m build' and uploads it with 'python -m twine upload dist/*'. Finally, in the docker stage add three build-image jobs (build-image, build-image-dev, build-image-mr) using docker:24.0 with docker:24.0-dind, each logging into the registry, installing binfmt, creating a buildx builder, and building and pushing multi‑arch images with appropriate tags and build‑args, where build-image runs on tags after a 10‑minute delay, build-image-dev is manual when no merge request source branch, and build-image-mr is manual on merge request events.",
+  "tags": [
+    "python",
+    "tox",
+    "docker",
+    "dind",
+    "buildx",
+    "multiarch",
+    "dependency-scanning",
+    "sast",
+    "secret-detection",
+    "coverage",
+    "pre-commit",
+    "twine",
+    "gitlab-ci"
+  ]
+}

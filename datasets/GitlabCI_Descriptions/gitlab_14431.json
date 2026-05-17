@@ -1,0 +1,20 @@
+{
+  "sha": "gitlab_14431",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 4985,
+  "description": "Create a GitLab CI pipeline with stages build, test, deploy and a pre stage. Use the quay.io/podman/stable:v5.6.2 image (entrypoint disabled) for all build jobs, logging into the registry via podman login in a before_script. In the build stage define build:fedora:42, build:fedora:43, build:fedora:44 (allow_failure, manual), build:fedora:rawhide (allow_failure, manual), build:ubuntu:24.04, build:ubuntu:26.04 (allow_failure, manual) and build:linter; each runs its respective ./.gitlab/build_image.sh script or a podman build then podman push command. In the pre stage add lint:shellcheck using koalaman/shellcheck-alpine that runs \"shellcheck --external-sources setup.sh $(find . -name '*.sh' -path '**/latest/**')\". In the test stage add test:ansible:lint using the linter image to run \"git config --global --add safe.directory $CI_PROJECT_DIR\", \"go-task ans:lint\" and \"yamllint -f parsable .\", then test:fedora:42, test:fedora:43, test:fedora:44 (allow_failure, manual), test:fedora:rawhide (allow_failure, manual), test:ubuntu:24.04, test:ubuntu:26.04 (allow_failure, manual); each inherits the .test template to execute \"id\", \"pwd\", \"ls -la\", \"stat .\", a UID check for user 1010, \"sudo chown -R 1010:1010 .\", \"sudo chmod -R go-w .\", \"./setup.sh\", \"./.gitlab/check_versions.bash\" and \"./.gitlab/verify_no_changes.sh\". Finally, add deploy:github using registry.fedoraproject.org/fedora:latest to install git and openssh, write the GITHUB_KEY files, add a GitHub remote and push the current branch, running only on the default branch; all jobs inherit rules that trigger on tags, the default branch, or merge requests, with manual or allow_failure where indicated.",
+  "tags": [
+    "podman",
+    "build",
+    "fedora",
+    "ubuntu",
+    "linter",
+    "shellcheck",
+    "ansible",
+    "go-task",
+    "yamllint",
+    "github-deploy",
+    "k8s"
+  ]
+}

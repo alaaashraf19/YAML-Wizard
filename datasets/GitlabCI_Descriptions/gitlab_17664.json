@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_17664",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 3086,
+  "description": "Create a GitLab CI pipeline with stages build, tests, full-fieldtests, release, and cleanup, using a global before_script that installs pip requirements via `pip3 install --user -U pip -rtools/ci/requirements.txt`. In the build stage define `build_cli` (except schedules) running `tools/ci/orc build --tag=$CI_COMMIT_REF_SLUG --image=tessia-cli` and `build_server` (except schedules) running `tools/ci/orc build --tag=$CI_COMMIT_REF_SLUG --image=tessia-server`. In the tests stage add `clitests` (except schedules) executing `tools/ci/orc clitest --tag=$CI_COMMIT_REF_SLUG`, `unittests_server` (except schedules) executing `tools/ci/orc unittest --tag=$CI_COMMIT_REF_SLUG`, and `fieldtests_lite` (except schedules) which checks `$TESSIA_FTESTS_LITE_DIR` and `$TESSIA_IMG_PASSWD_FILE` then runs `tools/ci/orc clitest --tag=$CI_COMMIT_REF_SLUG --fieldtests=${TESSIA_FTESTS_LITE_DIR} --img-passwd-file=${TESSIA_IMG_PASSWD_FILE}`. In the full-fieldtests stage provide `fieldtests_full_manual` (manual, except schedules, tag install-runner-full) with before_script checks for `$TESSIA_FTESTS_FULL_DIR` and `$TESSIA_IMG_PASSWD_FILE`, pip install, `tools/ci/orc build --tag=$CI_COMMIT_REF_SLUG`, then script `tools/ci/orc clitest --tag=$CI_COMMIT_REF_SLUG --fieldtests=${TESSIA_FTESTS_FULL_DIR} --img-passwd-file=${TESSIA_IMG_PASSWD_FILE}` and after_script cleanup, and `fieldtests_full_schedule` (only schedules, same steps) runs the same clitest script. The `release` job (except schedules, only on master or tags) computes `TESSIA_IMAGE_TAG` via a Python command, retags Docker images `tessia-cli` and `tessia-server` with this tag, pushes them using `tools/ci/orc push`, and cleans up with `tools/ci/orc cleanup` and `tools/dregman clean`. Finally, a `cleanup` job (except schedules, always) runs `tools/ci/orc cleanup --tag=$CI_COMMIT_REF_SLUG`.",
+  "tags": [
+    "orc",
+    "docker",
+    "python",
+    "fieldtests",
+    "release",
+    "gitlab-ci"
+  ]
+}

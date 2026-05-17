@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_06942",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 400,
+  "description": "Create a GitLab CI pipeline using the php:7.1 Docker image with a mysql:5.7 service and define MYSQL_DATABASE and MYSQL_ROOT_PASSWORD variables for the database. In a global before_script download phpunit 7.1.0 to /usr/local/bin/phpunit, make it executable, install the mysqli extension, and append a db_server definition to tests/db_config.php. Add a test job (default stage) named test that runs phpunit --bootstrap tests/bootstrap.php tests. The pipeline has no caches, artifacts, or conditional rules.",
+  "tags": [
+    "php",
+    "phpunit",
+    "mysql",
+    "docker",
+    "ci"
+  ]
+}

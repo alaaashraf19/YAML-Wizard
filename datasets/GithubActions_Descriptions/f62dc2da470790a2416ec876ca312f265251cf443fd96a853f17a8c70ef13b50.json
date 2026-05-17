@@ -1,0 +1,14 @@
+{
+  "sha": "f62dc2da470790a2416ec876ca312f265251cf443fd96a853f17a8c70ef13b50",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2830,
+  "description": "Create a GitHub Actions workflow named Build Wheels that runs on push to master and tags starting with 'v', and on pull requests to master. Use a matrix strategy to build wheels on ubuntu-latest, windows-latest, and macOS-11. For each OS, check out the code, set up Python 3.x, and then build wheels using cibuildwheel. Install dependencies, handle OS-specific builds, and upload the resulting wheels and sdist as artifacts. If the workflow is triggered by a tag, upload the wheels as a release.",
+  "tags": [
+    "python",
+    "cibuildwheel",
+    "wheels",
+    "multi-os",
+    "release"
+  ]
+}

@@ -1,0 +1,364 @@
+before_script:
+- export DEBIAN_FRONTEND=noninteractive
+build:bullseye:
+  artifacts:
+    name: lebiniou-bullseye-${VSN}
+    paths:
+    - lebiniou_${VSN}-${DEB_VSN}_amd64.deb
+    - lebiniou-dbgsym_${VSN}-${DEB_VSN}_amd64.deb
+  image: debian:bullseye
+  script:
+  - apt-get -qq update && apt-get -qq install autoconf pkg-config make libglib2.0-dev
+    libfftw3-dev libswscale-dev libmagickwand-dev libjack-dev libsndfile1-dev libavcodec-dev
+    libavformat-dev libcaca-dev libulfius-dev systemd appstream-util desktop-file-utils
+    uglifyjs cleancss htmlmin python3-setuptools wget libsdl2-dev liblo-dev
+  - apt-get -qq install gcc devscripts
+  - wget https://github.com/babelouest/orcania/archive/refs/tags/v${ORCANIA_VSN}.tar.gz
+  - wget https://github.com/babelouest/yder/archive/refs/tags/v${YDER_VSN}.tar.gz
+  - wget https://github.com/babelouest/ulfius/archive/refs/tags/v${ULFIUS_VSN}.tar.gz
+  - tar xvf v${ORCANIA_VSN}.tar.gz
+  - tar xvf v${YDER_VSN}.tar.gz
+  - tar xvf v${ULFIUS_VSN}.tar.gz
+  - cd orcania-${ORCANIA_VSN}/src
+  - make static-install
+  - cd ../..
+  - cd yder-${YDER_VSN}/src
+  - make static-install
+  - cd ../..
+  - cd ulfius-${ULFIUS_VSN}/src
+  - make static-install
+  - cd ../..
+  - ./bootstrap
+  - CC=gcc ./configure
+  - make dist
+  - tar xvf lebiniou-${VSN}.tar.gz
+  - ln -s lebiniou-${VSN}.tar.gz lebiniou_${VSN}.orig.tar.gz
+  - cd lebiniou-${VSN}
+  - cp -r ../debian .
+  - debuild -uc -us
+  stage: build
+build:buster:
+  artifacts:
+    name: lebiniou-buster-${VSN}
+    paths:
+    - lebiniou_${VSN}-${DEB_VSN}_amd64.deb
+    - lebiniou-dbgsym_${VSN}-${DEB_VSN}_amd64.deb
+  except:
+  - /^test-/
+  image: debian:buster
+  script:
+  - apt-get -qq update && apt-get -qq install autoconf pkg-config make libglib2.0-dev
+    libfftw3-dev libswscale-dev libmagickwand-dev libjack-dev libsndfile1-dev libavcodec-dev
+    libavformat-dev libcaca-dev libulfius-dev systemd wget libsdl2-dev liblo-dev
+  - apt-get -qq install gcc devscripts
+  - wget -q https://github.com/babelouest/orcania/archive/refs/tags/v${ORCANIA_VSN}.tar.gz
+  - wget -q https://github.com/babelouest/yder/archive/refs/tags/v${YDER_VSN}.tar.gz
+  - wget -q https://github.com/babelouest/ulfius/archive/refs/tags/v${ULFIUS_VSN}.tar.gz
+  - tar xvf v${ORCANIA_VSN}.tar.gz
+  - tar xvf v${YDER_VSN}.tar.gz
+  - tar xvf v${ULFIUS_VSN}.tar.gz
+  - cd orcania-${ORCANIA_VSN}/src
+  - make static-install
+  - cd ../..
+  - cd yder-${YDER_VSN}/src
+  - make static-install
+  - cd ../..
+  - cd ulfius-${ULFIUS_VSN}/src
+  - make static-install
+  - cd ../..
+  - ./bootstrap
+  - CC=gcc ./configure
+  - make dist
+  - tar xvf lebiniou-${VSN}.tar.gz
+  - ln -s lebiniou-${VSN}.tar.gz lebiniou_${VSN}.orig.tar.gz
+  - cd lebiniou-${VSN}
+  - cp -r ../debian .
+  - sed -i "s/4.5.1/4.3.0/g" debian/control
+  - sed -i "s/13/12/g" debian/control
+  - debuild -uc -us
+  stage: build
+build:clang:
+  image: debian:testing
+  only:
+  - /^dev-/
+  script:
+  - apt-get -qq update && apt-get -qq install autoconf pkg-config make libglib2.0-dev
+    libfftw3-dev libswscale-dev libmagickwand-dev libjack-dev libsndfile1-dev libavcodec-dev
+    libavformat-dev libcaca-dev libulfius-dev systemd libsdl2-dev liblo-dev libomp-dev
+  - apt-get -qq install clang
+  - ./bootstrap
+  - CC=clang ./configure
+  - make
+  stage: build
+build:experimental:
+  image: debian:experimental
+  only:
+  - /^dev-/
+  script:
+  - apt-get -qq update && apt-get -qq install autoconf pkg-config make libglib2.0-dev
+    libfftw3-dev libswscale-dev libmagickwand-dev libjack-dev libsndfile1-dev libavcodec-dev
+    libavformat-dev libcaca-dev libulfius-dev systemd appstream-util desktop-file-utils
+    wget libsdl2-dev liblo-dev
+  - apt-get -qq install gcc devscripts
+  - wget -q https://github.com/babelouest/orcania/archive/refs/tags/v${ORCANIA_VSN}.tar.gz
+  - wget -q https://github.com/babelouest/yder/archive/refs/tags/v${YDER_VSN}.tar.gz
+  - wget -q https://github.com/babelouest/ulfius/archive/refs/tags/v${ULFIUS_VSN}.tar.gz
+  - tar xvf v${ORCANIA_VSN}.tar.gz
+  - tar xvf v${YDER_VSN}.tar.gz
+  - tar xvf v${ULFIUS_VSN}.tar.gz
+  - cd orcania-${ORCANIA_VSN}/src
+  - make static-install
+  - cd ../..
+  - cd yder-${YDER_VSN}/src
+  - make static-install
+  - cd ../..
+  - cd ulfius-${ULFIUS_VSN}/src
+  - make static-install
+  - cd ../..
+  - ./bootstrap
+  - ./configure && make
+  stage: build
+build:gcc-11:
+  image: debian:experimental
+  only:
+  - /^exp-/
+  script:
+  - apt-get -qq update
+  - apt-get -qq -t=experimental install gcc-11 autoconf pkg-config make libglib2.0-dev
+    libfftw3-dev libswscale-dev libmagickwand-dev libjack-dev libsndfile1-dev libavcodec-dev
+    libavformat-dev libcaca-dev libulfius-dev systemd libsdl2-dev liblo-dev
+  - ./bootstrap
+  - CC=gcc-11 ./configure
+  - make
+  stage: build
+build:groovy:
+  artifacts:
+    name: lebiniou-groovy-${VSN}
+    paths:
+    - lebiniou_${VSN}-${DEB_VSN}_amd64.deb
+    - lebiniou-dbgsym_${VSN}-${DEB_VSN}_amd64.ddeb
+  except:
+  - /^test/
+  image: ubuntu:20.04
+  script:
+  - apt-get -qq update && apt-get -qq install autoconf pkg-config make libglib2.0-dev
+    libfftw3-dev libswscale-dev libmagickwand-dev libjack-dev libsndfile1-dev libavcodec-dev
+    libavformat-dev libcaca-dev libulfius-dev systemd wget libsdl2-dev liblo-dev
+  - apt-get -qq install gcc devscripts debhelper
+  - wget -q https://github.com/babelouest/orcania/archive/refs/tags/v${ORCANIA_VSN}.tar.gz
+  - wget -q https://github.com/babelouest/yder/archive/refs/tags/v${YDER_VSN}.tar.gz
+  - wget -q https://github.com/babelouest/ulfius/archive/refs/tags/v${ULFIUS_VSN}.tar.gz
+  - tar xvf v${ORCANIA_VSN}.tar.gz
+  - tar xvf v${YDER_VSN}.tar.gz
+  - tar xvf v${ULFIUS_VSN}.tar.gz
+  - cd orcania-${ORCANIA_VSN}/src
+  - make static-install
+  - cd ../..
+  - cd yder-${YDER_VSN}/src
+  - make static-install
+  - cd ../..
+  - cd ulfius-${ULFIUS_VSN}/src
+  - make static-install
+  - cd ../..
+  - ./bootstrap
+  - CC=gcc ./configure
+  - make dist
+  - tar xvf lebiniou-${VSN}.tar.gz
+  - ln -s lebiniou-${VSN}.tar.gz lebiniou_${VSN}.orig.tar.gz
+  - cd lebiniou-${VSN}
+  - cp -r ../debian .
+  - sed -i "s/unstable/groovy/g" debian/changelog
+  - sed -i "s/= 13/= 12/g" debian/control
+  - grep -v Rules-Requires-Root debian/control > debian/control.tmp
+  - mv debian/control.tmp debian/control
+  - debuild -uc -us
+  stage: build
+build:io:
+  artifacts:
+    name: lebiniou-io-${VSN}
+    paths:
+    - lebiniou_${VSN}-${DEB_VSN}_amd64.deb
+    - lebiniou-dbgsym_${VSN}-${DEB_VSN}_amd64.deb
+  image: debian:sid
+  script:
+  - apt-get -qq update && apt-get -qq install autoconf pkg-config make libglib2.0-dev
+    libfftw3-dev libswscale-dev libmagickwand-dev libjack-dev libsndfile1-dev libavcodec-dev
+    libavformat-dev libcaca-dev libulfius-dev systemd wget libsdl2-dev liblo-dev
+  - apt-get -qq install gcc devscripts
+  - wget -q https://github.com/babelouest/orcania/archive/refs/tags/v${ORCANIA_VSN}.tar.gz
+  - wget -q https://github.com/babelouest/yder/archive/refs/tags/v${YDER_VSN}.tar.gz
+  - wget -q https://github.com/babelouest/ulfius/archive/refs/tags/v${ULFIUS_VSN}.tar.gz
+  - tar xvf v${ORCANIA_VSN}.tar.gz
+  - tar xvf v${YDER_VSN}.tar.gz
+  - tar xvf v${ULFIUS_VSN}.tar.gz
+  - cd orcania-${ORCANIA_VSN}/src
+  - make static-install
+  - cd ../..
+  - cd yder-${YDER_VSN}/src
+  - make static-install
+  - cd ../..
+  - cd ulfius-${ULFIUS_VSN}/src
+  - make static-install
+  - cd ../..
+  - ./bootstrap
+  - CC=gcc ./configure
+  - make dist
+  - tar xvf lebiniou-${VSN}.tar.gz
+  - ln -s lebiniou-${VSN}.tar.gz lebiniou_${VSN}.orig.tar.gz
+  - cd lebiniou-${VSN}
+  - cp -r ../debian .
+  - echo >> debian/rules
+  - echo "override_dh_auto_configure:" >> debian/rules
+  - echo -e "\tdh_auto_configure -- --enable-fixed=1920x1080 --enable-camsize=1024x576"
+    >> debian/rules
+  - debuild -uc -us
+  stage: build
+build:sdl2ui:
+  except:
+  - /^dev-/
+  - /^test-/
+  - /^ulfius/
+  image: debian:testing
+  script:
+  - apt-get -qq update && apt-get -qq install autoconf pkg-config make libglib2.0-dev
+    libfftw3-dev libswscale-dev libmagickwand-dev libjack-dev libsndfile1-dev libavcodec-dev
+    libavformat-dev libcaca-dev libulfius-dev systemd libsdl2-ttf-dev liblo-dev
+  - apt-get -qq install gcc
+  - ./bootstrap
+  - CC=gcc ./configure --enable-debug --enable-sdl2ui
+  - make
+  stage: build
+build:sid:
+  artifacts:
+    name: lebiniou-sid-${VSN}
+    paths:
+    - lebiniou_${VSN}-${DEB_VSN}_amd64.deb
+    - lebiniou-dbgsym_${VSN}-${DEB_VSN}_amd64.deb
+  image: debian:sid
+  script:
+  - ./scripts/check_FreeBSD_plist.sh
+  - apt-get -qq update && apt-get -qq install autoconf pkg-config make libglib2.0-dev
+    libfftw3-dev libswscale-dev libmagickwand-dev libjack-dev libsndfile1-dev libavcodec-dev
+    libavformat-dev libcaca-dev libulfius-dev systemd appstream-util desktop-file-utils
+    wget libsdl2-dev liblo-dev
+  - ./scripts/check_flatpak.sh
+  - apt-get -qq install gcc devscripts
+  - wget -q https://github.com/babelouest/orcania/archive/refs/tags/v${ORCANIA_VSN}.tar.gz
+  - wget -q https://github.com/babelouest/yder/archive/refs/tags/v${YDER_VSN}.tar.gz
+  - wget -q https://github.com/babelouest/ulfius/archive/refs/tags/v${ULFIUS_VSN}.tar.gz
+  - tar xvf v${ORCANIA_VSN}.tar.gz
+  - tar xvf v${YDER_VSN}.tar.gz
+  - tar xvf v${ULFIUS_VSN}.tar.gz
+  - cd orcania-${ORCANIA_VSN}/src
+  - make static-install
+  - cd ../..
+  - cd yder-${YDER_VSN}/src
+  - make static-install
+  - cd ../..
+  - cd ulfius-${ULFIUS_VSN}/src
+  - make static-install
+  - cd ../..
+  - ./bootstrap
+  - ./LTOWrapper - bash -c './configure && make'
+  - export LD_LIBRARY_PATH=src
+  - ./src/lebiniou -q -i NULL --version
+  - make dist
+  - tar xvf lebiniou-${VSN}.tar.gz
+  - ln -s lebiniou-${VSN}.tar.gz lebiniou_${VSN}.orig.tar.gz
+  - cd lebiniou-${VSN}
+  - cp -r ../debian .
+  - debuild -uc -us --lintian-opts -I --pedantic
+  stage: build
+build:test:
+  artifacts:
+    name: lebiniou-buster-test-${VSN}
+    paths:
+    - lebiniou_${VSN}-${DEB_VSN}_amd64.deb
+    - lebiniou-dbgsym_${VSN}-${DEB_VSN}_amd64.deb
+  except:
+  - /^test-/
+  image: debian:buster
+  script:
+  - apt-get -qq update && apt-get -qq install autoconf pkg-config make libglib2.0-dev
+    libfftw3-dev libswscale-dev libmagickwand-dev libjack-dev libsndfile1-dev libavcodec-dev
+    libavformat-dev libsdl2-ttf-dev libcaca-dev libulfius-dev systemd wget liblo-dev
+  - apt-get -qq install gcc devscripts
+  - wget -q https://github.com/babelouest/orcania/archive/refs/tags/v${ORCANIA_VSN}.tar.gz
+  - wget -q https://github.com/babelouest/yder/archive/refs/tags/v${YDER_VSN}.tar.gz
+  - wget -q https://github.com/babelouest/ulfius/archive/refs/tags/v${ULFIUS_VSN}.tar.gz
+  - tar xvf v${ORCANIA_VSN}.tar.gz
+  - tar xvf v${YDER_VSN}.tar.gz
+  - tar xvf v${ULFIUS_VSN}.tar.gz
+  - cd orcania-${ORCANIA_VSN}/src
+  - make static-install
+  - cd ../..
+  - cd yder-${YDER_VSN}/src
+  - make static-install
+  - cd ../..
+  - cd ulfius-${ULFIUS_VSN}/src
+  - make static-install
+  - cd ../..
+  - ./bootstrap
+  - CC=gcc ./configure
+  - make dist
+  - tar xvf lebiniou-${VSN}.tar.gz
+  - ln -s lebiniou-${VSN}.tar.gz lebiniou_${VSN}.orig.tar.gz
+  - cd lebiniou-${VSN}
+  - cp -r ../debian .
+  - sed -i "s/4.5.1/4.3.0/g" debian/control
+  - sed -i "s/13/12/g" debian/control
+  - echo >> debian/rules
+  - echo "override_dh_auto_configure:" >> debian/rules
+  - echo -e "\tdh_auto_configure -- --enable-debug --enable-asan --enable-test-plugins"
+    >> debian/rules
+  - debuild -uc -us
+  stage: build
+build:webcamless:
+  except:
+  - /^dev-/
+  - /^test-/
+  - /^ulfius/
+  image: debian:testing
+  script:
+  - apt-get -qq update && apt-get -qq install autoconf pkg-config make libglib2.0-dev
+    libfftw3-dev libswscale-dev libmagickwand-dev libjack-dev libsndfile1-dev libavcodec-dev
+    libavformat-dev libcaca-dev libulfius-dev systemd libsdl2-dev liblo-dev
+  - apt-get -qq install gcc
+  - ./bootstrap
+  - CC=gcc ./configure --disable-webcam
+  - make
+  stage: build
+stages:
+- build
+- test
+test:sid:
+  artifacts:
+    name: lebiniou-videos-${VSN}
+    paths:
+    - ./*.mp4
+    - ./*.log
+    - ./*.sha256
+  image: debian:sid
+  only:
+  - /^test-/
+  - /^release-/
+  - master
+  script:
+  - apt-get -qq update && apt-get -qq install wget unzip ffmpeg libasound2t64 libavcodec61
+    libavformat61 libavutil59 libcaca0 libcurl3t64-gnutls libfftw3-double3 libglib2.0-0t64
+    libjack-jackd2-0 libjansson4 liblo7 libmagickwand-6.q16-7t64 libmicrohttpd12t64
+    libpulse0 libsdl2-2.0-0 libsndfile1 libsndio7.0 libswscale8
+  - wget -qq https://gitlab.com/lebiniou/lebiniou-data/-/jobs/artifacts/master/download?job=build%3Astable
+  - unzip "download?job=build:stable"
+  - rm "download?job=build:stable"
+  - dpkg -i lebiniou-data*.deb
+  - dpkg -i lebiniou_${VSN}-${DEB_VSN}_amd64.deb
+  - /usr/share/lebiniou/test/lebiniou-test.sh
+  - mv /tmp/*.mp4 /tmp/*.log /tmp/*.sha256 .
+  stage: test
+variables:
+  DEB_VSN: '1'
+  ORCANIA_VSN: 2.3.2
+  ULFIUS_VSN: 2.7.13
+  VSN: 3.67.0
+  YDER_VSN: 1.4.19

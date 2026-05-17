@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_06054",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1225,
+  "description": "Create a GitLab CI pipeline that uses the ruby:2.3 Docker image. Add a test job that runs only on the master branch in the default test stage. The job configures git with \"git config --global user.email \\\"orta+dangersystems@artsy.net\\\"\" and \"git config --global user.name \\\"Danger.Systems\\\"\", updates apt, installs Node 16 via the Nodesource script and nvm, sets NVM_DIR and PROFILE, installs build-essential and libssl-dev, runs the nvm install script, adds the Yarn APT repository and installs yarn and pngquant, installs bundler version 1.15.4, runs \"bundle install\", updates the danger gem, sets RUBYOPT='-E utf-8', creates the directory static/json_data, executes \"bundle exec rake generate\", runs \"bundle install\" again, builds the Middleman site with \"bundle exec middleman build --clean --verbose\", moves the build output to a public directory, installs netlify-cli globally with npm, and finally deploys the public folder to Netlify using \"netlify deploy --site 83354caf-7886-446f-99eb-f91a58b2a682 --auth $NETLIFY_ACCESS_TOKEN --dir public\". No caches or artifacts are defined.",
+  "tags": [
+    "ruby",
+    "netlify",
+    "middleman",
+    "bundler",
+    "danger",
+    "yarn",
+    "nvm",
+    "master-only"
+  ]
+}

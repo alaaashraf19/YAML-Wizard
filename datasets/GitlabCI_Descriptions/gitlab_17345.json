@@ -1,0 +1,21 @@
+{
+  "sha": "gitlab_17345",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 4860,
+  "description": "Create a GitLab CI pipeline with global before_script that echoes \"start inTime2 CI\" and sets GRADLE_USER_HOME to the .gradle directory, and four stages: test, package-frontend, package, and deploy. In the test stage add test-backend (java:8-jdk) that runs ./gradlew backend:test, ./gradlew backend:testreports, cat backend/build/reports/jacoco/test/html/index.html, caches .gradle/wrapper and .gradle/caches, stores backend/build/reports as an artifact, runs a codecov after_script, allows failure and always runs; test-frontend (node:latest) that runs cd frontend, npm install, npm run test:ci, npm run sonar-scanner:ci sonar.login=$SONAR_LOGIN_FRONTEND, npx typedoc --out build-typedoc --name inTime2 --ignoreCompilerErrors --exclude **/coverage/**, caches frontend/node_modules, artifacts frontend/coverage and frontend/build-typedoc, runs a codecov after_script, allows failure and always runs; qa-test-e2e-cypress (cypress/base) that runs cd qa/e2e-cypress, npm install, $(npm bin)/cypress run, caches none, artifacts videos and screenshots, allows failure and always runs; and qa-test-e2e-testcafe (circleci/node:10.3.0-stretch-browsers) that runs cd qa/e2e, echo \"install\", npm install, mkdir reports, npm run test:browsers, echo \"now running e2e tests test:ci (chrome headless, spec reporter, screenshots)\", npm run test:ci -- --baseUrl=http://intime2-intime2.7e14.starter-us-west-2.openshiftapps.com/?lang=en-US, caches qa/e2e/node_modules, artifacts TestResult, reports and screenshots, allows failure and always runs. In the package-frontend stage add package-react-frontend (node:latest) that runs cd frontend, npm install, today=$(date +%Y-%m-%dT%H:%M), sed \"s/TBUILD/${today}/g\" .env.production, npm run build, caches frontend/node_modules and publishes frontend/build as an artifact. In the package stage add package-spring-boot-jar (java:8-jdk) dependent on package-react-frontend that runs ./gradlew backend:includeReactFrontend and ./gradlew backend:bootJar, caches .gradle/wrapper and .gradle/caches, and stores backend/build/libs as an artifact. In the deploy stage add deploy-push-docker-gitlab-image (docker:latest with docker:dind service) that runs the global before_script then mkdir deployment/build, echo $CI_REGISTRY_USER $CI_REGISTRY $CI_REGISTRY_IMAGE, docker login -u \"$CI_REGISTRY_USER\" -p \"$CI_REGISTRY_PASSWORD\" $CI_REGISTRY, docker version, then cp -v backend/build/libs/*.jar deployment/build, docker image build --build-arg JAR_FILE=backend-0.0.4.jar --tag $CI_REGISTRY_IMAGE --file deployment/src/main/docker/DOCKERFILE --pull deployment/build, docker images, docker push $CI_REGISTRY_IMAGE, runs only on master, allows failure, and deploys to the openshift-deply environment; also add pages (java:8-jdk) that runs only on master, always, executes a series of ./gradlew commands to test, generate docs, run Liquibase updates, generate API docs and slides, caches .gradle, and publishes the public/ directory as a GitLab Pages artifact.",
+  "tags": [
+    "java",
+    "node",
+    "docker",
+    "dind",
+    "gradle",
+    "cypress",
+    "testcafe",
+    "openshift",
+    "gitlab-pages",
+    "sonar",
+    "typedoc",
+    "codecov"
+  ]
+}

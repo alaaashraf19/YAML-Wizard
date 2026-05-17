@@ -1,0 +1,145 @@
+build_env:
+  image: registry.gitlab.com/finding-ray/docker-alpine-curl:latest
+  only:
+  - dev
+  script:
+  - curl --request POST --form token=${ANTI_ARM_ENV_TOKEN} --form ref=master --form
+    variables[DEV_BRANCH]=true https://gitlab.com/api/v4/projects/2905142/trigger/builds
+  stage: package
+  tags:
+  - docker
+  - x86
+package:
+  artifacts:
+    name: ${CI_PROJECT_NAME}_${CI_PIPELINE_ID}
+    paths:
+    - dist/
+  image: python
+  only:
+  - master
+  - dev
+  script:
+  - apt-get --yes update && apt-get --yes install lsb-release
+  - bash setup.sh
+  - python setup.py sdist bdist_wheel
+  stage: package
+  tags:
+  - docker
+  - x86
+pages:
+  artifacts:
+    paths:
+    - public
+  image: python
+  only:
+  - master
+  script:
+  - apt-get --yes update && apt-get --yes install lsb-release
+  - bash setup.sh
+  - pip install -r test-requirements.txt
+  - python setup.py test
+  - python setup.py docs
+  - mv htmlcov public/
+  - mv docs/_build/html/* public/
+  - cp install.sh public/
+  - cp requirements.txt public/
+  stage: pages
+  tags:
+  - docker
+  - x86
+release_env:
+  image: registry.gitlab.com/finding-ray/docker-alpine-curl:latest
+  only:
+  - master
+  script:
+  - curl --request POST --form token=${ANTI_ARM_ENV_TOKEN} --form ref=master https://gitlab.com/api/v4/projects/2905142/trigger/builds
+  stage: deploy
+  tags:
+  - docker
+  - x86
+stages:
+- test
+- package
+- deploy
+- pages
+test_armv7l:
+  allow_failure: true
+  only:
+  - runners
+  script:
+  - bash setup.sh
+  - pip3 install -r test-requirements.txt
+  - python3 setup.py test
+  stage: test
+  tags:
+  - arm
+test_install_debian_x86:
+  image: debian
+  script:
+  - bash install.sh
+  stage: test
+  tags:
+  - docker
+  - x86
+test_install_rpi_3.4.4:
+  image: resin/raspberrypi2-python:3.4.4
+  script:
+  - bash install.sh
+  stage: test
+  tags:
+  - rpi
+  - docker
+test_install_rpi_3.5.1:
+  image: resin/raspberrypi2-python:3.5.1
+  script:
+  - bash install.sh
+  stage: test
+  tags:
+  - rpi
+  - docker
+test_install_ubuntu_x86:
+  image: ubuntu
+  script:
+  - bash install.sh
+  stage: test
+  tags:
+  - docker
+  - x86
+test_rpi:
+  image: registry.gitlab.com/finding-ray/antikythera:latest
+  script:
+  - apt-get --yes update && apt-get --yes install lsb-release
+  - bash setup.sh
+  - pip3 install -r test-requirements.txt
+  - python3 setup.py test
+  stage: test
+  tags:
+  - rpi
+  - docker
+test_ubuntu:
+  image: ubuntu
+  script:
+  - apt-get --yes update && apt-get --yes install python3 python3-venv lsb-release
+  - mkdir -p ~/.virtualenv
+  - python3 -m venv ~/.virtualenv/antikythera
+  - source ~/.virtualenv/antikythera/bin/activate
+  - bash setup.sh
+  - pip install -r test-requirements.txt
+  - python setup.py test
+  - python setup.py docs
+  - python setup.py install
+  stage: test
+  tags:
+  - docker
+  - x86
+test_x86:
+  image: python
+  script:
+  - apt-get --yes update && apt-get --yes install lsb-release
+  - bash setup.sh
+  - pip install -r test-requirements.txt
+  - python setup.py test
+  stage: test
+  tags:
+  - docker
+  - x86

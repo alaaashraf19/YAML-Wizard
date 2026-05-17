@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_10718",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 5094,
+  "description": "Create a GitLab CI pipeline that uses the docker image with a docker:dind service and runs on the saas-linux-medium-amd64 tag. Define four stages: level1, level2, level3, and level4. In the level1 stage add the jobs r-3.1-0, r-3.2-0, r-3.3-0, r-base-alpine, r-base-minimal, r-devel-clang, r-devel-gcc, r-devel-gcc-strict, and r-devel-minimal, each with a before_script that runs `docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY`, a script that runs `docker build --pull -t \"$CI_REGISTRY_IMAGE/$IMAGE_NAME\" -f $IMAGE_FAMILY_NAME/$IMAGE_NAME .` followed by `docker push \"$CI_REGISTRY_IMAGE/$IMAGE_NAME\"`, variables IMAGE_FAMILY_NAME and IMAGE_NAME set to the appropriate values, and a rule that triggers only on master branch pushes when the listed path changes. In the level2 stage add the jobs r-base-gcc and r-devel, using the same docker login, build, and push commands, with their respective IMAGE_FAMILY_NAME and IMAGE_NAME variables and the same master‑push change rules. In the level3 stage add the r-base job with the identical docker commands and variables, also gated by the master‑push change rule. Finally, in the level4 stage add r-data.table and r-pkgdown jobs, each executing the same docker login, build, and push steps, setting IMAGE_FAMILY_NAME and IMAGE_NAME accordingly, and running only when changes to their directories are pushed to master.",
+  "tags": [
+    "docker",
+    "dind",
+    "r-packages",
+    "gitlab-ci",
+    "ci-pipeline"
+  ]
+}

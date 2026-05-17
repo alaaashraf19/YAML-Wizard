@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_08500",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1048,
+  "description": "Create a GitLab CI pipeline with a deploy stage and three jobs: pages, yard, and trigger-rollout-update-daemonset. The pages job runs in the deploy stage using the alpine:3.22 image, needs artifacts from build-docs (optional), yard (required) and update (optional), executes `echo \"Deploying gitlab pages...\"` then `ls -lhR public`, and publishes the public/ directory as an artifact. The yard job also runs in the deploy stage, extends the same deploy template, uses a matrix of Ruby versions 3.2, 3.3, and 3.4 with the image `${GITLAB_DEPENDENCY_PROXY}ruby:${RUBY_VERSION}`, caches the bundle path under the key ruby-bundle, stores artifacts from `public/yard/*` for one week, and runs `bundle install` followed by `bundle exec yardoc`. The trigger-rollout-update-daemonset job inherits the deploy stage, disables variable inheritance, needs the build-gitlab-remote-workspace-image job, and triggers a downstream pipeline in project gitlab-org/quality/engineering-productivity-infrastructure with the variable RUN_ROLLOUT_UPDATE_DAEMONSET='true'. All three jobs include the appropriate rule sets `.rules:deploy-pages` for pages and yard and `.rules:deploy-image` for the trigger job to control when they run.",
+  "tags": [
+    "ruby",
+    "yard",
+    "pages",
+    "alpine",
+    "deploy",
+    "gitlab-ci",
+    "trigger",
+    "cache",
+    "artifacts",
+    "matrix"
+  ]
+}

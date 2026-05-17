@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_07926",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 191,
+  "description": "Create a GitLab CI pipeline that uses the node:latest Docker image with a mongo service and defines the variables DATABASE_URI=mongodb://mongo/test_friss and PORT=3000. Include a before_script that runs npm install --silent for all jobs. Add a tests job (which runs in the default test stage) that executes npm test followed by npm run lint. No caches, artifacts, or special rules are required.",
+  "tags": [
+    "node",
+    "npm",
+    "mongo",
+    "test",
+    "lint"
+  ]
+}

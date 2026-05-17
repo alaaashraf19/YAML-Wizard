@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_00762",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 526,
+  "description": "Create a GitLab CI pipeline with a single job named build that runs in the default stage. The job should execute the following script steps: remove the build directory, delete any .deb files, delete the virtualenv at $VENV_PATH, create a Python 3.6 virtualenv at $VENV_PATH with virtualenv --python=python3.6, install requirements via $VENV_PATH/bin/pip install -r requirements.txt, make the virtualenv relocatable, build a Debian package using fpm -s dir -t deb -n pmx-console -v $BASE_VERSION-$CI_JOB_ID -d python3.6 -m \"$MAINTAINER\" --description \"$DESC\" etc usr, and finally run ~/add_repository.sh. Define the variables BASE_VERSION='0.1', DESC='Console client for ProxmoxVE', MAINTAINER='Alexander Teseyko <alexteko@gmail.com>', and VENV_PATH='usr/local/pmx-console/.venv'.",
+  "tags": [
+    "python36",
+    "virtualenv",
+    "fpm",
+    "deb",
+    "gitlab-ci"
+  ]
+}

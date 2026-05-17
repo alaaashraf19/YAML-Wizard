@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_18213",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 730,
+  "description": "Create a GitLab CI pipeline using the mcr.microsoft.com/dotnet/core/sdk:3.0 Docker image and three stages: build, test, and publish, with a global variable project set to Immutability. In the build stage add a build job that sets build_path to $project, runs `cd $build_path`, then `dotnet add package Roslynator.Analyzers` and `dotnet build --no-incremental -v q /warnaserror`. In the test stage add a test job that sets test_path to $project.Tests, runs `cd $test_path` followed by `dotnet test`. In the publish stage add a publish job that runs only on the master branch, targets the production environment, sets build_path to $project, executes `cd $build_path`, `rm -rf bin`, `dotnet pack -v q /warnaserror -c Release`, changes to `bin/Release`, and pushes the generated *.nupkg to NuGet with `dotnet nuget push ./*.nupkg --source https://api.nuget.org/v3/index.json --api-key $NUGET`. No caches or artifacts are defined.",
+  "tags": [
+    "dotnet",
+    "nuget",
+    "publish",
+    "build",
+    "test",
+    "mcr-dotnet-sdk"
+  ]
+}

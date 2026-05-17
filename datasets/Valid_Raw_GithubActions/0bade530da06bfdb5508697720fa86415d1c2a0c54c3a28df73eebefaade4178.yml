@@ -1,0 +1,59 @@
+name: Node.js CI Windows Platform
+
+on: [push, pull_request]
+
+env:
+  PYTHON_VERSION: '3.11'
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        api_version:
+          - standard
+          - experimental
+        node-version:
+          - 18.x
+          - 20.x
+          - 22.x
+        architecture: [x64, x86]
+        os:
+          - windows-2019
+          - windows-2022
+    runs-on: ${{ matrix.os }}
+    steps:
+    - name: Harden Runner
+      uses: step-security/harden-runner@5c7944e73c4c2a096b17a9cb74d65b6c2bbafbde # v2.9.1
+      with:
+        egress-policy: audit
+
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+    - name: Set up Python ${{ env.PYTHON_VERSION }}
+      uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3  # v5.2.0
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4.0.3
+      with:
+        node-version: ${{ matrix.node-version }}
+        architecture: ${{ matrix.architecture }}
+    - name: Check Node.js installation
+      run: |
+        node --version
+        npm --version
+    - name: Install dependencies
+      run: |
+        npm install
+    - name: npm test
+      shell: bash
+      run: |
+        if [ "${{ matrix.api_version }}" = "experimental" ]; then
+          export NAPI_VERSION=2147483647
+        fi
+        npm run pretest -- --verbose
+        node test

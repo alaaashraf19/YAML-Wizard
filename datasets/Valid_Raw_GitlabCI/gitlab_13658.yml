@@ -1,0 +1,119 @@
+apt-deploy:
+  before_script: []
+  dependencies:
+  - debian-package-build
+  environment:
+    name: production
+    url: http://apt.nobodyinperson.de
+  only:
+  - tags
+  script:
+  - eval $(ssh-agent -s)
+  - ssh-add <(echo "$SSH_DEPLOY_PRIVATE_KEY")
+  - mkdir -p ~/.ssh
+  - echo "$SSH_DEPLOY_HOSTKEYS" >> ~/.ssh/known_hosts
+  - scp -qP "$SSH_DEPLOY_PORT" "$DEBIAN_PACKAGE_DIR"/*.deb "$SSH_DEPLOY_ADDRESS"
+  stage: deploy
+  variables:
+    GIT_STRATEGY: none
+apt-install-test:
+  before_script: []
+  dependencies:
+  - debian-package-build
+  only:
+  - tags
+  script:
+  - apt-get update -qq
+  - apt-get install -qq wget apt-transport-https
+  - set -e
+  - export DEBFILE=`ls --color=never -1 $DEBIAN_PACKAGE_DIR/*.deb | tail -1`
+  - 'echo "debian package file: $DEBFILE"'
+  - export PACKAGE_NAME=$(dpkg -I $DEBFILE | perl -ne 'if(s/^\s*package:\s*(\S+)\s*$/$1/ig){print;exit}')
+  - export PACKAGE_VERSION=$(dpkg -I $DEBFILE | perl -ne 'if(s/^\s*version:\s*(\S+)\s*$/$1/ig){print;exit}')
+  - 'echo "built package version: $PACKAGE_VERSION"'
+  - wget -qO- https://apt.nobodyinperson.de/gpg.key | apt-key add -
+  - echo "deb https://apt.nobodyinperson.de unstable main" | tee /etc/apt/sources.list.d/nobodyinperson.list
+  - apt-get update -qq
+  - apt-get download -y -qq $PACKAGE_NAME
+  - export APT_PACKAGE_VERSION=$(dpkg -I $PACKAGE_NAME*.deb | perl -ne 'if(s/^\s*version:\s*(\S+)\s*$/$1/ig){print;exit}')
+  - 'echo "apt package version: $APT_PACKAGE_VERSION"'
+  - test "$PACKAGE_VERSION" = "$APT_PACKAGE_VERSION"
+  - apt-get install -y -qq $PACKAGE_NAME
+  stage: deploy-test
+  variables:
+    GIT_STRATEGY: none
+autoconf-build:
+  dependencies: []
+  script:
+  - ./configure
+  - make
+  stage: build
+autoconf-clean-test:
+  dependencies: []
+  script:
+  - git clean -fdx
+  - tests/autoconf/build-clean-test.sh
+  stage: build-test
+autoconf-install-uninstall:
+  dependencies: []
+  script:
+  - ./configure --prefix=$(pwd)/$AUTOCONF_INSTALL_DIR
+  - make
+  - make install
+  - find $AUTOCONF_INSTALL_DIR -type f
+  - test -n "$(find $AUTOCONF_INSTALL_DIR -type f)"
+  - make uninstall
+  - find $AUTOCONF_INSTALL_DIR -type f
+  - test -z "$(find $AUTOCONF_INSTALL_DIR -type f)"
+  stage: install-test
+before_script:
+- apt-get update -qq
+- apt-get install -qq -y thunar python3 python3-lxml make imagemagick zenity ghostscript
+  gnupg2 bc xdg-utils perl findutils  coreutils pinentry-gtk2 gnupg-agent debhelper
+  pandoc m4 apt-transport-https
+cache:
+  key: $CI_JOB_NAME-$CI_COMMIT_REF_NAME
+  untracked: true
+debian-package-build:
+  artifacts:
+    name: ${CI_JOB_STAGE}_${CI_COMMIT_REF_NAME}
+    paths:
+    - $DEBIAN_PACKAGE_DIR/*
+  script:
+  - dpkg-buildpackage -us -uc
+  - mkdir -p $DEBIAN_PACKAGE_DIR
+  - cp ../*.deb ../*.dsc ../*.changes $DEBIAN_PACKAGE_DIR
+  stage: build
+debian-package-install-uninstall:
+  before_script:
+  - apt-get update -qq
+  dependencies:
+  - debian-package-build
+  script:
+  - export DEBFILE=`ls --color=never -1 $DEBIAN_PACKAGE_DIR/*.deb | tail -1`
+  - touch /etc/passwd
+  - dpkg -i $DEBFILE || apt-get install -qq -y -f
+  - dpkg -r $(dpkg -I $DEBFILE | perl -ne 'if(s/^\s*package:\s*(\S+)$/$1/ig){print;exit}')
+  stage: install-test
+debian-package-test:
+  before_script:
+  - apt-get -qq update
+  - apt-get -qq -y install lintian
+  dependencies:
+  - debian-package-build
+  script:
+  - export DEBFILE=`ls --color=never -1 $DEBIAN_PACKAGE_DIR/*.deb | tail -1`
+  - dpkg -c $DEBFILE
+  - lintian --allow-root --fail-on-warnings $DEBFILE
+  stage: build-test
+image: registry.gitlab.com/nobodyinperson/simbuto/ubuntu_16.04
+stages:
+- build
+- build-test
+- install-test
+- app-test
+- deploy
+- deploy-test
+variables:
+  AUTOCONF_INSTALL_DIR: install-dir
+  DEBIAN_PACKAGE_DIR: debian-package

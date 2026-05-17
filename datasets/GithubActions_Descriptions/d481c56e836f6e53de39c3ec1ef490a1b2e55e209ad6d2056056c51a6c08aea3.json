@@ -1,0 +1,20 @@
+{
+  "sha": "d481c56e836f6e53de39c3ec1ef490a1b2e55e209ad6d2056056c51a6c08aea3",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4599,
+  "description": "Create a GitHub Actions workflow named Test that runs on pull requests and pushes to all branches except those starting with 'pre-commit-ci'. The workflow uses a matrix strategy to test multiple Python versions and configurations across different environments, including Ubuntu, Windows, and macOS. For each job, it checks out the code, caches conda and node_modules, sets up Python, installs dependencies, and runs tests with pytest, with specific steps varying based on the matrix configuration.",
+  "tags": [
+    "python",
+    "tests",
+    "matrix",
+    "github-actions",
+    "ubuntu",
+    "windows",
+    "macos",
+    "conda",
+    "pip",
+    "pytest",
+    "codecov"
+  ]
+}

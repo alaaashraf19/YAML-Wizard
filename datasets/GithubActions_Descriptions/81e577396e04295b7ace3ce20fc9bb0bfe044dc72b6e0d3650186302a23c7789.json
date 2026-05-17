@@ -1,0 +1,15 @@
+{
+  "sha": "81e577396e04295b7ace3ce20fc9bb0bfe044dc72b6e0d3650186302a23c7789",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1705,
+  "description": "Create a GitHub Actions workflow named Build Snapshots that runs on push to specific branches (master, imgui, WIP-keyboard-stuff) and on pull requests to master. Use a matrix strategy to run a build job on multiple platforms (ubuntu-latest, ubuntu-22.04, macos-12, windows-latest) with different configurations (x86_64, aarch64, unittest, opt). For each job, check out the repository with full history and then perform a build using a custom action.",
+  "tags": [
+    "github-actions",
+    "matrix-build",
+    "cross-platform",
+    "ubuntu",
+    "macos",
+    "windows"
+  ]
+}

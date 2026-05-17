@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_17100",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1395,
+  "description": "Create a GitLab CI pipeline using the rust:latest Docker image with CARGO_HOME set to ${CI_PROJECT_DIR}/.cargo and RUSTFLAGS=-Dwarnings, and a cache keyed by $CI_JOB_NAME storing .cargo and target directories. Define stages lint, test, build, and deploy. In the lint stage add a lint-clippy job that runs rustup component add clippy, rustc --version, cargo version, and cargo clippy, and a lint-fmt job that runs rustup component add rustfmt, rustc --version, cargo version, and cargo fmt -- --check; both jobs trigger on any changes to src/** or cargo.* but never on tag commits. Add a build job in the build stage that runs rustc --version, cargo version, and cargo build, also only on changes to src/** or cargo.* and not on tags. Add a test job in the test stage that creates $CARGO_HOME/bin, downloads and extracts nextest via curl | tar, runs cargo nextest run --profile ci, and always publishes the JUnit report at $CI_PROJECT_DIR/target/nextest/ci/junit.xml, running on changes but not on tags. Finally, add a nixos job in the deploy stage that only runs on the main branch, triggers the downstream pipeline nix17/nixos-config, and sets variables PACKAGE_NAME=silver_api_dw2 and UPDATE_FLAKE=yes.",
+  "tags": [
+    "rust",
+    "cargo",
+    "clippy",
+    "rustfmt",
+    "nextest",
+    "junit",
+    "nixos",
+    "gitlab-ci"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_12871",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 912,
+  "description": "Create a GitLab CI pipeline using the scorpil/rust:stable Docker image with stages build, test, docs, and deploy. Add a build job in the build stage that runs \"mkdir -p target\", \"mkdir -p cargo\", \"du -hs target\", \"du -h cargo\", \"rustc --version && cargo --version\", \"cargo build --verbose --jobs 1 --release\", stores the target/ and cargo/ directories as artifacts, and runs only on tags, the master branch, or branches matching the regex /^[0-9]+-.*$/ . Add a test job in the test stage that depends on build, runs \"mkdir -p target\", \"mkdir -p cargo\", \"du -hs target\", \"du -hs cargo\", \"rustc --version && cargo --version\", \"cargo test --verbose --jobs 1 --release\", saves the same artifacts, and has the same only rules. Add a docs job in the docs stage that depends on build, runs \"mkdir -p target\", \"mkdir -p cargo\", \"du -hs target\", \"du -hs cargo\", \"cargo doc --jobs 1\", stores target/ and cargo/ as artifacts, and also runs only on tags, master, or matching branches.",
+  "tags": [
+    "rust",
+    "cargo",
+    "build",
+    "test",
+    "docs",
+    "gitlab-ci"
+  ]
+}

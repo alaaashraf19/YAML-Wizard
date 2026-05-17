@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_16148",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 220,
+  "description": "Create a GitLab CI pipeline that uses the coderus/sailfishos-platform-sdk-base:latest Docker image and runs `source mido.env` as a before_script for all jobs. Define a single stage named build and add a run-build job in that stage that executes `./run-mic.sh`. Configure the job to keep any `sfe-*/*.zip` files as artifacts. Restrict the job to run only on the `web` branch and on tag pipelines. No additional services, caches, or deployment steps are required.",
+  "tags": [
+    "sailfishos",
+    "sdk-base",
+    "build",
+    "artifacts",
+    "gitlab-ci"
+  ]
+}

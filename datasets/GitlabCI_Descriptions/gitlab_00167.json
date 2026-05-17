@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_00167",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 652,
+  "description": "Create a GitLab CI pipeline using the node:8 Docker image with a cache keyed by $CI_COMMIT_REF_SLUG that stores node_modules/. Define stages test and bundle, and a global before_script that runs npm install before every job. In the test stage add a test:lint job that runs npm run lint, and a test:unit job that uses the adimit/docker-node-chromium image and runs npm run test. In the bundle stage add a bundle:chromium job that runs npm run build:chromium then npm run bundle and publishes any .zip files as artifacts. Also add a bundle:firefox job that runs only on tags, executes npm run build:firefox then node_modules/web-ext/bin/web-ext sign -a . -s addon --api-key=${MOZILLA_USER} --api-secret=${MOZILLA_KEY} --id=${MOZILLA_ID}, and stores any .xpi files as artifacts.",
+  "tags": [
+    "node",
+    "npm",
+    "lint",
+    "unit-test",
+    "chromium",
+    "firefox",
+    "web-ext",
+    "bundle",
+    "cache"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "8c8ce6c4800848c7fa2deb72af0cc3a9d5b8af7f97e24083f06e2bf17e319a97",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2128,
+  "description": "Create a GitHub Actions workflow named cov-build that runs on a weekly schedule, on push of tags matching v*.*.*, and on pull requests to the master branch for specific paths. The workflow should use a windows-latest job with MinGW, install required libraries and Coverity scan tools, configure CMake, build with Coverity, and submit the results to Coverity.",
+  "tags": [
+    "coverity",
+    "mingw",
+    "cmake",
+    "windows",
+    "scheduled",
+    "ci"
+  ]
+}

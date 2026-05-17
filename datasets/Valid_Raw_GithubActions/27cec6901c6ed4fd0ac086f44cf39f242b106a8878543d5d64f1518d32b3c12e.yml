@@ -1,0 +1,99 @@
+name: CI
+
+on:
+    push:
+        paths-ignore:
+            - "docs/**"
+            - "*.md"
+    pull_request:
+        paths-ignore:
+            - "docs/**"
+            - "*.md"
+
+jobs:
+    lint:
+        name: Lint Code
+        if: github.event.pull_request.draft == false
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2.3.4
+            - uses: actions/setup-node@v2.1.5
+              with:
+                  node-version: 14
+            - name: Install
+              run: npm install --ignore-scripts
+            - name: Run ESLint
+              run: npm run lint
+            - name: Run Prettier
+              run: npm run lint:prettier:ci
+            - name: Compile TypeScript Definition File
+              run: npm run build
+
+    commit-lint:
+        name: Lint Commit Messages
+        if: github.event.pull_request.draft == false
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2.3.4
+              with:
+                  fetch-depth: 0
+            - uses: wagoid/commitlint-github-action@v3.0.6
+              with:
+                  configFile: ./package.json
+
+    unit-tests:
+        name: Unit Tests
+        if: github.event.pull_request.draft == false
+        strategy:
+            matrix:
+                node-version: [10, 12, 14]
+                os: [macos-latest, ubuntu-20.04, windows-latest]
+        runs-on: ${{ matrix.os }}
+        steps:
+            - uses: actions/checkout@v2.3.4
+            - name: Use Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@v2.1.5
+              with:
+                  node-version: ${{ matrix.node-version }}
+            - name: Install
+              run: npm install --ignore-scripts
+            - name: Install macOS Dependencies
+              if: matrix.os == 'macos-latest'
+              env:
+                  HOMEBREW_NO_INSTALL_CLEANUP: 1
+                  HOMEBREW_NO_AUTO_UPDATE: 1
+              run: brew install poppler
+            - name: Install Ubuntu Dependencies
+              if: matrix.os == 'ubuntu-20.04'
+              run: sudo apt-get -y install poppler-data poppler-utils
+            - name: Run Tests
+              run: npm run jest:coverage
+            - name: Coveralls Parallel
+              uses: coverallsapp/github-action@v1.1.2
+              with:
+                  github-token: ${{ secrets.GITHUB_TOKEN }}
+                  parallel: true
+                  flag-name: run-${{ matrix.node-version }}-${{ matrix.os }}
+
+    coverage:
+        name: Aggregate Coverage Calculations
+        if: github.event.pull_request.draft == false
+        needs: unit-tests
+        runs-on: ubuntu-latest
+        steps:
+            - name: Coveralls Finished
+              uses: coverallsapp/github-action@v1.1.2
+              with:
+                  github-token: ${{ secrets.GITHUB_TOKEN }}
+                  parallel-finished: true
+
+    automerge:
+        name: Automatically Merge Dependabot Pull Requests
+        if: github.event.pull_request.draft == false
+        needs: [commit-lint, lint, unit-tests]
+        runs-on: ubuntu-latest
+        steps:
+            - uses: fastify/github-action-merge-dependabot@v2.0.0
+              if: ${{ github.actor == 'dependabot[bot]' && github.event_name == 'pull_request' }}
+              with:
+                  github-token: ${{ secrets.GITHUB_TOKEN }}

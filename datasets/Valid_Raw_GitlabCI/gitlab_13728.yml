@@ -1,0 +1,11 @@
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+    changes:
+    - public/*
+  script:
+  - find public -type f -iregex '.*\.\(html\|js\|css\)$' -execdir gzip -f --keep {}
+    \;
+  stage: deploy

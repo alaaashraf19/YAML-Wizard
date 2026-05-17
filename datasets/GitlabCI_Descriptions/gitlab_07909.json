@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_07909",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 534,
+  "description": "Create a GitLab CI pipeline with two stages named externalbuild and externalpostbuild and a GIT_STRATEGY variable set to none. Add four buildbot jobs—buildbot/build_debian, buildbot/build_fedora, buildbot/build_macosx, and buildbot/build_mingw32—each assigned to the externalbuild stage, limited to the external trigger, and executing the single command /bin/true. Add a buildbot/post_build job in the externalpostbuild stage, also limited to the external trigger, that runs /bin/true. No images, caches, artifacts, or deployment targets are defined.",
+  "tags": [
+    "external-build",
+    "buildbot",
+    "debian",
+    "fedora",
+    "macosx",
+    "mingw32"
+  ]
+}

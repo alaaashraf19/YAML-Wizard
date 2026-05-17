@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_13195",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 407,
+  "description": "Create a GitLab CI pipeline with a single deploy stage and a job named deploy that only runs on the master branch. Use the default runner image (no custom image) and no services. In the deploy job execute the following shell commands in order: ssh $USER@$HOST \"cd $PROJECT_ROOT && git pull origin master\", ssh $USER@$HOST \"cd $PROJECT_ROOT && composer install -o\", ssh $USER@$HOST \"cd $PROJECT_ROOT && drush cr -y\", ssh $USER@$HOST \"cd $PROJECT_ROOT && drush cim -y\", ssh $USER@$HOST \"cd $PROJECT_ROOT && drush updb --entity-updates -y\", and finally echo \"Deploy complete!\". The job publishes no artifacts or caches and is triggered only for commits to the master branch, performing a remote Drupal deployment via SSH.",
+  "tags": [
+    "ssh",
+    "composer",
+    "drush",
+    "drupal",
+    "deploy",
+    "gitlab-ci"
+  ]
+}

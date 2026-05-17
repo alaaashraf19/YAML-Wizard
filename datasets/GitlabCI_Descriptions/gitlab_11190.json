@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_11190",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1147,
+  "description": "Create a GitLab CI pipeline using the rust:latest Docker image and set CARGO_HOME and DEBIAN_FRONTEND variables. Define three stages (check, test, doc) and add a check job in the check stage that caches .cargo and runs cargo check. Add a clippy job in the test stage with a before_script rustup component add clippy-preview, caching .cargo and executing cargo clippy -- -D clippy::all, and also a test job in the test stage that caches .cargo and runs env GO_SLOW=2000000 cargo test. Add a pages job in the doc stage that runs only on the master branch, builds the docs via cargo doc --all --no-deps, copies them to a public directory, creates a redirect index.html, and publishes the public/ artifact. Add a smoke-docs job in the doc stage that runs on all branches except master, performs the same documentation steps, and also publishes the public/ artifact.",
+  "tags": [
+    "rust",
+    "cargo",
+    "clippy",
+    "documentation",
+    "gitlab-pages",
+    "cache",
+    "ci-variables"
+  ]
+}

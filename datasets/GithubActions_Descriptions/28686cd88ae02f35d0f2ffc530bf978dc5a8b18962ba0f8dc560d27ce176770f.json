@@ -1,0 +1,15 @@
+{
+  "sha": "28686cd88ae02f35d0f2ffc530bf978dc5a8b18962ba0f8dc560d27ce176770f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1399,
+  "description": "Create a nightly GitHub Actions workflow named nightly-debian-10 that runs on a scheduled cron job and allows manual dispatch. The workflow should use a debian:10 container on an ubuntu-latest environment, prepare the Debian environment, check out the source code, and perform a generic build. Send a notification to a Matrix room on success or failure with a specific message.",
+  "tags": [
+    "debian",
+    "nightly",
+    "cron",
+    "workflow-dispatch",
+    "container",
+    "matrix-notify"
+  ]
+}

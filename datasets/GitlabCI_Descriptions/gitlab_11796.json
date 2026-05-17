@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_11796",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 307,
+  "description": "Create a GitLab CI pipeline that includes the \"/templates/job/.base.yml\" template. Define a yamllint job that extends .base_tpl, runs in the lint stage, uses the Docker image registry.gitlab.com/pipeline-components/yamllint:latest, and executes the shell commands find . -type f \\( -name \"*.yml\" -and ! -name \"*vault*\" \\) | xargs -r yamllint followed by a loop for file in $files_to_lint; do yamllint $file; done. The job has no caches, artifacts, or special rules.",
+  "tags": [
+    "yamllint",
+    "lint",
+    "gitlab-ci",
+    "template",
+    "yaml"
+  ]
+}

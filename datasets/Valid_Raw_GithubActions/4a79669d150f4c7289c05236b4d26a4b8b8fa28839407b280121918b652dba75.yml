@@ -1,0 +1,57 @@
+name: "Update translations"
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 3 * * *"
+
+jobs:
+  update-translations:
+    runs-on: ubuntu-latest
+
+    env:
+      TX_TOKEN: ${{ secrets.TX_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+          ref: 2.9
+
+      - name: l10n-read
+        run: bash .github/workflows/run-in-docker.sh rabits/qt:5.12-desktop "cd translations && make l10n-read"
+
+      - name: l10n-push
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        run: bash .github/workflows/run-in-docker.sh owncloudci/transifex:latest "cd translations && make l10n-push"
+
+      - name: l10n-pull
+        run: bash .github/workflows/run-in-docker.sh owncloudci/transifex:latest "cd translations && make l10n-pull"
+
+      - name: l10n-write
+        run: bash .github/workflows/run-in-docker.sh owncloudci/transifex:latest "cd translations && make l10n-write"
+
+      - name: l10n-clean
+        run: bash .github/workflows/run-in-docker.sh owncloudci/transifex:latest "cd translations && make l10n-clean"
+
+      - name: update-repo-before-commit
+        run: |
+          set -x
+          git status
+          git stash
+          git pull --ff-only origin
+          if [[ "$(git stash list)" != "" ]]; then git stash pop; else echo "no stash to restore"; fi
+
+      - name: commit and push
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        env:
+          DEPLOYMENT_SSH_KEY: ${{ secrets.DEPLOYMENT_SSH_KEY }}
+        run: |
+          install -d -m 0700 ~/.ssh
+          echo "$DEPLOYMENT_SSH_KEY" > ~/.ssh/id_ed25519
+          chmod 0600 ~/.ssh/id_ed25519
+          git config user.name "ownClouders"
+          git config user.email "devops@owncloud.com"
+          git add translations/
+          git commit -m "[tx] updated client translations from transifex [skip ci]"
+          git push git@github.com:owncloud/client.git

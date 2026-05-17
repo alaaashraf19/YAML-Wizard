@@ -1,0 +1,16 @@
+{
+  "sha": "b6703bd2435598f0a2aa611fad36d77756f8579230e69a29c3e62244c4e3e246",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3331,
+  "description": "Create a GitHub Actions workflow that builds OSW-OS for Ubuntu across all models. The workflow can be triggered manually or on push and pull request events to specific branches and paths. It checks for duplicate runs, determines which languages and models to build based on changed files and branch, then builds the firmware in a matrix of languages, models, and build configurations, caching dependencies and uploading the resulting firmware artifacts.",
+  "tags": [
+    "ubuntu",
+    "firmware",
+    "python",
+    "github-actions",
+    "ci",
+    "build",
+    "matrix-build"
+  ]
+}

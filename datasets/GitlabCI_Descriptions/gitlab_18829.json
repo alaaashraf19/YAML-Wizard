@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_18829",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 963,
+  "description": "Create a GitLab CI pipeline using the docker:latest image with docker:dind, postgres:10-alpine, and redis:4-alpine services, and define global variables DOCKER_DRIVER, IMAGE, POSTGRES_DB, POSTGRES_PORT, POSTGRES_USER, and TAGGED_IMAGE as shown. Add a build job in the build stage that runs before_script commands `apk add --no-cache py-pip` and `pip install docker-compose`, then executes `docker build -t avs_backend .` followed by `ash .ci_scripts/push.sh`. Add a test_cov job in the test stage that uses the ${TAGGED_IMAGE} image, sets variables DJANGO_SETTINGS_MODULE, POSTGRES_HOST, RAVEN_DSN, REDIS_HOST, REDIS_PORT, and runs `py.test -v --cov`. Add a test_lint job also in the test stage using the ${TAGGED_IMAGE} image that runs `pycodestyle --exclude='*/migrations/*, settings/*' .`. No caches, artifacts, or conditional rules are defined, so all jobs run on every pipeline.",
+  "tags": [
+    "docker",
+    "docker-compose",
+    "postgres",
+    "redis",
+    "pytest",
+    "coverage",
+    "pycodestyle",
+    "lint",
+    "ci"
+  ]
+}

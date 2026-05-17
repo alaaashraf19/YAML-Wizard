@@ -1,0 +1,76 @@
+.build-oss-job:
+  cache: []
+  rules:
+  - changes:
+    - LICENSES/**
+    - includes/**
+    - tools/*.jar
+    - tools/*.sh
+    - zip-content/**
+    - CHANGELOG.rst
+    - LICENSE*.rst
+    - build.sh
+    - conf-*.sh
+    if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    when: always
+  script: BUILD_TYPE='oss' './build.sh'
+  stage: build
+  timeout: 5 minutes
+build-job:
+  artifacts:
+    expire_in: 15 minutes
+    paths:
+    - output/*.zip*
+  rules:
+  - changes:
+    - LICENSES/**
+    - includes/**
+    - tools/*.jar
+    - tools/*.sh
+    - zip-content/**
+    - CHANGELOG.rst
+    - LICENSE*.rst
+    - build.sh
+    - conf-*.sh
+    if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    when: always
+  - if: $CI_PIPELINE_SOURCE == "schedule"
+    when: always
+  - if: $CI_PIPELINE_SOURCE == "web"
+    when: always
+  script: BUILD_TYPE='full' './build.sh'
+  stage: build
+  timeout: 5 minutes
+default:
+  before_script: '# Install dependencies
+
+    apk add bash zip~=3.0 wget || exit "${?}"
+
+    '
+  cache:
+    key: cache-build
+    paths:
+    - cache/build
+    when: always
+  image: eclipse-temurin:17-jdk-alpine
+  interruptible: true
+ping-cache:
+  before_script: []
+  interruptible: false
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "schedule"
+    when: always
+  script: test ! -d './cache/build' || date -u -- '+%s' 1> './cache/build/last-ping.dat'
+  stage: build
+  timeout: 5 minutes
+stages:
+- build
+- test
+variables:
+  ARTIFACT_COMPRESSION_LEVEL: fastest
+  CACHE_COMPRESSION_LEVEL: fastest
+  FF_USE_FASTZIP: true
+  GIT_DEPTH: 1
+workflow:
+  auto_cancel:
+    on_new_commit: interruptible

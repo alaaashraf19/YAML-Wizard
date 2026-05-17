@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_06615",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 4391,
+  "description": "Create a GitLab CI pipeline with stages build, sbom, release, and scan, using a before_script that defines JOB_TIMESTAMP, COMMIT_HASH_SHORT, COMMIT_BRANCH_OR_TAG, REGISTRY_HOST, REGISTRY_USER, REGISTRY_PASSWORD, and REGISTRY_IMAGE from CI variables. In the build stage add a build job using the openjdk:17-jdk image that runs ./gradlew build and stores the generated *.tar files in build/distributions and the build reports as artifacts. Also in the build stage add a build docker image job using the docker:latest image that echoes the computed variables, logs in to $REGISTRY_HOST with $REGISTRY_USER/$REGISTRY_PASSWORD, builds a Docker image tagged $REGISTRY_IMAGE:$COMMIT_BRANCH_OR_TAG-$COMMIT_HASH_SHORT with --pull, and pushes it while echoing confirmation. In the sbom stage add two jobs: collect SBOM (syft, docker) using docker:latest that logs in, pulls the image, installs curl via apk, installs syft, and generates Docker SBOM in JSON and table formats; and collect SBOM (syft, jar) using ubuntu:20.04 that installs curl, installs syft, and generates a JAR SBOM from the built tar files. In the release stage add a push docker image job using docker:latest that logs in, pulls the image, tags it as $REGISTRY_IMAGE:$COMMIT_BRANCH_OR_TAG, and pushes it, and a push docker image on master as latest job (only on master) that logs in, pulls the image, tags it as $REGISTRY_IMAGE, and pushes it. In the scan stage add two jobs: scan vulnerabilities (grype, docker) and scan vulnerabilities (grype, jar) both using ubuntu:20.04, installing curl, installing grype, and scanning the respective SBOM files to produce JSON and table vulnerability reports as artifacts. Use the docker:dind service with a command that injects a certificate from $CERTIFICATE_URL if provided.",
+  "tags": [
+    "java",
+    "gradle",
+    "docker",
+    "dind",
+    "syft",
+    "grype",
+    "sbom",
+    "vulnerability-scan"
+  ]
+}

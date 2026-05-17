@@ -1,0 +1,12 @@
+{
+  "sha": "gitlab_12232",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 129,
+  "description": "Create a GitLab CI pipeline that defines a single stage called test. Add a job named test that runs in the test stage using the nixos/nix Docker image and executes the exact command: nix --experimental-features \"nix-command flakes\" flake check. The pipeline does not define any caches, artifacts, services, variables, or conditional rules.",
+  "tags": [
+    "nix",
+    "flake-check",
+    "test"
+  ]
+}

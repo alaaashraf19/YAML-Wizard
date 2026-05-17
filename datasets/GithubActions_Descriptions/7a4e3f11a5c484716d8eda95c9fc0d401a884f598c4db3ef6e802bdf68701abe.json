@@ -1,0 +1,13 @@
+{
+  "sha": "7a4e3f11a5c484716d8eda95c9fc0d401a884f598c4db3ef6e802bdf68701abe",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 989,
+  "description": "Create a GitHub Actions workflow named WASM that runs on push and pull request events. Use an ubuntu-latest job with an archlinux container that installs git, checks out the repository with submodules, installs dependencies, builds, and deploys the WebAssembly project. If the event is not a pull request, push changes to the main branch of the ossia/score-web repository using a GitHub token from secrets.",
+  "tags": [
+    "wasm",
+    "webassembly",
+    "archlinux",
+    "github-push-action"
+  ]
+}

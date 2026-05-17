@@ -1,0 +1,12 @@
+expose:
+  artifacts:
+    paths:
+    - simpleplc.pdf
+  only:
+  - master
+  script:
+  - xelatex -interaction=nonstopmode -halt-on-error simpleplc.tex
+  stage: deploy
+image: niccokunzmann/ci-latex
+stages:
+- deploy

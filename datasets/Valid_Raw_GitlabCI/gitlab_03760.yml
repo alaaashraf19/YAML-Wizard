@@ -1,0 +1,19 @@
+after_script:
+- python -V
+before_script:
+- python -V
+image: python:latest
+stages:
+- before_script
+- test
+- run
+- after_script
+test:
+  script:
+  - apt-get update -qy
+  - apt-get install -y python3-dev python3-pip
+  - pip3 install -r req.txt
+  - pip3 install pylint
+  - pip3 install pytest pytest-cov
+  - python3 -m pytest -s tests/test.py
+  - python3 -m pytest -s  --cov-report term --cov=. tests/test.py

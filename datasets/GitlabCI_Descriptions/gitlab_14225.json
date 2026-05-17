@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_14225",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 383,
+  "description": "Create a GitLab CI pipeline that uses the fedora:32 Docker image and defines a global before_script running `dnf --setopt=cachedir=`pwd`/dnf-cache --quiet --assumeyes install /usr/bin/nikola`. Add a cache with key `dnf-cache` that stores the `dnf-cache/` directory. Define two jobs in the default test stage: a `pages` job that executes `nikola build`, publishes the `public/` directory as an artifact, runs only on the `master` branch, uses the `shared` tag, and deploys to GitLab Pages; and a `test` job that also runs `nikola build`, saves `public/` as an artifact, runs on all branches except `master`, and uses the `shared` tag.",
+  "tags": [
+    "fedora",
+    "nikola",
+    "gitlab-pages",
+    "cache",
+    "dnf",
+    "pages",
+    "test"
+  ]
+}

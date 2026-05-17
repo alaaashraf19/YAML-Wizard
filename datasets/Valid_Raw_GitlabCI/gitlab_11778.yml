@@ -1,0 +1,15 @@
+before_script:
+- npm install
+cache:
+  paths:
+  - node_modules/
+image: node:10.10.0
+pages:
+  artifacts:
+    paths:
+    - public
+  script:
+  - CI=true npm run build
+  - rm -rf public
+  - mv dist public
+  stage: deploy

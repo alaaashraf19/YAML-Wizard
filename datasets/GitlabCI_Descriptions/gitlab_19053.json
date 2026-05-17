@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_19053",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 213,
+  "description": "Create a GitLab CI pipeline that uses the rustlang/rust:nightly Docker image and runs a before_script to update apt and install libcap2-dev, libzmq3-dev, and libzmq5. Define a single job named test:cargo in the default test stage that executes `rustc --version && cargo --version` followed by `cargo test --all --verbose`. No services, caches, artifacts, or special rules are required.",
+  "tags": [
+    "rust",
+    "cargo",
+    "nightly",
+    "apt",
+    "test"
+  ]
+}

@@ -1,0 +1,18 @@
+Test SSH:
+  script:
+  - ssh git@gitlab.com
+  - git clone git@gitlab.com:gitlab-examples/ssh-private-key.git
+before_script:
+- which ssh-agent || ( apt-get update -y && apt-get install openssh-client git -y
+  )
+- eval $(ssh-agent -s)
+- mkdir -p ~/.ssh
+- chmod 700 ~/.ssh
+- echo 'echo $SSH_PASSPHRASE' > ~/.ssh/tmp && chmod 700 ~/.ssh/tmp
+- echo "$SSH_PRIVATE_KEY" | tr -d '\r' | DISPLAY=None SSH_ASKPASS=~/.ssh/tmp ssh-add
+  -
+- ssh-keyscan gitlab.com >> ~/.ssh/known_hosts
+- chmod 644 ~/.ssh/known_hosts
+- git config --global user.email "darth@empire.com"
+- git config --global user.name "Darth Vader"
+image: ubuntu

@@ -1,0 +1,25 @@
+build:
+  artifacts:
+    paths:
+    - build/subprojects/librts/test/tests
+  before_script:
+  - apt update
+  - apt install -y --no-install-recommends build-essential g++ pkg-config libboost-all-dev
+    meson librtlsdr-dev libgpiod-dev
+  script:
+  - meson build
+  - cd build && ninja
+  stage: build
+image: debian:testing
+stages:
+- build
+- test
+test:
+  before_script:
+  - apt update
+  - apt install -y --no-install-recommends librtlsdr0 libgpiod2 libboost-test-dev
+  script:
+  - cd build/subprojects/librts/test && ./tests
+  stage: test
+  variables:
+    GIT_STRATEGY: none

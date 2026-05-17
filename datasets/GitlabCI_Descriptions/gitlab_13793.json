@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_13793",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1311,
+  "description": "Create a GitLab CI pipeline that defines four jobs (Debian, Fedora, Mint, Ubuntu) each using its respective Docker image (debian:latest, fedora:latest, vcatechnology/linux-mint:latest, ubuntu:latest) and running in the default stage. All jobs generate artifacts that expire in 2 weeks and include the paths build/pdf/* and build/*.zip. The Debian, Mint, and Ubuntu jobs each execute: export DEBIAN_FRONTEND=noninteractive; apt-get -y update; apt-get -y install pandoc make zip; apt-get install -y texlive-xetex; make zip. The Fedora job executes: dnf -y update && dnf clean all; dnf -y install texlive-collection-latexextra texlive-collection-basic; dnf -y install texlive-collection-latexrecommended make zip pandoc; dnf -y install texlive-collection-bibtexextra texlive-collection-latex; dnf -y install texlive-xetex-def texlive-collection-xetex texlive-xetex; make zip. No caches, services, or conditional rules are defined.",
+  "tags": [
+    "debian",
+    "fedora",
+    "mint",
+    "ubuntu",
+    "pandoc",
+    "make",
+    "zip",
+    "texlive"
+  ]
+}

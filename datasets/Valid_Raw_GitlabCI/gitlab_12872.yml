@@ -1,0 +1,91 @@
+before_script:
+- apt-get update -yqq
+- apt-get install -o dir::cache::archives="$APT_CACHE_DIR" -yqq --no-install-recommends
+  build-essential cmake
+cache:
+  paths:
+  - $APT_CHACHE_DIR
+  - $CARGO_HOME
+clippy:
+  only:
+  - tags
+  - master
+  - merge_requests
+  script:
+  - rustup component add clippy
+  - cargo clippy --version
+  - cargo clippy --all-targets --all-features
+  stage: analysis
+examples:
+  only:
+  - tags
+  - master
+  - merge_requests
+  script:
+  - cargo build --examples
+  stage: docs
+format:
+  allow_failure: true
+  image: rustlang/rust:nightly-slim
+  only:
+  - tags
+  - master
+  - merge_requests
+  script:
+  - rustup component add rustfmt
+  - cargo fmt --version
+  - cargo fmt --package nng -- --check
+  stage: analysis
+image: rust:latest
+minimum-rust-version:
+  image: rust:1.36-slim-buster
+  only:
+  - tags
+  - master
+  - merge_requests
+  script:
+  - rustc --version
+  - cargo --version
+  - cargo test --all --all-features --verbose
+  stage: test
+nightly:
+  allow_failure: true
+  image: rustlang/rust:nightly-slim
+  only:
+  - tags
+  - master
+  - merge_requests
+  script:
+  - rustc --version
+  - cargo --version
+  - cargo test --all --all-features --verbose
+  stage: test
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - cargo doc --no-deps
+  - mv target/doc public
+  - echo '<meta http-equiv="refresh" content="0; url=nng">' > public/index.html
+  stage: docs
+stable:
+  only:
+  - tags
+  - master
+  - merge_requests
+  script:
+  - rustc --version
+  - cargo --version
+  - cargo test --all --all-features --verbose
+  stage: test
+stages:
+- analysis
+- test
+- docs
+variables:
+  APT_CACHE_DIR: $CI_PROJECT_DIR/apt
+  CARGO_HOME: $CI_PROJECT_DIR/cargo
+  GIT_SUBMODULE_STRATEGY: normal

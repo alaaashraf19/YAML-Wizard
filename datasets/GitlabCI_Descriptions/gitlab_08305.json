@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_08305",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 232,
+  "description": "Create a GitLab CI pipeline that defines a single stage called validate. Add a job named \"prepare done\" that runs in the validate stage and simply extends the .common:stage-done template (no custom script). Add a second job named \"validate\" that also runs in the validate stage, extends the .common:docker-in-docker template (so it uses a Docker image with Docker‑in‑Docker service), and applies the .rules:merge-requests rule to run only on merge‑request pipelines. In its before_script it runs \"apk add -U make bash\", and its script executes the exact command \"make build validate\". No caches, artifacts, or additional variables are defined.",
+  "tags": [
+    "make",
+    "apk",
+    "docker-in-docker",
+    "validate",
+    "merge-requests"
+  ]
+}

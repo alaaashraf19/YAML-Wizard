@@ -1,0 +1,14 @@
+{
+  "sha": "97ccc1c761d88eab428dc40485e27740d4bbc8d45e67332e1b45fae8bd168449",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 7324,
+  "description": "Create a comprehensive GitHub Actions workflow named CI that runs on workflow dispatch, push to main, and pull requests to main. The workflow uses a concurrency group with a fallback value and cancels in-progress jobs. It defines a matrix strategy with multiple jobs across different operating systems (macOS, Ubuntu, Windows) and configurations (release, debug, iOS, static, MATLAB, Android). Each job checks out the repository, sets up dependencies, and performs various build and test steps with specific flags and conditions.",
+  "tags": [
+    "ci",
+    "matrix",
+    "multios",
+    "multiconfig",
+    "github-actions"
+  ]
+}

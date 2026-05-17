@@ -1,0 +1,14 @@
+{
+  "sha": "7d8ebc6eaee3c48f3435b63b6387ea0bd45fda046f6c8e40a4bc7903f7376e16",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1811,
+  "description": "Create a GitHub Actions workflow named Artifacts (Package) that triggers on push, pull request, and workflow dispatch events. Run two parallel jobs on ubuntu-20.04, one for mingw-w64 and one for steamrt-sniper in a container. For each job, check out the code with submodules, set up a problem matcher, build a release using a custom script, and upload the resulting artifacts with a version name derived from the GitHub reference and SHA.",
+  "tags": [
+    "artifacts",
+    "mingw",
+    "steamrt",
+    "github-actions",
+    "ubuntu"
+  ]
+}

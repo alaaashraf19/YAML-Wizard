@@ -1,0 +1,63 @@
+name: Windows
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          choco install swig
+          python -m pip install --upgrade pip
+          pip install poetry
+          poetry install
+        shell: powershell
+
+      - name: Run unit tests
+        run: poetry run pytest -v
+
+      - name: Build
+        run: poetry build
+
+      - name: Install from tar.gz
+        shell: bash
+        run: |
+          pip install dist/*.tar.gz
+          ykman --version
+          [[ -z "$(ykman --version | grep -E "not found|missing")" ]]
+          pip uninstall -y yubikey-manager
+
+      - name: Install from wheel
+        shell: bash
+        run: |
+          pip install dist/*.whl
+          ykman --version
+          [[ -z "$(ykman --version | grep -E "not found|missing")" ]]
+          pip uninstall -y yubikey-manager
+
+      - name: PyInstaller
+        shell: bash
+        run: |
+          poetry run pyinstaller ykman.spec
+          dist/ykman/ykman.exe --version
+          [[ -z "$(dist/ykman/ykman.exe --version | grep -E "not found|missing")" ]]
+
+      - name: Build installer
+        run: |
+          ./resources/win/make_installer.ps1 "4.1.0"
+
+      - name: Upload build
+        uses: actions/upload-artifact@v1
+        with:
+          name: ykman-builds-windows
+          path: dist

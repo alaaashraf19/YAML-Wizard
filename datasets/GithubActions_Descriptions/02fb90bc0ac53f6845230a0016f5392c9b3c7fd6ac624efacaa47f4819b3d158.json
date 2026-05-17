@@ -1,0 +1,15 @@
+{
+  "sha": "02fb90bc0ac53f6845230a0016f5392c9b3c7fd6ac624efacaa47f4819b3d158",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 6354,
+  "description": "Create a GitHub Actions CD workflow that triggers on push events. The workflow should have three jobs: build-linux-win on ubuntu-latest, build-linux-release on ubuntu-16.04, and macosx-bintray on macos-latest. Each job checks out the code, installs dependencies, configures, builds, and packages the Texstudio project. The jobs then upload artifacts and release them on GitHub or Bintray.",
+  "tags": [
+    "cd",
+    "ubuntu",
+    "macos",
+    "texstudio",
+    "cross-platform",
+    "github-actions"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_05699",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 448,
+  "description": "Create a GitLab CI pipeline with two stages: deploy and cleanup. Add a review job in the deploy stage that runs on all branches except master, sets the environment name to review/$CI_COMMIT_REF_NAME with an on_stop reference to stop_review, and executes the shell command `echo start review`. Add a stop_review job in the cleanup stage that runs manually, also on branches except master, allows failure, runs a before_script `apk add --update curl jq`, sets the environment action to stop for the same review environment, and runs `./build/src/remove_registry_tag.sh`. Ensure the stop_review job is linked as the stop action for the review environment.",
+  "tags": [
+    "review",
+    "stop-review",
+    "environment",
+    "manual",
+    "cleanup",
+    "deploy"
+  ]
+}

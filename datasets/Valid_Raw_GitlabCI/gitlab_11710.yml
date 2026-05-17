@@ -1,0 +1,19 @@
+image: node:latest
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - npm i
+  - npm run build
+  - mv dist public
+  - cp favicon.ico public/
+  stage: deploy
+test:
+  except:
+  - master
+  script:
+  - npm i
+  - npm run build

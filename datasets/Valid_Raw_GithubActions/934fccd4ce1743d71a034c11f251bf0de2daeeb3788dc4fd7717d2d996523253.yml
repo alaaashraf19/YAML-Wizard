@@ -1,0 +1,47 @@
+name: macOS
+
+on: workflow_dispatch
+
+env:
+  BUILD_TYPE: Release
+  QT_VERSION: "6.2.3"
+  QT_ARCH: "clang_64"
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Cache Qt
+        id: cache-qt
+        uses: actions/cache@v2
+        with:
+          path: ${{runner.workspace}}/Qt
+          key: qt-${{env.QT_VERSION}}-${{env.QT_ARCH}}
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v2
+        with:
+          cached: ${{steps.cache-qt.outputs.cache-hit}}
+          version: ${{env.QT_VERSION}}
+          arch: ${{env.QT_ARCH}}
+
+      - name: Configure CMake
+        run: cmake . -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DUSE_QT6=ON
+
+      - name: Build
+        run: cmake --build . --config $BUILD_TYPE
+
+      - name: Package
+        run: |
+          mkdir -p spotify-qt.app/Contents/MacOs
+          cp ${{runner.workspace}}/build/spotify-qt spotify-qt.app/Contents/MacOs/
+          macdeployqt spotify-qt.app -dmg
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: spotify-qt
+          path: ${{runner.workspace}}/spotify-qt.app

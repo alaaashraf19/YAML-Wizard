@@ -1,0 +1,60 @@
+.deploy template:
+  before_script: &id001
+  - which rsync || ( apt-get update -y && apt-get install rsync -y )
+  - which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )
+  - eval $(ssh-agent -s)
+  - ssh-add <(echo "$SSH_PRIVATE_KEY")
+  - mkdir -p ~/.ssh
+  - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+  environment:
+    name: null
+    url: null
+  only:
+  - trigger
+  script: &id002
+  - export TARGETPATH="${TARGETBASEPATH}"
+  - echo "Host    " $TARGETHOST
+  - echo "Path    " $TARGETPATH
+  - date > VERSION
+  - echo "Tag   ${CI_BUILD_TAG}" >> VERSION
+  - echo "Build ${CI_BUILD_ID}" >> VERSION
+  - echo "Ref   ${CI_BUILD_REF}" >> VERSION
+  - echo "Name  ${CI_BUILD_NAME}" >> VERSION
+  - echo "git   $(git describe)" >> VERSION
+  - ls -la
+  - ssh -p $TARGETPORT $TARGETHOST "mkdir -p $TARGETPATH"
+  - rsync -azv -e "ssh -p $TARGETPORT" --delete --exclude=/composer.* --exclude=/.ssh
+    www $TARGETHOST:$TARGETPATH
+  - echo "cleanup ... "
+  - echo "done."
+  stage: deploy
+  when: manual
+Deploy:dev:
+  before_script: *id001
+  environment:
+    name: dev
+    url: https://${CI_COMMIT_REF_NAME}.${CI_PROJECT_NAME}.ci-example.com
+  only:
+  - dev
+  script: *id002
+  stage: deploy
+  variables:
+    TARGETBASEPATH: /var/www/html/${CI_COMMIT_REF_NAME}.${CI_PROJECT_NAME}.example.com
+    TARGETHOST: $DEV_SERVER_SSH_IP
+    TARGETPORT: $DEV_SERVER_SSH_PORT
+  when: manual
+build:
+  artifacts:
+    expire_in: 1 week
+    name: plateform_${CI_BUILD_NAME}_${CI_BUILD_REF_NAME}_${CI_BUILD_REF}
+    paths:
+    - ./
+  image: juliend/drupal-build-tools-ci
+  script:
+  - composer -n global require -n "hirak/prestissimo:^0.3"
+  - composer install --no-dev
+  - rm -rf .git
+  stage: build
+stages:
+- build
+- deploy

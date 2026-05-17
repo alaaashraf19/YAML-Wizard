@@ -1,0 +1,23 @@
+.node:
+  before_script: &id001
+  - apk add --no-cache git
+  - npm ci
+build:
+  before_script: *id001
+  except:
+  - tags
+  script:
+  - npm run-script build:ci
+  stage: build
+image: node:22-alpine3.20
+release:
+  before_script: *id001
+  only:
+  - master@timrs2998/newsie
+  script:
+  - npm run-script build
+  - node_modules/.bin/semantic-release
+  stage: release
+stages:
+- build
+- release

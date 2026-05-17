@@ -1,0 +1,14 @@
+{
+  "sha": "bb7839588b5a9fd7a37987d9149556afd845e0b1f4dc31238b28df051278c3ed",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 508,
+  "description": "Create a GitHub Actions workflow named Lint CI that runs on push to the master branch and on pull requests to master that affect specific files. Use an ubuntu-20.04 job with a matrix strategy to lint each file in include/jwt-cpp and tests. Install clang-format-10, checkout the code, format the files in place, and exit with a non-zero status if any changes were made.",
+  "tags": [
+    "cpp",
+    "linting",
+    "clang-format",
+    "ubuntu",
+    "ci"
+  ]
+}

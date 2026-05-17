@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_11297",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2246,
+  "description": "Create a GitLab CI pipeline with stages build, documentation, package, and analyze_and_docker and a global MAVEN_OPTS variable. Add a global before_script that makes ./generate_config.sh executable and, when the branch is not master, sets BRANCH_NAME to a sanitized version of CI_COMMIT_REF_NAME. In the build stage define a compile_project job (tag ita) that runs ./generate_config.sh $PROD_HOST $PROD_DB $PROD_USER $PROD_PASS $LOGIN_HOST, then mvn clean compile -B \"$MAVEN_OPTS\", copies swagger/swagger.yaml to public/, and always stores public/ and target/ as artifacts for one day. In the documentation stage add a pages job (tag ita, only on master or STAGE) that echoes 'Publishing Documents' and publishes the public/ directory as a pages artifact, always. In the package stage add a run_tests_and_package job (tag ita) that depends on compile_project and runs mvn package -B \"$MAVEN_OPTS\", storing target/ as an artifact for one day, and in the analyze_and_docker stage add three production‑only jobs (master and STAGE): deploy_the_war (tag container) with a before_script that sets IMAGE_TAG, makes scripts executable, logs into the GitLab registry, then runs sh generate_config.sh …, docker build -t \"$CI_REGISTRY_IMAGE:$IMAGE_TAG\" . and docker push the image plus after_script cleanup; pack_the_client (tag ita) that runs mvn clean install -B -Dswagger=client -Dmaven.test.skip=true; and sonar_qube (tag ita) that depends on run_tests_and_package and runs mvn sonar:sonar -B -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=kvjavaxxv -Dsonar.login=\"$SONAR_SECRET\" -Dsonar.branch=\"$BRANCH_NAME\" \"$MAVEN_OPTS\" then cats the JaCoCo report, always.",
+  "tags": [
+    "maven",
+    "docker",
+    "sonarqube",
+    "gitlab-pages",
+    "java",
+    "ci"
+  ]
+}

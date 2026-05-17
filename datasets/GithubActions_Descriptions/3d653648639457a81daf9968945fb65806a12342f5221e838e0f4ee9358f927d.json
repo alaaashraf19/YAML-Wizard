@@ -1,0 +1,14 @@
+{
+  "sha": "3d653648639457a81daf9968945fb65806a12342f5221e838e0f4ee9358f927d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 563,
+  "description": "Create a reusable GitHub Actions workflow named Lint Check that runs clang-tidy checks. The workflow should run in a ubuntu-latest job with a custom container, checking out the repository with submodules and full history. It should then configure CMake and run clang-tidy-diff against the current branch's diff from origin/master, continuing on error.",
+  "tags": [
+    "clang-tidy",
+    "cmake",
+    "ubuntu",
+    "linting",
+    "reusable-workflow"
+  ]
+}

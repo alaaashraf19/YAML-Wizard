@@ -1,0 +1,14 @@
+{
+  "sha": "36b2c34bdedf28d8140c64a6a0f70bf035e0ff118d4ffa50ae55057c3e9facdb",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 6751,
+  "description": "Create a GitHub Actions workflow named Build Project that runs on every push to the master branch and on pull requests to master. The workflow should have multiple jobs for building the project on different platforms: ubuntu_x11, ubuntu_wayland, macosx_10, windows, windows_x86, and android. Each job should check out the repository with submodules, install Qt 5.12.9, and then build and upload the project to an FTP server using secrets for authentication.",
+  "tags": [
+    "qt",
+    "vulkan",
+    "multi-platform",
+    "ftp",
+    "github-actions"
+  ]
+}

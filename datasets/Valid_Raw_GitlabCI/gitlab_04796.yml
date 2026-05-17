@@ -1,0 +1,68 @@
+compile:
+  artifacts:
+    expire_in: 20 minutes
+    paths:
+    - target/camelot.jar
+  before_script:
+  - export LEIN_ROOT=1
+  - export LEIN_SNAPSHOTS_IN_RELEASE=1
+  - export PATH="$HOME/bin:${PATH}"
+  script:
+  - script/build
+  stage: build
+image: registry.gitlab.com/camelot-project/camelot/image
+new-install:
+  script:
+  - script/test-runtime.sh
+  stage: test
+package:
+  artifacts:
+    name: camelot-${CI_BUILD_REF_NAME}-$(date '+%Y%m%d%H%M%S')
+    paths:
+    - camelot-${CI_BUILD_REF_NAME}/
+  script:
+  - mkdir -p "camelot-${CI_BUILD_REF_NAME}/"
+  - script/prepare-snapshot.sh
+  - cp target/camelot-*.jar script/bin/camelot-desktop.sh script/bin/camelot-desktop.bat
+    script/bin/camelot-desktop.command "camelot-${CI_BUILD_REF_NAME}/"
+  stage: package
+securityscan:
+  before_script:
+  - export LEIN_ROOT=1
+  - export LEIN_SNAPSHOTS_IN_RELEASE=1
+  - export PATH="$HOME/bin:${PATH}"
+  only:
+  - schedules
+  script:
+  - clojure -J-Dclojure.main.report=stderr -Tnvd nvd.task/check :config-filename '"nvd-config.json"'  :classpath
+    '"'"$(lein with-profile -user classpath)"'"'
+  stage: test
+stages:
+- build
+- test
+- package
+unittest-clj:
+  before_script:
+  - export LEIN_ROOT=1
+  - export PATH="$HOME/bin:${PATH}"
+  script:
+  - script/test clj
+  stage: build
+unittest-cljs:
+  before_script:
+  - export LEIN_ROOT=1
+  - export PATH="$HOME/bin:${PATH}"
+  script:
+  - script/test cljs
+  stage: build
+upgrade:
+  before_script:
+  - mkdir ~/.ssh
+  - chmod 700 ~/.ssh
+  - sh -c "ssh-keyscan -t rsa gitlab.com >> ~/.ssh/known_hosts"
+  script:
+  - script/setup-testdata.sh
+  - CAMELOT_DATADIR="testdata" script/test-runtime.sh
+  stage: test
+variables:
+  GIT_SSL_NO_VERIFY: '1'

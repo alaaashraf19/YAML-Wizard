@@ -1,0 +1,25 @@
+before_script:
+- docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+build:
+  script:
+  - docker run -v $CI_PROJECT_DIR:/source $CONTAINER_BUILDER_IMAGE cargo build --release
+  - docker build -f Dockerfile.app -t $CONTAINER_APP_IMAGE .
+  - docker push $CONTAINER_APP_IMAGE
+  stage: build
+build-builder:
+  script:
+  - docker build -f Dockerfile.builder -t $CONTAINER_BUILDER_IMAGE .
+  - docker push $CONTAINER_BUILDER_IMAGE
+  stage: build-builder
+cache:
+  paths:
+  - $CI_PROJECT_DIR/target
+image: docker:git
+services:
+- docker:dind
+stages:
+- build-builder
+- build
+variables:
+  CONTAINER_APP_IMAGE: registry.gitlab.com/azdle/stockfaces-api:latest
+  CONTAINER_BUILDER_IMAGE: registry.gitlab.com/azdle/stockfaces-api:builder-$CI_BUILD_REF_NAME

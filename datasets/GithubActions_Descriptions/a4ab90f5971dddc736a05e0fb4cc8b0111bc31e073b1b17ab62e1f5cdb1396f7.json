@@ -1,0 +1,17 @@
+{
+  "sha": "a4ab90f5971dddc736a05e0fb4cc8b0111bc31e073b1b17ab62e1f5cdb1396f7",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1477,
+  "description": "Create a GitHub Actions workflow named build that triggers on push to branches matching branch-* and specific tags, and also allows calling with inputs. The workflow manages concurrent runs, canceling in-progress jobs when a new one starts. It defines three jobs: cpp-build, python-build, and upload-conda. The cpp-build job uses a shared workflow for C++ matrix builds with specified repository and inputs. The python-build job depends on cpp-build and uses a shared workflow for Python matrix builds. The upload-conda job depends on both previous jobs and uses a shared workflow for uploading packages to Conda.",
+  "tags": [
+    "github-actions",
+    "conda",
+    "c++",
+    "python",
+    "rapidsai",
+    "rmm",
+    "matrix-build",
+    "workflows"
+  ]
+}

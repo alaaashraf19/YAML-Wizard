@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_07987",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 631,
+  "description": "Create a GitLab CI pipeline using the golang Docker image and define variables ARTIFACTS_DIR, BIN_NAME, GO_PROJECT. Include a global before_script that creates the Go workspace directories, fetches dep, copies the project into $GOPATH/src/$GO_PROJECT, changes into that directory and runs dep ensure. In the test stage add a testacc job that runs TF_ACC=true go test -v . and a unit_tests job that runs go test -v -cover . . In the build stage add a build job that compiles the binary with go build -o $CI_PROJECT_DIR/$ARTIFACTS_DIR/$BIN_NAME. No caches, artifacts, or special rules are defined.",
+  "tags": [
+    "golang",
+    "go",
+    "dep",
+    "test",
+    "unit-test",
+    "build",
+    "gitlab-ci"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_06944",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1561,
+  "description": "Create a GitLab CI pipeline using the docker:git image with a docker:dind service and a before_script that installs curl and jq via apk, logs into the registry with $CI_REGISTRY_USER/$CI_REGISTRY_PASSWORD, and sets LAST_COMMIT by querying the GitLab API. Define stages minimal, standard, tools, adntools, and adnamc. Add a build:minimal job in the minimal stage that runs ./build.sh, sets IMAGE_TAG=minimal, and stores the variables directory as an artifact expiring in 1 day. Add build:basic, build:custom, and build:full jobs in the standard stage that each depend on and need build:minimal, run ./build.sh, set IMAGE_TAG to basic, custom, and full respectively, and publish the same artifact. Add build:tools (needs build:custom), build:adntools (needs build:tools), and build:adnamc (needs build:adntools) jobs in the tools, adntools, and adnamc stages respectively, each running ./build.sh, setting IMAGE_TAG to tools, adntools, and adnamc, and publishing the variables artifact.",
+  "tags": [
+    "docker",
+    "dind",
+    "ci",
+    "artifact",
+    "stages",
+    "build"
+  ]
+}

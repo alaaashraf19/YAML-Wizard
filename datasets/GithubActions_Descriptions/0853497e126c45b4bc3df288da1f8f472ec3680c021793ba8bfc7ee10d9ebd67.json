@@ -1,0 +1,14 @@
+{
+  "sha": "0853497e126c45b4bc3df288da1f8f472ec3680c021793ba8bfc7ee10d9ebd67",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2436,
+  "description": "Create a GitHub Actions workflow named Build Release that triggers on release creation. Run a matrix job across ubuntu-latest, macos-12, and windows-latest, setting up Python 3.x and checking out code with submodules. Install ninja build tool on each OS, then use CMake to configure and build the project. Strip binaries on non-Windows platforms, and create a tarball and SHA256 sum of the release. Upload these assets to the release using the upload-release-action.",
+  "tags": [
+    "release",
+    "cmake",
+    "ninja",
+    "multi-os",
+    "github-actions"
+  ]
+}

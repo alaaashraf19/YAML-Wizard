@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_18292",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1131,
+  "description": "Create a GitLab CI pipeline with a single test stage, using a global untracked cache and default image ruby:2.4. Add a brakeman job in the test stage that runs a before_script installing the brakeman gem with \"gem install brakeman --no-ri --no-rdoc\" and then executes \"brakeman --exit-on-warn\". Add a bundle_audit job in the test stage that installs the bundle-audit gem via \"gem install bundle-audit --no-ri --no-rdoc\" and runs \"bundle-audit check --update\". Add a rubocop job in the test stage that installs rubocop using \"gem install rubocop --no-ri --no-rdoc\" and runs \"rubocop -D\". Add system_test and test jobs in the test stage that both use the \"unused/rails-system-test\" image, the \"mongo:latest\" service, set variables MONGO_HOST=mongo and RAILS_ENV=test, execute a shared before_script (ruby -v; which ruby; echo $RAILS_ENV; gem install bundler --no-ri --no-rdoc; bundle install --jobs $(nproc) \"${FLAGS[@]}\"; bundle exec bin/rails yarn:install; bundle exec bin/rails db:mongoid:create_indexes) and then run respectively \"bundle exec bin/rails test:system\" for system_test and \"bundle exec bin/rails test\" for test.",
+  "tags": [
+    "ruby",
+    "rails",
+    "mongo",
+    "brakeman",
+    "bundle-audit",
+    "rubocop",
+    "system-test",
+    "gitlab-ci"
+  ]
+}

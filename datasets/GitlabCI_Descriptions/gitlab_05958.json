@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_05958",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 517,
+  "description": "Create a GitLab CI pipeline with two stages, build and deploy. In the build stage add an update_readme job that runs a curl POST request to https://gitlab.com/api/v4/projects/7064305/trigger/pipeline, sending the $README_TOKEN secret, ref=master and the variable single_repo=uptimerobot. In the deploy stage add a push_github job that first downloads and executes init.sh from ludeeus/toolbox with arguments github HA-Custom_components root /uptimerobot, then downloads and runs push.sh with the argument Europe/Oslo. No specific Docker image or services are defined, so the jobs use the default runner environment.",
+  "tags": [
+    "github",
+    "readme",
+    "curl",
+    "deploy",
+    "build"
+  ]
+}

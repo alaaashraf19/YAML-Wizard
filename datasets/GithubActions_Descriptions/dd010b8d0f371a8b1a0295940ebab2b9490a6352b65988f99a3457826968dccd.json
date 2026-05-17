@@ -1,0 +1,17 @@
+{
+  "sha": "dd010b8d0f371a8b1a0295940ebab2b9490a6352b65988f99a3457826968dccd",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4003,
+  "description": "Create a GitHub Actions workflow named ci that runs on every push to main, on pull requests to main, and on a scheduled cron job. The workflow has multiple jobs for different environments, including macOS Sonoma ARM with CMake installed, ROS 2 Humble with ament CMake installed, and several Ubuntu Jammy jobs with different setups. Each job checks out the repository, performs environment-specific setup, and runs build and test scripts.",
+  "tags": [
+    "ci",
+    "macos",
+    "ubuntu",
+    "ros2",
+    "cmake",
+    "bazel",
+    "catkin",
+    "python"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "ad00cb4ec5fa214eb6b8fbcda438fd6372995228f41ce141d41f9f0f981603b1",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2142,
+  "description": "Create a GitHub Actions workflow named Docs that builds and deploys documentation. Trigger on push to main and version branches in the docs directory, on pull requests to the docs directory, and on workflow dispatch. Use ubuntu-24.04 jobs to check out code, set up Node.js 20 with npm caching, install dependencies with yarn, build docs with VitePress, and upload the build artifact. Deploy the artifact to a GitHub repository using credentials from secrets, conditional on push, workflow dispatch, or merged pull request events.",
+  "tags": [
+    "nodejs",
+    "vitepress",
+    "docs",
+    "github-pages",
+    "deployment"
+  ]
+}

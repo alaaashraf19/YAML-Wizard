@@ -1,0 +1,19 @@
+.test:
+  script:
+  - make
+  stage: test
+test-25.3:
+  extends: .test
+  image: flycheck/emacs-cask:25.3
+test-26.1:
+  extends: .test
+  image: flycheck/emacs-cask:26.1
+test-26.2:
+  extends: .test
+  image: flycheck/emacs-cask:26.2
+test-26.3:
+  extends: .test
+  image: flycheck/emacs-cask:26.3
+test-master:
+  extends: .test
+  image: flycheck/emacs-cask:master

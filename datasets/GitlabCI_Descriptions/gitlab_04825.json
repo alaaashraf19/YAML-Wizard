@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_04825",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 645,
+  "description": "Create a GitLab CI pipeline that uses the fommil/docker-openjdk-sbt:latest Docker image, defines the variables COURSIER_CACHE and SBT_TASK_LIMIT, and includes two stages: build and deploy. In the build stage add a build_job that uses a cache with key \"default\" pulling the path project/.sbt, is excluded on the master branch, and runs the script: if $(git grep -qE \"TODO|FIXME\" *) ; then echo \"Please remove TODO or FIXME.\" ; exit 1 ; fi, then sbt \";+check ;+cpl ;+lint ;+test\", then cd scalafix ; sbt tests/test. In the deploy stage add a deploy_job that also uses the same cache, runs only on the master branch and not on tags, and executes sbt \";+update;+publish\" followed by cd scalafix ; sbt update.",
+  "tags": [
+    "sbt",
+    "scala",
+    "docker-openjdk",
+    "build",
+    "deploy",
+    "gitlab-ci"
+  ]
+}

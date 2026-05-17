@@ -1,0 +1,21 @@
+build:
+  artifacts:
+    paths:
+    - dist/verso-*-x86_64.AppImage
+  script:
+  - rustc --version
+  - cargo --version
+  - node --version
+  - npm i
+  - npm rebuild
+  - npm run dist
+  - npm run test
+cache:
+  paths:
+  - cargo/
+  - node_modules/
+image: registry.gitlab.com/p8n/verso-ci-image:latest
+variables:
+  CARGO_FLAGS: --color always
+  CARGO_HOME: $CI_PROJECT_DIR/cargo
+  CARGO_INCREMENTAL: 0

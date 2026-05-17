@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_17415",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1384,
+  "description": "Create a GitLab CI pipeline that runs a common before_script to set up the workspace, clone srrg_cmake_modules, export SRRG_SCRIPT_PATH, source its install_environment.sh with $CI_PROJECT_DIR and $CI_PROJECT_NAME, start ssh-agent, add $SSH_PRIVATE_KEY_FULL, configure ~/.ssh, and source srrg2_integration/gitlab-ci.bash. Define a single build stage with four jobs: build_ubuntu1604_kinetic_debug uses the osrf/ros:kinetic-desktop-full-xenial image and runs catkin build -j4 -DCMAKE_BUILD_TYPE=Debug --summarize --no-status --force-color; build_ubuntu1604_kinetic_release uses the same image and runs catkin build -j4 --summarize --no-status --force-color then catkin run_tests -j4; build_ubuntu1804_melodic_debug uses the osrf/ros:melodic-desktop-full-bionic image and runs catkin build -j4 -DCMAKE_BUILD_TYPE=Debug --summarize --no-status --force-color; build_ubuntu1804_melodic_release uses the same image and runs catkin build -j4 --summarize --no-status --force-color then catkin run_tests -j4. No caches, artifacts, or special rules are defined.",
+  "tags": [
+    "ros",
+    "catkin",
+    "kinetic",
+    "melodic",
+    "ubuntu1604",
+    "ubuntu1804",
+    "debug",
+    "release"
+  ]
+}

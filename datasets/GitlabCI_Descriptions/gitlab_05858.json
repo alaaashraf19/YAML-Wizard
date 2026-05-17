@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_05858",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 394,
+  "description": "Create a GitLab CI pipeline with a single job named test that runs in the test stage using the Docker image registry.gitlab.com/craigbarnes/dockerfiles/cdev-debian. The job should execute the following shell commands in order: export MAKEFLAGS=\\\"-j$(mk/nproc.sh)\\\" WERROR=1 V=1, make check CC=\\\"ccache ${CC:-gcc}\\\", make install, tally, make CC='ccache gcc', make CC='ccache gcc' LDFLAGS=-static, make CC='ccache clang', make CC='ccache arm-linux-gnueabihf-gcc', and make CC='ccache aarch64-linux-gnu-gcc'. No caches, artifacts, services, or special rules are required.",
+  "tags": [
+    "cdev-debian",
+    "make",
+    "ccache",
+    "test"
+  ]
+}

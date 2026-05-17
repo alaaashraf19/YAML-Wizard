@@ -1,0 +1,15 @@
+{
+  "sha": "d955c06981375ed5769c62cd9b2e37b1c22505bf4ec7c3a3377405c6b2f52639",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5461,
+  "description": "Create a GitHub Actions workflow to package BeamerPresenter for Ubuntu 20.04. The workflow should trigger on push events with tags matching 'v*'. It should configure, build, and package the project in three variants: with Qt5 and Poppler, with Qt5 and MuPDF, and with Qt5 and a small MuPDF. Additionally, it should download and build MuPDF. The workflow should upload the resulting Debian packages as artifacts and release them as a draft on tag pushes.",
+  "tags": [
+    "ubuntu",
+    "qt5",
+    "mupdf",
+    "poppler",
+    "packaging",
+    "github-release"
+  ]
+}

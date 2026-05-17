@@ -1,0 +1,16 @@
+{
+  "sha": "cf43de37f878bc7873eaec45c5011e1bbc129e6064c3c107bc31121f94fa1940",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3741,
+  "description": "Create a GitHub Actions workflow named build that runs on push to the master branch. The workflow uses a Windows environment with MSYS2, sets up a matrix strategy for 32-bit and 64-bit builds with different Qt5 versions and DLLs. It checks out the repository, sets up MSYS2, configures the environment, downloads and extracts Qt5 and DLLs, runs autogen.sh, builds D3D9 and OpenGL versions of the project, and uploads the resulting artifacts.",
+  "tags": [
+    "windows",
+    "msys2",
+    "qt5",
+    "build",
+    "artifacts",
+    "d3d9",
+    "opengl"
+  ]
+}

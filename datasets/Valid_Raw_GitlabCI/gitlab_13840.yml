@@ -1,0 +1,18 @@
+build-artifact:
+  artifacts:
+    name: $CI_COMMIT_REF_NAME
+    paths:
+    - build/
+  script:
+  - yarn
+  - yarn build
+  stage: build
+image: node:latest
+run-tests:
+  script:
+  - yarn
+  - yarn test
+  stage: test
+stages:
+- test
+- build

@@ -1,0 +1,14 @@
+{
+  "sha": "c73c3aaa96ea4940f598610e1ffd44e7c5f933948ae16ab5913190761767221f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 483,
+  "description": "Create a GitHub Actions workflow named release that triggers on push events with tags matching v*. Run a single job on an ubuntu-18.04 environment, checking out the code, then build and package using ./make.sh release-git, and finally publish using ./make.sh publish with AWS credentials from secrets.",
+  "tags": [
+    "release",
+    "tags",
+    "aws",
+    "s3",
+    "make"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "49f0f6f6318e0f006dffae117c13d4665c3a90947306f7c77431075aaa8d8899",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1547,
+  "description": "Create a GitHub Actions workflow named Analyzers that runs on pull requests, pushes, and published releases. Use an ubuntu-latest job with a matrix strategy to run for different tools (clang-analyzer, iwyu) and configurations (Release, Debug). Checkout the repository, install dependencies, configure the build with CMake, download Clang analysis driver scripts, and then run either Clang Analyzer or IWYU based on the tool in the matrix.",
+  "tags": [
+    "clang",
+    "analyzer",
+    "iwyu",
+    "ubuntu",
+    "cmake",
+    "github-actions"
+  ]
+}

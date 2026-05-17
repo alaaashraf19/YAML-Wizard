@@ -1,0 +1,484 @@
+name: Build and Test
+
+on:
+  push:
+    branches:
+    - 'master'
+    - 'develop'
+    tags:
+    - 'v*'
+  pull_request:
+    branches:
+    - '*'
+
+
+jobs:
+  coverage:
+    name: coverage (ubuntu-18.04)
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Install lcov
+        run: sudo apt-get install -y lcov
+      - name: configure
+        run: cmake -DCMAKE_BUILD_TYPE=Coverage -DASAN=ON -DUBSAN=ON -DLSAN=ON -DWERROR=OFF -j 2 -Bbuild -H.
+      - name: build
+        run: cmake --build build -j 2
+      - name: test
+        run: ./build/src/unit_tests_runner
+      - name: run lcov
+        run: lcov --capture --directory . --output-file lcov.info
+      - name: Coveralls
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: "./lcov.info"
+
+  ubuntu18-non-superbuild:
+    name: ubuntu-18.04 (non-backend, non-superbuild)
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: install
+        run: sudo apt-get update && sudo apt-get install -y libjsoncpp-dev libcurl4-openssl-dev libtinyxml2-dev
+      - name: configure
+        run: cmake -DCMAKE_BUILD_TYPE=Release -DSUPERBUILD=OFF -DWERROR=OFF -j 2 -Bbuild/release -H.
+      - name: build
+        run: cmake --build build/release -j 2
+      - name: test
+        run: ./build/release/src/unit_tests_runner
+
+  ubuntu18-superbuild:
+    name: ubuntu-18.04 (backend, superbuild)
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: configure
+        run: cmake -DCMAKE_BUILD_TYPE=Release -DSUPERBUILD=ON -DBUILD_BACKEND=ON -DWERROR=OFF -j 2 -Bbuild/release -H.
+      - name: build
+        run: cmake --build build/release -j 2
+      - name: install
+        run: sudo cmake --build build/release --target install
+      - name: install examples dependencies
+        run: sudo apt-get install -y libsdl2-dev
+      - name: configure examples
+        run: (cd examples && cmake -DCMAKE_BUILD_TYPE=Release -DWERROR=OFF -j 2 -Bbuild -H.)
+      - name: build examples
+        run: (cd examples && cmake --build build -j 2)
+      - name: test
+        run: ./build/release/src/unit_tests_runner
+      - name: test (mavsdk_server)
+        run: ./build/release/src/backend/test/unit_tests_backend
+
+  ubuntu20-proto-check:
+    name: ubuntu-20.04 (proto check)
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: install clang-format
+        run: sudo apt-get install -y clang-format-10
+      - name: install dcsdkgen
+        run: |
+             cd proto/pb_plugins
+             pip3 install --user -r requirements.txt
+             pip3 install --user -e .
+      - name: build necessary protoc tooling
+        run: cmake -DBUILD_BACKEND=ON -Bbuild/default -H.
+      - name: generate code from protos
+        run: PATH="$PATH:$HOME/.local/bin" tools/generate_from_protos.sh
+      - name: fix style
+        run: tools/fix_style.sh . || true
+      - name: check for diff
+        run: git diff --exit-code
+
+  ubuntu20-check-style:
+    name: ubuntu-20.04 (check style and docs)
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: install dependencies
+        run: sudo apt-get install -y doxygen clang-format-10
+      - name: check style
+        run: ./tools/fix_style.sh .
+      - name: check docs
+        run: tools/generate_docs.sh
+
+  alpine-linux:
+    name: alpine 3.11.6 (musl)
+    runs-on: ubuntu-18.04
+    container: alpine:3.11.6
+    steps:
+      - name: install tools
+        run: apk update && apk add build-base cmake git linux-headers
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: configure
+        run: cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_BACKEND=ON -DBUILD_SHARED_LIBS=OFF -DBUILD_STATIC_MAVSDK_SERVER=ON -DCMAKE_INSTALL_PREFIX=install -DWERROR=OFF -j 2 -Bbuild/release -H.
+      - name: build
+        run: cmake --build build/release --target install -- -j2
+      - name: test
+        run: ./build/release/src/unit_tests_runner
+      - name: test (mavsdk_server)
+        run: ./build/release/src/backend/test/unit_tests_backend
+      - name: Check the artifact
+        run: |
+          file "./install/bin/mavsdk_server"
+      - name: Publish artefacts
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: svenstaro/upload-release-action@v1-release
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: 'install/bin/mavsdk_server'
+          asset_name: 'mavsdk_server_musl_x86_64'
+          tag: ${{ github.ref }}
+          overwrite: true
+
+  alpine-linux-qemu:
+    runs-on: ubuntu-18.04
+    name: Build on alpine for ${{ matrix.arch }}
+
+    strategy:
+      matrix:
+        include:
+          - arch: armv6
+            distro: alpine_latest
+          - arch: armv7
+            distro: alpine_latest
+          - arch: aarch64
+            distro: alpine_latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Prepare ccache timestamp
+        id: ccache_cache_timestamp
+        shell: cmake -P {0}
+        run: |
+          string(TIMESTAMP current_date "%Y-%m-%d-%H;%M;%S" UTC)
+          message("::set-output name=timestamp::${current_date}")
+      - name: ccache cache files
+        uses: actions/cache@v1.1.0
+        with:
+          path: .ccache
+          key: ${{ matrix.arch }}-ccache-${{ steps.ccache_cache_timestamp.outputs.timestamp }}
+          restore-keys: |
+            ${{ matrix.arch }}-ccache-
+
+      - uses: uraimo/run-on-arch-action@v2.0.6
+        name: Build
+        id: build
+        with:
+          arch: ${{ matrix.arch }}
+          distro: ${{ matrix.distro }}
+
+          # Not required, but speeds up builds
+          githubToken: ${{ github.token }}
+
+          # Mount the source directory in the container
+          dockerRunArgs: |
+            --volume "${PWD}:/root/MAVSDK"
+            --volume "${PWD}/.ccache:/root/.ccache"
+
+          # Pass some environment variables to the container
+          #env: | # YAML, but pipe character is necessary
+          #  artifact_name: git-${{ matrix.distro }}_${{ matrix.arch }}
+
+          # The shell to run commands with in the container
+          shell: /bin/sh
+
+          # Install some dependencies in the container. This speeds up builds if
+          # you are also using githubToken. Any dependencies installed here will
+          # be part of the container image that gets cached, so subsequent
+          # builds don't have to re-install them. The image layer is cached
+          # publicly in your project's package repository, so it is vital that
+          # no secrets are present in the container state or logs.
+          install: |
+            apk update
+            apk add build-base cmake git linux-headers libexecinfo-dev ccache
+
+          run: |
+            cd /root/MAVSDK
+            export CC=/usr/lib/ccache/bin/gcc
+            export CXX=/usr/lib/ccache/bin/g++
+            export CCACHE_COMPRESS="true"
+            export CCACHE_MAXSIZE="400M"
+            cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_BACKEND=ON -DBUILD_SHARED_LIBS=OFF -DBUILD_STATIC_MAVSDK_SERVER=ON -DCMAKE_INSTALL_PREFIX=install -DWERROR=OFF -j 2 -Bbuild/release -H.
+            cmake --build build/release --target install -- -j2
+            ./build/release/src/unit_tests_runner
+            ./build/release/src/backend/test/unit_tests_backend
+            ccache -s
+
+      - name: Check the artifact
+        run: |
+          file "${PWD}/install/bin/mavsdk_server"
+      - name: Publish artefacts
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: svenstaro/upload-release-action@v1-release
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: 'install/bin/mavsdk_server'
+          asset_name: 'mavsdk_server_musl_${{ matrix.arch }}'
+          tag: ${{ github.ref }}
+          overwrite: true
+
+  px4-sitl-older:
+    name: PX4 SITL ${{ matrix.px4_version }} (ubuntu-18.04)
+    runs-on: ubuntu-18.04
+    container: mavsdk/mavsdk-ubuntu-18.04-px4-sitl-${{ matrix.px4_version }}
+    strategy:
+      matrix:
+        px4_version: [v1.9, v1.10]
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: test
+        run: PX4_VERSION=${{ matrix.px4_version }} tools/run-sitl-tests.sh /home/user/Firmware
+
+  px4-sitl-newer:
+    name: PX4 SITL ${{ matrix.px4_version }} (ubuntu-20.04)
+    runs-on: ubuntu-18.04
+    container: mavsdk/mavsdk-ubuntu-20.04-px4-sitl-${{ matrix.px4_version }}
+    strategy:
+      matrix:
+        px4_version: [v1.11]
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: test
+        run: PX4_VERSION=${{ matrix.px4_version }} tools/run-sitl-tests.sh /home/user/Firmware
+
+  deb-package:
+    name: ${{ matrix.container_name }} (package, non-backend)
+    runs-on: ubuntu-18.04
+    container: mavsdk/mavsdk-${{ matrix.container_name }}
+    strategy:
+      matrix:
+        container_name: [ubuntu-18.04, ubuntu-20.04]
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: configure
+        run: cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_BACKEND=OFF -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=install -DWERROR=OFF -j 2 -Bbuild/release -H.
+      - name: build
+        run: cmake --build build/release --target install -- -j2
+      - name: Package
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: tools/create_packages.sh ./install .
+      - name: Publish artefacts
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: svenstaro/upload-release-action@v1-release
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file_glob: true
+          file: '*.deb'
+          tag: ${{ github.ref }}
+          overwrite: true
+
+  rpm-package:
+    name: ${{ matrix.container_name }} (package, non-backend)
+    runs-on: ubuntu-18.04
+    container: mavsdk/mavsdk-${{ matrix.container_name }}
+    strategy:
+      matrix:
+        container_name: [fedora-31, fedora-32]
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: configure
+        run: cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_BACKEND=OFF -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=install -DWERROR=OFF  -j 2 -Bbuild/release -H.
+      - name: build
+        run: cmake --build build/release --target install -- -j2
+      - name: Package
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: tools/create_packages.sh ./install .
+      - name: Publish artefacts
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: svenstaro/upload-release-action@v1-release
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file_glob: true
+          file: '*.rpm'
+          tag: ${{ github.ref }}
+          overwrite: true
+
+  dockcross-linux:
+    name: ${{ matrix.arch_name }}
+    runs-on: ubuntu-18.04
+    strategy:
+      matrix:
+        arch_name: [linux-armv6, linux-armv7, linux-arm64, manylinux2010-x64, manylinux2014-aarch64]
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: setup dockcross
+        run: docker run --rm dockcross/${{ matrix.arch_name }} > ./dockcross-${{ matrix.arch_name }}; chmod +x ./dockcross-${{ matrix.arch_name }}
+      - name: configure
+        run: ./dockcross-${{ matrix.arch_name }} cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=build/${{ matrix.arch_name }}/install -DBUILD_BACKEND=ON -DBUILD_SHARED_LIBS=OFF -DWERROR=OFF -j 2 -Bbuild/${{ matrix.arch_name }} -H.
+      - name: build
+        run: ./dockcross-${{ matrix.arch_name }} cmake --build build/${{ matrix.arch_name }} -j 2 --target install
+      - name: Publish artefacts
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: svenstaro/upload-release-action@v1-release
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: 'build/${{ matrix.arch_name }}/install/bin/mavsdk_server'
+          asset_name: 'mavsdk_server_${{ matrix.arch_name }}'
+          tag: ${{ github.ref }}
+          overwrite: true
+
+  dockcross-android-arm:
+    name: android-arm
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: setup dockcross
+        run: docker run --rm dockcross/android-arm > ./dockcross-android-arm; chmod +x ./dockcross-android-arm
+      - name: configure
+        run: ./dockcross-android-arm cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=build/android-arm/install -DBUILD_BACKEND=ON -DBUILD_SHARED_LIBS=OFF -DWERROR=OFF -j 2 -Bbuild/android-arm -H.
+      - name: build
+        run: ./dockcross-android-arm cmake --build build/android-arm -j 2 --target install
+      - name: create tar with header and library
+        run: mkdir -p build/android-arm/export/include; cp build/android-arm/install/include/mavsdk/backend/backend_api.h build/android-arm/export/include; mkdir -p build/android-arm/export/armeabi-v7a; cp build/android-arm/install/lib/libmavsdk_server.so build/android-arm/export/armeabi-v7a; tar -C build/android-arm/export -cf build/android-arm/export/mavsdk_server_android-arm.tar armeabi-v7a include;
+      - name: Publish artefacts
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: svenstaro/upload-release-action@v1-release
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: 'build/android-arm/export/mavsdk_server_android-arm.tar'
+          asset_name: 'mavsdk_server_android-arm.tar'
+          tag: ${{ github.ref }}
+          overwrite: true
+
+  dockcross-android-arm64:
+    name: android-arm64
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: setup dockcross
+        run: docker run --rm dockcross/android-arm64 > ./dockcross-android-arm64; chmod +x ./dockcross-android-arm64
+      - name: configure
+        run: ./dockcross-android-arm64 cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=build/android-arm64/install -DBUILD_BACKEND=ON -DBUILD_SHARED_LIBS=OFF -DWERROR=OFF -j 2 -Bbuild/android-arm64 -H.
+      - name: build
+        run: ./dockcross-android-arm64 cmake --build build/android-arm64 -j 2 --target install
+      - name: create tar with header and library
+        run: mkdir -p build/android-arm64/export/include; cp build/android-arm64/install/include/mavsdk/backend/backend_api.h build/android-arm64/export/include; mkdir -p build/android-arm64/export/arm64-v8a; cp build/android-arm64/install/lib/libmavsdk_server.so build/android-arm64/export/arm64-v8a; tar -C build/android-arm64/export -cf build/android-arm64/export/mavsdk_server_android-arm64.tar arm64-v8a include;
+      - name: Publish artefacts
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: svenstaro/upload-release-action@v1-release
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: 'build/android-arm64/export/mavsdk_server_android-arm64.tar'
+          asset_name: 'mavsdk_server_android-arm64.tar'
+          tag: ${{ github.ref }}
+          overwrite: true
+
+  debian-packaging:
+    name: Ubuntu/Debian packaging (Ubuntu 20.04)
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+          fetch-depth: 0
+      - name: Install lcov
+        run: sudo apt-get update && sudo apt-get install -y build-essential debhelper fakeroot libjsoncpp-dev libcurl4-openssl-dev libtinyxml2-dev libjsoncpp1 libcurl4 libtinyxml2-6a
+      - name: Generate changelog
+        run: ./tools/generate_debian_changelog.sh > debian/changelog
+      - name: Build package
+        run: dpkg-buildpackage -us -uc -b
+
+  macOS:
+    name: macOS
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: configure
+        run: cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=build/release/install -DBUILD_BACKEND=ON -DBUILD_SHARED_LIBS=OFF -DWERROR=OFF -j 2 -Bbuild/release -H.
+      - name: build
+        run: cmake --build build/release -j 2 --target install
+      - name: test (core)
+        run: ./build/release/src/unit_tests_runner
+      - name: test (mavsdk_server)
+        run: ./build/release/src/backend/test/unit_tests_backend
+      - name: Publish artefacts
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: svenstaro/upload-release-action@v1-release
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: 'build/release/install/bin/mavsdk_server'
+          asset_name: 'mavsdk_server_macos'
+          tag: ${{ github.ref }}
+          overwrite: true
+
+  iOS:
+    name: iOS
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: configure (ios)
+        run: cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=$(pwd)/tools/ios.toolchain.cmake -DPLATFORM=OS -DBUILD_BACKEND=ON -DBUILD_SHARED_LIBS=OFF -DWERROR=OFF -j 2 -Bbuild/ios -H.
+      - name: build (ios)
+        run: cmake --build build/ios -j 2
+      - name: configure (ios_simulator)
+        run: cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=$(pwd)/tools/ios.toolchain.cmake -DPLATFORM=SIMULATOR64 -DBUILD_BACKEND=ON -DBUILD_SHARED_LIBS=OFF -DWERROR=OFF -j 2 -Bbuild/ios_simulator -H.
+      - name: build (ios_simulator)
+        run: cmake --build build/ios_simulator -j 2
+      - name: Package
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: bash ./src/backend/tools/package_backend_framework.bash
+      - name: Publish artefacts
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: svenstaro/upload-release-action@v1-release
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: 'build/mavsdk_server.zip'
+          asset_name: 'mavsdk_server_ios.zip'
+          tag: ${{ github.ref }}
+          overwrite: true
+
+  Windows:
+    name: Windows
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: configure
+        run: cmake -G "Visual Studio 16 2019" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=build/release/install -DBUILD_BACKEND=ON -DBUILD_SHARED_LIBS=OFF -DWERROR=OFF -j 2 -Bbuild/release -S.
+      - name: build
+        run: cmake --build build/release -j 2 --config Release --target install
+      - name: Publish artefacts
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: svenstaro/upload-release-action@v1-release
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: 'build/release/install/bin/mavsdk_server_bin.exe'
+          asset_name: 'mavsdk_server_win32.exe'
+          tag: ${{ github.ref }}
+          overwrite: true

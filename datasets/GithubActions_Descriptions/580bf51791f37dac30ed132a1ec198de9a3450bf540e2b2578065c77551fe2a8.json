@@ -1,0 +1,14 @@
+{
+  "sha": "580bf51791f37dac30ed132a1ec198de9a3450bf540e2b2578065c77551fe2a8",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4088,
+  "description": "Create a GitHub Actions workflow named Ubuntu build that triggers on push events. The workflow should have a build job matrix with multiple configurations on ubuntu-22.04, each with different compilers and build settings. For each configuration, it should check out the repository, create a build environment, install Boost, configure the build with CMake, and perform the build and installation. Additionally, set up a notify job that sends a Discord notification on failure.",
+  "tags": [
+    "ubuntu",
+    "cmake",
+    "boost",
+    "discord-notification",
+    "matrix-build"
+  ]
+}

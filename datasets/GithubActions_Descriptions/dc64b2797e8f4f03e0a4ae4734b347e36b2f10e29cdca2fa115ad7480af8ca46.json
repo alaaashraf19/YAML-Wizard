@@ -1,0 +1,14 @@
+{
+  "sha": "dc64b2797e8f4f03e0a4ae4734b347e36b2f10e29cdca2fa115ad7480af8ca46",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 586,
+  "description": "Create a GitHub Actions workflow named Deploy Docs that runs on every push to the main branch. Use an ubuntu-latest job that checks out the repository, installs asciidoctor and rouge, sets up Hugo with the latest version, builds the documentation in the docs directory with hugo --minify, and deploys it to GitHub Pages using the GITHUB_TOKEN from secrets.",
+  "tags": [
+    "hugo",
+    "docs",
+    "deployment",
+    "github-pages",
+    "asciidoctor"
+  ]
+}

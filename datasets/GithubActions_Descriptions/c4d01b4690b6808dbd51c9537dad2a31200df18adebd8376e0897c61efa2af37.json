@@ -1,0 +1,15 @@
+{
+  "sha": "c4d01b4690b6808dbd51c9537dad2a31200df18adebd8376e0897c61efa2af37",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3215,
+  "description": "Create a GitHub Actions workflow named ci-neon that runs on push to the calamares branch, on pull request opened, reopened, or synchronize events, and on workflow dispatch. Use an ubuntu-latest job in a kdeneon/plasma:user container to prepare the environment, checkout the code, install dependencies, and build Calamares using cmake with custom arguments. Notify IRC channels on success or failure.",
+  "tags": [
+    "calamares",
+    "cmake",
+    "ubuntu",
+    "plasma",
+    "irc",
+    "notifications"
+  ]
+}

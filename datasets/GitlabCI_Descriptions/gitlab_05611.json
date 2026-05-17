@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_05611",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2060,
+  "description": "Create a GitLab CI pipeline that caches pip files at $CI_PROJECT_PATH/.cache/pip, sets DEBIAN_FRONTEND and XDG_CACHE_HOME variables, and includes an external base template. Define test and deploy stages. In the test stage add a lint job (python:3.6) that runs apk add git, installs setuptools==21 and pip==9.0.1, installs coala and coala-bears via git+ URLs, then executes coala --ci. Add a moban job (python:3.6) that installs moban with the test-requirements.txt constraint and runs .ci/check_moban.sh. Add a py36_testGeneratedParsers job (python:3.6) that installs the same coala packages, runs .ci/downloadGrammars.sh, .ci/setupAntlr.sh, .ci/antlrGenerate.sh, removes .ci/grammars/, and verifies no git diff. Add three test jobs named tests:3.5, tests:3.6, tests:3.7 (python:3.x‑alpine) that share a before_script installing git, setuptools==21, pip==9.0.1, and all requirements, then run pytest with --cov-fail-under=100 and upload coverage via codecov, retrying twice. In the deploy stage add a pages job (python:3.6‑alpine) that installs git and make via apk, installs project and docs requirements, builds docs with python setup.py docs, moves the HTML output to a public folder, and publishes the public directory as a GitLab Pages artifact.",
+  "tags": [
+    "python-3.6",
+    "pytest",
+    "codecov",
+    "coala",
+    "moban",
+    "gitlab-pages",
+    "documentation"
+  ]
+}

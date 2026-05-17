@@ -1,0 +1,14 @@
+{
+  "sha": "0e7b84b0f8c1ae7a6887f866d69d2faf1147e16e9d86df7c4e0e6d6e2dcc389d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2223,
+  "description": "Create a GitHub Actions workflow named GitHub Release that runs concurrently with cancel-in-progress behavior. Trigger on pull requests, push to trunk branch or tags matching v*, and workflow dispatch. The workflow should have a default bash shell and define a release job that builds a tarball on ubuntu-latest, installs tools, determines the last tag, generates a changelog, copies and tars the source code, and uploads the artifacts. A subsequent publish job depends on the release job, downloads the artifacts, and creates a GitHub release with the tarballs and changelog when a tag is pushed.",
+  "tags": [
+    "github-release",
+    "tarball",
+    "changelog",
+    "ubuntu",
+    "bash"
+  ]
+}

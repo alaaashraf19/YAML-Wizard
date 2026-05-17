@@ -1,0 +1,19 @@
+image: node:latest
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - source ./build.sh
+  stage: deploy
+test:
+  artifacts:
+    paths:
+    - public
+  except:
+  - master
+  script:
+  - source ./build.sh
+  stage: test

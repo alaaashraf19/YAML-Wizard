@@ -1,0 +1,48 @@
+coverage:
+  script:
+  - tox -e py312-django42-cov
+  stage: test
+docs:
+  script:
+  - tox -e docs
+  stage: quality-assurance
+image: ghcr.io/maxking/mailman-ci-runner:latest
+include:
+- template: SAST.gitlab-ci.yml
+lint-js:
+  image: node:latest
+  script:
+  - npm install -g eslint@"<9.0"
+  - eslint -c .eslintrc.yml hyperkitty/static/hyperkitty/js
+  stage: quality-assurance
+qa:
+  script:
+  - tox -e qa
+  stage: quality-assurance
+stages:
+- quality-assurance
+- test
+test-django42:
+  parallel:
+    matrix:
+    - PYTHON_VER:
+      - '39'
+      - '310'
+      - '311'
+      - '312'
+  script:
+  - tox -e "py$PYTHON_VER-django42"
+  stage: test
+test-django52:
+  parallel:
+    matrix:
+    - PYTHON_VER:
+      - '310'
+      - '311'
+      - '312'
+      - '313'
+  script:
+  - tox -e "py$PYTHON_VER-django52"
+  stage: test
+variables:
+  SAST_DEFAULT_ANALYZERS: bandit,secrets

@@ -1,0 +1,15 @@
+{
+  "sha": "5c4ef60778f5c9cdc2727f341c02bdaf2ef6de33e213bb53348a7af931d1318a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2644,
+  "description": "Create a GitHub Actions workflow named Build that runs on every push. The workflow has three jobs: test, build, and release. The test job uses a matrix strategy to test on multiple OS and Python versions, installing poetry and running tests. The build job depends on test, runs on ubuntu-latest if the push is a tag, and builds the project with poetry. The release job depends on build, uploads the build artifact, generates a changelog, and releases the project to GitHub and PyPI.",
+  "tags": [
+    "python",
+    "poetry",
+    "github-actions",
+    "release-workflow",
+    "testing",
+    "pypi"
+  ]
+}

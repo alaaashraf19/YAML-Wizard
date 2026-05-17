@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_07646",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 274,
+  "description": "Create a GitLab CI pipeline that uses the jangrewe/gitlab-ci-android Docker image and defines a single stage named build. Include a before_script that sets GRADLE_USER_HOME to the repository's .gradle directory and makes ./gradlew executable. Add a build job in the build stage that runs ./gradlew assembleRelease and publishes the generated app-release-unsigned.apk located at app/build/outputs/apk/release/ as a job artifact. The pipeline has no additional services, caches, or conditional rules.",
+  "tags": [
+    "android",
+    "gradle",
+    "apk",
+    "gitlab-ci-android",
+    "build"
+  ]
+}

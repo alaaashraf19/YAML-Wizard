@@ -1,0 +1,71 @@
+before_script:
+- export GRADLE_USER_HOME=`pwd`/.gradle
+- export MAVEN_USER_HOME=`pwd`/.maven
+- npm install
+cache:
+  key: $CI_BUILD_REF_NAME
+  paths:
+  - node_modules
+  - .gradle/wrapper
+  - .gradle/caches
+  - .maven
+docker-build:
+  before_script:
+  - docker info
+  - cp target/*.war src/main/docker
+  dependencies:
+  - maven-repackage
+  image: docker:latest
+  script:
+  - docker login -u "gitlab-ci-token" -p "$CI_BUILD_TOKEN" registry.gitlab.com
+  - docker build -f src/main/docker/Dockerfile -t registry.gitlab.com/atomfrede/jhipster-ci-example-maven
+    src/main/docker
+  - docker push registry.gitlab.com/atomfrede/jhipster-ci-example-maven
+  stage: release
+gatling-test:
+  allow_failure: true
+  artifacts:
+    paths:
+    - target/gatling/*
+  before_script:
+  - npm install
+  - export MAVEN_USER_HOME=`pwd`/.maven
+  - ./mvnw spring-boot:run -Dmaven.repo.local=$MAVEN_USER_HOME &
+  script:
+  - ./mvnw gatling:execute -Dmaven.repo.local=$MAVEN_USER_HOME
+  stage: test
+gulp-build:
+  script:
+  - gulp build
+  stage: build
+gulp-test:
+  script:
+  - gulp test
+  stage: test
+image: atomfrede/gitlab-ci-jhipster-stack
+maven-build:
+  script:
+  - ./mvnw compile -Dmaven.repo.local=$MAVEN_USER_HOME
+  stage: build
+maven-repackage:
+  artifacts:
+    paths:
+    - target/*.war
+  script:
+  - ./mvnw package -DskipTests -Dmaven.repo.local=$MAVEN_USER_HOME
+  stage: package
+maven-test:
+  artifacts:
+    paths:
+    - target/surefire-reports/*
+  script:
+  - ./mvnw test -Dmaven.repo.local=$MAVEN_USER_HOME
+  stage: test
+services:
+- docker:dind
+stages:
+- build
+- test
+- package
+- release
+- deploy

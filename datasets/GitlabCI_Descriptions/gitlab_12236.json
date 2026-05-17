@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_12236",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 552,
+  "description": "Create a GitLab CI pipeline with two stages: test and deploy, using a global before_script that runs `npm i` and caches the `node_modules` and `.meteor` directories (untracked). Add a `mocha` job in the test stage that uses the `node:latest` Docker image and executes `npm t`. Add a `deploy` job in the deploy stage that also uses `node:latest`, runs only on the `master` branch, and performs the following commands in order: `echo $METEOR_TOKEN > meteor_session_file.json`, `echo $METEOR_SETTINGS > meteor_settings.json`, `curl https://install.meteor.com/ | sh`, and `METEOR_PROFILE=1 DEPLOY_HOSTNAME=$DEPLOY_HOSTNAME METEOR_SESSION_FILE=meteor_session_file.json meteor deploy magic.modweb.io --settings meteor_settings.json`. The pipeline should deploy the Meteor app to the `magic.modweb.io` host using the provided token and settings.",
+  "tags": [
+    "node",
+    "npm",
+    "meteor",
+    "mocha",
+    "gitlab-ci"
+  ]
+}

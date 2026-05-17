@@ -1,0 +1,97 @@
+name: build
+
+on:
+  push:
+    branches: [ master ]
+    tags-ignore: ['*']
+    paths-ignore: ['**.md']
+  pull_request:
+    branches: [ master ]
+    paths-ignore: ['**.md']
+
+jobs:
+  linux64:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        compiler: [clang, gcc]
+
+    steps:
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install \
+            libsdl2-dev \
+            libsdl2-net-dev \
+            libopenal-dev \
+            libsndfile1-dev \
+            libfluidsynth-dev \
+            libxmp-dev \
+            ninja-build
+
+      - uses: actions/checkout@v3
+
+      - name: Configure
+        env:
+          CC: ${{ matrix.compiler }}
+        run: cmake -B build -G "Ninja" -DENABLE_WERROR=ON -DENABLE_HARDENING=ON -DENABLE_LTO=ON
+
+      - name: Build
+        run: cmake --build build
+
+      - name: Install
+        run: |
+          cd build
+          ninja -v package
+
+  cppcheck:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install cppcheck
+
+      - uses: actions/checkout@v3
+
+      - name: Run cppcheck
+        shell: bash
+        run: |
+          cppcheck --version ; cppcheck --error-exitcode=1 -j4 -q --force -U_WIN32 -Isrc opl src setup textscreen
+
+  win64_msys2:
+    runs-on: windows-latest
+
+    defaults:
+      run:
+        shell: msys2 {0}
+
+    steps:
+      - name: Setup MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: mingw64
+          update: false
+          install: >-
+            mingw-w64-x86_64-gcc
+            mingw-w64-x86_64-cmake
+            mingw-w64-x86_64-ninja
+            mingw-w64-x86_64-SDL2
+            mingw-w64-x86_64-SDL2_net
+            mingw-w64-x86_64-openal
+            mingw-w64-x86_64-libsndfile
+            mingw-w64-x86_64-fluidsynth
+            mingw-w64-x86_64-libxmp
+
+      - uses: actions/checkout@v3
+
+      - name: Configure
+        run: cmake -B build -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DENABLE_WERROR=ON
+
+      - name: Build
+        run: cmake --build build
+
+      - name: Package
+        run: |
+          cd build
+          cpack -G ZIP

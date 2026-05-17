@@ -1,0 +1,60 @@
+before_script:
+- apt-get update -qq && apt-get install -y -qq apache2
+- service apache2 start
+build0:
+  script: echo "Building the app"
+  stage: build
+deploy_prod:
+  environment:
+    name: production
+    url: https://firebaseHosting.example.com
+  only:
+  - master
+  script:
+  - echo "Deploy to prod server npm for cycle analytics  https://gitlab.com/help/ci/environments"
+  stage: deploy
+deploy_review:
+  environment:
+    name: review/$CI_COMMIT_REF_NAME
+    on_stop: stop_review
+    url: https://$CI_ENVIRONMENT_SLUG.example.com
+  except:
+  - master
+  only:
+  - branches
+  script:
+  - echo "Deploy a review app"
+  stage: deploy
+deploy_staging:
+  environment:
+    name: staging
+    url: https://staging.example.com
+  only:
+  - master
+  script:
+  - echo "Deploy to staging server"
+  stage: deploy
+faillingjobmoi:
+  script: exit 1
+indexPage:
+  script: curl http://localhost/public/index.html
+stages:
+- test
+- build
+- deploy
+stop_review:
+  environment:
+    action: stop
+    name: review/$CI_COMMIT_REF_NAME
+  script:
+  - echo "Remove review app"
+  stage: deploy
+  variables:
+    GIT_STRATEGY: none
+  when: manual
+testecho:
+  script: echo "Running tests"
+  stage: test
+testko:
+  script: exit 1
+  stage: test

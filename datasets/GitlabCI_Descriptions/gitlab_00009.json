@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_00009",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 116,
+  "description": "Create a GitLab CI pipeline with a single job named build that runs in the default test stage using the default Docker image. The build job should execute the exact shell commands: cargo --version, rustc --version, cargo build -j2 --verbose, and cargo test -j2 --verbose. No additional stages, caches, artifacts, services, or rules are required.",
+  "tags": [
+    "rust",
+    "cargo",
+    "build",
+    "test"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "a77f401437d0f01bc969820c0744296ce2bfb46b2fd374f96c65cd081f750e79",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2823,
+  "description": "Create a GitHub Actions workflow named ci that runs on push to the master branch and on pull requests to master. The workflow has two jobs: compilers and linux. The compilers job runs on ubuntu-20.04 with a matrix of different C and C++ compilers, installs dependencies, and runs the build script with debug configuration. The linux job runs on a matrix of ubuntu-22.04 and ubuntu-20.04, installs dependencies, and runs the build script.",
+  "tags": [
+    "ci",
+    "ubuntu",
+    "compilers",
+    "linux",
+    "cmake",
+    "build"
+  ]
+}

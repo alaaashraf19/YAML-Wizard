@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_09700",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 3756,
+  "description": "Create a GitLab CI pipeline with three stages (test, build, pages) and set GIT_SUBMODULE_STRATEGY to normal. In the test stage add a checkversions job that allows failure, runs `apt-get update -qq` and `apt-get install -y -qq jq` in before_script, then executes `make -C 3rdparty/ checkversions && test ! -f 3rdparty/check-version-failed || exit 1` in script. Also in test add a tests job that installs SDL and PNG development libraries, runs `CFLAGS=-fsanitize=address LDFLAGS=-fsanitize=address OPTIM=0 make check || exit 1` and uploads `test-report.xml` as a JUnit artifact. In the build stage define job_atari (installs zip, dos2unix, lsb-release, gpg, jq, runs `sh ./.install-cross-mint.sh`, then `ATARICROSS=1 make 3rdparty -j2 || exit 1`, `ATARICROSS=1 make -j2 || exit 1`, `ATARICROSS=1 make ziprelease || exit 1`, echoes CI_JOB_ID to ATARI_JOB_ID, and stores `*.zip` and ATARI_JOB_ID as artifacts), job_gp2x (adds i386 architecture, installs zip, dos2unix, libc6:i386, runs `sh ./.install-gp2x-toolchain.sh`, then `NOLUA=1 GP2XCROSS=1 make -j2 grafx2 || exit 1` and `NOLUA=1 GP2XCROSS=1 make ziprelease || exit 1`, echoes CI_JOB_ID to GP2X_JOB_ID, artifacts `*.zip` and GP2X_JOB_ID), job_linux (installs zip, jq, imagemagick and many SDL and graphics libraries, runs `make -j3 || exit 1`, `make ziprelease || exit 1`, `API=sdl2 make -j3 && API=sdl2 make ziprelease || exit 1`, `./.build-appimage.sh`, `make docarchive || exit 1`, echoes CI_JOB_ID to LINUX_JOB_ID, artifacts `*.zip`, `grafx2*.tgz`, `GrafX2-*.AppImage*`, `VERSION`, and LINUX_JOB_ID), job_switch (uses image devkitpro/devkita64, allows failure, installs build-essential, libpng-dev, zip, dos2unix, jq, updates PATH, runs `SWITCH=1 make -j2 grafx2 || exit 1` and `SWITCH=1 make ziprelease || exit 1`, echoes CI_JOB_ID to SWITCH_JOB_ID, artifacts `*.zip` and SWITCH_JOB_ID), and job_win32 (installs zip, dos2unix, gpg, jq, mingw-w64 toolchain, then runs a series of commands with WIN32CROSS=1 and API variations to build, ziprelease and create installers, echoes CI_JOB_ID to WIN32_JOB_ID, artifacts `*.zip`, `install/grafx2*.exe`, and WIN32_JOB_ID). Finally, in the pages stage add a pages job that runs only on master or gitlab-pages, executes `NOLUA=1 API=x11 make htmldoc`, copies documentation into `public/htmldoc`, copies `share/grafx2/gfx2.png` to public, runs `./.gitlab-page.sh`, extracts a doxygen archive with `cd public && tar xzf ../grafx2*doxygen.tgz`, and publishes the `public` directory as a pages artifact.",
+  "tags": [
+    "make",
+    "cross-compilation",
+    "gitlab-pages",
+    "atari",
+    "gp2x",
+    "linux",
+    "switch",
+    "win32"
+  ]
+}

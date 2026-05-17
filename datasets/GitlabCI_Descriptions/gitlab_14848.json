@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_14848",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 17700,
+  "description": "Create a GitLab CI pipeline with stages build, test, translate, deploy and release, using the docker:25-dind service (DOCKER_DRIVER=overlay2, DOCKER_HOST=tcp://docker:2375/, DOCKER_TLS_CERTDIR='') and jobs that exclude schedules and run on specific branch or tag patterns. In the build-container-alpine job (stage build, image psono-docker.jfrog.io/ubuntu:22.04) run sh ./var/update_version.sh, apt-get update, install curl ca-certificates iptables libdevmapper1.02.1 python3 python3-pip, pip3 install requests, download and verify Docker .deb packages, dpkg -i them, docker login to registry.gitlab.com, create a buildx builder and execute docker buildx build -f DockerfileAlpine --platform linux/amd64,linux/arm64 -t $CONTAINER_TEST_IMAGE --push --pull .; in the build-sbom job (stage test, same image) repeat the Docker installation steps, login, docker pull $CONTAINER_TEST_IMAGE, install syft, run syft scan $CONTAINER_TEST_IMAGE -o cyclonedx-json > sbom.json, move the file to the project root and publish it as an artifact named sbom_$CI_COMMIT_REF_SLUG with path ./; the create-translations job (stage translate, image psono-docker.jfrog.io/ubuntu:22.04) installs python3 and pip, pip3 installs requests and openai==1.55.3, then runs python3 var/translate.py. The deploy job (stage deploy, image psono-docker.jfrog.io/docker:25.0.3-git) logs into GitLab, Artifactory and Docker Hub registries, then runs sh ./var/deploy.sh to push the image to production; deploy-changelog runs sh ./var/deploy_changelog.sh, while deploy-nightlyartifacts and deploy-releaseartifacts depend on build-sbom and run their respective deployment scripts for nightly and latest SBOM URLs. The release-container job (stage release, same docker image) installs skopeo, logs into registries, and copies $CONTAINER_TEST_IMAGE to $CONTAINER_LATEST_IMAGE and $CONTAINER_TEST_ARTIFACTORY_IMAGE; release-version-bump configures SSH with $github_deploy_key, commits a version bump via var/update_version.sh, and pushes to master. Finally, run-unittests-alpine, run-unittests-alpine-arm64 (with tag saas-linux-small-arm64) and run-unittests-ubuntu (stage test) pull $CONTAINER_TEST_IMAGE, start a postgres:15.5-alpine container, then execute pip3 install -r requirements-dev.txt and Django manage commands to presetup, migrate and run parallel tests, with the Ubuntu job also measuring coverage via coverage3.",
+  "tags": [
+    "docker",
+    "dind",
+    "alpine",
+    "ubuntu",
+    "sbom",
+    "release",
+    "test",
+    "translation",
+    "ci",
+    "gitlab"
+  ]
+}

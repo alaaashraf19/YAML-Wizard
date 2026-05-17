@@ -1,0 +1,14 @@
+{
+  "sha": "01c02137b421795f393793e722b396185ef109fc4cdd5d3164b0bd18dd100925",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1550,
+  "description": "Create a GitHub Actions workflow named Build macOS x86_64 Distributable that runs on every push to master and on pull requests to master. Use a single macos-11.0 job that checks out the repository, fetches the entire repository, builds with make using specific environment variables, determines the OpenMSX version, renames the redistributable dmg file based on the version, and uploads it as an artifact.",
+  "tags": [
+    "macos",
+    "make",
+    "openmsx",
+    "ci",
+    "artifact"
+  ]
+}

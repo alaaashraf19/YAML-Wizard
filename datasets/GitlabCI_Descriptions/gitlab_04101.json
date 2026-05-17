@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_04101",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 237,
+  "description": "Create a GitLab CI pipeline that uses the crystallang/crystal:latest Docker image and caches the lib directory. Include a before_script that runs apt-get update -qq && apt-get install -y -qq libxml2-dev, then crystal -v and shards for each job. Define two jobs in the default test stage: a minitest job that executes crystal test/spec_test.cr, and a spec job that runs crystal spec. Both jobs inherit the before_script and use the cached lib path. No additional services, artifacts, or rules are required.",
+  "tags": [
+    "crystal",
+    "minitest",
+    "spec",
+    "cache",
+    "apt-get",
+    "docker"
+  ]
+}

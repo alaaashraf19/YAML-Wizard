@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_11922",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 287,
+  "description": "Create a GitLab CI pipeline that uses the ruby:2.1 Docker image. In the global before_script download and extract the Testspace client with curl -fsSL https://testspace-client.s3.amazonaws.com/testspace-linux.tgz | tar -zxvf- -C /usr/local/bin and configure it using testspace config url http://$TS_TOKEN:@$TS_ORG.stridespace.com. Define a single stage named test and a job called job1 that runs in this stage executing the command testspace -v. After the job finishes, run the global after_script testspace test.xml to publish the test results.",
+  "tags": [
+    "ruby",
+    "testspace",
+    "ci",
+    "test"
+  ]
+}

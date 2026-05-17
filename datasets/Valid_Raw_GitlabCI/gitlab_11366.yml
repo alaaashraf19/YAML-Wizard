@@ -1,0 +1,24 @@
+image: electronuserland/builder:wine
+pages:
+  artifacts:
+    expire_in: 1 hour
+    paths:
+    - public
+  image: seriallab/python3.6dev
+  only:
+  - tags
+  script:
+  - pip install mkdocs
+  - pip install mkdocs-cinder
+  - mkdocs build -d ./public
+  stage: build-docs
+stages:
+- test
+- build-docs
+test:
+  coverage: /All files[^|]*\|[^|]*\s+([\d\.]+)/
+  script:
+  - yarn install
+  - yarn build
+  - yarn test --coverage
+  stage: test

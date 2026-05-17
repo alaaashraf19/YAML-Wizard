@@ -1,0 +1,28 @@
+before_script:
+- echo -e "fastestmirror=True\nmax_parallel_downloads=20\nretries=30" >> /etc/dnf/dnf.conf
+- dnf -q -y install --allowerasing createrepo_c curl git dpkg-devel tar gzip gnupg2
+  expect openssl reprepro findutils rpm-sign
+- chmod +x updaterepos.sh
+image: fedora:latest
+pages:
+  artifacts:
+    expire_in: 1 day
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - ./updaterepos.sh
+  - mkdir .public
+  - mv pkgs/* .public/
+  - echo "<html><body>" > .public/index.html
+  - cat index.html >> .public/index.html
+  - echo "<h2>Index:</h2>" >> .public/index.html
+  - cd .public && find -exec echo "<a href='{}'>{}</a><br/>" \; >> index.html && cd
+    -
+  - echo "</body></html>" >> .public/index.html
+  - mv .public public
+  stage: deploy
+  variables:
+    ARTIFACT_COMPRESSION_LEVEL: fastest
+    FF_USE_FASTZIP: 'true'

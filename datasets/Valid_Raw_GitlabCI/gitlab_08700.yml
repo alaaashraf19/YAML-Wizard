@@ -1,0 +1,26 @@
+.test-template:
+  before_script: &id001
+  - bundle install
+  script: &id002
+  - bundle exec rake spec
+default:
+  image: ruby:${RUBY_VERSION}
+include:
+- component: gitlab.com/gitlab-org/components/gem-release/gem-release@main
+  inputs:
+    gem_name: gitlab_omniauth-ldap
+rspec:
+  before_script: *id001
+  parallel:
+    matrix:
+    - RUBY_VERSION:
+      - '2.7'
+      - '3.0'
+      - '3.1'
+      - '3.2'
+      - '3.3'
+      - '3.4'
+  script: *id002
+stages:
+- test
+- deploy

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_00674",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 407,
+  "description": "Create a GitLab CI pipeline with a single test stage that runs four jobs, each using a different Python Alpine Docker image. Add a test_py27 job in the test stage that uses the python:2.7-alpine image and executes `pip install pytest .` followed by `pytest`. Add a test_py34 job in the test stage that uses the python:3.4-alpine image and runs the same two commands. Similarly, add test_py35 and test_py36 jobs using python:3.5-alpine and python:3.6-alpine images respectively, each running `pip install pytest .` and `pytest`.",
+  "tags": [
+    "python",
+    "pytest",
+    "alpine",
+    "gitlab-ci",
+    "multiple-versions"
+  ]
+}

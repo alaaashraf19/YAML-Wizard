@@ -1,0 +1,16 @@
+abs_vol_check:
+  script:
+  - python3 scripts_tests.py
+before_script:
+- LANG=en_US.UTF-8
+- apt-get update -qq && apt-get install -y python3-pip python3-pandas python3-openpyxl
+  python3-pyqt5
+- python3 --version
+- which python3
+- cd tests
+data_check:
+  script:
+  - python3 data_tests.py
+dvh_textfile_check:
+  script:
+  - python3 utils_tests.py

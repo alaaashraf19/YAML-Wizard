@@ -1,0 +1,14 @@
+{
+  "sha": "665366e8284e62c82fb97177149bde8d0e8bccc05f6ff2086830dabbab54e8b7",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2875,
+  "description": "Create a GitHub Actions workflow named tests that runs on pull requests to branches 18.0* and on pushes to branches 18.0 and 18.0-ocabot-*. The workflow has two jobs: Detect unreleased dependencies on ubuntu-latest and a matrix of tests on ubuntu-22.04 with different containers and names. The test job uses a postgres service, sets up environment variables, checks out the code, installs addons and dependencies, checks licenses and development status, initializes a test db, runs tests, and uploads code coverage and optionally updates .pot files.",
+  "tags": [
+    "tests",
+    "ubuntu",
+    "postgres",
+    "odoo",
+    "codecov"
+  ]
+}

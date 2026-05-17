@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_17246",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1631,
+  "description": "Create a GitLab CI pipeline with stages test and docs, using rust:1.65.0 as the default image and a before_script that adds /root/.cargo/bin to PATH and installs the clippy and rustfmt components via rustup. In the test stage add a check-docs job that uses the rust:latest image, runs cargo rustdoc -- -D warnings, and is triggered only when src/**, Cargo.toml or .gitlab-ci.yml change in branches or merge requests. Also in test add a check-formatting job (rust:latest) that runs cargo fmt -- --check with the same change‑based only rule (including examples/**). Add a run-clippy job (rust:latest) that executes three cargo clippy commands with different feature flags, triggered on changes to src, examples, Cargo.toml, .gitlab-ci.yml or clippy.toml for branches and merge requests. Add a run-tests job (inherits the default rust:1.65.0 image) that runs cargo +1.65.0 test --features=proxy under the same change‑based only rule. Finally, in the docs stage add a pages job (rust:latest) that runs cargo doc --release --no-deps, moves ./target/doc to ./public, creates an index.html redirect to https://docs.tbot.rs/tbot/, and publishes the public directory as a GitLab Pages artifact, only on the master branch when the listed files change.",
+  "tags": [
+    "rust",
+    "cargo",
+    "clippy",
+    "fmt",
+    "docs",
+    "pages",
+    "gitlab-ci"
+  ]
+}

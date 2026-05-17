@@ -1,0 +1,15 @@
+{
+  "sha": "0722406fa775b0721ee273a340e290d9ecfe4858c8c9bfe0a01ac23e4b7c988a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2143,
+  "description": "Create a GitHub Actions workflow named ci that runs on push. It should have two jobs, ci-v8 and ci-quickjs, both running on windows-2019. The ci-v8 job checks out the code, sets up msbuild, downloads an artifact from build_v8.yml, builds a plugin, and runs unit tests. The ci-quickjs job does similar tasks but for quickjs, downloading an artifact from build_quickjs.yml, clearing the quickjs directory, and building a plugin with quickjs.",
+  "tags": [
+    "windows",
+    "msbuild",
+    "ci",
+    "unity",
+    "nuget",
+    "tests"
+  ]
+}

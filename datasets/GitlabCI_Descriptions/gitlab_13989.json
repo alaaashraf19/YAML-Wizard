@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_13989",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 3503,
+  "description": "Create a GitLab CI pipeline with a global before_script that unsets http_proxy and https_proxy and prints CI variables, and define stages build, sign, deploy, staging, and production. Add build jobs (build_centos_6, build_centos_7, build_debian_bookworm, build_debian_bullseye, build_debian_buster, build_debian_jessie, build_debian_stretch, build_fedora_24, build_fedora_25, build_ubuntu_bionic, build_ubuntu_focal, build_ubuntu_jammy, build_ubuntu_kinetic, build_ubuntu_lunar, build_ubuntu_trusty, build_ubuntu_xenial) each using its specific buildpkg/* Docker image, tagged docker, running the single command ci-build-pkg, and publishing the result/* directory as a 1‑day artifact. Add a sign job that runs on buildpkg/debian:stretch, depends on all build jobs, executes ci-sign-pkg, and stores result/* as a 1‑day artifact. Add a pages job that runs on buildpkg/debian:stretch, only on the master branch, runs ci-pages-ppa, ci-pages-home, and ci-pages-tree, publishes the public/ directory as an artifact, and sets a PPA environment with a dynamic URL. Add deploy_staging and deploy_production jobs that run on buildpkg/ubuntu:xenial, only on master, are manual, execute ci-deploy-pkg staging or production respectively, and target Staging and Production environments with the specified URLs.",
+  "tags": [
+    "docker",
+    "buildpkg",
+    "ci-build-pkg",
+    "ci-sign-pkg",
+    "ci-deploy-pkg",
+    "pages",
+    "manual",
+    "artifact"
+  ]
+}

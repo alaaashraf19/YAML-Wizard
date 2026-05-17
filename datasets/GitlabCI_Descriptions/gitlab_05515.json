@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_05515",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 601,
+  "description": "Create a GitLab CI pipeline that uses the ghcr.io/prefix-dev/pixi:latest Docker image with a global before_script installing texlive, texlive-xetex, texlive-fonts-extra and latexmk via apt-get, and sets DEBIAN_FRONTEND=noninteractive. Define a test job in the test stage that runs only for merge request events and executes \"pixi run test\", then \"pixi run build\", then \"pixi run pdf\". Define a pages job in the deploy stage that runs only on the default branch, runs \"pixi run build\" and \"pixi run pdf\", copies _build/latex/modern-cmake.pdf into _build/html/, and publishes the _build/html directory as GitLab Pages with an artifact that expires after one week.",
+  "tags": [
+    "pixi",
+    "latex",
+    "gitlab-pages",
+    "docker-image",
+    "apt",
+    "merge-request"
+  ]
+}

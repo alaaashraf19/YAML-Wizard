@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_14428",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 993,
+  "description": "Create a GitLab CI pipeline with interruptible jobs and a single stage named test. Add a test:install job that runs on a matrix of four Docker images (python:3.10-slim, python:3.11-slim, python:3.12-slim, python:3.13-slim) using the variable $IMG, executes before_script apt update -qq and apt install -y git, then runs ./install.py -vv, verifies a clean git status with git status --short && test \"$(git status --short)\" = \"\", and checks submodule paths with stat $(cat .gitmodules|grep path|sed -e 's/\\spath\\s=\\s//'). Add a test:lint job that uses the python:slim image, sets PATH to $HOME/.local/bin:$PATH, upgrades pip, setuptools and wheel via pip install --user --upgrade pip, pip install --user --upgrade setuptools wheel, installs bandit, black, dlint, flake8 and related plugins via pip install --user --upgrade \\ bandit \\ black \\ dlint \\ flake8 \\ flake8-annotations \\ flake8-docstrings \\ flake8-future-import \\ flake8-import-order \\ mypy \\ pep8-naming \\ pydocstyle \\ types-termcolor, runs pip check, prints versions of black, flake8, and mypy, then runs black --diff --check ./install.py, flake8 --statistics install.py, and mypy --strict install.py. Both jobs belong to the test stage and have no artifacts, caches, or deployment steps. Ensure the pipeline respects the default interruptible setting.",
+  "tags": [
+    "python",
+    "install",
+    "lint",
+    "parallel",
+    "apt",
+    "pip",
+    "flake8",
+    "black",
+    "mypy"
+  ]
+}

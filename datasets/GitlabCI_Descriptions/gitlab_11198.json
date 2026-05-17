@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_11198",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 3209,
+  "description": "Create a GitLab CI pipeline that builds the KitchenSink Android demo for multiple architectures using a shared .android_job_template. Define four build jobs (android_kitchen_arm-v7a, android_kitchen_arm64-v8a, android_kitchen_armeabi, android_kitchen_x86) each in the build stage, each running the common before_script that installs debconf, adds i386 architecture, updates apt, installs build-essential, ccache, git, zlib, Python 2.7, pip, OpenJDK 7, unzip, ant, then installs Buildozer via pip and runs the android_sdk_downloader.py script, and then executes their script blocks: echo the architecture, cd to $CI_PROJECT_DIR/gitlab-ci, run python ./android_sdk_downloader.py with the appropriate --api flag, cd to the demo directory, export APP_ANDROID_ARCH and APP_ANDROID_API, run buildozer android debug, verify the bin folder is not empty, and move the generated *.apk to a file named $CI_BUILD_NAME-$CI_BUILD_REF_NAME-${CI_BUILD_REF:0:8}.apk. Each job uploads the resulting APK as an artifact using the path $CI_PROJECT_DIR/demos/kitchen_sink/bin/$CI_BUILD_NAME-$CI_BUILD_REF_NAME-${CI_BUILD_REF:0:8}.apk. Add a trigger_build_site job in the build stage that runs only on the master branch and executes a curl POST to https://gitlab.com/api/v3/projects/2719855/trigger/builds with token $KIVYMD_DOC_BUILD_TOKEN and ref=master to trigger the documentation site build. No explicit Docker image or services are defined, so the jobs use the default runner environment.",
+  "tags": [
+    "android",
+    "buildozer",
+    "kivy",
+    "apk",
+    "gitlab-ci",
+    "trigger"
+  ]
+}

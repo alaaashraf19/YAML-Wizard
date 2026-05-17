@@ -1,0 +1,15 @@
+{
+  "sha": "846d47a0326f8ee94bad2a23908cf498ec269c4072b7ec0088a3d86a6736490e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5136,
+  "description": "Create a GitHub Actions workflow named ci that runs on every push to the master branch and on pull requests to master. The workflow has read permissions for repository contents. It consists of four jobs: linux, macos, specials, and x-compile. Each job runs on a different environment (ubuntu-latest or macos-latest), checks out the repository, sets up a build agent, and builds and tests Botan using a Python script.",
+  "tags": [
+    "botan",
+    "ci",
+    "ubuntu",
+    "macos",
+    "cross-compilation",
+    "testing"
+  ]
+}

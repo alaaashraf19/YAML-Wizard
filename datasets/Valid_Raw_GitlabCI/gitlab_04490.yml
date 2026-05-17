@@ -1,0 +1,73 @@
+before_script:
+- npm set registry $NPM_REPO
+- npm set $NPM_CREDENTIALS
+- mkdir -p ~/.m2/repository
+- cp maven/settings.xml ~/.m2/settings.xml
+- rm -rf ~/.gnupg
+- gpg --version
+- gpg --import --batch --passphrase "$GPG_PASSPHRASE" <<< "$GPG_KEY"
+- gpg --import-ownertrust <<< "$GPG_OWNER_TRUST"
+build:
+  image: dazraf/build-tools:latest
+  only:
+  - /^[0-9]+-.*$/
+  script:
+  - mvn $MAVEN_CLI_OPTS help:evaluate -Dexpression=settings.localRepository clean
+    license:check install
+  - ./braid-gradle/gradlew assemble -b ./braid-gradle/build.gradle
+  - bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN
+  stage: build
+  tags:
+  - build-tools
+deploy:
+  image: dazraf/build-tools:latest
+  only:
+  - master
+  script:
+  - mvn $MAVEN_CLI_OPTS help:evaluate -Dexpression=settings.localRepository license:check
+    install deploy
+  - docker tag bluebank/braid-server ${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}
+  - docker tag ${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID} ${CI_REGISTRY_IMAGE}:edge
+  - docker tag ${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID} ${CI_REGISTRY_IMAGE}:latest
+  - docker tag ${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID} ${DOCKER_IMAGE_NAME}:edge
+  - docker tag ${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID} ${DOCKER_IMAGE_NAME}:latest
+  - docker login -u gitlab-ci-token -p ${CI_JOB_TOKEN} ${CI_REGISTRY}
+  - docker push ${CI_REGISTRY_IMAGE}
+  - docker login -u "${DOCKER_HUB_USER}" -p "${DOCKER_HUB_PASSWORD}"
+  - docker push ${DOCKER_IMAGE_NAME}
+  stage: snapshot_release
+  tags:
+  - build-tools
+release:
+  image: dazraf/build-tools:latest
+  only:
+  - /^v[0-9]+\.[0-9]+\.[0-9]+.*$/
+  script:
+  - mvn $MAVEN_CLI_OPTS versions:set -DnewVersion=${BRAID_VERSION:1}
+  - mvn $MAVEN_CLI_OPTS clean dokka:javadocJar deploy -DskipTests -P gitlab-release
+  - mvn $MAVEN_CLI_OPTS clean dokka:javadocJar deploy -DskipTests -P release,npm-release
+  - docker tag bluebank/braid-server ${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}
+  - docker tag ${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID} ${CI_REGISTRY_IMAGE}:${CI_COMMIT_TAG:-edge}
+  - docker tag ${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID} ${CI_REGISTRY_IMAGE}:latest
+  - docker tag ${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID} ${DOCKER_IMAGE_NAME}:${CI_COMMIT_TAG:-edge}
+  - docker tag ${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID} ${DOCKER_IMAGE_NAME}:latest
+  - docker login -u gitlab-ci-token -p ${CI_JOB_TOKEN} ${CI_REGISTRY}
+  - docker push ${CI_REGISTRY_IMAGE}
+  - docker login -u "${DOCKER_HUB_USER}" -p "${DOCKER_HUB_PASSWORD}"
+  - docker push ${DOCKER_IMAGE_NAME}:${CI_COMMIT_TAG:-edge}
+  - docker push ${DOCKER_IMAGE_NAME}:latest
+  stage: release
+  tags:
+  - build-tools
+  variables:
+    BRAID_VERSION: $CI_COMMIT_REF_NAME
+  when: manual
+stages:
+- build
+- snapshot_release
+- release
+variables:
+  DOCKER_IMAGE_NAME: cordite/braid
+  MAVEN_CLI_OPTS: --batch-mode --errors --fail-at-end --show-version
+  MAVEN_OPTS: -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true
+    -Dhttps.protocols=TLSv1.2

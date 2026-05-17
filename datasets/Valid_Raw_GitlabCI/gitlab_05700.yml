@@ -1,0 +1,14 @@
+phpunit:
+  cache:
+    paths:
+    - vendor/
+    - composer.lock
+  coverage: /^\s*Lines:\s*\d+.\d+\%/
+  image: $BUILD_IMAGE_NAME
+  only:
+  - branches
+  script:
+  - ./build/src/test.sh
+  stage: test
+  variables:
+    DEBUG: 'on'

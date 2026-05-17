@@ -1,0 +1,14 @@
+{
+  "sha": "c28c705c52486478df502fa2c68b48670a5c85e4b3d8b892d0283dcf7a25239b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4053,
+  "description": "Create a GitHub Actions workflow named Publish releases that runs on every push. It has two jobs: create-release and pyinstaller-executable. The create-release job checks out the source code, determines a tag, deletes any previous release and tag, tags the release, and creates a new release. The pyinstaller-executable job builds and publishes executables for multiple operating systems, including Mac OS and Windows, and notifies collaborators of the release.",
+  "tags": [
+    "github-release",
+    "pyinstaller",
+    "multi-os",
+    "python",
+    "automation"
+  ]
+}

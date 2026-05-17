@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_09035",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1630,
+  "description": "Create a GitLab CI pipeline that defines custom stages named security_release:disable_issue_processor_schedule and security_release:disable_issue_processor_schedule:start for disabling the security issue processor. Add a hidden base job .disable-issue-processor-schedule-base (and .if-disable-issue-processor-schedule) that extends .common-job-setup and runs only when $CI_PIPELINE_SOURCE matches pipeline, web, or api and $SECURITY_RELEASE_PIPELINE is \"disable_issue_processor\" or \"true\". In the security_release:disable_issue_processor_schedule:start job, which runs manually, inherit the base and .common-ci-tokens and execute `bundle exec rake 'security:disable_security_target_processor:start'`. Define three dependent jobs—security_release_disable_issue_processor_schedule:execute, security_release_disable_issue_processor_schedule:verify-managed-version-projects, and security_release_disable_issue_processor_schedule:verify_pending_issues—that all extend the base, depend on the start job, and run respectively `bundle exec rake 'security:disable_security_target_processor:execute'`, `bundle exec rake 'security:disable_security_target_processor:verify_managed_version_projects'`, and `bundle exec rake 'security:disable_security_target_processor:verify_pending_issues'`. Ensure all jobs share the same rule conditions, have no artifacts or caches, and use the default Docker image.",
+  "tags": [
+    "ruby",
+    "rake",
+    "security",
+    "manual",
+    "pipeline-rules",
+    "gitlab-ci"
+  ]
+}

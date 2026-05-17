@@ -1,0 +1,36 @@
+build:
+  script:
+  - docker build -t ${CONTAINER_REF_IMAGE} .
+  - docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
+  - docker push ${CONTAINER_REF_IMAGE}
+  stage: build
+  tags:
+  - docker
+image: docker:latest
+release:
+  only:
+  - master
+  script:
+  - docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
+  - docker pull ${CONTAINER_REF_IMAGE}
+  - docker tag ${CONTAINER_REF_IMAGE} ${CONTAINER_LATEST_IMAGE}
+  - docker push ${CONTAINER_LATEST_IMAGE}
+  stage: release
+  tags:
+  - docker
+services:
+- docker:dind
+stages:
+- build
+- test
+- release
+test:
+  script:
+  - docker run --rm -t ${CONTAINER_REF_IMAGE} make check
+  stage: test
+  tags:
+  - docker
+variables:
+  CONTAINER_LATEST_IMAGE: ${CI_REGISTRY_IMAGE}:latest
+  CONTAINER_REF_IMAGE: ${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_NAME}
+  GIT_DEPTH: '3'

@@ -1,0 +1,16 @@
+{
+  "sha": "8c79c3f7c72a604cbfabc27d37837a462afecb23163ade639760f98da0f58269",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1465,
+  "description": "Create a GitHub Actions workflow named CI that runs on every push. Use a matrix strategy to test with multiple Python versions (3.6, 3.7, 3.8, 3.9) on ubuntu-latest. For each version, check out the code, set up Python, install GDAL binaries, update pip, install poetry and tox, and run tests with tox. Upload coverage artifacts. Additionally, create a separate job to combine coverage reports from all test jobs and upload to Coveralls.",
+  "tags": [
+    "python",
+    "ci",
+    "tox",
+    "coverage",
+    "coveralls",
+    "matrix",
+    "ubuntu"
+  ]
+}

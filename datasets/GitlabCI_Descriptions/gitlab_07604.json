@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_07604",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 488,
+  "description": "Create a GitLab CI pipeline using the node:10-alpine Docker image and caching the node_modules/ directory. Define two stages: test and deploy. In the test stage add a tests job that runs node -v, npm -v, npm rebuild, npm install and npm test, with a retry of 1. In the deploy stage add a publish to npmjs.com job that only runs on the master branch, retries up to 2 times, writes the NPM authentication token to ~/.npmrc, then checks if the package version in the npm registry differs from the local version and runs npm publish if so, targeting npmjs.com.",
+  "tags": [
+    "node",
+    "npm",
+    "publish",
+    "ci",
+    "test",
+    "docker"
+  ]
+}

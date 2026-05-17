@@ -1,0 +1,16 @@
+{
+  "sha": "85c6fcc4cc8173d9e95d3567b8279f874e4f63787a6af658b333b46b8419c88e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1532,
+  "description": "Create a GitHub Actions workflow named Passenger generic binaries tests CI tests that runs on push to stable-* and feature/* branches and on pull requests to those branches. Use a build job with a matrix strategy across macos-latest and ubuntu-latest OS and x86_64 and aarch64 architectures. For each matrix combination, check out the repository with submodules, set up QEMU and Buildx, prepare and build binaries, upload the resulting binaries as an artifact, and run tests.",
+  "tags": [
+    "ci",
+    "tests",
+    "binaries",
+    "docker",
+    "matrix",
+    "multios",
+    "multiarch"
+  ]
+}

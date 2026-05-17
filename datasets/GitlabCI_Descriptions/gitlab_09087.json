@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_09087",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 830,
+  "description": "Create a GitLab CI pipeline with a release_environment stage containing two jobs. Add a release-environment:notify job that runs in the release_environment stage, uses the command `bundle exec rake \\\"release_environment:notify[$RELEASE_ENVIRONMENT_CI_PIPELINE_URL,$RELEASE_ENVIRONMENT_NAME,$RELEASE_ENVIRONMENT_VERSION]\\\"`, and is triggered only when the variable RELEASE_ENVIRONMENT_PIPELINE is \\\"true\\\" and RELEASE_ENVIRONMENT_NOTIFICATION_TYPE equals \\\"deploy\\\" (otherwise never). Add a release-environment:qa_notify_failure job that also runs in the release_environment stage, executes `bundle exec rake \\\"release_environment:qa_notify[$RELEASE_ENVIRONMENT_CI_PIPELINE_URL,$RELEASE_ENVIRONMENT_NAME,$RELEASE_ENVIRONMENT_VERSION]\\\"`, and is triggered only when RELEASE_ENVIRONMENT_PIPELINE is \\\"true\\\" and RELEASE_ENVIRONMENT_NOTIFICATION_TYPE equals \\\"qa\\\" (otherwise never). Both jobs inherit the .with-bundle and .common-ci-tokens templates, which provide the Ruby environment and required CI tokens.",
+  "tags": [
+    "ruby",
+    "bundle",
+    "rake",
+    "release-environment",
+    "ci-tokens",
+    "gitlab-ci"
+  ]
+}

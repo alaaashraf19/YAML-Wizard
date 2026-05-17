@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_11109",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 586,
+  "description": "Create a GitLab CI pipeline with three stages: build, test, and deploy. In the build stage add a job named \"build the package\" that runs on npm runners, executes `npm install`, and is excluded from tag pipelines. In the test stage add a job named \"execute npm tests\" that runs on npm runners, executes `npm install` then `npm test`, and also excludes tag pipelines. In the deploy stage add a job named \"publish coveralls\" that runs on npm runners, allows failure, runs `npm install`, `npm run-script test-and-cover`, then sets the environment variables `COVERALLS_SERVICE_NAME=\"GitLab CI\"`, `COVERALLS_GIT_COMMIT=${CI_BUILD_REF}`, `COVERALLS_GIT_BRANCH=${CI_BUILD_REF_NAME}`, `COVERALLS_REPO_TOKEN=${COVERALLS_REPO_TOKEN}` and finally runs `npm run-script publish-coveralls`; this job is also excluded from tag pipelines.",
+  "tags": [
+    "npm",
+    "coveralls",
+    "gitlab-ci",
+    "build",
+    "test",
+    "deploy"
+  ]
+}

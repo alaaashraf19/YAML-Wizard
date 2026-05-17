@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_11701",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2678,
+  "description": "Create a GitLab CI pipeline with three stages: cpplint, pycodestyle, benchmark. Add a cpplint job in the cpplint stage that runs `cpplint --linelength=80 --counting=detailed $(find aibench -name \"*.h\" -or -name \"*.cc\")`. Add a pycodestyle job in the pycodestyle stage that runs `pycodestyle $(find aibench/python -name \"*.py\")`. Add a benchmark job in the benchmark stage that executes the following shell commands in order: `set -x`, `pwd`, `ifconfig`, set DATE_STR=`date \"+%Y_%m_%d\"`, define CI_PROJECT_OUTPUT_PATH=/mace-build-output/$CI_PROJECT_NAME/${DATE_STR}_${CI_PIPELINE_ID}, create the directory, set ANDROID_NDK_HOME=/opt/android-ndk-r17b/, compute DAY_OF_WEEK=`date +%u`, clone the repository `git clone git@v9.git.n.xiaomi.com:deep-computing/generic-mobile-devices.git`, then run a conditional block that on weekdays (DAY_OF_WEEK < 6) executes two `bash tools/benchmark.sh` commands with Precision, target_abis=armeabi-v7a,arm64-v8a,aarch64,armhf, max_time_per_lock=30, executors=MACE,SNPE, input_dir=http, num_targets=1 and a second call without Precision; on weekends runs similar calls with `--all_devices_at_once`. After the benchmark runs, copy all `*_report.csv` files to the workspace, and use Python one‑liners with `prettytable` to print the contents of prepare_report.csv, run_report.csv, and precision_report.csv with separator headings. The job publishes the three CSV files as artifacts. No custom Docker image or services are specified.",
+  "tags": [
+    "benchmark",
+    "cpplint",
+    "pycodestyle",
+    "prettytable",
+    "android-ndk",
+    "csv-reports"
+  ]
+}

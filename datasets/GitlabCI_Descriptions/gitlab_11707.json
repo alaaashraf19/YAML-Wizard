@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_11707",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 604,
+  "description": "Create a GitLab CI pipeline that runs all jobs in the default test stage using various python:<version> Docker images. Define a hidden .qa template that installs the project in editable mode with all extras (pip install -e .[all]) and runs pytest watchghost/tests/tests. Add a doc job using python:3.13 that installs Sphinx and builds HTML docs with sphinx-build -b html docs build/html. Add a lint job extending .qa, also using python:3.13, but overriding the script to run pytest --ruff --ruff-format -m ruff watchghost. Add qa-3.7 through qa-3.13 jobs extending .qa, each using the corresponding python:<version> image to install dependencies and execute the standard pytest command.",
+  "tags": [
+    "python",
+    "pytest",
+    "sphinx",
+    "ruff",
+    "multiple-python-versions",
+    "gitlab-ci"
+  ]
+}

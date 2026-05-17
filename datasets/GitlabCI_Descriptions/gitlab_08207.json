@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_08207",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2292,
+  "description": "Create a GitLab CI pipeline with stages build, deploy, and post-deploy. In the build stage add a build job using ruby:2.5-buster that caches tmp/cache and vendor with key ruby-2.5.1 (pull-push), stores the public directory as an artifact for 3 days, runs ln -sf /usr/share/zoneinfo/Asia/Tokyo /etc/localtime, apt-get update -yqqq, apt-get install -y nodejs, bundle install --path vendor, and bundle exec middleman build, and runs on merge‑request or master branches. In the deploy stage add a production job using python:3.6 that installs awscli version ${AWSCLI_VERSION}, then syncs public to an S3 bucket and creates a CloudFront invalidation, runs on master (scheduled automatically or manually), and defines a production environment at https://www.gitlab.jp. Also add a review deployment job that inherits nginx/review-apps tags, runs on merge‑request, rsyncs public to /srv/nginx/pages/$CI_BUILD_REF_SLUG, defines a review environment with URL http://$CI_BUILD_REF_SLUG.review‑www.gitlab.jp and a stop job, and a staging job that also inherits the tags, runs on master, rsyncs to /srv/nginx/staging and defines a staging environment at http://staging.gitlab.jp. Finally, add a post‑deploy job using ruby:2.5.1 that caches vendor, runs bundle install --path vendor and bundle exec rake update_s3_redirects on master, and a stop:review job that manually removes public and the deployed files on merge‑request, inherits the same tags, and sets GIT_STRATEGY to none.",
+  "tags": [
+    "ruby-2.5",
+    "python-3.6",
+    "awscli",
+    "s3",
+    "cloudfront",
+    "review-app",
+    "staging",
+    "middleman",
+    "rsync",
+    "post-deploy"
+  ]
+}

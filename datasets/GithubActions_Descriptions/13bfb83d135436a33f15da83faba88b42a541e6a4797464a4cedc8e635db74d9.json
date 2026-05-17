@@ -1,0 +1,18 @@
+{
+  "sha": "13bfb83d135436a33f15da83faba88b42a541e6a4797464a4cedc8e635db74d9",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3772,
+  "description": "Create a GitHub Actions workflow named CI that runs on push to master and try-import branches and on pull requests. The workflow has multiple jobs: check-commit and check-format for commit and code format checks on ubuntu-latest, cpu-test and gpu-test for tests on a self-hosted environment with a custom Docker image, auto-merge to merge try-import into master if successful, and send-dingding to send a DingTalk notification on failure.",
+  "tags": [
+    "ci",
+    "self-hosted",
+    "docker",
+    "ubuntu",
+    "nodejs",
+    "python",
+    "tests",
+    "automation",
+    "github-actions"
+  ]
+}

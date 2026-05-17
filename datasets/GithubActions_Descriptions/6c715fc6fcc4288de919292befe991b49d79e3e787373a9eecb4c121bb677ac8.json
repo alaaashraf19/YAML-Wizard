@@ -1,0 +1,15 @@
+{
+  "sha": "6c715fc6fcc4288de919292befe991b49d79e3e787373a9eecb4c121bb677ac8",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3448,
+  "description": "Create a GitHub Actions workflow named Release_actions that triggers on published releases. The workflow should have two jobs: build_deb and build-appimage. The build_deb job runs on ubuntu-latest, installs dependencies, checks out the repository, builds a .deb file using cmake, and uploads the generated .deb file to the release. The build-appimage job runs on ubuntu-18.04, installs dependencies, checks out the repository, prepares files needed to create an AppImage, builds AntiMicroX, creates an AppImage file, and uploads the generated AppImage files to the release.",
+  "tags": [
+    "github-actions",
+    "release",
+    "ubuntu",
+    "cmake",
+    "appimage",
+    "deb"
+  ]
+}

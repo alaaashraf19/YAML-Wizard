@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_18218",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1035,
+  "description": "Create a GitLab CI pipeline that runs a before_script updating apt and Cabal, defines a STORE_DIR variable pointing to .cabal-store, and caches .cabal-store and dist-newstyle/cache per job. Add six test jobs named test:8.10, test:8.4, test:8.6, test:8.8, test:9.0, and test:9.2, each using the corresponding haskell:<version> Docker image. In each job run apt -qq -y install build-essential libssl-dev > /dev/null, then execute cabal --store-dir=$STORE_DIR test for versions 8.10, 8.8, 9.0 and 9.2 and cabal --store-dir=$STORE_DIR new-test for versions 8.4 and 8.6. All jobs run in the default test stage and inherit the before_script, cache and variable settings.",
+  "tags": [
+    "haskell",
+    "cabal",
+    "apt",
+    "cache",
+    "ci"
+  ]
+}

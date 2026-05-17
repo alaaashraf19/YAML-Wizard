@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_04394",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 807,
+  "description": "Create a GitLab CI pipeline using the ubuntu:latest Docker image with a global before_script that runs apt-get update and apt-get install -y python-pip. Define two stages: test and deploy. In the test stage add a unit-tests job that runs apt-get install -y git, configures git user.name \"Test User\" and user.email \"testuser@gmail.com\", and executes python -m unittest discover -v. In the deploy stage add a pages job that installs mkdocs via pip, runs PYTHONPATH=. python gitutils/git_utils.py -m > www/mkdocs_docs/commands.md, changes directory to www and runs mkdocs build --clean, returns to the root, captures the version with VERSION=$(PYTHONPATH=. python gitutils/git_utils.py -v) and writes it to public/version.json, creates a public/release directory, builds a source distribution with python setup.py sdist, copies the resulting gitutils*.tar.gz and update.py into public/, and publishes the public/ directory as a Pages artifact. The pages job should only run for tag pipelines or trigger pipelines.",
+  "tags": [
+    "ubuntu",
+    "mkdocs",
+    "gitutils",
+    "pages",
+    "unittest",
+    "python-pip"
+  ]
+}

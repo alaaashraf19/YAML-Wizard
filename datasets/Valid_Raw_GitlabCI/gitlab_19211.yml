@@ -1,0 +1,19 @@
+test:
+  except:
+    variables:
+    - $TEST_DISABLED
+  image: gliderlabs/herokuish:latest
+  only:
+  - branches
+  - tags
+  script:
+  - "if [ -z ${KUBERNETES_PORT+x} ]; then\n  DB_HOST=postgres\nelse\n  DB_HOST=localhost\n\
+    fi\n"
+  - export DATABASE_URL="postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${DB_HOST}:5432/${POSTGRES_DB}"
+  - cp -R . /tmp/app
+  - /bin/herokuish buildpack test
+  services:
+  - postgres:latest
+  stage: test
+  variables:
+    POSTGRES_DB: test

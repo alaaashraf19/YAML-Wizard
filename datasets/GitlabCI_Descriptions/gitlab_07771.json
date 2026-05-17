@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_07771",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2973,
+  "description": "Create a GitLab CI pipeline that uses the docker:dind Docker image with a docker:dind service and logs in to the registry in a before_script. Define a single stage called \"building image\" and a hidden .build job (interruptible) that runs the script: `docker buildx create --use`, `docker run --rm --privileged multiarch/qemu-user-static --reset -p yes`, a conditional `docker buildx build` command that, when IS_RELEASE=1, builds for linux/arm64,linux/amd64 with cache-from ${IMAGE_REGISTRY}:latest, build‑args VERSION, PHP_IMAGE_VERSION, MAJOR_VERSION_NODE, tags ${IMAGE_NAME}:${VERSION} and ${IMAGE_NAME}:latest, and pushes; otherwise builds with tag ${IMAGE_NAME}:${BUILD_VERSION} and pushes; finally `echo ${IMAGE_NAME}:${BUILD_VERSION}`. Add jobs ci/nginx, ci/php, ci/renovate, docs (needs php), maildev, mariadb, nginx, node, php, phpmyadmin, playwright (needs node and php, runs on tag saas‑linux‑medium‑amd64), playwright-dev, redis, and selenium, each extending .build and setting their VERSION variable (and extra variables for docs, playwright, and playwright‑dev). Configure workflow rules so merge‑request pipelines set BUILD_VERSION to $CI_MERGE_REQUEST_IID and IS_RELEASE=0, while pipelines on the default branch set BUILD_VERSION to $CI_COMMIT_SHORT_SHA and IS_RELEASE=1, causing the conditional build logic to run accordingly.",
+  "tags": [
+    "docker",
+    "docker-buildx",
+    "multiarch",
+    "gitlab-ci",
+    "image-build",
+    "dind",
+    "conditional-build"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "sha": "ad551da37a70534cbbb6515f5483bb706ee25a8c9eea4eb6122636715b04ee4b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2660,
+  "description": "Create a GitHub Actions workflow named build that runs on push and pull request events. Use a matrix strategy to test against multiple Python and ClickHouse versions on an ubuntu-20.04 environment. For each matrix combination, check out the code, set up Python, install test requirements, run flake8, set up the test environment, start a ClickHouse server container, run tests with coverage, and upload coverage to Coveralls. Additionally, run a separate job to indicate completion to Coveralls.io after all tests have finished.",
+  "tags": [
+    "python",
+    "clickhouse",
+    "tests",
+    "coverage",
+    "coveralls",
+    "matrix",
+    "ubuntu"
+  ]
+}

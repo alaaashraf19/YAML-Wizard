@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_12009",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 7563,
+  "description": "Create a GitLab CI pipeline using the ocaml/opam:ubuntu Docker image with a .opamcache cache and a before_script that lists files, prints environment variables, installs any extra APT packages, installs any extra pip packages, sets up the opam repository, updates, switches to the specified OCaml compiler, and installs camlp5, ocamlfind, num and any extra opam packages. Define two stages, build and test. In the build stage add the jobs build, build:32bit, and build:bleeding-edge that each run the shared build script (set -e; echo 'start:coq.config'; ./configure -prefix \"$(pwd)/_install_ci\" ${EXTRA_CONF}; echo 'end:coq.config'; echo 'start:coq.build'; make -j ${NJOBS} byte; make -j ${NJOBS}; make test-suite/misc/universes/all_stdlib.v; echo 'end:coq:build'; echo 'start:coq.install'; make install; make install-byte; cp bin/fake_ide _install_ci/bin/; echo 'end:coq.install'; set +e) and produce artifacts _install_ci, config/Makefile and test-suite/misc/universes/all_stdlib.v with a one‑week expiration. In the test stage add all ci-* jobs (ci-bignums, ci-color, ci-compcert, ci-coq-dpdgraph, ci-coquelicot, ci-elpi, ci-equations, ci-fiat-parsers, ci-flocq, ci-formal-topology, ci-geocoq, ci-hott, ci-iris-lambda-rust, ci-ltac2, ci-math-classes, ci-math-comp, ci-sf, ci-unimath, ci-vst) that depend on the build job, run the shared test script (set -e; echo 'start:coq.test'; make -f Makefile.ci -j ${NJOBS} ${TEST_TARGET}; echo 'end:coq.test'; set +e) with job‑specific variables, as well as test-suite, test-suite:32bit and test-suite:bleeding-edge jobs that depend on the matching build jobs, cd into test-suite, clean, set BIN and LIB paths, and run make -j ${NJOBS} all, publishing logs on failure as artifacts; also add validate and validate:32bit jobs that depend on the corresponding build jobs and run the validation script (cd _install_ci; find lib/coq/ -name '*.vo' -print0 > vofiles; for regexp in 's/.vo//' 's:lib/coq/plugins:Coq:' 's:lib/coq/theories:Coq:' 's:/:.:g'; do sed -z -i \"$regexp\" vofiles; done; xargs -0 --arg-file=vofiles bin/coqchk -boot -silent -o -m -coqlib lib/coq/), and warnings and warnings:bleeding-edge jobs that run the shared warnings script (set -e; echo 'start:coq.config'; ./configure -local ${EXTRA_CONF}; echo 'end:coq.config'; echo 'start:coq.build'; make -j ${NJOBS} coqocaml; echo 'end:coq:build'; set +e). No deployment targets are defined.",
+  "tags": [
+    "ocaml",
+    "opam",
+    "coq",
+    "build",
+    "test",
+    "ci",
+    "cache",
+    "make",
+    "warnings"
+  ]
+}

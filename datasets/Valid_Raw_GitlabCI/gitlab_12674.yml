@@ -1,0 +1,37 @@
+.job_template:
+  before_script: &id001
+  - apt-get update
+  - mix local.hex --force
+  - mix local.rebar --force
+  - mix deps.get
+  image: elixir:1.4
+coverage:
+  coverage: /\[TOTAL\]\s+(\d+\.\d+%)$/
+  image: alpine
+  script:
+  - cat cov.out
+  stage: post-test
+dogma:
+  before_script: *id001
+  image: elixir:1.4
+  script:
+  - mix dogma
+  stage: test
+  variables:
+    MIX_ENV: dev
+stages:
+- build
+- test
+- post-test
+test:
+  artifacts:
+    paths:
+    - cov.out
+    - cover/
+  before_script: *id001
+  image: elixir:1.4
+  script:
+  - mix coveralls.html | tee cov.out
+  stage: test
+variables:
+  MIX_ENV: test

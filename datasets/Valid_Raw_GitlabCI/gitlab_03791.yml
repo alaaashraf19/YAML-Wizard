@@ -1,0 +1,31 @@
+build_linux:
+  artifacts:
+    paths:
+    - doc/userguide/build
+  script:
+  - mkdir build
+  - cd build
+  - cmake -DCMAKE_BUILD_TYPE=Debug -DPYTHON_INCLUDE_DIR=/usr/include/python3.6m -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.6m.so
+    -DCMAKE_INSTALL_PREFIX=../install ..
+  - make -j4
+  - ctest --output-on-failure
+  - make userguide
+  stage: build
+  tags:
+  - linux
+image: registry.gitlab.com/atomicrex/atomicrex/ci
+pages:
+  artifacts:
+    paths:
+    - public
+  dependencies:
+  - build_linux
+  only:
+  - master
+  script:
+  - mv doc/userguide/build public/
+  - mv doc/google*.html public/
+  - chmod go-rwX -R public/
+  stage: deploy
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive

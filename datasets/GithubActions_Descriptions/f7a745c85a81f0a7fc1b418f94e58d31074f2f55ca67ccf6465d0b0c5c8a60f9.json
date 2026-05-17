@@ -1,0 +1,14 @@
+{
+  "sha": "f7a745c85a81f0a7fc1b418f94e58d31074f2f55ca67ccf6465d0b0c5c8a60f9",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1469,
+  "description": "Create a GitHub Actions workflow named docs that runs on push and pull request events to the master branch. The workflow should have two jobs: build and publish. The build job should run on ubuntu-latest, check out the repository, set up Python 3.9, upgrade packaging tools, install dependencies, build documentation with tox, and upload the documentation as an artifact. The publish job should run on ubuntu-latest, download the documentation artifact, and deploy it to GitHub Pages using the peaceiris/actions-gh-pages action, but only on push events to the master branch.",
+  "tags": [
+    "python",
+    "docs",
+    "github-pages",
+    "tox",
+    "ubuntu"
+  ]
+}

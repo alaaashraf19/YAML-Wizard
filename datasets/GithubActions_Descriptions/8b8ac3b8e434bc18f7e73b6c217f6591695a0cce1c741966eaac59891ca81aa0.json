@@ -1,0 +1,13 @@
+{
+  "sha": "8b8ac3b8e434bc18f7e73b6c217f6591695a0cce1c741966eaac59891ca81aa0",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1089,
+  "description": "Create a GitHub Actions workflow named Update Docker Image that can be triggered manually. The workflow should run on an ubuntu-latest environment, allowing write access to packages and read access to repository contents. It should check out the repository, build a Docker image with a specified name, log in to the GitHub Container Registry using a GitHub token, and then push the image to the registry with the latest version tag.",
+  "tags": [
+    "docker",
+    "github-packages",
+    "container-registry",
+    "workflow-dispatch"
+  ]
+}

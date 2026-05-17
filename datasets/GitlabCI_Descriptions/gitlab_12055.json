@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_12055",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 674,
+  "description": "Create a GitLab CI pipeline with a single stage named deploy. Add a test1 job in the deploy stage that runs in parallel using a matrix: PROVIDER set to aws with STACK values monitoring, app1, app2; PROVIDER set to ovh with STACK values monitoring, backup, app; PROVIDER set to gcp and vultr with STACK values data, processing. Each parallel instance executes the shell command bin/deploy. Add a test2 job also in the deploy stage with the identical parallel matrix, runs bin/deploy, and defines a variable RESULT equal to $PROVIDER/$STACK for each job instance.",
+  "tags": [
+    "parallel",
+    "matrix",
+    "deploy",
+    "aws",
+    "ovh",
+    "gcp",
+    "vultr"
+  ]
+}

@@ -1,0 +1,38 @@
+name: ci-push
+
+on:
+  push:
+    branches:
+      - calamares
+      - 3.2.x-stable
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+  workflow_dispatch:
+
+env:
+  BUILDDIR: /build
+  SRCDIR: ${{ github.workspace }}
+  CMAKE_ARGS: |
+    -DWEBVIEW_FORCE_WEBKIT=1
+    -DKDE_INSTALL_USE_QT_SYS_PATHS=ON
+    -DWITH_PYTHONQT=OFF
+    -DCMAKE_BUILD_TYPE=Debug
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: docker://kdeneon/plasma:user
+      options: --tmpfs /build:rw --user 0:0
+    steps:
+      - name: "prepare source"
+        uses: calamares/actions/generic-checkout@v5
+      - name: "install dependencies"
+        shell: bash
+        run: ./ci/deps-neon.sh
+      - name: "build"
+        id: build
+        uses: calamares/actions/generic-build@v4

@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_05332",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 709,
+  "description": "Create a GitLab CI pipeline using the docker:stable image with a docker:dind service. Define stages build, test, release, deploy and set variables CONTAINER_LATEST_IMAGE=$REPO:latest, CONTAINER_TEST_IMAGE=$REPO:$CI_COMMIT_REF_NAME, REPO=registry.gitlab.com/christophs/aws_adfs. Add a build job in the build stage that runs docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com, docker build --no-cache -t $CONTAINER_TEST_IMAGE . and docker push $CONTAINER_TEST_IMAGE. Add a latest-image job in the release stage that runs only on the master branch and executes docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com, docker pull $CONTAINER_TEST_IMAGE, docker tag $CONTAINER_TEST_IMAGE $CONTAINER_LATEST_IMAGE and docker push $CONTAINER_LATEST_IMAGE.",
+  "tags": [
+    "docker",
+    "dind",
+    "docker-login",
+    "docker-build",
+    "docker-push",
+    "gitlab-ci-token",
+    "release",
+    "build"
+  ]
+}

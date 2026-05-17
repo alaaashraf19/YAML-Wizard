@@ -1,0 +1,16 @@
+{
+  "sha": "11620f4e6dfe4761a9ea4e9d13ebe1dafbe668319ac693d9174f5828127fa308",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1494,
+  "description": "Create a GitHub Actions workflow named Release that triggers on push events with tags matching v*. The workflow should run on an ubuntu-latest environment, setting up Python 3.11, installing Poetry, and caching its virtual environment. It should then install dependencies if the cache misses, build the project using Poetry, and upload distributions to PyPI using twine with secrets for authentication. Finally, it should create a GitHub release with the built distributions.",
+  "tags": [
+    "python",
+    "release",
+    "poetry",
+    "pypi",
+    "twine",
+    "github-release",
+    "tags"
+  ]
+}

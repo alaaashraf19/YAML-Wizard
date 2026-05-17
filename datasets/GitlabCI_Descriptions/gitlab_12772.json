@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_12772",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 134,
+  "description": "Create a GitLab CI pipeline that uses the rustlang/rust:nightly Docker image. Define a single stage (test) with a job named test:cargo that runs the commands `rustc --version && cargo --version` followed by `cargo test --verbose --jobs 1 --release`. The job has no additional services, caches, artifacts, or conditional rules, and runs on every pipeline execution.",
+  "tags": [
+    "rust",
+    "cargo",
+    "rustc",
+    "nightly",
+    "gitlab-ci"
+  ]
+}

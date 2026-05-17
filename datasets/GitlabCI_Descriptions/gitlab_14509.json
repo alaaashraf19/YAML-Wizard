@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_14509",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 437,
+  "description": "Create a GitLab CI pipeline that sets a default runner tag using the variable $RUNNER_TAG (initially empty) and includes a series of local configuration files: /.gitlab-ci.d/base.yml, /.gitlab-ci.d/stages.yml, /.gitlab-ci.d/opensbi.yml, /.gitlab-ci.d/containers.yml, /.gitlab-ci.d/crossbuilds.yml, /.gitlab-ci.d/buildtest.yml, /.gitlab-ci.d/static_checks.yml, /.gitlab-ci.d/custom-runners.yml, /.gitlab-ci.d/cirrus.yml, and /.gitlab-ci.d/windows.yml. The pipeline does not define any jobs directly; all jobs, stages, variables, and services are provided by the included files. Ensure the variable RUNNER_TAG is defined (empty by default) so that downstream jobs can reference it for runner selection.",
+  "tags": [
+    "includes",
+    "default-runner-tag",
+    "modular-pipeline",
+    "gitlab-ci"
+  ]
+}

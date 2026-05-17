@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_08123",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 395,
+  "description": "Create a GitLab CI pipeline that uses the Docker image registry.gitlab.com/gitlab-org/gitlab-build-images:doc-gitlab-com and sets the variable PROGRESS to '1'. Define a deploy stage with a pages job that runs the commands: ruby -v, ruby generate.rb, and for i in `find public -name README.html`; do ln -sf README.html $(dirname $i)/index.html; done. The pages job publishes the public/ directory as an artifact, configures the environment named production with URL https://docs.gitlab.com, and is limited to the master branch.",
+  "tags": [
+    "ruby",
+    "gitlab-pages",
+    "docker-image",
+    "deploy",
+    "master-only",
+    "environment"
+  ]
+}

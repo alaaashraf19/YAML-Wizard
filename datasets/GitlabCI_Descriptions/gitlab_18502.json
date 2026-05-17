@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_18502",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 437,
+  "description": "Create a GitLab CI pipeline that uses the jangrewe/gitlab-ci-android Docker image, sets the CI_PROJECT_NAME variable to UsageStats, and defines a cache keyed by CI_PROJECT_ID storing the .gradle directory. Include a before_script that exports GRADLE_USER_HOME=$(pwd)/.gradle and runs chmod +x ./gradlew. Define a single stage called build and a job named buildRelease in that stage that runs ./gradlew assembleRelease, creates an artifact named ${CI_PROJECT_NAME}_${CI_COMMIT_REF_NAME}_${CI_COMMIT_SHA:0:8} with the path build/outputs/apk/release, and is limited to the master branch only.",
+  "tags": [
+    "android",
+    "gradle",
+    "gitlab-ci-android",
+    "apk",
+    "build"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_10728",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 479,
+  "description": "Create a GitLab CI pipeline that uses the node:latest Docker image and caches the node_modules/ directory. Define a single stage named deploy and add a deploy job that runs only on the master branch, sets the environment name to heroku with URL https://trump-or-orange-api.herokuapp.com/, and executes the exact shell commands: npm install, npm run build, apt-get update -qy, apt-get install ruby -y -q, apt-get install ruby-dev -y -q, gem install dpl, and dpl --provider=heroku --app=trump-or-orange-api --api-key=$HEROKU_API_KEY --skip-cleanup. Mark the job as a deploy type.",
+  "tags": [
+    "node",
+    "heroku",
+    "npm",
+    "dpl",
+    "apt-get",
+    "deploy"
+  ]
+}

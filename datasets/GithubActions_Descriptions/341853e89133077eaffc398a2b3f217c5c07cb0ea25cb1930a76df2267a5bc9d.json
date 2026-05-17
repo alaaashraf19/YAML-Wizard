@@ -1,0 +1,17 @@
+{
+  "sha": "341853e89133077eaffc398a2b3f217c5c07cb0ea25cb1930a76df2267a5bc9d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5321,
+  "description": "Create a GitHub Actions workflow named build that runs on every push to all branches except travis_ccache and on all pull requests to those branches. The workflow has four jobs: clang-format, Linux, macOS, and Windows. The clang-format job checks code formatting using clang-format 9 on an ubuntu-18.04 environment. The Linux, macOS, and Windows jobs build and test the project using cmake and ctest on their respective environments with different compilers and generators.",
+  "tags": [
+    "cmake",
+    "ctest",
+    "clang-format",
+    "ubuntu",
+    "macos",
+    "windows",
+    "multi-os",
+    "multi-compiler"
+  ]
+}

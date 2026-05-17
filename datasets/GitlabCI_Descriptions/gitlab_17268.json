@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_17268",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 32768,
+  "description": "Create a GitLab CI pipeline that uses the docker:stable image with a docker:stable-dind service and defines the stages test, build, security, review and production. In the test stage add a test job that runs the shell commands `setup_test_db` and then your test suite (e.g. `make test`), and a code_quality job that executes the `code_quality` function, a sast job that runs `sast`, a dependency_scanning job that runs `dependency_scanning`, a container_scanning job that runs `container_scanning`, and a license_management job that runs `license_management`; each of these jobs uploads its respective JSON report as an artifact. In the build stage add a build job that runs `install_dependencies`, `setup_docker`, and `build` to build a Docker image (or Herokuish image) and push it to the GitLab Container Registry. In the review stage add a review job that runs `ensure_namespace`, `download_chart`, and `deploy review` to deploy a temporary environment using Helm, publishing the Helm chart as an artifact. In the production stage add a production job that runs `ensure_namespace`, `download_chart`, and `deploy stable` to upgrade the stable release with Helm, and only runs on the main branch or when a tag is created.",
+  "tags": [
+    "auto-devops",
+    "docker",
+    "helm",
+    "kubernetes",
+    "security-scanning",
+    "gitlab-ci"
+  ]
+}

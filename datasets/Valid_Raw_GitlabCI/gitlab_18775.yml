@@ -1,0 +1,16 @@
+image: node:18.16.0
+test:
+  artifacts:
+    expire_in: 1337 mins
+    paths:
+    - public
+  before_script:
+  - git submodule sync --recursive
+  - git submodule update --init --recursive
+  - npm i
+  - cd demo && npm i && cd ..
+  script:
+  - cd demo
+  - npm run lint
+  - npm run production
+  stage: test

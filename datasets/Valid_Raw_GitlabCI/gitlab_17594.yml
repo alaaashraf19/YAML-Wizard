@@ -1,0 +1,26 @@
+before_script:
+- apt-get update
+- apt-get install -y git language-pack-zh-hans language-pack-zh-hant
+- mkdir -p /usr/share/fonts/opentype
+- git clone https://github.com/a20185/adobefonts
+- chmod +x adobefonts/runner.sh
+- adobefonts/runner.sh
+- fc-cache -f -v
+- sed -i 's/Times New Roman/Nimbus Roman No9 L/g' sysuthesis.cls
+- rm -R adobefonts
+image: ablu/ubuntu-texlive-full:latest
+stages:
+- build
+test_build:
+  artifacts:
+    name: CI-$CI_COMMIT_REF_NAME-${CI_COMMIT_SHA:0:7}
+    paths:
+    - main.pdf
+    when: on_success
+  only:
+  - master
+  - dev
+  script:
+  - git checkout -b ci-build
+  - make
+  stage: build

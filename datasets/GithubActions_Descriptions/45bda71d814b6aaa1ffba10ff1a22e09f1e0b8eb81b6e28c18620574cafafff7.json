@@ -1,0 +1,14 @@
+{
+  "sha": "45bda71d814b6aaa1ffba10ff1a22e09f1e0b8eb81b6e28c18620574cafafff7",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 934,
+  "description": "Create a GitHub Actions workflow named Test that runs on push events with three jobs: Check, Test, and Deploy. The Check job runs on ubuntu-latest, checks out the code, sets up Python, installs dev dependencies, checks the package with python setup.py check, and runs pre-commit checks. The Test job runs on ubuntu-latest with a matrix of Python versions 2.7 and 3.8, checks out the code, sets up Python, installs nose, and runs nosetests. The Deploy job runs on ubuntu-latest if the push event is a tag, needs the Test job to succeed, checks out the code, and deploys to PyPI using a token from secrets.",
+  "tags": [
+    "python",
+    "tests",
+    "deploy",
+    "pypi",
+    "pre-commit"
+  ]
+}

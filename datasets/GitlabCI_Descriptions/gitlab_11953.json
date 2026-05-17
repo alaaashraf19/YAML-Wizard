@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_11953",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 530,
+  "description": "Create a GitLab CI pipeline with three stages: build, package, and deploy, using docker:latest as the default image and docker:dind as a service. In the build stage add a job named build that runs on the maven image, sets the environment linux-pi1, executes `mvn package -B`, and stores the resulting JAR files matching target/*.jar as artifacts. In the package stage add a job named package-pi that runs on the default docker:latest image, also uses the linux-pi1 environment, runs the commands `echo \"Deploying the App\"`, `docker build -t registry.gitlab.com/lorez/masterproject -f Dockerfile .`, `docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com`, and `docker push registry.gitlab.com/lorez/masterproject`, publishing the Docker image to the GitLab Container Registry. No caches or conditional rules are defined.",
+  "tags": [
+    "maven",
+    "docker",
+    "dind",
+    "java",
+    "jar",
+    "gitlab-registry",
+    "ci-pipeline"
+  ]
+}

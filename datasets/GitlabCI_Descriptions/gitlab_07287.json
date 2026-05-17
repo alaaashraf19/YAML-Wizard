@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_07287",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 201,
+  "description": "Create a GitLab CI pipeline that uses the golang:1.24-bookworm Docker image and includes the Workflows/MergeRequest-Pipelines.gitlab-ci.yml template. Add a global before_script that sources ci/prepare.sh. Define a single stage named test. In the test stage add a test job that runs the command `make CONCURRENT_JOBS=4 -k check`. The pipeline has no caches, artifacts, services, or special rules.",
+  "tags": [
+    "go",
+    "golang",
+    "make",
+    "test",
+    "merge-request"
+  ]
+}

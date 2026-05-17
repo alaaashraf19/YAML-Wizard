@@ -1,0 +1,20 @@
+{
+  "sha": "gitlab_19305",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 9071,
+  "description": "Create a GitLab CI pipeline using the docker:latest image with a docker:dind service and DOCKER_BUILDKIT=1, defining stages build, test, docker-create, docker-manifest, and docker-tag. Add a .clang-tidy template job (ubuntu:24.04, interruptible) that installs clang-14 and many development packages, runs ci/build.sh, and stores build/warnings/ and ci/ as artifacts for 1 month; clang-tidy-amd64 extends this template. Add a commit-verify job (ubuntu:24.04, interruptible) with a before_script installing git wget gnupg and a script calling ci/commit_verify.sh, running in the build stage. Add a build-test job using the registry.gitlab.com/yottadb/db/ydbtest image (entrypoint cleared) that runs /usr/library/gtm_test/T999/docker/pipeline-test-ydb.csh and publishes testarea1/, testarea2/, testarea3/, pipeline-test-ydb-build.out and coverage.xml (cobertura) as artifacts for 1 month. Define a .docker-create template job that only runs on the master branch, builds a Docker image with \"docker build --platform=${PLATFORM} ${ARGS} --provenance=false --pull -t yottadb/${REPO}:${DOCKERHUBTAG} -f ${DOCKERFILE} .\", logs into Docker Hub using HUB_USERNAME/HUB_PASSWORD, pushes the image, creates a BareDockerfile to build a base image yottadb/${REPO}-base:${DOCKERHUBTAG}, and pushes it; concrete docker-create-*-* jobs extend this template with specific tags (amd64/aarch64), REPO values (yottadb, yottadb-debian, yottadb-rocky, yottadb-asan, yottadb-debug), Dockerfiles, and optional ARGS for Debug or ASAN builds. Define a .docker-manifest template job that only runs on master, logs into Docker Hub, pulls the amd64 and aarch64 images for both the main and base repositories, creates and pushes multi‑arch manifests, and runs on the docker-manifest stage with an amd64 tag; docker-manifest-*-* jobs extend this template with appropriate REPO and DOCKERHUBTAG values, with docker-manifest-release variants triggered only on tags and docker-manifest-tag-with-version jobs that tag the latest image with a version extracted from source using \"docker buildx imagetools create\".",
+  "tags": [
+    "ubuntu",
+    "clang-tidy",
+    "docker",
+    "dind",
+    "manifest",
+    "yottadb",
+    "debian",
+    "rocky",
+    "asan",
+    "debug",
+    "multi-arch"
+  ]
+}

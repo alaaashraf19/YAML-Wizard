@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_08692",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 803,
+  "description": "Create a GitLab CI pipeline with a single test stage using the docker:latest image and a docker:dind service, setting DOCKER_DRIVER to overlay2 and enabling untracked artifacts. Define a hidden job template .test-sitespeed-base that runs the script: apk add npm, npm install, docker pull sitespeedio/sitespeed.io:$SITESPEED_VERSION, docker run --shm-size=1g --rm -v \"$(pwd)\":/sitespeed.io sitespeedio/sitespeed.io:$SITESPEED_VERSION --cpu --plugins.add /sitespeed.io/index.js --outputFolder . https://gitlab.com/gitlab-org/gitlab-foss/issues/1 https://gitlab.com/gitlab-org/gitlab-ee/merge_requests/3507, and then mv data/performance.json performance.json. Add two concrete jobs in the test stage: test-sitespeed-27-0-0 extending the template with SITESPEED_VERSION set to 27.0.0, and test-sitespeed-latest extending the template with SITESPEED_VERSION set to latest, both inheriting the image, service, variables, artifacts, and script.",
+  "tags": [
+    "docker",
+    "sitespeed",
+    "performance",
+    "dind",
+    "test"
+  ]
+}

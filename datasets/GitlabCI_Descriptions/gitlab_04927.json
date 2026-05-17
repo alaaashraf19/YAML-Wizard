@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_04927",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 4737,
+  "description": "Create a GitLab CI pipeline using the image registry.gitlab.com/gitlab-org/gitlab-build-images/debian-bookworm-slim-ruby-3.2:kubectl-1.30-helm-3.10-helm_kubeconform-0.1.17-vcluster-0.19-awscli-1.32.93 and a default before_script that runs ruby -v, installs bundler 2.3.9, and adds helm repos gitlab and jetstack. Define a deploy stage with a pages job that runs only on the master branch and trigger pipelines, uses a cache key $CI_JOB_NAME.$CI_BUILD_REF_NAME caching vendor/ruby, and executes: mkdir -p public/unstable; aws s3 cp s3://$S3_BUCKET/index.yaml public/index.yaml || true; aws s3 cp s3://$S3_BUCKET/unstable/index.yaml public/unstable/index.yaml || true; cp ${COSIGN_PUBLIC_KEY} public/cosign.pub || true; bundle config set path vendor/ruby; bundle install --jobs 4; bundle exec kramdown --input GFM --template document --syntax-highlighter rouge README.md > public/index.html; helm repo index public --merge public/index.yaml --url https://$S3_BUCKET.s3.amazonaws.com; cp artifacthub-repo.yml public/artifacthub-repo.yml; aws s3 sync public s3://$S3_BUCKET --acl public-read; echo \"Compressing with GZIP\"; find public -type f -regex '.*\\.(htm|html|yaml|yml)$' -exec gzip -9 -f -k {} \\;; rm -f public/*tgz; and publishes the public directory as a GitLab Pages artifact. Add three test‑stage jobs: release_chart runs on pipelines for master when CHART_NAME and RELEASE_REF are set and UNSTABLE is not true, clones the chart repository (fallback to security group), runs helm dep up if needed, packages charts with scripts/package_charts.sh, updates the Helm repo index and syncs the public folder to S3; release_unstable_chart runs on pipelines for master when UNSTABLE is true, performs the same steps in a public/unstable directory and syncs to the unstable S3 path; test runs on all branches except master, creates the public folder, pulls the index from S3, installs Ruby dependencies, builds documentation with kramdown, clones charts listed in CHARTS_LIST, lints them with helm lint, resolves dependencies, packages them, updates the Helm repo index and stores the public folder as a 3‑day artifact. All jobs inherit the default image and before_script, and use AWS CLI for S3 operations and Helm for chart handling.",
+  "tags": [
+    "ruby",
+    "helm",
+    "aws-cli",
+    "s3",
+    "gitlab-pages",
+    "chart-release",
+    "kramdown",
+    "ci"
+  ]
+}

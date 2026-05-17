@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_05972",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1162,
+  "description": "Create a GitLab CI pipeline using the python:3.7 Docker image and a postgres:latest service, with a pip cache at ~/.cache/pip/. Define stages test, build, and publish and set PostgreSQL variables (POSTGRES_DB, POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_HOST_AUTH_METHOD). In the test stage add a coverage job that runs pip install coverage, coverage run --source='.' manage.py test, tox -e py37-django21, and coverage html, stores the htmlcov directory as an artifact (expire 1 day) and extracts coverage percentage via regex, and sets a DATABASE_URL variable referencing the service. Also in test stage add a python37 job using python:3.7 that runs tox -epy37-django21. In the build stage add a docs job that installs requirements.txt and sphinx, changes to docs/, removes any existing build/, runs make html, and publishes the docs/build/html/ directory as an artifact (expire 1 day). In the publish stage add a pages job that runs only on the master branch, depends on coverage and docs, creates public/coverage, copies the generated HTML docs and coverage reports into public/, and publishes the public/ directory as a GitLab Pages artifact.",
+  "tags": [
+    "python-3.7",
+    "postgres",
+    "pip-cache",
+    "tox",
+    "coverage",
+    "sphinx",
+    "docs",
+    "gitlab-pages"
+  ]
+}

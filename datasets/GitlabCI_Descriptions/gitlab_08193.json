@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_08193",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 488,
+  "description": "Create a GitLab CI pipeline using the docker:git image with a docker:dind service and set DOCKER_DRIVER=overlay. Define a single deploy stage and two jobs: development and stable. The development job runs only on the master branch, executes the before_script to log in to the registry with gitlab-ci-token, then builds the image with tag $CI_REGISTRY_IMAGE:latest and pushes it. The stable job runs only on tag pushes, also uses the before_script login, builds the image with tag $CI_REGISTRY_IMAGE:$(CI_BUILD_REF_NAME) and pushes it. Both jobs are assigned to the deploy stage.",
+  "tags": [
+    "docker",
+    "dind",
+    "gitlab-ci",
+    "deploy",
+    "registry-login",
+    "tags"
+  ]
+}

@@ -1,0 +1,71 @@
+deploy_stable:
+  environment: Stable
+  only:
+  - master
+  - tags
+  script:
+  - scp $CI_PROJECT_DIR/boot.php stable@172.20.1.251:/var/www/gap.shadow.touchepasletruc.com/html/boot.php
+  - scp $CI_PROJECT_DIR/shadow_bg.png stable@172.20.1.251:/var/www/gap.shadow.touchepasletruc.com/html/shadow_bg.png
+  - scp $CI_PROJECT_DIR/ShadowBoot_$CI_COMMIT_REF_NAME.efi stable@172.20.1.251:/var/www/gap.shadow.touchepasletruc.com/html/shadow.efi
+  stage: deploy
+  tags:
+  - shadow
+  - bionic
+  - ubuntu
+  when: manual
+ipxe_build:
+  artifacts:
+    expire_in: 2 days
+    name: IPXE-$CI_COMMIT_REF_NAME
+    paths:
+    - $CI_PROJECT_DIR/shadow_bg.png
+    - $CI_PROJECT_DIR/boot.php
+    - $CI_PROJECT_DIR/ShadowBoot_$CI_COMMIT_REF_NAME.efi
+    - $CI_PROJECT_DIR/ShadowBoot_EFI_$CI_COMMIT_REF_NAME.img
+    - $CI_PROJECT_DIR/ShadowBoot_LEGACY_$CI_COMMIT_REF_NAME.img
+    - $CI_PROJECT_DIR/ShadowBoot_$CI_COMMIT_REF_NAME.iso
+    - $CI_PROJECT_DIR/ShadowBoot-efi_$CI_COMMIT_REF_NAME.iso
+    - $CI_PROJECT_DIR/ShadowBoot-hybrid_$CI_COMMIT_REF_NAME.iso
+  before_script:
+  - echo "deb-src http://ftp.fr.debian.org/debian/ stable main non-free non-free-firmware
+    contrib" > /etc/apt/sources.list.d/src.list
+  - apt update -qq && apt install -y -qq git build-essential devscripts wget
+  image: debian:stable
+  script:
+  - apt install -y -qq liblzma-dev isolinux curl fuseiso genisoimage mtools syslinux
+  - curl -s http://ca.ipxe.org/ca.crt > ca.pem
+  - curl -s https://letsencrypt.org/certs/isrgrootx1.pem > isrgrootx1.pem
+  - curl -s https://letsencrypt.org/certs/lets-encrypt-r3.pem > lets-encrypt-r3.pem
+  - git clone --single-branch --recurse-submodules https://github.com/ipxe/ipxe.git
+  - cd ipxe/src
+  - patch -p2 < $CI_PROJECT_DIR/ipxe.patch
+  - make bin/ipxe.usb EMBED=$CI_PROJECT_DIR/shadow.ipxe CERT=$CI_PROJECT_DIR/ca.pem,$CI_PROJECT_DIR/isrgrootx1.pem,$CI_PROJECT_DIR/lets-encrypt-r3.pem
+    TRUST=$CI_PROJECT_DIR/ca.pem,$CI_PROJECT_DIR/isrgrootx1.pem,$CI_PROJECT_DIR/lets-encrypt-r3.pem
+    DEBUG=x509
+  - make bin/ipxe.iso EMBED=$CI_PROJECT_DIR/shadow.ipxe CERT=$CI_PROJECT_DIR/ca.pem,$CI_PROJECT_DIR/isrgrootx1.pem,$CI_PROJECT_DIR/lets-encrypt-r3.pem
+    TRUST=$CI_PROJECT_DIR/ca.pem,$CI_PROJECT_DIR/isrgrootx1.pem,$CI_PROJECT_DIR/lets-encrypt-r3.pem
+    DEBUG=x509
+  - make bin-x86_64-efi/ipxe.efi EMBED=$CI_PROJECT_DIR/shadow.ipxe CERT=$CI_PROJECT_DIR/ca.pem,$CI_PROJECT_DIR/isrgrootx1.pem,$CI_PROJECT_DIR/lets-encrypt-r3.pem
+    TRUST=$CI_PROJECT_DIR/ca.pem,$CI_PROJECT_DIR/isrgrootx1.pem,$CI_PROJECT_DIR/lets-encrypt-r3.pem
+    DEBUG=x509
+  - make bin-x86_64-efi/ipxe.usb EMBED=$CI_PROJECT_DIR/shadow.ipxe CERT=$CI_PROJECT_DIR/ca.pem,$CI_PROJECT_DIR/isrgrootx1.pem,$CI_PROJECT_DIR/lets-encrypt-r3.pem
+    TRUST=$CI_PROJECT_DIR/ca.pem,$CI_PROJECT_DIR/isrgrootx1.pem,$CI_PROJECT_DIR/lets-encrypt-r3.pem
+    DEBUG=x509
+  - mkdir tmp_mount
+  - mkdir -p tmp_hybrid/EFI/BOOT/
+  - mkdir -p tmp_efi/EFI/BOOT/
+  - fuseiso bin/ipxe.iso tmp_mount
+  - cp -R tmp_mount/* tmp_hybrid/
+  - fusermount -u tmp_mount
+  - cp bin-x86_64-efi/ipxe.efi tmp_efi/EFI/BOOT/bootx64.efi
+  - cp bin-x86_64-efi/ipxe.efi tmp_hybrid/EFI/BOOT/bootx64.efi
+  - genisoimage -o $CI_PROJECT_DIR/ShadowBoot-efi_$CI_COMMIT_REF_NAME.iso tmp_efi
+  - genisoimage -o $CI_PROJECT_DIR/ShadowBoot-hybrid_$CI_COMMIT_REF_NAME.iso tmp_hybrid
+  - mv bin-x86_64-efi/ipxe.efi $CI_PROJECT_DIR/ShadowBoot_$CI_COMMIT_REF_NAME.efi
+  - mv bin/ipxe.iso $CI_PROJECT_DIR/ShadowBoot_$CI_COMMIT_REF_NAME.iso
+  - mv bin/ipxe.usb $CI_PROJECT_DIR/ShadowBoot_LEGACY_$CI_COMMIT_REF_NAME.img
+  - mv bin-x86_64-efi/ipxe.usb $CI_PROJECT_DIR/ShadowBoot_EFI_$CI_COMMIT_REF_NAME.img
+  stage: build
+  tags:
+  - docker-shared-amd64
+  timeout: 3 hours 30 minutes

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_06004",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 364,
+  "description": "Create a GitLab CI pipeline with a single job called job1 that runs in the default test stage using the runner's default Docker image. In job1 execute the following shell commands: remove any existing Blender addon directories with rm -f ~/.config/blender/2.78/scripts/addons/toaster and rm -f ~/.config/blender/2.78/scripts/addons/toaster_tests, then create symbolic links from the repository's toaster and toaster_tests directories into ~/.config/blender/2.78/scripts/addons using ln -s `pwd`/toaster/ ~/.config/blender/2.78/scripts/addons and ln -s `pwd`/toaster_tests/ ~/.config/blender/2.78/scripts/addons. Finally run Blender with the specified addons by invoking blender --addons toaster,toaster_tests --python toaster_tests/run.py --python-exit-code 1. The job does not define any caches, artifacts, services, or conditional rules, and it does not deploy to any target.",
+  "tags": [
+    "blender",
+    "gitlab-ci",
+    "symlink",
+    "addons",
+    "test-job"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_10683",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2435,
+  "description": "Create a GitLab CI pipeline with three stages: build, publish, and badge. In the build stage add a build job using the maven:3.3.9-jdk-8 image that caches /root/.m2/repository/, runs `git clone https://gitlab.com/ixilon/nukkit.git`, `cd nukkit`, `git submodule update --init`, `./gradlew shadowJar`, `./gradlew publishToMavenLocal`, `cd -`, `mvn -f helper-pom.xml package`, sets `CLASSPATH=nukkit/target/nukkit-1.0-SNAPSHOT.jar:target/nukkit-helper-0.0.1-SNAPSHOT.jar`, then `java -cp $CLASSPATH de.ixilon.nukkit.NukkitProtocol | tee nukkit/target/PROTOCOL` and `java -cp $CLASSPATH de.ixilon.nukkit.NukkitVersion | tee nukkit/target/VERSION`, and stores the JAR, VERSION and PROTOCOL files as artifacts for 1 hour. In the publish stage add a dockerhub job that runs only on the master branch, uses the docker image with a docker:dind service, logs in to Docker Hub with $DOCKERHUB_USERNAME/$DOCKERHUB_PASSWORD, builds the image `docker build -t $DOCKERHUB_IMAGE .`, tags it with the version and protocol read from the build artifacts, and pushes all tags to Docker Hub. Also in the publish stage add a gitlab job that runs only on master, uses the docker image with docker:dind, logs in to the GitLab registry using the CI job token, builds the image `docker build -t $CI_REGISTRY_IMAGE .`, tags it with the version and protocol, and pushes all tags to the GitLab Container Registry. Finally, in the badge stage add a badge job that runs only on master with the node image, reads VERSION and PROTOCOL from the build artifacts, clones the nukkit-docker repository, installs git-credential-envvar via npm, configures git credentials from $GITCREDENTIALUSERNAME and $GITCREDENTIALEMAIL, checks out the badges branch, downloads shields.io badge images for the protocol and version, adds and commits them (skipping CI), and pushes the changes.",
+  "tags": [
+    "maven",
+    "docker",
+    "node",
+    "dockerhub",
+    "gitlab-registry",
+    "badge",
+    "ci"
+  ]
+}

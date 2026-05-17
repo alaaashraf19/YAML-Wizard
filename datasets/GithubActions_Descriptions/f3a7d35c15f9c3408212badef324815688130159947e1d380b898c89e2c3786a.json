@@ -1,0 +1,14 @@
+{
+  "sha": "f3a7d35c15f9c3408212badef324815688130159947e1d380b898c89e2c3786a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3056,
+  "description": "Create a GitHub Actions workflow named BuildThirdpartyDockerRegularly that builds and publishes third-party Docker images weekly. The workflow triggers on push to specific paths, manually with a workflow dispatch, and on a scheduled cron job. It uses two ubuntu-latest jobs to build and push source and binary Docker images to DockerHub using QEMU, Docker Buildx, and login actions.",
+  "tags": [
+    "docker",
+    "dockerhub",
+    "third-party",
+    "scheduled",
+    "workflows"
+  ]
+}

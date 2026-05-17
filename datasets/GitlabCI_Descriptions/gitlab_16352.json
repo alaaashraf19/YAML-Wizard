@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_16352",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 110,
+  "description": "Create a GitLab CI pipeline that defines a cache keyed by $CI_JOB_NAME storing the node_modules directory. Add a single job named puppeteer that uses the buildkite/puppeteer Docker image, runs in the default stage, and executes the shell command `npm it`. No services, variables, artifacts, or rules are required.",
+  "tags": [
+    "node",
+    "npm",
+    "puppeteer",
+    "cache"
+  ]
+}

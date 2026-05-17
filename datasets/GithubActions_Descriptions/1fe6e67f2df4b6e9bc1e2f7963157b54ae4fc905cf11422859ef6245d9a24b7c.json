@@ -1,0 +1,17 @@
+{
+  "sha": "1fe6e67f2df4b6e9bc1e2f7963157b54ae4fc905cf11422859ef6245d9a24b7c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 8096,
+  "description": "Create a GitHub Actions workflow named Windows 64bit Build that runs on push events to winbuild-testing, master, and release branches. The workflow should use a windows-2019 environment to check out the repository, download and install GStreamer, InfoZip, OpenSSL, and fonts, then build and package the OpenKJ project using CMake, Qt, and Inno Setup. The workflow should also sign the executable and installer, and upload the installer to Google Cloud Storage.",
+  "tags": [
+    "windows",
+    "gstreamer",
+    "qt",
+    "cmake",
+    "innosetup",
+    "signing",
+    "gcloud",
+    "installer"
+  ]
+}

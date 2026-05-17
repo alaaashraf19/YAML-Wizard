@@ -1,0 +1,60 @@
+build:
+  artifacts:
+    paths:
+    - target/
+    - cargo/
+  only:
+  - tags
+  - master
+  - /^[0-9]+-.*$/
+  script:
+  - mkdir -p target
+  - mkdir -p cargo
+  - du -hs target
+  - du -h cargo
+  - rustc --version && cargo --version
+  - cargo build --verbose --jobs 1 --release
+  stage: build
+docs:
+  artifacts:
+    paths:
+    - target/
+    - cargo/
+  dependencies:
+  - build
+  only:
+  - tags
+  - master
+  - /^[0-9]+-.*$/
+  script:
+  - mkdir -p target
+  - mkdir -p cargo
+  - du -hs target
+  - du -hs cargo
+  - cargo doc --jobs 1
+  stage: docs
+image: scorpil/rust:stable
+stages:
+- build
+- test
+- docs
+- deploy
+test:
+  artifacts:
+    paths:
+    - target/
+    - cargo/
+  dependencies:
+  - build
+  only:
+  - tags
+  - master
+  - /^[0-9]+-.*$/
+  script:
+  - mkdir -p target
+  - mkdir -p cargo
+  - du -hs target
+  - du -hs cargo
+  - rustc --version && cargo --version
+  - cargo test --verbose --jobs 1 --release
+  stage: test

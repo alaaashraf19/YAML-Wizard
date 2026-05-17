@@ -1,0 +1,89 @@
+certify:
+  environment: production
+  image:
+    entrypoint:
+    - /usr/bin/env
+    - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    name: hashicorp/packer:1.2.5
+  only:
+  - master
+  script:
+  - cd packer
+  - packer build certify.json
+  stage: build
+compute:
+  environment: production
+  image:
+    entrypoint:
+    - /usr/bin/env
+    - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    name: hashicorp/packer:1.2.5
+  only:
+  - master
+  script:
+  - cd packer
+  - packer build compute.json
+  stage: build
+control:
+  environment: production
+  image:
+    entrypoint:
+    - /usr/bin/env
+    - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    name: hashicorp/packer:1.2.5
+  only:
+  - master
+  script:
+  - cd packer
+  - packer build control.json
+  stage: build
+loadbalancer:
+  environment: production
+  image:
+    entrypoint:
+    - /usr/bin/env
+    - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    name: hashicorp/packer:1.2.5
+  only:
+  - master
+  script:
+  - cd packer
+  - packer build loadbalancer.json
+  stage: build
+stages:
+- validate
+- build
+- provision
+terraform:
+  before_script:
+  - cd terraform
+  - mkdir -p ~/.ssh
+  - mkdir -p ~/.gcloud
+  - echo '${DIGITALOCEAN_SSH_PRIVATE_KEY}' >> /root/.ssh/id_ed25519
+  - export DIGITALOCEAN_TOKEN=${DIGITALOCEAN_API_TOKEN}
+  - echo '${GCP_ACCOUNT_FILE}' >> ~/.gcloud/account.json
+  - terraform --version
+  - terraform init
+  image:
+    entrypoint:
+    - /usr/bin/env
+    - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    name: hashicorp/terraform:light
+  script:
+  - terraform validate -var commit_id=$CI_COMMIT_SHA
+  - terraform apply -auto-approve -lock=true -lock-timeout=10s -var commit_id=$CI_COMMIT_SHA
+  stage: provision
+validate:
+  before_script:
+  - packer --version
+  image:
+    entrypoint:
+    - /usr/bin/env
+    - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    name: hashicorp/packer:1.2.5
+  script:
+  - cd packer
+  - find . -maxdepth 1 -name '*.json' -print0 | xargs -t0n1 packer validate
+  stage: validate
+variables:
+  PLAN: plan.tfplan

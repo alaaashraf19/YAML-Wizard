@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_17694",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 335,
+  "description": "Create a GitLab CI pipeline that uses the docker:latest Docker image and the docker:dind service, with the DOCKER_DRIVER variable set to overlay2 and jobs marked interruptible. Define a single job named publish:docker that runs in the default stage and is limited to the master branch. In this job, first execute docker login -u \"${CI_REGISTRY_USER}\" -p \"${CI_REGISTRY_PASSWORD}\" \"${CI_REGISTRY}\", then change into the app directory and run docker build . -t ${CI_REGISTRY_IMAGE}:latest. The job should run on runners tagged docker.",
+  "tags": [
+    "docker",
+    "dind",
+    "ci-registry",
+    "publish",
+    "docker-build",
+    "master-only"
+  ]
+}

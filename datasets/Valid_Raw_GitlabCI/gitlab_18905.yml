@@ -1,0 +1,25 @@
+apk:
+  artifacts:
+    name: vplayer-$CI_COMMIT_REF_NAME
+    paths:
+    - app-release-unsigned.apk
+  script:
+  - ./gradlew assembleRelease
+  - mv ./app/build/outputs/apk/release/app-release-unsigned.apk ./
+  stage: release
+before_script:
+- export GRADLE_USER_HOME=`pwd`/.gradle
+- chmod +x ./gradlew
+- sdkmanager --update > update.log
+- sdkmanager "platforms;android-28" > install-platform.log
+- sdkmanager "build-tools;28.0.3" > install-buildtools.log
+- set +o pipefail
+- yes | sdkmanager --licenses
+- set -o pipefail
+cache:
+  key: $CI_COMMIT_REF_NAME
+  paths:
+  - .gradle/
+image: registry.gitlab.com/showcheap/android-ci:master
+stages:
+- release

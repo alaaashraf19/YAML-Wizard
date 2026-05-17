@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_11293",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 257,
+  "description": "Create a GitLab CI pipeline that uses the microsoft/dotnet:latest Docker image. Add a build job that runs the commands `dotnet --version`, `dotnet restore --verbosity normal`, and `dotnet build --verbosity normal`. Add a test job that changes into the XUnitTestProject1 directory and runs `dotnet restore --verbosity normal` followed by `dotnet test --verbosity normal`. Both jobs run in the default test stage, have no caches, artifacts, services, or conditional rules.",
+  "tags": [
+    "dotnet",
+    "microsoft",
+    "build",
+    "test",
+    "ci"
+  ]
+}

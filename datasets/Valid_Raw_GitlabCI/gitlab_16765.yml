@@ -1,0 +1,16 @@
+image: monachus/hugo:latest
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - hugo --minify && gzip -k -6 $(find public -type f)
+test:
+  except:
+  - master
+  script:
+  - hugo --minify
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive

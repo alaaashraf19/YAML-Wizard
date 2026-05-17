@@ -1,0 +1,100 @@
+name: CI
+on: [push, pull_request, workflow_dispatch]
+env:
+  OPENLOCO_BUILD_SERVER: GitHub
+jobs:
+  check-code-formatting:
+    name: Check code formatting
+    runs-on: ubuntu-latest
+    container:
+      image: openrct2/openrct2-build:8-format
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Run clang-format
+        run: scripts/check-code-formatting.sh
+  windows:
+    name: Windows
+    runs-on: windows-latest
+    needs: check-code-formatting
+    env:
+      CONFIGURATION: Release
+      POWERSHELL_TELEMETRY_OPTOUT: 1
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          submodules: true
+      - name: Restore artifacts, or setup vcpkg
+        uses: lukka/run-vcpkg@v10
+        with:
+          vcpkgDirectory: '${{ github.workspace }}/vcpkg'
+          vcpkgGitCommitId: 01b29f6d8212bc845da64773b18665d682f5ab66 
+      - name: Build OpenLoco
+        shell: cmd
+        run: |
+          cmake --preset windows-msvc
+          cmake --build --preset windows-msvc-release
+      - name: Build artifacts
+        run: |
+          mkdir artifacts | Out-Null
+          Copy-Item CHANGELOG.md,CONTRIBUTORS.md,DEVELOPMENTLOG.md,LICENSE artifacts
+          Copy-Item build\windows-msvc\Release\* artifacts -Recurse
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: OpenLoco-${{ runner.os }}-Win32-cmake
+          path: artifacts
+          if-no-files-found: error
+      - name: Run Tests
+        shell: cmd
+        run: |
+          ctest --test-dir build\windows-msvc\ --output-on-failure
+  ubuntu:
+    name: Ubuntu ${{ matrix.distro }} ${{ matrix.compiler }} i686
+    runs-on: ubuntu-latest
+    needs: check-code-formatting
+    container: openloco/openloco:5-${{ matrix.distro }}32
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [g++, clang++]
+        distro: [focal, jammy]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          submodules: true
+      - name: Install GCC problem matcher
+        uses: ammaraskar/gcc-problem-matcher@master
+      - name: Build OpenLoco
+        run: |
+          cmake --preset linux -DCMAKE_CXX_COMPILER=${{ matrix.compiler }}
+          cmake --build --preset linux-release
+      - name: Run Tests
+        run: |
+          ctest --test-dir build/linux/ --output-on-failure
+
+  fedora:
+    name: Fedora shared=${{ matrix.build_shared_libs }} i686 MinGW32
+    runs-on: ubuntu-latest
+    needs: check-code-formatting
+    container: openloco/openloco:4-mingw32
+    strategy:
+      fail-fast: false
+      matrix:
+        build_shared_libs: [on, off]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          submodules: true
+      - name: Install GCC problem matcher
+        uses: ammaraskar/gcc-problem-matcher@master
+      - name: Build OpenLoco
+        run: |
+          cmake --preset mingw -DBUILD_SHARED_LIBS=${{ matrix.build_shared_libs }}
+          cmake --build --preset mingw-release

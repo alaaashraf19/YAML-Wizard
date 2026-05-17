@@ -1,0 +1,15 @@
+{
+  "sha": "834fc8ea71f6ce67d0adcc28fafb870012289335fd37731dfd450ae351adfc9d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2091,
+  "description": "Create a GitHub Actions workflow named Docs that runs on push to main and on pull requests. Use a concurrency group to cancel in-progress jobs. Run a matrix job on ubuntu-latest for Python 3.7 and 3.10, checking out the code, installing dependencies including texlive and pandoc, setting up Python, caching pip, installing packages, listing installed packages, building HTML and PDF docs, and uploading artifacts. Also, perform a link check on the docs.",
+  "tags": [
+    "python",
+    "docs",
+    "sphinx",
+    "ubuntu",
+    "latex",
+    "pandoc"
+  ]
+}

@@ -1,0 +1,68 @@
+before_script:
+- apt-get update -qq
+build_linux:
+  artifacts:
+    expire_in: 1 year
+    paths:
+    - release_build/OpenSimRoot
+  needs: []
+  script:
+  - apt-get install -y -qq gcc g++ make python3.12-dev
+  - ./build.sh
+  stage: build
+build_windows:
+  artifacts:
+    expire_in: 1 year
+    paths:
+    - windows_build/OpenSimRoot.exe
+  needs: []
+  script:
+  - apt-get install -y -qq gcc make mingw-w64
+  - ./build_win64.sh
+  stage: build
+image: ubuntu:latest
+pages:
+  artifacts:
+    expire_in: 3 years
+    paths:
+    - public
+  environment:
+    name: pages
+    url: https://not.used.de
+  needs:
+  - build_linux
+  - build_windows
+  only:
+  - master
+  script:
+  - apt install -y -qq zip
+  - cp OpenSimRoot/scripts/XML/SimulaXMLSchema.xsd public/
+  - cp OpenSimRoot/scripts/XML/*.css public/
+  - cp OpenSimRoot/scripts/XML/*.xsl public/
+  - cp release_build/OpenSimRoot public/executables/OpenSimRoot_Linux_x64
+  - cp windows_build/OpenSimRoot.exe public/executables/OpenSimRoot_Win_x64.exe
+  - zip -r inputfiles_osr.zip OpenSimRoot/tests OpenSimRoot/InputFiles
+  - mv inputfiles_osr.zip public/inputfiles/
+  stage: deploy
+stages:
+- build
+- test
+- deploy
+testEngine:
+  needs:
+  - build_linux
+  script:
+  - apt install -y -qq  libpython3.12-dev
+  - ./runTestsEngine.sh
+  stage: test
+testModules:
+  needs:
+  - build_linux
+  script:
+  - mkdir -p /root/.aws/
+  - echo region = us-west-2 >> /root/.aws/credentials
+  - apt install -y -qq  bc r-cran-xml libpython3.12-dev
+  - ./runTestsModules.sh
+  stage: test
+  variables:
+    DEBIAN_FRONTEND: noninteractive

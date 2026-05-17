@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_05206",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2258,
+  "description": "Create a GitLab CI pipeline that defines a hidden .v134_base job with environment name gkevc_134/$REVIEW_REF_PREFIX$CI_COMMIT_SHORT_SHA, URL https://gitlab${DOMAIN}, and variables DOMAIN, HOST_SUFFIX, VARIABLES_FILE, VCLUSTER_K8S_VERSION, and VCLUSTER_NAME. In the review stage add a create_review_v134 job that uses the ${BUSYBOX_IMAGE} Docker image, runs the command `echo \"Configuring gkevc_134/$REVIEW_REF_PREFIX$CI_COMMIT_SHORT_SHA to automatically stop in $REVIEW_APPS_AUTO_STOP_IN.\"`, sets GIT_STRATEGY to none, starts the environment, sets auto_stop_in $REVIEW_APPS_AUTO_STOP_IN and defines on_stop stop_review_v134. Include the GitLab component for Allure reporting which creates an e2e-test-v134 job in the qa-report stage, passes inputs for allure_results_glob and AWS credentials, and runs only when CI_PIPELINE_SOURCE is \"pipeline\" or \"parent_pipeline\" and CI_SERVER_HOST is not \"gitlab.com\". Add a qa_v134 job in the qa stage that extends .qa_branch and .v134_base, needs review_v134 and review_specs_v134 (without artifacts), and sets TEST_SUITE to $QA_SANITY_SUITE_OPTIONS. Add a manual qa_v134_full_suite_manual_trigger job that echoes \"The job will trigger Full E2E suite against GKE134 vcluster\", and a qa_v134_manual_full_suite job that extends .qa_branch and .v134_base, needs the manual trigger, runs with parallel: 7, and sets TEST_SUITE to $QA_FULL_SUITE_OPTIONS. Define review_specs_v134, review_v134, and stop_review_v134 jobs that extend their respective vcluster templates, inherit the .v134_base variables, run in the review stage, and have environment actions access (for specs and review) or stop (for stop_review_v134).",
+  "tags": [
+    "gkevc",
+    "vcluster",
+    "review",
+    "qa",
+    "allure-report",
+    "busybox",
+    "parallel",
+    "manual-trigger"
+  ]
+}

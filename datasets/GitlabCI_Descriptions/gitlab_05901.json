@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_05901",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 140,
+  "description": "Create a GitLab CI pipeline that uses the ruby:2.5 Docker image. Add a pages job that runs in the default stage, executes the shell commands \"gem install jekyll\" and \"jekyll build -d public/\", publishes the generated public/ directory as an artifact, and is limited to the master branch for deployment to GitLab Pages.",
+  "tags": [
+    "ruby",
+    "jekyll",
+    "gitlab-pages",
+    "master",
+    "artifact"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "787a42026b2aa849d6abc82b7872e6ff9f96a591af5b106c6cec0cbb542ada05",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4573,
+  "description": "Create a GitHub Actions workflow that builds and uploads a Python package to PyPI. The workflow should trigger on push and pull request events. It should determine the runner to use for ARM64 builds based on the repository owner, then build wheels for multiple Python versions and platforms, including Linux, macOS, and Windows. Additionally, it should build a source distribution, upload the artifacts to PyPI if a tag is pushed, build a Docker image, and perform pass testing on the build wheels.",
+  "tags": [
+    "python",
+    "pypi",
+    "docker",
+    "github-actions",
+    "ci",
+    "cd"
+  ]
+}

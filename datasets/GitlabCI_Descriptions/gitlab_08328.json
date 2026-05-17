@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_08328",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 726,
+  "description": "Create a GitLab CI pipeline using the golang:${GO_VERSION}-alpine Docker image, with a variable GO_VERSION defaulting to 1.22 and a before_script that installs git via apk, creates the Go workspace under /go/src/gitlab.com/gitlab-org, symlinks the repository, changes into it, and sets GOARCH=amd64, CGO_ENABLED=0, GOOS=linux. Define two stages, test and release. In the test stage add a static-analysis job that runs the script _support/go-fmt-check.sh, and a unit tests job that runs go test -v ./.... In the release stage add a binary job that runs in parallel for GO_VERSION values 1.22 and 1.23, executes go build -ldflags \"-s -w\" ./cmds/docker-distribution-pruner, and stores the resulting docker-distribution-pruner binary as an artifact.",
+  "tags": [
+    "go",
+    "golang",
+    "static-analysis",
+    "unit-tests",
+    "binary",
+    "docker-alpine",
+    "go-build"
+  ]
+}

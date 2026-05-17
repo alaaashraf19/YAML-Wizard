@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_09954",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2370,
+  "description": "Create a GitLab CI pipeline that runs a before_script to print system information, add the i386 architecture, update apt, and install cmake, openssh-client, re2c, and perl. Define four jobs—lnx32-debug, lnx32-release, lnx64-debug, and lnx64-release—each using the default Docker image (e.g., ubuntu:latest). In the 32‑bit jobs, install libelf-dev:i386, libdwarf-dev:i386, llvm-dev:i386, ncurses-dev:i386, gcc-multilib, and g++-multilib; in the 64‑bit jobs install the non‑i386 equivalents. Each job creates a build/$CI_BUILD_NAME directory, runs cmake with -DCMAKE_BUILD_TYPE set to Debug or Release, sets -DCMAKE_C_FLAGS, -DCMAKE_CXX_FLAGS, and -DCMAKE_SHARED_LINKER_FLAGS to -m32 for 32‑bit or -m64 for 64‑bit, and sets -DCMAKE_INSTALL_PREFIX=../../$CI_BUILD_NAME, then executes make -j4, make install, make test, and returns to the repository root. Each job publishes the $CI_BUILD_NAME directory as an artifact named hsail-tools-${CI_BUILD_NAME}-${CI_BUILD_ID} that expires in 4 weeks. The pipeline runs on all branches with no explicit stages or rules.",
+  "tags": [
+    "cmake",
+    "make",
+    "apt",
+    "i386",
+    "x86_64",
+    "debug",
+    "release",
+    "linux"
+  ]
+}

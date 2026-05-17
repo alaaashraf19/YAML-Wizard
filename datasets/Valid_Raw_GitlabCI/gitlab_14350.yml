@@ -1,0 +1,30 @@
+pages:
+  artifacts:
+    expire_in: 1 day
+    paths:
+    - public/
+  dependencies:
+  - run-fitnesse-test
+  only:
+  - master
+  script:
+  - mv target/fitnesse-test-results public
+  stage: publish
+  when: always
+run-fitnesse-test:
+  after_script:
+  - cp target/fitnesse-test-results/TestSuite.html target/fitnesse-test-results/index.html
+  artifacts:
+    expire_in: 1 day
+    paths:
+    - target/fitnesse-test-results
+  before_script: null
+  image: maven:3.3.9-jdk-8
+  only:
+  - master
+  script:
+  - mvn clean install -B -P start-demo-test -DskipTests=false -DforkCount=1
+  stage: test
+stages:
+- test
+- publish

@@ -1,0 +1,454 @@
+.auto_dbt_seed: &id002
+- SCHEMA_NAME=$(python3 ../../orchestration/yaml_reader.py read_seed_schema --dbt_project_path
+  "./dbt_project.yml")
+- TABLE_NAME=$(python3 ../../orchestration/yaml_reader.py read_seed_name --seed_file_path
+  "./seeds/seed_engineering/seed_engineering.yml")
+- RESULT=$(python3 ../../orchestration/manage_snowflake.py check_if_table_exists --database
+  $SNOWFLAKE_PREP_DATABASE --schema $SCHEMA_NAME --table_name $TABLE_NAME)
+- CLEAN_RESULT=$(echo $RESULT | egrep -o '.{4,5}$')
+- if [ $CLEAN_RESULT = "False" ]; then dbt seed --full-refresh $CI_PROFILE_TARGET;
+  fi
+.clone_raw:
+- export SNOWFLAKE_LOAD_DATABASE="${CI_COMMIT_REF_NAME^^}_RAW"
+- echo $SNOWFLAKE_LOAD_DATABASE
+.dbt_deps: &id001
+- dbt deps $CI_PROFILE_TARGET
+.dbt_macro_check:
+  allow_failure: false
+  before_script: &id011
+  - cd transform/snowflake-dbt/
+  image: registry.gitlab.com/gitlab-data/dbt-image:v0.1.2
+  only: &id012
+    changes:
+    - transform/snowflake-dbt/macros/**/*.sql
+    refs:
+    - merge_request
+  stage: "\U0001F6E0 dbt Misc"
+  tags: &id013
+  - analytics
+.dbt_misc_jobs:
+  after_script: &id004
+  - cd $CI_PROJECT_DIR/transform/snowflake-dbt/
+  - mkdir -p $CI_PROJECT_DIR/public/dbt/
+  - cp -r target $CI_PROJECT_DIR/public/dbt/
+  artifacts: &id005
+    expire_in: 1 week
+    name: dbt Compiled Files and logs
+    paths:
+    - public
+    - transform/snowflake-dbt/logs
+    when: always
+  before_script: &id006
+  - cd transform/snowflake-dbt/
+  - echo $BRANCH_NAME
+  - if [ $BRANCH_NAME = "master" ]; then export SNOWFLAKE_PREP_DATABASE="PREP"; else
+    export SNOWFLAKE_PREP_DATABASE="${CI_COMMIT_REF_NAME^^}_PREP"; fi
+  - if [ $BRANCH_NAME = "master" ]; then export SNOWFLAKE_PROD_DATABASE="PROD"; else
+    export SNOWFLAKE_PROD_DATABASE="${CI_COMMIT_REF_NAME^^}_PROD"; fi
+  - echo $SNOWFLAKE_PREP_DATABASE
+  - echo $SNOWFLAKE_PROD_DATABASE
+  - export SNOWFLAKE_LOAD_DATABASE="RAW"
+  - echo $SNOWFLAKE_LOAD_DATABASE
+  - export SNOWFLAKE_TRANSFORM_WAREHOUSE=$SNOWFLAKE_MR_XS_WAREHOUSE
+  - echo $SNOWFLAKE_TRANSFORM_WAREHOUSE
+  - export SNOWFLAKE_SNAPSHOT_DATABASE="SNOWFLAKE"
+  - echo $SNOWFLAKE_SNAPSHOT_DATABASE
+  - export ENVIRONMENT="CI"
+  - echo $ENVIRONMENT
+  - export CI_PROFILE_TARGET="--profiles-dir profile --target ci"
+  - echo $CI_PROFILE_TARGET
+  - export DBT_RUNNER="${GITLAB_USER_ID}-${CI_MERGE_REQUEST_ID}-${CI_JOB_ID}"
+  - echo $DBT_RUNNER
+  - mkdir -p $CI_PROJECT_DIR/transform/snowflake-dbt/reference_state/
+  - curl -o $CI_PROJECT_DIR/transform/snowflake-dbt/reference_state/manifest.json
+    http://dbt.gitlabdata.com/manifest.json
+  - mkdir -p ~/.ssh
+  - touch ~/.ssh/id_rsa
+  - chmod 700 ~/.ssh
+  - echo "$GIT_DATA_TESTS_SSH_PRIVATE_KEY" | base64 --decode > ~/.ssh/id_rsa
+  - chmod 0400 ~/.ssh/id_rsa
+  - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+  image: registry.gitlab.com/gitlab-data/dbt-image:v0.1.2
+  only: &id008
+  - merge_requests
+  stage: "\U0001F6E0 dbt Misc"
+  tags: &id007
+  - analytics
+  when: manual
+.dbt_validate_tags: &id003
+- dbt --warn-error run-operation tag_validation --profiles-dir profile --target ci
+.deps_and_seed: &id009
+- *id001
+- *id002
+- *id003
+.ds_exposure_dependencies_query:
+  after_script: *id004
+  allow_failure: true
+  artifacts: *id005
+  before_script: *id006
+  image: registry.gitlab.com/gitlab-data/dbt-image:v0.1.2
+  only: &id010
+    changes:
+    - transform/snowflake-dbt/models/**/*.sql
+    refs:
+    - merge_request
+  stage: "\U0001F6E0 dbt Misc"
+  tags: *id007
+  when: always
+.glab_job:
+  before_script:
+  - apk update
+  - apk upgrade
+  - apk add bash git jq sed zsh
+  image:
+    entrypoint:
+    - ''
+    name: gitlab/glab
+.l_warehouse:
+- export SNOWFLAKE_TRANSFORM_WAREHOUSE=$SNOWFLAKE_MR_L_WAREHOUSE
+- echo $SNOWFLAKE_TRANSFORM_WAREHOUSE
+.merge-request:
+  if: $CI_PIPELINE_SOURCE != "merge_request_event"
+  when: never
+.notification_job:
+  extends: .glab_job
+  needs:
+  - job: "\U0001F3D7\uFE0F\U0001F3EDbuild_changes"
+    optional: true
+  stage: notify
+.safe_models_check:
+  after_script: *id004
+  allow_failure: false
+  artifacts: *id005
+  before_script: *id006
+  image: registry.gitlab.com/gitlab-data/dbt-image:v0.1.2
+  only: &id016
+    changes:
+    - transform/snowflake-dbt/models/**/*.sql
+    refs:
+    - merge_request
+  stage: "\U0001F6E0 dbt Misc"
+  tags: *id007
+  when: always
+.set_snapshot:
+- export SNOWFLAKE_SNAPSHOT_DATABASE="${CI_COMMIT_REF_NAME^^}_RAW"
+- echo $SNOWFLAKE_SNAPSHOT_DATABASE
+.skip-bot-authored:
+  if: $GITLAB_USER_LOGIN =~ /^(project|group)_/
+  when: never
+.snowflake_dbt_jobs:
+  after_script: *id004
+  artifacts: *id005
+  before_script: *id006
+  image: registry.gitlab.com/gitlab-data/dbt-image:v0.1.2
+  only: *id008
+  stage: "\u2699\uFE0F dbt Run"
+  tags: *id007
+  when: manual
+.tableau_direct_dependencies_query:
+  allow_failure: true
+  image: registry.gitlab.com/gitlab-data/data-image/data-image:v2.0.7
+  only: &id014
+    changes:
+    - transform/snowflake-dbt/models/**/*.sql
+    refs:
+    - merge_request
+  stage: "\U0001F6E0 dbt Misc"
+  tags: &id015
+  - analytics
+.xl_warehouse:
+- export SNOWFLAKE_TRANSFORM_WAREHOUSE=$SNOWFLAKE_MR_XL_WAREHOUSE
+- echo $SNOWFLAKE_TRANSFORM_WAREHOUSE
+.xs_warehouse:
+- export SNOWFLAKE_TRANSFORM_WAREHOUSE=$SNOWFLAKE_MR_XS_WAREHOUSE
+- echo $SNOWFLAKE_TRANSFORM_WAREHOUSE
+clear_report:
+  extends: .notification_job
+  rules:
+  - if: $CI_PIPELINE_SOURCE != "merge_request_event"
+    when: never
+  - if: $CI_MERGE_REQUEST_LABELS =~ /Suppress Results Report/
+  script:
+  - unset GITLAB_ACCESS_TOKEN
+  - transform/snowflake-dbt/clear_dbt_report.zsh
+post_report_on_build:
+  extends: .notification_job
+  rules:
+  - if: $CI_PIPELINE_SOURCE != "merge_request_event"
+    when: never
+  - if: $CI_MERGE_REQUEST_LABELS !~ /Suppress Results Report/
+  script:
+  - unset GITLAB_ACCESS_TOKEN
+  - transform/snowflake-dbt/parse_dbt_results.zsh > msg.txt
+  - transform/snowflake-dbt/post_dbt_report.zsh "$(cat msg.txt)"
+run_grants:
+  after_script: *id004
+  artifacts: *id005
+  before_script: *id006
+  image: registry.gitlab.com/gitlab-data/dbt-image:v0.1.2
+  only: *id008
+  script:
+  - set +e
+  - dbt deps $CI_PROFILE_TARGET
+  - make run-grants MODE="CI" UPSTREAM="1+" PROFILE_TARGET="$CI_PROFILE_TARGET" GRANT_TO_ROLE="$GRANT_TO_ROLES"
+  stage: "\U0001F6E0 dbt Misc"
+  tags: *id007
+  when: manual
+"\U0001F331manual_seed":
+  after_script: *id004
+  artifacts: *id005
+  before_script: *id006
+  image: registry.gitlab.com/gitlab-data/dbt-image:v0.1.2
+  only: *id008
+  script:
+  - dbt deps $CI_PROFILE_TARGET
+  - dbt seed --full-refresh $CI_PROFILE_TARGET
+  - dbt --warn-error run-operation tag_validation --profiles-dir profile --target
+    ci
+  stage: "\U0001F6E0 dbt Misc"
+  tags: *id007
+  when: manual
+"\U0001F33Bfreshness":
+  after_script: *id004
+  artifacts: *id005
+  before_script: *id006
+  image: registry.gitlab.com/gitlab-data/dbt-image:v0.1.2
+  only: *id008
+  script:
+  - *id009
+  - dbt source snapshot-freshness $CI_PROFILE_TARGET
+  stage: "\U0001F6E0 dbt Misc"
+  tags: *id007
+  when: manual
+"\U0001F39B\uFE0Fcustom_invocation":
+  after_script: *id004
+  artifacts: *id005
+  before_script: *id006
+  image: registry.gitlab.com/gitlab-data/dbt-image:v0.1.2
+  only: *id008
+  script:
+  - set +e
+  - export SNOWFLAKE_SNAPSHOT_DATABASE="${CI_COMMIT_REF_NAME^^}_RAW"
+  - if [ -z $WAREHOUSE ]; then echo "No Warehouse selected." && exit 7; else SNOWFLAKE_TRANSFORM_WAREHOUSE=$WAREHOUSE;
+    fi
+  - echo $SNOWFLAKE_TRANSFORM_WAREHOUSE
+  - export DBT_CI_STATEMENT=""
+  - if [ -z "$STATEMENT" ]; then echo "No models selected." && exit 3; else DBT_CI_STATEMENT=$STATEMENT;
+    fi
+  - echo $DBT_CI_STATEMENT
+  - echo $SNOWFLAKE_SNAPSHOT_DATABASE
+  - if [ ! -z "$RAW_DB" ]; then SNOWFLAKE_LOAD_DATABASE="${CI_COMMIT_REF_NAME^^}_RAW";
+    fi
+  - echo $SNOWFLAKE_LOAD_DATABASE
+  - dbt deps $CI_PROFILE_TARGET
+  - dbt $DBT_CI_STATEMENT $CI_PROFILE_TARGET || FAILED=true
+  - if [ $FAILED ]; then echo "Invocation process failed" && exit 5; fi
+  stage: "\u2699\uFE0F dbt Run"
+  tags: *id007
+  when: manual
+"\U0001F3D7\uFE0F\U0001F3EDbuild_changes":
+  after_script: *id004
+  artifacts: *id005
+  before_script: *id006
+  image: registry.gitlab.com/gitlab-data/dbt-image:v0.1.2
+  only: *id008
+  script:
+  - set +e
+  - export SNOWFLAKE_TRANSFORM_WAREHOUSE=${WAREHOUSE:-$SNOWFLAKE_MR_XL_WAREHOUSE}
+  - echo $SNOWFLAKE_TRANSFORM_WAREHOUSE
+  - export SNOWFLAKE_SNAPSHOT_DATABASE="${CI_COMMIT_REF_NAME^^}_RAW"
+  - echo $SNOWFLAKE_SNAPSHOT_DATABASE
+  - if [ ! -z "$RAW_DB" ]; then SNOWFLAKE_LOAD_DATABASE="${CI_COMMIT_REF_NAME^^}_RAW";
+    fi
+  - echo $SNOWFLAKE_LOAD_DATABASE
+  - dbt deps $CI_PROFILE_TARGET
+  - make build-changes MODE="CI" CONTIGUOUS="$CONTIGUOUS" SELECTION="$SELECTION" EXCLUDE="$EXCLUDE"
+    PROFILE_TARGET="$CI_PROFILE_TARGET" FULL_REFRESH="$FULL_REFRESH" FAIL_FAST="$FAIL_FAST"
+    VARS="$VARS" DOWNSTREAM="$DOWNSTREAM"
+  stage: "\u2699\uFE0F dbt Run"
+  tags: *id007
+  when: manual
+"\U0001F4BEdata_tests":
+  after_script: *id004
+  artifacts: *id005
+  before_script: *id006
+  image: registry.gitlab.com/gitlab-data/dbt-image:v0.1.2
+  only: *id008
+  script:
+  - *id009
+  - dbt test --select test_type:data $CI_PROFILE_TARGET
+  stage: "\U0001F6E0 dbt Misc"
+  tags: *id007
+  when: manual
+"\U0001F4DA\u270F\uFE0Fgenerate_dbt_docs":
+  after_script:
+  - cd $CI_PROJECT_DIR/transform/snowflake-dbt/
+  - mkdir -p $CI_PROJECT_DIR/public/dbt/
+  - cp -r target $CI_PROJECT_DIR/public/dbt/
+  allow_failure: true
+  before_script:
+  - cd transform/snowflake-dbt/
+  - echo $BRANCH_NAME
+  - export SNOWFLAKE_PREP_DATABASE="RAW"
+  - export SNOWFLAKE_PROD_DATABASE="RAW"
+  - export SNOWFLAKE_LOAD_DATABASE="RAW"
+  - echo $SNOWFLAKE_LOAD_DATABASE
+  - export SNOWFLAKE_TRANSFORM_WAREHOUSE=$SNOWFLAKE_MR_XS_WAREHOUSE
+  - echo $SNOWFLAKE_TRANSFORM_WAREHOUSE
+  - export SNOWFLAKE_SNAPSHOT_DATABASE="SNOWFLAKE"
+  - echo $SNOWFLAKE_SNAPSHOT_DATABASE
+  - export ENVIRONMENT="CI"
+  - echo $ENVIRONMENT
+  - export DBT_RUNNER="${GITLAB_USER_ID}-${CI_MERGE_REQUEST_ID}-${CI_JOB_ID}"
+  - echo $DBT_RUNNER
+  - export CI_PROFILE_TARGET="--profiles-dir profile --target ci"
+  - echo $CI_PROFILE_TARGET
+  - mkdir -p ~/.ssh
+  - touch ~/.ssh/id_rsa
+  - chmod 700 ~/.ssh
+  - echo "$GIT_DATA_TESTS_SSH_PRIVATE_KEY" | base64 --decode > ~/.ssh/id_rsa
+  - chmod 0400 ~/.ssh/id_rsa
+  - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+  image: registry.gitlab.com/gitlab-data/dbt-image:v0.1.2
+  only:
+    changes:
+    - transform/snowflake-dbt/**/*.{md,yml}
+    refs:
+    - merge_request
+  script:
+  - *id001
+  - dbt docs generate $CI_PROFILE_TARGET --no-compile || FAILED=true
+  - if [ $FAILED ]; then exit 1; fi
+  stage: "\u2699\uFE0F dbt Run"
+  tags:
+  - analytics
+  variables:
+    LOGURU_COLORIZE: 'true'
+  when: manual
+"\U0001F4DDspecify_tests":
+  after_script: *id004
+  artifacts: *id005
+  before_script: *id006
+  image: registry.gitlab.com/gitlab-data/dbt-image:v0.1.2
+  only: *id008
+  script:
+  - *id009
+  - echo $DBT_MODELS
+  - dbt test $CI_PROFILE_TARGET --models $DBT_MODELS
+  stage: "\U0001F6E0 dbt Misc"
+  tags: *id007
+  when: manual
+"\U0001F4F8snapshots":
+  after_script: *id004
+  artifacts: *id005
+  before_script: *id006
+  image: registry.gitlab.com/gitlab-data/dbt-image:v0.1.2
+  only: *id008
+  script:
+  - export SNOWFLAKE_SNAPSHOT_DATABASE="${CI_COMMIT_REF_NAME^^}_RAW"
+  - echo $SNOWFLAKE_SNAPSHOT_DATABASE
+  - *id009
+  - dbt snapshot $CI_PROFILE_TARGET
+  stage: "\U0001F6E0 dbt Misc"
+  tags: *id007
+  when: manual
+"\U0001F50Dds_exposure_dependencies_query":
+  after_script: *id004
+  allow_failure: true
+  artifacts: *id005
+  before_script: *id006
+  image: registry.gitlab.com/gitlab-data/dbt-image:v0.1.2
+  only: *id010
+  script:
+  - *id001
+  - DIFF=$(git diff origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME...HEAD --name-only
+    | grep -iEo "(.*)\.sql" | sed -E 's/\.sql//' | awk -F '/' '{print tolower($NF)}'
+    | sort | uniq )
+  - echo $DIFF
+  - if [ -n "$DIFF" ]; then python3 ds_dependency_check.py $DIFF; fi
+  stage: "\U0001F6E0 dbt Misc"
+  tags: *id007
+  variables:
+    LOGURU_COLORIZE: 'true'
+  when: always
+"\U0001F50Dmacro_name_check":
+  allow_failure: false
+  before_script: *id011
+  image: registry.gitlab.com/gitlab-data/dbt-image:v0.1.2
+  only: *id012
+  script:
+  - python3 macro_name_check.py
+  stage: "\U0001F6E0 dbt Misc"
+  tags: *id013
+"\U0001F50Dtableau_direct_dependencies_query":
+  allow_failure: true
+  image: registry.gitlab.com/gitlab-data/data-image/data-image:v2.0.7
+  only: *id014
+  script:
+  - DIFF=$(git diff origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME...HEAD --name-only
+    | grep -iEo "(.*)\.sql" | sed -E 's/\.sql//' | awk -F '/' '{print tolower($NF)}'
+    | sort | uniq )
+  - echo $DIFF
+  - python3 orchestration/tableau_dependency_query/src/tableau_query.py $DIFF
+  stage: "\U0001F6E0 dbt Misc"
+  tags: *id015
+  variables:
+    LOGURU_COLORIZE: 'true'
+"\U0001F5C2schema_tests":
+  after_script: *id004
+  artifacts: *id005
+  before_script: *id006
+  image: registry.gitlab.com/gitlab-data/dbt-image:v0.1.2
+  only: *id008
+  script:
+  - *id009
+  - dbt test --select test_type:schema $CI_PROFILE_TARGET
+  stage: "\U0001F6E0 dbt Misc"
+  tags: *id007
+  when: manual
+"\U0001F6ABsafe_model_script":
+  after_script: *id004
+  allow_failure: false
+  artifacts: *id005
+  before_script: *id006
+  image: registry.gitlab.com/gitlab-data/dbt-image:v0.1.2
+  only: *id016
+  script:
+  - set +e
+  - dbt deps $CI_PROFILE_TARGET
+  - make safe-check PROFILE_TARGET="$CI_PROFILE_TARGET"
+  stage: "\U0001F6E0 dbt Misc"
+  tags: *id007
+  when: always
+"\U0001F6C3dbt_sqlfluff":
+  after_script: *id004
+  allow_failure: true
+  artifacts: *id005
+  before_script: *id006
+  image: registry.gitlab.com/gitlab-data/dbt-image:v0.1.2
+  only:
+    changes:
+    - transform/snowflake-dbt/models/**/*.sql
+    - transform/snowflake-dbt/analysis/**/*.sql
+    refs:
+    - merge_request
+  script:
+  - set +e
+  - export CI_MERGE_REQUEST_DIFF_BASE_SHA=$CI_MERGE_REQUEST_DIFF_BASE_SHA
+  - dbt deps $CI_PROFILE_TARGET
+  - make lint-models MODE="CI"
+  stage: "\U0001F6E0 dbt Misc"
+  tags: *id007
+  when: manual
+"\U0001F9E0all_tests":
+  after_script: *id004
+  artifacts: *id005
+  before_script: *id006
+  image: registry.gitlab.com/gitlab-data/dbt-image:v0.1.2
+  only: *id008
+  script:
+  - *id009
+  - dbt test $CI_PROFILE_TARGET
+  stage: "\U0001F6E0 dbt Misc"
+  tags: *id007
+  when: manual

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_07930",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 818,
+  "description": "Create a GitLab CI pipeline that uses the node:latest Docker image and defines three stages: setup, build, and deploy. Add a setup job in the setup stage that runs `npm install`, saves the `node_modules/` directory as an artifact, and runs only on the master branch. Add a build job in the build stage that depends on setup, runs `npm run build`, saves the `dist/` directory as an artifact, runs only on master, and executes on success. Add a deploy job in the deploy stage that depends on setup and build, runs a before_script installing rsync and openssh-client, starts ssh-agent, adds the `$SSH_PRIVATE_KEY`, creates `~/.ssh` with strict host key checking disabled, then runs `rsync -hrvz --delete --exclude=_ -e 'ssh -i id_rsa' dist/ fro@frodesigns.com:/home/fro/pwa-skeleton/`, sets the environment name to Demo, and runs only on master on success.",
+  "tags": [
+    "node",
+    "npm",
+    "rsync",
+    "ssh-deploy",
+    "master-only"
+  ]
+}

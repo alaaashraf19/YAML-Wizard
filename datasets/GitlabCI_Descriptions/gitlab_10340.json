@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_10340",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 194,
+  "description": "Create a GitLab CI pipeline that uses the maven:latest Docker image and defines a MAVEN_CLI_OPTS variable set to '-f backend/pom.xml '. Define two stages: build and test. In the build stage add a build job that runs mvn $MAVEN_CLI_OPTS compile. In the test stage add a test job that runs mvn $MAVEN_CLI_OPTS test. No caches, artifacts, services or special rules are required.",
+  "tags": [
+    "maven",
+    "java",
+    "build",
+    "test",
+    "gitlab-ci"
+  ]
+}

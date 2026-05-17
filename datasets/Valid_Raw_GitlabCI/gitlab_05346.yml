@@ -1,0 +1,59 @@
+build_binary:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - penguin-htdocs.deb
+  image: ubuntu:16.04
+  script:
+  - chmod 755 penguin-htdocs/DEBIAN
+  - dpkg -b penguin-htdocs
+  stage: build
+  tags:
+  - docker
+deploy_to_dev:
+  image: chusiang/ansible:alpine-3.6
+  only:
+  - master@chusiang/coscup2017-cd-demo
+  - develop@chusiang/coscup2017-cd-demo
+  - tags@chusiang/coscup2017-cd-demo
+  script:
+  - ls
+  - cd ansible-playbooks/
+  - echo "${VAULT_KEY}" > secret.txt
+  - ansible-playbook deploy.yml
+  - rm -f secret.txt
+  stage: deploy
+  tags:
+  - docker
+release_to_prd:
+  image: chusiang/ansible:alpine-3.6
+  only:
+  - master@chusiang/coscup2017-cd-demo
+  - tags@chusiang/coscup2017-cd-demo
+  script:
+  - cd ansible-playbooks/
+  - echo "${VAULT_KEY}" > secret.txt
+  - ansible-playbook -i production deploy.yml
+  - rm -f secret.txt
+  stage: release
+  tags:
+  - docker
+stages:
+- build
+- deploy
+- test
+- release
+test_dev:
+  image: chusiang/ansible:alpine-3.6
+  only:
+  - master@chusiang/coscup2017-cd-demo
+  - develop@chusiang/coscup2017-cd-demo
+  - tags@chusiang/coscup2017-cd-demo
+  script:
+  - cd ansible-playbooks/
+  - echo "${VAULT_KEY}" > secret.txt
+  - ansible-playbook test.yml
+  - rm -f secret.txt
+  stage: test
+  tags:
+  - docker

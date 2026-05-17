@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_11486",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 212,
+  "description": "Create a GitLab CI pipeline that uses the gcc Docker image and defines a single stage called build. Add a job named build in the build stage that first runs apt update && apt -y install make autoconf gcc-arm-none-eabi in a before_script. Cache all object files matching build/*.o, then execute make as the main script. Publish all generated ELF files matching build/*.elf as artifacts.",
+  "tags": [
+    "gcc",
+    "make",
+    "arm-none-eabi",
+    "embedded",
+    "ci"
+  ]
+}

@@ -1,0 +1,90 @@
+build_package:
+  artifacts:
+    expire_in: 2 weeks
+    name: artifacts-$CI_PROJECT_NAME-$CI_JOB_ID
+    paths:
+    - '*.vsix'
+  cache:
+    paths:
+    - node_modules/
+  image: node:latest
+  rules:
+  - if: $CI_COMMIT_BRANCH == "develop"
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  - if: $CI_COMMIT_TAG == /^v.*$/
+    when: never
+  - if: $CI_COMMIT_TAG
+  script:
+  - npm install --unsafe-perm -g vsce
+  - npm install --unsafe-perm
+  - vsce package -o $CI_PROJECT_NAME-$CI_JOB_ID-$CI_PIPELINE_SOURCE.vsix --baseContentUrl
+    $CI_PROJECT_URL/blob/$CI_COMMIT_REF_NAME
+  stage: build
+build_package_release:
+  artifacts:
+    name: artifacts-$CI_PROJECT_NAME-$CI_COMMIT_TAG
+    paths:
+    - '*.vsix'
+  cache:
+    paths:
+    - node_modules/
+  image: node:latest
+  rules:
+  - if: $CI_COMMIT_TAG == /^v.*$/
+  script:
+  - npm install --unsafe-perm -g vsce
+  - npm install --unsafe-perm
+  - vsce package -o $CI_PROJECT_NAME-$CI_COMMIT_TAG.vsix --baseContentUrl $BASE_CONTENT_URL
+  stage: build
+code_quality:
+  rules:
+  - if: $CI_COMMIT_TAG
+  - if: $CI_COMMIT_BRANCH == "develop"
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+deploy_package:
+  image: node:latest
+  rules:
+  - if: $CI_COMMIT_TAG == /^v.*$/
+  script:
+  - npm install --unsafe-perm -g vsce
+  - vsce publish -p $VSCE_PERSONAL_ACCESS_TOKEN --packagePath $CI_PROJECT_NAME-$CI_COMMIT_TAG.vsix
+  stage: deploy
+  variables:
+    GIT_STRATEGY: none
+eslint-sast:
+  rules:
+  - if: $CI_COMMIT_TAG
+  - if: $CI_COMMIT_BRANCH == "develop"
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+include:
+- template: SAST.gitlab-ci.yml
+- template: Security/License-Scanning.gitlab-ci.yml
+- template: Security/Secret-Detection.gitlab-ci.yml
+- template: Dependency-Scanning.gitlab-ci.yml
+- template: Code-Quality.gitlab-ci.yml
+license_scanning:
+  rules:
+  - if: $CI_COMMIT_TAG
+  - if: $CI_COMMIT_BRANCH == "develop"
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  - if: $CI_PIPELINE_SOURCE == "schedule"
+  variables:
+    NODE_ENV: production
+retire-js-dependency_scanning:
+  rules:
+  - if: $CI_COMMIT_TAG
+  - if: $CI_COMMIT_BRANCH == "develop"
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  - if: $CI_PIPELINE_SOURCE == "schedule"
+secret_detection:
+  rules:
+  - if: $CI_COMMIT_TAG
+  - if: $CI_COMMIT_BRANCH == "develop"
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+stages:
+- build
+- test
+- deploy
+variables:
+  DS_DEFAULT_ANALYZERS: retire.js
+  SAST_DEFAULT_ANALYZERS: eslint

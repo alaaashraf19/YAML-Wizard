@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_06833",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 422,
+  "description": "Create a GitLab CI pipeline using the elixir:latest Docker image and a selenium/standalone-chrome:latest service aliased as selenium. Set a cache keyed by ${CI_BUILD_REF_NAME} that stores the deps/ and _build/ directories. Define a before_script that exports CONTAINER_IP by parsing /etc/hosts, runs mix local.rebar --force, mix local.hex --force, and mix deps.get. Add a mix job in the default test stage that executes echo $CONTAINER_IP and then runs mix test. No additional artifacts, rules, or deployment targets are required.",
+  "tags": [
+    "elixir",
+    "mix",
+    "selenium",
+    "docker",
+    "cache",
+    "gitlab-ci"
+  ]
+}

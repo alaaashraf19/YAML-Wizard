@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_03666",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 384,
+  "description": "Create a GitLab CI pipeline using the maven:latest Docker image and a Maven local repository cache at .m2/repository. Define three stages: build, test, and deploy, and set MAVEN_OPTS to use the local repository. Add a kt-validate job in the build stage that runs mvn test-compile. Add a kt-test job in the test stage that runs mvn test then cat target/site/jacoco/index.html || true. Add a kt-deploy job in the deploy stage that runs mvn package and publishes the resulting target/*.jar files as an artifact named after the job.",
+  "tags": [
+    "maven",
+    "java",
+    "jacoco",
+    "cache",
+    "artifact",
+    "build",
+    "test",
+    "deploy"
+  ]
+}

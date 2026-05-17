@@ -1,0 +1,88 @@
+.generate_ui_images:
+  cache:
+    untracked: true
+  dependencies:
+  - build_debug_android
+  scrip: ???
+  stage: test
+  tags: &id001
+  - android-tools-25-0-5
+  - android-sdk-25
+  - txrunner
+.template_android_build_tags:
+  tags: *id001
+.unit_test:
+  cache:
+    untracked: true
+  dependencies:
+  - build_debug_android
+  scrip: ???
+  stage: test
+  tags: *id001
+build_release_android:
+  artifacts:
+    expire_in: 1 weeks
+    name: build_release_android
+    untracked: true
+  cache:
+    untracked: true
+  script:
+  - android/gradlew assembleRelease -p android
+  - '$ANDROID_HOME/build-tools/25.0.2/zipalign -v -p 4 android/app/build/outputs/apk/app-release-unsigned.apk  app-release-aligned.apk
+
+    '
+  - '$ANDROID_HOME/build-tools/25.0.2/apksigner sign --ks $KEYSTORE_PATH --key-pass
+    env:KEY_PASSWORD --ks-key-alias $KEY_NAME --ks-pass env:KEYSTORE_PASSWORD --out
+    pangoling-release.apk  app-release-aligned.apk
+
+    '
+  - rm app-release-aligned.apk
+  stage: build
+  tags: *id001
+lint_test:
+  artifacts:
+    expire_in: 1 years
+    name: lint-result
+    paths:
+    - android/app/build/reports/lint-results-release.*
+    when: always
+  dependencies:
+  - build_release_android
+  script:
+  - ./android/gradlew lintRelease -p android
+  stage: test
+  tags: *id001
+package_apk:
+  artifacts:
+    expire_in: 1 years
+    name: packages
+    paths:
+    - pangoling-release.apk
+    - package-unsigned.apk
+    - mapping.txt
+  dependencies:
+  - build_release_android
+  script:
+  - cp android/app/build/outputs/apk/app-release-unsigned.apk package-unsigned.apk
+  - cp android/app/build/outputs/mapping/release/mapping.txt mapping.txt
+  stage: package
+  tags: *id001
+pages:
+  artifacts:
+    name: site
+    paths:
+    - public
+  dependencies: []
+  only:
+  - www-public
+  script:
+  - ./www/nindex/generate.py
+  stage: deploy-www
+stages:
+- build
+- test
+- package
+- deploy-www
+variables:
+  GIT_DEPTH: '1'
+  GIT_STRATEGY: fetch

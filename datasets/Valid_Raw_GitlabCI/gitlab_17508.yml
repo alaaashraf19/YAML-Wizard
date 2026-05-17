@@ -1,0 +1,25 @@
+build:
+  artifacts:
+    paths:
+    - super
+    - superdb
+  cache:
+    paths:
+    - src/*.o
+  script:
+  - apt update && apt -y install make autoconf automake libtool check lcov cppcheck
+    python3 pkgconf
+  - autoreconf -i && ./configure --disable-pylint && make
+  stage: build
+image: debian:testing
+test:
+  script:
+  - apt update && apt -y install make autoconf automake libtool check lcov cppcheck
+    pkgconf clang-tools-4.0 clang python3 python3-pip python3-numpy python3-scipy
+    python3-biopython python3-pyparsing pylint
+  - pip3 install -U ProDy
+  - autoreconf -i && ./configure --enable-code-coverage
+  - scan-build make
+  - make check
+  - make local-code-coverage-output
+  stage: test

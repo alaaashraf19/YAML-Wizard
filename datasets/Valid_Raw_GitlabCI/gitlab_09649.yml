@@ -1,0 +1,62 @@
+package:
+  artifacts:
+    paths:
+    - dist
+  only:
+  - master
+  - /^v\d+\.\d+(?:.\d+)?(?:-\d+)?$/
+  script:
+  - apt-get update -qy
+  - apt-get install -y --force-yes lsb-release fakeroot python3-dev python3-pip
+  - pip3 install setuptools
+  - make version PATCH=$CI_BUILD_ID
+  - make package PY_VERSION=3
+  - pip3 install dist/*.whl
+  stage: package
+  variables:
+    PATCH: $CI_BUILD_ID
+pages:
+  allow_failure: true
+  artifacts:
+    paths:
+    - public
+  coverage: /TOTAL.*?\s+(\d+%)/
+  only:
+  - master
+  script:
+  - apt-get update -qy
+  - apt-get install -y --force-yes lsb-release fakeroot python-dev python-pip
+  - pip install -r requirements.txt
+  - echo "export PATCH=$CI_BUILD_ID" > PATCH_VERSION
+  - mkdir -p public
+  - time make cover && mv htmlcov public/
+  - mv docs public/
+  - echo '<html><body><a href="htmlcov/index.html">Test Coverage</a><br/><a href="docs/index.html">Developer
+    Documentation</a></body></html>' > public/index.html
+  stage: test
+stages:
+- test
+- package
+- upload
+test:
+  only:
+  - dev
+  - master
+  script:
+  - apt-get update -qy
+  - apt-get install -y --force-yes lsb-release fakeroot python-dev python3-dev python3-pip
+  - pip3 install -r requirements.txt
+  - echo "export PATCH=$CI_BUILD_ID" > PATCH_VERSION
+  - make test
+  stage: test
+  variables:
+    PATCH: $CI_BUILD_ID
+upload:
+  only:
+  - tags
+  script:
+  - apt-get update -qy
+  - apt-get install -y --force-yes lsb-release fakeroot python3-dev python3-pip
+  - pip3 install twine
+  - twine upload dist/* -u $PYPI_USERNAME -p $PYPI_PASSWORD
+  stage: upload

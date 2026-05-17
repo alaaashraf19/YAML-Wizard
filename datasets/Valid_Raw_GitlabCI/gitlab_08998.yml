@@ -1,0 +1,137 @@
+.ci-patterns: &id002
+- .gitlab-ci.yml
+- .gitlab/ci/triage-web.yml
+.kube-context:
+  before_script:
+  - kubectl config use-context ${KUBE_CONTEXT}
+.rules-deploy:
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "schedule"
+    when: never
+  - changes: &id001
+    - config/**/*
+    - triage/**/*
+    - lib/**/*
+    - spec/{fixtures/reactive,job,processor,rack,support,triage}/**/*
+    - .gitlab/ci/triage-web.yml
+    - Dockerfile.rack
+    if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  - when: never
+  - when: manual
+.rules-general:
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "schedule"
+    when: never
+  - changes: *id001
+  - changes: *id002
+.triage-web-patterns: *id001
+build:triage-web:
+  before_script:
+  - mkdir -p /kaniko/.docker
+  - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}"
+    > /kaniko/.docker/config.json
+  extends: .rules-general
+  image:
+    entrypoint:
+    - ''
+    name: gcr.io/kaniko-project/executor:v1.7.0-debug
+  script:
+  - /kaniko/executor --context=${CI_PROJECT_DIR} --dockerfile=${CI_PROJECT_DIR}/Dockerfile.rack
+    --destination=${TRIAGE_WEB_IMAGE_PATH} --cache=true
+  stage: build
+deploy:secrets:
+  environment:
+    action: prepare
+    name: production
+  extends:
+  - .kube-context
+  - .rules-deploy
+  image: ${DEPLOY_IMAGE}
+  needs: []
+  script:
+  - kubectl create secret generic gitlab-webhook-token --from-literal GITLAB_WEBHOOK_TOKEN="$GITLAB_WEBHOOK_TOKEN"
+    --dry-run=client -o yaml | kubectl apply -n "${KUBE_NAMESPACE}" -f -
+  - kubectl create secret generic gitlab-bot-api-token-on-com --from-literal GITLAB_BOT_API_TOKEN_ON_COM="$GITLAB_BOT_API_TOKEN_ON_COM"
+    --dry-run=client -o yaml | kubectl apply -n "${KUBE_NAMESPACE}" -f -
+  - kubectl create secret generic gitlab-bot-api-token-on-dev --from-literal GITLAB_BOT_API_TOKEN_ON_DEV="$GITLAB_BOT_API_TOKEN_ON_DEV"
+    --dry-run=client -o yaml | kubectl apply -n "${KUBE_NAMESPACE}" -f -
+  - kubectl create secret generic gitlab-dashboard-token --from-literal GITLAB_DASHBOARD_TOKEN="$GITLAB_DASHBOARD_TOKEN"
+    --dry-run=client -o yaml | kubectl apply -n "${KUBE_NAMESPACE}" -f -
+  - kubectl create secret generic sentry-dsn --from-literal SENTRY_DSN="$SENTRY_DSN_PRODUCTION"
+    --dry-run=client -o yaml | kubectl apply -n "${KUBE_NAMESPACE}" -f -
+  - kubectl create secret generic gitlab-sdk-app-id --from-literal GITLAB_SDK_APP_ID="$GITLAB_SDK_APP_ID"
+    --dry-run=client -o yaml | kubectl apply -n "${KUBE_NAMESPACE}" -f -
+  - kubectl create secret generic slack-webhook-url --from-literal SLACK_WEBHOOK_URL="$CI_SLACK_WEBHOOK_URL"
+    --dry-run=client -o yaml | kubectl apply -n "${KUBE_NAMESPACE}" -f -
+  - kubectl create secret generic user-account-csv-url --from-literal USER_ACCOUNT_CSV_URL="$USER_ACCOUNT_CSV_URL"
+    --dry-run=client -o yaml | kubectl apply -n "${KUBE_NAMESPACE}" -f -
+  - kubectl create secret generic alt-project-id-for-ci-title-label --from-literal
+    ALT_PROJECT_ID_FOR_CI_TITLE_LABEL="$ALT_PROJECT_ID_FOR_CI_TITLE_LABEL" --dry-run=client
+    -o yaml | kubectl apply -n "${KUBE_NAMESPACE}" -f -
+  - kubectl create secret generic discord-webhook-path-community-mr-request-review
+    --from-literal DISCORD_WEBHOOK_PATH_COMMUNITY_MR_REQUEST_REVIEW="$DISCORD_WEBHOOK_PATH_COMMUNITY_MR_REQUEST_REVIEW"
+    --dry-run=client -o yaml | kubectl apply -n "${KUBE_NAMESPACE}" -f -
+  - kubectl create secret generic discord-webhook-path-community-mr-help --from-literal
+    DISCORD_WEBHOOK_PATH_COMMUNITY_MR_HELP="$DISCORD_WEBHOOK_PATH_COMMUNITY_MR_HELP"
+    --dry-run=client -o yaml | kubectl apply -n "${KUBE_NAMESPACE}" -f -
+  - kubectl create secret generic discord-webhook-path-community-mr-handoff --from-literal
+    DISCORD_WEBHOOK_PATH_COMMUNITY_MR_HANDOFF="$DISCORD_WEBHOOK_PATH_COMMUNITY_MR_HANDOFF"
+    --dry-run=client -o yaml | kubectl apply -n "${KUBE_NAMESPACE}" -f -
+  - kubectl create secret generic common-room-api-token --from-literal COMMON_ROOM_API_TOKEN="$COMMON_ROOM_API_TOKEN"
+    --dry-run=client -o yaml | kubectl apply -n "${KUBE_NAMESPACE}" -f -
+  - kubectl create secret generic google-service-account-credentials-path --from-literal
+    GOOGLE_SERVICE_ACCOUNT_CREDENTIALS_PATH="/etc/secrets-volume/GOOGLE_SERVICE_ACCOUNT_CREDENTIALS"
+    --dry-run=client -o yaml | kubectl apply -n "${KUBE_NAMESPACE}" -f -
+  - kubectl create secret generic leading-orgs-tracker-sheet-id --from-literal LEADING_ORGS_TRACKER_SHEET_ID="$LEADING_ORGS_TRACKER_SHEET_ID"
+    --dry-run=client -o yaml | kubectl apply -n "${KUBE_NAMESPACE}" -f -
+  - kubectl create secret generic google-service-account-credentials --from-file "$GOOGLE_SERVICE_ACCOUNT_CREDENTIALS"
+    --dry-run=client -o yaml | kubectl apply -n "${KUBE_NAMESPACE}" -f -
+  stage: secrets
+deploy:triage-web:
+  environment:
+    action: start
+    name: production
+  extends:
+  - .kube-context
+  - .rules-deploy
+  image: ${DEPLOY_IMAGE}
+  needs:
+  - build:triage-web
+  script:
+  - echo ${KUBE_NAMESPACE}
+  - kubectl apply -f config/triage-web.yaml -n ${KUBE_NAMESPACE}
+  - kubectl set image deployment/triage-web-deployment triage-web=${TRIAGE_WEB_IMAGE_PATH}
+    -n ${KUBE_NAMESPACE}
+  - kubectl rollout restart deployment/triage-web-deployment -n ${KUBE_NAMESPACE}
+  - kubectl get all -n ${KUBE_NAMESPACE}
+  stage: deploy
+health-check:container:
+  artifacts:
+    expire_in: 31d
+    paths:
+    - container.log
+    when: always
+  before_script:
+  - export SERVICE_URL=http://${CONTAINER_NAME}:8080
+  - docker network create test
+  - docker run -d -p 8080:8080 --name ${CONTAINER_NAME} --net test --hostname ${CONTAINER_NAME}
+    -e GITLAB_WEBHOOK_TOKEN=gitlab_webhook_token -e GITLAB_BOT_API_TOKEN_ON_COM=gitlab_api_token
+    -e SLACK_WEBHOOK_URL='' -e DRY_RUN=1 ${TRIAGE_WEB_IMAGE_PATH}
+  - docker ps
+  - docker logs -f ${CONTAINER_NAME} &> container.log &
+  extends:
+  - .rules-general
+  - .use-docker-in-docker
+  script:
+  - docker run --rm --net test -v "$PWD:/work" "quay.io/curl/curl:latest" /work/bin/health-check
+    "${SERVICE_URL}" /work gitlab_webhook_token
+  - docker stop ${CONTAINER_NAME}
+  - docker network rm test
+  - test ! -f health-check-failed
+  stage: health-check
+  variables:
+    CONTAINER_NAME: triage-web
+variables:
+  DEPLOY_IMAGE: registry.gitlab.com/gitlab-org/gitlab-build-images/${BUILD_OS}-${OS_VERSION}-ruby-${RUBY_VERSION}:gcloud-413-kubectl-1.30-helm-3.14
+  KUBE_CONTEXT: gitlab-org/quality/triage-ops:triage-ops-prod
+  KUBE_NAMESPACE: triage-ops-7776928-production

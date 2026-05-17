@@ -1,0 +1,22 @@
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+  - .npm
+  - cache/Cypress
+test:
+  artifacts:
+    expire_in: 1 day
+    paths:
+    - cypress/videos
+    - cypress/screenshots
+  image: cypress/base:latest
+  script:
+  - npm ci
+  - $(npm bin)/print-env CI
+  - npm run cy:verify
+  - npm run start &
+  - npm run e2e:record
+  stage: test
+variables:
+  CYPRESS_CACHE_FOLDER: $CI_PROJECT_DIR/cache/Cypress
+  npm_config_cache: $CI_PROJECT_DIR/.npm

@@ -1,0 +1,21 @@
+{
+  "sha": "gitlab_04751",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 16220,
+  "description": "Create a GitLab CI pipeline with a global before_script that runs `git lfs fetch` and `git lfs checkout` and a global after_script that echoes `log-after_script`. In the build stage add five compile jobs—`compile.android` (linux, android, cmake, ninja tags) executing a series of `rm -rf`, `cd`, `mkdir`, `cmake` (Ninja generator) and `ninja` commands for armeabi‑v7a, armeabi‑v7a‑with‑neon, arm64‑v8a, x86 and x86_64 builds and copying the resulting `.a` files to `output/lib/android/*`; `compile.ios` (macos, gcc, cmake, make, ios tags) running `rm -rf`, `cd`, `mkdir`, `cmake` (iOS toolchain) and `make` for os, simulator and watchos targets and copying the libs to `output/lib/ios/*`; `compile.linux` (linux, gcc, cmake, make tags) performing `rm -rf`, `cd`, `mkdir`, `cmake` (Unix Makefiles) and `make` then copying the lib to `output/lib/linux`; `compile.macos` (macos, gcc, cmake, make tags) similar to the Linux job but copying to `output/lib/macos`; and `compile.windows` (win32, win64, cmake, vs2019 tags) using Windows batch commands to clean, create VS2019 build directories, invoke the Visual Studio generator via CMake, build `dracodec` and `dracoenc` in Release and Debug for Win32 and x64 with `msbuild`, and finally `xcopy` the resulting `.lib` files into `output\\lib\\win*\\vs2019\\*`. In the package stage add `package_ue4.10` and `package_ue4.16` jobs (linux, rsync tags) that clear and create `libdraco_ue4` directories, copy README, LICENSE, Build.cs files, gather headers from the Draco source with `rsync`, rebuild Draco with CMake/Make to obtain headers, and copy the compiled libraries from `output/lib/*` into the package, publishing the package as an artifact named with CI variables. In the deploy stage add `libdraco_ue4.10`, `libdraco_ue4.16`, and `libdraco_ue4.19` jobs (linux, python, itchio, butler tags, manual trigger) that create a directory named after the job, move the packaged `libdraco_ue4` folder into it, log in to Butler, push the directory to the corresponding itch.io channel (`c4gio/libdraco-ue4:ue4.10`, `ue4.16`, `ue4.19`), and log out. All jobs produce artifacts that expire in one month and are named using `$CI_JOB_NAME`, `$CI_PIPELINE_ID`, and `$CI_JOB_ID` where appropriate.",
+  "tags": [
+    "c++",
+    "cmake",
+    "ninja",
+    "make",
+    "windows",
+    "linux",
+    "macos",
+    "android",
+    "ios",
+    "ue4",
+    "butler",
+    "itchio"
+  ]
+}

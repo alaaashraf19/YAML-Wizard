@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_13990",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 991,
+  "description": "Create a GitLab CI pipeline with three stages: build, sign, and deploy. In the global before_script unset http_proxy and https_proxy and output all CI variables. Add a build_debian_stretch job in the build stage using the buildpkg/debian:stretch image (docker tag) that runs ci-build-pkg and publishes the result/* directory as an artifact that expires in 1 day. Add a build_ubuntu_zesty job in the build stage using the buildpkg/ubuntu:zesty image (docker tag) that also runs ci-build-pkg and stores result/* as an artifact expiring in 1 day. Add a sign job in the sign stage using the buildpkg/debian:stretch image (docker tag), dependent on both build jobs, that runs ci-sign-pkg and saves result/* as an artifact expiring in 1 day. Finally, add a pages job in the deploy stage using the buildpkg/debian:stretch image (docker tag), dependent on sign, that runs ci-pages-ppa, ci-pages-home, and ci-pages-tree, publishes the public/ directory as an artifact, runs only on the master branch, and sets an environment named PPA with URL http://$CI_PROJECT_NAMESPACE.gitlab.io/$CI_PROJECT_NAME.",
+  "tags": [
+    "debian",
+    "ubuntu",
+    "ppa",
+    "ci-build-pkg",
+    "ci-sign-pkg",
+    "gitlab-pages"
+  ]
+}

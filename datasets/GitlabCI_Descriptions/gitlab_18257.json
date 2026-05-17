@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_18257",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 270,
+  "description": "Create a GitLab CI pipeline that uses the node:10.14.1-jessie Docker image, includes a postgres:9.6.5-alpine service, and caches the node_modules/ directory. Define a single stage named test and add a mocha job in that stage. The mocha job runs the commands npm install, npm rebuild, export $(cat .env_tests), node setup_test_db.js, and ./node_modules/mocha/bin/mocha test/* in order.",
+  "tags": [
+    "node",
+    "mocha",
+    "postgres",
+    "npm",
+    "cache"
+  ]
+}

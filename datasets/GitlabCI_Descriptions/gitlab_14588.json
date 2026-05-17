@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_14588",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 299,
+  "description": "Create a GitLab CI pipeline using the alpine Docker image. Add a pages job in the default stage that runs only on the master branch, installs py-pip, python-dev and cython with apk, upgrades pip, installs sphinx, sphinx_rtd_theme and numpydoc via pip, changes into the docs directory, installs make with apk, builds the documentation using make html, moves the generated HTML to a public/ directory, and publishes the public/ folder as a GitLab Pages artifact. No caches or services are defined.",
+  "tags": [
+    "alpine",
+    "sphinx",
+    "docs",
+    "gitlab-pages",
+    "make"
+  ]
+}

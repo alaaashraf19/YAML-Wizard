@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_09743",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 445,
+  "description": "Create a GitLab CI pipeline using the elixir:latest Docker image and a global before_script that runs `mix local.hex --force` and `mix local.rebar --force`. Define three stages: setup, build, and test, and set the variable MIX_ENV to test. In the setup stage add a get-dependencies job that runs `mix deps.get` and stores the `deps` directory and `mix.lock` as artifacts that expire after 30 minutes. In the build stage add a compile job that runs `mix compile`. In the test stage add a tests job that runs `mix credo --strict` then `mix coveralls.json`, and configure the job to capture coverage using the regex `/\\[TOTAL\\]\\s+(\\d+\\.\\d+)%/`.",
+  "tags": [
+    "elixir",
+    "mix",
+    "credo",
+    "coveralls",
+    "gitlab-ci",
+    "docker"
+  ]
+}

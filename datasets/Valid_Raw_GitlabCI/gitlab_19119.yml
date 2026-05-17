@@ -1,0 +1,25 @@
+before_script:
+- dotnet restore --packages $NUGET_PACKAGES_DIRECTORY
+build:
+  script:
+  - dotnet build --no-restore
+  stage: build
+cache:
+  key: $CI_JOB_STAGE-$CI_COMMIT_REF_SLUG
+  paths:
+  - $SOURCE_CODE_PATH$OBJECTS_DIRECTORY/project.assets.json
+  - $SOURCE_CODE_PATH$OBJECTS_DIRECTORY/*.csproj.nuget.*
+  - $NUGET_PACKAGES_DIRECTORY
+  policy: pull-push
+image: microsoft/dotnet:latest
+stages:
+- build
+- test
+tests:
+  script:
+  - dotnet test --no-restore
+  stage: test
+variables:
+  NUGET_PACKAGES_DIRECTORY: .nuget
+  OBJECTS_DIRECTORY: obj
+  SOURCE_CODE_PATH: '*/*/'

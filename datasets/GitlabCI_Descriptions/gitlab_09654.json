@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_09654",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 194,
+  "description": "Create a GitLab CI pipeline that uses the node:latest Docker image and defines a single stage named test. Add a job called test in the test stage that executes the following shell commands in order: npm install, npm run lint, npm test, npm install -g codecov, and codecov --token=0635d3a9-a5c8-4b48-b0cd-4b718b21c25e. The pipeline does not define any caches, artifacts, services, or conditional rules.",
+  "tags": [
+    "node",
+    "npm",
+    "lint",
+    "codecov",
+    "gitlab-ci"
+  ]
+}

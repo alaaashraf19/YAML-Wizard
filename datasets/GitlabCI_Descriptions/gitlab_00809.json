@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_00809",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1124,
+  "description": "Create a GitLab CI pipeline with two stages: build and release, using the gradle:jdk7-alpine Docker image for the build-job and the tutum/curl:alpine image for the release-job. In the build stage add a build-job that caches .gradle/wrapper, .gradle/caches, and .gradle/native (untracked), echoes 'Job Id:' $CI_JOB_ID and 'Pipeline Id:' $CI_PIPELINE_ID, runs gradle --gradle-user-home .gradle/ --no-daemon shadowJar, and archives build/libs/game.jar as an artifact that expires in one week. In the release stage add a release-job that runs only on tags, sets PROJECT_RELEASE_ARTIFACT and RELEASE_MESSAGE environment variables in before_script, verifies that RELEASE_TOKEN is set, then executes curl --fail --request POST -H \"PRIVATE-TOKEN: $RELEASE_TOKEN\" --form \"description=$RELEASE_MESSAGE\" --form \"tag_name=$CI_COMMIT_REF_NAME\" \"https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/repository/tags/$CI_COMMIT_REF_NAME/release\", and publishes build/libs/game.jar as an artifact.",
+  "tags": [
+    "gradle",
+    "java",
+    "shadowjar",
+    "curl",
+    "gitlab-release",
+    "ci"
+  ]
+}

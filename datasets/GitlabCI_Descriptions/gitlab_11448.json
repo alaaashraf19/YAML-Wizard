@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_11448",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2023,
+  "description": "Create a GitLab CI pipeline with stages build, test, and deploy, using the global image registry.gitlab.com/apploud/docker/webserver:latest and services mysql (registry.gitlab.com/apploud/docker/mysql:latest) and mailhog (registry.gitlab.com/apploud/docker/mailhog:latest), and define MYSQL_DATABASE and MYSQL_ROOT_PASSWORD variables. In the build stage add a composer job that runs \"composer install --no-interaction --ansi --prefer-dist --optimize-autoloader --ignore-platform-reqs\" and stores the vendor/ directory as an artifact that expires in 24 h. In the test stage add lint (vendor/bin/phing lint), orm validate (vendor/bin/phing db then vendor/bin/phing orm-validate), phpstan (vendor/bin/phing stan), sniffer (vendor/bin/phing sniffer), unit tests (vendor/bin/phing tests-unit) and integration tests (vendor/bin/phing tests-integration) jobs, each publishing the log/ directory as an artifact on failure that expires in 48 h. Define a hidden .deploy_job template that starts an ssh-agent, adds $DEPLOYER_PRIVATE_KEY, uses the image registry.gitlab.com/apploud/docker/deployer:latest and runs \"dep deploy $CI_ENVIRONMENT_SLUG --revision=\\\"$CI_COMMIT_SHA\\\"\", set to manual. Create deploy jobs: autodeloy to dev (environment dev with $DEV_URL, runs the .deploy_job script on_success), deploy to client (environment client with $CLIENT_URL, manual), and deploy to production (environment production with $PRODUCTION_URL, manual, only on master branch), all using the same deployer image and before_script.",
+  "tags": [
+    "php",
+    "composer",
+    "phing",
+    "mysql",
+    "mailhog",
+    "deployer",
+    "docker",
+    "gitlab-ci",
+    "integration-tests",
+    "unit-tests"
+  ]
+}

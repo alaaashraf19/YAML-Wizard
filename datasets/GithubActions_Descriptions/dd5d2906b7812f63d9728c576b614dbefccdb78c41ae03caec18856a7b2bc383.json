@@ -1,0 +1,16 @@
+{
+  "sha": "dd5d2906b7812f63d9728c576b614dbefccdb78c41ae03caec18856a7b2bc383",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4019,
+  "description": "Create a GitHub Actions workflow named Linux that runs on push and pull request events. The workflow should have two jobs, build-gcc-9 and build-clang-10, each running on ubuntu-latest and using a matrix strategy to build with Debug and Release configurations. For each job, clone DiligentTools and DiligentCore repositories, configure dependencies, set up CMake with specific compilers (GCC 9 or Clang 10), build the project, run tests, and upload artifacts for Release configurations.",
+  "tags": [
+    "linux",
+    "gcc",
+    "clang",
+    "cmake",
+    "ubuntu",
+    "tests",
+    "artifacts"
+  ]
+}

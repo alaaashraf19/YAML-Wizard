@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_17276",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 588,
+  "description": "Create a GitLab CI pipeline that uses the docker:git Docker image with a docker:dind service and defines two stages, test and build. In the test stage add a test-a2x job that runs `docker container run --rm -v $(pwd):/workdir somatorio/a2x --fop --dry-run cv.txt`. Also in the test stage add a test-spellcheck job that sets CORRETOR_ERROS by running `docker container run --rm -v $(pwd):/workdir somatorio/hunspell -l -d pt_BR,en_US -p .whitelist.dic infos/*.txt | sort | uniq`, then echoes the variable and asserts it is empty with `test \"$CORRETOR_ERROS\" == \"\"`. In the build stage add a build job that runs `docker container run --rm -v $(pwd):/workdir somatorio/a2x --fop cv.txt` and publishes the generated cv.pdf as a build artifact.",
+  "tags": [
+    "docker",
+    "dind",
+    "a2x",
+    "hunspell",
+    "spellcheck",
+    "pdf"
+  ]
+}

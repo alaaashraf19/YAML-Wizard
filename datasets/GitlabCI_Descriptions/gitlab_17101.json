@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_17101",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 470,
+  "description": "Create a GitLab CI pipeline that uses the node:16 Docker image and caches the node_modules/ directory. Define two stages: install and deploy. In the install stage add an install_build job that runs `yarn` then `yarn build`, saves the node_modules/ folder as an artifact, and runs only when files under src/** or public/** change on the main branch. In the deploy stage add a nixos job that triggers the downstream pipeline nix17/nixos-config, sets the variables PACKAGE_NAME=silver_datawars2-frontend and UPDATE_FLAKE=yes, and also runs only on changes to src/** or public/** on the main branch.",
+  "tags": [
+    "node",
+    "yarn",
+    "cache",
+    "trigger",
+    "nixos",
+    "frontend"
+  ]
+}

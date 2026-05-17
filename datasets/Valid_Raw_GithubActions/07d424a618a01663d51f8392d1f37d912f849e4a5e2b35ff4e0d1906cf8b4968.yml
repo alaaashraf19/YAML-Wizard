@@ -1,0 +1,155 @@
+defaults:
+  run:
+    shell: bash -leo pipefail {0}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: ['ubuntu-latest']
+        python: ['3.10', '3.11', '3.12']
+        pip_opts: ['']
+        numba_boundscheck: [0]
+        include:
+          - os: macos-latest
+            python: '3.10'
+          - os: windows-latest
+            python: '3.10'
+          - os: ubuntu-latest
+            python: '3.10'
+            numba_boundscheck: 1
+          - os: ubuntu-latest
+            python: '3.10'
+            pip_opts: 'numpy<2'
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    env:
+      PYTHON_VERSION: ${{ matrix.python }}
+      NUMBA_BOUNDSCHECK: ${{ matrix.numba_boundscheck }}
+      PYTHONFAULTHANDLER: '${{ github.workspace }}/faulthandler.log'
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+      - uses: mamba-org/setup-micromamba@v2
+        with:
+          environment-file: ci/environment.yml
+          init-shell: >-
+            bash
+          cache-environment: true
+          cache-downloads: true
+          post-cleanup: 'all'
+          create-args: >-
+            python=${{ matrix.python }}
+            ${{ matrix.pip_opts }}
+      - name: Install package
+        run: |
+          pip install -e '.[tests]'
+      - name: Run tests
+        run: |
+          if [ $(python -c 'import numpy as np; print(np.lib.NumpyVersion(np.__version__) >= "2.0.0a1")') = 'True' ]; then
+            pytest --pyargs sparse --doctest-modules --cov-report=xml:coverage_Numba.xml -n auto -vvv
+          else
+            pytest --pyargs sparse --cov-report=xml:coverage_Numba.xml -n auto -vvv
+          fi
+          python -c 'import finch'
+          SPARSE_BACKEND=Finch pytest --pyargs sparse/tests --cov-report=xml:coverage_Finch.xml -n auto -vvv
+          SPARSE_BACKEND=MLIR pytest --pyargs sparse/mlir_backend --cov-report=xml:coverage_MLIR.xml -n auto -vvv
+      - uses: codecov/codecov-action@v5
+        if: always()
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./**/coverage*.xml
+
+  examples:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Repo
+      uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+    - name: Build and install Sparse
+      run: |
+        pip install -U setuptools wheel
+        pip install '.[finch]' scipy
+    - name: Run examples
+      run: |
+        source ci/test_examples.sh
+
+  notebooks:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Repo
+      uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+    - name: Build and install Sparse
+      run: |
+        pip install -e '.[notebooks]'
+    - name: Run notebooks
+      run: |
+        source ci/test_notebooks.sh
+
+  array_api_tests:
+    strategy:
+      matrix:
+        backend: ['Numba', 'Finch']
+      fail-fast: false
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Repo
+      uses: actions/checkout@v4
+    - name: Checkout array-api-tests
+      uses: actions/checkout@v4
+      with:
+        repository: data-apis/array-api-tests
+        ref: '33f2d2ea2f3dd2b3ceeeb4519d55e08096184149'  # Latest commit as of 2024-05-29
+        submodules: 'true'
+        path: 'array-api-tests'
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+    - name: Install build and test dependencies from PyPI
+      run: |
+        pip install pytest-xdist -r array-api-tests/requirements.txt
+    - name: Build and install Sparse
+      run: |
+        pip install '.[finch]'
+    - name: Run the test suite
+      env:
+        ARRAY_API_TESTS_MODULE: sparse
+        SPARSE_BACKEND: ${{ matrix.backend }}
+      run: |
+        cd ${GITHUB_WORKSPACE}/array-api-tests
+        if [ "${SPARSE_BACKEND}" = "Finch" ]; then
+            python -c 'import finch'
+        fi
+        pytest array_api_tests -v -c pytest.ini -n auto --max-examples=2 --derandomize --disable-deadline -o xfail_strict=True --xfails-file ${GITHUB_WORKSPACE}/ci/${{ matrix.backend }}-array-api-xfails.txt --skips-file ${GITHUB_WORKSPACE}/ci/${{ matrix.backend }}-array-api-skips.txt
+
+on:
+  # Trigger the workflow on push or pull request,
+  # but only for the main branch
+  push:
+    branches:
+      - main
+      - vnext
+  pull_request:
+    branches:
+      - main
+      - vnext
+  # Also trigger on page_build, as well as release created events
+  page_build:
+  release:
+    types: # This configuration does not affect the page_build event above
+      - created

@@ -1,0 +1,99 @@
+.rust_test_template:
+  before_script: &id001
+  - export CARGO_HOME="$CI_PROJECT_DIR/cargo"
+  - rustup --version
+  - rustc --version
+  - cargo --version
+  cache: &id002
+    key: $CI_JOB_NAME-$CI_COMMIT_REF_NAME
+    paths:
+    - cargo/
+    - target/
+  image: registry.gitlab.com/dzamlo/gitlab-ci-rust-test/rust:latest
+  script: &id003
+  - cargo test --all --verbose
+  stage: test
+docker:
+  image: docker:latest
+  only:
+  - schedules
+  script:
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+  - cd ci/docker/rust
+  - docker build --no-cache -t registry.gitlab.com/dzamlo/gitlab-ci-rust-test/rust:latest
+    .
+  - docker push registry.gitlab.com/dzamlo/gitlab-ci-rust-test/rust:latest
+  services:
+  - docker:dind
+  stage: docker
+stages:
+- docker
+- test
+test-beta:
+  before_script: *id001
+  cache: *id002
+  image: registry.gitlab.com/dzamlo/gitlab-ci-rust-test/rust:latest
+  script: *id003
+  stage: test
+  variables:
+    RUSTUP_TOOLCHAIN: beta
+test-clippy:
+  before_script: *id001
+  cache: *id002
+  image: registry.gitlab.com/dzamlo/gitlab-ci-rust-test/rust:latest
+  script:
+  - cargo clippy --all --verbose -- -D warnings
+  stage: test
+  variables:
+    RUSTUP_TOOLCHAIN: nightly
+test-fmt:
+  before_script: *id001
+  cache: *id002
+  image: registry.gitlab.com/dzamlo/gitlab-ci-rust-test/rust:latest
+  script:
+  - cargo fmt --all --verbose -- --check
+  stage: test
+  variables:
+    RUSTUP_TOOLCHAIN: nightly
+test-minimal-versions:
+  before_script: *id001
+  cache: *id002
+  image: registry.gitlab.com/dzamlo/gitlab-ci-rust-test/rust:latest
+  script:
+  - cargo test --all --verbose -Z minimal-versions
+  stage: test
+  variables:
+    RUSTUP_TOOLCHAIN: nightly
+test-nightly:
+  before_script: *id001
+  cache: *id002
+  image: registry.gitlab.com/dzamlo/gitlab-ci-rust-test/rust:latest
+  script: *id003
+  stage: test
+  variables:
+    RUSTUP_TOOLCHAIN: nightly
+test-prerelase:
+  before_script:
+  - export PATH="$CARGO_HOME/bin:$PATH"
+  - curl https://sh.rustup.rs -sSf | sh -s -- -y  --default-toolchain stable
+  - rustup component add rustfmt-preview
+  - rustup --version
+  - rustc --version
+  - cargo --version
+  image: buildpack-deps:stretch
+  script:
+  - cargo test --all --verbose
+  - cargo fmt --all --verbose -- --write-mode=diff
+  stage: test
+  variables:
+    CARGO_HOME: $CI_PROJECT_DIR/cargo
+    RUSTUP_DIST_SERVER: https://dev-static.rust-lang.org
+  when: manual
+test-stable:
+  before_script: *id001
+  cache: *id002
+  image: registry.gitlab.com/dzamlo/gitlab-ci-rust-test/rust:latest
+  script: *id003
+  stage: test
+  variables:
+    RUSTUP_TOOLCHAIN: stable

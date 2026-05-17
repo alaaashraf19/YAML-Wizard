@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_12127",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 210,
+  "description": "Create a GitLab CI pipeline that uses the rust:latest Docker image. Define a job named test:cargo (which runs in the default test stage) that executes the following shell commands in order: rustup default nightly-2022-08-25, rustup show, rustc --version && cargo --version, rustup component add rust-src, cargo build --release, and cargo bench. The pipeline does not define any services, variables, caches, or artifacts. No special rules or only/except conditions are set, so the job runs on every pipeline.",
+  "tags": [
+    "rust",
+    "cargo",
+    "rustup",
+    "benchmark",
+    "gitlab-ci"
+  ]
+}

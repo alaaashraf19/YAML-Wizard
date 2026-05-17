@@ -1,0 +1,55 @@
+before_script:
+- docker info
+- docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+build:
+  script:
+  - docker build --pull -t $CONTAINER_TEST_IMAGE .
+  - docker push $CONTAINER_TEST_IMAGE
+  stage: build
+image: docker:latest
+rancher-upgrade:
+  allow_failure: true
+  only:
+  - master
+  script:
+  - chmod +x ./tools/rancher-upgrade.sh
+  - apk --no-cache add curl
+  - ./tools/rancher-upgrade.sh $WEBHOOK_MASTER_URL
+  stage: deploy
+release-image:
+  only:
+  - master
+  script:
+  - docker pull $CONTAINER_TEST_IMAGE
+  - docker tag $CONTAINER_TEST_IMAGE $PRODUCTION_IMAGE
+  - docker push $PRODUCTION_IMAGE
+  stage: release
+services:
+- docker:dind
+stage-image:
+  only:
+  - development
+  script:
+  - docker pull $CONTAINER_TEST_IMAGE
+  - docker tag $CONTAINER_TEST_IMAGE $STAGING_IMAGE
+  - docker push $STAGING_IMAGE
+  stage: release
+stages:
+- build
+- test
+- release
+- deploy
+test:
+  script:
+  - docker pull $CONTAINER_TEST_IMAGE
+  - docker run $CONTAINER_TEST_IMAGE npm run test
+  stage: test
+test-lint:
+  script:
+  - docker pull $CONTAINER_TEST_IMAGE
+  - docker run $CONTAINER_TEST_IMAGE npm run lint
+  stage: test
+variables:
+  CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+  PRODUCTION_IMAGE: $CI_REGISTRY_IMAGE:latest
+  STAGING_IMAGE: $CI_REGISTRY_IMAGE:staging

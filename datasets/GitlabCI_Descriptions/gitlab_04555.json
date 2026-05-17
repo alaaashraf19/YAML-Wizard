@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_04555",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 485,
+  "description": "Create a GitLab CI pipeline with two stages: build and deploy. Use the node:10.13.0 Docker image for a build job named build that runs the commands rm package-lock.json, npm install, and npm run build-prod, then saves the dist directory as an artifact expiring after 30 minutes. Use the python:latest Docker image for a deploy job named deploy that runs only on the master branch, is manual, and executes pip install awscli, aws s3 cp ./dist/BrawlDB-Frontend/ s3://brawldb-beta/ --recursive --include \"*\", and aws cloudfront create-invalidation --distribution-id E17VAWVQQ0YUPI --paths /* to upload the built files to S3 and invalidate the CloudFront distribution.",
+  "tags": [
+    "node",
+    "npm",
+    "python",
+    "awscli",
+    "s3",
+    "cloudfront",
+    "gitlab-ci",
+    "manual-deploy"
+  ]
+}

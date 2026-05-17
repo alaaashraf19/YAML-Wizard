@@ -1,0 +1,14 @@
+{
+  "sha": "5f2fd0c5483c27893edb9dc364d6854f4e76c2aefc93255569fd13643441049e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4245,
+  "description": "Create a GitHub Actions workflow named CI/CD Pipeline that runs on push, pull request, and workflow dispatch events. The workflow should have two jobs: Continuous Integration and Continuous Deployment. The CI job should run on a matrix of ubuntu-latest and windows-latest, gather data, handle conditionals, set up .NET Core 8.0.x, check out the repository, build the solution, run unit tests, publish the WebApp, and upload build and publish artifacts. The CD job should run on windows-latest, download publish artifacts, and deploy to Azure WebApp using a publish profile if the push is to the default branch.",
+  "tags": [
+    "dotnet",
+    "azure",
+    "ci-cd",
+    "powershell",
+    "github-actions"
+  ]
+}

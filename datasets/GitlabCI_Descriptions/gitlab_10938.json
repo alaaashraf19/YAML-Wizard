@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_10938",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 235,
+  "description": "Create a GitLab CI pipeline that uses the Docker image registry.gitlab.com/gitlab-examples/kubernetes-deploy, sets the variable GIT_STRATEGY to none, and defines a single stage named deploy. Add a job called deploy that runs in the deploy stage, targets the production environment with URL http://localhost:30080, and executes the shell command echo \"fake deploy\". The job does not define any caches, artifacts, or conditional rules, so it runs on every pipeline execution.",
+  "tags": [
+    "kubernetes-deploy",
+    "production",
+    "gitlab-ci",
+    "deployment"
+  ]
+}

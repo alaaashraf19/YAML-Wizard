@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_17153",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1006,
+  "description": "Create a GitLab CI pipeline with the rust:latest Docker image for the build stage and a python:3.6 image for the deploy stage, define build and deploy stages, and set variables ANSIBLE_HOST_KEY_CHECKING='False', GIT_SUBMODULE_STRATEGY=recursive, GUTENBERG_VERSION=0.4.2 and GUTENBERG_RELEASE URL using the version variable. In the build stage add a build:static job that runs `rustc --version && cargo --version`, then `curl -L $GUTENBERG_RELEASE -o gutenberg.tar.gz`, `tar xzvf gutenberg.tar.gz`, and `./gutenberg build`, and publishes the `public` directory as an artifact that expires in 1 day. In the deploy stage add a deploy:static job that runs only on the master branch, uses python:3.6, executes a before_script to install openssh-client if missing, start ssh-agent, add the $SSH_KEY, create and secure ~/.ssh, and `pip install ansible`. The deploy:static job depends on build:static, sets the environment to Production, and runs `ansible-playbook deploy.yml -i \"$DEPLOY_HOST\" -e ansible_port=1222` to deploy the static site.",
+  "tags": [
+    "rust",
+    "cargo",
+    "python-3.6",
+    "ansible",
+    "static-site",
+    "gitlab-ci",
+    "deploy",
+    "build"
+  ]
+}

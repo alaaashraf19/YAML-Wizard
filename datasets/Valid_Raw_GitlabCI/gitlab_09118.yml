@@ -1,0 +1,197 @@
+.build:
+  dependencies:
+  - go build
+  image: docker:stable
+  script:
+  - docker info
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+  - export IMAGE=$CI_REGISTRY_IMAGE:$IMAGE_TAG
+  - docker build -t $IMAGE --build-arg SAST_ANALYZER_IMAGE_TAG=$SAST_ANALYZER_IMAGE_TAG
+    .
+  - docker push $IMAGE
+  stage: build
+.deploy:
+  before_script:
+  - docker info
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+  - export IMAGE=$CI_REGISTRY_IMAGE:$CI_JOB_NAME
+  image: docker:stable
+  only:
+  - tags
+  script:
+  - docker build -t $IMAGE -f $DOCKERFILE --build-arg SAST_ANALYZER_IMAGE_TAG=$MAJOR
+    --build-arg SAST_DEFAULT_ANALYZERS=$SAST_DEFAULT_ANALYZERS .
+  - docker push $IMAGE
+  stage: deploy
+.go:
+  image: golang:1.13.7
+  stage: go
+11-10-stable:
+  extends: .deploy
+  variables:
+    DOCKERFILE: Dockerfile.v2
+    SAST_DEFAULT_ANALYZERS: bandit,brakeman,gosec,spotbugs,flawfinder,phpcs-security-audit,security-code-scan,nodejs-scan,eslint,tslint,secrets,sobelow
+11-11-stable:
+  extends: .deploy
+  variables:
+    DOCKERFILE: Dockerfile.v2
+    SAST_DEFAULT_ANALYZERS: bandit,brakeman,gosec,spotbugs,flawfinder,phpcs-security-audit,security-code-scan,nodejs-scan,eslint,tslint,secrets,sobelow
+11-8-stable:
+  extends: .deploy
+  variables:
+    DOCKERFILE: Dockerfile.v2
+    SAST_DEFAULT_ANALYZERS: bandit,brakeman,gosec,find-sec-bugs,find-sec-bugs-gradle,find-sec-bugs-sbt,find-sec-bugs-groovy,flawfinder,phpcs-security-audit,security-code-scan,nodejs-scan,eslint
+11-9-stable:
+  extends: .deploy
+  variables:
+    DOCKERFILE: Dockerfile.v2
+    SAST_DEFAULT_ANALYZERS: bandit,brakeman,gosec,spotbugs,flawfinder,phpcs-security-audit,security-code-scan,nodejs-scan,eslint,tslint,secrets
+12-0-stable:
+  extends: .deploy
+  variables:
+    DOCKERFILE: Dockerfile.v2
+    SAST_DEFAULT_ANALYZERS: bandit,brakeman,gosec,spotbugs,flawfinder,phpcs-security-audit,security-code-scan,nodejs-scan,eslint,tslint,secrets,sobelow
+12-1-stable:
+  extends: .deploy
+  variables:
+    DOCKERFILE: Dockerfile.v2
+    SAST_DEFAULT_ANALYZERS: bandit,brakeman,gosec,spotbugs,flawfinder,phpcs-security-audit,security-code-scan,nodejs-scan,eslint,tslint,secrets,sobelow,pmd-apex
+12-10-stable:
+  extends: .deploy
+  variables:
+    DOCKERFILE: Dockerfile.v2
+    SAST_DEFAULT_ANALYZERS: bandit,brakeman,gosec,spotbugs,flawfinder,phpcs-security-audit,security-code-scan,nodejs-scan,eslint,tslint,secrets,sobelow,pmd-apex,kubesec
+12-2-stable:
+  extends: .deploy
+  variables:
+    DOCKERFILE: Dockerfile.v2
+    SAST_DEFAULT_ANALYZERS: bandit,brakeman,gosec,spotbugs,flawfinder,phpcs-security-audit,security-code-scan,nodejs-scan,eslint,tslint,secrets,sobelow,pmd-apex
+12-3-stable:
+  extends: .deploy
+  variables:
+    DOCKERFILE: Dockerfile.v2
+    SAST_DEFAULT_ANALYZERS: bandit,brakeman,gosec,spotbugs,flawfinder,phpcs-security-audit,security-code-scan,nodejs-scan,eslint,tslint,secrets,sobelow,pmd-apex
+12-4-stable:
+  extends: .deploy
+  variables:
+    DOCKERFILE: Dockerfile.v2
+    SAST_DEFAULT_ANALYZERS: bandit,brakeman,gosec,spotbugs,flawfinder,phpcs-security-audit,security-code-scan,nodejs-scan,eslint,tslint,secrets,sobelow,pmd-apex
+12-5-stable:
+  extends: .deploy
+  variables:
+    DOCKERFILE: Dockerfile.v2
+    SAST_DEFAULT_ANALYZERS: bandit,brakeman,gosec,spotbugs,flawfinder,phpcs-security-audit,security-code-scan,nodejs-scan,eslint,tslint,secrets,sobelow,pmd-apex
+12-6-stable:
+  extends: .deploy
+  variables:
+    DOCKERFILE: Dockerfile.v2
+    SAST_DEFAULT_ANALYZERS: bandit,brakeman,gosec,spotbugs,flawfinder,phpcs-security-audit,security-code-scan,nodejs-scan,eslint,tslint,secrets,sobelow,pmd-apex,kubesec
+12-7-stable:
+  extends: .deploy
+  variables:
+    DOCKERFILE: Dockerfile.v2
+    SAST_DEFAULT_ANALYZERS: bandit,brakeman,gosec,spotbugs,flawfinder,phpcs-security-audit,security-code-scan,nodejs-scan,eslint,tslint,secrets,sobelow,pmd-apex,kubesec
+12-8-stable:
+  extends: .deploy
+  variables:
+    DOCKERFILE: Dockerfile.v2
+    SAST_DEFAULT_ANALYZERS: bandit,brakeman,gosec,spotbugs,flawfinder,phpcs-security-audit,security-code-scan,nodejs-scan,eslint,tslint,secrets,sobelow,pmd-apex,kubesec
+12-9-stable:
+  extends: .deploy
+  variables:
+    DOCKERFILE: Dockerfile.v2
+    SAST_DEFAULT_ANALYZERS: bandit,brakeman,gosec,spotbugs,flawfinder,phpcs-security-audit,security-code-scan,nodejs-scan,eslint,tslint,secrets,sobelow,pmd-apex,kubesec
+13-0-stable:
+  extends: .deploy
+  variables:
+    DOCKERFILE: Dockerfile.v2
+    SAST_DEFAULT_ANALYZERS: bandit,brakeman,gosec,spotbugs,flawfinder,phpcs-security-audit,security-code-scan,nodejs-scan,eslint,tslint,secrets,sobelow,pmd-apex,kubesec
+build branch:
+  except:
+  - master
+  extends: .build
+  only:
+  - branches
+  variables:
+    IMAGE_TAG: $CI_COMMIT_REF_NAME
+    SAST_ANALYZER_IMAGE_TAG: $MAJOR
+build edge:
+  extends: .build
+  only:
+  - master
+  variables:
+    IMAGE_TAG: edge
+    SAST_ANALYZER_IMAGE_TAG: edge
+build major:
+  allow_failure: false
+  extends: .build
+  only:
+  - tags
+  variables:
+    IMAGE_TAG: $MAJOR
+    SAST_ANALYZER_IMAGE_TAG: $MAJOR
+  when: manual
+build tag:
+  before_script:
+  - echo "Checking that $CI_COMMIT_TAG is last in the changelog"
+  - test "$(grep '^## v' CHANGELOG.md |head -n 1)" = "## $CI_COMMIT_TAG"
+  - export IMAGE_TAG=${CI_COMMIT_TAG/v/}
+  extends: .build
+  only:
+  - tags
+  variables:
+    SAST_ANALYZER_IMAGE_TAG: $MAJOR
+go build:
+  artifacts:
+    paths:
+    - sast
+  extends: .go
+  script:
+  - go build -o ${CI_PROJECT_DIR}/sast
+  variables:
+    CGO_ENABLED: 0
+go lint:
+  extends: .go
+  script:
+  - go get -u golang.org/x/lint/golint
+  - golint -set_exit_status
+go test:
+  extends: .go
+  script:
+  - go test -race -cover -v ./...
+services:
+- docker:stable-dind
+stages:
+- go
+- test
+- build
+- deploy
+tag latest:
+  before_script:
+  - docker info
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+  - export SOURCE_IMAGE=$CI_REGISTRY_IMAGE:$MAJOR
+  - export TARGET_IMAGE=$CI_REGISTRY_IMAGE:latest
+  image: docker:stable
+  only:
+  - tags
+  script:
+  - docker pull $SOURCE_IMAGE
+  - docker tag $SOURCE_IMAGE $TARGET_IMAGE
+  - docker push $TARGET_IMAGE
+  stage: deploy
+test:
+  artifacts:
+    paths:
+    - test/fixtures/gl-sast-report.json
+  dependencies:
+  - go build
+  image: docker:stable
+  script:
+  - ./test.sh
+  stage: test
+  variables:
+    SAST_ANALYZER_IMAGE_TAG: $MAJOR
+variables:
+  DOCKER_DRIVER: overlay2
+  MAJOR: 2

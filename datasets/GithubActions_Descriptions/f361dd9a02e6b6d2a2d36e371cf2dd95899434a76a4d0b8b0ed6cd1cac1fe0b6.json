@@ -1,0 +1,14 @@
+{
+  "sha": "f361dd9a02e6b6d2a2d36e371cf2dd95899434a76a4d0b8b0ed6cd1cac1fe0b6",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1477,
+  "description": "Create a GitHub Actions workflow named Release Draft that triggers on push of tags matching v*. The workflow has two jobs: one for building Windows binaries on a matrix of Python 3.6, 3.7, and 3.8 using Miniconda, and another job that depends on the first job, downloads the binaries, and creates a draft release using a GitHub release action.",
+  "tags": [
+    "windows",
+    "python",
+    "miniconda",
+    "release-draft",
+    "github-release"
+  ]
+}

@@ -1,0 +1,18 @@
+before_script:
+- npm install
+build:
+  script:
+  - npm run build
+  stage: build
+cache:
+  paths:
+  - node_modules/
+image: node:latest
+lint:
+  script:
+  - npm run lint
+  stage: test
+stages:
+- test
+- build
+- deploy

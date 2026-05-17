@@ -1,0 +1,37 @@
+before_script:
+- curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
+- apt-get update -yqq
+- apt-get install libzip-dev git nodejs unzip -yqq
+- docker-php-ext-install zip
+- curl -sS https://getcomposer.org/installer | php
+- mv composer.phar /usr/local/bin/composer
+- composer install
+cache:
+  paths:
+  - vendor/
+image: php:7.4
+pages:
+  artifacts:
+    paths:
+    - public
+  rules:
+  - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+  script:
+  - composer require tightenco/jigsaw
+  - ./vendor/bin/jigsaw build
+  - mv build_local/ public/
+  stage: deploy
+stages:
+- test
+- deploy
+test-build:
+  rules:
+  - if: $CI_COMMIT_REF_NAME != $CI_DEFAULT_BRANCH
+  script:
+  - composer require tightenco/jigsaw
+  - ./vendor/bin/jigsaw build
+  stage: test
+workflow:
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  - if: $CI_PIPELINE_SOURCE == "push"

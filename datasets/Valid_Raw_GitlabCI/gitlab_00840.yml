@@ -1,0 +1,74 @@
+dist:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - dist/
+  image: quay.io/pypa/manylinux2014_x86_64
+  only:
+  - tags
+  script:
+  - chmod +x CI/build-wheel-manylinux.sh
+  - CI/build-wheel-manylinux.sh
+  stage: build
+image: python:3.10
+pypi:
+  id_tokens:
+    PYPI_ID_TOKEN:
+      aud: pypi
+  only:
+  - tags
+  script:
+  - pip install twine
+  - echo "Upload to PyPi"
+  - twine upload --skip-existing dist/*
+  stage: publish
+stages:
+- test
+- build
+- publish
+- postupload
+test:
+  only:
+  - tags
+  script:
+  - echo "Testing"
+  - apt-get update
+  - apt-get install -y gfortran
+  - pip3 install setuptools
+  - pip3 install .
+  - rm -rf smuthi
+  - pip3 install nose2
+  - nose2 -v
+  stage: test
+whl_test_centos8:
+  image: inveniosoftware/centos8-python:3.8
+  only:
+  - tags
+  script:
+  - pip3 install smuthi
+  - pip3 install nose2
+  - rm -rf smuthi
+  - nose2 -v
+  stage: postupload
+whl_test_python38:
+  image: python:3.8
+  only:
+  - tags
+  script:
+  - pip3 install smuthi
+  - pip3 install nose2
+  - rm -rf smuthi
+  - nose2 -v
+  stage: postupload
+whl_test_ubuntu_focal2004LTS:
+  image: ubuntu:focal
+  only:
+  - tags
+  script:
+  - apt update
+  - apt install -y python3-pip
+  - pip3 install smuthi
+  - pip3 install nose2
+  - rm -rf smuthi
+  - nose2 -v
+  stage: postupload

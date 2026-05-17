@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_14844",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 334,
+  "description": "Create a GitLab CI pipeline with a single job named Testsuites that runs in the default stage using the default Docker image. In before_script install build tools with \"apt-get update -qq && apt-get install -y -qq autopoint autoconf automake gettext libncurses5-dev dejagnu\". In script execute \"./autogen.sh\", then \"./configure\", then \"make\", and finally \"make check\". After the script run \"make clean\" as after_script. Archive any files matching \"testsuite/*.log\" and \"testsuite/*.sum\" as job artifacts. Configure the job to be excluded from tag pipelines (except tags) and do not set any specific runner tags or variables.",
+  "tags": [
+    "autotools",
+    "make",
+    "c",
+    "ci",
+    "testsuites"
+  ]
+}

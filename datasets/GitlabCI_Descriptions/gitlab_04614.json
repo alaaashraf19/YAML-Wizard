@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_04614",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 607,
+  "description": "Create a GitLab CI pipeline that uses the java:8 Docker image. Add a test job named test in the test stage that runs the following script commands in order: apt-get update -y; wget -q --no-check-certificate -O /tmp/phantomjs-2.1.1-linux-x86_64.tar.bz2 https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2; tar -xjf /tmp/phantomjs-2.1.1-linux-x86_64.tar.bz2 -C /tmp; mv /tmp/phantomjs-2.1.1-linux-x86_64/bin/phantomjs /usr/local/bin; wget https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein; chmod a+x lein; export LEIN_ROOT=1; PATH=$PATH:.; lein do deps, uberjar, test, doo phantom test once. Configure the job to publish the generated uberjar files matching target/uberjar/*-standalone.jar as artifacts. No caches, services, or conditional rules are required.",
+  "tags": [
+    "java",
+    "leiningen",
+    "phantomjs",
+    "uberjar",
+    "ci"
+  ]
+}

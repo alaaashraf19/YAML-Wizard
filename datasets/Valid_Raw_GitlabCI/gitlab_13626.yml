@@ -1,0 +1,10 @@
+build-pdf:
+  artifacts:
+    paths:
+    - articles/ReVIEW-Template.pdf
+  script:
+  - ./setup.sh
+  - npm run pdf
+  tags:
+  - docker
+image: vvakame/review:5.4

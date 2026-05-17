@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_11902",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1681,
+  "description": "Create a GitLab CI pipeline with a global before_script that runs apt-get update -yq, sets APT_CACHE_DIR to the current directory's apt-cache and creates it, initializes QT_PACKAGES, conditionally appends Qt 5.9 modules when the job name contains \"5.9\", and installs the accumulated QT_PACKAGES together with xvfb, lcov, gcovr, libglu1-mesa-dev and libxrender1 using the apt cache directory. Define a cache keyed \"apt-cache\" that stores the apt-cache/ path and two stages: build and test. In the build stage add a build_5.12 job using the image mardy/qt:xenial-qt512 that runs \"mkdir build\", \"cd build\", \"qmake CONFIG+=debug CONFIG+=coverage ..\" and \"make -j 4\", then archives the build/ directory as an artifact; also add a build_5.9 job using the image ubuntu:bionic that runs \"export QT_SELECT=qt5\", \"mkdir build\", \"cd build\", \"qmake CONFIG+=debug CONFIG+=coverage ..\" and \"make -j 4\", and archives its build/ directory. In the test stage add a test_5.12 job using mardy/qt:xenial-qt512, dependent on build_5.12, that runs \"find build | xargs touch\", \"export TMPDIR=$(pwd)/tmpdir\", \"mkdir $TMPDIR\", \"cd build\", \"make install\" and \"make coverage-html\", always publishing build/coverage-html/ and the tmpdir as artifacts; also add a test_5.9 job using ubuntu:bionic, dependent on build_5.9, that runs the same initial commands and then \"make install\" followed by \"make check\", always publishing the tmpdir as an artifact.",
+  "tags": [
+    "qt",
+    "qt5.12",
+    "qt5.9",
+    "coverage",
+    "make",
+    "apt-cache"
+  ]
+}

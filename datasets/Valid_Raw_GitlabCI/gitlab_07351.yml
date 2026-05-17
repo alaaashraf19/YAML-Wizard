@@ -1,0 +1,52 @@
+before_script:
+- docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+- export BASE_VERSION=${CI_COMMIT_REF_NAME%-*}
+- export MINOR_VERSION=${BASE_VERSION%.*}
+- export MAJOR_VERSION=${BASE_VERSION%.*}
+- export CONTAINER_TEST_IMAGE=$REGISTRY:${CI_COMMIT_SHA:0:8}
+- export CONTAINER_VERSION_IMAGE=$REGISTRY:$BASE_VERSION
+- export CONTAINER_MINOR_VERSION_IMAGE=$REGISTRY:$MINOR_VERSION
+- export CONTAINER_MAJOR_VERSION_IMAGE=$REGISTRY:$MAJOR_VERSION
+build:
+  script:
+  - docker build --pull -t $CONTAINER_TEST_IMAGE .
+  - docker push $CONTAINER_TEST_IMAGE
+  stage: build
+image: docker:latest
+lint:
+  script:
+  - docker pull $CONTAINER_TEST_IMAGE
+  - docker run $CONTAINER_TEST_IMAGE npm run lint
+  stage: test
+release-latest:
+  only:
+  - master
+  script:
+  - docker pull $CONTAINER_TEST_IMAGE
+  - docker tag $CONTAINER_TEST_IMAGE $CONTAINER_LATEST_IMAGE
+  - docker push $CONTAINER_LATEST_IMAGE
+  stage: release
+release-version:
+  only:
+  - tags
+  script:
+  - docker pull $CONTAINER_TEST_IMAGE
+  - docker tag $CONTAINER_TEST_IMAGE $CONTAINER_VERSION_IMAGE
+  - docker tag $CONTAINER_TEST_IMAGE $CONTAINER_MINOR_VERSION_IMAGE
+  - docker tag $CONTAINER_TEST_IMAGE $CONTAINER_MAJOR_VERSION_IMAGE
+  - docker push $CONTAINER_VERSION_IMAGE
+  stage: release
+services:
+- docker:dind
+stages:
+- build
+- test
+- release
+test:
+  script:
+  - docker pull $CONTAINER_TEST_IMAGE
+  - docker run $CONTAINER_TEST_IMAGE npm test
+  stage: test
+variables:
+  CONTAINER_LATEST_IMAGE: $REGISTRY:latest
+  REGISTRY: registry.gitlab.com/evanp/places-pub

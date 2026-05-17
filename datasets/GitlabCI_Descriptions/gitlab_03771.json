@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_03771",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 659,
+  "description": "Create a GitLab CI pipeline that uses the gradle:4.7-jdk10 Docker image and defines three stages: build, test, and deploy. In the build stage add a build job that runs the exact command gradle jar, and a javadoc job that runs gradle javadoc and stores the generated documentation from adba/build/docs and adbaoverjdbc/build/docs as artifacts that expire after one day. In the test stage add a unit-test job that runs gradle test and always uploads the test reports from adbaoverjdbc/build/reports as artifacts that expire after one day. In the deploy stage add a pages job that always runs on the master branch, executes mkdir --parents public/adba/docs, mv adba/build/docs/javadoc public/adba/docs, mkdir --parents public/adbaoverjdbc/docs, and mv adbaoverjdbc/build/docs/javadoc public/adbaoverjdbc/docs, then publishes the public/ directory as a pages artifact.",
+  "tags": [
+    "gradle",
+    "java",
+    "javadoc",
+    "gitlab-pages",
+    "unit-test",
+    "docker-image"
+  ]
+}

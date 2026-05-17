@@ -1,0 +1,15 @@
+before_script:
+- npm install
+cache:
+  paths:
+  - node_modules/
+image: node:10
+test:node:10:
+  script:
+  - npm run build
+  - npm test
+test:node:8:
+  image: node:8
+  script:
+  - npm run build
+  - npm test

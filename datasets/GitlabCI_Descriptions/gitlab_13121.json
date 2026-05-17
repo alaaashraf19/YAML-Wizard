@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_13121",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 302,
+  "description": "Create a GitLab CI pipeline that uses the Docker image registry.gitlab.com/nestal/spaghetti and defines a single stage called build. Add a job named build_spag in the build stage that runs the exact shell commands: mkdir build/, cd build, cmake -DCMAKE_BUILD_TYPE=Release .., make all, ./unittest, and make package. Configure the job to publish the generated RPM files matching build/*.rpm as an artifact named ${CI_BUILD_NAME}_${CI_BUILD_REF_NAME}. No services, caches, or special rules are required.",
+  "tags": [
+    "cmake",
+    "make",
+    "rpm",
+    "spaghetti",
+    "gitlab-ci"
+  ]
+}

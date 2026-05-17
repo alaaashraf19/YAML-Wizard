@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_09854",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2392,
+  "description": "Create a GitLab CI pipeline with three stages: build, release, and deploy. In the build stage define three jobs (build:darwin, build:linux, build:windows) each using an OS‑specific tag, caching the build directory with key $CI_BUILD_REF_NAME, storing the build/ directory as an artifact for 6 hours, and running: cd build; cmake ../src -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=Release -G Ninja (for darwin) or cmake ../src -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -DCMAKE_BUILD_TYPE=Release -G Ninja (for linux) or cmake ../src -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -DCMAKE_BUILD_TYPE=Release -G Ninja -DZLIB_INCLUDE_DIR=c:/zlib-1.2.11 -DQUAZIP_INCLUDE_DIR=c:/quazip -DQUAZIP_LIBRARIES=c:/quazip/release/libquazip.a (for windows), then ninja HearthLauncher check (darwin) or ninja HearthLauncher HLTest (linux and windows). In the release stage define three jobs (release:darwin, release:linux, release:windows) that depend on their respective build jobs, run only on tags, produce release/ artifacts for 6 hours, and execute ./CI/macrelease.sh, ./CI/linuxrelease.sh, or ./CI/windowsrelease.bat respectively. In the deploy stage define three jobs (deploy:darwin, deploy:linux, deploy:windows) that depend on the matching release jobs, run only on tags, execute python3 CI/deploy.py, and run on the appropriate OS tags. Also set variables HL_BUILDER and HL_JOB_ID for the pipeline.",
+  "tags": [
+    "cmake",
+    "ninja",
+    "darwin",
+    "linux",
+    "windows",
+    "release",
+    "deploy",
+    "gitlab-ci"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "ee3316ab698589cbfd26f6e166fe67ce37aa3d3ba0711dd3953b39cd008cb179",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 933,
+  "description": "Create a GitHub Actions workflow named Libraries build that runs on push to the master branch and on pull requests to master, excluding certain files. The workflow should have two jobs, x64 and x86, both running on windows-latest. Each job checks out the code, sets up the MSVC development environment for the respective architecture, caches libraries, and then sets up the libraries using a batch script.",
+  "tags": [
+    "windows",
+    "msvc",
+    "libraries",
+    "cache",
+    "setup"
+  ]
+}

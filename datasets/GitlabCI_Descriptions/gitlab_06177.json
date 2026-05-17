@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_06177",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 6420,
+  "description": "Create a GitLab CI pipeline with three stages (test, build, deploy) using docker:latest as the default image and google/cloud-sdk for the build and deploy jobs, plus a docker:dind service for the build job. Define a before_script that exports VERSION, SECRET_NAME, REPLICAS, TRACK and declares the functions config_kubernetes (sets kubectl context), create_ssl_secret (creates or replaces a TLS secret when USE_SSL=True), create_deployment_files (generates deployment, ingress and service YAML from templates with sed substitutions), and apply_and_rollout (applies the manifests and waits for rollout). In the test stage add a test job that runs `echo \"Running tests\"`. In the build stage add a build job that runs `echo \"$GCP_SERVICE_KEY\" > gcloud-service-key.json`, `gcloud auth activate-service-account --key-file gcloud-service-key.json`, `gcloud config set project $GCP_PROJECT_ID`, and `gcloud builds submit . --config=cloudbuild.yaml --substitutions _IMAGE_NAME=$CI_PROJECT_NAME,_VERSION=$(echo $CI_COMMIT_SHA | cut -c8-25)`. In the deploy stage add a deploy_review job (environment review/$CI_COMMIT_REF_NAME, URL https://$CI_ENVIRONMENT_SLUG.$CI_PROJECT_NAME.$MY_DOMAIN) that runs `echo \"Deploy a review app $CI_ENVIRONMENT_SLUG - $CI_COMMIT_REF_NAME\"` then calls config_kubernetes, create_ssl_secret, create_deployment_files, apply_and_rollout; it runs on all branches except master. Also add a deploy_stage job (environment prod, URL https://$CI_ENVIRONMENT_SLUG.$CI_PROJECT_NAME.$MY_DOMAIN) that runs the same sequence of function calls and only triggers on tags. Finally add a manual stop_review job that runs `echo \"Remove review app\"`, `kubectl version`, `kubectl delete ing -l app=$CI_ENVIRONMENT_SLUG`, and `kubectl delete all -l app=$CI_ENVIRONMENT_SLUG` with GIT_STRATEGY=none.",
+  "tags": [
+    "docker",
+    "google-cloud-sdk",
+    "kubernetes",
+    "review-app",
+    "production-deploy",
+    "gitlab-ci"
+  ]
+}

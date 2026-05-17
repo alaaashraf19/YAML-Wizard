@@ -1,0 +1,33 @@
+build:
+  artifacts:
+    expire_in: 1 week
+    name: $CI_COMMIT_REF_SLUG
+    paths:
+    - artifacts/
+  script:
+  - dotnet build Finite.Commands.sln -c Release /p:BuildId="`$BUILD_ID_CMD`" /p:Tag="$CI_COMMIT_TAG"
+  - dotnet pack Finite.Commands.sln -c Release -o ../../artifacts /p:BuildId="`$BUILD_ID_CMD`"
+    /p:Tag="$CI_COMMIT_TAG"
+  stage: build
+image: microsoft/dotnet:2.1-sdk
+push:
+  dependencies:
+  - build
+  only:
+  - master@FiniteReality/Finite.Commands
+  script:
+  - for file in artifacts/*; do dotnet nuget push $file -s "$MYGET_PACKAGE_URL" -k
+    "$MYGET_API_KEY"; done
+  stage: release
+stages:
+- build
+- test
+- release
+test:
+  script:
+  - dotnet test Finite.Commands.Tests.sln -c Release /p:BuildId="`$BUILD_ID_CMD`"
+    /p:Tag="$CI_COMMIT_TAG"
+  stage: test
+variables:
+  BUILD_ID_CMD: printf %05d $CI_PIPELINE_IID
+  MYGET_PACKAGE_URL: https://www.myget.org/F/finitereality/api/v2/package

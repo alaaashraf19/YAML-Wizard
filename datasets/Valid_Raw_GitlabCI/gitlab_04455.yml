@@ -1,0 +1,57 @@
+before_script:
+- bash scripts/prepare_gitlab_ci.sh
+- source /root/.bashrc
+- nvm use node
+- make setup-node
+- pip3 install -r requirements.txt
+deploy-production:
+  needs:
+  - test
+  only:
+  - master
+  - tags
+  script: make deploy-prod
+  stage: deploy
+  type: deploy
+deploy-staging:
+  needs:
+  - test
+  only:
+  - merge_requests
+  script: make deploy-staging
+  stage: deploy
+  type: deploy
+image: python:3.7.4
+pages:
+  artifacts:
+    expire_in: 30 days
+    paths:
+    - public
+  needs:
+  - test
+  only:
+  - master
+  - merge_requests
+  script:
+  - mkdir -p public/
+  - mv htmlcov/ public/
+  stage: deploy
+services:
+- alias: postgis
+  name: mdillon/postgis
+test:
+  artifacts:
+    paths:
+    - htmlcov/
+  coverage: /TOTAL.+ ([0-9]{1,3}%)/
+  only:
+  - master
+  - merge_requests
+  script:
+  - source test/useci
+  - make test
+  stage: test
+variables:
+  POSTGRES_DB: bike_parking_toronto
+  POSTGRES_PASSWORD: postgres
+  POSTGRES_USER: postgres

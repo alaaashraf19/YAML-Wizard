@@ -1,0 +1,18 @@
+{
+  "sha": "fd726d30107d5a0070821075f653cd7b17adb30f235b8144cbf304a9982ec5e6",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4821,
+  "description": "Create a GitHub Actions workflow named Continuous Integration v2 that runs on a schedule, on workflow dispatch, and on pull requests. The workflow has four jobs: CI, Publish, Documentation, and Formatting. The CI job runs on a matrix of operating systems, configurations, and Vulkan versions, and performs steps such as checking out code, caching and installing Vulkan SDK, setting up C++, building, and testing. The Publish job downloads artifacts and publishes test results. The Documentation job generates documentation on Ubuntu. The Formatting job checks code formatting on Ubuntu.",
+  "tags": [
+    "ci",
+    "cd",
+    "vulkan",
+    "c++",
+    "doxygen",
+    "clang-format",
+    "ubuntu",
+    "windows",
+    "macos"
+  ]
+}

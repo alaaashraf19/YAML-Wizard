@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_18942",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1533,
+  "description": "Create a GitLab CI pipeline that uses the wengych/rpmbuild-java Docker image and defines three stages: build, upload, and deploy, with a global cache keyed by ${CI_COMMIT_REF_NAME} that caches the target/rpm/gitflow-ci-demo/RPMS/noarch/ directory (including untracked files). In the build stage add a build job that runs only on the develop branch, any release/* branch, or tags, executes `export GIT_REVISION=`git rev-list HEAD --count`` followed by `mvn clean package rpm:attached-rpm -DgitRevision=${GIT_REVISION}` to produce an RPM package. In the upload stage add three upload jobs: upload_develop_rpm (runs on develop), upload_prerelease_rpm (runs on release/*), and upload_release_rpm (runs on tags); each echoes a placeholder upload script and then runs `scp target/rpm/gitflow-ci-demo/RPMS/noarch/*.rpm dev_repo:` (or staging_repo:, release_repo: respectively), with the release upload job also publishing the generated *.noarch.rpm as an artifact. In the deploy stage add deploy_develop (environment develop) that runs only on develop and echoes \"ssh to dev test server and run yum install\", and deploy_prerelease (environment staging) that runs only on release/* and echoes \"ssh to staging test server and run yum install\". All jobs respect the defined only rules and the pipeline uploads RPMs to the appropriate repositories and prepares deployment via SSH.",
+  "tags": [
+    "java",
+    "maven",
+    "rpm",
+    "gitlab-ci",
+    "docker",
+    "ssh-deploy",
+    "scp-upload"
+  ]
+}

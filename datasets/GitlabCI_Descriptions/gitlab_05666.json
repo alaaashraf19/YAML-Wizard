@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_05666",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 436,
+  "description": "Create a GitLab CI pipeline that uses the docker:git Docker image with a docker:dind service, sets the CONTAINER_IMAGE variable to registry.gitlab.com/codebabel/$CI_PROJECT_NAME, and defines DOCKER_DRIVER=overlay2 and DOCKER_HOST=tcp://docker:2375. Include a before_script that runs docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com. Define a single stage called \"build and stage\" and a job named \"job 1\" in that stage that executes the commands docker build -t $CONTAINER_IMAGE:$CI_COMMIT_SHA . and docker push $CONTAINER_IMAGE:$CI_COMMIT_SHA to build and push the image to the GitLab Container Registry.",
+  "tags": [
+    "docker",
+    "dind",
+    "container-registry",
+    "build",
+    "gitlab-ci-token"
+  ]
+}

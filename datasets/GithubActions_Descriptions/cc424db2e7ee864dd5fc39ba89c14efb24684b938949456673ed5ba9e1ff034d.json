@@ -1,0 +1,17 @@
+{
+  "sha": "cc424db2e7ee864dd5fc39ba89c14efb24684b938949456673ed5ba9e1ff034d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3326,
+  "description": "Create a nightly GitHub Actions workflow named nightly-neon that runs at 23:52 every day and can be manually triggered. The workflow builds Calamares in a ubuntu-latest job using a KDE Neon container, prepares the environment and source code, configures and builds Calamares with specific CMake arguments, and uploads the resulting tarball as an artifact. Additionally, it sends a notification to a Matrix room on success or failure.",
+  "tags": [
+    "calamares",
+    "kde",
+    "neon",
+    "nightly",
+    "ci",
+    "ubuntu",
+    "cmake",
+    "matrix"
+  ]
+}

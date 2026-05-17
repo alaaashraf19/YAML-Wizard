@@ -1,0 +1,15 @@
+{
+  "sha": "095eb1837e0a4343172b9c3b2924a36babf924a243416092a48d14d9fd34f8e0",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1983,
+  "description": "Create a GitHub Actions workflow named Test that runs on push to the master branch, on opened and synchronized pull requests, and on a weekly schedule every Monday. The workflow uses a matrix strategy to test multiple Python versions (3.7 to 3.12) on an ubuntu-latest environment. For each Python version, it checks out the code, sets up a Docker build with a specific Dockerfile, builds a Docker image, sets up Python 3.10, installs dependencies with pip, and runs tests with a bash script.",
+  "tags": [
+    "python",
+    "docker",
+    "tests",
+    "matrix",
+    "schedule",
+    "ubuntu"
+  ]
+}

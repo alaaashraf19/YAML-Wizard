@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_03890",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 941,
+  "description": "Create a GitLab CI pipeline with three stages: build, deploy, and release, using a Maven cache at ~/.m2/repository and defining MAVEN_CLI_OPTS and RELEASE_VER variables. Add a compile job in the build stage that runs on aws runners and executes `mvn $MAVEN_CLI_OPTS -U compile`. Add a nexus job in the deploy stage that runs on aws runners, executes `mvn $MAVEN_CLI_OPTS deploy`, and is excluded from the master branch. Add a release job in the release stage that runs on aws runners only on the master branch, runs `git checkout -B $CI_COMMIT_REF_NAME`, then `mvn $MAVEN_CLI_OPTS -B -DreleaseVersion=$RELEASE_VER release:prepare -DskipTests -DautoVersionSubmodules=true -DdryRun=false -DscmCommentPrefix=\"[ci skip] [maven-release-plugin]\"`, then `mvn $MAVEN_CLI_OPTS -B release:perform -DskipTests -DautoVersionSubmodules=true -DdryRun=false -DscmCommentPrefix=\"[ci skip] [maven-release-plugin]\"`, then `git fetch` and `git push ssh://git@gitlab.com/${CI_PROJECT_PATH}.git HEAD:develop`.",
+  "tags": [
+    "maven",
+    "aws",
+    "release",
+    "ci",
+    "cache"
+  ]
+}

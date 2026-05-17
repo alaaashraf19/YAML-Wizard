@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_05969",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 225,
+  "description": "Create a GitLab CI pipeline that uses the node:latest Docker image and runs a before_script that installs the web-ext CLI globally with yarn and prints its version. Define a single stage called build and add a make_all job in that stage that executes the exact command `make --trace all VERBOSE=1`. Configure the job to always publish any files matching link_alert*.xpi as artifacts. No services, caches, or conditional rules are needed, and the pipeline does not deploy to any external target.",
+  "tags": [
+    "node",
+    "yarn",
+    "web-ext",
+    "make",
+    "artifact",
+    "build"
+  ]
+}

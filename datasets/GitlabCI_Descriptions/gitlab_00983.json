@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_00983",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 584,
+  "description": "Create a GitLab CI pipeline using the harkishen/mindtheword_ci_image_fedora Docker image with a single stage called build. Add a job named build that runs in the build stage and executes the following script commands in order: node -v && npm -v; npm install -g prettier; prettier --check -- lib/assets/js/main.js lib/scripts/**/*.js test/**/*.js; npm install -g gulp jspm minimatch@3.0.2; chromium-browser -version; npm install; jspm install bootstrap=npm:bootstrap; jspm install; npm install gulp; gulp build; npm install -g selenium-webdriver mocha mochawesome; npm install chromedriver@2.46 chromium mocha selenium-webdriver; xvfb-run -s \"-screen 0 1920x1080x16\" -a npm test. No caches, artifacts, services, or conditional rules are defined.",
+  "tags": [
+    "node",
+    "npm",
+    "prettier",
+    "gulp",
+    "jspm",
+    "selenium",
+    "mocha",
+    "fedora",
+    "docker-image"
+  ]
+}

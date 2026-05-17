@@ -1,0 +1,14 @@
+{
+  "sha": "c9f7e5179ec47df247655bee5b61803fec0a5190e5b78e0c46968aaf92c6423e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3305,
+  "description": "Create a GitHub Actions workflow named CI that runs on push and pull request events to the ros2-beta branch and allows manual triggering. The workflow should have a build job that runs on a matrix of ROS distributions (foxy, galactic, eloquent, dashing) and operating systems (ubuntu-20.04, ubuntu-18.04). For each combination, it should set up ROS, install RealSense SDK 2.0 dependencies, create a ROS2 workspace, check out the repository, build the project with colcon, install test packages, and run tests with a Python script.",
+  "tags": [
+    "ros2",
+    "ci",
+    "ubuntu",
+    "realsense",
+    "tests"
+  ]
+}

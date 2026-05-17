@@ -1,0 +1,13 @@
+{
+  "sha": "6270d577154356db8a035c81e7a5bebaa914469d918e7695f6efaa69db9c676d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 691,
+  "description": "Create a GitHub Actions workflow named Schedule that runs on a schedule and on workflow dispatch. The workflow has two jobs: schedule-next that runs on a cron schedule and calls a reusable workflow for the next branch, and schedule-master that runs on workflow dispatch and calls the same reusable workflow for the master branch. Both jobs pass specific secrets and inputs to the reusable workflow.",
+  "tags": [
+    "schedule",
+    "workflow-dispatch",
+    "reusable-workflow",
+    "cron"
+  ]
+}

@@ -1,0 +1,48 @@
+name: Standard Build and Test
+
+on:
+  # allows us to run workflows manually
+  workflow_dispatch:
+  pull_request:
+    paths-ignore:
+      - '.github/workflows/docker_publish.yml'
+      - '.github/workflows/changelog_test.yml'
+      - 'docker/**'
+      - 'CHANGELOG.rst'
+  push:
+    branches:
+      - develop
+    paths-ignore:
+      - '.github/workflows/docker_publish.yml'
+      - '.github/workflows/changelog_test.yml'
+      - 'docker/**'
+      - 'CHANGELOG.rst'
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  BuildTest:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        stage: [base_python, moab, dagmc, openmc]
+        hdf5: ['']
+        include:
+          - stage: dagmc
+            hdf5: _hdf5
+      fail-fast: false
+
+    container:
+      image: ghcr.io/pyne/pyne_ubuntu_22.04_py3${{ matrix.hdf5 }}/${{ matrix.stage }}:stable
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: use BuildTest composite action
+        uses: ./.github/actions/build-test
+        with:
+          stage: ${{ matrix.stage }}
+          hdf5: ${{ matrix.hdf5 }}
+

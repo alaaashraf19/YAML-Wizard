@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_14834",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 937,
+  "description": "Create a GitLab CI pipeline using the golang:1.10 Docker image. Define variables ARTIFACTS_DIR, BIN_NAME, GO_PROJECT and two stages: build and test. Include a before_script that creates ${GOPATH}/src/${GO_PROJECT} and ${CI_PROJECT_DIR}/${ARTIFACTS_DIR} directories, installs dep via curl, copies the project files, runs go get github.com/golang/mock/gomock, installs mockgen, gets github.com/satori/go.uuid, creates a mock_server directory, runs go generate ./..., installs the mock server binary, and returns to the project root. Add a build-my-project job in the build stage that runs go build -o ${CI_PROJECT_DIR}/${ARTIFACTS_DIR}/${BIN_NAME} and saves the ${ARTIFACTS_DIR} directory as an artifact. Add a test-my-project job in the test stage that runs go test -v -race -cover -coverprofile=coverage.txt -tags=\"unit integration\" -covermode=atomic and then uploads coverage with bash <(curl -s https://codecov.io/bash). No special rules, caches, or deployment targets.",
+  "tags": [
+    "golang",
+    "go-build",
+    "go-test",
+    "codecov",
+    "mockgen",
+    "dep",
+    "gitlab-ci"
+  ]
+}

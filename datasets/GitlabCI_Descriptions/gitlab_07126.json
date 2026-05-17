@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_07126",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1576,
+  "description": "Create a GitLab CI pipeline using the docker:git image with a docker:dind service and define three stages: build, test, and release. Set the variables GITLAB_RUNNER_IMAGE=gitlab/gitlab-runner:alpine, RELEASE_IMAGE=${CI_REGISTRY_IMAGE}:latest, and TEST_IMAGE=${CI_REGISTRY_IMAGE}:$CI_BUILD_REF_NAME, and add a before_script that logs into the registry with echo $CI_BUILD_TOKEN | docker login -u gitlab-ci-token --password-stdin ${CI_REGISTRY}. In the build stage add a build job that runs apk add --no-cache bash, checks overlay scripts with /bin/bash -n overlay/usr/share/gitlab-ci-common overlay/usr/bin/gitlab-ci-*, echoes Building ${RELEASE_IMAGE}, builds a Docker image using docker build -t $TEST_IMAGE ., and pushes it with docker push $TEST_IMAGE. In the test stage add a test job that echoes Testing ${TEST_IMAGE}, clones https://salsa.debian.org/debian/pidcat.git, writes a .gitlab-ci.yml containing the test image definition, pulls ${TEST_IMAGE}, and executes docker run --rm --interactive --volume /var/run/docker.sock:/var/run/docker.sock --volume $PWD:$PWD --workdir $PWD ${GITLAB_RUNNER_IMAGE} exec docker --docker-volumes \"/var/run/docker.sock:/var/run/docker.sock\" --env \"HOSTNAME=$HOSTNAME\" --env \"CI_PROJECT_NAMESPACE=debian\" --env \"CI_PROJECT_NAME=pidcat\" --env \"CI_COMMIT_REF_NAME=`git symbolic-ref HEAD --short`\" --env \"CI_COMMIT_SHA=`git rev-parse HEAD`\" test. In the release stage add a release job that runs only on the master branch or tags, echoes Publishing ${RELEASE_IMAGE}, pulls $TEST_IMAGE, retags it to $RELEASE_IMAGE with docker tag, and pushes the final image with docker push $RELEASE_IMAGE.",
+  "tags": [
+    "docker",
+    "dind",
+    "docker-build",
+    "gitlab-ci",
+    "release",
+    "test"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "ea41a52fc3b2454e4e6572a9e9020522f6c6b74ca23a5282902cd3f170e93e5a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2039,
+  "description": "Create a GitHub Actions workflow named CI - Release that runs on workflow dispatch with an optional commit or tag input and on push to release/* branches when VERSION or tags v* change. Use a single docker job with write permissions to repository contents and ID token, checking out the specified commit or tag, configuring AWS credentials, logging in to ECR and DockerHub, building and pushing Docker images with a tag derived from VERSION file contents.",
+  "tags": [
+    "docker",
+    "aws",
+    "ecr",
+    "dockerhub",
+    "release",
+    "ci"
+  ]
+}

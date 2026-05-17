@@ -1,0 +1,15 @@
+{
+  "sha": "9f2300f41287f31cb0b83df3c846c12f45aaf967722598c2ba8afbfc25d0b174",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2931,
+  "description": "Create a GitHub Actions workflow named Build MATLAB Packages that can be triggered manually with an optional Ice version input or called by another workflow with an optional ice_version input. The workflow should run on both ubuntu-24.04 and windows-2022, checking out the repository, setting up C++, MATLAB, and cache. It should then conditionally set the Ice package version, build the MATLAB toolbox for Linux or Windows, collect files to sign on Windows, sign C++ binaries on Windows using Azure trusted signing, package the Windows MATLAB toolbox, and upload the resulting MATLAB packages as artifacts.",
+  "tags": [
+    "matlab",
+    "azure",
+    "cpp",
+    "windows",
+    "linux",
+    "github-actions"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_19083",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2607,
+  "description": "Create a GitLab CI pipeline with the stages environment, build, test, deploy, internal, alpha, beta, and production, using the image $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG for Fastlane jobs and docker:stable with a docker:dind service for container jobs. In the build stage add a buildDebug job that runs a before_script to decode the signing keystore, export VERSION_CODE and VERSION_SHA, then executes `bundle exec fastlane buildDebug`, saves `app/build/outputs` as artifacts, and removes the keystore in an after_script; also add a buildRelease job (environment production) that runs the same before/after steps and `bundle exec fastlane buildRelease`. Add an ensureContainer job in the environment stage that creates an experimental Docker config, logs into the registry, checks for an existing manifest, then runs `docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY`, `docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG || true`, `docker build --cache-from $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG .`, and `docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG`. Add promoteAlpha, promoteBeta, and promoteProduction jobs in the alpha, beta, and production stages that each write the Google Play service account JSON, run `bundle exec fastlane promote_internal_to_alpha`, `bundle exec fastlane promote_alpha_to_beta`, or `bundle exec fastlane promote_beta_to_production` respectively, delete the JSON after, are manual except promoteProduction which runs only on the master branch. Finally, add a testDebug job in the test stage depending on buildDebug that runs `bundle exec fastlane test`; a publishInternal manual job in the internal stage depending on buildRelease that writes the Google Play key, runs `bundle exec fastlane internal`, and cleans up; and an updateContainer job in the environment stage that runs the same Docker login/pull/build/push script but only when the Dockerfile changes.",
+  "tags": [
+    "fastlane",
+    "docker",
+    "android",
+    "gitlab-ci",
+    "ci-cd",
+    "manual-approval"
+  ]
+}

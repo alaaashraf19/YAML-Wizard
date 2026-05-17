@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_14832",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1187,
+  "description": "Create a GitLab CI pipeline using the gcc:7.4.0 Docker image and a before_script that runs apt-get update -qq and installs clang-tools-6.0 curl docutils-common gdb lcov libarchive-dev libtalloc-dev strace swig uthash-dev xsltproc. Define the stages check, dist, coverage, static-analysis, and deploy. Add a check job (allow_failure) in the check stage that executes make -C src proot care and then timeout --signal=SIGKILL 5m make -C test. Add a dist job in the dist stage that runs LDFLAGS=\"${LDFLAGS} -static\" make -C src proot GIT=false, then after_script creates a dist directory, copies src/proot, generates sha256sum and md5sum files, and publishes the dist directory as an artifact. Add a gcov job in the coverage stage that runs /bin/sh ./util/coverage.sh and stores gcov-latest as an artifact, a scan-build job in the static-analysis stage that runs scan-build-6.0 make -C src proot and after_script copies /tmp/scan-build-* to scan-build-latest as an artifact, a pages job in the deploy stage that runs /bin/sh ./util/dist.sh, depends on dist, gcov, and scan-build, and publishes the public/ folder as a GitLab Pages artifact, and a site job that runs only on the master branch, allows failure, and runs /bin/sh ./util/site.sh.",
+  "tags": [
+    "gcc",
+    "make",
+    "scan-build",
+    "coverage",
+    "gitlab-pages",
+    "static-analysis",
+    "deploy"
+  ]
+}

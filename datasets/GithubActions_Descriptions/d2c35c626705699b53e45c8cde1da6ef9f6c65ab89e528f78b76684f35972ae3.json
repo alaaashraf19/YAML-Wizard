@@ -1,0 +1,14 @@
+{
+  "sha": "d2c35c626705699b53e45c8cde1da6ef9f6c65ab89e528f78b76684f35972ae3",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1444,
+  "description": "Create a GitHub Actions workflow to manually publish NuGet packages with a specified version. The workflow should trigger on a workflow dispatch with a required tag input. In an ubuntu-latest job, check out the repository, retrieve the current version, install .NET 8, update the version number in a specific file, pack the solution with the specified version, and push the resulting packages to NuGet using a provided API key.",
+  "tags": [
+    "dotnet",
+    "nuget",
+    "manual",
+    "publish",
+    "tags"
+  ]
+}

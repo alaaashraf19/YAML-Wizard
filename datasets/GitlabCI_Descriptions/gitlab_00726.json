@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_00726",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 3027,
+  "description": "Create a GitLab CI pipeline using the node:10.13-alpine Docker image with a global before_script that exports CI_APPLICATION_REPOSITORY and CI_APPLICATION_TAG, installs nodejs, npm, zip, native build tools, node‑gyp, make, python, ca‑certificates, openssl, downloads and installs the Google Cloud SDK, authenticates with $GCLOUD_SERVICE_KEY and sets the $GCP_PROJECT_ID project. Define stages test_unit, test_eslint, test_prettier, build, dev_deploy, and deploy, cache the node_modules directory per commit, and use the default image for the test jobs. Add a test_unit job (stage test_unit) that runs apk add nodejs nodejs-npm, npm install, then npm test in a dev environment; a test_eslint job (stage test_eslint) that runs apk add nodejs nodejs-npm, npm install, yarn config set cache-folder .yarn, then yarn lint-ci; and a test_prettier job (stage test_prettier) with the same before_script and runs yarn prettier-ci. Add a build job (stage build) using the docker:latest image with the docker:dind service that runs npm install, npm install copyfiles -g, npm run build, copies deploy_index.js to dist, moves index.js, copies package.json, zips the dist directory together with node_modules into app.zip, and uploads it to gs://$GCP_BUCKET/$CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG.zip. Finally, add a deploy job (stage deploy) that only runs on the master branch and uses gcloud beta functions deploy api --runtime nodejs6 --trigger-http with production environment variables (PROD_DB_*) and the uploaded zip as source, and a dev_deploy job (stage dev_deploy) that runs on all branches except master, deploying api-$CI_BRANCH with development environment variables (DEV_DB_*) from the same zip.",
+  "tags": [
+    "node",
+    "docker",
+    "gcloud",
+    "google-cloud-sdk",
+    "gcs",
+    "cache",
+    "eslint",
+    "prettier",
+    "unit-test",
+    "deployment"
+  ]
+}

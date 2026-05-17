@@ -1,0 +1,41 @@
+build:
+  artifacts:
+    paths:
+    - gosmtpd
+  image: golang:1.20
+  script:
+  - CGO_ENABLED=0 go build
+  stage: build
+build-docker:
+  dependencies:
+  - build
+  - test
+  image: docker:latest
+  only:
+    refs:
+    - master
+  script:
+  - export VERSION=$(date +%Y%m%d-%H%M)
+  - echo $VERSION
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  - docker build -t $IMAGE_TAG .
+  - docker tag $IMAGE_TAG $CI_REGISTRY_IMAGE:$VERSION
+  - docker push $IMAGE_TAG
+  - docker push $CI_REGISTRY_IMAGE:$VERSION
+  services:
+  - docker:dind
+  stage: deploy
+  variables:
+    IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+stages:
+- build
+- test
+- deploy
+test:
+  artifacts:
+    paths:
+    - gosmtpd
+  image: golang:1.20
+  script:
+  - go test -v -race --cover
+  stage: test

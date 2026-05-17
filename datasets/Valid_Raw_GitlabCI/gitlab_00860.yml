@@ -1,0 +1,50 @@
+.tox:
+  before_script:
+  - pip install tox
+  image: python:latest
+  script:
+  - tox
+  variables:
+    TOXENV: py
+before_script:
+- python -V
+- apt update && apt install -y python3-dev
+- python setup.py build
+black:
+  allow_failure: true
+  extends: .tox
+  variables:
+    TOXENV: black
+codespell:
+  before_script:
+  - apt update
+  - apt install -qy codespell
+  image:
+    name: debian:stable
+  script:
+  - codespell --skip '*.json,*.xml,*.ini,*.mbx' *
+flake8:
+  extends: .tox
+  variables:
+    TOXENV: flake8
+isort:
+  extends: .tox
+  variables:
+    TOXENV: isort
+mypy:
+  allow_failure: true
+  extends: .tox
+  variables:
+    TOXENV: mypy
+test:
+  extends: .tox
+  image: $IMAGE
+  parallel:
+    matrix:
+    - IMAGE:
+      - python:3.9
+      - python:3.11
+      - python:3.13
+variables:
+  LANG: C.UTF-8
+  LC_ALL: C.UTF-8

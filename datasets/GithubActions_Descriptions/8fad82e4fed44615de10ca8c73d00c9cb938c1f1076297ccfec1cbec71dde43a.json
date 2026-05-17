@@ -1,0 +1,14 @@
+{
+  "sha": "8fad82e4fed44615de10ca8c73d00c9cb938c1f1076297ccfec1cbec71dde43a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1062,
+  "description": "Create a GitHub Actions workflow named Test-Pull-Request that runs on push to the main branch in the src-python folder, on pull request events, and on workflow dispatch. Run tests in a ubuntu-latest job with a matrix strategy across Python 3.8 to 3.11. For each job, check out the repository, set up the Python version, install the package locally, install dev dependencies, and run tests with pytest.",
+  "tags": [
+    "python",
+    "tests",
+    "ubuntu",
+    "matrix",
+    "github-actions"
+  ]
+}

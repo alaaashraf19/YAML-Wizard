@@ -1,0 +1,213 @@
+.debian_build:
+  extends: .when_push
+  script:
+  - apt update && apt -y install --no-install-recommends eatmydata
+  - eatmydata -- apt -y dist-upgrade
+  - eatmydata -- apt -y install --no-install-recommends ${PACKAGES}
+  - if [ -n "${EXPERIMENTAL_PACKAGES}" ]; then apt -y install --no-install-recommends
+    -t experimental ${EXPERIMENTAL_PACKAGES}; fi
+  - eatmydata -- .ci-build/build.sh
+.when_push:
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "push"
+    when: always
+  - when: never
+.when_sched:
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "schedule"
+    when: always
+  - when: never
+alma-9:
+  allow_failure: true
+  extends: .when_sched
+  image: almalinux:9
+  interruptible: true
+  script:
+  - dnf -y install epel-release
+  - dnf -y install -y eatmydata
+  - eatmydata -- dnf -y install dnf-plugins-core
+  - eatmydata -- dnf config-manager --set-enabled crb
+  - eatmydata -- dnf -y install diffutils python3-scons bc ncurses-devel qt5-qtbase-devel
+    pps-tools-devel libnsl2-devel bluez-libs-devel dbus-devel libusbx-devel gtk3-devel
+    python3-pyserial python3-cairo python3-gobject-base ccache
+  - eatmydata -- ln -sv scons-3 /usr/bin/scons&&ln -sv python3 /usr/bin/python
+  - eatmydata -- .ci-build/build.sh
+  variables:
+    SCONSOPTS: qt=yes xgps=yes
+alpine-3:
+  extends: .when_sched
+  image: alpine:3
+  script:
+  - apk update
+  - apk add scons libcap-dev ncurses-dev build-base bash linux-headers musl-dev ccache
+  - .ci-build/build.sh
+  stage: .pre
+cache:
+  key: ${CI_JOB_NAME}
+  paths:
+  - .ccache/
+coverity:
+  artifacts:
+    paths:
+    - cov-int
+  image: debian:latest
+  rules:
+  - if: $COVERITY_SCAN_PROJECT_NAME =~ "^$"
+    when: never
+  - if: $COVERITY_SCAN_TOKEN =~ "^$"
+    when: never
+  - if: $COVERITY_USER_EMAIL =~ "^$"
+    when: never
+  - if: $CI_PIPELINE_SOURCE == "sched"
+    when: always
+  - when: never
+  script:
+  - apt update
+  - apt -y install --no-install-recommends eatmydata
+  - eatmydata -- apt -y install --no-install-recommends ${PACKAGES}
+  - eatmydata -- curl -o /tmp/cov-analysis-linux64.tgz -D - https://scan.coverity.com/download/linux64
+    --form project=$COVERITY_SCAN_PROJECT_NAME --form token=$COVERITY_SCAN_TOKEN
+  - eatmydata -- tar xfz /tmp/cov-analysis-linux64.tgz
+  - eatmydata -- .ci-build/build.sh
+  - eatmydata -- tar cfz cov-int.tar.gz cov-int
+  - curl https://scan.coverity.com/builds?project=$COVERITY_SCAN_PROJECT_NAME --form
+    token=$COVERITY_SCAN_TOKEN --form email=$COVERITY_USER_EMAIL -D - --form file=@cov-int.tar.gz
+    --form version="`git describe --tags`" --form description="`git describe --tags`
+    / $CI_COMMIT_TITLE / $CI_COMMIT_REF_NAME:$CI_PIPELINE_ID"
+  variables:
+    NOCHECK: 'true'
+    PACKAGES: bc build-essential ca-certificates clang clang-tools curl file git libbluetooth-dev
+      libdbus-1-dev libglib2.0-dev libncurses-dev libqt5network5 libusb-1.0-0-dev
+      pps-tools python-is-python3 python3-setuptools qtbase5-dev scons
+    SCAN_BUILD: cov-analysis-linux64-*/bin/cov-build --dir cov-int
+    SCONSOPTS: qt=yes xgps=yes
+debian-experimental:clang:
+  allow_failure: true
+  extends: .debian_build
+  image: debian:experimental
+  variables:
+    CC: clang
+    CXX: clang++
+    EXPERIMENTAL_PACKAGES: clang
+    PACKAGES: bc build-essential ccache libbluetooth-dev libdbus-1-dev libglib2.0-dev
+      libncurses-dev libqt5network5t64 libusb-1.0-0-dev pps-tools python-is-python3
+      python3-setuptools qtbase5-dev scons
+    SCONSOPTS: qt=yes xgps=yes
+debian-experimental:gcc:
+  allow_failure: true
+  extends: .debian_build
+  image: debian:experimental
+  variables:
+    EXPERIMENTAL_PACKAGES: gcc g++
+    PACKAGES: bc build-essential ccache libbluetooth-dev libdbus-1-dev libglib2.0-dev
+      libncurses-dev libqt5network5t64 libusb-1.0-0-dev pps-tools python-is-python3
+      python3-setuptools qtbase5-dev scons
+    SCONSOPTS: qt=yes xgps=yes
+debian-unstable:clang:
+  allow_failure: true
+  extends: .debian_build
+  image: debian:unstable
+  variables:
+    CC: clang
+    CXX: clang++
+    PACKAGES: bc build-essential ccache clang libbluetooth-dev libdbus-1-dev libglib2.0-dev
+      libncurses-dev libqt5network5t64 libusb-1.0-0-dev pps-tools python-is-python3
+      python3-setuptools qtbase5-dev scons
+    SCONSOPTS: qt=yes xgps=yes
+debian-unstable:minimal:
+  extends: .debian_build
+  image: debian:unstable
+  stage: .pre
+  variables:
+    NOCHECK: 'true'
+    PACKAGES: asciidoctor build-essential ccache python-is-python3 python3-setuptools
+      scons
+    SCONSOPTS: aivdm=no ashtech=no bluez=no control_socket=no controlsend=no coveraging=no
+      dbus_export=no debug=no earthmate=no evermore=no force_global=no fury=no fv18=no
+      garmin=no garmintxt=no geostar=no gpsclock=no gpsdclients=no greis=no implicit_link=no
+      isync=no itrax=no leapfetch=no libgpsmm=no magic_hat=no manbuild=no minimal=no
+      mtk3301=no navcom=no ncurses=no netfeed=no nmea0183=no nmea2000=no nostrip=no
+      ntrip=no oncore=no oscillator=no passthrough=no profiling=no python=no qt=no
+      reconfigure=no shared=no shm_export=no sirf=no skytraq=no slow=no socket_export=yes
+      squelch=no superstar2=no systemd=no timeservice=no tnt=no tripmate=no tsip=no
+      usb=no xgps=no
+fedora-latest:
+  allow_failure: true
+  extends: .when_sched
+  image: fedora:latest
+  script:
+  - dnf install -y eatmydata
+  - eatmydata -- dnf install -y ccache diffutils bluez-libs-devel dbus-devel gcc-c++
+    ncurses-devel python3-setuptools qt5-qtbase-devel scons pps-tools-devel
+  - eatmydata .ci-build/build.sh
+  variables:
+    SCONSOPTS: qt=yes xgps=yes
+freebsd:
+  allow_failure: true
+  extends: .when_sched
+  rules:
+  - if: $HAVE_FREEBSD != "true"
+    when: never
+  script:
+  - .ci-build/build.sh
+  tags:
+  - freebsd
+  timeout: 2 h
+  variables:
+    WRITE_PAD: '0.05'
+mips64le-linux:
+  extends: .when_sched
+  rules:
+  - if: $HAVE_MIPS64LE_LINUX != "true"
+    when: never
+  script:
+  - .ci-build/build.sh
+  tags:
+  - mips64le
+  - linux
+pages:
+  artifacts:
+    paths:
+    - public
+  extends: .when_push
+  image: alpine:latest
+  script:
+  - apk update && apk add python3 asciidoctor scons rsync musl-dev gcc
+  - gem install rouge
+  - mkdir .pages; WEBSITE=.public scons website=.pages website; mv .public public
+  - find public -type f -regex '.*\.\(htm\|html\|txt\|text\|js\|css\)$' -exec gzip
+    -f -k {} \;
+  - ls -lR public
+scan-build:
+  allow_failure: true
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - scan_build
+  extends: .debian_build
+  image: debian:unstable
+  variables:
+    NOCHECK: 'true'
+    PACKAGES: bc build-essential clang clang-tools libbluetooth-dev libdbus-1-dev
+      libglib2.0-dev libncurses-dev libqt5network5t64 libusb-1.0-0-dev pps-tools python3-setuptools
+      qtbase5-dev scons
+    SCAN_BUILD: scan-build -o scan_build
+    SCONSOPTS: qt=yes xgps=yes
+sparc64-linux:
+  allow_failure: true
+  extends: .when_sched
+  rules:
+  - if: $HAVE_SPARC64_LINUX != "true"
+    when: never
+  script:
+  - .ci-build/build.sh
+  tags:
+  - sparc64
+  - linux
+  timeout: 1 h 10m
+variables:
+  CCACHE_BASEDIR: ${CI_PROJECT_DIR}
+  CCACHE_COMPILERCHECK: content
+  CCACHE_DIR: ${CI_PROJECT_DIR}/.ccache
+  DEBIAN_FRONTEND: noninteractive
+  USE_CCACHE: 'true'

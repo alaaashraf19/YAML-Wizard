@@ -1,0 +1,12 @@
+before_script:
+- python -V
+- pip install pyflakes
+cache:
+  paths:
+  - .cache/pip
+image: python:latest
+test:
+  script:
+  - pyflakes main.py
+variables:
+  PIP_CACHE_DIR: $CI_PROJECT_DIR/.cache

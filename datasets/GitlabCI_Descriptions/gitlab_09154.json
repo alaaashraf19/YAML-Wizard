@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_09154",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 376,
+  "description": "Create a GitLab CI pipeline that uses python:3 as the default Docker image and defines three jobs. Add a code_check job that runs on all branches except master, overrides the image to python:3.5-alpine, and executes pip install 'coala-bears[alldeps]' followed by coala --ci. Add a tests job that also runs on all branches except master, uses the default python:3 image, and runs pip install -r requirements.txt then mkdocs build. Add a pages job that runs only on the master branch, uses the default python:3 image, runs pip install -r requirements.txt, mkdocs build, moves the generated site directory to public, and publishes the public/ directory as a GitLab Pages artifact. No caches, services, or additional stages are defined.",
+  "tags": [
+    "python",
+    "coala",
+    "mkdocs",
+    "gitlab-pages",
+    "alpine",
+    "pip"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "271dd2b96cb7f20cdb0336f6523e7d1a6c53806cc84bc2c6212a5b2ef64098f3",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 12269,
+  "description": "Create a GitHub Actions workflow named GcodeAnalyzer that runs on push to specific paths and branches, and on pull requests to specific branches and tags. The workflow checks if the actor is a bot or if the pull request is from a fork, and if not, it sets up the environment, installs dependencies, builds CuraEngine, runs GCodeAnalyzer on generated GCode files, and uploads the results.",
+  "tags": [
+    "gcodeanalyzer",
+    "curaengine",
+    "conan",
+    "python",
+    "github-actions"
+  ]
+}

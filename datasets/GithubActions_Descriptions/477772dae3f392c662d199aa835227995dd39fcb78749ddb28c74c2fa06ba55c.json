@@ -1,0 +1,14 @@
+{
+  "sha": "477772dae3f392c662d199aa835227995dd39fcb78749ddb28c74c2fa06ba55c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2446,
+  "description": "Create a GitHub Actions workflow named Linux AArch64 that runs on pushes to master, pull requests to master, published releases, and workflow dispatches. The workflow should build and package a project for Linux AArch64 architecture. It should use an ubuntu-20.04 environment, checkout the code, create a build environment, build the project with CMake, package it, and upload the package as an artifact. If the workflow is triggered by a release event, update the release with the package.",
+  "tags": [
+    "linux",
+    "aarch64",
+    "cmake",
+    "packaging",
+    "github-actions"
+  ]
+}

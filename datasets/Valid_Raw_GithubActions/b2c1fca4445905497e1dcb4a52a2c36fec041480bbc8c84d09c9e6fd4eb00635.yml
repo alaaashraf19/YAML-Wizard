@@ -1,0 +1,30 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: compile and run examples
+      run: |
+        autoreconf -i -f
+        ./configure
+        make
+    - name: compile and run tests
+      run: |
+        sudo apt-get install libboost-test-dev
+        cd tests
+        autoreconf -i -f
+        ./configure
+        make
+        make check
+    - name: make distcheck
+      run: make distcheck

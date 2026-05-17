@@ -1,0 +1,25 @@
+before_script:
+- npm install
+cache:
+  paths:
+  - node_modules/
+image: node:latest
+lint:
+  script:
+  - npm run lint
+pages:
+  artifacts:
+    paths:
+    - public
+  cache:
+    paths:
+    - node_modules/
+  only:
+  - master
+  script:
+  - npm install
+  - npm run docs:build
+services: null
+test:
+  script:
+  - npm run coverage

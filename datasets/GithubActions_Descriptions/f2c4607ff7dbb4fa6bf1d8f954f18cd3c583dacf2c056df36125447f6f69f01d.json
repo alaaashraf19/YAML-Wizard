@@ -1,0 +1,14 @@
+{
+  "sha": "f2c4607ff7dbb4fa6bf1d8f954f18cd3c583dacf2c056df36125447f6f69f01d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 969,
+  "description": "Create a GitHub Actions workflow for validating and publishing a Vultr template to the marketplace. The workflow should trigger on released events and run two jobs sequentially: validate and publish. Both jobs run on ubuntu-latest and check out the repository. The validate job currently has steps to fix and validate the template using hashicorp/packer-github-actions but they are disabled. The publish job depends on validate, builds the template but the step is currently disabled.",
+  "tags": [
+    "marketplace",
+    "vultr",
+    "packer",
+    "validation",
+    "publication"
+  ]
+}

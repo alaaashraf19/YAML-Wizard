@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_14811",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 302,
+  "description": "Create a GitLab CI pipeline using the nixos/nix Docker image and no services. Define a before_script that runs \"nix-channel --add https://nixos.org/channels/nixpkgs-unstable\" then \"nix-channel --update\". Add a build stage with a build job that executes \"nix-shell --run make\", stores the \"public\" directory as an artifact, and runs in the build stage. Add a deploy stage with a pages job that runs a no‑op \":\" script, publishes the \"public\" directory as a GitLab Pages artifact, and only runs on the master branch.",
+  "tags": [
+    "nix",
+    "make",
+    "gitlab-pages",
+    "build",
+    "deploy"
+  ]
+}

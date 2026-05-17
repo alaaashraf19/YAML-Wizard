@@ -1,0 +1,18 @@
+{
+  "sha": "045db8e61ab6c80d01e51d86cb27134d83807f3d17185eaac1b474d7b26cdbbe",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4129,
+  "description": "Create a GitHub Actions workflow named '🧪 Test' with read permission to repository contents and write permission to pull requests. The workflow triggers on push and pull request events to the master branch. It runs a matrix job with multiple Python versions and operating systems, checking out the repository, setting up Python, installing build prerequisites, creating a virtual environment, testing with tox, and uploading artifacts. Additionally, it runs a quality job on ubuntu-latest to perform various quality checks.",
+  "tags": [
+    "python",
+    "test",
+    "quality",
+    "ubuntu",
+    "macos",
+    "windows",
+    "tox",
+    "coverage",
+    "coveralls"
+  ]
+}

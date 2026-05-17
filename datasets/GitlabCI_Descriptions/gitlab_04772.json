@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_04772",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 356,
+  "description": "Create a GitLab CI pipeline using the cage1016/gitlab-ci-gcp:v1.5 Docker image and a global before_script that exports CLOUDSDK_CORE_DISABLE_PROMPTS=1, CLOUDSDK_PYTHON_SITEPACKAGES=1, GCP_PROJECT=gae-lab-001 and GCP_PROJECT_VERSION=uat. Define two stages, test and deploy. Add a test job in the test stage that runs the shell command `sh ./scripts/tests.sh`. Add a deploy job in the deploy stage that runs only on the master branch and executes `sh ./scripts/deploy.sh` to deploy the application to Google Cloud (App Engine).",
+  "tags": [
+    "gcp",
+    "gae",
+    "gitlab-ci",
+    "deploy",
+    "test",
+    "cage1016"
+  ]
+}

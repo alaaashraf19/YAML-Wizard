@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_05652",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 304,
+  "description": "Create a GitLab CI pipeline that runs a before_script for all jobs containing the commands: apt-get update -y, apt-get install default-jre -y, wget https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein, chmod a+x lein, export LEIN_ROOT=1, export PATH=$PATH:., and ./scripts/build.sh $(pwd). Cache the Maven local repository at .m2/. Define a test stage with a test job that executes lein sub test. The pipeline uses the default runner image and has no additional services or rules.",
+  "tags": [
+    "java",
+    "leiningen",
+    "apt",
+    "maven-cache",
+    "gitlab-ci"
+  ]
+}

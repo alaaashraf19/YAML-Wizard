@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_11721",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 331,
+  "description": "Create a GitLab CI pipeline using the node:8 Docker image with a before_script that runs yarn install --frozen-lockfile for all jobs. Define two stages: Test and Deploy. In the Test stage add a static job that runs yarn static-ci and a test job that runs yarn test-ci. In the Deploy stage add a deploy-test job that runs only on the master branch, sets the variable STAGE to test, runs yarn global add serverless then yarn deploy --no-confirm to perform a Serverless deployment, with no caches or artifacts defined.",
+  "tags": [
+    "node",
+    "yarn",
+    "serverless",
+    "test",
+    "static",
+    "deploy",
+    "ci"
+  ]
+}

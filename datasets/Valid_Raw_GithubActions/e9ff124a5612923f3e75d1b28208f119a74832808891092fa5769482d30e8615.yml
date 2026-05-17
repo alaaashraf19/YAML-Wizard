@@ -1,0 +1,134 @@
+name: Coverage
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * 0" # Run every Sunday at midnight
+
+jobs:
+  generate-cpp-coverage-report:
+    runs-on: macos-15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup C++
+        uses: ./.github/actions/setup-cpp
+
+      - name: Generate C++ Coverage
+        working-directory: ./cpp
+        run: ../scripts/generate-cpp-code-coverage.sh
+
+      - name: Install testing dependencies from pip
+        run: python3 -m pip install passlib cryptography numpy
+        shell: bash
+
+      - name: Generate C++ Coverage Reports
+        working-directory: ./cpp
+        run: |
+          for binary in bin/*; do
+            ../scripts/generate-cpp-code-coverage.sh "$binary"
+          done
+
+          for library in lib/*; do
+            if [[ $library =~ lib/lib[a-zA-Z0-9]+\.dylib ]]; then
+              ../scripts/generate-cpp-code-coverage.sh "$library"
+            fi
+          done
+
+      # This will perform a full sync of the documentation to S3 every time the workflow is run since
+      # the timestamps will always be different. Using --size-only is not sufficient since the
+      # documentation may be updated without changing the size of the files. S3 does not offer a hash based sync.
+      - name: Sync Documentation to S3
+        working-directory: ./cpp/coverage/html
+        run: |
+          for coverage_dir in *; do
+              if [[ -d $coverage_dir ]]; then
+                  aws s3 sync $coverage_dir s3://${AWS_S3_CODE_BUCKET}/ice/main/coverage/cpp/$(basename $coverage_dir) --delete
+              fi
+          done
+
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_S3_CODE_BUCKET: ${{ secrets.AWS_S3_CODE_BUCKET }}
+          AWS_DEFAULT_REGION: us-east-1
+        if: github.ref == 'refs/heads/main' && github.repository == 'zeroc-ice/ice'
+
+  generate-csharp-coverage-report:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup C++
+        uses: ./.github/actions/setup-cpp
+
+      - name: Setup .NET
+        uses: ./.github/actions/setup-dotnet
+
+      - name: Install testing dependencies from pip
+        run: python3 -m pip install passlib cryptography numpy
+        shell: bash
+
+      - name: Build
+        run: |
+          make -C cpp srcs
+          make -C csharp
+
+      - name: Generate C# Coverage
+        working-directory: ./csharp
+        run: |
+          dotnet tool install  dotnet-coverage --global
+          dotnet-coverage collect --server-mode --background --session-id dotnet-coverage --output coverage.cobertura.xml --output-format cobertura --settings msbuild/coverage.runsettings
+          python3 allTests.py --all --workers=4 --debug --coverage-session dotnet-coverage
+          dotnet-coverage shutdown dotnet-coverage
+
+      - name: Generate Coverage Reports
+        uses: danielpalme/ReportGenerator-GitHub-Action@5.3.8
+        with:
+          reports: csharp/coverage.cobertura.xml
+          targetdir: coveragereport
+          reporttypes: Html;Badges
+          license: ${{ secrets.REPORT_GENERATOR_LICENSE }}
+
+      - name: Sync Documentation to S3
+        working-directory: ./coveragereport
+        run: aws s3 sync . s3://${AWS_S3_CODE_BUCKET}/ice/main/coverage/csharp --delete
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_S3_CODE_BUCKET: ${{ secrets.AWS_S3_CODE_BUCKET }}
+          AWS_DEFAULT_REGION: us-east-1
+        if: github.ref == 'refs/heads/main' && github.repository == 'zeroc-ice/ice'
+
+  generate-java-coverage-report:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup C++
+        uses: ./.github/actions/setup-cpp
+
+      - name: Setup Java
+        uses: ./.github/actions/setup-java
+
+      - name: Install testing dependencies from pip
+        run: python3 -m pip install passlib cryptography numpy
+        shell: bash
+
+      - name: Generate Java Coverage
+        working-directory: ./java
+        run: |
+          ../scripts/generate-java-code-coverage.sh
+
+      - name: Sync Documentation to S3
+        working-directory: ./java/coverage
+        run: aws s3 sync . s3://${AWS_S3_CODE_BUCKET}/ice/main/coverage/java --delete
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_S3_CODE_BUCKET: ${{ secrets.AWS_S3_CODE_BUCKET }}
+          AWS_DEFAULT_REGION: us-east-1
+        if: github.ref == 'refs/heads/main' && github.repository == 'zeroc-ice/ice'

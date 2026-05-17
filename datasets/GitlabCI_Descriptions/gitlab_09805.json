@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_09805",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 235,
+  "description": "Create a GitLab CI pipeline that uses the harbottle/wix:latest Docker image and defines a single stage called build. Add a job named build:msi in the build stage that executes the following shell commands in order: cd example, x86_64-w64-mingw32-gcc ./example.c -o ./example.exe, candle example.wxs, and light -sval example.wixobj. The job should publish any generated *.msi files under the example/ directory as build artifacts. No caches, variables, services, or conditional rules are required.",
+  "tags": [
+    "wix",
+    "msi",
+    "mingw",
+    "docker",
+    "build"
+  ]
+}

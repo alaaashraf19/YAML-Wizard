@@ -1,0 +1,25 @@
+{
+  "sha": "gitlab_14537",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 6514,
+  "description": "Create a GitLab CI pipeline with three stages (test, prepare, deploy) and a default image of archlinux:base-devel. In the prepare stage add a conda job (image conda/miniconda3) that runs `conda init bash` then `./conda/release.sh build` and stores the `conda/build` directory as an artifact, and a coverage job (image archlinux:base-devel) that installs python-coverage via `pacman -Syu --noconfirm python-coverage` and runs `coverage combine`, `coverage report --precision=2`, `coverage xml`, `coverage html --precision=2`, publishing `htmlcov` and a Cobertura `coverage.xml` report; also add a documentation job (image archlinux:base-devel) that installs many build tools with pacman and pip, runs multiple `sphinx-build` commands for doctest, html and latex, executes `make -C latex`, creates API links, and artifacts `html` and `latex/picos.pdf`; finally add an sdist job (image archlinux:base-devel) that installs build dependencies via pacman, runs `./setup.py sdist`, checks the tarball with `twine check`, extracts it, imports the package with `python -c \"import picos\"`, and stores `dist/picos-*.tar.gz` as an artifact. In the deploy stage add an anaconda job (image conda/miniconda3) that runs `conda init bash` then `./conda/release.sh upload`, depends on the conda job and runs only on the master branch; a pages job that depends on coverage and documentation, runs only on master, creates a `public` directory and moves `html/*`, `latex/picos.pdf`, and `htmlcov` into it, publishing `public` as the pages artifact; and a pypi job that installs twine via pacman, depends on the sdist job, runs `twine upload picos-*.tar.gz` on the `dist` folder, and also runs only on master. Also in the test stage define style (image python) with `pip install ruff` and `ruff check …`, allow_failure true; leftovers running `(! grep -qr XXX picos tests)`; linelength with `(! find picos tests -name '*.py' -print0|xargs -0 grep '^.{81,}$')` also allow_failure; doctests using pacman to install coverage and other libs and running `coverage run -p --source picos ./test.py -u -vv`; and multiple test_* jobs for each solver (cplex, cvxopt, ecos, glpk, gurobi_legacy, gurobi_matrix, mosek, mskfsn, osqp, qics, scip) each with its own python or specialized image, installing required pip packages, and executing `coverage run -p --source picos ./test.py -p -vv -s <solver> -o <options>`, publishing `.coverage.*` artifacts.",
+  "tags": [
+    "conda",
+    "coverage",
+    "documentation",
+    "pages",
+    "pypi",
+    "sdist",
+    "style",
+    "test",
+    "python",
+    "archlinux",
+    "conda-miniconda3",
+    "gurobi",
+    "mosek",
+    "scip",
+    "linelength",
+    "leftovers"
+  ]
+}

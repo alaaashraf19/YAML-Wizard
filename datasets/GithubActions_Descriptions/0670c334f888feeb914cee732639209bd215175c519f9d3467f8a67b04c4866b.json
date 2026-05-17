@@ -1,0 +1,14 @@
+{
+  "sha": "0670c334f888feeb914cee732639209bd215175c519f9d3467f8a67b04c4866b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1324,
+  "description": "Create a GitHub Actions workflow named release that runs on workflow dispatch and on push of tags matching *.*.*. The workflow has read permission to repository contents. It consists of two ubuntu-latest jobs: build and pypi. The build job checks out the repository, sets up Python, installs build dependencies, builds distributions, and uploads them as an artifact. The pypi job depends on the build job, downloads the distributions, and publishes them to PyPI if triggered by a push event.",
+  "tags": [
+    "python",
+    "release",
+    "pypi",
+    "tags",
+    "artifacts"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "ff3bfbb4b5bcd57623ef1183d2bc9db3996e7655c8c7a38ed4e8f0fc3fad9be3",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1094,
+  "description": "Create a GitHub Actions workflow named Release Draft that triggers on push events with tags matching v*. Use a Windows job matrix to build for Python 3.6, 3.7, and 3.8. For each job, set up Miniconda with the specified Python version, install dependencies with conda, build the package with setup.py, and create a draft release with the built wheels.",
+  "tags": [
+    "python",
+    "release",
+    "draft",
+    "windows",
+    "miniconda",
+    "matrix"
+  ]
+}

@@ -1,0 +1,35 @@
+.test_common:
+  before_script: &id001
+  - apt-get update --quiet --quiet --yes
+  - apt-get install --quiet --quiet --yes ${_APT_PACKAGE_NAMES}
+  - python3 -m pip --quiet install tox
+  stage: test
+cache:
+  paths:
+  - .cache/
+image: python
+stages:
+- test
+test_python35:
+  before_script: *id001
+  image: python:3.5
+  script: python3 -m tox -e py35
+  stage: test
+test_python36:
+  before_script: *id001
+  image: python:3.6
+  script: python3 -m tox -e py36
+  stage: test
+test_python37:
+  before_script: *id001
+  image: python:3.7
+  script: python3 -m tox -e py37
+  stage: test
+variables:
+  DEBIAN_FRONTEND: noninteractive
+  XDG_CACHE_HOME: ${CI_PROJECT_DIR}/.cache
+  _APT_PACKAGE_NAMES: 'graphviz
+
+    libgl1-mesa-glx
+
+    '

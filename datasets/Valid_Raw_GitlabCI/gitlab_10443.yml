@@ -1,0 +1,92 @@
+.default:
+  artifacts: &id001
+    name: $target_dir
+    paths:
+    - export-website/
+    - export-inkscape/
+  script: &id002
+  - cd $target_dir
+  - make version
+  - make check-input
+  - make all --always-make -j1
+  - make check-output
+  - make copy
+  stage: build
+deploy:
+  artifacts:
+    name: documentation
+    paths:
+    - export-website/
+    - export-inkscape/
+  script:
+  - mkdir -p export-website/data
+  - 'git log --all --format="------------------%n%nAUTHOR:%aN%nTIME:%at%nEMAIL:%aE%n%h
+    : %s%n%aD%n" > export-website/data/documentation.log'
+  - if [ -z "${CI_TOKEN}" ]; then echo "\${CI_TOKEN} not set, skipping update of export
+    repository..."; exit 0; fi
+  - if [ -z "${CI_BUILD_BEFORE_SHA}" ] || [ "${CI_BUILD_BEFORE_SHA}" == 0 ] || [ "${CI_BUILD_BEFORE_SHA}"
+    == "$(git rev-parse ${CI_COMMIT_SHA}^)" ] || ! git rev-list ${CI_BUILD_BEFORE_SHA}...${CI_COMMIT_SHA};
+    then COMMIT_MESSAGE=$(git log -1 --pretty=format:"  %s%n  authored by %an on %aD");
+    COMMIT_MESSAGE_LINK="see ${CI_PROJECT_URL}/commit/${CI_COMMIT_SHA}"; else COMMIT_MESSAGE=$(git
+    log ${CI_BUILD_BEFORE_SHA}..${CI_COMMIT_SHA} --pretty=format:"  %s%n  authored
+    by %an on %aD%n"); COMMIT_MESSAGE_LINK="see ${CI_PROJECT_URL}/compare/${CI_BUILD_BEFORE_SHA}...${CI_COMMIT_SHA}";
+    fi
+  - git config --global user.name "Inkscape CI"
+  - git config --global user.email "inkscape.dev@outlook.com"
+  - git clone --depth 1 https://gitlab.com/${CI_PROJECT_PATH}-export.git documentation-export
+  - cp -r export-website/* documentation-export
+  - cd documentation-export
+  - git add --all
+  - if [ "${CI_COMMIT_REF_NAME}" != "master" ]; then echo "\${CI_COMMIT_REF_NAME}
+    is not master, skipping update of tutorials..."; git reset tutorials && git checkout
+    tutorials; fi
+  - git diff --cached --quiet || git commit -m "Automatic update from CI" -m "${COMMIT_MESSAGE}"
+    -m "${COMMIT_MESSAGE_LINK}"
+  - CI_USER=inkscape_ci
+  - git config --global credential.helper cache
+  - echo -e "protocol=https\nhost=gitlab.com\npath=${CI_PROJECT_PATH}-export.git\nusername=${CI_USER}\npassword=${CI_TOKEN}\n\n"
+    | git credential-cache store
+  - git push origin || { git pull --rebase origin master && git push origin; }
+  - git credential-cache exit
+  stage: deploy
+  variables:
+    GIT_DEPTH: ''
+image: registry.gitlab.com/inkscape/inkscape-ci-docker/documentation
+keys:
+  artifacts: *id001
+  script: *id002
+  stage: build
+  variables:
+    target_dir: keys
+man:
+  artifacts: *id001
+  script: *id002
+  stage: build
+  variables:
+    target_dir: man
+patch_itstool:
+  script:
+  - sed -i -e "s/re.sub('/re.sub(r'/g" /usr/bin/itstool
+  - sed -i -e "s/re.compile('/re.compile(r'/g" /usr/bin/itstool
+  stage: .pre
+stages:
+- build
+- deploy
+statistics:
+  allow_failure: true
+  artifacts: *id001
+  before_script:
+  - make po --always-make -j$(nproc)
+  script: *id002
+  stage: build
+  variables:
+    target_dir: statistics
+tutorials:
+  artifacts: *id001
+  script: *id002
+  stage: build
+  variables:
+    target_dir: tutorials
+variables:
+  GIT_DEPTH: '0'
+  INKBRANCH: master

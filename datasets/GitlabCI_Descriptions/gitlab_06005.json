@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_06005",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 585,
+  "description": "Create a GitLab CI pipeline using the gcc Docker image. Define two stages: build and test. In the build stage add a build job that runs a before_script to source /etc/os-release, echo $PRETTY_NAME, display uname -srm, and echo \"gcc $GCC_VERSION\", then changes directory to SAP-Report-Source-Decompressor and runs make, and publishes the resulting SAP-Report-Source-Decompressor/sap-reposrc-decompressor file as an artifact that expires in one week. In the test stage add a cppcheck job that updates apt-get quietly, installs cppcheck, then runs cppcheck --enable=all --error-exitcode=1 -i lib/ . in the SAP-Report-Source-Decompressor directory. Also in the test stage add a test job that runs make test in the same directory. No caches, rules, or deployment targets are defined.",
+  "tags": [
+    "gcc",
+    "make",
+    "cppcheck",
+    "c",
+    "gitlab-ci"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "c825134ae16b9547ecb3228fe424eaaefa3489a4aa60f29fcbcd9cf588660d70",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3689,
+  "description": "Create a reusable GitHub Actions workflow named Build C++ Windows Packages that builds C++ Windows packages. The workflow can be triggered manually with an optional Ice version input or called by another workflow with an ice_version input. It runs on a windows-latest environment, checks out the repository, sets up C++ and Java, builds C++ binaries, signs them with Azure Trusted Signing, and builds and signs MSI installers and NuGet packages. The workflow also uploads the resulting MSI and NuGet packages as artifacts.",
+  "tags": [
+    "cpp",
+    "windows",
+    "azure",
+    "nuget",
+    "msi",
+    "trusted-signing"
+  ]
+}

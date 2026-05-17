@@ -1,0 +1,15 @@
+{
+  "sha": "16deb439785d64a4cd59ddf2536220cef725150a5af35779bbee5c08f4058e6e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1931,
+  "description": "Create a GitHub Actions workflow named Conda Build that runs on pull requests, workflow dispatch, and push to the stable branch. Use a matrix strategy to build with multiple Python versions (3.7-3.12) on ubuntu-latest. For each job, set up Miniforge, install build tools, configure auto-upload on the stable branch, and build a binary with a specified Conda token. Additionally, run a final job to report results, exiting with a failure code if any of the build jobs fail, are cancelled, or are skipped.",
+  "tags": [
+    "conda",
+    "python",
+    "miniforge",
+    "build",
+    "matrix",
+    "github-actions"
+  ]
+}

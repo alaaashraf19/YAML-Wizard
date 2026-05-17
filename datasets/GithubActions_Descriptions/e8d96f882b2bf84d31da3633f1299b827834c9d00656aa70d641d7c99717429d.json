@@ -1,0 +1,15 @@
+{
+  "sha": "e8d96f882b2bf84d31da3633f1299b827834c9d00656aa70d641d7c99717429d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5164,
+  "description": "Create a GitHub Actions workflow named FBGEMM_GPU-CUDA Benchmark that runs on pull requests to the main branch and can be triggered manually. The workflow builds and benchmarks FBGEMM_GPU-CUDA using a matrix of build targets, host machines, Python versions, CUDA versions, and compilers. It checks out the repository, downloads a wheel artifact, installs NVIDIA drivers and Docker runtime, sets up Miniconda, creates a Conda environment, installs build tools and C/C++ compilers, installs CUDA, installs PyTorch nightly, collects PyTorch environment info, prepares the FBGEMM_GPU build, installs the FBGEMM_GPU wheel, runs the FBGEMM_GPU benchmark, and uploads benchmark traces as artifacts.",
+  "tags": [
+    "fbgemm",
+    "gpu",
+    "cuda",
+    "benchmarking",
+    "pytorch",
+    "github-actions"
+  ]
+}

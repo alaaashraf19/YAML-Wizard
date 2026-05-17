@@ -1,0 +1,8 @@
+hekoru:
+  image: ruby:latest
+  only:
+  - master@deltarena/hsgs-hackathon-18
+  script:
+  - gem install dpl
+  - dpl --provider=heroku --app=hsgs-hackathon-18 --api-key=$HEROKU_API_KEY
+  stage: deploy

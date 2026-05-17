@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_05957",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 193,
+  "description": "Create a GitLab CI pipeline that defines a single job called update_readme in the build stage. The job runs the exact shell command `curl -X POST -F token=$README_TOKEN -F ref=master -F variables[single_repo]=untapped https://gitlab.com/api/v4/projects/7064305/trigger/pipeline`. No custom Docker image, services, caches, artifacts, or rules are specified, so the default runner image is used and the job runs on every pipeline. The pipeline only triggers the external pipeline via the GitLab API.",
+  "tags": [
+    "curl",
+    "gitlab-api",
+    "trigger-pipeline",
+    "readme",
+    "build-stage"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "sha": "e0ba8221761cc210a8ac0151e4a5d006de2b3990ab271141e80a9b0c07f13339",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 7669,
+  "description": "Create a GitHub Actions workflow named Wheel that builds Python wheels for Linux, macOS, and Windows. Trigger on push events to branches and tags, excluding versioned branches and tags for OCIO <= 1.x.x. For each platform, set up Python, install dependencies, build wheels using cibuildwheel, and upload the resulting wheels as artifacts. Additionally, create a job to upload the collected wheels to PyPI when a tag is pushed.",
+  "tags": [
+    "python",
+    "wheel",
+    "cibuildwheel",
+    "pypi",
+    "linux",
+    "macos",
+    "windows"
+  ]
+}

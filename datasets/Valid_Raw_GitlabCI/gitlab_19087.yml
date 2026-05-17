@@ -1,0 +1,40 @@
+dast:
+  except:
+    refs:
+    - master
+image: alpine:latest
+include:
+- template: Jobs/Build.gitlab-ci.yml
+- template: Jobs/Test.gitlab-ci.yml
+- template: Jobs/Code-Quality.gitlab-ci.yml
+- template: Jobs/Deploy.gitlab-ci.yml
+- template: Jobs/Browser-Performance-Testing.gitlab-ci.yml
+- template: Security/DAST.gitlab-ci.yml
+- template: Security/Container-Scanning.gitlab-ci.yml
+- template: Security/Dependency-Scanning.gitlab-ci.yml
+- template: Security/License-Management.gitlab-ci.yml
+- template: Security/SAST.gitlab-ci.yml
+stages:
+- build
+- test
+- deploy
+- review
+- dast
+- staging
+- canary
+- production
+- incremental rollout 10%
+- incremental rollout 25%
+- incremental rollout 50%
+- incremental rollout 100%
+- performance
+- cleanup
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: ''
+  POSTGRES_DB: $CI_ENVIRONMENT_SLUG
+  POSTGRES_ENABLED: 'true'
+  POSTGRES_PASSWORD: testing-password
+  POSTGRES_USER: user
+  POSTGRES_VERSION: 9.6.2
+  ROLLOUT_RESOURCE_TYPE: deployment

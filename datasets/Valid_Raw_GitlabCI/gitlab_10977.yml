@@ -1,0 +1,24 @@
+build-main-app:
+  script:
+  - go install gitlab.com/jtaimisto/bluewalker
+  - go install gitlab.com/jtaimisto/bluewalker/listener
+  stage: build
+check-min-version:
+  image: golang:1.15
+  script:
+  - go install gitlab.com/jtaimisto/bluewalker
+  - go test gitlab.com/jtaimisto/bluewalker/...
+  stage: test
+image: golang:latest
+include:
+- template: Security/SAST.gitlab-ci.yml
+run-tests:
+  script:
+  - go test -race -coverprofile=.cov.out gitlab.com/jtaimisto/bluewalker/...
+  - go tool cover -func .cov.out
+  stage: test
+sast:
+  stage: test
+stages:
+- build
+- test

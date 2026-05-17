@@ -1,0 +1,18 @@
+{
+  "sha": "1ba08f82e0bddff42c349cd3dab6a2d76b3798217102eaf9e06d257f595a17b0",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 6314,
+  "description": "Create a GitHub Actions workflow that runs on every pull request. The workflow has four ubuntu-latest jobs: special_debugRelease for a debug build with coverage, special_releaseValgrind for a release build with valgrind, special_releaseSanitizers for a release build with sanitizers, and special_allEnabled for a build with all options enabled. Each job checks out the repository, installs dependencies, configures Conan, and performs a build and test.",
+  "tags": [
+    "conan",
+    "ubuntu",
+    "gcc",
+    "cmake",
+    "ninja",
+    "coverage",
+    "valgrind",
+    "sanitizers",
+    "documentation"
+  ]
+}

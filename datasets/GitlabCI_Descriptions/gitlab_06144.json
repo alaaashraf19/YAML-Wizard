@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_06144",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2090,
+  "description": "Create a GitLab CI pipeline using the debian:unstable Docker image for the build, davical_tests, and test jobs, and php:cli-bookworm and php:cli-bullseye images for the test_bookworm_latestphp and test_bullseye_latestphp jobs, with stages build, test, davical, and testall. In the build stage add a build job that runs 'apt-get -y update', 'mkdir -p /usr/share/man/man{0..10}', 'apt-get -y install build-essential devscripts fakeroot dh-exec jdupes doxygen graphviz php-cli phpunit', moves debian/changelog to a backup, generates a new changelog using GITLAB_USER_NAME, GITLAB_USER_EMAIL, CI_COMMIT_SHA and the current date, removes the backup, runs 'debuild -us -uc -b -d', moves the resulting libawl-php_*_all.deb to libawl-php.deb, and publishes all *.deb files as artifacts. In the davical stage add a davical_tests job that runs 'apt-get -y update', 'apt-get -y install curl', downloads and extracts the davical master tarball, executes 'davical-master/testing/gitlab_ci_script.sh', then runs 'su testrunner -c \"IS_CI=yes ALLSUITES=\\\"regression-suite binding carddav scheduling\\\" ./run_regressions.sh all x\"', and stores testing/report.xml and Apache logs as artifacts with a JUnit report. In the test stage add a test job that installs php, php-cli, phpunit, installs the built .deb packages, lints each PHP file in /usr/share/awl/inc with 'php -l', runs 'phpunit --log-junit phpunit.xml tests', and publishes phpunit.xml as a JUnit artifact. In the testall stage add test_bookworm_latestphp and test_bullseye_latestphp jobs that each lint all PHP files in inc/ with 'php -l' and publish phpunit.xml as a JUnit artifact, using php:cli-bookworm and php:cli-bullseye images respectively.",
+  "tags": [
+    "debian",
+    "php",
+    "davical",
+    "phpunit",
+    "deb",
+    "build",
+    "test",
+    "ci"
+  ]
+}

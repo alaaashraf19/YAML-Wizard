@@ -1,0 +1,35 @@
+build:
+  artifacts:
+    name: $CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG
+    paths:
+    - target/*.war
+  only:
+  - tags
+  script:
+  - mvn $MAVEN_CLI_OPTS -U package -DskipTests
+  stage: build
+default:
+  cache:
+    paths:
+    - .m2/repository
+  image: maven
+quality:
+  allow_failure: true
+  artifacts:
+    paths:
+    - target
+  only:
+    refs:
+    - develop
+    variables:
+    - $SONARQUBE_URL
+  script:
+  - mvn $MAVEN_CLI_OPTS -Dsonar.host.url=$SONARQUBE_URL sonar:sonar
+  stage: build
+stages:
+- build
+variables:
+  MAVEN_CLI_OPTS: --batch-mode --errors --fail-at-end --show-version
+  MAVEN_OPTS: -Dhttps.protocols=TLSv1.2 -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository
+    -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN
+    -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true

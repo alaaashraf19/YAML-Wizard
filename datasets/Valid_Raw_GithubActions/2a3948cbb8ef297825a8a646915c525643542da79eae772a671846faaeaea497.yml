@@ -1,0 +1,62 @@
+name: Build and Test
+
+on:
+  push:
+    branches:
+      - 'master'
+  pull_request:
+
+jobs:
+  unix:
+    strategy:
+      matrix:
+        os: [ubuntu, macos]
+        compiler: [g++, clang++]
+        exclude:
+          - os: macos
+            compiler: g++
+
+    name: ${{matrix.os}} (${{matrix.compiler}})
+
+    runs-on: ${{matrix.os}}-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        shell: bash
+        run: |
+            if [ "$RUNNER_OS" == "Linux" ]; then
+                sudo apt-get update
+                sudo apt-get install --yes libpng++-dev libunittest++-dev
+                sudo apt-get install --yes fonts-noto-cjk
+            elif [ "$RUNNER_OS" == "macOS" ]; then
+                brew install unittest-cpp
+                brew tap homebrew/cask
+                brew install --cask font-noto-sans-cjk 
+            else
+                echo "$RUNNER_OS not supported"
+                exit 1
+            fi
+
+      - name: Build
+        shell: bash
+        run: |
+            export CXX=${{matrix.compiler}}
+            $CXX --version
+            mkdir build && cd build
+            cmake -G "Unix Makefiles" -DLOMSE_RUN_TESTS=OFF ..
+            make
+
+      - name: Run tests
+        shell: bash
+        run: |
+            cd build
+            ./testlib
+
+#      - name: Upload logs on fail
+#        if: ${{ failure() }}
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: Build failure logs
+#          path: ${{ runner.temp }}/build_logs

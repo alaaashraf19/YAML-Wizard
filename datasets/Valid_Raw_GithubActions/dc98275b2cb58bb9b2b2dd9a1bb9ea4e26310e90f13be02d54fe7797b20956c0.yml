@@ -1,0 +1,47 @@
+name: Test
+
+on:
+  push:
+  schedule:
+    - cron:  "0 0 * * 0"
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    env:
+      AWS_DEFAULT_REGION: us-west-2
+      AWS_ATHENA_S3_STAGING_DIR: s3://laughingman7743-pyathena/github/
+      AWS_ATHENA_WORKGROUP: pyathena
+      AWS_ATHENA_SPARK_WORKGROUP: pyathena-spark
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [3.9, "3.10", "3.11", "3.12", "3.13"]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install hatch
+        run: pipx install hatch
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::676287850544:role/github-actions-oidc-pyathena
+          role-session-name: PyAthenaTestSession
+          aws-region: ${{ env.AWS_DEFAULT_REGION }}
+
+      - name: Test
+        run: |
+          hatch -e test.py${{ matrix.python-version }} run test
+          hatch -e test.py${{ matrix.python-version }} run test-sqla

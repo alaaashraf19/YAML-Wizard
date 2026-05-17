@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_13606",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 317,
+  "description": "Create a GitLab CI pipeline that runs a before_script to update apt and install Docker on the runner. Define two jobs, build_for_pg10 and build_for_pg96, both using the default stage. The build_for_pg10 job executes \"docker build --build-arg PG_SERVER_VERSION=10 -t postgresmen/postgres-with-stuff:p10 .\" and the build_for_pg96 job executes \"docker build --build-arg PG_SERVER_VERSION=9.6 -t postgresmen/postgres-with-stuff:pg9.6 .\" No caches, artifacts, or conditional rules are specified.",
+  "tags": [
+    "docker",
+    "postgres",
+    "build-arg",
+    "apt",
+    "ci"
+  ]
+}

@@ -1,0 +1,11 @@
+build-job:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - main.pdf
+  image: aergus/latex
+  script:
+  - make
+  stage: build
+stages:
+- build

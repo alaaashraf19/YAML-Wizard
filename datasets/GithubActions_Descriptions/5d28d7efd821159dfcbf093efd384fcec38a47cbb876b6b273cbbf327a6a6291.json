@@ -1,0 +1,14 @@
+{
+  "sha": "5d28d7efd821159dfcbf093efd384fcec38a47cbb876b6b273cbbf327a6a6291",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1791,
+  "description": "Create a GitHub Actions workflow named Automated Test Build that runs on push to the master branch and on pull requests to master. Use a single windows-2022 job that checks out the repository with full history, downloads Lua and Premake dependencies, builds Lua and Premake, adds msbuild to the PATH, builds the solution with msbuild for both Win32 and x64 platforms, uploads the build artifacts, and creates a GitHub release on push with the built DLL.",
+  "tags": [
+    "windows",
+    "msbuild",
+    "lua",
+    "premake",
+    "github-release"
+  ]
+}

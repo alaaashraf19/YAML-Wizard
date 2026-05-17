@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_05821",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2178,
+  "description": "Create a GitLab CI pipeline with stages test and deploy. In the test stage add a test job using the python:3 image that runs pip install . then python setup.py test --addopts \"--cov=srim\". In the deploy stage add a deploy_conda job using continuumio/miniconda3:latest that runs conda install conda-build anaconda-client -y and conda build --user $ANACONDA_USERNAME --token $ANACONDA_TOKEN .conda/pysrim, and only triggers on tags matching the regex /^v\\d+\\.\\d+\\.\\d+([abc]\\d*)?$/ . Also add a deploy_docker_pysrim job using docker:git image with docker:dind service, exporting DOCKER_IMAGE=\"costrouc/pysrim\", GITLAB_IMAGE=\"$CI_REGISTRY/$CI_PROJECT_PATH\", PKG_VERSION=$CI_COMMIT_TAG, logging into Docker Hub and GitLab registry, building the image with Dockerfile.pysrim and --build-arg VERSION=$PKG_VERSION, tagging as $DOCKER_IMAGE:$PKG_VERSION, $DOCKER_IMAGE:latest, $GITLAB_IMAGE:$PKG_VERSION, $GITLAB_IMAGE:latest, and pushing all tags; it runs only on the same version tag regex. Add a deploy_docker_srim job using docker:git image with docker:dind service, exporting DOCKER_IMAGE=\"costrouc/srim\" and PKG_VERSION=${CI_COMMIT_TAG:5}, logging into Docker Hub, building with Dockerfile.srim, tagging and pushing similarly, triggered only on tags matching /^srim-v\\d+\\.\\d+\\.\\d+([abc]\\d*)?$/ . Finally add a deploy_pypi job using python:3 image that installs twine and setuptools, builds source and wheel with python setup.py sdist bdist_wheel, and uploads both with twine upload to PyPI, also only on the version tag regex. Use the defined secure variables ANACONDA_USERNAME, ANACONDA_TOKEN, DOCKER_USERNAME, DOCKER_PASSWORD, TWINE_USERNAME, TWINE_PASSWORD, and TWINE_REPOSITORY_URL for authentication.",
+  "tags": [
+    "python",
+    "conda",
+    "docker",
+    "pypi",
+    "ci",
+    "deploy",
+    "test"
+  ]
+}

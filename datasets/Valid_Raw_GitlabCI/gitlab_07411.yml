@@ -1,0 +1,173 @@
+.build:
+  extends: .default_template
+  script:
+  - npx gulp build -t $TARGET -c development
+  - npx gulp devenv -t $TARGET
+  stage: build
+.cache:
+  cache: &id002
+    key: global-cache
+    paths: &id001
+    - adblockpluscore/*-snapshots/download-cache/
+    - adblockpluscore/chromium-snapshots/chromedriver/
+    - adblockplusui/node_modules/
+    untracked: true
+.default_template:
+  before_script:
+  - npm install
+  cache:
+    key: global-cache
+    paths: *id001
+    policy: pull
+    untracked: true
+  except:
+  - schedules
+  interruptible: true
+  needs:
+  - job: prepare-dependencies
+  retry:
+    max: 2
+    when: stuck_or_timeout_failure
+.pages:
+  except:
+  - schedules
+  needs:
+  - artifacts: true
+    job: docs
+  stage: publish
+.test_template:
+  artifacts:
+    expire_in: 1 mo
+    paths:
+    - test/screenshots/
+    when: on_failure
+  before_script:
+  - npm install
+  - unzip -q $EXTENSION_FILE -d devenv.*
+  extends: .default_template
+  stage: test
+  variables:
+    SKIP_BUILD: 'true'
+.test_template_chromium:
+  extends: .test_template
+  needs:
+  - artifacts: true
+    job: build:chrome
+  variables:
+    EXTENSION_FILE: adblockpluschrome-*.zip
+.test_template_firefox:
+  extends: .test_template
+  needs:
+  - artifacts: true
+    job: build:firefox
+  variables:
+    EXTENSION_FILE: adblockplusfirefox-*.xpi
+audit:
+  allow_failure: true
+  extends: .default_template
+  script:
+  - npm audit
+  stage: test
+build:chrome:
+  artifacts:
+    paths:
+    - adblockpluschrome-*.zip
+    - devenv.chrome/tests/
+  extends: .build
+  variables:
+    TARGET: chrome
+build:firefox:
+  artifacts:
+    paths:
+    - adblockplusfirefox-*.xpi
+    - devenv.firefox/tests/
+  extends: .build
+  variables:
+    TARGET: firefox
+build:source:
+  artifacts:
+    paths:
+    - adblockplus-*.tar.gz
+  extends: .build
+  script:
+  - npx gulp source -c development
+default:
+  image: registry.gitlab.com/eyeo/docker/adblockplus-ci:node12
+docs:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - docs/
+  extends: .default_template
+  script:
+  - npm run docs
+  stage: build
+include:
+  file: .gitlab-pages.yml
+  project: eyeo/adblockplus/adblockpluscore
+lint:js:
+  extends: .default_template
+  script:
+  - npm run lint
+  stage: test
+lint:yaml:
+  except:
+  - schedules
+  image: registry.gitlab.com/eyeo/docker/yamllint:1.14.0-configured
+  interruptible: true
+  needs: []
+  script:
+  - yamllint .gitlab-ci.yml
+  stage: test
+prepare-dependencies:
+  cache: *id002
+  except:
+  - schedules
+  interruptible: true
+  script:
+  - git clean -x -d -ff
+  - git -C adblockpluscore clean -e '/*-snapshots' -x -d -ff
+  - git -C adblockplusui clean -x -d -ff
+  - npm install
+  - npm run download-test-browsers
+  stage: prepare
+stages:
+- prepare
+- build
+- publish
+- test
+test:chromium:latest:
+  extends: .test_template_chromium
+  script:
+  - xvfb-run -a npm run test-only -- -g 'Chromium \(latest\)'
+test:chromium:oldest:
+  extends: .test_template_chromium
+  script:
+  - xvfb-run -a npm run test-only -- -g 'Chromium \(oldest\)'
+test:edge:
+  before_script:
+  - Expand-Archive -Path $EXTENSION_FILE -DestinationPath devenv.chrome
+  - choco upgrade -y nodejs --version=12.17.0
+  - choco install -y microsoft-edge --version=79.0.309.71
+  - npm install
+  cache: null
+  extends: .test_template_chromium
+  script:
+  - npm run test-only -- -g 'Edge'
+  tags:
+  - shared-windows
+  - windows
+  - windows-1809
+test:firefox:latest:
+  extends: .test_template_firefox
+  script:
+  - npm run test-only -- -g 'Firefox \(latest\)'
+test:firefox:oldest:
+  extends: .test_template_firefox
+  script:
+  - npm run test-only -- -g 'Firefox \(oldest\)'
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+  npm_config_audit: 'false'
+  npm_config_prefer_offline: 'true'
+  npm_config_unsafe_perm: 'true'

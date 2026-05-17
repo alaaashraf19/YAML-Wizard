@@ -1,0 +1,29 @@
+compile:
+  artifacts:
+    paths:
+    - artifacts/
+  script:
+  - bash $CI_PROJECT_DIR/scripts/build.sh pin $CI_PROJECT_DIR
+  stage: build
+docker:
+  image: docker:19.03.12
+  script:
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  - docker build -t $IMAGE_TAG .
+  - docker tag $IMAGE_TAG $CI_REGISTRY_IMAGE:latest
+  - docker push $IMAGE_TAG
+  - docker push $CI_REGISTRY_IMAGE:latest
+  services:
+  - docker:19.03.12-dind
+  stage: release
+  variables:
+    IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+format:
+  script:
+  - diff <(echo -n) <(gofmt -s -d .)
+  stage: test
+image: golang:latest
+stages:
+- test
+- build
+- release

@@ -1,0 +1,129 @@
+build-backend:
+  artifacts:
+    paths:
+    - backend/track-my-ride-backend
+  image: node:8.9.4
+  only:
+  - master
+  script:
+  - cd backend
+  - npm install
+  - npm run build
+  stage: build
+build-frontend:
+  artifacts:
+    paths:
+    - frontend/build
+  cache:
+    paths:
+    - frontend/node_modules/
+  image: node:8.9.4
+  only:
+  - master
+  script:
+  - cd frontend
+  - npm install
+  - npm run build
+  stage: build
+build-mobile:
+  artifacts:
+    paths:
+    - mobile/android/app/build/outputs/apk
+  before_script:
+  - cp --recursive ./mobile/licenses /opt/android-sdk/
+  - chmod +x ./mobile/android/gradlew
+  - echo "$MOBILE_KEYSTORE" | sed "s/\r\$//" | base64 -d > ./mobile/android/app/tmr_release.keystore
+    && echo "$MOBILE_SIGNING_INFO" | sed "s/\r\$//" >> ./mobile/android/gradle.properties
+    || echo "Signing configuration failed"
+  - cd mobile
+  cache:
+    key: ${CI_PROJECT_ID}
+    paths:
+    - mobile/node_modules/
+    - mobile/.gradle/
+  image: registry.gitlab.com/motorica-org/gitlab-ci-react-native-android:master
+  only:
+  - master
+  script:
+  - npm run build
+  stage: build
+deployment:
+  before_script:
+  - mkdir -p ~/.ssh
+  - chmod 700 ~/.ssh
+  - which ssh-agent || ( apt-get update -y && apt-get install openssh-client git -y
+    )
+  - eval $(ssh-agent -s)
+  - echo "$SSH_DEPLOYMENT_KEY" | tr -d '\r' | ssh-add - > /dev/null
+  - echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+  - chmod 644 ~/.ssh/known_hosts
+  dependencies:
+  - build-frontend
+  - build-backend
+  - build-mobile
+  image: node:8.9.4
+  only:
+  - master
+  script:
+  - ssh trackmyride@$SSH_DEPLOYMENT_SERVER "rm -rf /home/trackmyride/frontend/*" ||
+    echo "Could not remove frontend folder - moving on anyway"
+  - scp -r -B frontend/build/* trackmyride@$SSH_DEPLOYMENT_SERVER:/home/trackmyride/frontend/
+  - ssh trackmyride@$SSH_DEPLOYMENT_SERVER "kill -9 \$(pidof track-my-ride-backend)
+    && sleep 2 || echo Could not stop backend process - moving on anyway"
+  - ssh trackmyride@$SSH_DEPLOYMENT_SERVER "rm -rf /home/trackmyride/backend/*" ||
+    "echo Could not remove backend folder - moving on anyway"
+  - ssh trackmyride@$SSH_DEPLOYMENT_SERVER "mkdir /home/trackmyride/backend/sql"
+  - scp -B backend/src/sql/db/init_db.sql trackmyride@$SSH_DEPLOYMENT_SERVER:/home/trackmyride/backend/sql/
+  - scp -B backend/src/sql/db/update_db.sql trackmyride@$SSH_DEPLOYMENT_SERVER:/home/trackmyride/backend/sql/
+  - ssh trackmyride@$SSH_DEPLOYMENT_SERVER "mysql -utrackmyride < /home/trackmyride/backend/sql/init_db.sql"
+  - ssh trackmyride@$SSH_DEPLOYMENT_SERVER "mysql -utrackmyride < /home/trackmyride/backend/sql/update_db.sql"
+  - scp -B backend/track-my-ride-backend trackmyride@$SSH_DEPLOYMENT_SERVER:/home/trackmyride/backend/
+  - ssh trackmyride@$SSH_DEPLOYMENT_SERVER "chmod +x /home/trackmyride/backend/track-my-ride-backend"
+  - ssh trackmyride@$SSH_DEPLOYMENT_SERVER "nohup /home/trackmyride/backend/track-my-ride-backend
+    </dev/null >command.log 2>&1 &"
+  - ssh trackmyride@$SSH_DEPLOYMENT_SERVER "mkdir /home/trackmyride/backend/download"
+  - scp -B mobile/android/app/build/outputs/apk/app-release.apk trackmyride@$SSH_DEPLOYMENT_SERVER:/home/trackmyride/backend/download/
+  stage: deploy
+stages:
+- build
+- test
+- deploy
+test-mobile:
+  cache:
+    paths:
+    - mobile/node_modules/
+  image: registry.gitlab.com/motorica-org/gitlab-ci-react-native-android:master
+  only:
+  - master
+  script:
+  - cd mobile
+  - npm install
+  - npm test
+  stage: test
+test-webservices:
+  before_script:
+  - export REPO=$(pwd)
+  cache:
+    paths:
+    - backend/node_modules/
+    - frontend/node_modules/
+  dependencies:
+  - build-frontend
+  - build-backend
+  image: registry.gitlab.com/trackmyride/psit4-docker:8.9.4
+  only:
+  - master
+  script:
+  - cd backend
+  - npm install
+  - npm test
+  - echo "{\"HttpPort\":3000,\"Webroot\":\"$REPO/frontend/build\",\"Database\":{\"host\":\"$TEST_DB_HOST\",\"user\":\"$TEST_DB_USER\",\"password\":\"$TEST_DB_PASSWORD\",\"database\":\"$TEST_DB_DB\"}}"
+    > config.json
+  - $REPO/backend/track-my-ride-backend $REPO/backend/config.json &
+  - sleep 5
+  - cd ../frontend
+  - npm install
+  - npm test
+  - sleep 2
+  - kill -kill $(pidof track-my-ride-backend) || echo "could not kill backend"
+  stage: test

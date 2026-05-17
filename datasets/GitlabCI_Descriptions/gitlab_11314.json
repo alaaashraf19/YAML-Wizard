@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_11314",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 434,
+  "description": "Create a GitLab CI pipeline using the ruby:2 Docker image and two stages: merge and deploy. Add a merge job that runs in the merge stage on all branches except master, executes apt-get update and apt-get install sshpass in before_script, then runs bundle install and bundle exec jekyll build. Add a deploy job that runs in the deploy stage only on the master branch, also runs apt-get update and apt-get install sshpass, then runs bundle install, bundle exec jekyll build, and finally uses sshpass -p \"$PASS\" scp -o StrictHostKeyChecking=no -r $LOCALDIR $USER@$SERVER:$REMOTEDIR to copy the built site to a remote server. No caches, artifacts, or services are defined.",
+  "tags": [
+    "ruby",
+    "jekyll",
+    "sshpass",
+    "scp",
+    "gitlab-ci",
+    "deploy"
+  ]
+}

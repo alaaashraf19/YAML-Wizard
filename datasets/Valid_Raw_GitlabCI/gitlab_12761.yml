@@ -1,0 +1,11 @@
+before_script:
+- apt-get update
+- apt-get install -y openjfx --no-install-recommends
+build:
+  artifacts:
+    expire_in: 1 month
+    paths:
+    - build/libs/
+    - build/distributions/
+  script: ./gradlew build --stacktrace
+image: openjdk:8

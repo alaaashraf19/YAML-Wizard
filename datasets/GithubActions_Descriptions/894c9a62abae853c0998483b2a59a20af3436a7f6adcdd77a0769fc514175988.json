@@ -1,0 +1,14 @@
+{
+  "sha": "894c9a62abae853c0998483b2a59a20af3436a7f6adcdd77a0769fc514175988",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 848,
+  "description": "Create a GitHub Actions workflow named master that runs on push to the master branch and on pull requests. Use a matrix job on ubuntu-latest that tests multiple Python versions (2.7, 3.6, 3.7, 3.8). For each version, check out the code, set up Python, upgrade pip, install dependencies with make env, lint with flake8, test with pytest, and upload coverage to Codecov.",
+  "tags": [
+    "python",
+    "matrix",
+    "tests",
+    "linting",
+    "codecov"
+  ]
+}

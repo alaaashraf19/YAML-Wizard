@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_17626",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 4421,
+  "description": "Create a GitLab CI pipeline using the docker:stable image with a docker:dind service and a cache keyed by ${CI_PROJECT_PATH_SLUG}-${CI_COMMIT_REF_SLUG} that stores .build/, src/vendor/ and src/node_modules/. Define three stages: prepare, test, and build. In the prepare stage add three jobs named Build service images (branch), Build service images (latest) and Build service images (stable) that each run the before_script from .with-docker (install make if missing, create .build directory, docker login), then execute the two make commands `make PULL_TAG=\"$PULL_TAG\" PUBLISH_TAGS=\"$PUBLISH_TAGS\" app-push` and `make PULL_TAG=\"$PULL_TAG\" PUBLISH_TAGS=\"$PUBLISH_TAGS\" nginx-push`; the branch job runs on all branches except commits whose title matches `[skip build]`, the latest job runs only on the master ref, and the stable job runs only on tags matching `vX.Y.Z`, with appropriate PULL_TAG and PUBLISH_TAGS variables. In the build stage add three jobs named Build sources image (branch), Build sources image (latest) and Build sources image (stable) that also use the .with-docker before_script, then run three script lines: `docker run --rm -u \"$(id -u):$(id -g)\" -v \"$(pwd)/src:/app:rw\" $APP_IMAGE:$TAG_NAME composer install --no-interaction --ansi --no-suggest --prefer-dist --no-dev`, `docker run --rm -u \"$(id -u):$(id -g)\" -v \"$(pwd)/src:/app:rw\" --workdir \"/app\" $NODE_IMAGE sh -c \"npm install && npm run production\"`, and `make PUBLISH_TAGS=\"$PUBLISH_TAGS\" sources-push`; each job is gated by the same branch/master/tag rules as the corresponding service‑image jobs and sets PULL_TAG/TAG_NAME and PUBLISH_TAGS variables accordingly. In the test stage add Execute npm build (branch) and Execute npm build (stable) jobs that use the $NODE_IMAGE, run `cd ./src`, `npm install` and `npm run production`, and are skipped when the commit title matches `[skip test]`, running on branches or version tags respectively. Also add Execute phpstan (branch) and Execute phpstan (stable) jobs that use the appropriate $APP_IMAGE tag, run the global before_script defining a composer_install function, then execute `cd ./src`, `composer_install`, and `php ./vendor/bin/phpstan analyze --ansi --level=2 ./app`; finally add Execute phpunit (branch) and Execute phpunit (stable) jobs that use the same $APP_IMAGE tag, enable xdebug with `docker-php-ext-enable xdebug`, run `cd ./src`, `composer_install`, and `php ./vendor/bin/phpunit --colors=never --coverage-text`, provide postgres and redis services ($POSETGRES_IMAGE, $REDIS_IMAGE), and set database environment variables (DB_CONNECTION, DB_DATABASE, DB_HOST, DB_PASSWORD, DB_PORT, DB_USERNAME, POSTGRES_DB, POSTGRES_PASSWORD, POSTGRES_USER, REDIS_HOST, REDIS_PORT); all test jobs are skipped on `[skip test]` commits and run on branches or version tags as appropriate.",
+  "tags": [
+    "docker",
+    "dind",
+    "make",
+    "composer",
+    "npm",
+    "phpstan",
+    "phpunit",
+    "postgres",
+    "redis",
+    "cache"
+  ]
+}

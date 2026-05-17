@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_10947",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 421,
+  "description": "Create a GitLab CI pipeline that uses the docker:27-cli Docker image with a docker:27-dind service and sets DOCKER_TLS_CERTDIR to /certs. Define two stages, build and deploy, and a before_script that installs OpenJDK 21 JRE via apk and runs docker info. In the build stage add a job named build that runs ./gradlew build and is excluded from the main branch (except: main). In the deploy stage add a job named \"build and deploy\" that runs ./gradlew push --continue, runs only on the main branch, and deploys to the GitLab Docker registry for JOSM using an environment with the appropriate URL. No caches or artifacts are defined.",
+  "tags": [
+    "docker",
+    "docker-dind",
+    "gradle",
+    "java",
+    "gitlab-registry",
+    "deployment"
+  ]
+}

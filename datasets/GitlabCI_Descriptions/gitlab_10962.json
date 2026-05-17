@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_10962",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1185,
+  "description": "Create a GitLab CI pipeline using the golang:1.14 Docker image, with a global before_script that creates a .cache directory, sets GOPATH to .cache, and runs go mod vendor, and caches the .cache path. Define two stages: test and generate. Add a unit_tests job in the test stage that runs go test -coverprofile=coverage.txt -covermode=atomic ./..., uploads coverage to Codecov with after_script bash <(curl -s https://codecov.io/bash) -t \"${CODECOV_TOKEN}\", and runs on all pipelines except scheduled ones. Add a gitlab_inbox job in the generate stage using the registry.gitlab.com/jramsay/git-lab:build image, runs only on schedules, executes in parallel over a matrix of HOST=gitlab.com and multiple PROJECT values, runs go build ./cmd/..., sets BUNDLE_PATH, fetches a bundle with ./git-lab fetch (ignoring failures), creates a bundle with ./git-lab bundle, and uploads it to S3 via aws s3 cp, with variable GITLAB_CACHE_SKIP_HOOKS set to true.",
+  "tags": [
+    "go",
+    "golang",
+    "codecov",
+    "aws-s3",
+    "parallel",
+    "cache",
+    "docker-image",
+    "schedule"
+  ]
+}

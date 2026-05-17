@@ -1,0 +1,26 @@
+#### Publish tags to docker hub
+name: Test docker builds
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    name: Test image build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: crazy-max/ghaction-docker-buildx@v1
+        with:
+          version: latest
+      - name: Run Buildx
+        run: |
+          docker buildx build \
+            --platform linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64 \
+            --output "type=image,push=false" \
+            --file ./Dockerfile . \
+            --compress \
+            --tag netdaemon/netdaemon:dev

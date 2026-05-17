@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_13133",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 788,
+  "description": "Create a GitLab CI pipeline using the python:3.8.2 Docker image. Define a lint_yaml_files job in the default stage that runs pip install yamllint then lints all *.yml files excluding .kitchen, .molecule and [warning] patterns with find . -type f -name '*.yml' | sed 's|\\./||g' | egrep -v '(\\.kitchen/|\\[warning\\]|\\.molecule/)' | xargs yamllint -c yamllint.conf -f parsable. Add a pages job also in the default stage that runs only on the master branch, downloads Hugo ${HUGO_VERSION} via curl, extracts it, moves the binary to /usr/local/bin, builds the site with hugo -s website -d ../public, installs mkdocs and plugins with pip install mkdocs mkdocs-material mkdocs-git-revision-date-localized-plugin, verifies mkdocs version, runs ./prep_docs_for_publish.sh, builds the documentation with mkdocs build, moves the output to public/docs, and publishes the public directory as a GitLab Pages artifact.",
+  "tags": [
+    "python-3.8",
+    "yamllint",
+    "hugo",
+    "mkdocs",
+    "gitlab-pages",
+    "yaml-lint"
+  ]
+}

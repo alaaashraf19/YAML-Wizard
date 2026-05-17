@@ -1,0 +1,36 @@
+before_script:
+- docker info
+- apk add --no-cache py-pip
+- apk add --no-cache make
+- pip install docker-compose
+build:all:
+  script:
+  - make build
+  stage: build
+cleanup_job:
+  script:
+  - make down
+  stage: cleanup
+  when: always
+image: docker:stable
+services:
+- docker:dind
+stages:
+- build
+- test
+- cleanup
+test:backend:
+  dependencies:
+  - build:all
+  script:
+  - make test_backend
+  stage: test
+test:frontend:
+  dependencies:
+  - build:all
+  script:
+  - make test_frontend
+  stage: test
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_HOST: tcp://docker:2375/

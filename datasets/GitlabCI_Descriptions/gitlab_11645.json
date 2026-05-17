@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_11645",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2499,
+  "description": "Create a GitLab CI pipeline with two stages: prerequisites and release. In the prerequisites stage add a job named prerequisites that runs the commands `ifconfig | awk '/inet addr/{print substr($2,6)}'`, `pip install --upgrade sh`, and `apt-get install -y bsdmainutils`. In the release stage add a job named release that defines CI_PROJECT_OUTPUT_PATH using the project name, date and pipeline ID, creates a temporary work directory, clones the MACE repository via SSH, selects model configuration files, runs `python tools/converter.py convert` and `python tools/converter.py run` for each config with appropriate target SOCs, copies the generated `report.csv` to the job root, displays it formatted, and cleans up the temporary directory; it also archives `report.csv` as an artifact. The pipeline does not specify a Docker image, services, caches, or conditional rules, and only the release job produces an artifact.",
+  "tags": [
+    "prerequisites",
+    "release",
+    "mace",
+    "python",
+    "gitlab-ci"
+  ]
+}

@@ -1,0 +1,178 @@
+.template-export:
+  artifacts: &id002
+    expire_in: 1 hour
+    name: Scramble-$TYPE-$PLATFORM-$CI_COMMIT_SHORT_SHA
+    paths:
+    - Scramble-$TYPE-$PLATFORM.$EXTENSION
+    - Scramble-$TYPE-$PLATFORM.pck
+  dependencies: &id003
+  - version-extractor:version
+  image: scramblesim/godot-desktop-export:$GODOT_VERSION
+  script: &id004
+  - ls -la
+  - mv version.txt Scramble-$TYPE/meta/version.txt
+  - mkdir -p export
+  - cd Scramble-$TYPE
+  - godot -v --export $PLATFORM ../Scramble-$TYPE-$PLATFORM.$EXTENSION
+  - if ! test -f ../Scramble-$TYPE-$PLATFORM.$EXTENSION; then exit 1; fi
+  stage: build
+.template-only-release:
+  except: &id005
+  - branches
+  only: &id006
+  - tags
+.template-skip-lfs:
+  variables: &id001
+    GIT_LFS_SKIP_SMUDGE: '1'
+file-naming:test:
+  image: alpine
+  script:
+  - apk update && apk add bash
+  - .gitlab/fileNamingConventionCheck.sh
+  stage: test
+  variables: *id001
+global-logging:test:
+  image: alpine
+  script:
+  - apk update && apk add grep
+  - .gitlab/scrambleLoggingCheck.sh
+  stage: test
+  variables: *id001
+license-header:test:
+  image: alpine
+  script:
+  - .gitlab/licenseHeaderCheck.sh .gitlab/license/LICENSE_HEADER
+  stage: test
+  variables: *id001
+linux-client:build:
+  artifacts: *id002
+  dependencies: *id003
+  image: scramblesim/godot-desktop-export:$GODOT_VERSION
+  script: *id004
+  stage: build
+  variables:
+    EXTENSION: x64
+    PLATFORM: linux
+    TYPE: client
+linux-docker-server:deploy:
+  dependencies:
+  - linux-server:behead
+  - version-extractor:version
+  except: *id005
+  image: docker:stable
+  only: *id006
+  script:
+  - mv Scramble-server-linux.x64 Scramble-server-linux.pck .gitlab/docker/linux-server
+  - VERSION=`cat version.txt`
+  - docker build -t scramblesim/scramble-server:$VERSION --build-arg TYPE=server --build-arg
+    PLATFORM=linux --build-arg EXTENSION=x64 .gitlab/docker/linux-server
+  - docker login -u $DOCKER_HUB_USER -p $DOCKER_HUB_PASSWORD
+  - docker push scramblesim/scramble-server:$VERSION
+  services:
+  - docker:dind
+  stage: deploy
+  variables: *id001
+linux-server:behead:
+  artifacts:
+    expire_in: 1 hour
+    paths:
+    - Scramble-server-linux.x64
+    - Scramble-server-linux.pck
+  dependencies:
+  - linux-server:build
+  except: *id005
+  image: scramblesim/godot-server-converter:$GODOT_VERSION
+  only: *id006
+  script:
+  - mv /Godot_server.x64 ./Scramble-server-linux.x64
+  stage: behead
+linux-server:build:
+  artifacts: *id002
+  dependencies: *id003
+  image: scramblesim/godot-desktop-export:$GODOT_VERSION
+  script: *id004
+  stage: build
+  variables:
+    EXTENSION: x64
+    PLATFORM: linux
+    TYPE: server
+mac-client:build:
+  artifacts: *id002
+  dependencies: *id003
+  image: scramblesim/godot-desktop-export:$GODOT_VERSION
+  script: *id004
+  stage: build
+  variables:
+    EXTENSION: x64
+    PLATFORM: mac
+    TYPE: client
+mac-server:build:
+  artifacts: *id002
+  dependencies: *id003
+  image: scramblesim/godot-desktop-export:$GODOT_VERSION
+  script: *id004
+  stage: build
+  variables:
+    EXTENSION: x64
+    PLATFORM: mac
+    TYPE: server
+releases:deploy:
+  dependencies:
+  - version-extractor:version
+  - linux-client:build
+  - linux-server:behead
+  - mac-client:build
+  - mac-server:build
+  - windows-client:build
+  - windows-server:build
+  except: *id005
+  image:
+    name: everpeace/curl-jq
+  only: *id006
+  script:
+  - apt update
+  - apt install -y zip
+  - bash -c .gitlab/zipReleaseFiles.sh
+  - VERSION=`cat version.txt`
+  - VERSION=$VERSION bash -c .gitlab/uploadReleaseFiles.sh
+  stage: deploy
+  variables: *id001
+stages:
+- version
+- build
+- test
+- behead
+- deploy
+variables:
+  GODOT_VERSION: '3.2'
+version-extractor:version:
+  artifacts:
+    expire_in: 1 hour
+    paths:
+    - version.txt
+  image: alpine
+  script:
+  - if [ -z $CI_COMMIT_TAG ]; then echo $CI_COMMIT_SHORT_SHA > version.txt; else echo
+    $CI_COMMIT_TAG > version.txt; fi
+  stage: version
+  variables: *id001
+windows-client:build:
+  artifacts: *id002
+  dependencies: *id003
+  image: scramblesim/godot-desktop-export:$GODOT_VERSION
+  script: *id004
+  stage: build
+  variables:
+    EXTENSION: exe
+    PLATFORM: windows
+    TYPE: client
+windows-server:build:
+  artifacts: *id002
+  dependencies: *id003
+  image: scramblesim/godot-desktop-export:$GODOT_VERSION
+  script: *id004
+  stage: build
+  variables:
+    EXTENSION: exe
+    PLATFORM: windows
+    TYPE: server

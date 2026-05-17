@@ -1,0 +1,16 @@
+{
+  "sha": "c2b2db2032d4decf8d7c2bbf48de32f459f6869ac1f86c0f4af43602d7004c5f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 15670,
+  "description": "Create a complex GitHub Actions workflow named VCMI that runs on pushes to features/*, beta, and master branches, on pull requests, on a scheduled cron job, and on workflow dispatch. The workflow has two jobs: check_last_build and build. The check_last_build job checks if a successful build of the current commit exists and cancels the current run if it does. The build job runs on multiple platforms with different configurations, checks out the repository, sets up Python, installs dependencies, configures and builds the project, runs tests, packs the build, and uploads artifacts.",
+  "tags": [
+    "github-actions",
+    "complex-workflow",
+    "multi-platform",
+    "cmake",
+    "conan",
+    "ccache",
+    "artifacts"
+  ]
+}

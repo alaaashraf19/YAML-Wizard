@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_17235",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 984,
+  "description": "Create a GitLab CI pipeline that uses the debian:bookworm Docker image and a global before_script which runs apt-get update -y, installs make sfst python3 python3-pip python3-venv locales git, creates a Python virtual environment with python3 -m venv .venv, activates it, and generates the ml_IN.UTF-8 locale. Define three stages: build, test, and publish. In the build stage add a build job that executes make and publishes the files malayalam.a and python/dist/ as artifacts. In the test stage add a test job that depends on build and runs LC_ALL=ml_IN.UTF-8 make test, and also add a test:python job that runs in parallel for Python 3.8, 3.9, 3.10, 3.11, and 3.12 using the docker.io/python:<version> image, overrides the before_script with an echo, installs tox, and runs tox -e py -c python/tox.ini. In the publish stage add a publish job that runs only on tags, overrides the before_script with an echo, depends on build, installs twine, and uploads the dist/* packages to PyPI with the $PYPI_API_KEY token.",
+  "tags": [
+    "debian",
+    "make",
+    "python-venv",
+    "locale-ml",
+    "tox",
+    "twine",
+    "pypi",
+    "parallel-matrix",
+    "build-artifacts"
+  ]
+}

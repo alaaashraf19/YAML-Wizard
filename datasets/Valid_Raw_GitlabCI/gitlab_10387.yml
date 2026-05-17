@@ -1,0 +1,6 @@
+shellcheck:
+  before_script:
+  - shellcheck --version
+  image: koalaman/shellcheck-alpine:latest
+  script:
+  - shellcheck bin/ienv

@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_12541",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 180,
+  "description": "Create a GitLab CI pipeline using the ruby:alpine Docker image. Define a job named aptly that runs in the default test stage, is triggered only by pipeline triggers, and executes the shell commands: apk --no-cache add bash curl jq; gem install aptly_cli --no-rdoc --no-ri; and ${CI_PROJECT_DIR}/.gitlab-ci/upload.sh. No services, caches, artifacts, or deployment targets are defined.",
+  "tags": [
+    "ruby",
+    "alpine",
+    "aptly",
+    "gem",
+    "apk",
+    "upload",
+    "triggers"
+  ]
+}

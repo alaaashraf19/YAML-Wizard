@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_07809",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 314,
+  "description": "Create a GitLab CI pipeline that uses the java:8-jdk Docker image. Set a before_script to export GRADLE_USER_HOME=`pwd`/.gradle and an after_script that echoes \"End CI\". Define a single stage called build and a build job that runs only on the master branch, executes ./gradlew build, caches the .gradle/wrapper and .gradle/caches directories, and publishes the generated JAR files matching build/libs/*.jar as artifacts that expire after one week.",
+  "tags": [
+    "java",
+    "gradle",
+    "build",
+    "cache",
+    "artifacts",
+    "master-only"
+  ]
+}

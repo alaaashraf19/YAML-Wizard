@@ -1,0 +1,49 @@
+docker-build:
+  before_script:
+  - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  except:
+  - master
+  image: docker:latest
+  script:
+  - docker build --pull -t "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG" .
+  - docker push "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG"
+  services:
+  - docker:dind
+  stage: publish-docker
+docker-build-master:
+  before_script:
+  - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  image: docker:latest
+  only:
+  - master
+  script:
+  - docker build --pull -t "$CI_REGISTRY_IMAGE" .
+  - docker push "$CI_REGISTRY_IMAGE"
+  stage: publish-docker
+image: maven:3-jdk-8
+publish-job:
+  script:
+  - which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )
+  - apt-get update -y && apt-get install rsync -y
+  - eval $(ssh-agent -s)
+  - mv webapp/target/lh-toolkit.war webapp/target/master.war
+  - ssh-add <(echo "$SSH_PRIVATE_KEY")
+  - mkdir -p ~/.ssh
+  - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+  - rsync -avz -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+    --progress webapp/target/master.war ci@toolkit.librehealth.io:/var/lib/tomcat9/webapps
+  stage: deploy
+stages:
+- test
+- publish
+- deploy
+- publish-docker
+unit-test-job:
+  artifacts:
+    expire_in: 5 days
+    paths:
+    - webapp/target/*.war
+  image: maven:3.3.9-jdk-8
+  script:
+  - mvn package -B
+  stage: test

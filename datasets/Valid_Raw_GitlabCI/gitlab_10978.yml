@@ -1,0 +1,50 @@
+before_script:
+- apt-get -qq install git
+build:
+  artifacts:
+    expire_in: 1 hour
+    paths:
+    - .build
+  image:
+    name: microsoft/powershell
+  script:
+  - pwsh -Command ". ./build.init.ps1; Invoke-Build Build"
+  stage: build
+create_artifacts:
+  artifacts:
+    paths:
+    - .build
+  before_script:
+  - chmod +x ./linuxbuilddependencies.sh
+  - ./linuxbuilddependencies.sh
+  image:
+    name: microsoft/powershell
+  script:
+  - pwsh -Command ". ./build.init.ps1; Invoke-Build CreateArtifacts"
+  stage: artifacts
+pages:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - public
+  environment:
+    name: GitLab Pages
+    url: https://juanfperezperez.gitlab.io/ip-and-network-calculator-module/
+  image:
+    name: microsoft/powershell
+  only:
+  - master
+  script:
+  - pwsh -Command ". ./build.init.ps1; Invoke-Build DeployDocs_GitLabPages"
+  stage: deploy
+stages:
+- test
+- build
+- artifacts
+- deploy
+test:
+  image:
+    name: microsoft/powershell
+  script:
+  - pwsh -Command ". ./build.init.ps1; Invoke-Build Test"
+  stage: test

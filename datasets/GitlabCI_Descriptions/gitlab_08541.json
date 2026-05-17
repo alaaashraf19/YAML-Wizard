@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_08541",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 385,
+  "description": "Create a GitLab CI pipeline with a pre-verify stage containing two jobs. The build-integration-image job extends .cached-job, .build-job and .rules:build-integration-image, has no dependencies, and runs the shell command ./support/docker ci-build-integration-image. The build-verify-image job extends .cached-job, .build-job and .rules:code-changes-verify, declares a need on the release-image job, and runs ./support/docker ci-build-verify-image. Both jobs inherit caching and rule logic from the extended templates and execute their Docker helper scripts in the pre-verify stage.",
+  "tags": [
+    "docker",
+    "pre-verify",
+    "build",
+    "ci",
+    "extends"
+  ]
+}

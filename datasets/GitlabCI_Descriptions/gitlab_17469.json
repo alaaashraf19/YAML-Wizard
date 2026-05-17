@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_17469",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 699,
+  "description": "Create a GitLab CI pipeline that uses the python:3.7 Docker image for the test stage and the ilyasemenov/gitlab-ci-git-push image for the deploy stage, with two stages named test and deploy. In the test stage add a test job that runs before_script commands: pip install virtualenv poetry pre-commit, virtualenv venv, source venv/bin/activate, poetry config virtualenvs.create false, poetry install --no-root, python manage.py migrate, and python manage.py collectstatic --noinput; cache the directories .cache/pip and venv/, set the variable PIP_CACHE_DIR to $CI_PROJECT_DIR/.cache/pip, then execute script commands: pre-commit run -a --hook-stage=manual and python manage.py test. In the deploy stage add a \"deploy to production\" job that runs only on the master branch, targets the production environment, uses the ilyasemenov/gitlab-ci-git-push image, and runs the command git-push ssh://dokku@projects.stavros.io:16022/spamnesty to push the code to a Dokku server.",
+  "tags": [
+    "python-3.7",
+    "poetry",
+    "pre-commit",
+    "dokku",
+    "git-push",
+    "production",
+    "test",
+    "deploy"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "sha": "1ce4400fb5138e67a6b52defb16df455ffdda5847010d582f5102e68931bbb26",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 10719,
+  "description": "Create a GitHub Actions workflow that runs on pushes to tags, the 'master' branch, and pull requests. Use a matrix job that runs on ubuntu-22.04, macos-13, macos-14, and windows-2022, with various build types and architectures. For each OS, check out the code, install Qt, bootstrap vcpkg, install dependencies, add NuGet sources, build, and upload artifacts. On macOS, set up signing environment and import signing certificates if required. Create a release with uploaded assets if the workflow is triggered by a tag push.",
+  "tags": [
+    "github-actions",
+    "matrix-build",
+    "qt",
+    "vcpkg",
+    "nuget",
+    "mono",
+    "macos-signing",
+    "release"
+  ]
+}

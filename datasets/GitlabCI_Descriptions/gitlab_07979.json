@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_07979",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 18366,
+  "description": "Create a GitLab CI pipeline that builds the GAMBAS project on many Linux distributions using the default stage. Add a build:alpine job using the alpine image that runs a before_script installing autoconf, automake, libtool, curl-dev and many other development packages via apk, then executes ./reconf-all, GAMBAS_CONFIG_FAILURE=1 ./configure -C with numerous --disable flags, make -j$(nproc) and make install. Add a build:archlinux job using the archlinux:base image that installs required packages with pacman in before_script, then runs the same ./reconf-all, GAMBAS_CONFIG_FAILURE=1 ./configure -C with its own disable options, make -j$(nproc) and make install. For each Debian (bookworm, bullseye, sid, trixie), Fedora (latest), openSUSE (tumbleweed), Ubuntu (bionic, focal) job, use the corresponding image, install dependencies via apt‑get, dnf, or zypper in before_script, then run ./reconf-all, GAMBAS_CONFIG_FAILURE=1 ./configure -C with distribution‑specific disable flags, make -j$(nproc) (or make) and make install. No caches, artifacts, or deployment targets are defined and all jobs run on any branch.",
+  "tags": [
+    "gambas",
+    "build",
+    "alpine",
+    "archlinux",
+    "debian",
+    "fedora",
+    "opensuse",
+    "ubuntu",
+    "ci"
+  ]
+}

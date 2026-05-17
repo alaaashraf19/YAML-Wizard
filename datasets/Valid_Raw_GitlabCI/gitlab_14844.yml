@@ -1,0 +1,18 @@
+Testsuites:
+  after_script:
+  - make clean
+  artifacts:
+    paths:
+    - testsuite/*.log
+    - testsuite/*.sum
+  except:
+  - tags
+  script:
+  - ./autogen.sh
+  - ./configure
+  - make
+  - make check
+  tags: null
+before_script:
+- apt-get update -qq && apt-get install -y -qq autopoint autoconf automake gettext
+  libncurses5-dev dejagnu

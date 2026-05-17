@@ -1,0 +1,147 @@
+name: test
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      gtest_filter:
+        description: 'Google Test filter'
+      test_linux:
+        description: 'Test on Linux'
+        type: boolean
+        default: true
+      test_macos:
+        description: 'Test on MacOS'
+        type: boolean
+        default: true
+      test_windows:
+        description: 'Test on Windows'
+        type: boolean
+        default: true
+
+env:
+  GTEST_FILTER: ${{ github.event.inputs.gtest_filter || '*' }}
+
+jobs:
+  style-check:
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.event.pull_request.base.repo.full_name
+    continue-on-error: true
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: run style check
+        run: |
+          clang-format --version
+          cd test && make style_check
+
+  ubuntu:
+    runs-on: ubuntu-latest
+    if: >
+      (github.event_name == 'push') ||
+      (github.event_name == 'pull_request'  &&
+       github.event.pull_request.head.repo.full_name != github.event.pull_request.base.repo.full_name) ||
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.test_linux == 'true')
+    strategy:
+      matrix:
+        select_impl: ['select', 'poll']
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: install libraries
+        run: sudo apt-get update && sudo apt-get install -y libbrotli-dev libcurl4-openssl-dev
+      - name: build and run tests
+        env:
+          SELECT_IMPL: ${{ matrix.select_impl }}
+        run: cd test && make
+      - name: run fuzz test target
+        env:
+          SELECT_IMPL: ${{ matrix.select_impl }}
+        run: cd test && make fuzz_test
+
+  macos:
+    runs-on: macos-latest
+    if: >
+      (github.event_name == 'push') ||
+      (github.event_name == 'pull_request'  &&
+       github.event.pull_request.head.repo.full_name != github.event.pull_request.base.repo.full_name) ||
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.test_macos == 'true')
+    strategy:
+      matrix:
+        select_impl: ['select', 'poll']
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: build and run tests
+        env:
+          SELECT_IMPL: ${{ matrix.select_impl }}
+        run: cd test && make
+      - name: run fuzz test target
+        env:
+          SELECT_IMPL: ${{ matrix.select_impl }}
+        run: cd test && make fuzz_test
+
+  windows:
+    runs-on: windows-latest
+    if: >
+      (github.event_name == 'push') ||
+      (github.event_name == 'pull_request'  &&
+       github.event.pull_request.head.repo.full_name != github.event.pull_request.base.repo.full_name) ||
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.test_windows == 'true')
+    strategy:
+      matrix:
+        select_impl: ['select', 'poll']
+    steps:
+    - name: Prepare Git for Checkout on Windows
+      run: |
+        git config --global core.autocrlf false
+        git config --global core.eol lf
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Export GitHub Actions cache environment variables
+      uses: actions/github-script@v7
+      with:
+        script: |
+          core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+          core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+    - name: Setup msbuild on windows
+      uses: microsoft/setup-msbuild@v2
+    - name: Install libraries
+      run: |
+        vcpkg install gtest curl zlib brotli
+        choco install openssl
+
+    - name: Configure CMake with SSL
+      run: >
+        cmake -B build -S .
+        -DCMAKE_BUILD_TYPE=Release
+        -DCMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake
+        -DHTTPLIB_TEST=ON
+        -DHTTPLIB_REQUIRE_OPENSSL=ON
+        -DHTTPLIB_REQUIRE_ZLIB=ON
+        -DHTTPLIB_REQUIRE_BROTLI=ON
+        -DHTTPLIB_USE_SELECT=${{ matrix.select_impl == 'select' && 'ON' || 'OFF' }}
+    - name: Build with with SSL
+      run: cmake --build build --config Release -- /v:m /clp:ShowCommandLine /nologo
+    - name: Run tests with SSL
+      run: ctest --output-on-failure --test-dir build -C Release
+
+    - name: Configure CMake without SSL
+      run: >
+        cmake -B build-no-ssl -S .
+        -DCMAKE_BUILD_TYPE=Release
+        -DCMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake
+        -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+        -DHTTPLIB_TEST=ON
+        -DHTTPLIB_REQUIRE_OPENSSL=OFF
+        -DHTTPLIB_REQUIRE_ZLIB=ON
+        -DHTTPLIB_REQUIRE_BROTLI=ON
+        -DHTTPLIB_USE_SELECT=${{ matrix.select_impl == 'select' && 'ON' || 'OFF' }}
+    - name: Build without SSL
+      run: cmake --build build-no-ssl --config Release -- /v:m /clp:ShowCommandLine /nologo
+    - name: Run tests without SSL
+      run: ctest --output-on-failure --test-dir build-no-ssl -C Release
+    env:
+      VCPKG_ROOT: "C:/vcpkg"
+      VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"

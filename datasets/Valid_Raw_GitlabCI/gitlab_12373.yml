@@ -1,0 +1,12 @@
+before_script:
+- pip install mkdocs-material
+image: python:alpine
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - mkdocs build
+  - mv site public

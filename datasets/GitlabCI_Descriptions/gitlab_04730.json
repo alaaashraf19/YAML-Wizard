@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_04730",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 178,
+  "description": "Create a GitLab CI pipeline that uses the gradle:alpine Docker image and defines the variable GRADLE_OPTS as -Dorg.gradle.daemon=false. Add a before_script that exports GRADLE_USER_HOME to the .gradle directory in the repository root. Define a build stage with a job named build that runs the exact command ./gradlew bootJar. No caches, artifacts, services, or special rules are configured.",
+  "tags": [
+    "gradle",
+    "java",
+    "bootjar",
+    "docker-alpine"
+  ]
+}

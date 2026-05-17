@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_18222",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 533,
+  "description": "Create a GitLab CI pipeline that uses a cache keyed by the job name storing .cabal-store and dist-newstyle/cache, sets a STORE_DIR variable to ${CI_PROJECT_DIR}/.cabal-store, and runs a before_script updating apt and cabal. Define three jobs named test:8.0, test:8.2, and test:8.4, all in the default test stage. The test:8.0 job uses the haskell:8.0 Docker image and runs \"apt -qq install build-essential netbase xz-utils libstdc++-4.9-dev > /dev/null\", then \"cabal install --enable-test --only-dep -j\", and \"cabal build\". The test:8.2 job uses the haskell:8.2 image and runs \"cabal --store-dir=$STORE_DIR new-build\". The test:8.4 job uses the haskell:8.4 image and runs \"cabal --store-dir=$STORE_DIR new-build\".",
+  "tags": [
+    "haskell",
+    "cabal",
+    "apt",
+    "cache",
+    "test"
+  ]
+}

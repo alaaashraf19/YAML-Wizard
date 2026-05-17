@@ -1,0 +1,14 @@
+{
+  "sha": "e57e3926cf37a33352a97041fd107680c1121eff6956916713a429aa3ba622b7",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2722,
+  "description": "Create a GitHub Actions workflow named CI that runs on push and pull request events to the master branch and allows manual triggering. The workflow should use an ubuntu-18.04 runner and skip if the commit message contains 'ci-skip'. It checks out the source tree and submodules, caches Bazel artifacts, sets up bazelisk, builds and tests with Bazel, and applies a caching workaround.",
+  "tags": [
+    "bazel",
+    "ubuntu",
+    "ci",
+    "actions",
+    "caching"
+  ]
+}

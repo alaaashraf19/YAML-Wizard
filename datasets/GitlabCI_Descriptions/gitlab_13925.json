@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_13925",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1729,
+  "description": "Create a GitLab CI pipeline using the node:6 Docker image with stages install, test, build, and deploy. In the install stage add an install job that caches and artifacts the node_modules/ directory (cache key $CI_BUILD_REF_NAME) and runs npm install --loglevel=warn. In the test stage add a test job that runs npm test. In the build stage add a build job that runs npm run production and publishes the public/ folder as an artifact. In the deploy stage add three jobs: deploy_staging (only on the master branch, except tags) that updates apt, installs lftp, and uses lftp to mirror the public directory to the staging FTP location; deploy_prod (only on tags and triggers, except branches) that updates apt, installs lftp, and mirrors public to the production FTP location; deploy_review (except master and tags) that depends on the build job, updates apt, installs lftp, mirrors public to a review FTP path named builds/$CI_BUILD_REF_SLUG, and defines the environment review/$CI_BUILD_REF_NAME with an on_stop of stop_review; also add a stop_review manual job (except master and tags) that sets GIT_STRATEGY to none, updates apt, installs lftp, and removes the review directory via lftp.",
+  "tags": [
+    "node",
+    "npm",
+    "lftp",
+    "ftp-deploy",
+    "review-environment",
+    "staging",
+    "production",
+    "manual-stop"
+  ]
+}

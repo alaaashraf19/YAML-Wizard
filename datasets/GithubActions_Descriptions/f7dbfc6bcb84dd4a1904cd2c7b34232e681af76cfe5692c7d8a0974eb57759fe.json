@@ -1,0 +1,14 @@
+{
+  "sha": "f7dbfc6bcb84dd4a1904cd2c7b34232e681af76cfe5692c7d8a0974eb57759fe",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1028,
+  "description": "Create a GitHub Actions workflow named CITATION.cff that validates a CITATION.cff file on push and pull request events targeting that file, as well as on workflow dispatch. Use an ubuntu-latest job that checks out the repository, installs V8 if running on Linux, validates the CITATION.cff file using the cff-validator action, and uploads citation-cff-errors as an artifact if validation fails.",
+  "tags": [
+    "github-actions",
+    "citation",
+    "validation",
+    "ubuntu",
+    "artifact"
+  ]
+}

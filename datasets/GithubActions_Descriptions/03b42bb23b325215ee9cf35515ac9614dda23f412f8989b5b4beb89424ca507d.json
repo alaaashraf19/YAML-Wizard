@@ -1,0 +1,14 @@
+{
+  "sha": "03b42bb23b325215ee9cf35515ac9614dda23f412f8989b5b4beb89424ca507d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 988,
+  "description": "Create a GitHub Actions workflow named ci build that runs on every push to the master branch and on pull requests to the master branch. The workflow should have two jobs, ubuntu-cmake and fedora-cmake, both running on ubuntu-latest. The ubuntu-cmake job should install dependencies, checkout the code, and run make, make check, and make tutorial. The fedora-cmake job should run in a fedora:latest container, checkout the code, verify the OS, install dependencies, and then run make, make check, and make tutorial.",
+  "tags": [
+    "cmake",
+    "ubuntu",
+    "fedora",
+    "make",
+    "ci"
+  ]
+}

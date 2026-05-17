@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_06084",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 524,
+  "description": "Create a GitLab CI pipeline that uses the openjdk:12-jdk Docker image and defines three stages: test, integrationTest, and build. Include a before_script that runs \"mkdir -p /cache/.gradle\", \"ln -s /cache/.gradle .cache\", and \"export GRADLE_USER_HOME=.cache/\". In the test stage add a test job that caches the .cache directory and executes \"./gradlew clean check --info\". In the integrationTest stage add an integrationTest job that depends on test and runs \"./gradlew integrationTest\". In the build stage add a build job that depends on integrationTest, runs \"./gradlew shadowJar\", publishes the \"build/libs/\" directory as an artifact, and is limited to the master branch via only refs.",
+  "tags": [
+    "java",
+    "gradle",
+    "openjdk12",
+    "shadowjar",
+    "integration-test",
+    "gitlab-ci"
+  ]
+}

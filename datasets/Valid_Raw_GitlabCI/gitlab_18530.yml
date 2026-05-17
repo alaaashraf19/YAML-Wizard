@@ -1,0 +1,75 @@
+.docker:
+  dependencies: &id002
+  - build
+  image: docker
+  services: &id003
+  - docker:dind
+  stage: docker
+  variables: &id004
+    DOCKER_HOST: tcp://docker:2375
+.scripts:
+  before_script: &id001
+  - ln -s /builds/$CI_PROJECT_PATH /go/src/soundcloud-extractor
+  - cd /go/src/soundcloud-extractor
+build:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - build/soundcloud-extractor
+    - build/wordpress-importer
+  before_script: *id001
+  dependencies:
+  - vendor
+  script:
+  - make
+  stage: build
+docker:soundcloud-extractor:
+  dependencies: *id002
+  image: docker
+  script:
+  - docker build -t "${CI_REGISTRY_IMAGE}/soundcloud-extractor:latest" -f docker/Dockerfile-soundcloud-extractor
+    .
+  - docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
+  - docker push "${CI_REGISTRY_IMAGE}/soundcloud-extractor:latest"
+  services: *id003
+  stage: docker
+  variables: *id004
+docker:wordpress-importer:
+  dependencies: *id002
+  image: docker
+  script:
+  - docker build -t "${CI_REGISTRY_IMAGE}/wordpress-importer:latest" -f docker/Dockerfile-wordpress-importer
+    .
+  - docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
+  - docker push "${CI_REGISTRY_IMAGE}/wordpress-importer:latest"
+  services: *id003
+  stage: docker
+  variables: *id004
+image: golang
+lint:
+  before_script: *id001
+  script:
+  - make lint
+  stage: lint
+stages:
+- lint
+- vendor
+- test
+- build
+- docker
+test:
+  before_script: *id001
+  dependencies:
+  - vendor
+  script:
+  - make test
+  stage: test
+vendor:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - vendor
+  before_script: *id001
+  script:
+  - make vendor
+  stage: vendor

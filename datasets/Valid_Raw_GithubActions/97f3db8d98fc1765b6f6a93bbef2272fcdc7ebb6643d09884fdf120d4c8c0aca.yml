@@ -1,0 +1,29 @@
+name: build and test on ubuntus
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ${{matrix.os}}
+    strategy:
+      matrix:
+        os: [ubuntu-16.04, ubuntu-18.04, ubuntu-20.04, ubuntu-latest]
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: get gtest
+      working-directory: ${{github.workspace}}/compcmake
+      run: ./get_gtest.sh
+
+    - name: install dependencies
+      run: sudo apt-get -y install cmake ninja-build libssh-dev libboost-dev libboost-system-dev
+
+    - name: Configure CMake
+      working-directory: ${{github.workspace}}/compcmake
+      run: ./generate.sh
+
+    - name: Test
+      working-directory: ${{github.workspace}}/compcmake/gcc_debug
+      run: ctest -V

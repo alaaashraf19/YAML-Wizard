@@ -1,0 +1,21 @@
+{
+  "sha": "gitlab_16653",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 17810,
+  "description": "Create a GitLab CI pipeline that uses a dynamic image $CI_REGISTRY_IMAGE:${OS}_${FREL} for the generic .any jobs, with a .any base that sets debug flags, exports GIT_DEPTH=1, and defines coverage regex, artifacts (PDFs, rivet-plots, coverage.info, html) that expire in 2 days on failure. Add .any-cmake jobs that run a series of shell commands to select compiler toolset (LLVM or GNU), set CMAKE/CTEST versions based on FREL, record compilation start/end times, configure with cmake -S . -B BUILD, build with $CMAKE --build BUILD -j $NCOMPILATION_JOBS, install, run ctest, optionally build coverage and docs, and finally report timing; .any-cmake-ccache jobs prepend ccache setup (clean cache on special commits or schedules, set CCACHE_* variables, create cache directories, define CACHINGFLAGS, and display ccache stats) and use a pull‑only cache, while .any-cmake-ccache-main uses a pull‑push cache. Define three Kaniko‑based build_image jobs (Archlinux, CentOS, Fedora) that write Docker auth to /kaniko/.docker/config.json and, if a corresponding todo‑<OS>_$FREL.txt file exists, invoke /kaniko/executor to build and push images to $CI_REGISTRY_IMAGE:<OS>_$FREL, each in the build_docker_image stage with GIT_DEPTH=1 and retry 2. Provide a fallback .build_image_Fedora_alt job that uses docker:20.10.16 with docker‑in‑docker service, logs in, builds and pushes the Fedora image via docker CLI. Add check_commit jobs for Archlinux, CentOS, and Fedora that run in the check_if_dockerfile_updated stage, use alpine/git, extract recent Dockerfile changes into todo‑<OS>_$FREL.txt artifacts, and always succeed. Finally, generate a matrix of build jobs (e.g., Archlinux0-make-ccache-GNU, Archlinux0-make-ccache-GNU-feature, CentOS9-make-ccache‑GNU, Fedora41‑make‑ccache‑GNU, Fedora42‑make‑ccache‑LLVM, etc.) that extend the appropriate .any‑cmake‑ccache or .any‑cmake‑ccache‑main templates, depend on the matching build_image job, run only on the default branch or feature branches as specified, set variables like OS, FREL, TOOLSET, EXTRACMAKEFLAGS, and optionally BUILDDOCS, and execute the full cmake build and test workflow defined in the templates. Include a specialized LCG_106_ATLAS_7_x86_64‑el9‑gcc13‑opt job that runs on the CERN GitLab server, uses the alma9‑core image, sets many environment variables for external libraries, runs a cmake‑based build with NCOMPILATION_JOBS=8, and stores BUILD/Tests artifacts on failure for 7 days.",
+  "tags": [
+    "cmake",
+    "ccache",
+    "kaniko",
+    "docker",
+    "archlinux",
+    "centos",
+    "fedora",
+    "gitlab-ci",
+    "build",
+    "test",
+    "coverage",
+    "lcg"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_00794",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 771,
+  "description": "Create a GitLab CI pipeline using the maven:latest Docker image with two stages: build and deploy. Add a job named adf-validator-validate in the build stage that runs `mvn $MAVEN_CLI_OPTS clean compile`, then archives the adf-validator/target directory as an artifact named adf-validator-validate that expires in 120 minutes. Add a job named adf-validator-deploy in the deploy stage that runs `mvn $MAVEN_CLI_OPTS clean deploy`, archives the same directory as an artifact named adf-validator that expires in 14 days, is limited to the master branch and must be triggered manually. Define variables MAVEN_CLI_OPTS with Maven settings and batch options and MAVEN_OPTS with a local repository path and logging configuration.",
+  "tags": [
+    "maven",
+    "java",
+    "gitlab-ci",
+    "build",
+    "deploy",
+    "manual"
+  ]
+}

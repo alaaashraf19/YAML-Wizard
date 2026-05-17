@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_06120",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2453,
+  "description": "Create a GitLab CI pipeline that uses the registry.gitlab.com/datadrivendiscovery/images/testing-docker:ubuntu-bionic Docker image with a Docker-in-Docker service (registry.gitlab.com/datadrivendiscovery/images/docker:19-dind) aliased as docker, sets DOCKER_HOST=tcp://docker:2375 and GIT_SUBMODULE_STRATEGY=recursive, and defines a single build stage. Add a build_envoy job in the build stage that runs before_script docker info, then logs in with docker login -u gitlab-ci-token -p \"$CI_JOB_TOKEN\" \"$CI_REGISTRY\", builds the envoy image using docker build --cache-from=\"$CI_REGISTRY_IMAGE/envoy:latest\" -t \"$CI_REGISTRY_IMAGE/envoy:latest\" -f envoy.dockerfile ., and pushes it with docker push \"$CI_REGISTRY_IMAGE/envoy:latest\"; the job runs only on the master branch. Add a build_simple_ta3 job that performs the same steps but builds and pushes the simple-ta3 image from ta3.dockerfile. Add a build_tests job that builds and pushes the tests image from tests.dockerfile. Finally, add a build_wait job that builds and pushes the wait image from wait.dockerfile; all four jobs share the same image, service, variables, before_script, and master‑only trigger.",
+  "tags": [
+    "docker",
+    "dind",
+    "build",
+    "envoy",
+    "simple-ta3",
+    "tests",
+    "wait"
+  ]
+}

@@ -1,0 +1,10 @@
+cache:
+  paths:
+  - node_modules/
+image: node:carbon
+test:
+  script:
+  - npm install
+  - npm test
+  tags:
+  - docker

@@ -1,0 +1,14 @@
+{
+  "sha": "22084d316d9c71129b08d0042e464f617f18c080d03f2ffd1c67a0b0ce1b548d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1879,
+  "description": "Create a GitHub Actions workflow named Build Docker Images that triggers on push events. Run a matrix job on ubuntu-latest for Python versions 3.7 and 3.8. The job should check out the code, set up Python, install clang-format-10, black, pytest, and other dependencies. It should then lint C++ and Python code, update git submodules, build a Docker image, and run Poly* tests with pytest.",
+  "tags": [
+    "docker",
+    "python",
+    "linting",
+    "testing",
+    "cpp"
+  ]
+}

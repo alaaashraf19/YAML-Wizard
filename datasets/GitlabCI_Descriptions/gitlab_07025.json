@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_07025",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 6788,
+  "description": "Create a GitLab CI pipeline that runs on the java:8-jdk Docker image and defines the stages initialize, build, test, and deploy. In the initialize stage add an initialize job that runs `apt update -y && apt install xml-twig-tools -y` in before_script, checks out the `artifacts` branch, extracts configuration values from `settings.xml` with `xml_grep`, parses the commit message to adjust variables, computes VERSION, writes all variables to a `cicd-variables` file, and stores that file as an artifact. In the build stage add a build job that sources `cicd-variables`, compiles all Java sources under `src/main/java` using `javac -classpath \"./lib/main/*\" @sources.txt`, creates a manifest with `echo -e` commands, optionally extracts dependency JARs from `lib/main` and removes their META-INF directories, and finally packages the compiled classes into `$CI_PROJECT_NAME.jar` with `jar -cvfm $CI_PROJECT_NAME.jar MANIFEST.MF -C src/main/java/ .`, publishing the JAR as an artifact. In the test stage add a test job that also sources `cicd-variables`, skips execution when `SKIP_TESTS` is true, moves any library JARs into `./lib/`, compiles all Java files found by `find -name \"*.java\"` with `javac -classpath \"./lib/*\" @sources.txt`, packages the test classes into `$CI_PROJECT_NAME-$VERSION-JUnit-Tests.jar` using `jar -cvf`, and runs the tests with `java -cp \"./$CI_PROJECT_NAME-$VERSION-JUnit-Tests.jar\" org.junit.runner.JUnitCore $TEST_SUIT`. In the deploy stage, which runs only on the master branch, add a deploy job that sets up SSH using the `PRIVATE_SSH_KEY`, configures git user, optionally moves the built JAR into a versioned directory and commits it, runs `xsltproc` transformations on `settings.xml` based on the LOG and DEPLOY flags, commits the updated `settings.xml` and any new version files, and pushes the changes to the `artifacts` branch.",
+  "tags": [
+    "java",
+    "javac",
+    "jar",
+    "gitlab-ci",
+    "xsltproc",
+    "ssh-deploy",
+    "junit"
+  ]
+}

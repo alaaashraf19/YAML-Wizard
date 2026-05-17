@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_06899",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 168,
+  "description": "Create a GitLab CI pipeline that runs a before_script to update the package index and install Python 3 and pip with apt-get. Define a single job named test (in the default test stage) that executes the commands python3 -m pip install pytest and python3 -m pytest tests/unittests.py. The pipeline does not specify a Docker image, services, caches, artifacts, or any conditional rules, so it runs on the default runner for every commit.",
+  "tags": [
+    "apt",
+    "python",
+    "pytest",
+    "gitlab-ci"
+  ]
+}

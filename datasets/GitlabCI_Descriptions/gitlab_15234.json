@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_15234",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 841,
+  "description": "Create a GitLab CI pipeline using the image registry.gitlab.com/r3dlight/akabox/go-clang7:latest and define the variable REPO_NAME=gitlab.com/r3dlight/akabox. Set up two stages, test and build, and add a before_script that creates /go/src/gitlab.com/r3dlight/ and copies the repository into that path. Cache the apt cache and Go module directories at /apt-cache, /go/src/github.com, /go/src/golang.org, /go/src/google.golang.org, and /go/src/gopkg.in. In the test stage add a format job that runs: cd /go/src/gitlab.com/r3dlight/akabox; go fmt $(go list ./... | grep -v /vendor/); go vet $(go list ./... | grep -v /vendor/); export CC=clang-7; go test -msan -short; go test -race $(go list ./... | grep -v /vendor/). In the build stage add a compile job that runs: cd /go/src/gitlab.com/r3dlight/akabox && go build -race -ldflags \"-extldflags '-static'\" -o $CI_PROJECT_DIR/akabox, and publishes the resulting akabox binary as an artifact.",
+  "tags": [
+    "go",
+    "clang7",
+    "docker-image",
+    "cache",
+    "build",
+    "test",
+    "gitlab-ci"
+  ]
+}

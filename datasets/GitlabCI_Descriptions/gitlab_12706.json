@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_12706",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 168,
+  "description": "Create a GitLab CI pipeline with a single job called test that runs in the default test stage using the default Docker image. The job should execute the following shell commands in order: export DJANGO_SETTINGS_MODULE=test_settings, apt-get update -qy, apt-get install -y python-dev python-pip, pip install -e ., and py.test -v. No caches, artifacts, variables, or special rules are required, and the job runs on every pipeline execution.",
+  "tags": [
+    "django",
+    "pytest",
+    "apt",
+    "pip",
+    "gitlab-ci"
+  ]
+}

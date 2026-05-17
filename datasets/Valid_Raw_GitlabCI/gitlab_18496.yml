@@ -1,0 +1,23 @@
+check:
+  script:
+  - python checkcsv.py data/women-leaders-openness.csv
+  stage: test
+image: python:2
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - mkdir .public
+  - cp -r * .public/
+  - mv .public public
+  - sed 's/\( csv_path *[:=] *["'\'']data\/women-leaders-openness\.csv\)\(["'\'']\)/\1?h='$(git
+    rev-parse --short HEAD)'\2/' index.html >public/index.html
+  - sed 's/\( csv_path *[:=] *["'\'']data\/women-leaders-openness\.csv\)\(["'\'']\)/\1?h='$(git
+    rev-parse --short HEAD)'\2/' map.html >public/map.html
+  stage: deploy
+stages:
+- test
+- deploy

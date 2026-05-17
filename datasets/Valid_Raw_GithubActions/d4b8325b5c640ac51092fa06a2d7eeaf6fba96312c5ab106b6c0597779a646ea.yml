@@ -1,0 +1,672 @@
+name: CI
+
+# Trigger on pushes to all branches and for all pull-requests
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: ${{ matrix.config.name }}
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          # GCC-6
+          - {
+            name: "Linux GCC 6 C++11",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "gcc-6", cxx: "g++-6",
+            cxx_standard: 11,
+            cxx_asan: true
+          }
+          - {
+            name: "Linux GCC 6 C++14",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "gcc-6", cxx: "g++-6",
+            cxx_standard: 14,
+            cxx_asan: true
+          }
+          - {
+            name: "Linux GCC 6 C++17",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "gcc-6", cxx: "g++-6",
+            cxx_standard: 17,
+            cxx_asan: true
+          }
+
+          # GCC-7
+          - {
+            name: "Linux GCC 7 C++11",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "gcc-7", cxx: "g++-7",
+            cxx_standard: 11,
+            cxx_asan: true
+          }
+          - {
+            name: "Linux GCC 7 C++14",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "gcc-7", cxx: "g++-7",
+            cxx_standard: 14,
+            cxx_asan: true
+          }
+          - {
+            name: "Linux GCC 7 C++17",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "gcc-7", cxx: "g++-7",
+            cxx_standard: 17,
+            cxx_asan: true
+          }
+
+          # GCC-8
+          - {
+            name: "Linux GCC 8 C++11",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "gcc-8", cxx: "g++-8",
+            cxx_standard: 11,
+            cxx_asan: true
+          }
+          - {
+            name: "Linux GCC 8 C++14",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "gcc-8", cxx: "g++-8",
+            cxx_standard: 14,
+            cxx_asan: true
+          }
+          - {
+            name: "Linux GCC 8 C++17",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "gcc-8", cxx: "g++-8",
+            cxx_standard: 17,
+            cxx_asan: true
+          }
+
+          # GCC-9
+          - {
+            name: "Linux GCC 9 C++11",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "gcc-9", cxx: "g++-9",
+            cxx_standard: 11,
+            cxx_asan: true
+          }
+          - {
+            name: "Linux GCC 9 C++14",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "gcc-9", cxx: "g++-9",
+            cxx_standard: 14,
+            cxx_asan: true
+          }
+          - {
+            name: "Linux GCC 9 C++17",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "gcc-9", cxx: "g++-9",
+            cxx_standard: 17,
+            cxx_asan: true
+          }
+
+          # GCC-10
+          - {
+            name: "Linux GCC 10 C++11",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "gcc-10", cxx: "g++-10",
+            cxx_standard: 11,
+            cxx_asan: true
+          }
+          - {
+            name: "Linux GCC 10 C++14",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "gcc-10", cxx: "g++-10",
+            cxx_standard: 14,
+            cxx_asan: true
+          }
+          - {
+            name: "Linux GCC 10 C++17",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "gcc-10", cxx: "g++-10",
+            cxx_standard: 17,
+            cxx_asan: true
+          }
+          - {
+            name: "Linux GCC 10 C++20",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "gcc-10", cxx: "g++-10",
+            cxx_standard: 20,
+            cxx_asan: true
+          }
+
+
+          # Clang-5.0
+          - {
+            name: "Linux Clang 5.0 C++11 / libstdc++",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "clang-5.0", cxx: "clang++-5.0",
+            cxx_standard: 11,
+            cxx_asan: true,
+            libcxx: false
+          }
+          - {
+            name: "Linux Clang 5.0 C++14 / libstdc++",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "clang-5.0", cxx: "clang++-5.0",
+            cxx_standard: 14,
+            cxx_asan: true,
+            libcxx: false
+          }
+          - {
+            name: "Linux Clang 5.0 C++17 / libstdc++",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "clang-5.0", cxx: "clang++-5.0",
+            cxx_standard: 17,
+            cxx_asan: true,
+            libcxx: false
+          }
+          - {
+            name: "Linux Clang 5.0 C++11 / libc++",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "clang-5.0", cxx: "clang++-5.0",
+            cxx_standard: 11,
+            cxx_asan: true,
+            libcxx: true
+          }
+          - {
+            name: "Linux Clang 5.0 C++14 / libc++",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "clang-5.0", cxx: "clang++-5.0",
+            cxx_standard: 14,
+            cxx_asan: true,
+            libcxx: true
+          }
+          - {
+            name: "Linux Clang 5.0 C++17 / libc++",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "clang-5.0", cxx: "clang++-5.0",
+            cxx_standard: 17,
+            cxx_asan: true,
+            libcxx: true
+          }
+
+          # Clang-6.0
+          - {
+            name: "Linux Clang 6.0 C++11 / libstdc++",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "clang-6.0", cxx: "clang++-6.0",
+            cxx_standard: 11,
+            cxx_asan: true,
+            libcxx: false
+          }
+          - {
+            name: "Linux Clang 6.0 C++14 / libstdc++",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "clang-6.0", cxx: "clang++-6.0",
+            cxx_standard: 14,
+            cxx_asan: true,
+            libcxx: false
+          }
+          - {
+            name: "Linux Clang 6.0 C++17 / libstdc++",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "clang-6.0", cxx: "clang++-6.0",
+            cxx_standard: 17,
+            cxx_asan: true,
+            libcxx: false
+          }
+          - {
+            name: "Linux Clang 6.0 C++11 / libc++",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "clang-6.0", cxx: "clang++-6.0",
+            cxx_standard: 11,
+            cxx_asan: true,
+            libcxx: true
+          }
+          - {
+            name: "Linux Clang 6.0 C++14 / libc++",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "clang-6.0", cxx: "clang++-6.0",
+            cxx_standard: 14,
+            cxx_asan: true,
+            libcxx: true
+          }
+          - {
+            name: "Linux Clang 6.0 C++17 / libc++",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "clang-6.0", cxx: "clang++-6.0",
+            cxx_standard: 17,
+            cxx_asan: true,
+            libcxx: true
+          }
+
+          # Clang-8
+          - {
+            name: "Linux Clang 8 C++11 / libstdc++",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "clang-8", cxx: "clang++-8",
+            cxx_standard: 11,
+            cxx_asan: false,
+            libcxx: false
+          }
+          - {
+            name: "Linux Clang 8 C++14 / libstdc++",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "clang-8", cxx: "clang++-8",
+            cxx_standard: 14,
+            cxx_asan: false,
+            libcxx: false
+          }
+          - {
+            name: "Linux Clang 8 C++17 / libstdc++",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "clang-8", cxx: "clang++-8",
+            cxx_standard: 17,
+            cxx_asan: false,
+            libcxx: false
+          }
+          - {
+            name: "Linux Clang 8 C++11 / libc++",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "clang-8", cxx: "clang++-8",
+            cxx_standard: 11,
+            cxx_asan: false,
+            libcxx: true
+          }
+          - {
+            name: "Linux Clang 8 C++14 / libc++",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "clang-8", cxx: "clang++-8",
+            cxx_standard: 14,
+            cxx_asan: false,
+            libcxx: true
+          }
+          - {
+            name: "Linux Clang 8 C++17 / libc++",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "clang-8", cxx: "clang++-8",
+            cxx_standard: 17,
+            cxx_asan: false,
+            libcxx: true
+          }
+
+          # Clang-9
+          - {
+            name: "Linux Clang 9 C++11 / libstdc++",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "clang-9", cxx: "clang++-9",
+            cxx_standard: 11,
+            cxx_asan: true,
+            libcxx: false
+          }
+          - {
+            name: "Linux Clang 9 C++14 / libstdc++",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "clang-9", cxx: "clang++-9",
+            cxx_standard: 14,
+            cxx_asan: true,
+            libcxx: false
+          }
+          - {
+            name: "Linux Clang 9 C++17 / libstdc++",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "clang-9", cxx: "clang++-9",
+            cxx_standard: 17,
+            cxx_asan: true,
+            libcxx: false
+          }
+          - {
+            name: "Linux Clang 9 C++11 / libc++",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "clang-9", cxx: "clang++-9",
+            cxx_standard: 11,
+            cxx_asan: true,
+            libcxx: true
+          }
+          - {
+            name: "Linux Clang 9 C++14 / libc++",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "clang-9", cxx: "clang++-9",
+            cxx_standard: 14,
+            cxx_asan: true,
+            libcxx: true
+          }
+          - {
+            name: "Linux Clang 9 C++17 / libc++",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "clang-9", cxx: "clang++-9",
+            cxx_standard: 17,
+            cxx_asan: true,
+            libcxx: true
+          }
+
+          # Clang-10
+          - {
+            name: "Linux Clang 10 C++11 / libstdc++",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "clang-10", cxx: "clang++-10",
+            cxx_standard: 11,
+            cxx_asan: true,
+            libcxx: false
+          }
+          - {
+            name: "Linux Clang 10 C++14 / libstdc++",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "clang-10", cxx: "clang++-10",
+            cxx_standard: 14,
+            cxx_asan: true,
+            libcxx: false
+          }
+          - {
+            name: "Linux Clang 10 C++17 / libstdc++",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "clang-10", cxx: "clang++-10",
+            cxx_standard: 17,
+            cxx_asan: true,
+            libcxx: false
+          }
+          - {
+            name: "Linux Clang 10 C++20 / libstdc++",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "clang-10", cxx: "clang++-10",
+            cxx_standard: 20,
+            cxx_asan: true,
+            libcxx: false
+          }
+          - {
+            name: "Linux Clang 10 C++11 / libc++",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "clang-10", cxx: "clang++-10",
+            cxx_standard: 11,
+            cxx_asan: true,
+            libcxx: true
+          }
+          - {
+            name: "Linux Clang 10 C++14 / libc++",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "clang-10", cxx: "clang++-10",
+            cxx_standard: 14,
+            cxx_asan: true,
+            libcxx: true
+          }
+          - {
+            name: "Linux Clang 10 C++17 / libc++",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "clang-10", cxx: "clang++-10",
+            cxx_standard: 17,
+            cxx_asan: true,
+            libcxx: true
+          }
+          - {
+            name: "Linux Clang 10 C++20 / libc++",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "clang-10", cxx: "clang++-10",
+            cxx_standard: 20,
+            cxx_asan: true,
+            libcxx: true
+          }
+
+          # Clang-11
+          - {
+            name: "Linux Clang 11 C++11 / libstdc++",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "clang-11", cxx: "clang++-11",
+            cxx_standard: 11,
+            cxx_asan: true,
+            libcxx: false
+          }
+          - {
+            name: "Linux Clang 11 C++14 / libstdc++",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "clang-11", cxx: "clang++-11",
+            cxx_standard: 14,
+            cxx_asan: true,
+            libcxx: false
+          }
+          - {
+            name: "Linux Clang 11 C++17 / libstdc++",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "clang-11", cxx: "clang++-11",
+            cxx_standard: 17,
+            cxx_asan: true,
+            libcxx: false
+          }
+          - {
+            name: "Linux Clang 11 C++20 / libstdc++",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "clang-11", cxx: "clang++-11",
+            cxx_standard: 20,
+            cxx_asan: true,
+            libcxx: false
+          }
+
+          # AppleClang
+          - {
+            name: "macOS Clang C++11",
+            os: macos-latest,
+            build_type: Debug,
+            cc: "clang", cxx: "clang++",
+            cxx_standard: 11,
+            cxx_asan: true
+          }
+          - {
+            name: "macOS Clang C++14",
+              os: macos-latest,
+            build_type: Debug,
+            cc: "clang", cxx: "clang++",
+            cxx_standard: 14,
+            cxx_asan: true
+          }
+          - {
+            name: "macOS Clang C++17",
+              os: macos-latest,
+            build_type: Debug,
+            cc: "clang", cxx: "clang++",
+            cxx_standard: 17,
+            cxx_asan: true
+          }
+
+          # MSVC 2019
+          - {
+            name: "Windows MSVC 2019 C++11",
+            os: windows-latest,
+            build_type: Debug,
+            cc: "cl", cxx: "cl",
+            cxx_standard: 11,
+          }
+          - {
+            name: "Windows MSVC 2019 C++14",
+            os: windows-latest,
+            build_type: Debug,
+            cc: "cl", cxx: "cl",
+            cxx_standard: 14,
+          }
+          - {
+            name: "Windows MSVC 2019 C++17",
+            os: windows-latest,
+            build_type: Debug,
+            cc: "cl", cxx: "cl",
+            cxx_standard: 17,
+          }
+          - {
+            name: "Windows MSVC 2019 C++20",
+            os: windows-latest,
+            build_type: Debug,
+            cc: "cl", cxx: "cl",
+            cxx_standard: 20,
+          }
+
+    steps:
+      - uses: actions/checkout@v2
+
+
+      - name: Install GCC 6
+        id: install_gcc_6
+        if: startsWith(matrix.config.os, 'ubuntu') && ( matrix.config.cxx == 'g++-6' )
+        shell: bash
+        working-directory: ${{ env.HOME }}
+        run: |
+          sudo apt-get install -y gcc-6 g++-6
+
+      - name: Install Clang 5
+        id: install_clang_5
+        if: startsWith(matrix.config.os, 'ubuntu') && ( matrix.config.cxx == 'clang++-5.0' )
+        shell: bash
+        working-directory: ${{ env.HOME }}
+        run: |
+          wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key 2>/dev/null | sudo apt-key add -
+          sudo add-apt-repository 'deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-5.0 main' -y
+          sudo apt-get update -q
+          sudo apt-get install -y clang-5.0
+
+      - name: Install Clang 10
+        id: install_clang_10
+        if: startsWith(matrix.config.os, 'ubuntu') && ( matrix.config.cxx == 'clang++-10' )
+        shell: bash
+        working-directory: ${{ env.HOME }}
+        run: |
+          wget https://apt.llvm.org/llvm.sh
+          chmod +x llvm.sh
+          sudo ./llvm.sh 10
+
+      - name: Install Clang 11
+        id: install_clang_11
+        if: startsWith(matrix.config.os, 'ubuntu') && ( matrix.config.cxx == 'clang++-11' )
+        shell: bash
+        working-directory: ${{ env.HOME }}
+        run: |
+          wget https://apt.llvm.org/llvm.sh
+          chmod +x llvm.sh
+          sudo ./llvm.sh 11
+
+      - name: Install libc++
+        id: install_libcxx
+        if: matrix.config.libcxx
+        shell: bash
+        working-directory: ${{ env.HOME }}
+        env:
+          CC: ${{ matrix.config.cc }}
+          CXX: ${{ matrix.config.cxx }}
+        run: |
+          $GITHUB_WORKSPACE/install_libcxx.sh
+
+      - name: Verify compilation errors
+        if: (!startsWith(matrix.config.os, 'windows'))
+        shell: bash
+        run: |
+          CXX=${{ matrix.config.cxx }} CXXFLAGS="-std=c++${{ matrix.config.cxx_standard }}" ./check_errors.sh ||
+          {
+            FAILURES="$?" ;
+            if [[ "${{ matrix.config.cxx_standard }}" == "11" ]]; then
+              if [[ ${FAILURES} != "4" ]]; then
+                echo "Expected four failures from C++11 check_errors.sh, got ${FAILURES}" ;
+                exit 1 ;
+              fi ;
+            else
+              echo "Expected zero failures from check_errors.sh, got ${FAILURES}" ;
+              exit 1 ;
+            fi ;
+          }
+
+
+      - name: Configure
+        shell: cmake -P {0}
+        run: |
+          set(ENV{CC} ${{ matrix.config.cc }})
+          set(ENV{CXX} ${{ matrix.config.cxx }})
+
+          if ("x${{ matrix.config.libcxx }}" STREQUAL "xtrue")
+            set(cxx_flags "${cxx_flags} -stdlib=libc++ -nostdinc++ -cxx-isystem $ENV{GITHUB_WORKSPACE}/llvm/include/c++/v1/ -Wno-unused-command-line-argument")
+            set(link_flags "${link_flags} -L $ENV{GITHUB_WORKSPACE}/llvm/lib -Wl,-rpath,$ENV{GITHUB_WORKSPACE}/llvm/lib -lc++abi")
+          endif()
+
+          if ("x${{ matrix.config.cxx_asan }}" STREQUAL "xtrue")
+            set(cxx_flags "${cxx_flags} -fno-omit-frame-pointer")
+          endif()
+
+          execute_process(
+            COMMAND cmake
+              -S .
+              -B build
+              -D CMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
+              -D CMAKE_VERBOSE_MAKEFILE=ON
+              -D CXX_STANDARD:STRING=${{ matrix.config.cxx_standard }}
+              -D "CMAKE_CXX_FLAGS:STRING=${cxx_flags}"
+              -D "CMAKE_EXE_LINKER_FLAGS:STRING=${link_flags}"
+              -D SANITIZE=${{matrix.config.cxx_asan}}
+              ${{ matrix.config.cmake_args }}
+              ${extra_cmake_args}
+            RESULT_VARIABLE result
+          )
+          if (NOT result EQUAL 0)
+            message(FATAL_ERROR "Bad exit status")
+          endif()
+
+      - name: Build
+        shell: cmake -P {0}
+        run: |
+          execute_process(
+            COMMAND cmake --build build --target self_test
+            COMMAND cmake --build build --target custom_recursive_mutex
+            RESULT_VARIABLE result
+          )
+          if (NOT result EQUAL 0)
+            message(FATAL_ERROR "Bad exit status")
+          endif()
+
+      - name: Run tests
+        shell: cmake -P {0}
+        run: |
+          execute_process(
+            COMMAND cmake --build build --target run_self_test
+            RESULT_VARIABLE result
+          )
+          if (NOT result EQUAL 0)
+            message(FATAL_ERROR "Running tests failed!")
+          endif()

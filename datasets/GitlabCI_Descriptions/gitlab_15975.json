@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_15975",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 774,
+  "description": "Create a GitLab CI pipeline with a single test stage containing three jobs: job1, job2, and job3. Each job runs on the default image and executes apt-get update, apt-get install -y python-virtualenv python-psycopg2, creates a virtualenv with system site packages, activates it, installs Python dependencies from the appropriate requirements.pip file, and then runs its specific test script (job1 runs cd monyt && python tests_influxdb.py, job2 runs cd monyt && python tests_grafana.py, job3 runs python pgstat/tests_pgstat.py). All jobs are assigned to the test stage and no caches, artifacts, or rules are defined.",
+  "tags": [
+    "apt",
+    "python-virtualenv",
+    "psycopg2",
+    "virtualenv",
+    "test"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_12561",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 570,
+  "description": "Create a GitLab CI pipeline using the node:latest Docker image with three stages: test, build, and deploy. In the build stage add a \"Build SCSS\" job that runs \"npm ci\" then \"npm run build-scss\" and stores lib/theme.css as an artifact. In the test stage add three jobs: \"ESLint\" runs \"npm i\" then \"npx eslint .\"; \"Stylelint\" runs \"npm i\" then \"npx stylelint .\"; and \"Test code\" runs \"npm ci\" then \"npm test\". In the deploy stage add a \"Now Deploy\" job that runs only on the master branch, sets the environment name to Zeit NOW with URL https://listas.now.sh, and executes \"npm i --no-save now\", \"npx now deploy --token=$NOW_TOKEN\", and \"npx now alias --token=$NOW_TOKEN\" to deploy to ZEIT Now.",
+  "tags": [
+    "node",
+    "npm",
+    "eslint",
+    "stylelint",
+    "scss",
+    "now",
+    "gitlab-ci"
+  ]
+}

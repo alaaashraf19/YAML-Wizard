@@ -1,0 +1,140 @@
+.build:
+  after_script: &id001
+  - for builddir in build/packaging/rpm/BUILD/wireshark-*/build build/packaging/rpm/BUILD/wireshark-*
+    build obj-*; do [ ! -d "$builddir/run" ] || break; done
+  - if [[ "$CI_JOB_NAME" == "build:rpm-opensuse-"* ]]; then export LD_LIBRARY_PATH=$builddir/run;
+    fi
+  - if [ -f $builddir/run/tshark ]; then $builddir/run/tshark --version; fi
+  stage: build
+.build-rpm:
+  after_script: *id001
+  artifacts: &id002
+    expire_in: 3 days
+    paths:
+    - build/packaging/rpm/RPMS
+  stage: build
+.build-ubuntu:
+  after_script: *id001
+  before_script: &id003
+  - apt-get update -qq
+  - ./tools/debian-setup.sh --install-optional --install-test-deps -y
+  - useradd user
+  - locale-gen en_US.UTF-8
+  - export LANG=en_US.UTF-8
+  - export PYTEST_ADDOPTS=--skip-missing-programs=dumpcap,rawshark
+  - mkdir build
+  - cd build
+  image: wireshark/wireshark-ubuntu-dev
+  retry: 1
+  script: &id004
+  - cmake -GNinja $CMAKE_ARGS ..
+  - ninja
+  - ninja test-programs
+  - chown -R user .
+  - if [ -f run/dumpcap ]; then setcap cap_net_raw,cap_net_admin+eip run/dumpcap;
+    fi
+  - su user -c pytest-3
+  stage: build
+build:debian-stable:
+  after_script: *id001
+  artifacts:
+    expire_in: 3 days
+    paths:
+    - debian-packages/*.deb
+  before_script:
+  - ./tools/debian-setup.sh --install-optional --install-test-deps -y --install-deb-deps
+  image: debian:stable
+  script:
+  - DH_QUIET=1 dpkg-buildpackage -b --no-sign -jauto
+  - mkdir debian-packages
+  - mv ../*.deb debian-packages/
+  stage: build
+build:rpm-centos-7:
+  after_script: *id001
+  artifacts: *id002
+  image: centos:7
+  script:
+  - yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+  - tools/rpm-setup.sh --install-optional -y
+  - mkdir build
+  - cd build
+  - cmake3 -GNinja ..
+  - ninja-build rpm-package
+  stage: build
+build:rpm-fedora:
+  after_script: *id001
+  artifacts: *id002
+  image: fedora
+  script:
+  - dnf upgrade -y
+  - tools/rpm-setup.sh --install-optional -y
+  - mkdir build
+  - cd build
+  - cmake3 -GNinja ..
+  - ninja-build rpm-package
+  stage: build
+build:rpm-opensuse-15.1:
+  after_script: *id001
+  artifacts: *id002
+  image: opensuse/leap:15.1
+  script:
+  - zypper --non-interactive install update-desktop-files
+  - tools/rpm-setup.sh --install-optional ruby
+  - gem install asciidoctor -v 1.5.8 --no-ri --no-rdoc
+  - mkdir build
+  - cd build
+  - cmake -GNinja ..
+  - ninja rpm-package
+  stage: build
+clang-10:
+  after_script: *id001
+  before_script: *id003
+  image: wireshark/wireshark-ubuntu-dev
+  retry: 1
+  script: *id004
+  stage: build
+  variables:
+    CC: clang-10
+    CXX: clang++-10
+test:debian-stable:
+  dependencies:
+  - build:debian-stable
+  image: debian:stable
+  script:
+  - apt-get update
+  - DEBIAN_FRONTEND=noninteractive apt-get install ./debian-packages/*.deb -y
+  - tshark --version
+  stage: test
+  variables:
+    GIT_STRATEGY: none
+test:rpm-centos-7:
+  dependencies:
+  - build:rpm-centos-7
+  image: centos:7
+  script:
+  - yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+  - yum --nogpgcheck localinstall -y build/packaging/rpm/RPMS/x86_64/*.rpm
+  - tshark --version
+  stage: test
+  variables:
+    GIT_STRATEGY: none
+test:rpm-fedora:
+  dependencies:
+  - build:rpm-fedora
+  image: fedora
+  script:
+  - dnf install -y build/packaging/rpm/RPMS/x86_64/*.rpm
+  - tshark --version
+  stage: test
+  variables:
+    GIT_STRATEGY: none
+test:rpm-opensuse-15.1:
+  dependencies:
+  - build:rpm-opensuse-15.1
+  image: opensuse/leap:15.1
+  script:
+  - zypper --no-gpg-checks install -y build/packaging/rpm/RPMS/x86_64/*.rpm
+  - tshark --version
+  stage: test
+  variables:
+    GIT_STRATEGY: none

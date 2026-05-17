@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_07677",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 530,
+  "description": "Create a GitLab CI pipeline with a single job named migrate_repos that runs in the default test stage using the python:3.6 Docker image. Configure the job to run only on schedule pipelines and manual web triggers. In the script, create ~/.ssh, write the $GITLAB_PRIVATE_SSH_KEY secret to ~/.ssh/id_rsa, set permissions 0700 for the directory and 0600 for the key, add github.com and gitlab.com to known_hosts with ssh-keyscan, install Python dependencies via pip3 install -r requirements.txt, set global git user.name to \"OCA2FC Migrator Bot\" and user.email to \"info@flectra-community.org\", run python3 ./oca2fc.py --ignore-limit, and finally delete the private key file. No caches, artifacts, or services are defined.",
+  "tags": [
+    "python-3.6",
+    "ssh",
+    "schedule",
+    "web",
+    "migration"
+  ]
+}

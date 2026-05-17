@@ -1,0 +1,16 @@
+{
+  "sha": "d50552c477cdfddfc32b48d24bdcb37d7eccdf8f8f758e0b96898eb71a6cebbb",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4456,
+  "description": "Create a GitHub Actions workflow named build that runs on push and pull request events for all branches except travis_ccache. The workflow has three jobs: clang-format, build. The clang-format job checks code formatting using DoozyX/clang-format-lint-action. The build job runs a matrix of builds across different operating systems (Windows, Ubuntu, macOS) and generators (Visual Studio, Unix Makefiles, Ninja), installing dependencies, setting up the build environment, and running cmake, build, and test steps.",
+  "tags": [
+    "clang-format",
+    "cmake",
+    "matrix-build",
+    "ubuntu",
+    "windows",
+    "macos",
+    "github-actions"
+  ]
+}

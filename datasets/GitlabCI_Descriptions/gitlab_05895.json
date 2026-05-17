@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_05895",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1049,
+  "description": "Create a GitLab CI pipeline that uses the php:5.6-apache Docker image and defines three stages: build, test, and deploy. In the build stage add a lint job that runs pear install PHP_CodeSniffer then phpcs. In the test stage add a test_integration job that uses the mysql:5 service, sets MYSQL_DATABASE, MYSQL_HOST, MYSQL_USER, MYSQL_PASSWORD, and MYSQL_ROOT_PASSWORD variables, runs before_script commands: cp -r ./ /var/www/html/, env | grep _ | xargs -I {} echo \"export \\\"{}\\\"\" >> /etc/apache2/envvars, a2enmod rewrite, apt-get update && apt-get install -y linkchecker mysql-client, docker-php-ext-install mysql mysqli, apachectl start; then script commands: curl --fail http://localhost/setup.php, mv /var/www/html/config_sample.ini /var/www/html/config.ini, mysql -h$MYSQL_HOST -u$MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATABASE < sql/schema.sql, and linkchecker http://localhost/. In the deploy stage add a deploy job that runs only on the master branch, targets the production environment, and executes curl -v -H \"x-gitlab-token: $X_GITLAB_TOKEN\" https://www.hapitjeter.net/webhook_receive.php -d \"$CI_COMMIT_SHA\".",
+  "tags": [
+    "php",
+    "php-apache",
+    "lint",
+    "phpcs",
+    "mysql",
+    "integration-test",
+    "deploy",
+    "webhook"
+  ]
+}

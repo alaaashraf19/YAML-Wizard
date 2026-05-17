@@ -1,0 +1,58 @@
+cache:
+  key: node_modules
+  paths:
+  - node_modules/
+  untracked: true
+deploy_production:
+  before_script:
+  - which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )
+  - eval $(ssh-agent -s)
+  - ssh-add <(echo "$SSH_PRIVATE_KEY")
+  - mkdir -p $HOME/.ssh
+  - chmod 700 $HOME/.ssh
+  - ssh-keyscan -H -p 12345 34.209.207.52 >> $HOME/.ssh/known_hosts
+  - ssh-keyscan -H 'gitlab.com' >> $HOME/.ssh/known_hosts
+  environment: production
+  only:
+  - master
+  script:
+  - pm2 deploy ecosystem.json production
+  stage: deploy
+  when: manual
+deploy_staging:
+  before_script:
+  - which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )
+  - eval $(ssh-agent -s)
+  - ssh-add <(echo "$SSH_PRIVATE_KEY")
+  - mkdir -p $HOME/.ssh
+  - chmod 700 $HOME/.ssh
+  - ssh-keyscan -H -p 12345 34.212.243.114 >> $HOME/.ssh/known_hosts
+  - ssh-keyscan -H 'gitlab.com' >> $HOME/.ssh/known_hosts
+  environment: staging
+  only:
+  - master
+  script:
+  - pm2 deploy ecosystem.json staging
+  stage: deploy
+image: registry.gitlab.com/debtcollective/debtcollective/ci:latest
+stages:
+- test
+- deploy
+test:
+  before_script:
+  - wget https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs923/ghostscript-9.23-linux-x86_64.tgz
+  - cp config/config.sample.js config/config.js
+  - cp config/knexfile.sample.js knexfile.js
+  script:
+  - yarn
+  - yarn build
+  - yarn test
+  - yarn report
+  services:
+  - redis:3.0.6
+  - postgres:9.6.2
+  stage: test
+variables:
+  POSTGRES_HOST: postgres
+  POSTGRES_USER: postgres
+  REDIS_HOST: redis

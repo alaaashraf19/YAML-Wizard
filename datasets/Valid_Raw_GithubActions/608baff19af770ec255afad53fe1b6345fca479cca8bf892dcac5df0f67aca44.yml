@@ -1,0 +1,46 @@
+name: Release Latest
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  create_latest_release:
+    name: Create latest release
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install jq, python3-pip, g++-10, ninja
+        run: sudo apt-get install -y jq python3-pip g++-10 ninja-build
+      - name: Install meson
+        run: sudo pip3 install meson
+      - name: Initialize meson project
+        run:  meson setup dist --wrap-mode nofallback
+        env:
+          CXX: g++-10
+          CC: gcc-10
+      - name: Create distribution archive
+        run:  meson dist -C dist --formats "xztar,zip" --no-tests
+      - name: Prepare archives
+        run: |
+          cp dist/meson-dist/libosmscout-$(cd dist && meson introspect --projectinfo | jq -r .version).tar.xz libosmscout-latest.tar.xz
+          cp dist/meson-dist/libosmscout-$(cd dist && meson introspect --projectinfo | jq -r .version).zip libosmscout-latest.zip
+      - name: Create checksums
+        run: |
+          sha256sum libosmscout-latest.tar.xz >libosmscout-latest.tar.xz.sha256sum
+          sha256sum libosmscout-latest.zip >libosmscout-latest.zip.sha256sum
+      - name: Release
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          body: "Release of the latest code in master"
+          draft: false
+          prerelease: true
+          generateReleaseNotes: true
+          name: latest
+          removeArtifacts: true
+          replacesArtifacts: true
+          tag: latest
+          artifacts: "libosmscout-latest.tar.xz,libosmscout-latest.tar.xz.sha256sum,libosmscout-latest.zip,libosmscout-latest.zip.sha256sum"

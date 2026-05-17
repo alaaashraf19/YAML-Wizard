@@ -1,0 +1,17 @@
+{
+  "sha": "6cba58baeba363a154b38f627d5927aeac4aa28ac3e5fdfeca045d793a49c6dd",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2756,
+  "description": "Create a GitHub Actions workflow named CI that runs on push to the master branch, on pull requests, and daily at 12:00 UTC. The workflow should have three jobs: lint, build, and container. The lint job should run on ubuntu-latest, set up Python 3.6, install dependencies, and lint Python files with pyflakes and mypy. The build job should use a matrix strategy with multiple test environments, set up Python 3.6, install dependencies, build the project with cmake and make, and run tests with nosetests. The container job should build and push Docker images to docker.pkg.github.com using a provided action.",
+  "tags": [
+    "python",
+    "ci",
+    "ubuntu",
+    "docker",
+    "tests",
+    "linting",
+    "building",
+    "containers"
+  ]
+}

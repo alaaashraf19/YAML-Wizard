@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_17594",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 614,
+  "description": "Create a GitLab CI pipeline using the ablu/ubuntu-texlive-full:latest Docker image and a global before_script that runs apt-get update, installs git and Chinese language packs, creates /usr/share/fonts/opentype, clones https://github.com/a20185/adobefonts, makes adobefonts/runner.sh executable, executes it, refreshes the font cache, replaces Times New Roman with Nimbus Roman No9 L in sysuthesis.cls, and removes the adobefonts directory. Define a single stage named build. In the build stage add a test_build job that executes git checkout -b ci-build then make, archives the generated main.pdf as an artifact named CI-$CI_COMMIT_REF_NAME-${CI_COMMIT_SHA:0:7} on success, and runs only on the master and dev branches. No caches or services are used.",
+  "tags": [
+    "ubuntu",
+    "texlive",
+    "make",
+    "pdf",
+    "gitlab-ci"
+  ]
+}

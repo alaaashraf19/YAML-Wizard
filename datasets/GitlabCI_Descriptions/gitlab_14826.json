@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_14826",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2707,
+  "description": "Create a GitLab CI pipeline with two stages, test and package. In the test stage add a smartos_test job that runs ./rebar3 as lint lint, then ./rebar3 xref, then ./rebar3 dialyzer, is excluded from pipelines, master and dev refs, and uses the erlang-19 and smartos tags. Also in the test stage add trigger_dialyzer and trigger_xref jobs that use the erlang:19 Docker image, run only for pipeline triggers, execute ./rebar3 upgrade $DOWNSTREAM_LIBRARY followed by ./rebar3 dialyzer (or ./rebar3 xref respectively), and run on the gitlab-org-high-cpu tag. In the package stage add a bsd job that runs only on master or dev refs (excluding pipelines), sets SUFFIX, OS_VER, ARCH and BRANCH with export commands, runs gmake dist, uploads rel/pkgng/*.txz to s3://freebsd.project-fifo.net/$BRANCH/$ARCH/$OS_VER/, and triggers a downstream pipeline via curl with token and variables, using the erlang-19 and freebsd-11.0 tags. Also in the package stage add a smartos job that runs only on master or dev refs (excluding pipelines), sets SUFFIX and DS_VER with export commands, sets BRANCH, runs gmake dist, creates rel/pkg/info, uploads rel/pkg/*.tgz to s3://release.project-fifo.net/pkg/$DS_VER/$BRANCH/, writes package info to rel/pkg/info, uploads that info to s3://release-info.project-fifo.net/pkg/$DS_VER/$BRANCH/, and triggers a downstream pipeline via curl with token and variables, using the erlang-19 and smartos tags.",
+  "tags": [
+    "erlang",
+    "freebsd",
+    "smartos",
+    "rebar3",
+    "make",
+    "s3",
+    "pipeline-trigger"
+  ]
+}

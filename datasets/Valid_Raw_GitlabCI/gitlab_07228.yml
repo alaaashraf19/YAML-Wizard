@@ -1,0 +1,21 @@
+build:
+  artifacts:
+    paths:
+    - public/
+  image: ruby:2.7
+  script:
+  - gem install jekyll
+  - jekyll build -d public
+  stage: build
+deploy:
+  image: python:3.6.6-stretch
+  only:
+  - master
+  script:
+  - pip install --upgrade awscli
+  - aws s3 cp ./public s3://johnmollberg.com/public --recursive
+  - aws s3 cp ./support/index.html s3://johnmollberg.com/index.html
+  stage: deploy
+stages:
+- build
+- deploy

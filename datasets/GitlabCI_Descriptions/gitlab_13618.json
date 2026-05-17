@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_13618",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2681,
+  "description": "Create a GitLab CI pipeline using the docker:latest image with a docker:dind service and a before_script that runs docker info and logs into the registry. Define stages build, test, and release and set global variables CONTAINER_DEV_IMAGE, CONTAINER_ID, CONTAINER_RELEASE_IMAGE, and CONTAINER_TEST_IMAGE. In the build stage add build_fedora27 and build_fedora28 jobs (except master) that set DISTRO and TAG variables and execute \"docker build --pull -t $CONTAINER_TEST_IMAGE:$TAG -f Dockerfile.$DISTRO .\" then \"docker push $CONTAINER_TEST_IMAGE:$TAG\". In the test stage add test_fedora27 and test_fedora28 jobs (except master) that set DISTRO, INIT, and TAG variables and run \"docker pull $CONTAINER_TEST_IMAGE:$TAG\", \"docker run --name $CONTAINER_ID -d --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro $CONTAINER_TEST_IMAGE:$TAG $INIT\", and \"docker exec --tty $CONTAINER_ID env TERM=xterm ansible --version\". In the release stage add release-image_fedora27, release-image_fedora28, and release-image_latest jobs (only master) that set RELEASE_TAG and TAG variables and run \"docker pull $CONTAINER_DEV_IMAGE:$TAG\", \"docker tag $CONTAINER_DEV_IMAGE:$TAG $CONTAINER_RELEASE_IMAGE:$RELEASE_TAG\", and \"docker push $CONTAINER_RELEASE_IMAGE:$RELEASE_TAG\".",
+  "tags": [
+    "docker",
+    "dind",
+    "build",
+    "test",
+    "release",
+    "fedora27",
+    "fedora28",
+    "ansible",
+    "gitlab-ci"
+  ]
+}

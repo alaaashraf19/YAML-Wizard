@@ -1,0 +1,89 @@
+check-build-units:
+  before_script:
+  - source scripts/ci/gitlab-ci-section
+  - section_start setup "Install Tools"
+  - apt install --assume-yes --no-install-recommends jq
+  - section_end setup
+  extends: .base_job_template
+  image: $CI_REGISTRY_IMAGE/qemu/debian:$QEMU_CI_CONTAINER_TAG
+  needs:
+    job: amd64-debian-container
+  script:
+  - mkdir build
+  - cd build
+  - section_start configure "Running configure"
+  - ../configure
+  - cd ..
+  - section_end configure
+  - section_start analyse "Analyse"
+  - .gitlab-ci.d/check-units.py build/compile_commands.json
+  - section_end analyse
+  stage: build
+check-dco:
+  before_script:
+  - apk -U add git
+  extends: .base_job_template
+  image: python:3.10-alpine
+  needs: []
+  script: .gitlab-ci.d/check-dco.py
+  stage: build
+  variables:
+    GIT_DEPTH: 1000
+check-patch:
+  allow_failure: true
+  before_script:
+  - apk -U add git perl
+  extends: .base_job_template
+  image: python:3.10-alpine
+  needs: []
+  script:
+  - .gitlab-ci.d/check-patch.py
+  stage: build
+  variables:
+    GIT_DEPTH: 1000
+    QEMU_JOB_ONLY_FORKS: 1
+check-python-minreqs:
+  extends: .base_job_template
+  image: $CI_REGISTRY_IMAGE/qemu/python:$QEMU_CI_CONTAINER_TAG
+  needs:
+    job: python-container
+  script:
+  - make -C python check-minreqs
+  stage: test
+  variables:
+    GIT_DEPTH: 1
+check-python-tox:
+  extends: .base_job_template
+  image: $CI_REGISTRY_IMAGE/qemu/python:$QEMU_CI_CONTAINER_TAG
+  needs:
+    job: python-container
+  script:
+  - make -C python check-tox
+  stage: test
+  variables:
+    GIT_DEPTH: 1
+    QEMU_JOB_OPTIONAL: 1
+    QEMU_TOX_EXTRA_ARGS: --skip-missing-interpreters=false
+check-rust-tools-nightly:
+  allow_failure: true
+  artifacts:
+    expire_in: 2 days
+    paths:
+    - rust/target/doc
+    when: on_success
+  extends: .base_job_template
+  image: $CI_REGISTRY_IMAGE/qemu/fedora-rust-nightly:$QEMU_CI_CONTAINER_TAG
+  needs:
+  - artifacts: true
+    job: build-system-fedora-rust-nightly
+  script:
+  - source scripts/ci/gitlab-ci-section
+  - section_start test "Running Rust code checks"
+  - cd build
+  - pyvenv/bin/meson devenv -w ../rust ${CARGO-cargo} fmt --check
+  - make clippy
+  - make rustdoc
+  - section_end test
+  stage: test
+  variables:
+    GIT_DEPTH: 1

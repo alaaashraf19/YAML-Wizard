@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_04154",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 796,
+  "description": "Create a GitLab CI pipeline using the ruby:2.1 Docker image with a postgres service and a global DB_NAME=postgres variable. Add a before_script that runs gem install bundler, bundle install, and bundle exec rake db:create for all jobs. Define a notify job dockerhub that runs only on branches, executes curl http://dockerhub/URL, and is tagged ruby and postgres. Define a deploy job production that runs on the master branch and any branch matching /^deploy-.*$/, runs cap deploy production and cap notify, uses ruby and mysql tags, and overrides DB_NAME to mysql. Define a test job rspec that runs on branches, executes rake spec, and is tagged ruby and postgres. Define a test job spinach that allows failure, runs on all except tags, executes rake spinach, and is tagged ruby and mysql. Define a deploy job staging that runs on all except the stable branch, executes cap deploy stating, uses ruby and mysql tags, and sets KEY1=value1 and KEY2=value2.",
+  "tags": [
+    "ruby",
+    "postgres",
+    "mysql",
+    "capistrano",
+    "rspec",
+    "spinach",
+    "dockerhub",
+    "notify",
+    "deploy",
+    "test"
+  ]
+}

@@ -1,0 +1,51 @@
+before_script:
+- dotnet nuget add source https://gitlab.com/api/v4/projects/20574571/packages/nuget/index.json
+  -n gitlab
+build_linux:
+  artifacts:
+    paths:
+    - gtaserver.core/publish/linux-Release
+  script:
+  - cd gtaserver.core
+  - dotnet publish -r ubuntu-x64 -c Release -o publish/linux-Release
+  stage: build_server
+build_linux_arm:
+  artifacts:
+    paths:
+    - gtaserver.core/publish/arm-Release
+  script:
+  - cd gtaserver.core
+  - dotnet publish -r linux-arm -c Release -o publish/arm-Release
+  stage: build_server
+  when: manual
+build_plugins:
+  artifacts:
+    paths:
+    - Race/publish/race.dll
+    - Race/publish/race.pdb
+    - Race/publish/Maps
+    - DiscordBot/publish/DiscordBot.dll
+    - DiscordBot/publish/DiscordBot.pdb
+  script:
+  - cd Race
+  - dotnet publish -c Release -o publish
+  - cd ../DiscordBot
+  - dotnet publish -c Release -o publish
+  stage: plugins
+build_windows:
+  artifacts:
+    paths:
+    - gtaserver.core/publish/windows-Release
+  script:
+  - cd gtaserver.core
+  - dotnet publish -r win10-x64 -c Release -o publish/windows-Release -p:PublishSingleFile=true
+  stage: build_server
+  tags:
+  - group-windows
+  - windows
+image: mcr.microsoft.com/dotnet/sdk:6.0
+stages:
+- build_server
+- plugins
+variables:
+  GIT_SUBMODULE_STRATEGY: normal

@@ -1,0 +1,15 @@
+{
+  "sha": "96cbdc0ce2811bf9e3fb04136e144822b508ca3cff1a33ef37ecb4c70ce6c6e2",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1450,
+  "description": "Create a reusable GitHub Actions workflow named Common build & test workflow that accepts four inputs: install-name, os, build, and compiler. The workflow runs on a job named ci with the specified os and sets environment variables CC and CXX based on the compiler input. It checks out the repository, installs prerequisites, creates a build directory, configures CMake with the specified build type and warning settings, builds the project, runs tests, and installs and uninstalls the project.",
+  "tags": [
+    "cmake",
+    "gcc",
+    "clang",
+    "ci",
+    "tests",
+    "reusable-workflow"
+  ]
+}

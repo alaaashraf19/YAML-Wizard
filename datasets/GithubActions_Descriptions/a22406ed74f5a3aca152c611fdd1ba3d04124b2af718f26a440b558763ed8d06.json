@@ -1,0 +1,16 @@
+{
+  "sha": "a22406ed74f5a3aca152c611fdd1ba3d04124b2af718f26a440b558763ed8d06",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3236,
+  "description": "Create a GitHub Actions workflow named basic test that runs on push to any tag and branch master, and on pull requests to branches master and feature-2.0. The workflow consists of three jobs: simple-checks, unit-tests, and integration-tests, all running on ubuntu-latest. simple-checks checks out the code, sets up Python 3.11, and runs pre-commit checks. unit-tests and integration-tests check out the code, set up Python 3.11, install dependencies with uv and pip, and run tox with various environments and configurations.",
+  "tags": [
+    "python",
+    "tox",
+    "pre-commit",
+    "tests",
+    "ubuntu",
+    "docker",
+    "grpc"
+  ]
+}

@@ -1,0 +1,23 @@
+build:
+  only:
+  - master
+  script:
+  - command build
+  stage: build
+deploy:
+  environment:
+    name: production
+    url: http://production.example.com
+  only:
+  - master
+  script:
+  - command deploy
+  stage: deploy
+  variables:
+    DISABLE_POSTGRES: 'yes'
+image: registry.gitlab.com/gitlab-examples/kubernetes-deploy
+stages:
+- build
+- deploy
+variables:
+  KUBE_DOMAIN: example.com

@@ -1,0 +1,15 @@
+{
+  "sha": "1f758778a4e35b63fd48e500f096c51d75ade5dbba2ef59b42efa865c5ca88dd",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3483,
+  "description": "Create a GitHub Actions workflow named Build and Test that runs on push events to all branches except 'circleci', and ignores changes to specific paths. The workflow uses a matrix strategy to run on macOS-14 with Node.js 20 and 22. It checks out the code, sets up Node.js and .NET 8.0.x, caches node modules, installs dependencies, runs tests, and uploads test artifacts.",
+  "tags": [
+    "nodejs",
+    "dotnet",
+    "tests",
+    "macos",
+    "matrix",
+    "ci"
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "sha": "gitlab_08577",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 10736,
+  "description": "Create a GitLab CI pipeline with stages lint, security, test, package, release, and tag, using the DEFAULT_GO_VERSION variable and a .go-cache template that caches .go/pkg/mod/ and sets GOPATH. In the lint stage define lint:commitlint (node:lts-alpine image, before_script apk add git and npm install @commitlint/cli @commitlint/config-conventional, script npx commitlint --from \"$CI_MERGE_REQUEST_DIFF_BASE_SHA\" --verbose), lint:go-build-versions (golang image, script ./scripts/check-go-build-versions.sh), lint:go-fmt (golang image, script ./scripts/check-go-format.sh), lint:go-mod (golang image, script go mod tidy and a STATUS check that fails if go.mod or go.sum changed), lint:golangci (golangci/golangci-lint image, before_script apt-get update && apt-get -yy install libicu-dev, script make golangci-lint), lint:mr-title (node:lts-alpine image, before_script npm install @commitlint/cli @commitlint/config-conventional, script ./scripts/check-mr-title.sh), and lint:tool-versions (golang image, script ./scripts/check-tool-versions.sh). In the security stage include the imported gemnasium-dependency_scanning, secret_detection, and semgrep-sast jobs with rules that run on the default branch, merge requests, and tags. In the test stage add tests-elasticsearch and tests-opensearch jobs that extend .test-default (which creates .go cache, sets GOPATH, runs apt-get libicu-dev, make format, make cover, make, make test) and run in parallel matrices for multiple Elasticsearch or OpenSearch versions with corresponding services, publishing coverage.xml as a Cobertura coverage artifact. In the package stage add build-package-and-qa which triggers the gitlab-org/build/omnibus-gitlab-mirror project on the master branch with specific variables and runs only on merge‑request changes. In the release stage add release_create_mr (alpine image) that installs glab, determines the next version via git‑cliff, creates a release branch, updates VERSION and CHANGELOG, commits, pushes, selects a random reviewer via glab API, and opens a merge request with labels; finally, in the tag stage add version_tag (gitlab CLI image) that reads the VERSION file and creates a Git tag v${VERSION} via glab if it does not already exist.",
+  "tags": [
+    "go",
+    "lint",
+    "security",
+    "test",
+    "coverage",
+    "docker-trigger",
+    "release",
+    "tag",
+    "gitlab-ci",
+    "golangci-lint",
+    "commitlint",
+    "code-navigation",
+    "semgrep",
+    "dependency-scanning"
+  ]
+}

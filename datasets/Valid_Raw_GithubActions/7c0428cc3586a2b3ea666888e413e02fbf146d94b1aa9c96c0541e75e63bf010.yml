@@ -1,0 +1,66 @@
+name: Build
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        llvm: [9, 10, 11]
+        build-type: [DEBUG]
+        docker: [opensuse/tumbleweed]
+        include:
+          - llvm: 11
+            build-type: ASAN
+            docker: opensuse/tumbleweed
+          - llvm: 11
+            build-type: UBSAN
+            docker: opensuse/tumbleweed
+          - llvm: 11
+            build-type: COVERAGE
+            docker: opensuse/tumbleweed
+          - llvm: 9
+            build-type: DEBUG
+            docker: opensuse/leap
+      fail-fast: false
+
+    container: ${{ matrix.docker }}
+
+    steps:
+    - run: zypper -n install
+        binutils clang${{ matrix.llvm }}-devel cmake flex gcc-c++ llvm${{ matrix.llvm }}-devel python3-Pebble python3-pytest unifdef python3-psutil curl git
+        python3-pytest-flake8
+        python3-flake8
+        python3-flake8-builtins
+        python3-flake8-bugbear
+        python3-flake8-import-order
+        python3-flake8-quotes
+    - run: zypper -n install python3-pip python3-flake8-comprehensions python3 sqlite-devel
+      if: matrix.docker == 'opensuse/tumbleweed'
+    - run: pip install codecov pytest-cov
+      if: matrix.docker == 'opensuse/tumbleweed'
+    - uses: actions/checkout@v2
+    - run: nproc
+    - name: build
+      run: |
+            mkdir objdir
+            cd objdir
+            cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.build-type }}
+            make -j`nproc` VERBOSE=1
+    - name: test
+      run: |
+            cd objdir
+            pytest
+      if: matrix.build-type != 'COVERAGE'
+    - name: test with coverage
+      run: |
+            cd objdir
+            pytest --cov=./
+            codecov
+      if: matrix.build-type == 'COVERAGE'

@@ -1,0 +1,92 @@
+flash-cx3:cmake:
+  image: clemolgatsbr/qibuild:latest
+  script:
+  - cd flash-cx3
+  - mkdir build && cd build
+  - cmake ..
+  - make
+  stage: build
+flash-cx3:qibuild:
+  image: clemolgatsbr/qibuild:latest
+  script:
+  - cd flash-cx3
+  - qibuild init
+  - qibuild configure --release
+  - qibuild make
+  stage: build
+flash-cx3:robot:
+  image: clemolgatsbr/qibuild:latest
+  script:
+  - (cd toolchain && ./install_toolchain.sh)
+  - cd flash-cx3
+  - qibuild init
+  - qibuild configure -c robot --release
+  - qibuild make -c robot
+  stage: build
+flash-ov580:cmake:
+  image: clemolgatsbr/qibuild:latest
+  script:
+  - cd flash-ov580
+  - mkdir build && cd build
+  - cmake ..
+  - make
+  stage: build
+flash-ov580:qibuild:
+  image: clemolgatsbr/qibuild:latest
+  script:
+  - cd flash-ov580
+  - qibuild init
+  - qibuild configure --release
+  - qibuild make
+  stage: build
+flash-ov580:robot:
+  image: clemolgatsbr/qibuild:latest
+  script:
+  - (cd toolchain && ./install_toolchain.sh)
+  - cd flash-ov580
+  - qibuild init
+  - qibuild configure -c robot --release
+  - qibuild make -c robot
+  stage: build
+pages:
+  artifacts:
+    paths:
+    - public
+  image: clemolgatsbr/qibuild:latest
+  only:
+  - master
+  script:
+  - cd test-firmware
+  - mkdir build && cd build
+  - cmake -DENABLE_DOC=ON ..
+  - make doxygen
+  - mv doc/html/ ../../public/
+  stage: doc
+stages:
+- build
+- doc
+test-firmware:cmake:
+  image: clemolgatsbr/qibuild:latest
+  script:
+  - cd test-firmware
+  - mkdir build && cd build
+  - cmake ..
+  - make
+  stage: build
+test-firmware:qibuild:
+  image: clemolgatsbr/qibuild:latest
+  script:
+  - cd test-firmware
+  - qibuild init
+  - qibuild configure --release
+  - qibuild make
+  stage: build
+test-firmware:robot:
+  image: clemolgatsbr/qibuild:latest
+  script:
+  - (cd toolchain && ./install_toolchain.sh)
+  - cd test-firmware
+  - qibuild init
+  - qibuild configure -c robot --release
+  - qibuild make -c robot
+  stage: build

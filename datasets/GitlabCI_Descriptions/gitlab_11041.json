@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_11041",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 932,
+  "description": "Create a GitLab CI pipeline that defines two stages, build-app and build-image. In the build-app stage add a job named \"build app\" using the node:12 Docker image, caching the node_modules directory, and producing artifacts of the .next and build directories that expire after one day; the job runs the commands \"yarn\", \"yarn lint\", and \"yarn build\". In the build-image stage add a job named \"build image\" using the docker:latest image with the docker:19.03.5-dind service, which runs \"docker info\", logs in to $CI_REGISTRY with $CI_REGISTRY_USER and $CI_REGISTRY_PASSWORD via stdin, attempts to pull existing images, builds a new image with \"--cache-from\" for the current branch and master and \"--shm-size 512M\", pushes the image tagged with $CI_COMMIT_SHA, tags it with $CI_COMMIT_REF_SLUG, and pushes the tag. No additional rules or only/except conditions are defined.",
+  "tags": [
+    "node",
+    "yarn",
+    "docker",
+    "dind",
+    "ci-registry",
+    "build-app",
+    "build-image"
+  ]
+}

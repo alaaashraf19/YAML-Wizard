@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_14078",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2803,
+  "description": "Create a GitLab CI pipeline using golang:1.24 as the default image and defining stages checks and build. In the checks stage add a go test job that creates $COVERAGEREPORTDIR, runs `go test -cover --covermode=atomic --coverprofile=$COVERAGEREPORTDIR/main.cover ./...`, then `go tool cover -func $COVERAGEREPORTDIR/main.cover` and `go tool cover -html $COVERAGEREPORTDIR/main.cover -o $COVERAGEREPORTDIR/main.html`, stores the coverage directory as a one‑week artifact and runs only on branches; add a go test release job with the same script that runs only on tags and keeps artifacts for one year; add a govulncheck job that runs `go mod tidy` and `go tool govulncheck -show color ./...`; add a lint job that runs `go tool golangci-lint run`. In the build stage add a dev build job using the goreleaser/goreleaser image (entrypoint disabled) with the docker:dind service, installs docker-cli via `apk add --update docker-cli`, then runs `goreleaser release --clean --snapshot --skip=publish` and publishes the .build/dist/ directory as a one‑week artifact for any branch. Also add a release job using the same goreleaser image and docker:dind, installs py3-pip, jq and docker-cli, installs cloudsmith-cli with `pip install --upgrade --break-system-packages cloudsmith-cli`, logs into Docker Hub using $DOCKER_HUB_USER and $DOCKER_HUB_TOKEN, runs `goreleaser release --clean`, verifies .build/dist/metadata.json and artifacts.json, extracts VERSION via `jq`, and uploads each binary artifact to Cloudsmith with a `cloudsmith push raw` command that includes GOOS, GOARCH and the version; this job runs only on tags matching the pattern ^v\\d+\\.\\d+\\.\\d+$. All jobs inherit CGO_ENABLED=0 and COVERAGEREPORTDIR=_build/coverage variables, and the build jobs set DOCKER_DRIVER=overlay2, DOCKER_HOST=tcp://docker:2375, DOCKER_TLS_CERTDIR='' variables.",
+  "tags": [
+    "go",
+    "golang",
+    "goreleaser",
+    "docker",
+    "coverage",
+    "lint",
+    "govulncheck",
+    "cloudsmith",
+    "ci"
+  ]
+}

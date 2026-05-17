@@ -1,0 +1,12 @@
+{
+  "sha": "gitlab_07581",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 212,
+  "description": "Create a GitLab CI pipeline that uses the Docker image registry.gitlab.com/finite-loop/flutils/pyenv:latest. Define a job called tests that runs in the default test stage, sets the PATH variable to \"/opt/python/bin:/opt/poetry/bin:/opt/pyenv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\", and then executes the command tox. No caches, artifacts, or special rules are required.",
+  "tags": [
+    "pyenv",
+    "tox",
+    "python"
+  ]
+}

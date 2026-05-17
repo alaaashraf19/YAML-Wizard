@@ -1,0 +1,642 @@
+.migration-compat-common:
+  allow_failure: true
+  extends: .common_test_job_template
+  needs:
+  - job: build-previous-qemu
+  - job: build-system-opensuse
+  script:
+  - cd build-previous
+  - unset PYTHON
+  - QTEST_QEMU_BINARY_SRC=./qemu-system-${TARGET} QTEST_QEMU_BINARY=../build/qemu-system-${TARGET}
+    ./tests/qtest/migration-test
+  - QTEST_QEMU_BINARY_DST=./qemu-system-${TARGET} QTEST_QEMU_BINARY=../build/qemu-system-${TARGET}
+    ./tests/qtest/migration-test
+  variables:
+    IMAGE: opensuse-leap
+    MAKE_CHECK_ARGS: check-build
+build-cfi-aarch64:
+  extends:
+  - .native_build_job_template
+  - .native_build_artifact_template
+  needs:
+  - job: amd64-fedora-container
+  timeout: 90m
+  variables:
+    AR: llvm-ar
+    CONFIGURE_ARGS: --cc=clang --cxx=clang++ --enable-cfi --enable-cfi-debug --enable-safe-stack
+      --disable-slirp
+    IMAGE: fedora
+    LD_JOBS: 1
+    MAKE_CHECK_ARGS: check-build
+    QEMU_JOB_SKIPPED: 1
+    TARGETS: aarch64-softmmu
+build-cfi-ppc64-s390x:
+  extends:
+  - .native_build_job_template
+  - .native_build_artifact_template
+  needs:
+  - job: amd64-fedora-container
+  timeout: 80m
+  variables:
+    AR: llvm-ar
+    CONFIGURE_ARGS: --cc=clang --cxx=clang++ --enable-cfi --enable-cfi-debug --enable-safe-stack
+      --disable-slirp
+    IMAGE: fedora
+    LD_JOBS: 1
+    MAKE_CHECK_ARGS: check-build
+    QEMU_JOB_SKIPPED: 1
+    TARGETS: ppc64-softmmu s390x-softmmu
+build-cfi-x86_64:
+  extends:
+  - .native_build_job_template
+  - .native_build_artifact_template
+  needs:
+  - job: amd64-fedora-container
+  timeout: 70m
+  variables:
+    AR: llvm-ar
+    CONFIGURE_ARGS: --cc=clang --cxx=clang++ --enable-cfi --enable-cfi-debug --enable-safe-stack
+      --disable-slirp
+    IMAGE: fedora
+    LD_JOBS: 1
+    MAKE_CHECK_ARGS: check-build
+    TARGETS: x86_64-softmmu
+build-legacy:
+  extends: .native_build_job_template
+  needs:
+    job: amd64-debian-legacy-cross-container
+  variables:
+    CONFIGURE_ARGS: --disable-tools
+    IMAGE: debian-legacy-test-cross
+    MAKE_CHECK_ARGS: check-tcg
+    TARGETS: alpha-linux-user alpha-softmmu sh4-linux-user
+build-libvhost-user:
+  extends: .base_job_template
+  image: $CI_REGISTRY_IMAGE/qemu/fedora:$QEMU_CI_CONTAINER_TAG
+  needs:
+    job: amd64-fedora-container
+  script:
+  - mkdir subprojects/libvhost-user/build
+  - cd subprojects/libvhost-user/build
+  - meson
+  - ninja
+  stage: build
+build-loongarch64:
+  extends: .native_build_job_template
+  needs:
+    job: loongarch-debian-cross-container
+  variables:
+    CONFIGURE_ARGS: --disable-tools --enable-debug
+    IMAGE: debian-loongarch-cross
+    MAKE_CHECK_ARGS: check-tcg
+    TARGETS: loongarch64-linux-user loongarch64-softmmu
+build-oss-fuzz:
+  extends: .native_build_job_template
+  needs:
+    job: amd64-fedora-container
+  script:
+  - mkdir build-oss-fuzz
+  - export LSAN_OPTIONS=suppressions=scripts/oss-fuzz/lsan_suppressions.txt
+  - CC="clang" CXX="clang++" CFLAGS="-fsanitize=address" ./scripts/oss-fuzz/build.sh
+  - export ASAN_OPTIONS="fast_unwind_on_malloc=0"
+  - failures=0
+  - for fuzzer in $(find ./build-oss-fuzz/DEST_DIR/ -executable -type f | grep -v
+    slirp); do grep "LLVMFuzzerTestOneInput" ${fuzzer} > /dev/null 2>&1 || continue
+    ; echo Testing ${fuzzer} ... ; "${fuzzer}" -runs=1 -seed=1 || { echo "FAILED:""
+    ${fuzzer} exit code is $?"; failures=$(($failures+1)); }; done
+  - echo "Number of failures:"" $failures"
+  - test $failures = 0
+  variables:
+    IMAGE: fedora
+build-previous-qemu:
+  after_script:
+  - mv build build-previous
+  artifacts:
+    exclude:
+    - build-previous/**/*.p
+    - build-previous/**/*.a.p
+    - build-previous/**/*.c.o
+    - build-previous/**/*.c.o.d
+    expire_in: 2 days
+    paths:
+    - build-previous
+    when: on_success
+  before_script:
+  - source scripts/ci/gitlab-ci-section
+  - export QEMU_PREV_VERSION="$(sed 's/\([0-9.]*\)\.[0-9]*/v\1.0/' VERSION)"
+  - git remote add upstream https://gitlab.com/qemu-project/qemu
+  - git fetch upstream refs/tags/$QEMU_PREV_VERSION:refs/tags/$QEMU_PREV_VERSION
+  - git checkout $QEMU_PREV_VERSION
+  extends: .native_build_job_template
+  needs:
+    job: amd64-opensuse-leap-container
+  variables:
+    GIT_FETCH_EXTRA_FLAGS: --prune --quiet
+    IMAGE: opensuse-leap
+    TARGETS: x86_64-softmmu aarch64-softmmu
+build-some-softmmu:
+  extends: .native_build_job_template
+  needs:
+    job: amd64-debian-user-cross-container
+  variables:
+    CONFIGURE_ARGS: --disable-tools --enable-debug
+    IMAGE: debian-all-test-cross
+    MAKE_CHECK_ARGS: check-tcg
+    TARGETS: arm-softmmu aarch64-softmmu i386-softmmu riscv64-softmmu s390x-softmmu
+      x86_64-softmmu
+build-system-alpine:
+  extends:
+  - .native_build_job_template
+  - .native_build_artifact_template
+  needs:
+  - job: amd64-alpine-container
+  variables:
+    CONFIGURE_ARGS: --enable-docs --enable-trace-backends=log,simple,syslog
+    IMAGE: alpine
+    MAKE_CHECK_ARGS: check-build
+    TARGETS: avr-softmmu loongarch64-softmmu mips64-softmmu mipsel-softmmu
+build-system-centos:
+  extends:
+  - .native_build_job_template
+  - .native_build_artifact_template
+  needs:
+    job: amd64-centos9-container
+  variables:
+    CONFIGURE_ARGS: --disable-nettle --enable-gcrypt --enable-vfio-user-server --enable-modules
+      --enable-trace-backends=dtrace --enable-docs
+    IMAGE: centos9
+    MAKE_CHECK_ARGS: check-build
+    TARGETS: ppc64-softmmu or1k-softmmu s390x-softmmu x86_64-softmmu rx-softmmu sh4-softmmu
+build-system-debian:
+  extends:
+  - .native_build_job_template
+  - .native_build_artifact_template
+  needs:
+    job: amd64-debian-container
+  variables:
+    CONFIGURE_ARGS: --with-coroutine=sigaltstack --enable-rust
+    IMAGE: debian
+    MAKE_CHECK_ARGS: check-build
+    TARGETS: arm-softmmu i386-softmmu riscv64-softmmu sh4eb-softmmu sparc-softmmu
+      xtensa-softmmu
+build-system-fedora:
+  extends:
+  - .native_build_job_template
+  - .native_build_artifact_template
+  needs:
+    job: amd64-fedora-container
+  variables:
+    CONFIGURE_ARGS: --disable-gcrypt --enable-nettle --enable-docs --enable-crypto-afalg
+      --enable-rust
+    IMAGE: fedora
+    MAKE_CHECK_ARGS: check-build
+    TARGETS: microblaze-softmmu mips-softmmu xtensa-softmmu m68k-softmmu riscv32-softmmu
+      ppc-softmmu sparc64-softmmu
+build-system-fedora-rust-nightly:
+  after_script:
+  - source scripts/ci/gitlab-ci-section
+  - section_start test "Running Rust doctests"
+  - cd build
+  - pyvenv/bin/meson devenv -w ../rust ${CARGO-cargo} test --doc -p qemu_api
+  allow_failure: true
+  extends:
+  - .native_build_job_template
+  - .native_build_artifact_template
+  needs:
+    job: amd64-fedora-rust-nightly-container
+  variables:
+    CONFIGURE_ARGS: --disable-docs --enable-rust --enable-strict-rust-lints
+    IMAGE: fedora-rust-nightly
+    MAKE_CHECK_ARGS: check-build
+    TARGETS: aarch64-softmmu
+build-system-flaky:
+  extends:
+  - .native_build_job_template
+  - .native_build_artifact_template
+  needs:
+    job: amd64-debian-container
+  variables:
+    IMAGE: debian
+    MAKE_CHECK_ARGS: check-build
+    QEMU_JOB_OPTIONAL: 1
+    TARGETS: aarch64-softmmu arm-softmmu mips64el-softmmu ppc64-softmmu rx-softmmu
+      s390x-softmmu sh4-softmmu x86_64-softmmu
+build-system-opensuse:
+  extends:
+  - .native_build_job_template
+  - .native_build_artifact_template
+  needs:
+    job: amd64-opensuse-leap-container
+  variables:
+    IMAGE: opensuse-leap
+    MAKE_CHECK_ARGS: check-build
+    TARGETS: s390x-softmmu x86_64-softmmu aarch64-softmmu
+build-system-ubuntu:
+  extends:
+  - .native_build_job_template
+  - .native_build_artifact_template
+  needs:
+    job: amd64-ubuntu2204-container
+  variables:
+    CONFIGURE_ARGS: --enable-docs --enable-rust
+    IMAGE: ubuntu2204
+    MAKE_CHECK_ARGS: check-build
+    TARGETS: alpha-softmmu microblazeel-softmmu mips64el-softmmu
+build-tcg-disabled:
+  extends: .native_build_job_template
+  needs:
+    job: amd64-centos9-container
+  script:
+  - mkdir build
+  - cd build
+  - ../configure --disable-tcg --audio-drv-list="" --with-coroutine=ucontext --disable-docs
+    --disable-sdl --disable-gtk --disable-vnc || { cat config.log meson-logs/meson-log.txt
+    && exit 1; }
+  - make -j"$JOBS"
+  - make check-unit
+  - make check-qapi-schema
+  - cd tests/qemu-iotests/
+  - ./check -raw 001 002 003 004 005 008 009 010 011 012 021 025 032 033 048 052 063
+    077 086 101 104 106 113 148 150 151 152 157 159 160 163 170 171 184 192 194 208
+    221 226 227 236 253 277 image-fleecing
+  - ./check -qcow2 028 051 056 057 058 065 068 082 085 091 095 096 102 122 124 132
+    139 142 144 145 151 152 155 157 165 194 196 200 202 208 209 216 218 227 234 246
+    247 248 250 254 255 257 258 260 261 262 263 264 270 272 273 277 279 image-fleecing
+  - cd ../..
+  - make distclean
+  variables:
+    IMAGE: centos9
+build-tci:
+  extends: .native_build_job_template
+  needs:
+    job: amd64-debian-user-cross-container
+  script:
+  - TARGETS="aarch64 arm hppa m68k microblaze ppc64 s390x x86_64"
+  - mkdir build
+  - cd build
+  - ../configure --enable-tcg-interpreter --disable-kvm --disable-docs --disable-gtk
+    --disable-vnc --target-list="$(for tg in $TARGETS; do echo -n ${tg}'-softmmu ';
+    done)" || { cat config.log meson-logs/meson-log.txt && exit 1; }
+  - make -j"$JOBS"
+  - make tests/qtest/boot-serial-test tests/qtest/cdrom-test tests/qtest/pxe-test
+  - for tg in $TARGETS ; do export QTEST_QEMU_BINARY="./qemu-system-${tg}" ; ./tests/qtest/boot-serial-test
+    || exit 1 ; ./tests/qtest/cdrom-test || exit 1 ; done
+  - QTEST_QEMU_BINARY="./qemu-system-x86_64" ./tests/qtest/pxe-test
+  - QTEST_QEMU_BINARY="./qemu-system-s390x" ./tests/qtest/pxe-test -m slow
+  - make check-tcg
+  variables:
+    IMAGE: debian-all-test-cross
+build-tools-and-docs-debian:
+  extends:
+  - .native_build_job_template
+  - .native_build_artifact_template
+  needs:
+    job: amd64-debian-container
+    optional: true
+  variables:
+    CONFIGURE_ARGS: --disable-system --disable-user --enable-docs --enable-tools
+    IMAGE: debian
+    MAKE_CHECK_ARGS: check-unit ctags TAGS cscope
+    QEMU_JOB_PUBLISH: 1
+build-tricore-softmmu:
+  extends: .native_build_job_template
+  needs:
+    job: tricore-debian-cross-container
+  variables:
+    CONFIGURE_ARGS: --disable-tools --disable-fdt --enable-debug
+    IMAGE: debian-tricore-cross
+    MAKE_CHECK_ARGS: check-tcg
+    TARGETS: tricore-softmmu
+build-user:
+  extends: .native_build_job_template
+  needs:
+    job: amd64-debian-user-cross-container
+  variables:
+    CONFIGURE_ARGS: --disable-tools --disable-system --target-list-exclude=alpha-linux-user,sh4-linux-user
+    IMAGE: debian-all-test-cross
+    MAKE_CHECK_ARGS: check-tcg
+build-user-hexagon:
+  extends: .native_build_job_template
+  needs:
+    job: hexagon-cross-container
+  variables:
+    CONFIGURE_ARGS: --disable-tools --disable-docs --enable-debug-tcg
+    IMAGE: debian-hexagon-cross
+    MAKE_CHECK_ARGS: check-tcg
+    TARGETS: hexagon-linux-user
+build-user-static:
+  extends: .native_build_job_template
+  needs:
+    job: amd64-debian-user-cross-container
+  variables:
+    CONFIGURE_ARGS: --disable-tools --disable-system --static --target-list-exclude=alpha-linux-user,sh4-linux-user
+    IMAGE: debian-all-test-cross
+    MAKE_CHECK_ARGS: check-tcg
+build-without-defaults:
+  extends: .native_build_job_template
+  needs:
+    job: amd64-centos9-container
+  variables:
+    CONFIGURE_ARGS: --without-default-devices --without-default-features --disable-fdt
+      --disable-pie --disable-qom-cast-debug --disable-strip --target-list-exclude=aarch64-softmmu,microblaze-softmmu,mips64-softmmu,mipsel-softmmu,ppc64-softmmu,sh4el-softmmu,xtensa-softmmu,x86_64-softmmu
+    IMAGE: centos9
+    MAKE_CHECK_ARGS: check
+check-cfi-aarch64:
+  extends: .native_test_job_template
+  needs:
+  - artifacts: true
+    job: build-cfi-aarch64
+  variables:
+    IMAGE: fedora
+    MAKE_CHECK_ARGS: check
+check-cfi-ppc64-s390x:
+  extends: .native_test_job_template
+  needs:
+  - artifacts: true
+    job: build-cfi-ppc64-s390x
+  variables:
+    IMAGE: fedora
+    MAKE_CHECK_ARGS: check
+check-cfi-x86_64:
+  extends: .native_test_job_template
+  needs:
+  - artifacts: true
+    job: build-cfi-x86_64
+  variables:
+    IMAGE: fedora
+    MAKE_CHECK_ARGS: check
+check-system-alpine:
+  extends: .native_test_job_template
+  needs:
+  - artifacts: true
+    job: build-system-alpine
+  variables:
+    IMAGE: alpine
+    MAKE_CHECK_ARGS: check-unit check-qtest
+check-system-centos:
+  extends: .native_test_job_template
+  needs:
+  - artifacts: true
+    job: build-system-centos
+  variables:
+    IMAGE: centos9
+    MAKE_CHECK_ARGS: check
+check-system-debian:
+  extends: .native_test_job_template
+  needs:
+  - artifacts: true
+    job: build-system-debian
+  variables:
+    IMAGE: debian
+    MAKE_CHECK_ARGS: check
+check-system-fedora:
+  extends: .native_test_job_template
+  needs:
+  - artifacts: true
+    job: build-system-fedora
+  variables:
+    IMAGE: fedora
+    MAKE_CHECK_ARGS: check
+check-system-opensuse:
+  extends: .native_test_job_template
+  needs:
+  - artifacts: true
+    job: build-system-opensuse
+  variables:
+    IMAGE: opensuse-leap
+    MAKE_CHECK_ARGS: check
+check-system-ubuntu:
+  extends: .native_test_job_template
+  needs:
+  - artifacts: true
+    job: build-system-ubuntu
+  variables:
+    IMAGE: ubuntu2204
+    MAKE_CHECK_ARGS: check
+clang-system:
+  extends: .native_build_job_template
+  needs:
+    job: amd64-fedora-container
+  variables:
+    CONFIGURE_ARGS: --cc=clang --cxx=clang++ --enable-ubsan --extra-cflags=-fno-sanitize-recover=undefined
+    IMAGE: fedora
+    MAKE_CHECK_ARGS: check-qtest check-tcg
+    TARGETS: alpha-softmmu arm-softmmu m68k-softmmu mips64-softmmu s390x-softmmu
+clang-user:
+  extends: .native_build_job_template
+  needs:
+    job: amd64-debian-user-cross-container
+  timeout: 70m
+  variables:
+    CONFIGURE_ARGS: --cc=clang --cxx=clang++ --disable-system --enable-ubsan --target-list-exclude=alpha-linux-user,microblazeel-linux-user,aarch64_be-linux-user,i386-linux-user,m68k-linux-user,mipsn32el-linux-user,xtensaeb-linux-user
+      --extra-cflags=-fno-sanitize-recover=undefined
+    IMAGE: debian-all-test-cross
+    MAKE_CHECK_ARGS: check-unit check-tcg
+coverity:
+  allow_failure: true
+  before_script:
+  - dnf install -y curl wget
+  image: $CI_REGISTRY_IMAGE/qemu/fedora:$QEMU_CI_CONTAINER_TAG
+  needs:
+  - job: amd64-fedora-container
+    optional: true
+  rules:
+  - if: $COVERITY_TOKEN == null
+    when: never
+  - if: $COVERITY_EMAIL == null
+    when: never
+  - if: $CI_PROJECT_NAMESPACE == $QEMU_CI_UPSTREAM && $CI_PIPELINE_SOURCE == "schedule"
+    when: on_success
+  - if: $CI_PROJECT_NAMESPACE == $QEMU_CI_UPSTREAM
+    when: never
+  - if: $QEMU_CI != "1" && $QEMU_CI != "2"
+    when: never
+  - when: manual
+  script:
+  - scripts/coverity-scan/run-coverity-scan --check-upload-only || { exitcode=$?;
+    if test $exitcode = 1; then exit 0; else exit $exitcode; fi; }; scripts/coverity-scan/run-coverity-scan
+    --update-tools-only > update-tools.log 2>&1 || { cat update-tools.log; exit 1;
+    }; scripts/coverity-scan/run-coverity-scan --no-update-tools
+  stage: build
+  timeout: 3h
+crash-test-debian:
+  extends: .native_test_job_template
+  needs:
+  - artifacts: true
+    job: build-system-debian
+  script:
+  - cd build
+  - make NINJA=":" check-venv
+  - pyvenv/bin/python3 scripts/device-crash-test -q --tcg-only ./qemu-system-i386
+  variables:
+    IMAGE: debian
+crash-test-fedora:
+  extends: .native_test_job_template
+  needs:
+  - artifacts: true
+    job: build-system-fedora
+  script:
+  - cd build
+  - make NINJA=":" check-venv
+  - pyvenv/bin/python3 scripts/device-crash-test -q ./qemu-system-ppc
+  - pyvenv/bin/python3 scripts/device-crash-test -q ./qemu-system-riscv32
+  variables:
+    IMAGE: fedora
+functional-cfi-aarch64:
+  extends: .functional_test_job_template
+  needs:
+  - artifacts: true
+    job: build-cfi-aarch64
+  variables:
+    IMAGE: fedora
+    MAKE_CHECK_ARGS: check-avocado check-functional
+functional-cfi-ppc64-s390x:
+  extends: .functional_test_job_template
+  needs:
+  - artifacts: true
+    job: build-cfi-ppc64-s390x
+  variables:
+    IMAGE: fedora
+    MAKE_CHECK_ARGS: check-avocado check-functional
+functional-cfi-x86_64:
+  extends: .functional_test_job_template
+  needs:
+  - artifacts: true
+    job: build-cfi-x86_64
+  variables:
+    IMAGE: fedora
+    MAKE_CHECK_ARGS: check-avocado check-functional
+functional-system-alpine:
+  extends: .functional_test_job_template
+  needs:
+  - artifacts: true
+    job: build-system-alpine
+  variables:
+    AVOCADO_TAGS: arch:avr arch:loongarch64 arch:mips64 arch:mipsel
+    IMAGE: alpine
+    MAKE_CHECK_ARGS: check-avocado check-functional
+functional-system-centos:
+  extends: .functional_test_job_template
+  needs:
+  - artifacts: true
+    job: build-system-centos
+  variables:
+    AVOCADO_TAGS: arch:ppc64 arch:or1k arch:s390x arch:x86_64 arch:rx arch:sh4
+    IMAGE: centos9
+    MAKE_CHECK_ARGS: check-avocado check-functional
+functional-system-debian:
+  extends: .functional_test_job_template
+  needs:
+  - artifacts: true
+    job: build-system-debian
+  variables:
+    AVOCADO_TAGS: arch:arm arch:i386 arch:riscv64 arch:sh4 arch:sparc arch:xtensa
+    IMAGE: debian
+    MAKE_CHECK_ARGS: check-avocado check-functional
+functional-system-fedora:
+  extends: .functional_test_job_template
+  needs:
+  - artifacts: true
+    job: build-system-fedora
+  variables:
+    AVOCADO_TAGS: arch:microblaze arch:mips arch:xtensa arch:m68k arch:riscv32 arch:ppc
+      arch:sparc64
+    IMAGE: fedora
+    MAKE_CHECK_ARGS: check-avocado check-functional
+functional-system-flaky:
+  allow_failure: true
+  extends: .functional_test_job_template
+  needs:
+  - artifacts: true
+    job: build-system-flaky
+  variables:
+    AVOCADO_TAGS: flaky
+    IMAGE: debian
+    MAKE_CHECK_ARGS: check-avocado check-functional
+    QEMU_JOB_OPTIONAL: 1
+    QEMU_TEST_FLAKY_TESTS: 1
+functional-system-opensuse:
+  extends: .functional_test_job_template
+  needs:
+  - artifacts: true
+    job: build-system-opensuse
+  variables:
+    AVOCADO_TAGS: arch:s390x arch:x86_64 arch:aarch64
+    IMAGE: opensuse-leap
+    MAKE_CHECK_ARGS: check-avocado check-functional
+functional-system-ubuntu:
+  extends: .functional_test_job_template
+  needs:
+  - artifacts: true
+    job: build-system-ubuntu
+  variables:
+    AVOCADO_TAGS: arch:alpha arch:microblazeel arch:mips64el
+    IMAGE: ubuntu2204
+    MAKE_CHECK_ARGS: check-avocado check-functional
+gcov:
+  after_script:
+  - cd build
+  - gcovr --xml-pretty --exclude-unreachable-branches --print-summary -o coverage.xml
+    --root ${CI_PROJECT_DIR} . *.p
+  artifacts:
+    expire_in: 2 days
+    name: ${CI_JOB_NAME}-${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHA}
+    paths:
+    - build/meson-logs/testlog.txt
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: build/coverage.xml
+      junit: build/meson-logs/testlog.junit.xml
+    when: always
+  coverage: /^\s*lines:\s*\d+.\d+\%/
+  extends: .native_build_job_template
+  needs:
+    job: amd64-ubuntu2204-container
+  timeout: 80m
+  variables:
+    CONFIGURE_ARGS: --enable-gcov
+    IMAGE: ubuntu2204
+    MAKE_CHECK_ARGS: check-unit check-softfloat
+    TARGETS: aarch64-softmmu ppc64-softmmu s390x-softmmu x86_64-softmmu
+include:
+- local: /.gitlab-ci.d/buildtest-template.yml
+migration-compat-aarch64:
+  extends: .migration-compat-common
+  variables:
+    QEMU_JOB_SKIPPED: 1
+    TARGET: aarch64
+migration-compat-x86_64:
+  extends: .migration-compat-common
+  variables:
+    TARGET: x86_64
+pages:
+  artifacts:
+    paths:
+    - public
+    when: on_success
+  extends: .base_job_template
+  image: $CI_REGISTRY_IMAGE/qemu/debian:$QEMU_CI_CONTAINER_TAG
+  needs:
+  - job: build-tools-and-docs-debian
+  script:
+  - mkdir -p public
+  - make gtags
+  - CI_COMMIT_MESSAGE= CI_COMMIT_TAG_MESSAGE= htags -anT --tree-view=filetree -m qemu_init
+    -t "Welcome to the QEMU sourcecode"
+  - mv HTML public/src
+  - make -C build install DESTDIR=$(pwd)/temp-install
+  - mv temp-install/usr/local/share/doc/qemu/* public/
+  stage: test
+  variables:
+    QEMU_JOB_PUBLISH: 1
+tsan-build:
+  extends: .native_build_job_template
+  needs:
+    job: amd64-ubuntu2204-container
+  variables:
+    CONFIGURE_ARGS: --enable-tsan --cc=clang --cxx=clang++ --enable-trace-backends=ust
+      --disable-slirp
+    IMAGE: ubuntu2204
+    MAKE: setarch -R make
+    TARGETS: x86_64-softmmu ppc64-softmmu riscv64-softmmu x86_64-linux-user

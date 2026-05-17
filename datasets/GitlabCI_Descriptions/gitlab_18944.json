@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_18944",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 153,
+  "description": "Create a GitLab CI pipeline that uses the kaskada/cmake-gcc5 Docker image. Define a single stage called build. Add a job named job1 in the build stage that runs the commands: cmake -DCMAKE_BUILD_TYPE=Debug ., then cmake --build ., then ctest -R UnitTests. No services, caches, artifacts, or special rules are required.",
+  "tags": [
+    "cmake",
+    "gcc5",
+    "unit-tests",
+    "build"
+  ]
+}

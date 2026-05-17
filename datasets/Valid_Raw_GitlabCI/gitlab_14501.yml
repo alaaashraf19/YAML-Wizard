@@ -1,0 +1,171 @@
+cross-amd64-xen-only:
+  extends: .cross_accel_build_job
+  needs:
+    job: amd64-debian-cross-container
+  variables:
+    ACCEL: xen
+    EXTRA_CONFIGURE_OPTS: --disable-tcg --disable-kvm
+    IMAGE: debian-amd64-cross
+cross-arm64-kvm-only:
+  extends: .cross_accel_build_job
+  needs:
+    job: arm64-debian-cross-container
+  variables:
+    EXTRA_CONFIGURE_OPTS: --disable-tcg --without-default-features
+    IMAGE: debian-arm64-cross
+cross-arm64-system:
+  extends: .cross_system_build_job
+  needs:
+    job: arm64-debian-cross-container
+  variables:
+    IMAGE: debian-arm64-cross
+cross-arm64-user:
+  extends: .cross_user_build_job
+  needs:
+    job: arm64-debian-cross-container
+  variables:
+    IMAGE: debian-arm64-cross
+cross-arm64-xen-only:
+  extends: .cross_accel_build_job
+  needs:
+    job: arm64-debian-cross-container
+  variables:
+    ACCEL: xen
+    EXTRA_CONFIGURE_OPTS: --disable-tcg --disable-kvm
+    IMAGE: debian-arm64-cross
+cross-armhf-user:
+  extends: .cross_user_build_job
+  needs:
+    job: armhf-debian-cross-container
+  variables:
+    IMAGE: debian-armhf-cross
+cross-i686-system:
+  extends:
+  - .cross_system_build_job
+  - .cross_test_artifacts
+  needs:
+    job: i686-debian-cross-container
+  variables:
+    EXTRA_CONFIGURE_OPTS: --disable-kvm
+    IMAGE: debian-i686-cross
+    MAKE_CHECK_ARGS: check-qtest
+cross-i686-tci:
+  extends:
+  - .cross_accel_build_job
+  - .cross_test_artifacts
+  needs:
+    job: i686-debian-cross-container
+  timeout: 60m
+  variables:
+    ACCEL: tcg-interpreter
+    EXTRA_CONFIGURE_OPTS: --target-list=i386-softmmu,i386-linux-user,arm-softmmu,arm-linux-user,ppc-softmmu,ppc-linux-user
+      --disable-plugins --disable-kvm
+    IMAGE: debian-i686-cross
+    MAKE_CHECK_ARGS: check check-tcg -j2
+cross-i686-user:
+  extends:
+  - .cross_user_build_job
+  - .cross_test_artifacts
+  needs:
+    job: i686-debian-cross-container
+  variables:
+    IMAGE: debian-i686-cross
+    MAKE_CHECK_ARGS: check
+cross-mips64el-kvm-only:
+  extends: .cross_accel_build_job
+  needs:
+    job: mips64el-debian-cross-container
+  variables:
+    EXTRA_CONFIGURE_OPTS: --disable-tcg --target-list=mips64el-softmmu
+    IMAGE: debian-mips64el-cross
+cross-mips64el-system:
+  extends: .cross_system_build_job
+  needs:
+    job: mips64el-debian-cross-container
+  variables:
+    IMAGE: debian-mips64el-cross
+cross-mips64el-user:
+  extends: .cross_user_build_job
+  needs:
+    job: mips64el-debian-cross-container
+  variables:
+    IMAGE: debian-mips64el-cross
+cross-mipsel-system:
+  extends: .cross_system_build_job
+  needs:
+    job: mipsel-debian-cross-container
+  variables:
+    IMAGE: debian-mipsel-cross
+cross-mipsel-user:
+  extends: .cross_user_build_job
+  needs:
+    job: mipsel-debian-cross-container
+  variables:
+    IMAGE: debian-mipsel-cross
+cross-ppc64el-kvm-only:
+  extends: .cross_accel_build_job
+  needs:
+    job: ppc64el-debian-cross-container
+  variables:
+    EXTRA_CONFIGURE_OPTS: --disable-tcg --without-default-devices
+    IMAGE: debian-ppc64el-cross
+cross-ppc64el-system:
+  extends: .cross_system_build_job
+  needs:
+    job: ppc64el-debian-cross-container
+  variables:
+    IMAGE: debian-ppc64el-cross
+cross-ppc64el-user:
+  extends: .cross_user_build_job
+  needs:
+    job: ppc64el-debian-cross-container
+  variables:
+    IMAGE: debian-ppc64el-cross
+cross-riscv64-system:
+  allow_failure: true
+  extends: .cross_system_build_job
+  needs:
+    job: riscv64-debian-cross-container
+  variables:
+    IMAGE: debian-riscv64-cross
+cross-riscv64-user:
+  allow_failure: true
+  extends: .cross_user_build_job
+  needs:
+    job: riscv64-debian-cross-container
+  variables:
+    IMAGE: debian-riscv64-cross
+cross-s390x-kvm-only:
+  extends: .cross_accel_build_job
+  needs:
+    job: s390x-debian-cross-container
+  variables:
+    EXTRA_CONFIGURE_OPTS: --disable-tcg --enable-trace-backends=ftrace
+    IMAGE: debian-s390x-cross
+cross-s390x-system:
+  extends: .cross_system_build_job
+  needs:
+    job: s390x-debian-cross-container
+  variables:
+    IMAGE: debian-s390x-cross
+cross-s390x-user:
+  extends: .cross_user_build_job
+  needs:
+    job: s390x-debian-cross-container
+  variables:
+    IMAGE: debian-s390x-cross
+cross-win64-system:
+  artifacts:
+    paths:
+    - build/qemu-setup*.exe
+    when: on_success
+  extends: .cross_system_build_job
+  needs:
+    job: win64-fedora-cross-container
+  variables:
+    CROSS_SKIP_TARGETS: alpha-softmmu avr-softmmu hppa-softmmu m68k-softmmu microblazeel-softmmu
+      or1k-softmmu rx-softmmu sh4eb-softmmu sparc64-softmmu tricore-softmmu xtensaeb-softmmu
+    EXTRA_CONFIGURE_OPTS: --enable-fdt=internal --disable-plugins
+    IMAGE: fedora-win64-cross
+include:
+- local: /.gitlab-ci.d/crossbuild-template.yml

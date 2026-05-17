@@ -1,0 +1,14 @@
+{
+  "sha": "3f7f982d409d201f182d9c8c849e9b0f5fa9820df31c4827062454a31b8bc9fc",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3830,
+  "description": "Create a GitHub Actions workflow named bins that runs on push to the master branch, excluding the docs directory, and also allows calling as a reusable workflow. The workflow has two jobs, build-musl and build-macos, which run on ubuntu-latest and macos-12 respectively. The build-musl job builds a musl package using a Docker container, while the build-macos job builds a macOS package using Homebrew. Both jobs upload artifacts and release assets.",
+  "tags": [
+    "github-actions",
+    "release-workflow",
+    "musl",
+    "macos",
+    "reusable-workflow"
+  ]
+}

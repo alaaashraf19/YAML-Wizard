@@ -1,0 +1,17 @@
+MakeCheck:
+  after_script:
+  - make clean
+  artifacts:
+    paths:
+    - test-suite.log
+    - testsuite/*.log
+    - testsuite/*.sum
+  script:
+  - ./autogen.sh
+  - ./configure
+  - make
+  - make check
+  stage: build
+before_script:
+- apt-get update -qq && apt-get install -y -qq autopoint autoconf automake libtool-bin
+  gettext libncursesw5-dev dejagnu libnuma-dev libsystemd-dev

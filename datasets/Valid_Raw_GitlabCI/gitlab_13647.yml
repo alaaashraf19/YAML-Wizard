@@ -1,0 +1,191 @@
+.dind:
+  before_script: &id001
+  - echo ${CI_JOB_TOKEN} | docker login -u gitlab-ci-token --password-stdin registry.gitlab.com
+  - apk add --no-cache bash findutils
+  image: docker:latest
+  only: &id002
+  - schedule
+  - web
+  - docker
+  services: &id003
+  - docker:dind
+.docker:
+  before_script: *id001
+  image: docker:latest
+  only: *id002
+  script: &id004
+  - _runner/docker-tester
+  services: *id003
+  stage: docker
+.runner:
+  script: &id005
+  - _runner/run
+  stage: test
+docker:bash:
+  before_script: *id001
+  image: docker:latest
+  only: *id002
+  script: *id004
+  services: *id003
+  stage: docker
+docker:c:
+  before_script: *id001
+  image: docker:latest
+  only: *id002
+  script: *id004
+  services: *id003
+  stage: docker
+docker:clojure:
+  before_script: *id001
+  image: docker:latest
+  only: *id002
+  script: *id004
+  services: *id003
+  stage: docker
+docker:coffeescript:
+  before_script: *id001
+  image: docker:latest
+  only: *id002
+  script: *id004
+  services: *id003
+  stage: docker
+docker:cpp:
+  before_script: *id001
+  image: docker:latest
+  only: *id002
+  script: *id004
+  services: *id003
+  stage: docker
+docker:elisp:
+  before_script: *id001
+  image: docker:latest
+  only: *id002
+  script: *id004
+  services: *id003
+  stage: docker
+docker:elixir:
+  before_script: *id001
+  image: docker:latest
+  only: *id002
+  script: *id004
+  services: *id003
+  stage: docker
+docker:erlang:
+  before_script: *id001
+  image: docker:latest
+  only: *id002
+  script: *id004
+  services: *id003
+  stage: docker
+docker:haskell:
+  before_script: *id001
+  image: docker:latest
+  only: *id002
+  script: *id004
+  services: *id003
+  stage: docker
+docker:java:
+  before_script: *id001
+  image: docker:latest
+  only: *id002
+  script: *id004
+  services: *id003
+  stage: docker
+docker:lfe:
+  before_script: *id001
+  image: docker:latest
+  only: *id002
+  script: *id004
+  services: *id003
+  stage: docker
+docker:python:
+  before_script: *id001
+  image: docker:latest
+  only: *id002
+  script: *id004
+  services: *id003
+  stage: docker
+docker:racket:
+  before_script: *id001
+  image: docker:latest
+  only: *id002
+  script: *id004
+  services: *id003
+  stage: docker
+docker:ruby:
+  before_script: *id001
+  image: docker:latest
+  only: *id002
+  script: *id004
+  services: *id003
+  stage: docker
+docker:rust:
+  before_script: *id001
+  image: docker:latest
+  only: *id002
+  script: *id004
+  services: *id003
+  stage: docker
+stages:
+- docker
+- test
+test:bash:
+  image: registry.gitlab.com/nobbz/exercism-solutions/bash:latest
+  script: *id005
+  stage: test
+test:c:
+  image: registry.gitlab.com/nobbz/exercism-solutions/c:latest
+  script: *id005
+  stage: test
+test:clojure:
+  image: registry.gitlab.com/nobbz/exercism-solutions/clojure:latest
+  script: *id005
+  stage: test
+test:coffeescript:
+  image: registry.gitlab.com/nobbz/exercism-solutions/coffeescript:latest
+  script: *id005
+  stage: test
+test:cpp:
+  image: registry.gitlab.com/nobbz/exercism-solutions/cpp:latest
+  script: *id005
+  stage: test
+test:elisp:
+  image: registry.gitlab.com/nobbz/exercism-solutions/elisp:latest
+  script: *id005
+  stage: test
+test:elixir:
+  image: registry.gitlab.com/nobbz/exercism-solutions/elixir:latest
+  script: *id005
+  stage: test
+test:erlang:
+  image: registry.gitlab.com/nobbz/exercism-solutions/erlang:latest
+  script: *id005
+  stage: test
+test:haskell:
+  image: registry.gitlab.com/nobbz/exercism-solutions/haskell:latest
+  script: *id005
+  stage: test
+test:java:
+  image: registry.gitlab.com/nobbz/exercism-solutions/java:latest
+  script: *id005
+  stage: test
+test:lfe:
+  image: registry.gitlab.com/nobbz/exercism-solutions/lfe:latest
+  script: *id005
+  stage: test
+test:python:
+  image: registry.gitlab.com/nobbz/exercism-solutions/python:latest
+  script: *id005
+  stage: test
+test:racket:
+  image: registry.gitlab.com/nobbz/exercism-solutions/racket:latest
+  script: *id005
+  stage: test
+test:ruby:
+  image: registry.gitlab.com/nobbz/exercism-solutions/ruby:latest
+  script: *id005
+  stage: test
+test:rust:
+  image: registry.gitlab.com/nobbz/exercism-solutions/rust:latest
+  script: *id005
+  stage: test

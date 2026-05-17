@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_17981",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 612,
+  "description": "Create a GitLab CI pipeline using the julia:1.2 Docker image. Add a before_script that runs apt-get -qq update; apt-get -y install git and then julia --project=@. -e \"import Pkg; Pkg.build()\". Define a pages job in the deploy stage that runs julia --project=docs -e 'using Pkg; Pkg.instantiate(); Pkg.develop(PackageSpec(path=pwd()))', then julia --project=docs --color=yes docs/make.jl, and moves the generated docs with mv docs/build public, publishes the public directory as a Pages artifact, and only runs on the master branch.",
+  "tags": [
+    "julia",
+    "gitlab-pages",
+    "apt-get",
+    "docs",
+    "master-branch"
+  ]
+}

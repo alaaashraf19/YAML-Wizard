@@ -1,0 +1,94 @@
+.if-security-release-publish:
+  if: ($CI_PIPELINE_SOURCE =~ /^(pipeline|web|api)$/) && ($SECURITY_RELEASE_PIPELINE
+    =~ /^(publish|true)$/)
+.security-release-publish-base:
+  extends: .common-job-setup
+  needs:
+  - security_release_publish:start
+  rules:
+  - if: ($CI_PIPELINE_SOURCE =~ /^(pipeline|web|api)$/) && ($SECURITY_RELEASE_PIPELINE
+      =~ /^(publish|true)$/)
+  stage: security_release:publish
+security_release_publish:create_dynamic_pipeline:
+  artifacts:
+    paths:
+    - dynamic-gitlab-ci.yml
+  extends:
+  - .security-release-publish-base
+  - .common-ci-tokens
+  script:
+  - 'set -eo pipefail
+
+
+    # Generate dynamic pipeline YAML
+
+    bundle exec rake "security:publish:generate_dynamic_pipeline" # Writes dynamic-gitlab-ci.yml
+
+
+    # Display generated YAML content
+
+    echo -e "section_start:$(date +%s):generated_dynamic_pipeline[collapsed=true]\r\e[0KGenerated
+    dynamic-gitlab-ci.yml"
+
+    cat dynamic-gitlab-ci.yml
+
+    echo -e "section_end:$(date +%s):generated_dynamic_pipeline\r\e[0K"
+
+    '
+security_release_publish:deploy_blog_post:
+  extends:
+  - .security-release-publish-base
+  - .common-ci-tokens
+  needs:
+  - security_release_publish:move_blog_post
+  script:
+  - bundle exec rake 'security:publish:deploy_blog_post'
+security_release_publish:generate_jobs:
+  needs:
+  - security_release_publish:create_dynamic_pipeline
+  rules:
+  - if: ($CI_PIPELINE_SOURCE =~ /^(pipeline|web|api)$/) && ($SECURITY_RELEASE_PIPELINE
+      =~ /^(publish|true)$/)
+  stage: security_release:publish
+  trigger:
+    forward:
+      pipeline_variables: true
+    include:
+    - artifact: dynamic-gitlab-ci.yml
+      job: security_release_publish:create_dynamic_pipeline
+    - local: .gitlab/ci/include/secrets-self-contained.yml
+    strategy: depend
+security_release_publish:move_blog_post:
+  extends:
+  - .security-release-publish-base
+  - .common-ci-tokens
+  needs:
+  - security_release_publish:generate_jobs
+  script:
+  - source scripts/setup_ssh.sh
+  - source scripts/setup_git.sh
+  - bundle exec rake 'security:publish:move_blog_post'
+  when: manual
+security_release_publish:start:
+  extends: .common-job-setup
+  needs: []
+  rules:
+  - if: ($CI_PIPELINE_SOURCE =~ /^(pipeline|web|api)$/) && ($SECURITY_RELEASE_PIPELINE
+      =~ /^(publish|true)$/)
+  script:
+  - bundle exec rake 'security:publish:start'
+  stage: security_release:publish:start
+  when: manual
+security_release_publish:verify_blog_post:
+  extends:
+  - .security-release-publish-base
+  - .common-ci-tokens
+  needs:
+  - security_release_publish:deploy_blog_post
+  rules:
+  - if: ($CI_PIPELINE_SOURCE =~ /^(pipeline|web|api)$/) && ($SECURITY_RELEASE_PIPELINE
+      =~ /^(publish|true)$/)
+    start_in: 30 minutes
+    when: delayed
+  script:
+  - bundle exec rake 'security:publish:verify_blog_post'

@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_03904",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1561,
+  "description": "Create a GitLab CI pipeline using the ayufan/rock64-dockerfiles:bookworm Docker image and define variables GITHUB_REPO, GITHUB_USER, PIPELINE_URL, RELEASE_NAME, VERSION as shown. Define stages draft, build, pre-release, release and a before_script that exports CHANGES from the tag message and DESCRIPTION combining CHANGES and the pipeline URL. In the build stage add a debian-bookworm-minimal-arm64 job (and a manual build_manual job that allows failure) that runs make \"$CI_JOB_NAME\", then github-release upload --tag \"${VERSION}\" --name \"$(basename *.xz)\" --file *.xz, and finally git clean -fdx, and both run only on tag pipelines (the manual one runs when triggered manually). In the draft stage add a draft job that runs github-release release --tag \"${VERSION}\" --name \"$RELEASE_NAME\" --description \"$DESCRIPTION\" --target \"$CI_COMMIT_SHA\" --draft, only on tags. In the pre-release stage add a pre-release job with environment pre-release (URL pointing to the GitHub release page) that runs github-release edit --tag \"${VERSION}\" --name \"$RELEASE_NAME\" --description \"$DESCRIPTION\" --pre-release, only on tags; and in the release stage add a manual release job with environment release (same URL) that runs github-release edit --tag \"${VERSION}\" --name \"$RELEASE_NAME\" --description \"$DESCRIPTION\", only on tags.",
+  "tags": [
+    "rock64",
+    "docker",
+    "github-release",
+    "gitlab-ci",
+    "debian",
+    "pre-release",
+    "release",
+    "manual"
+  ]
+}

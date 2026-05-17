@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_14248",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1105,
+  "description": "Create a GitLab CI pipeline using the golang:1.9 Docker image and docker tags for runners, with a global before_script that symlinks /builds to /go/src/gitlab.com and changes directory to the repository. Define three stages: test, build, and package. In the build stage add a compile_master job that runs make build VERSION=$CI_JOB_ID, archives the go-init binary as an artifact (expire in 1 day) and runs only on the master branch, and a compile_tags job that runs make build VERSION=$CI_COMMIT_TAG then make upx, archives go-init as an artifact and runs only on tags. In the test stage add lint_code (runs make lint), race_detector (runs make race), and unit_tests (runs make test) jobs, all using docker runners. In the package stage add a package_master job that runs make fpm_install, make fpm, make fpm_upload_dev with VERSION=$CI_JOB_ID and runs only on master, and a package_tags job that runs make fpm_install, make fpm, make fpm_upload_tag with VERSION=$CI_COMMIT_TAG and runs only on tags.",
+  "tags": [
+    "golang",
+    "make",
+    "fpm",
+    "upx",
+    "lint",
+    "unit-tests",
+    "race-detector",
+    "docker"
+  ]
+}

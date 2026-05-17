@@ -1,0 +1,17 @@
+{
+  "sha": "5c4cefa2f6e25b5cfd186df644c765f6adddf50728d1ace04d0a8a70dd36b2e9",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4803,
+  "description": "Create a nightly GitHub Actions workflow named libBLS Nightly Tests that runs on a schedule and allows manual dispatch. The workflow should have two jobs: main_job and linux_build_with_emscripten. main_job runs on ubuntu-18.04, sets up Python 3.6, installs required packages, builds dependencies, configures, builds, and runs tests with valgrind. linux_build_with_emscripten also runs on ubuntu-18.04, installs packages, sets up Node.js, builds dependencies with Emscripten, and runs tests.",
+  "tags": [
+    "libbls",
+    "nightly",
+    "tests",
+    "ubuntu",
+    "python",
+    "nodejs",
+    "emscripten",
+    "valgrind"
+  ]
+}

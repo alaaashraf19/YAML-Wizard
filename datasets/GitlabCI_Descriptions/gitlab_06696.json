@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_06696",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1150,
+  "description": "Create a GitLab CI pipeline that uses the node:current-alpine Docker image and defines two stages: test and publish. In the test stage add a code-quality job that runs `npm ci` then `npm run lint`; an npm-outdated job that runs `npm ci` then `npm outdated` and is allowed to fail; a security-scan job that runs `npm audit --production`; a test-&-coverage job that runs `npm it`, publishes the `coverage/` directory as an artifact and extracts coverage with the regex `/All files[^|]*\\|[^|]*\\s+([\\d\\.]+)/`; and a test-on-nodejs-lts job that uses the node:lts-alpine image, runs `npm it` and also extracts coverage with the same regex. In the publish stage add a coverage-report job that depends on test-&-coverage, moves `coverage/lcov-report/` to `public/`, stores the `public/` directory as an artifact, sets the environment named \"coverage report\" with URL https://demsking.gitlab.io/image-downloader, and runs only on the master branch. Also in publish add a package job that runs `npm pack` and saves any generated `*.tgz` files as artifacts. Finally add a publish job that creates a .npmrc containing the NPM_TOKEN secret, runs `npm publish`, sets the environment named \"npm\" with URL https://www.npmjs.com/package/image-downloader, and runs only for tags or pipeline triggers.",
+  "tags": [
+    "node",
+    "npm",
+    "lint",
+    "coverage",
+    "publish",
+    "gitlab-ci"
+  ]
+}

@@ -1,0 +1,76 @@
+cache:
+  paths:
+  - node_modules/
+  - .npm/
+  - .meteor/
+cleanup:
+  script:
+  - rm -rf .meteor/ .npm/ node_modules/
+  stage: cleanup
+code_quality:
+  rules:
+  - if: $CODE_QUALITY_DISABLED
+    when: never
+  - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "dev"
+deploy_dev:
+  needs: []
+  only:
+  - dev
+  stage: deploy
+  trigger: Openki/sysadmin/deploy-config
+  variables:
+    SOURCE_BRANCH: dev
+    TARGET_HOST: dev
+  when: always
+deploy_sandbox:
+  only:
+  - main
+  stage: deploy
+  trigger: Openki/sysadmin/deploy-config
+  variables:
+    SOURCE_BRANCH: main
+    TARGET_HOST: sandbox
+  when: always
+deploy_staging:
+  only:
+  - staging
+  stage: deploy
+  trigger: Openki/sysadmin/deploy-config
+  variables:
+    SOURCE_BRANCH: staging
+    TARGET_HOST: staging
+  when: always
+image: registry.gitlab.com/openki/sysadmin/docker-ci-container:latest
+include:
+- template: Code-Quality.gitlab-ci.yml
+- template: Jobs/SAST.gitlab-ci.yml
+lint:
+  script: ./ci/lint.sh
+  stage: lint
+  tags:
+  - gitlab-org
+sast:
+  variables:
+    SAST_EXCLUDED_PATHS: $DEFAULT_SAST_EXCLUDED_PATHS,.meteor/*,packages/*
+semgrep-sast:
+  rules:
+  - if: $CI_COMMIT_BRANCH == "dev"
+stages:
+- lint
+- cleanup
+- test
+- deploy
+test:
+  allow_failure: true
+  script: ./ci/test.sh
+  stage: test
+  tags:
+  - gitlab-org-docker
+  timeout: 50m
+  variables:
+    CYPRESS_RECORD_KEY: $CYPRESS_RECORD_KEY
+variables:
+  DISPLAY: :99.0
+  GIT_DEPTH: '10'
+  METEOR_ALLOW_SUPERUSER: 'true'
+  TOOL_NODE_FLAGS: --max_old_space_size=4096

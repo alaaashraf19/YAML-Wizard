@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_11361",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2203,
+  "description": "Create a GitLab CI pipeline with three stages: test, generate, and deploy. In the test stage add four jobs: unit_tests_centos using the centos:7 image that runs yum update, installs epel-release, python-devel, gcc, python-pip, upgrades pip to 20.3.4, installs certifi and specific versions of twisted, service_identity, tornado==5.1.1, coverage, mock, decorator, then executes ci_scripts/run_tests_with_coverage.sh and always stores test/test.log, ci_scripts/generated_files/coverage_percent.txt and ci_scripts/generated_files/coverage_html as artifacts for 1 week; unit_tests_centos_python_3 using the centos image that runs yum update, installs epel-release, python3, python3-devel, gcc, upgrades pip, installs certifi, twisted, service_identity, tornado==5.1.1, mock, decorator, six, creates a symlink /usr/bin/python to python3, runs ci_scripts/run_tests.sh and always stores test/test.log as an artifact for 1 week; pycodestyle using alpine:3.10 that updates apk, adds bash, python2-dev, py-pip, installs pycodestyle via pip, runs ./ci_scripts/pycodestyle_src.sh and always stores ci_scripts/generated_files/pycodestyle_issue_count.txt for 1 day; pylint using alpine:3.10 that updates apk, adds bash, python2-dev, py-pip, installs pylint via pip, runs ./ci_scripts/pylint_src.sh and always stores ci_scripts/generated_files/pylint_score.txt for 1 day. In the generate stage add generate_pages using alpine:3.10 that depends on unit_tests_centos, pylint and pycodestyle, updates apk, adds bash, make, python2-dev, py-pip, py-gtk-dev, installs sphinx and tornado==5.1.1 via pip, runs ./ci_scripts/generate_web_pages.sh and always stores gitlab-pages/generated/ for 1 day. In the deploy stage add pages using the default alpine image that depends on generate_pages, runs only on the master branch, creates a public directory, copies gitlab-pages/generated/* into public, and publishes the public/ directory as the pages artifact.",
+  "tags": [
+    "alpine",
+    "centos",
+    "pycodestyle",
+    "pylint",
+    "sphinx",
+    "gitlab-pages",
+    "coverage"
+  ]
+}

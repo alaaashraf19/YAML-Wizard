@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_18103",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 419,
+  "description": "Create a GitLab CI pipeline that uses the microsoft/dotnet Docker image. Define a job named myasp in the default stage that runs only on the master branch. In the myasp job execute the following shell commands in order: apt-get update, apt-get install lftp, dotnet restore, dotnet publish --configuration Release, mkdir ~/.lftp, printf \"set ssl:verify-certificate no;set ftp:use-mdtm off;set ftp:ssl-allow off;\" >> ~/.lftp/rc, and lftp -e \"mirror --ignore-time -R bin/Release/netcoreapp1.1/publish asp-net-test\" -u $FTP_USERNAME,$FTP_PASSWORD $FTP_HOST. The job deploys the published ASP.NET files to an FTP server using lftp, with no caches, artifacts, or services defined.",
+  "tags": [
+    "dotnet",
+    "aspnet",
+    "ftp",
+    "lftp",
+    "ci"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "sha": "e61e08090cba868e3601edb3539e1bff2e03d2b9afb2556c08f619c9cc122cfd",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3073,
+  "description": "Create a GitHub Actions workflow named coverage-tests that runs on pull requests, pushes, and daily on a schedule. The workflow should have read permissions to repository contents and use a concurrency group that cancels in-progress jobs. Set up multiple jobs for Linux, Windows, and macOS to run Python and C++ tests with test coverage, as well as a separate job for Java tests with test coverage. Each job should use micromamba to provision a Conda environment and display the environment info.",
+  "tags": [
+    "coverage-tests",
+    "cpp",
+    "python",
+    "java",
+    "conda",
+    "micromamba",
+    "github-actions"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_12426",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 965,
+  "description": "Create a GitLab CI pipeline using the docker:latest image with the docker:dind service and a cache keyed by $CI_COMMIT_REF_NAME. Define stages docker, build, test, clean. In the docker stage add a docker job that runs docker build -t img:latest . then docker save img:latest -o img.tar, caches img.tar, and pushes the cache. In the build stage add a build job that loads img.tar with docker load -i img.tar, runs docker run --rm -v $(pwd):/project img:latest /bin/sh -c \"cd /project && mkdir build && echo 'Hello World' > build/file.txt\", caches img.tar and the build/ directory. In the test stage add a test job that loads img.tar and runs docker run --rm -v $(pwd):/project img:latest /bin/sh -c \"cat /project/build/file.txt\", also using the same cache. In the clean stage add a clean job that removes all files under /cache with (cd /cache && rm -rf *) || true.",
+  "tags": [
+    "docker",
+    "dind",
+    "cache",
+    "build",
+    "test",
+    "clean"
+  ]
+}

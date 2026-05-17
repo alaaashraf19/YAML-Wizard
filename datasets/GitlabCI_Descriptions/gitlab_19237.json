@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_19237",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 946,
+  "description": "Create a GitLab CI pipeline that uses the docker:stable Docker image with the docker:stable-dind service and defines variables ARCHIVE_DIR, NETWORKPARSE_IMAGE_BASE, RELEASE_TAG, and TEST_TAG. In the build stage add a build job that first runs the before_script commands '[ -z ${DOCKER_HOST+x} ] && export DOCKER_HOST=\"tcp://localhost:2375\"', 'echo \"$CI_JOB_TOKEN\" | docker login -u gitlab-ci-token --password-stdin \"$CI_REGISTRY\"', 'export NETWORKPARSE_LATEST_IMAGE=$NETWORKPARSE_IMAGE_BASE:latest', 'export NETWORKPARSE_TEST_IMAGE=$NETWORKPARSE_IMAGE_BASE:$TEST_TAG', 'export NETWORKPARSE_RELEASE_IMAGE=$NETWORKPARSE_IMAGE_BASE:$RELEASE_TAG' and then executes './ci-scripts/build-image.sh'. In the test stage add a test job that runs the same before_script commands and then './ci-scripts/test-package.sh'. In the deploy stage add a publish-docs job that runs only on the master branch, runs the before_script commands and then './ci-scripts/publish-docs.sh'. Also add a publish-package job that runs only on master, runs the before_script commands and then './ci-scripts/publish-package.sh'.",
+  "tags": [
+    "docker",
+    "dind",
+    "ci-scripts",
+    "build",
+    "test",
+    "deploy",
+    "publish-docs",
+    "publish-package"
+  ]
+}

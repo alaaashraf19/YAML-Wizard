@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_10656",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 581,
+  "description": "Create a GitLab CI pipeline using the maven:3-jdk-11 Docker image. Define two stages: build-maven and build-debian-package. In the build-maven stage add a build-maven job that runs mvn clean install -B. In the build-debian-package stage add a build-debian-package job that runs apt update, apt-get -y upgrade, apt-get -y install apt-utils build-essential devscripts debhelper, mvn clean package -B, dpkg-buildpackage -us -uc, mkdir -p build/, mv ../*.deb build/, cd build, and mv twmindmapgenerator_0.0.0.1_all.deb twmindmapgenerator-amd64.deb, then publishes the resulting .deb files as an artifact named twmindmapgenerator with path build/*. No additional triggers, caches, or services are defined.",
+  "tags": [
+    "maven",
+    "debian",
+    "dpkg",
+    "java",
+    "gitlab-ci"
+  ]
+}

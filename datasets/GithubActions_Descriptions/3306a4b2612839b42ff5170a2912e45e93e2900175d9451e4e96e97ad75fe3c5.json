@@ -1,0 +1,14 @@
+{
+  "sha": "3306a4b2612839b42ff5170a2912e45e93e2900175d9451e4e96e97ad75fe3c5",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1097,
+  "description": "Create a GitHub Actions workflow named Build & Validate OPML file that runs on push and pull request events. The workflow should have two jobs: build and deploy. The build job runs on ubuntu-latest, checks out the repository with submodules, sets up Python 3.12, installs dependencies, builds an OPML file using a script, and uploads the OPML file as an artifact if the branch is master. The deploy job runs on ubuntu-latest, waits for the build job to complete, and deploys the OPML file to GitHub Pages if the branch is master.",
+  "tags": [
+    "python",
+    "opml",
+    "github-pages",
+    "validation",
+    "deployment"
+  ]
+}

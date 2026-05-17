@@ -1,0 +1,15 @@
+{
+  "sha": "24afab093d7442bc085e2874ed1df26ed1e74d2b8f7367acd37b37d877a973ec",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1956,
+  "description": "Create a GitHub Actions workflow named Build - Staging that runs on a workflow dispatch. The workflow has two jobs: stage-release and stage-docker-release. The stage-release job runs on an ubuntu-latest environment in a defi/ain-builder:latest container with a matrix strategy for multiple targets, checks out the code, configures the environment, sets up dependencies, uses a Rust cache, builds and packages the project, and uploads the artifact. The stage-docker-release job depends on stage-release, downloads the binaries, and builds a Docker image.",
+  "tags": [
+    "docker",
+    "rust",
+    "matrix",
+    "workflow-dispatch",
+    "ubuntu",
+    "make"
+  ]
+}

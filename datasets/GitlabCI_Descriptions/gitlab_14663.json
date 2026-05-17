@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_14663",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 778,
+  "description": "Create a GitLab CI pipeline with three jobs: test, staging, and production. The test job runs in the default test stage using the php:5.6 Docker image, executes `bash .gitlab-ci.sh` then `vendor/bin/phpunit --colors --coverage-text |& tee report/report.md`, and saves the `report/` directory as an artifact. The staging job runs in a deploy stage after the test job, uses the ruby:2.2.4 image, is limited to the develop branch, and runs `apt-get update -qy`, `apt-get install -y ruby-dev`, `apt-get install rubygems-integration`, `gem install dpl`, and `dpl --provider=heroku --app=batique-staging --api-key=0ed5e2a2-11f9-43d3-98ad-425ee0680012` to deploy to Heroku. The production job also runs in the deploy stage after test, uses the ruby:2.2 image, is limited to the master branch, and runs the same apt-get and gem commands followed by `dpl --provider=heroku --app=batique --api-key=0ed5e2a2-11f9-43d3-98ad-425ee0680012` to deploy to the production Heroku app. Both deploy jobs declare a dependency on the test job and have no additional caches or services.",
+  "tags": [
+    "ruby",
+    "php",
+    "heroku",
+    "dpl",
+    "phpunit",
+    "deploy",
+    "staging",
+    "production",
+    "gitlab-ci"
+  ]
+}

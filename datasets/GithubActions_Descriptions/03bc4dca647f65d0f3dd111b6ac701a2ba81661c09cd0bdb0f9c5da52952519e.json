@@ -1,0 +1,13 @@
+{
+  "sha": "03bc4dca647f65d0f3dd111b6ac701a2ba81661c09cd0bdb0f9c5da52952519e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1230,
+  "description": "Create a GitHub Actions workflow named Build documentation that runs on every push to the master branch. Use an ubuntu-latest job to check out the code, install Python 3.8, install dependencies from requirements.txt and doc/requirements_doc.txt, install the package, build the documentation with make html, and deploy it to GitHub Pages by checking out the gh-pages branch, replacing its contents with the generated documentation, and pushing the changes.",
+  "tags": [
+    "python",
+    "documentation",
+    "github-pages",
+    "ubuntu"
+  ]
+}

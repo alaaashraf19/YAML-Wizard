@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_16369",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 553,
+  "description": "Create a GitLab CI pipeline using the golang:1.9 Docker image, define a REPO_NAME variable set to gitlab.com/clover/SeFTP, and a single stage called build. Add a before_script that runs go version, echoes $CI_BUILD_REF and $CI_PROJECT_DIR. In the build stage add a build-project job that runs mkdir -p /tmp/$REPO_NAME; mv $CI_PROJECT_DIR/* /tmp/$REPO_NAME/; mkdir -p $CI_PROJECT_DIR/artifacts; cd /tmp/$REPO_NAME/; go get golang.org/x/crypto/sha3; go get gopkg.in/cheggaaa/pb.v2; go get github.com/xtaci/smux; go get github.com/xtaci/kcp-go; cd /tmp/$REPO_NAME/client; go build; cd /tmp/$REPO_NAME/server; go build. No caches, artifacts, or special rules are defined.",
+  "tags": [
+    "go",
+    "golang",
+    "build",
+    "gitlab-ci"
+  ]
+}

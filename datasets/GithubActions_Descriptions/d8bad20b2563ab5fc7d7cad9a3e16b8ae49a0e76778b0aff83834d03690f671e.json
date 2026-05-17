@@ -1,0 +1,19 @@
+{
+  "sha": "d8bad20b2563ab5fc7d7cad9a3e16b8ae49a0e76778b0aff83834d03690f671e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3398,
+  "description": "Create a GitHub Actions workflow named windows that runs on push events to the master branch, excluding certain paths. The workflow uses a matrix strategy to build the project on Windows 11 for x86 and x64 architectures in both release and debug configurations. It checks out the repository and a submodule, sets up the MSVC environment, installs dependencies, builds the project, runs tests, and uploads artifacts.",
+  "tags": [
+    "windows",
+    "msvc",
+    "vcpkg",
+    "cmake",
+    "powershell",
+    "github-actions",
+    "ci",
+    "build",
+    "test",
+    "artifact"
+  ]
+}

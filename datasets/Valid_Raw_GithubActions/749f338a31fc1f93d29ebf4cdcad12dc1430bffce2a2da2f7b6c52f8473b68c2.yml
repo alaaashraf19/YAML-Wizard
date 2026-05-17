@@ -1,0 +1,68 @@
+name: GNU/Linux & macOS Build
+
+# Controls when the action will run. Triggers the workflow on push or
+# pull request events but only for the master branch
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+# A workflow run is made up of one or more jobs that can run
+# sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+
+    # Steps represent a sequence of tasks that will be executed as part
+    # of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job
+      # can access it
+      - uses: actions/checkout@v3
+
+      - name: setup prerequisites
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" == "Linux" ]; then
+            sudo apt install libpcsclite-dev python3-all-dev python3-setuptools swig
+          elif [ "$RUNNER_OS" == "macOS" ]; then
+            brew install swig
+          else
+            echo "$RUNNER_OS not supported"
+            exit 1
+          fi
+
+      - name: build
+        shell: bash
+        run: |
+          python3 -m venv temp
+          source temp/bin/activate
+          pip install -r dev-requirements.txt 
+          make
+
+      - name: test run
+        shell: bash
+        run: |
+          source temp/bin/activate
+          make test
+
+      - name: coverage
+        shell: bash
+        run: |
+          source temp/bin/activate
+          python3 -m coverage erase
+          python3 -m coverage run $PYTHON -m pytest
+          python3 -m coverage report
+
+      - name: Covealls
+        if: matrix.os == 'ubuntu-latest'
+        uses: AndreMiras/coveralls-python-action@develop
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+

@@ -1,0 +1,11 @@
+image: node:8-alpine
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - npm install
+  - npm run build
+  stage: deploy

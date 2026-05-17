@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_13736",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 792,
+  "description": "Create a GitLab CI pipeline using the docker:stable image with the docker:stable-dind service and a before_script that logs in to the registry using $REGISTRY_USER and $REGISTRY_TOKEN. Define a single stage called digits and global variables OS set to $CI_BUILD_REF_NAME and REPOSITORY set to $CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME. Add five jobs named v3.0, v3.3, v4.0, v5.0 and v6.0, all in the digits stage, each executing the same script: extract VERSION from CI_BUILD_NAME by stripping the leading character, run docker build -t \"$REPOSITORY:$VERSION\" --build-arg \"repository=nvidia/caffe\" \"$VERSION\", if the variable LATEST is true then tag the image as \"$REPOSITORY:latest\", and finally docker push \"$REPOSITORY\". The v6.0 job sets LATEST='true' to also push a latest tag, while the other jobs do not set LATEST. No caches, artifacts, or special rules are defined.",
+  "tags": [
+    "docker",
+    "dind",
+    "caffe",
+    "docker-build",
+    "gitlab-ci"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "a37859ea630ef957c52768c0eb7c96c863132f236af7e3a8ac5997b79f782e87",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1359,
+  "description": "Create a GitHub Actions workflow named Test and Docker build that runs on every push to the master branch and on pull requests to master. Use a single ubuntu-latest job that checks out the repository, sets up Python 3.12.x, installs dependencies from requirements.txt, runs tests with pytest, logs in to Docker Hub, builds Docker images for ai-chatbot-framework_backend and ai-chatbot-framework_frontend, and pushes the images to Docker Hub with the provided credentials.",
+  "tags": [
+    "python",
+    "docker",
+    "tests",
+    "dockerhub",
+    "github-actions"
+  ]
+}

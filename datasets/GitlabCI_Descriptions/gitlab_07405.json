@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_07405",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1822,
+  "description": "Create a GitLab CI pipeline with stages linting, tests, installation, distribution, and post. Add a ruff job in the linting stage using the image registry.gitlab.com/pipeline-components/ruff:latest that runs `ruff check --output-format=gitlab .`. Add three installation jobs limited to the master branch: debian_sid uses the debian:sid image and runs `echo -e 'deb http://deb.debian.org/debian unstable main\ndeb-src http://deb.debian.org/debian/ unstable main' >> /etc/apt/sources.list`, `apt-get update`, `apt-get install -y libglib2.0-dev libusb-1.0 git python3-dev python3-poetry build-essential`, clones the expliot repository, changes into the directory, and runs `poetry install`; fedora_latest uses the fedora:latest image and runs `dnf -y install redhat-rpm-config libusb glib2-devel python3-devel poetry git gcc-c++ @development-tools`, clones the repo, cd, and runs `poetry install`; ubuntu_latest uses the ubuntu:latest image and runs `DEBIAN_FRONTEND=noninteractive apt-get update`, `DEBIAN_FRONTEND=noninteractive apt-get install -y libglib2.0-dev libusb-1.0 git python3-dev python3-poetry build-essential`, clones the repo, cd, and runs `poetry install`. Add a sdist job in the distribution stage using python:3.11 that runs `pip install -U poetry` then `poetry build`, and publishes the `dist/` directory as an artifact that expires in one week. Finally, add a pypi job in the post stage using python:3.11 that runs only on tags and executes `pip install -U twine poetry`, `poetry build`, and `twine upload dist/*`.",
+  "tags": [
+    "debian",
+    "fedora",
+    "ubuntu",
+    "python",
+    "poetry",
+    "ruff",
+    "pypi",
+    "distribution",
+    "linting"
+  ]
+}

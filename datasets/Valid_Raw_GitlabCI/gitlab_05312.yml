@@ -1,0 +1,85 @@
+.docker:base:
+  before_script: &id001
+  - docker info
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+  image: docker:latest
+  services: &id002
+  - docker:dind
+  variables: &id003
+    CURRENT_IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+    DOCKER_DRIVER: overlay
+    LATEST_IMAGE_TAG: $CI_REGISTRY_IMAGE:latest
+  when: manual
+build:docker:
+  before_script: *id001
+  image: docker:latest
+  script:
+  - docker build -t $CURRENT_IMAGE_TAG .
+  - docker push $CURRENT_IMAGE_TAG
+  services: *id002
+  stage: build
+  variables: *id003
+  when: manual
+build:site:
+  artifacts:
+    paths:
+    - ./.public
+  before_script:
+  - apt-get update
+  - apt-get upgrade -y
+  - apt-get install nodejs -y
+  - gem install bundler --no-document
+  - bundle update --bundler
+  - bundle install --jobs $(nproc) --deployment --without development --full-index
+    --retry 3 --clean
+  cache:
+    key: vendor
+    paths:
+    - vendor
+  image: ruby:3.0
+  script:
+  - bundle exec jekyll build -d ./.public
+  stage: build
+  variables:
+    JEKYLL_ENV: gitlab
+pages:
+  artifacts:
+    paths:
+    - ./public
+  environment:
+    name: production
+    url: https://www.chillcoding.com
+  only:
+  - master
+  script:
+  - mv ./.public ./public
+  stage: pages
+pages:review:
+  artifacts:
+    paths:
+    - public
+  environment:
+    name: review/$CI_COMMIT_REF_NAME
+    url: https://$CI_PROJECT_NAMESPACE.gitlab.io/-/$CI_PROJECT_NAME/-/jobs/$CI_JOB_ID/artifacts/public/index.html
+  except:
+  - master
+  script:
+  - mv ./.public ./public
+  stage: pages
+release:docker:
+  before_script: *id001
+  image: docker:latest
+  only:
+  - master
+  script:
+  - docker pull $CURRENT_IMAGE_TAG
+  - docker tag $CURRENT_IMAGE_TAG $LATEST_IMAGE_TAG
+  - docker push $LATEST_IMAGE_TAG
+  services: *id002
+  stage: release
+  variables: *id003
+  when: manual
+stages:
+- build
+- pages
+- release

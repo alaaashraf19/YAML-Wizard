@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_08196",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1260,
+  "description": "Create a GitLab CI pipeline with stages build, review, staging, and production. Add a build job in the build stage that runs on tags nginx, review-apps, deploy, executes \"echo Build my page\", and stores the public directory as an artifact that expires in 1 hour. Add a review job in the review stage that runs on all branches except master, creates a review environment named review/$CI_COMMIT_REF_NAME with URL http://$CI_COMMIT_REF_SLUG.$APPS_DOMAIN, executes \"rsync -av --delete public /srv/nginx/pages/$CI_COMMIT_REF_SLUG\", and can be stopped by a manual stop_review job. Add a staging job in the staging stage that runs only on master, creates a staging environment with URL http://staging.$APPS_DOMAIN, and runs \"rsync -av --delete public /srv/nginx/pages/staging\" on the same tags. Add a production job in the production stage that runs only on master, creates a production environment with URL http://production.$APPS_DOMAIN, runs \"rsync -av --delete public /srv/nginx/pages/production\", is manual, and uses the same tags. Finally, add a stop_review job in the review stage that manually stops the review environment, runs \"rm -rf public /srv/nginx/pages/$CI_COMMIT_REF_SLUG\", sets GIT_STRATEGY to none, and runs on the same tags.",
+  "tags": [
+    "nginx",
+    "review-apps",
+    "deployment",
+    "rsync",
+    "gitlab-ci",
+    "stages"
+  ]
+}

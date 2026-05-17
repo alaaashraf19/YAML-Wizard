@@ -1,0 +1,16 @@
+{
+  "sha": "f65ae8d59f6447de6acce372d5a3b61477b8a8150aa6a4648760f399535586cc",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 7697,
+  "description": "Create a GitHub Actions workflow named master that runs on push to the master branch, on pull requests to master, on published releases, and manually from the Actions tab. The workflow consists of multiple jobs: intro, build, check, test, doc, and deploy. The build job compiles firmware for multiple environments using PlatformIO and Python 3.9, while the check job performs static checks. The test job runs tests on a native environment. The doc job builds documentation using Doxygen and Graphviz. The deploy job releases artifacts on tagged releases.",
+  "tags": [
+    "platformio",
+    "python",
+    "doxygen",
+    "graphviz",
+    "github-release",
+    "ci",
+    "esp32"
+  ]
+}

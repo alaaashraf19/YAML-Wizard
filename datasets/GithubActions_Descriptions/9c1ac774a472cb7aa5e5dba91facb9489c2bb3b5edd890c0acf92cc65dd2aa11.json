@@ -1,0 +1,18 @@
+{
+  "sha": "9c1ac774a472cb7aa5e5dba91facb9489c2bb3b5edd890c0acf92cc65dd2aa11",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4515,
+  "description": "Create a GitHub Actions workflow named C/C++ CI that runs on every push. The workflow should have concurrent jobs with cancel-in-progress set to true, grouped by environment and head reference. It should have four jobs: build-linux, build-linux-debian-11, build-macos-current, and build-windows. Each job should check out two repositories, install dependencies, and build the project using make or gmake.",
+  "tags": [
+    "c",
+    "cpp",
+    "ci",
+    "ubuntu",
+    "macos",
+    "windows",
+    "make",
+    "brew",
+    "apt"
+  ]
+}

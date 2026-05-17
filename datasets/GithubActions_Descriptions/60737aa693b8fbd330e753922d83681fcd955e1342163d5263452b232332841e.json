@@ -1,0 +1,14 @@
+{
+  "sha": "60737aa693b8fbd330e753922d83681fcd955e1342163d5263452b232332841e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1883,
+  "description": "Create a GitHub Actions workflow named MacOSX that runs on push to the master branch and on pull requests, excluding markdown files. Use a macos-latest job that checks out the repository, installs dependencies with brew bundle, caches the CMake build folder, configures CMake with specific options, builds the project, and uploads the resulting package as an artifact if not in an Actions test environment.",
+  "tags": [
+    "macos",
+    "cmake",
+    "brew",
+    "github-actions",
+    "artifact"
+  ]
+}

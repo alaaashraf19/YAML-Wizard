@@ -1,0 +1,14 @@
+{
+  "sha": "696c6caa82050a413963a9ca0fecb8493ac4261d88371231700861a552623a97",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2259,
+  "description": "Create a GitHub Actions workflow named builds that runs on push and pull request events. The workflow should have read-all permissions and use specific environment variables to configure the build process. It should have three jobs, each running in a different container (Ubuntu 20.04, Ubuntu 22.04, and CentOS 7), that install system dependencies, checkout the code, run autogen.sh, configure the build with specific CFLAGS, and perform the build and test steps.",
+  "tags": [
+    "ubuntu",
+    "centos",
+    "build",
+    "autotools",
+    "ci"
+  ]
+}

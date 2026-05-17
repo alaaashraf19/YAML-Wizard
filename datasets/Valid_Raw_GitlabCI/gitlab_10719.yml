@@ -1,0 +1,29 @@
+pages:
+  artifacts:
+    expire_in: 2 weeks
+    paths:
+    - public
+  image: docker.io/ubuntu
+  script:
+  - mv cran public
+  - cat public/src/contrib/PACKAGES
+  stage: deploy
+stages:
+- test
+- deploy
+test:
+  artifacts:
+    expire_in: 2 weeks
+    paths:
+    - macrobenchmark.Rcheck
+    - cran
+  image: docker.io/jangorecki/r-base-dev
+  script:
+  - Rscript -e 'install.packages("microbenchmarkCore", repos="https://olafmersmann.github.io/drat")'
+  - R CMD build .
+  - R CMD check $(ls -1t *.tar.gz | head -n 1) --no-manual --no-stop-on-test-error
+    --run-dontrun --as-cran
+  - mkdir -p cran/src/contrib
+  - mv $(ls -1t *.tar.gz | head -n 1) cran/src/contrib
+  - Rscript -e 'tools::write_PACKAGES("cran/src/contrib", addFiles=TRUE)'
+  stage: test

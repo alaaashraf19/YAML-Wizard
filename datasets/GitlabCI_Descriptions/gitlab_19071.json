@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_19071",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 202,
+  "description": "Create a GitLab CI pipeline that runs a before_script which updates apt-get quietly, installs sqlite3, libsqlite3-dev and nodejs, prints the Ruby version and its location, and runs bundle install with parallel jobs using the FLAGS array. Define a single rspec job that executes the command bundle exec rspec. Use the default runner image (no explicit image), no explicit stages, caches, artifacts, or rules, and rely on the before_script for all setup steps.",
+  "tags": [
+    "ruby",
+    "bundler",
+    "rspec",
+    "sqlite",
+    "nodejs"
+  ]
+}

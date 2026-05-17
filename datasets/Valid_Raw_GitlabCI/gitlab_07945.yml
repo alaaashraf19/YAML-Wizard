@@ -1,0 +1,139 @@
+docker_clamd:
+  image: docker
+  script:
+  - echo "Building clamd image"
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  - docker pull $CONTAINER_CLAMD || true
+  - docker build --cache-from $CONTAINER_CLAMD -t $CONTAINER_CLAMD -f docker/clamd/Dockerfile
+    .;
+  - docker push $CONTAINER_CLAMD
+  services:
+  - docker:dind
+  stage: build
+docker_deploy_latest:
+  image: docker
+  only:
+  - master
+  script:
+  - 'echo "Building fuglu latest image: $CONTAINER_RELEASE_IMAGE"'
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  - docker pull $CONTAINER_TEST_IMAGE || true
+  - docker tag $CONTAINER_TEST_IMAGE $CONTAINER_RELEASE_IMAGE
+  - docker push $CONTAINER_RELEASE_IMAGE
+  services:
+  - docker:dind
+  stage: deploy
+docker_fuglu:
+  image: docker
+  script:
+  - echo "Building fuglu image"
+  - 'echo "CI_COMMIT_SHA: $CI_COMMIT_SHA"'
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  - echo $CI_COMMIT_SHA > fuglu/src/fuglu.sha
+  - sh -c 'if [[ -z "$NOCACHE" ]]; then echo "NOCACHE is not defined... -> build using
+    cache"; docker pull $CONTAINER_TEST_IMAGE || true; docker build --cache-from $CONTAINER_TEST_IMAGE
+    -t $CONTAINER_TEST_IMAGE -f docker/fuglu/Dockerfile .; else echo "NOCACHE is defined...
+    -> build WITHOUT using cache"; docker build --no-cache --pull -t $CONTAINER_TEST_IMAGE
+    -f docker/fuglu/Dockerfile .; fi;'
+  - docker push $CONTAINER_TEST_IMAGE
+  services:
+  - docker:dind
+  stage: build
+docker_spamd:
+  image: docker
+  script:
+  - echo "Building spamd image"
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  - docker pull $CONTAINER_SPAMD || true
+  - docker build --cache-from $CONTAINER_SPAMD -t $CONTAINER_SPAMD -f docker/spamd/Dockerfile
+    .;
+  - docker push $CONTAINER_SPAMD
+  services:
+  - docker:dind
+  stage: build
+image: alpine
+include:
+- template: Security/SAST.gitlab-ci.yml
+integrationtests:
+  artifacts:
+    reports:
+      junit: fuglu/integration.xml
+    when: always
+  image: $CONTAINER_TEST_IMAGE
+  script:
+  - sh .gitlab-ci.wait4services.sh
+  - cd fuglu
+  - /fugluenv/bin/python3 -m pytest --junitxml=integration.xml tests/integration
+  services:
+  - alias: clamd
+    name: $CONTAINER_CLAMD
+  - alias: spamd
+    name: $CONTAINER_SPAMD
+  stage: test
+isolated:
+  artifacts:
+    reports:
+      junit: fuglu/isolated.xml
+    when: always
+  image: $CONTAINER_TEST_IMAGE
+  script:
+  - cd fuglu
+  - /fugluenv/bin/python3 -m pytest --junitxml=isolated.xml tests/isolated
+  services:
+  - alias: clamd
+    name: $CONTAINER_CLAMD
+  - alias: spamd
+    name: $CONTAINER_SPAMD
+  stage: test
+pages:
+  artifacts:
+    paths:
+    - public
+  image: $CONTAINER_TEST_IMAGE
+  only:
+  - master
+  - develop
+  - milter
+  script:
+  - mkdir public
+  - cd fuglu/develop/doc
+  - /fugluenv/bin/python3 make_sphinx_plugin_doc.py > ../../../documentation/source/includedplugins-autogen.txt
+  - cd ../../../documentation
+  - make html
+  - mv _build/* ../public/
+  stage: documentation
+sast:
+  stage: test
+stages:
+- build
+- test
+- documentation
+- deploy
+- trigger
+unittests:
+  artifacts:
+    reports:
+      junit: fuglu/unit.xml
+    when: always
+  image: $CONTAINER_TEST_IMAGE
+  script:
+  - cd fuglu
+  - /fugluenv/bin/python3 -m pytest --junitxml=unit.xml tests/unit
+  services:
+  - alias: clamd
+    name: $CONTAINER_CLAMD
+  - alias: spamd
+    name: $CONTAINER_SPAMD
+  - name: redis:latest
+  - name: mariadb:latest
+  stage: test
+variables:
+  CONTAINER_CLAMD: $CI_REGISTRY_IMAGE:clamd
+  CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE:latest
+  CONTAINER_SPAMD: $CI_REGISTRY_IMAGE:spamd
+  CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+  DOCKER_TLS_CERTDIR: /certs
+  MARIADB_DATABASE: testdb
+  MARIADB_PASSWORD: mysql123
+  MARIADB_RANDOM_ROOT_PASSWORD: 1
+  MARIADB_USER: testuser

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_04583",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 513,
+  "description": "Create a GitLab CI pipeline with a single deploy stage. Add a deploy_aws_s3 job that runs in the deploy stage using the napp/docker-aws-cli Docker image and only executes on the master branch. The job runs the exact commands: aws s3 cp ./tableau-style s3://$AWS_BUCKET/$AWS_FOLDER/tableau-style --recursive --acl public-read; aws s3 cp . s3://$AWS_BUCKET/$AWS_FOLDER --recursive --exclude \"*\" --include \"*.css\" --include \"*.js\" --include \"*.html\" --acl public-read; aws configure set preview.cloudfront true; aws cloudfront create-invalidation --distribution-id $CDN_DISTRIBUTION_ID --paths \"/brushfilter/*\". It uploads static files to an S3 bucket and triggers a CloudFront invalidation.",
+  "tags": [
+    "aws",
+    "s3",
+    "cloudfront",
+    "docker-aws-cli",
+    "deploy",
+    "gitlab-ci"
+  ]
+}

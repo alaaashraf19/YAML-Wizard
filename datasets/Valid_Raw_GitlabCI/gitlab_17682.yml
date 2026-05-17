@@ -1,0 +1,29 @@
+build:
+  script:
+  - git bundle create tools/ci/docker/assets/tessia-baselib.git HEAD
+  - docker build --pull --force-rm -f tools/ci/docker/Dockerfile -t $IMAGE_NAME tools/ci/docker
+  - docker run --env TESSIA_BASELIB_INTERACTIVE=no --rm $IMAGE_NAME
+  stage: build
+cleanup:
+  script:
+  - docker rm -v $(docker ps -a -q -f "ancestor=${IMAGE_NAME}") || true
+  - docker rmi $(docker images -a -q -f "dangling=true") || true
+  - docker rmi --no-prune $IMAGE_NAME
+  stage: cleanup
+  when: always
+lint:
+  script:
+  - docker run -t --rm --entrypoint /assets/tessia-baselib/tools/run_pylint.py $IMAGE_NAME
+  stage: lint
+stages:
+- build
+- lint
+- unittest
+- cleanup
+unittest:
+  coverage: /^TOTAL.*\s+(\d+\%)$/
+  script:
+  - docker run -t --rm --entrypoint /assets/tessia-baselib/tools/run_tests.py $IMAGE_NAME
+  stage: unittest
+variables:
+  IMAGE_NAME: tessia-baselib:${CI_COMMIT_REF_SLUG}

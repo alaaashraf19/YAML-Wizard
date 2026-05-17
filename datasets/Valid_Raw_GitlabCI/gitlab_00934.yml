@@ -1,0 +1,50 @@
+before_script:
+- source ci/prepare
+build:
+  artifacts:
+    paths:
+    - webapp
+  image: logimethods/docker-sbt-docker
+  script:
+  - sbt appJS/fullOptJS
+  - docker_login
+  - sbt appJVM/dockerBuildAndPush
+  stage: build
+image: docker:latest
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - cp -r webapp public
+  stage: deploy
+production:
+  environment: production
+  only:
+  - production
+  script:
+  - docker_retag_and_push $CI_BUILD_REF production
+  stage: deploy
+services:
+- docker:dind
+stages:
+- test
+- build
+- deploy
+staging:
+  environment: staging
+  except:
+  - production
+  script:
+  - docker_retag_and_push $CI_BUILD_REF staging
+  stage: deploy
+test:
+  image: logimethods/docker-sbt-docker
+  script:
+  - sbt appJVM/test
+  stage: test
+variables:
+  DOCKER_DRIVER: overlay
+  SBT_OPTS: -Xmx1G -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -Xss2M

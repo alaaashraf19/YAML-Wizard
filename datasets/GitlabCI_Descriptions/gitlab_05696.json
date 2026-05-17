@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_05696",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 240,
+  "description": "Create a GitLab CI pipeline that uses the docker:stable Docker image with the docker:stable-dind service. Define a single stage named build and a job called build that runs in the build stage, logs in to the GitLab Container Registry with \"docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY\" in before_script, then executes \"./build/src/build.sh\" as its script. The job should run only on branch pipelines (only branches) and be tagged with the docker runner tag. No caches, artifacts, or deployment targets are required.",
+  "tags": [
+    "docker",
+    "docker-stable",
+    "dind",
+    "build",
+    "ci-registry"
+  ]
+}

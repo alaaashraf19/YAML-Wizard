@@ -1,0 +1,16 @@
+name: bins
+
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: make
+        uses: ./.github/actions/muslbuilder

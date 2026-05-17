@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_11845",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 85,
+  "description": "Create a GitLab CI pipeline that defines a single job called production, marked as a deploy type, which only runs on the master branch. The job executes the shell command `npm test` using the default Docker image (implicitly a Node image). No stages, caches, artifacts, services, or variables are specified, and the pipeline contains no additional jobs. Ensure the job is limited to the master branch via an `only` rule.",
+  "tags": [
+    "npm",
+    "node",
+    "deploy",
+    "gitlab-ci"
+  ]
+}

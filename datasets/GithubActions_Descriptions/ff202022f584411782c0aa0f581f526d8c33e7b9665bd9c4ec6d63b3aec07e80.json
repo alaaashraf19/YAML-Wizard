@@ -1,0 +1,16 @@
+{
+  "sha": "ff202022f584411782c0aa0f581f526d8c33e7b9665bd9c4ec6d63b3aec07e80",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1626,
+  "description": "Create a GitHub Actions workflow named OpenSSL CI that runs on every push to the master branch and on pull requests to master. Use a ubuntu-latest job with a matrix strategy to test multiple OpenSSL versions, checking out the repository, installing CMake, Google Test, and the specific OpenSSL version, then configuring, building, and testing the project. Generate badges for each OpenSSL version on push events and publish them to a GitHub Pages branch.",
+  "tags": [
+    "openssl",
+    "ci",
+    "ubuntu",
+    "cmake",
+    "gtest",
+    "badges",
+    "github-pages"
+  ]
+}

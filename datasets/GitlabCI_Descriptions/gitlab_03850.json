@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_03850",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 213,
+  "description": "Create a GitLab CI pipeline that uses the cirrusci/flutter:stable Docker image and defines three stages: build, analyze, and test. Add a global before_script that runs flutter pub get and flutter clean before every job. In the build stage, add a job named build that runs flutter build aot, is limited to merge requests via only: [merge_requests], and is assigned to runners tagged shared. No services, caches, artifacts, or deployment targets are configured.",
+  "tags": [
+    "flutter",
+    "docker",
+    "merge-requests",
+    "ci-pipeline",
+    "build"
+  ]
+}

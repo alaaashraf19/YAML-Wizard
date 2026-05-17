@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_12415",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 275,
+  "description": "Create a GitLab CI pipeline that uses the default Docker image and runs a global before_script to update apt, install python and python-pip, and upgrade pip installing cfn-lint, ansible-lint, and yamllint. Define a single stage named test. Add a job called test in the test stage that executes the command find . -regextype posix-extended -regex '.*\\\\.y(a)?ml' -exec yamllint \\\"{}\\\" \\\\; to lint all YAML files. Then run ansible-lint . to lint Ansible playbooks, with no additional artifacts, caches, or triggers.",
+  "tags": [
+    "yaml",
+    "ansible-lint",
+    "yamllint",
+    "cfn-lint",
+    "gitlab-ci"
+  ]
+}

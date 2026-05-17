@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_09114",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1237,
+  "description": "Create a GitLab CI pipeline with three stages (test and release) using the docker:stable Docker image and the docker:stable-dind service for every job, and set the DOCKER_DRIVER variable to overlay2. In the test stage add a job named test that runs the commands: apk add --no-cache jq and ./test.sh. In the release stage add a job named release-latest that runs only on the master branch and executes: echo \"Building Docker image...\", docker build -t \"$CI_REGISTRY_IMAGE:latest\" ., echo \"Logging to GitLab Container Registry with CI credentials...\", docker login -u \"$CI_REGISTRY_USER\" -p \"$CI_REGISTRY_PASSWORD\" \"$CI_REGISTRY\", echo \"Pushing to GitLab Container Registry...\", docker push \"$CI_REGISTRY_IMAGE:latest\". Also add a job named release-version that runs only on tags matching the regex ^\\d+\\.\\d+\\.\\d+(-gitlab\\.\\d+)?$ and executes: echo \"Building Docker image...\", docker build -t \"$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME\" ., echo \"Logging to GitLab Container Registry with CI credentials...\", docker login -u \"$CI_REGISTRY_USER\" -p \"$CI_REGISTRY_PASSWORD\" \"$CI_REGISTRY\", echo \"Pushing to GitLab Container Registry...\", docker push \"$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME\".",
+  "tags": [
+    "docker",
+    "dind",
+    "release",
+    "test",
+    "semantic-version",
+    "gitlab-registry"
+  ]
+}

@@ -1,0 +1,49 @@
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: "0 1 * * *"
+
+name: Test
+
+jobs:
+  R-CMD-check:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ["ubuntu-18.04", "macos-latest", "windows-latest"]
+        include:
+          - os: ubuntu-18.04
+            cran: https://demo.rstudiopm.com/all/__linux__/bionic/latest
+    runs-on: ${{ matrix.os }}
+    name: ${{ matrix.os }}
+    timeout-minutes: 30
+    env:
+      R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
+      INSTALL_TORCH: 1
+      CRAN: ${{ matrix.cran }}
+
+    steps:
+      - uses: actions/checkout@v1
+      - uses: r-lib/actions/setup-r@master
+      - uses: r-lib/actions/setup-pandoc@master
+      - name: Install system dependencies
+        if: runner.os == 'Linux'
+        env:
+          RHUB_PLATFORM: linux-x86_64-ubuntu-gcc
+        run: |
+          Rscript -e "install.packages(c('remotes'))" -e "remotes::install_github('r-hub/sysreqs')"
+          sysreqs=$(Rscript -e "cat(sysreqs::sysreq_commands('DESCRIPTION'))")
+          sudo -s eval "$sysreqs"
+      - name: Install dependencies
+        run: Rscript -e "install.packages(c('remotes', 'rcmdcheck'))" -e "remotes::install_deps(dependencies = TRUE)"
+      - name: Build lantern and get libtorch
+        run: | 
+          Rscript tools/buildlantern.R
+      - name: Check
+        run:  |
+          print(Sys.info())
+          rcmdcheck::rcmdcheck(args = c("--no-manual", "--no-multiarch"), error_on = "error", check_dir = "check")
+        shell: Rscript {0}
+      - name: Reveal testthat details
+        run: find . -name testthat.Rout -exec cat '{}' ';'

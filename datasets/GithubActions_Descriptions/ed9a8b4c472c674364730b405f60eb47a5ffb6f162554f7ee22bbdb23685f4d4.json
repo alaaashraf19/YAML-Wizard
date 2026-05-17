@@ -1,0 +1,17 @@
+{
+  "sha": "ed9a8b4c472c674364730b405f60eb47a5ffb6f162554f7ee22bbdb23685f4d4",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3634,
+  "description": "Create a GitHub Actions workflow named sdl2-examples that runs on push to any branch except markdown files, on pull requests to any branch except markdown files, and on workflow dispatch. The workflow has three ubuntu-latest jobs: cmake, make, and two alire jobs with different environments. The cmake job uses a matrix to test different C++ versions with CMake and Ninja. The make job uses a matrix to test various build configurations with Make. The alire jobs set up Alire, install toolchains, and build Ada projects in different environments.",
+  "tags": [
+    "sdl2",
+    "cmake",
+    "make",
+    "alire",
+    "ada",
+    "ubuntu",
+    "macos",
+    "windows"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_07125",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1159,
+  "description": "Create a GitLab CI pipeline that uses the php:7.0 Docker image and caches the vendor/ directory. Define a global before_script that updates apt, installs git, wget, zlib1g-dev, installs the PHP extensions zip and exif, installs Xdebug via pecl and enables it, downloads and verifies the Composer installer, runs Composer install, and creates a testuser system account. In the default test stage add a job named php:7.0 that runs php vendor/bin/phpstan analyse --no-progress -l 7 src -c phpstan.neon. Then it echoes \"Running PHPUnit Tests\" and executes the PHPUnit test suite as testuser with su testuser -c \"php vendor/bin/phpunit --colors=\\\"never\\\" --coverage-text\". The job uses the cached vendor/ directory and does not produce any artifacts or special triggers.",
+  "tags": [
+    "php",
+    "phpstan",
+    "phpunit",
+    "composer",
+    "xdebug",
+    "docker-php-ext",
+    "cache"
+  ]
+}

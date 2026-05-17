@@ -1,0 +1,8 @@
+before_script:
+- python -V
+"\U0001F373 start-cook":
+  script:
+  - pip install bluepy
+  - python breakfast.py
+  tags:
+  - blue

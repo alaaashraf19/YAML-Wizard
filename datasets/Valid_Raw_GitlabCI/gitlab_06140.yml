@@ -1,0 +1,41 @@
+build:
+  artifacts:
+    paths:
+    - build/
+  before_script:
+  - apt-get update -yqqq
+  - apt-get install -y nodejs
+  - bundle install --path vendor
+  cache:
+    paths:
+    - vendor/
+  image: ruby:2.3
+  script:
+  - bundle exec middleman build
+  stage: build
+deploy:
+  image: sequenceiq/alpine-curl
+  script: curl -X POST -H "$CONTENT_TYPE" -d "$JSON_DATA" "$RANCHER_HOST"
+  stage: deploy
+  tags:
+  - home
+  - docker
+  variables:
+    CONTENT_TYPE: 'Content-Type: application/json'
+    JSON_DATA: '{"push_data": {"tag": "latest"},"repository": {"repo_name":"$CI_REGISTRY_IMAGE"}}'
+dockerize:
+  before_script:
+  - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  dependencies:
+  - build
+  image: docker:latest
+  script:
+  - docker build -t "$CI_REGISTRY_IMAGE" .
+  - docker push "$CI_REGISTRY_IMAGE"
+  services:
+  - docker:dind
+  stage: dockerize
+stages:
+- build
+- dockerize
+- deploy

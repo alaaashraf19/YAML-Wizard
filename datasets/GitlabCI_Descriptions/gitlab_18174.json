@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_18174",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 834,
+  "description": "Create a GitLab CI pipeline that uses the ruby:2.4 Docker image and defines two stages: validate and policy. In the validate stage add a lint job that runs `gem install mdl -v 0.4.0` then `mdl -s <(echo \"rule 'MD009', :br_spaces => 4\") .`. In the policy stage add a policy job that sets `GIT_STRATEGY` to `none` and executes a curl request to `${GITECT_HOST}/api/v1/gitlab.com/${CI_PROJECT_PATH}/~/${CI_COMMIT_REF_NAME}/${CI_COMMIT_SHA}/policy-compliance` with the `${GITECT_HOST_TOKEN}` header, echoes the JSON output, and exits with an error if the output does not contain \"true\". The policy job should run on all branches except `master` and should not run on tags. Define global variables `GITECT_HOST` set to `https://gitect2.codethink.co.uk` and `TARGET_BRANCH` set to `master`.",
+  "tags": [
+    "ruby",
+    "mdl",
+    "lint",
+    "policy",
+    "curl",
+    "gitect"
+  ]
+}

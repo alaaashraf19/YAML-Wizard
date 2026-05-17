@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_11433",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 627,
+  "description": "Create a GitLab CI pipeline using the node:12-alpine Docker image and defining two stages: build and deploy. In the build stage add a generate_stats job that sets NODE_OPTIONS=--max_old_space_size=3584, runs `apk add --update-cache --no-cache git jq bash gzip curl tree coreutils`, then `apk add cloc perl-moo --update-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/community/`, executes `bash ./analysis.sh`, moves the resulting `dist` directory to `public`, and always stores the `public`, `results`, and `tmp` directories as artifacts. Also in the build stage add a shellcheck job that uses the koalaman/shellcheck-alpine image and runs `shellcheck ./analysis.sh`. In the deploy stage add a pages job that runs `ls public`, publishes the `public` directory as a GitLab Pages artifact, and only runs on the master branch. No caches or additional services are required.",
+  "tags": [
+    "node-alpine",
+    "apk",
+    "gitlab-pages",
+    "shellcheck",
+    "build",
+    "deploy"
+  ]
+}

@@ -1,0 +1,34 @@
+beta:
+  before_script:
+  - "apt-get -y update \\\n  && apt-get -y install python3-dev \\\n  && git clone\
+    \ https://github.com/tobyn/zbase32.git pyzbase32 \\\n  && cd pyzbase32 \\\n  &&\
+    \ python3 ./setup.py install --user\n"
+  - rustup toolchain install beta
+  - rustup default beta
+  script: &id001
+  - cargo rustc --lib --verbose -- -D warnings
+  - rustup component add clippy
+  - cargo clippy -- -D clippy::all -D clippy::pedantic -D warnings
+  - cargo test --verbose --features python_tests
+image: rust:latest
+nightly:
+  allow_failure: true
+  before_script:
+  - "apt-get -y update \\\n  && apt-get -y install python3-dev \\\n  && git clone\
+    \ https://github.com/tobyn/zbase32.git pyzbase32 \\\n  && cd pyzbase32 \\\n  &&\
+    \ python3 ./setup.py install --user\n"
+  - rustup toolchain install nightly
+  - rustup default nightly
+  script:
+  - cargo test --verbose --features unstable,python_tests
+stable:
+  before_script:
+  - "apt-get -y update \\\n  && apt-get -y install python3-dev \\\n  && git clone\
+    \ https://github.com/tobyn/zbase32.git pyzbase32 \\\n  && cd pyzbase32 \\\n  &&\
+    \ python3 ./setup.py install --user\n"
+  script: *id001
+variables:
+  QUICKCHECK_GENERATOR_SIZE: 4096
+  QUICKCHECK_MAX_TESTS: 100000
+  QUICKCHECK_MIN_TESTS_PASSED: 3
+  QUICKCHECK_TESTS: 5000

@@ -1,0 +1,39 @@
+before_script:
+- apk update
+- apk add alpine-sdk cairo-dev dbus dbus-dev gobject-introspection-dev py3-flake8
+  py3-pylint py3-tox python3-dev
+cache:
+  paths:
+  - .tox/
+linting:
+  before_script:
+  - apk update
+  - apk add py3-dbus py3-flake8 py3-pylint
+  image: python:alpine
+  script:
+  - pylint -d C0111,C0103,R1732 networkd_dispatcher.py
+  - flake8 networkd_dispatcher.py
+  stage: linters
+stages:
+- linters
+- tests
+test-py3.10:
+  image: python:3.10-alpine
+  script:
+  - TOXENV=py310 tox
+  stage: tests
+test-py3.11:
+  image: python:3.11-alpine
+  script:
+  - TOXENV=py311 tox
+  stage: tests
+test-py3.7:
+  image: python:3.7-alpine
+  script:
+  - TOXENV=py37 tox
+  stage: tests
+test-py3.8:
+  image: python:3.8-alpine
+  script:
+  - TOXENV=py38 tox
+  stage: tests

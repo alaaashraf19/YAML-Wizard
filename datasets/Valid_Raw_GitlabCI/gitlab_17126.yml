@@ -1,0 +1,252 @@
+.acceptance_base:
+  before_script: &id001
+  - 'ruby -e "puts %(\n\n), %q(=)*80, %(\nSIMP-relevant Environment Variables:\n\n#{e=ENV.keys.grep(/^PUPPET|^SIMP|^BEAKER|MATRIX/);
+    pad=((e.map{|x| x.size}.max||0)+1); e.map{|v| %(    * #{%(#{v}:).ljust(pad)} #{39.chr
+    + ENV[v] + 39.chr}\n)}.join}\n),  %q(=)*80, %(\n\n)" || :'
+  - echo -e "\e[0Ksection_start:`date +%s`:before_script10[collapsed=true]\r\e[0KDiagnostic
+    ruby & gem information"
+  - 'which ruby && ruby --version || :'
+  - '[[ $- == *i* ]] && echo ''Interactive shell session'' || echo ''Non-interactive
+    shell session'''
+  - shopt -q login_shell && echo 'Login shell' || echo 'Not a login shell'
+  - 'rvm ls || :'
+  - echo -e "\e[0Ksection_end:`date +%s`:before_script10\r\e[0K"
+  - echo -e "\e[0Ksection_start:`date +%s`:before_script20[collapsed=true]\r\e[0KEnsure
+    RVM & ruby is installed"
+  - if command -v rvm; then if declare -p rvm_path &> /dev/null; then source "${rvm_path}/scripts/rvm";
+    else source "$HOME/.rvm/scripts/rvm" || source /etc/profile.d/rvm.sh; fi; fi
+  - 'if command -v rvm && ! grep rvm_install_on_use_flag=1 ~/.rvmrc; then echo rvm_install_on_use_flag=1
+    >> ~/.rvmrc || echo ''== WARNING: ~/.rvmrc is missing rvm_install_on_use_flag=1
+    and I failed to add it''; fi'
+  - if command -v rvm; then rvm use "$MATRIX_RUBY_VERSION"; else echo "rvm not detected;
+    skipping 'rvm use'"; fi
+  - 'ruby --version || :'
+  - 'gem list sync || :'
+  - echo -e "\e[0Ksection_end:`date +%s`:before_script20\r\e[0K"
+  - echo -e "\e[0Ksection_start:`date +%s`:before_script30[collapsed=true]\r\e[0KBundle
+    gems (preferring cached > local > downloaded resources)"
+  - declare GEM_BUNDLER_VER=(-v "~> ${BUNDLER_VERSION:-2.2.6}")
+  - declare GEM_INSTALL_CMD=(gem install --no-document)
+  - declare BUNDLER_INSTALL_CMD=(bundle install --no-binstubs --jobs $(nproc) "${FLAGS[@]}")
+  - mkdir -p ${GEM_HOME} ${BUNDLER_BIN}
+  - gem list -ie "${GEM_BUNDLER_VER[@]}" --silent bundler || "${GEM_INSTALL_CMD[@]}"
+    --local "${GEM_BUNDLER_VER[@]}" bundler || "${GEM_INSTALL_CMD[@]}" "${GEM_BUNDLER_VER[@]}"
+    bundler
+  - 'rm -rf pkg/ || :'
+  - 'bundle check || rm -f Gemfile.lock && ("${BUNDLER_INSTALL_CMD[@]}" --local ||
+    "${BUNDLER_INSTALL_CMD[@]}" || bundle pristine ||  "${BUNDLER_INSTALL_CMD[@]}")
+    || { echo "PIPELINE: Bundler could not install everything (see log output above)"
+    && exit 99 ; }'
+  - echo -e "\e[0Ksection_end:`date +%s`:before_script30\r\e[0K"
+  - echo -e "\e[0Ksection_start:`date +%s`:before_script40[collapsed=true]\r\e[0KDiagnostic
+    bundler, ruby, and gem checks"
+  - 'bundle exec rvm ls || :'
+  - 'bundle exec which ruby || :'
+  - 'bundle show sync || :'
+  - 'bundle exec gem list sync || :'
+  - echo -e "\e[0Ksection_end:`date +%s`:before_script40\r\e[0K"
+  cache: &id002
+    key: ${CI_PROJECT_NAMESPACE}_ruby-${MATRIX_RUBY_VERSION}_bundler
+    paths:
+    - .vendor
+  stage: acceptance
+  tags: &id003
+  - beaker
+.compliance_base:
+  before_script: *id001
+  cache: *id002
+  stage: compliance
+  tags:
+  - beaker
+.lint_tests:
+  before_script: *id001
+  cache: *id002
+  script:
+  - bundle exec rake metadata_lint
+  stage: validation
+  tags:
+  - docker
+.only_with_SIMP_FULL_MATRIX:
+  only:
+    variables:
+    - $SIMP_FULL_MATRIX
+.only_with_SIMP_FULL_MATRIX_or_SIMP_IPA_TEST:
+  only: &id006
+    variables:
+    - $SIMP_FULL_MATRIX
+    - $SIMP_IPA_TEST
+.only_with_SIMP_FULL_MATRIX_or_SIMP_LITE_TEST:
+  only: &id007
+    variables:
+    - $SIMP_FULL_MATRIX
+    - $SIMP_LITE_TEST
+.only_with_SIMP_RELEASE_TESTS:
+  only: &id005
+    variables:
+    - $SIMP_RELEASE_TESTS
+.pup_6_pe:
+  image: ruby:2.5
+  variables: &id004
+    BEAKER_PUPPET_COLLECTION: puppet6
+    MATRIX_RUBY_VERSION: '2.5'
+    PUPPET_VERSION: 6.22.1
+.pup_6_x:
+  image: ruby:2.5
+  variables: &id009
+    BEAKER_PUPPET_COLLECTION: puppet6
+    MATRIX_RUBY_VERSION: '2.5'
+    PUPPET_VERSION: ~> 6.0
+.pup_7_x:
+  image: ruby:2.7
+  variables: &id008
+    BEAKER_PUPPET_COLLECTION: puppet7
+    MATRIX_RUBY_VERSION: '2.7'
+    PUPPET_VERSION: ~> 7.0
+.setup_bundler_env:
+  before_script: *id001
+  cache: *id002
+.unit_tests:
+  before_script: *id001
+  cache: *id002
+  script:
+  - bundle exec rake spec
+  stage: validation
+  tags:
+  - docker
+pup6.pe-default_el7:
+  before_script: *id001
+  cache: *id002
+  image: ruby:2.5
+  retry: 1
+  script:
+  - bundle exec rake beaker:suites[default,el7_server]
+  stage: acceptance
+  tags: *id003
+  variables: *id004
+pup6.pe-default_el8:
+  before_script: *id001
+  cache: *id002
+  image: ruby:2.5
+  retry: 1
+  script:
+  - bundle exec rake beaker:suites[default,el8_server]
+  stage: acceptance
+  tags: *id003
+  variables: *id004
+pup6.pe-forge_install_el7:
+  before_script: *id001
+  cache: *id002
+  image: ruby:2.5
+  only: *id005
+  retry: 1
+  script:
+  - bundle exec rake beaker:suites[install_from_core_module,el7_server]
+  stage: acceptance
+  tags: *id003
+  variables: *id004
+pup6.pe-forge_install_el8:
+  before_script: *id001
+  cache: *id002
+  image: ruby:2.5
+  only: *id005
+  retry: 1
+  script:
+  - bundle exec rake beaker:suites[install_from_core_module,el8_server]
+  stage: acceptance
+  tags: *id003
+  variables: *id004
+pup6.pe-ipa_el7:
+  before_script: *id001
+  cache: *id002
+  image: ruby:2.5
+  only: *id006
+  retry: 1
+  script:
+  - bundle exec rake beaker:suites[ipa,el7_server]
+  stage: acceptance
+  tags: *id003
+  variables: *id004
+pup6.pe-rpm_el7:
+  before_script: *id001
+  cache: *id002
+  image: ruby:2.5
+  only: *id005
+  retry: 1
+  script:
+  - bundle exec rake beaker:suites[install_from_rpm,el7_server]
+  stage: acceptance
+  tags: *id003
+  variables: *id004
+pup6.pe-rpm_el8:
+  before_script: *id001
+  cache: *id002
+  image: ruby:2.5
+  only: *id005
+  retry: 1
+  script:
+  - bundle exec rake beaker:suites[install_from_rpm,el8_server]
+  stage: acceptance
+  tags: *id003
+  variables: *id004
+pup6.pe-simp_lite_el7:
+  before_script: *id001
+  cache: *id002
+  image: ruby:2.5
+  only: *id007
+  retry: 1
+  script:
+  - bundle exec rake beaker:suites[simp_lite,el7_server]
+  stage: acceptance
+  tags: *id003
+  variables: *id004
+pup6.pe-simp_lite_el8:
+  before_script: *id001
+  cache: *id002
+  image: ruby:2.5
+  only: *id007
+  retry: 1
+  script:
+  - bundle exec rake beaker:suites[simp_lite,el8_server]
+  stage: acceptance
+  tags: *id003
+  variables: *id004
+pup7.pe-default_el7:
+  before_script: *id001
+  cache: *id002
+  image: ruby:2.7
+  retry: 1
+  script:
+  - bundle exec rake beaker:suites[default,el7_server]
+  stage: acceptance
+  tags: *id003
+  variables: *id008
+releng_checks:
+  before_script: *id001
+  cache: *id002
+  image: ruby:2.5
+  script:
+  - 'command -v rpm || if command -v apt-get; then apt-get update; apt-get install
+    -y rpm; fi ||:'
+  - SIMP_RPM_dist=.el7 bundle exec rake check:dot_underscore
+  - SIMP_RPM_dist=.el7 bundle exec rake check:test_file
+  - bundle exec rake metadata_lint
+  - bundle exec pdk build --force --target-dir=dist
+  stage: validation
+  tags:
+  - docker
+  variables: *id009
+stages:
+- validation
+- acceptance
+- compliance
+- deployment
+variables:
+  BUNDLER_VERSION: 2.2.19
+  BUNDLE_BIN: .vendor/gem_install/bin
+  BUNDLE_CACHE_PATH: .vendor/bundle
+  BUNDLE_NO_PRUNE: 'true'
+  BUNDLE_PATH: .vendor/bundle
+  GEM_HOME: .vendor/gem_install
+  PUPPET_VERSION: UNDEFINED
+  SIMP_FORCE_RUN_MATRIX: 'no'
+  SIMP_MATRIX_LEVEL: '1'

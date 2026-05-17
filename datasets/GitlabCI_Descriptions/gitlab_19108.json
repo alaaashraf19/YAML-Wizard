@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_19108",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1639,
+  "description": "Create a GitLab CI pipeline that runs a dependency_scanning job in the test stage using the docker:stable image with a docker:stable-dind service. Set variables DOCKER_DRIVER=overlay2 and DOCKER_TLS_CERTDIR='' and allow the job to fail without breaking the pipeline. The job runs only on branch refs and when $GITLAB_FEATURES matches the regex /\\bdependency_scanning\\b/, and it is excluded if the variable $DEPENDENCY_SCANNING_DISABLED is set. It executes the script steps: export DS_VERSION=${SP_VERSION:-$(echo \"$CI_SERVER_VERSION\" | sed 's/^([0-9]*)\\.([0-9]*).*/\\1-\\2-stable/')}, conditionally set DOCKER_HOST if Docker is not reachable, define a propagate_env_vars function that echoes \"--env VAR_NAME\" for each listed variable, and finally run docker run $(propagate_env_vars ...) --volume \"$PWD:/code\" --volume /var/run/docker.sock:/var/run/docker.sock \"registry.gitlab.com/gitlab-org/security-products/dependency-scanning:$DS_VERSION\" /code. The job publishes a dependency_scanning artifact report gl-dependency-scanning-report.json.",
+  "tags": [
+    "dependency-scanning",
+    "docker",
+    "dind",
+    "gitlab-ci",
+    "security"
+  ]
+}

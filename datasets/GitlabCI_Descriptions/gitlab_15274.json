@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_15274",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 400,
+  "description": "Create a GitLab CI pipeline using the python:latest Docker image with a pip cache at .cache/pip and a cached virtualenv directory. Define a variable PIP_CACHE_DIR pointing to $CI_PROJECT_DIR/.cache and a single stage named test. Add a test job that runs the before_script commands: python -V, pip3 install --upgrade pip, pip3 install virtualenv, virtualenv venv, and source venv/bin/activate, then in its script installs requirements with pip3 install -r requirements.txt, downloads all NLTK data via python3 -m nltk.downloader all, and executes py.test -v --doctest-modules solutions. The job runs in the test stage and uses the defined cache paths, with no additional artifacts or rules.",
+  "tags": [
+    "python",
+    "pytest",
+    "nltk",
+    "virtualenv",
+    "pip-cache"
+  ]
+}

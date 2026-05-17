@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_15310",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 767,
+  "description": "Create a GitLab CI pipeline using the node:latest Docker image with two stages: build and deploy. Add a build_app job in the build stage that runs npm config set user 0, npm config set unsafe-perm true, npm install -g polymer-cli bower, bower cache clean --allow-root, bower install --allow-root, bower prune --allow-root, and polymer build, and caches the node_modules/ and build/default directories keyed by ${CI_COMMIT_REF_SLUG}. Add a deploy_production job in the deploy stage, limited to the master branch, that runs npm config set user 0, npm config set unsafe-perm true, npm install -g firebase-tools, then lists files, changes into the build directory, and executes firebase use --token $FIREBASE_PROD_KEY default followed by firebase deploy --non-interactive --token $FIREBASE_PROD_KEY, deploying to the production environment at https://memeservices.com.",
+  "tags": [
+    "node",
+    "npm",
+    "polymer-cli",
+    "bower",
+    "firebase",
+    "gitlab-ci",
+    "deployment",
+    "cache"
+  ]
+}

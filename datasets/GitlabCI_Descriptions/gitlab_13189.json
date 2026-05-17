@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_13189",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 14792,
+  "description": "Create a GitLab CI pipeline with stages pylint_test, dev_test, pip_test, pip_publish, and release_notes. Add a pylintjob in the pylint_test stage that runs pylint --rcfile=tests/pylintrc on niftynet/engine, niftynet/io, niftynet/utilities/user_parameters_*py, niftynet/utilities/download.py, and niftynet/utilities/niftynet_global_config.py, and is excluded from a long list of branches and merge‑request IDs. Add a quicktest job in the dev_test stage that (except on master, dev, tags, and many listed branches) checks for NVIDIA devices, downloads example_volumes, testing_data, and csv_data archives, extracts them, creates a virtualenv named niftynet-dev-test-py3, activates it, installs coverage and the project requirements, prints the TensorFlow version, runs QUICKTEST=True coverage run -a --source . -m unittest discover -s \"tests\" -p \"*_test.py\", reports coverage, deactivates the env and echoes a completion message. Add a pip-installer job in the pip_test stage that runs on master, dev, and tags, sets up a virtualenv named niftynet-pip-installer-venv-py3, activates it, upgrades pip, installs tensorflow==1.15.*, installs requirements, builds a wheel via ci/bundlewheel.sh, finds the wheel, installs it together with simpleitk, generates a package_importer script, runs it, links example volumes, downloads testing data, and then executes a long series of net_* commands (train, inference, evaluation for net_segment, net_gan, net_autoencoder, net_classify, net_regress, etc.) to verify functionality. Add a pip-camera-ready job in the pip_publish stage that runs only on tags, creates a virtualenv called check_version_venv, installs tensorflow==1.15.*, installs requirements, builds the wheel, verifies the NiftyNet version with net_segment --version and a Python import check, deactivates and removes the virtualenv, copies the wheel to /home/gitlab-runner/environments/niftynet/pip/camera-ready, lists the directory and echoes the created wheel. Finally add a release-notes job in the release_notes stage that runs only on tags, echoes CI_COMMIT_REF_NAME and CI_COMMIT_TAG, greps the changelog for the tag, and if the tag starts with \"v\" runs a chandler push to the NifTK/NiftyNet GitHub repository.",
+  "tags": [
+    "python",
+    "tensorflow",
+    "pip",
+    "pylint",
+    "quicktest",
+    "release-notes",
+    "gitlab-ci",
+    "niftynet"
+  ]
+}

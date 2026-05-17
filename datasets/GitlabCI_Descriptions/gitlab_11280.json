@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_11280",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 824,
+  "description": "Create a GitLab CI pipeline using the golang:latest Docker image with a docker:dind service and define variables IMAGE_NAME, IMAGE_TAG and REPO_NAME as specified. In the test stage add a format job that runs go fmt $(go list ./... | grep -v /vendor/) and go vet $(go list ./... | grep -v /vendor/). In the build stage add a compile job that first executes the global before_script (mkdir -p $GOPATH/src/$(dirname $REPO_NAME); ln -svf $CI_PROJECT_DIR $GOPATH/src/$REPO_NAME; cd $GOPATH/src/$REPO_NAME) then runs go build -race -ldflags \"-extldflags '-static'\" -o $CI_PROJECT_DIR/rabbit-mailer and publishes the rabbit-mailer binary as an artifact. In the deploy stage add a deploy job that logs into Docker with $DOCKER_CI_USER and $DOCKER_CI_PASS, runs make, and pushes $IMAGE_TAG and $IMAGE_NAME:latest to the Docker registry. The pipeline follows the stages test → build → deploy with no extra caches or conditional rules.",
+  "tags": [
+    "golang",
+    "go-build",
+    "docker",
+    "dind",
+    "make",
+    "gitlab-ci",
+    "rabbit-mailer"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_13899",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 242,
+  "description": "Create a GitLab CI pipeline that uses the docker:stable image with a docker:dind service, sets DOCKER_DRIVER to overlay2 and DOCKER_HOST to tcp://docker:2375, and runs a before_script to log in to the GitLab Container Registry using docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY. Define a single build stage and a build job that runs the command sh build.sh. No caches, artifacts, or conditional rules are defined.",
+  "tags": [
+    "docker",
+    "dind",
+    "docker-login",
+    "build-script",
+    "gitlab-ci"
+  ]
+}

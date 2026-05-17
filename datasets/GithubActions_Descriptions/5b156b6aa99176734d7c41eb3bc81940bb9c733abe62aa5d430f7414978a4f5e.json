@@ -1,0 +1,16 @@
+{
+  "sha": "5b156b6aa99176734d7c41eb3bc81940bb9c733abe62aa5d430f7414978a4f5e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1685,
+  "description": "Create a GitHub Actions workflow named pytest that runs on push to master and dev-gha branches and on pull requests to master. Use an ubuntu-latest job with a matrix strategy to test multiple Python versions (3.8, 3.9, 3.10, 3.11) with optional graphviz support. For each job, check out the repository, set up Python, install dependencies from requirements.txt, requirements_test.txt, and optionally requirements_mypy.txt and requirements_diagrams.txt, then run pytest with coverage and upload the results to Codecov.",
+  "tags": [
+    "python",
+    "pytest",
+    "coverage",
+    "codecov",
+    "tests",
+    "ubuntu",
+    "graphviz"
+  ]
+}

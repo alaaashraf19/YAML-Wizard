@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_19200",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 4383,
+  "description": "Create a GitLab CI pipeline with a single test stage that runs SAST analyzers using Docker images from $SAST_ANALYZER_IMAGE_PREFIX and a docker:stable image with a docker:stable-dind service. Define a hidden .sast template that allows failure, uploads gl-sast-report.json as a SAST artifact, runs only on branch refs when $GITLAB_FEATURES includes sast, and a hidden .analyzer template that excludes runs when $SAST_DISABLE_DIND == 'false' and executes the script '/analyzer run'. For each language‑specific job (bandit-sast, brakeman-sast, eslint-sast, flawfinder-sast, gosec-sast, nodejs-scan-sast, phpcs-security-audit-sast, pmd-apex-sast, secrets-sast, security-code-scan-sast, sobelow-sast, spotbugs-sast, tslint-sast) set stage to test, extend .analyzer, use the corresponding Docker image (e.g., $SAST_ANALYZER_IMAGE_PREFIX/bandit for bandit-sast) and trigger only when $CI_PROJECT_REPOSITORY_LANGUAGES matches the appropriate regex for that language. Add a sast job that also runs in the test stage, extends .sast, uses the docker:stable image, runs a script that exports SAST_VERSION, checks Docker availability, defines a propagate_env_vars function, and finally runs a docker container from registry.gitlab.com/gitlab-org/security-products/sast:$SAST_VERSION with the code volume and Docker socket mounted, while using the docker:stable-dind service with DOCKER_DRIVER=overlay2 and DOCKER_TLS_CERTDIR empty. Ensure all jobs inherit the SAST artifact report, allow_failure, and no cache paths are defined.",
+  "tags": [
+    "sast",
+    "docker",
+    "gitlab-ci",
+    "security-analyzers",
+    "multi-language",
+    "dind"
+  ]
+}

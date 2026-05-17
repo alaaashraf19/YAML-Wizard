@@ -1,0 +1,42 @@
+before_script:
+- docker version
+- docker login --username=gitlab-ci-token --password=$CI_BUILD_TOKEN registry.gitlab.com
+build:
+  script:
+  - docker pull $CONTAINER_IMAGE_RELEASE_LATEST || true
+  - docker build --cache-from $CONTAINER_IMAGE_RELEASE_LATEST -t $CONTAINER_IMAGE_TEST
+    .
+  - docker push $CONTAINER_IMAGE_TEST
+  stage: build
+image: docker:18
+release:
+  only:
+    refs:
+    - master
+    variables:
+    - $CI_PROJECT_NAMESPACE == $PRIMARY_NAMESPACE
+  script:
+  - docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
+  - docker pull $CONTAINER_IMAGE_TEST
+  - docker tag $CONTAINER_IMAGE_TEST $CONTAINER_IMAGE_RELEASE_LATEST
+  - docker tag $CONTAINER_IMAGE_TEST $CONTAINER_IMAGE_RELEASE_REF
+  - docker tag $CONTAINER_IMAGE_TEST $CONTAINER_IMAGE_RELEASE_HEROKU
+  - docker push $CONTAINER_IMAGE_RELEASE_LATEST
+  - docker push $CONTAINER_IMAGE_RELEASE_REF
+  - docker push $CONTAINER_IMAGE_RELEASE_HEROKU
+  - apk update && apk add nodejs yarn && yarn global add heroku@7.0.95
+  - heroku auth:whoami
+  - heroku labs:enable --app=ttn-experiments runtime-new-layer-extract
+  - heroku container:release --app=ttn-experiments worker
+  stage: release
+services:
+- docker:dind
+stages:
+- build
+- release
+variables:
+  CONTAINER_IMAGE_RELEASE_HEROKU: registry.heroku.com/ttn-experiments/worker
+  CONTAINER_IMAGE_RELEASE_LATEST: registry.gitlab.com/$PRIMARY_NAMESPACE/ttn-experiments:latest
+  CONTAINER_IMAGE_RELEASE_REF: registry.gitlab.com/$PRIMARY_NAMESPACE/ttn-experiments:$CI_COMMIT_REF_NAME
+  CONTAINER_IMAGE_TEST: registry.gitlab.com/$CI_PROJECT_NAMESPACE/ttn-experiments:$CI_COMMIT_SHA
+  PRIMARY_NAMESPACE: njam

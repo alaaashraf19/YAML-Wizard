@@ -1,0 +1,67 @@
+before_script:
+- apk add --no-cache make
+- docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+build:
+  script:
+  - docker pull $BRANCH_IMAGE || true
+  - make build image=$BRANCH_IMAGE
+  - docker push $BRANCH_IMAGE
+  stage: build
+code-quality:
+  allow_failure: true
+  script:
+  - make code-quality image=$BRANCH_IMAGE report_file=cq_branch.txt || true
+  - make code-quality image=$MASTER_IMAGE report_file=cq_master.txt || true
+  - ./backend/scripts/compare-cq-reports.sh cq_branch.txt cq_master.txt
+  stage: test
+deploy-production:
+  environment:
+    name: production
+    url: http://chat.rubick.cz
+  only:
+    variables:
+    - $CI_COMMIT_TAG
+  script:
+  - ./backend/scripts/deploy.sh $PRODUCTION_SERVER_IP $VERSION_IMAGE $PRODUCTION_SETTINGS
+  stage: deploy
+  when: manual
+deploy-staging:
+  environment:
+    name: staging
+    url: http://staging.chat.rubick.cz
+  only:
+    refs:
+    - master
+  script:
+  - ./backend/scripts/deploy.sh $STAGING_SERVER_IP $BRANCH_IMAGE $STAGING_SETTINGS
+  stage: deploy
+image: docker:stable
+services:
+- docker:dind
+stages:
+- build
+- test
+- release
+- deploy
+test:
+  artifacts:
+    paths:
+    - backend/htmlcov
+  coverage: /TOTAL.+ ([0-9]+\.[0-9]+\%)$/
+  script:
+  - apk add --no-cache py-pip curl bc
+  - pip install docker-compose
+  - make test image=$BRANCH_IMAGE
+  - ./backend/scripts/check-coverage.sh
+  stage: test
+variables:
+  BRANCH_IMAGE: $REGISTRY_PATH:$CI_COMMIT_REF_NAME
+  DOCKER_DRIVER: overlay2
+  DOCKER_HOST: tcp://docker:2375/
+  MASTER_IMAGE: $REGISTRY_PATH:latest
+  PRODUCTION_SERVER_IP: 207.154.238.202
+  PRODUCTION_SETTINGS: settings.production
+  REGISTRY_PATH: registry.gitlab.com/rubickcz/chat
+  STAGING_SERVER_IP: 207.154.208.17
+  STAGING_SETTINGS: settings.staging
+  VERSION_IMAGE: $REGISTRY_PATH:$CI_COMMIT_TAG

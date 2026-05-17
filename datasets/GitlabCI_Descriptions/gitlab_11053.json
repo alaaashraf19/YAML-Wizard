@@ -1,0 +1,12 @@
+{
+  "sha": "gitlab_11053",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 55,
+  "description": "Create a GitLab CI pipeline that includes the built‑in Dependency‑Scanning template (template: Dependency-Scanning.gitlab-ci.yml). This adds the predefined dependency_scanning job which runs in the test stage, uses the default Docker image, scans project dependencies with the appropriate scanner, and uploads the results as a Code Quality report. No additional jobs, stages, variables, caches or rules are defined beyond those provided by the template.",
+  "tags": [
+    "dependency-scanning",
+    "security",
+    "gitlab-ci"
+  ]
+}

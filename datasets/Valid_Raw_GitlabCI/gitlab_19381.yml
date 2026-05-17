@@ -1,0 +1,10 @@
+image: node:8.5.0
+run_test:
+  script:
+  - node -v
+  - npm -v
+  - yarn -v
+  - yarn install
+  - yarn test
+stages:
+- test

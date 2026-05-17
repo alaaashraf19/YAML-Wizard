@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_19126",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 195,
+  "description": "Create a GitLab CI pipeline that uses the node:latest Docker image and caches the node_modules/ directory. Define a single job named pages (in the default test stage) that runs the commands 'yarn install' and './node_modules/.bin/gatsby build --prefix-paths', then publishes the generated public/ folder as a pages artifact. Configure the job to run only on the master branch and to deploy the artifact to GitLab Pages. Ensure the cache and artifact paths are correctly specified.",
+  "tags": [
+    "node",
+    "yarn",
+    "gatsby",
+    "gitlab-pages",
+    "cache"
+  ]
+}

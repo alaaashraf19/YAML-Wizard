@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_17829",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1532,
+  "description": "Create a GitLab CI pipeline with three stages: test, build, and deploy. In the test stage add a job named test that uses the ruby:alpine image and runs: echo \"Checking Swagger YAML syntax for all .yaml files in folder\"; for i in $(find . -type f -name \"*.yaml\"); do echo \"Checking file $i\"; ruby -e \"require 'yaml'; puts YAML.load_file('$i')\" > /dev/null; done, and runs on runners tagged docker. In the build stage add a job named build that uses the tijsg/java-plantuml image, executes pwd, ls, mkdir public, for each *.txt file runs java -jar /plantuml.jar $i -o public, then java -jar /plantuml.jar test.txt -o public, and ls public, stores the public directory as an artifact, and runs on docker‑tagged runners. In the deploy stage add a job named pages that uses the tijsg/alpine-git-swaggerui image, moves /swagger-ui/dist/index.html to swagger.html, removes favicon files, copies the swagger UI distribution and index.html into a public folder, copies all *.yaml files into public, then generates contracts.html and uml.html by iterating over the yaml and png files respectively, and publishes the public folder as an artifact, also running on docker‑tagged runners.",
+  "tags": [
+    "ruby-alpine",
+    "java-plantuml",
+    "swaggerui",
+    "yaml-validation",
+    "gitlab-pages",
+    "docker"
+  ]
+}

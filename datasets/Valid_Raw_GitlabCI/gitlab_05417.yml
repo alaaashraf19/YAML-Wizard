@@ -1,0 +1,65 @@
+before_script:
+- export GRADLE_USER_HOME=`pwd`/.gradle
+- ./gradlew npm_install -PnodeInstall --no-daemon
+cache:
+  key: $CI_COMMIT_REF_NAME
+  paths:
+  - .gradle/
+frontend-test:
+  artifacts:
+    expire_in: 1 day
+    paths:
+    - build/test-results/
+    - build/jacoco/
+    reports:
+      junit: build/test-results/jest/TESTS-*.xml
+  script:
+  - ./gradlew npm_test -PnodeInstall --no-daemon
+  stage: test
+gradle-compile:
+  artifacts:
+    expire_in: 1 day
+    paths:
+    - build/classes/
+    - build/generated/
+  script:
+  - ./gradlew compileJava -x check -PnodeInstall --no-daemon
+  stage: build
+gradle-package:
+  artifacts:
+    expire_in: 1 day
+    paths:
+    - build/libs/*.war
+  script:
+  - ./gradlew bootWar -Pprod -x check --no-daemon
+  stage: package
+gradle-test:
+  artifacts:
+    expire_in: 1 day
+    paths:
+    - build/test-results/
+    - build/jacoco/
+    reports:
+      junit: build/test-results/test/TEST-*.xml
+  script:
+  - ./gradlew test -PnodeInstall --no-daemon
+  stage: test
+image: jhipster/jhipster:v5.6.0
+sonar-analyze:
+  allow_failure: true
+  dependencies:
+  - gradle-test
+  - frontend-test
+  script:
+  - ./gradlew sonarqube --no-daemon -Dsonar.projectKey=recsys -Dsonar.organization=recsys
+    -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN
+  stage: analyze
+  variables:
+    SONAR_TOKEN: 13a792e65fd736719d21d6e7d7a04a48a518d0b4
+stages:
+- build
+- test
+- analyze
+- package
+- release
+- deploy

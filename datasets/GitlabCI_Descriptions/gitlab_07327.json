@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_07327",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1210,
+  "description": "Create a GitLab CI pipeline that caches the Maven repository at /root/.m2/repository/ and defines three stages: build, test, and deploy. In the build stage add validate:jdk7 and validate:jdk8 jobs that use the maven:3.3.9-jdk-7 and maven:3.3.9-jdk-8 images respectively and run `mvn $MAVEN_CLI_OPTS test-compile`. In the test stage add verify:jdk7 and verify:jdk8 jobs that also use the corresponding JDK images, run `mvn $MAVEN_CLI_OPTS verify site site:stage`, and are excluded from the master branch, plus a deploy:jdk8 job that runs only on master, uses maven:3.3.9-jdk-8, executes `mvn $MAVEN_CLI_OPTS deploy site site:stage` and stores the target/staging directory as an artifact. Finally, in the deploy stage add a pages job that runs only on master, uses busybox:latest, copies `target/staging` to a `public` folder with `mv target/staging public`, and publishes the public directory as a GitLab Pages artifact.",
+  "tags": [
+    "maven",
+    "java",
+    "jdk7",
+    "jdk8",
+    "gitlab-pages",
+    "cache-m2",
+    "maven-deploy",
+    "verify",
+    "validate"
+  ]
+}

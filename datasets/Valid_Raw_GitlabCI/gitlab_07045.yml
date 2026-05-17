@@ -1,0 +1,19 @@
+before_script:
+- npm install
+cache:
+  paths:
+  - node_modules/
+image: node
+pages:
+  artifacts:
+    paths:
+    - public
+  image: node
+  only:
+  - master
+  script:
+  - npm run deploy
+  - echo 'Nothing to do...'
+  - mkdir -p ./public/
+  - cp -r ./dist/ index.html ./public/
+  stage: deploy

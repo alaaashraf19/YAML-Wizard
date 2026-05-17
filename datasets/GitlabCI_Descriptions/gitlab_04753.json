@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_04753",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 781,
+  "description": "Create a GitLab CI pipeline using the golang:1.10 Docker image with a redis:latest service and a REDIS_ADDRESS variable set to redis:6379. Add a global before_script that runs: mkdir -p ${GOPATH}/src/gitlab.com/${CI_PROJECT_NAMESPACE}; cd ${GOPATH}/src/gitlab.com/${CI_PROJECT_NAMESPACE}; ln -s ${CI_PROJECT_DIR}; cd ${CI_PROJECT_NAME}; apt-get update; apt-get install libcairo2-dev -y; go get github.com/bwmarrin/discordgo; cd ${GOPATH}/src/github.com/bwmarrin/discordgo; git checkout develop; cd ${GOPATH}/src/gitlab.com/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}; go get -v ./...; go get -v golang.org/x/tools/cmd/goimports. Define a single stage called test and a testing job in that stage that executes bash format_go.sh, then runs go test -v -race -coverprofile=coverage.txt -covermode=atomic $(go list ./... | grep -v /vendor/), and finally uploads coverage with bash <(curl -s https://codecov.io/bash).",
+  "tags": [
+    "go",
+    "golang-1.10",
+    "redis",
+    "testing",
+    "codecov",
+    "formatting"
+  ]
+}

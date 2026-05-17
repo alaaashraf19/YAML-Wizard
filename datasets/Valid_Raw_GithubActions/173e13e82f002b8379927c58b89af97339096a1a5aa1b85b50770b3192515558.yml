@@ -1,0 +1,42 @@
+name: Build App
+
+on:
+  push:
+    branches:
+      - master
+
+concurrency: ci-${{ github.ref }}
+
+jobs:
+  
+  build-app:
+    name: ${{ matrix.config.name }}
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config: 
+        - {
+            name: "Windows Latest MSVC-2022",
+            os: windows-latest,
+            artifact: "windows_msvc2022.7z",
+            build_type: "Release",
+            cc: "cl",
+            cxx: "cl",
+            archiver: "7z a",
+            generators: "Visual Studio 17 2022"
+          }
+
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2.6.0
+        with:
+          submodules: 'true'
+
+      - name: Setup Dev Env 
+        uses: ./.github/actions/setup_dev_env
+
+# Removed the rest of this to get a successful build to cache requirements.
+
+

@@ -1,0 +1,19 @@
+buildntest_job:
+  except:
+  - tags
+  script:
+  - mvn -B clean install
+  stage: buildntest
+image: maven:3-jdk-8
+release_job:
+  artifacts:
+    paths:
+    - target/*.jar
+  only:
+  - tags
+  script:
+  - mvn -B clean install
+  stage: release
+stages:
+- buildntest
+- release

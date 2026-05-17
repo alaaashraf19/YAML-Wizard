@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_17824",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 346,
+  "description": "Create a GitLab CI pipeline that uses the maven:3-jdk-7 Docker image. Define two stages: package and documentation. In the package stage add a package-build job that runs `mvn package` and publishes the resulting `target/melodyexporter.war` as an artifact. In the documentation stage add a pages job that runs `mvn javadoc:javadoc`, creates a temporary `.public` directory, copies the generated Javadoc from `target/site/apidocs/` into it, renames it to `public`, and publishes the `public` directory as a GitLab Pages artifact. No caches or special triggers are required.",
+  "tags": [
+    "maven",
+    "java",
+    "war",
+    "javadoc",
+    "gitlab-pages",
+    "documentation"
+  ]
+}

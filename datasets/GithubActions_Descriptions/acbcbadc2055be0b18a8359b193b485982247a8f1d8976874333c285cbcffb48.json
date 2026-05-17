@@ -1,0 +1,15 @@
+{
+  "sha": "acbcbadc2055be0b18a8359b193b485982247a8f1d8976874333c285cbcffb48",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5439,
+  "description": "Create a scheduled GitHub Actions workflow named Benchmark that runs daily at 6:15, 12:15, and 17:15. The workflow also triggers on push events to specific paths in the main, CURA-9906_benchmark branches, and tags matching [0-9].[0-9].[0-9]*. Set up an ubuntu-22.04 environment with Conan and Python 3.10, then run a C++ benchmark and upload results to GitHub.",
+  "tags": [
+    "conan",
+    "cpp",
+    "benchmark",
+    "ubuntu",
+    "python",
+    "github-actions"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "6419ce25d51d6b543f6cc80e0afdfc23dfd190222b50e4e14d89c60f1b6901d2",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2778,
+  "description": "Create a GitHub Actions workflow named CMake Build that runs on every push. Use a matrix strategy with two ubuntu-latest jobs, one for CLang and one for GCC, to checkout the repository, install dependencies, download the Vulkan SDK, create a CMake build, build the project, analyze with CLang-tidy if using CLang, prepare an archive for upload, and upload the artifact.",
+  "tags": [
+    "cmake",
+    "ubuntu",
+    "clang",
+    "gcc",
+    "vulkan",
+    "ci"
+  ]
+}

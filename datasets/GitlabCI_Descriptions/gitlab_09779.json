@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_09779",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 383,
+  "description": "Create a GitLab CI pipeline using the debian:testing-slim Docker image. Define a before_script that runs apt-get update && apt-get install -y hugo git-core, then git submodule init and git submodule update --force. Add a test job (default test stage) that runs hugo -s web/hacklabcormano/ and is excluded from the master branch. Add a pages job (deploy stage) that runs hugo -s web/hacklabcormano/, creates a public directory, copies web/hacklabcormano/public/* into public, publishes the public/ directory as a Pages artifact, and only runs on the master branch.",
+  "tags": [
+    "hugo",
+    "gitlab-pages",
+    "debian",
+    "pages",
+    "test"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_15221",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2636,
+  "description": "Create a GitLab CI pipeline that uses the registry.gitlab.com/quesog/ubuntu-pandoc-pdf Docker image and defines a single deploy stage. Add a docx job in the deploy stage that runs mkdir docs and a for loop converting each *.md file to a .docx file with pandoc -s -o \\\"docs/$(basename \\\"$f\\\" .md).docx\\\" \\\"$f\\\" (ignoring errors), and publishes the docs/ directory as an artifact. Add an epub job in the deploy stage that creates an epubs directory and runs a series of pandoc commands to generate L01.epub through L11.epub from the listed markdown files, then stores the epubs/ directory as an artifact. Add a pdf job in the deploy stage that makes a pdfs directory and runs a for loop converting each *.md file to a PDF with pandoc -s -o \\\"pdfs/$(basename \\\"$f\\\" .md).pdf\\\" \\\"$f\\\" (ignoring errors), publishing pdfs/ as an artifact. Add a pdf-twocolumn job in the deploy stage that creates pdfs-twocol directory and runs a for loop converting each *.md file to a two‑column A4 PDF using pandoc -s -V classoption=twocolumn -V papersize=a4paper -o \\\"pdfs-twocol/$(basename \\\"$f\\\" .md).pdf\\\" \\\"$f\\\" (ignoring errors), and stores pdfs-twocol/ as an artifact. Finally, add a pages job in the deploy stage that runs mkdir .public, converts each *.md to HTML with pandoc -s --css pandoc.css -o \\\".public/$(basename \\\"$f\\\" .md).html\\\" \\\"$f\\\", copies index.html, pandoc.css and the images folder into .public, renames .public to public, publishes the public/ directory as a GitLab Pages artifact, and runs only on the master branch.",
+  "tags": [
+    "pandoc",
+    "docx",
+    "epub",
+    "pdf",
+    "pdf-twocolumn",
+    "gitlab-pages",
+    "ubuntu",
+    "markdown"
+  ]
+}

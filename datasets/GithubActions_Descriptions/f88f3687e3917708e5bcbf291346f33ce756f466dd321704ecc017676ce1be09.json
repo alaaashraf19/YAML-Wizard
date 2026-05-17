@@ -1,0 +1,14 @@
+{
+  "sha": "f88f3687e3917708e5bcbf291346f33ce756f466dd321704ecc017676ce1be09",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1598,
+  "description": "Create a GitHub Actions workflow named Android CI that runs on push and pull request events. Use an ubuntu-latest job to set up the Android build environment, checkout the repository with submodules, cache Gradle dependencies, build the Android project with Gradle, upload the debug APK as an artifact, and sync the APK to an S3 bucket with AWS credentials from secrets.",
+  "tags": [
+    "android",
+    "gradle",
+    "s3",
+    "ci",
+    "apk"
+  ]
+}

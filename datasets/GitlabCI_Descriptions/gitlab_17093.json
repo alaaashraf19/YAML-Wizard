@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_17093",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 229,
+  "description": "Create a GitLab CI pipeline that defines a PIP_CACHE_DIR variable pointing to a cache directory and uses the python:3.10-slim Docker image. Add a single job called upload_conan in the default test stage with a cache on the path cache. In that job run \"mkdir -p cache\", \"chown -R $USER:$USER cache\", \"pip install -r requirements.txt\", and \"python -m conanpublish\".",
+  "tags": [
+    "python",
+    "conan",
+    "pip",
+    "cache",
+    "upload"
+  ]
+}

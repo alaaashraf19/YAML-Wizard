@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_12719",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 421,
+  "description": "Create a GitLab CI pipeline using the maven:3.5.3-jdk-8 Docker image. Define variables MAVEN_CLI_OPTS set to \"-s ci_settings.xml --batch-mode\" and MAVEN_OPTS set to \"-Dmaven.repo.local=.m2/repository\". Set up three stages: build, test, deploy, and cache the .m2/repository/ and target/ directories. Add a build job in the build stage that runs \"mvn $MAVEN_CLI_OPTS compile\". Add a test job in the test stage that runs \"mvn $MAVEN_CLI_OPTS test\". Add a deploy job in the deploy stage that runs \"mvn $MAVEN_CLI_OPTS deploy\" and is limited to the master branch.",
+  "tags": [
+    "maven",
+    "java",
+    "gitlab-ci",
+    "docker",
+    "cache"
+  ]
+}

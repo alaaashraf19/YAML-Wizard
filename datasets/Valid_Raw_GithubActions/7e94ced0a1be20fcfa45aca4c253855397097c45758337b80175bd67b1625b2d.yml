@@ -1,0 +1,190 @@
+name: ActionsCI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build-ubuntu:
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@main
+    - name: apt
+      run: |
+        sudo apt-get update -qq
+        sudo apt install -y --no-install-recommends pkg-config qmake6 qt6-base-dev qt6-base-dev-tools qt6-tools-dev-tools qt6-declarative-dev libqt6sql6-mysql libqt6sql6-psql libqt6sql6-odbc libqt6sql6-sqlite libqt6core6 libqt6qml6 libqt6xml6 libpq5 libodbc1 libmongoc-dev libbson-dev gcc g++ clang make cmake
+    - name: qmake version
+      run: |
+        sudo rm -f /usr/bin/qmake
+        sudo ln -sf /usr/bin/qmake6 /usr/bin/qmake
+        qmake -v
+    - name: configure
+      run: ./configure --prefix=/usr/local --spec=linux-g++
+    - name: make
+      run: |
+        make -j4 -C src
+        sudo make -C src install
+        make -j4 -C tools
+        sudo make -C tools install
+    - name: version
+      run: |
+        treefrog -v
+        tspawn --show-drivers
+    - name: apt for test
+      run: |
+        sudo apt install -y --no-install-recommends redis-server memcached
+        sudo service redis-server start
+        sudo service memcached start
+    - name: testall.sh
+      run: |
+        $GITHUB_WORKSPACE/src/test/testall.sh
+    - name: tmaketest
+      run: |
+        cd $GITHUB_WORKSPACE/tools/tmake/test
+        qmake tmaketest.pro
+        make -j4
+        ./tmaketest.sh
+    - name: releasetest
+      run: |
+        $GITHUB_WORKSPACE/tools/test/releasetest/releasetest
+
+  build-ubuntu-mongoc:
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@main
+    - name: apt
+      run: |
+        sudo apt-get update -qq
+        sudo apt install -y --no-install-recommends pkg-config qmake6 qt6-base-dev qt6-base-dev-tools qt6-tools-dev-tools qt6-declarative-dev libqt6sql6-mysql libqt6sql6-psql libqt6sql6-odbc libqt6sql6-sqlite libqt6core6 libqt6qml6 libqt6xml6 libpq5 libodbc1 libmongoc-dev libbson-dev gcc g++ clang make cmake
+    - name: qmake version
+      run: |
+        sudo rm -f /usr/bin/qmake
+        sudo ln -sf /usr/bin/qmake6 /usr/bin/qmake
+        qmake -v
+    - name: configure
+      run: ./configure --prefix=/usr/local --enable-shared-mongoc --spec=linux-clang
+    - name: make
+      run: |
+        make -j4 -C src
+        sudo make -C src install
+        make -j4 -C tools
+        sudo make -C tools install
+    - name: version
+      run: |
+        treefrog -v
+        tspawn --show-drivers
+    - name: apt for test
+      run: |
+        sudo apt install -y --no-install-recommends redis-server memcached
+        sudo service redis-server start
+        sudo service memcached start
+    - name: testall.sh
+      run: |
+        $GITHUB_WORKSPACE/src/test/testall.sh
+    - name: tmaketest
+      run: |
+        cd $GITHUB_WORKSPACE/tools/tmake/test
+        qmake tmaketest.pro
+        make -j4
+        ./tmaketest.sh
+    - name: releasetest
+      run: |
+        $GITHUB_WORKSPACE/tools/test/releasetest/releasetest
+
+  build-ubuntu20:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@main
+    - name: apt
+      run: |
+        sudo apt-get update -qq
+        sudo apt install -y --no-install-recommends pkg-config qtbase5-dev qt5-default qt5-qmake qttools5-dev-tools qtdeclarative5-dev qtdeclarative5-dev-tools libqt5sql5 libqt5sql5-sqlite libsqlite3-dev libmongoc-dev libbson-dev gcc g++ clang make cmake
+    - name: qmake version
+      run: |
+        qmake -v
+    - name: configure
+      run: ./configure --prefix=/usr/local --spec=linux-g++
+    - name: make
+      run: |
+        make -j4 -C src
+        sudo make -C src install
+        make -j4 -C tools
+        sudo make -C tools install
+    - name: version
+      run: |
+        treefrog -v
+        tspawn --show-drivers
+    - name: apt for test
+      run: |
+        sudo apt install -y --no-install-recommends redis-server memcached
+        sudo service redis-server start
+        sudo service memcached start
+    - name: testall.sh
+      run: |
+        $GITHUB_WORKSPACE/src/test/testall.sh
+    - name: tmaketest
+      run: |
+        cd $GITHUB_WORKSPACE/tools/tmake/test
+        qmake tmaketest.pro
+        make -j4
+        ./tmaketest.sh
+    - name: releasetest
+      run: |
+        $GITHUB_WORKSPACE/tools/test/releasetest/releasetest
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@main
+    - name: Homebrew
+      run: brew install qt6 jq
+    - name: configure
+      run: ./configure --prefix=/usr/local
+    - name: build
+      run: |
+        make -j4 -C src
+        sudo make -C src install
+        make -j4 -C tools
+        sudo make -C tools install
+    - name: version
+      run: |
+        treefrog -v
+        tspawn --show-drivers
+
+  build-macos-mongoc:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@main
+    - name: Homebrew
+      run: brew install qt6 mongo-c-driver gflags glog
+    - name: configure
+      run: ./configure --prefix=/usr/local --enable-shared-mongoc --enable-shared-glog
+    - name: build
+      run: |
+        make -j4 -C src
+        sudo make -C src install
+        make -j4 -C tools
+        sudo make -C tools install
+    - name: version
+      run: |
+        treefrog -v
+        tspawn --show-drivers
+    - name: Homebrew for test
+      run: |
+        brew install redis memcached
+        brew services start redis
+        brew services start memcached
+    - name: testall.sh
+      run: |
+        $GITHUB_WORKSPACE/src/test/testall.sh
+    - name: tmaketest
+      run: |
+        cd $GITHUB_WORKSPACE/tools/tmake/test
+        qmake tmaketest.pro
+        make -j4
+        ./tmaketest.sh
+    - name: releasetest
+      run: |
+        $GITHUB_WORKSPACE/tools/test/releasetest/releasetest

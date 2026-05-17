@@ -1,0 +1,16 @@
+{
+  "sha": "92c6c6e6dcf4ea2c713df7343400ca55cec38791f4be2173dc787de9f62bf589",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1261,
+  "description": "Create a GitHub Actions workflow named Core that runs on push and pull request events. Use a matrix strategy to run a build job on multiple operating systems (ubuntu-latest, windows-latest, macos-latest) and Python versions (3.6, 3.7, 3.8, 3.9). In each job, check out the repository with submodules, set up the corresponding Python version, install dependencies with pip and tox, run Python lint and integration tests with tox, and send a Slack notification on failure.",
+  "tags": [
+    "python",
+    "multios",
+    "multiversion",
+    "tox",
+    "slack",
+    "notifications",
+    "tests"
+  ]
+}

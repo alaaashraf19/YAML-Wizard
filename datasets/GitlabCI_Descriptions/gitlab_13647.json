@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_13647",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 4078,
+  "description": "Create a GitLab CI pipeline with two stages (docker and test) using the docker:latest image and the docker:dind service for all docker‑stage jobs. Define a hidden .dind template that runs the before_script commands `echo ${CI_JOB_TOKEN} | docker login -u gitlab-ci-token --password-stdin registry.gitlab.com` and `apk add --no-cache bash findutils`, and is limited to the schedule, web, and docker triggers; also define .docker and .runner templates that inherit this before_script. Add a docker:bash, docker:c, docker:clojure, docker:coffeescript, docker:cpp, docker:elisp, docker:elixir, docker:erlang, docker:haskell, docker:java, docker:lfe, docker:python, docker:racket, docker:ruby, and docker:rust job in the docker stage, each using the docker:latest image, the docker:dind service, the same only rules, and executing the script `_runner/docker-tester`. Add a test:bash, test:c, test:clojure, test:coffeescript, test:cpp, test:elisp, test:elixir, test:erlang, test:haskell, test:java, test:lfe, test:python, test:racket, test:ruby, and test:rust job in the test stage, each using its respective `registry.gitlab.com/nobbz/exercism-solutions/<language>:latest` image and running the script `_runner/run` with no special rules. No caches, artifacts, or deployment targets are defined.",
+  "tags": [
+    "docker",
+    "dind",
+    "exercism",
+    "multi-language",
+    "ci"
+  ]
+}

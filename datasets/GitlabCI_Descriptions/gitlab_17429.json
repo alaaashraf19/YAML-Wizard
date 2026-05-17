@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_17429",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 5792,
+  "description": "Create a GitLab CI pipeline with stages test, manual, publish, and pages using the default runner image and tags prodcom and stabfem. In the test stage add autorun-matlab-ff4 (script ./.gitlab-ci-autorun.sh -m --ffver 4), autorun-matlab-ff4-long (script ./.gitlab-ci-autorun.sh -m --ffver 4 --list long, with rules allowing MR target master or develop and any commit tag), autorun-octave-ff4 (script ./.gitlab-ci-autorun.sh --ffver 4), and autorun-octave-ff4-long (script ./.gitlab-ci-autorun.sh --ffver 4 --list long, with rules for commit messages containing [[OCTAVE]] or any tag). In the manual stage add makepdf that cd ./99_Documentation/MANUAL/ then runs pdflatex main.tex twice, produces an artifact main.pdf named $CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA, and runs on master, develop, on commit messages [[MANUAL]] or when GENERATE_MANUAL_ONLY is set. In the publish stage add publish-master (extends .publish, cache key publish-master-cache with pull‑push, runs ./.gitlab-ci-publish-script.sh unless GENERATE_PAGE_ONLY, MR source, or master branch), publish-multiproc_1 and publish-multiproc_2 (both extend .publish, share cache key publish-other-cache, always run when PUBLISH_MULTICORE is set, set NSTART/NEND to 1‑10 and 91‑100 respectively and execute ./.gitlab-ci-publish-script.sh), publish-other (extends .publish, same cache, runs on commit messages [[PUBLISH]] or when GENERATE_PAGE or PUBLISH_ONLY are set), and publish-restore-cache-other (extends .publish, cache policy pull, runs only when GENERATE_PAGE_ONLY or PUBLISH_ONLY, echoing a cache restore message). In the pages stage add pages (script ./.gitlab-ci-page-script.sh and ./.gitlab-ci-autoindex-script.sh, artifacts public/, never runs on merge‑request source branches, and triggers on commit messages [[PUBLISH]] or when GENERATE_PAGE, GENERATE_PAGE_ONLY, PUBLISH_ONLY, or PUBLISH_MULTICORE are set).",
+  "tags": [
+    "test",
+    "manual",
+    "publish",
+    "pages",
+    "matlab",
+    "octave",
+    "pdf",
+    "cache",
+    "gitlab-ci"
+  ]
+}

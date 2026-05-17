@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_05598",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 709,
+  "description": "Create a GitLab CI pipeline that uses the docker:stable Docker image with a docker:dind service and sets the CONTAINER_IMAGE variable to registry.gitlab.com/$CI_PROJECT_PATH and DOCKER_DRIVER to overlay2. Add a global before_script that logs in to registry.gitlab.com with docker login -u gitlab-ci-token -p $CI_JOB_TOKEN. Define two stages, test and deploy. In the test stage add a Test Build job that runs docker pull $CONTAINER_IMAGE:latest || true and then docker build --cache-from $CONTAINER_IMAGE:latest . . In the deploy stage add a Deploy Image job that runs only on the master branch, executes docker pull $CONTAINER_IMAGE:latest || true, builds the image with docker build --cache-from $CONTAINER_IMAGE:latest --tag $CONTAINER_IMAGE:$CI_BUILD_REF --tag $CONTAINER_IMAGE:latest ., and pushes both tags to the GitLab Container Registry with docker push $CONTAINER_IMAGE:$CI_BUILD_REF and docker push $CONTAINER_IMAGE:latest.",
+  "tags": [
+    "docker",
+    "docker-dind",
+    "gitlab-registry",
+    "ci-pipeline",
+    "test-build",
+    "deploy-image"
+  ]
+}

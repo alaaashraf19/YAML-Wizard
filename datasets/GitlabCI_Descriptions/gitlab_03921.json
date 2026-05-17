@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_03921",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 853,
+  "description": "Create a GitLab CI pipeline with three jobs: a test job in the test stage that uses the default Docker image and a postgres:alpine service, sets POSTGRES_DB, POSTGRES_USER, POSTGRES_PASSWORD variables, and runs export DATABASE_URL=postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@postgres:5432/$POSTGRES_DB, apt-get update -qy, apt-get install -y python-dev python-pip, pip install -r requirements.txt, and python manage.py test. Add a staging deploy job that runs in the deploy stage, executes apt-get update -qy, apt-get install -y ruby-dev, gem install dpl, and dpl --provider=heroku --app=$HEROKU_STAGING_APP --api-key=$HEROKU_STAGING_API_KEY --skip-cleanup, and is limited to the master branch. Add a production deploy job that also runs in the deploy stage, runs the same commands but with $HEROKU_PRODUCTION_APP and $HEROKU_PRODUCTION_API_KEY, and is limited to tag pipelines. No caches or artifacts are defined.",
+  "tags": [
+    "heroku",
+    "ruby",
+    "postgres",
+    "python",
+    "pip",
+    "django",
+    "gitlab-ci",
+    "deployment"
+  ]
+}

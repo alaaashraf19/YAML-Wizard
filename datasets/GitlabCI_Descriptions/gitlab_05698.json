@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_05698",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 446,
+  "description": "Create a GitLab CI pipeline with a single release job that runs in the release stage using the docker:stable image and the docker:stable-dind service. The job logs in to the GitLab Container Registry using docker login -u \"$CI_REGISTRY_USER\" -p \"$CI_REGISTRY_PASSWORD\" \"$CI_REGISTRY\" in before_script. It only runs on the master branch or when a tag is pushed. In the script it checks if CI_COMMIT_TAG is set; if so it sets BUILD_IMAGE_NAME to $CI_REGISTRY_IMAGE:latest and RELEASE_IMAGE_NAME to $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG, then executes ./build/src/release.sh. The job is tagged with docker.",
+  "tags": [
+    "docker",
+    "release",
+    "ci-registry",
+    "dind"
+  ]
+}

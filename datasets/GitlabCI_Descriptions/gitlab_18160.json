@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_18160",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 551,
+  "description": "Create a GitLab CI pipeline that runs a PowerShell script on a Windows runner using the tags powershell, windows, and mssql, with a global before_script that executes `git --version`. Define a single stage called build and add a ps_build job in that stage that runs the command `./build-ci.ps1`. Configure the job to publish artifacts `./coverage` and `./src/TT.Tests/TestResults/TestResults.xml` that expire after 30 days, and to generate a JUnit report from `./src/TT.Tests/TestResults/TestResults.xml`. Include a coverage pattern `/##teamcity\\[buildStatisticValue key='CodeCoverageS' value='(\\d+\\.?\\d*)'\\]/` for code‑coverage extraction. Set workflow rules so the pipeline triggers on merge‑request events, on tag pushes, or on commits to the default branch.",
+  "tags": [
+    "powershell",
+    "windows",
+    "mssql",
+    "gitlab-ci",
+    "coverage",
+    "artifact"
+  ]
+}

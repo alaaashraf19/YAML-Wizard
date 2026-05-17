@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_12696",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 123,
+  "description": "Create a GitLab CI pipeline with a single Phing job that runs in the default test stage using the default Docker image. The job executes the shell command ./gitlab-ci/bootstrap.sh, is limited to runners tagged php70 and composer, and caches the vendor/ directory with untracked files enabled. No services, variables, artifacts, or rules are defined.",
+  "tags": [
+    "php",
+    "composer",
+    "phing",
+    "cache"
+  ]
+}

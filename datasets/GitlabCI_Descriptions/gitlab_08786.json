@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_08786",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 323,
+  "description": "Create a GitLab CI pipeline with a single \"package\" stage. Define a hidden .openssh_template that sets the artifacts to the \"packages/\" directory and runs the shell command \"scripts/build_openssh.sh\". Add two jobs named \"CentOS 6\" and \"CentOS 7\" that both run in the package stage, use the Docker images \"centos:centos6\" and \"centos:centos7\" respectively, and inherit the template's script and artifacts.",
+  "tags": [
+    "centos6",
+    "centos7",
+    "openssh",
+    "package",
+    "gitlab-ci"
+  ]
+}

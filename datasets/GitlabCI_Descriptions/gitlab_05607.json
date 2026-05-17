@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_05607",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 220,
+  "description": "Create a GitLab CI pipeline that uses the beevelop/ionic:latest Docker image. Define a deploy stage with a pages job that runs the exact commands: cd /builds/cn-ds/ionic-app, npm install, npm run build, mkdir public, and mv www/* public. The job should publish the public directory as a pages artifact and only run on the master branch.",
+  "tags": [
+    "ionic",
+    "npm",
+    "gitlab-pages",
+    "deploy",
+    "docker"
+  ]
+}

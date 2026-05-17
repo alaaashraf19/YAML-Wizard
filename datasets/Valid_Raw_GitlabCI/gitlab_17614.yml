@@ -1,0 +1,52 @@
+build-book:
+  image: registry.gitlab.com/taichunmin/progit2-zh-tw:latest
+  script:
+  - mkdir images
+  - cp book/*/images/* images/
+  - asciidoctor progit.asc || true
+  - asciidoctor-pdf -r asciidoctor-pdf-cjk-kai_gen_gothic -a pdf-style=KaiGenGothicTW
+    progit.asc || true
+  - asciidoctor-epub3 progit.asc || true
+  - asciidoctor-epub3 -a ebook-format=kf8 progit.asc || true
+  - mkdir public
+  - cp progit.{pdf,epub} progit-kf8.epub public/ || true
+  - cp progit.html public/index.html
+  - cp -r images/ public/
+  - ls public
+  stage: build
+  tags:
+  - docker
+build-docker:
+  only:
+  - web
+  script:
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  - docker-compose -f docker-build.yml build
+  - docker-compose -f docker-build.yml push
+  - docker-compose -f docker-build.yml down --rmi all
+  services:
+  - docker:dind
+  stage: docker
+  tags:
+  - docker
+cache:
+  key: $CI_PIPELINE_ID
+  paths:
+  - public/
+image: registry.gitlab.com/taichunmin/docker-compose-git:latest
+pages:
+  artifacts:
+    paths:
+    - public
+    when: always
+  only:
+  - master
+  script:
+  - ls public
+  stage: deploy
+  tags:
+  - docker
+stages:
+- docker
+- build
+- deploy

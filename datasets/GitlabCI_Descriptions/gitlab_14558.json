@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_14558",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2290,
+  "description": "Create a GitLab CI pipeline with default image python:3.6.2, stages test, schedule, and deploy, and global cache at ~/.cache/pip/ and variables GITLAB_ORIGIN, PCF_API_URL, PCF_DOMAIN. In the test stage add a build job that makes a binaries directory, copies splash, templates, www, Procfile, manage.py, manifest.yml, requirements.txt, runtime.txt, uwsgi.ini into it, and stores the binaries/ directory as an artifact, and a unit job that echoes a disabling message, both excluded from trigger pipelines. In the schedule stage add a manual trigger job that posts to $GITLAB_ORIGIN/api/v4/projects/$CI_PROJECT_ID/trigger/pipeline with token $TRIGGER_TOKEN and ref $CI_COMMIT_REF_NAME, and a manual trigger_without_sample job that also posts to the same endpoint but runs only when not a trigger pipeline. In the deploy stage add a .pages job using image poffey21/nikola:7.8.10 that runs cd pages && nikola build, publishes the public/ directory as artifact, and runs only on the master branch; also an app job using image poffey21/cfcli:6.32.0 that logs into Cloud Foundry with cf login using $PCF_API_URL, $PCF_ORG, $PCF_SPACE, $PCF_USER, $PCF_PASS, pushes $PCF_APP_NAME with hostname $PCF_APP_HOSTNAME, sets DJANGO_SECRET_KEY from $DJANGO_SECRET_KEY, and starts the app, running manually with variables PCF_APP_HOSTNAME=$CI_PROJECT_PATH_SLUG and PCF_APP_NAME=$CI_PROJECT_NAME. Finally, add three trigger‑related deploy jobs: trigger_always runs only on trigger pipelines, downloads the build artifact via the job token, unzips it and lists binaries; trigger_sample runs only on trigger pipelines and prints a message if $TRIGGER_VARIABLE is set; both use GIT_STRATEGY none.",
+  "tags": [
+    "python-3.6",
+    "nikola",
+    "cfcli",
+    "cloud-foundry",
+    "curl",
+    "trigger",
+    "manual",
+    "deploy",
+    "test",
+    "schedule"
+  ]
+}

@@ -1,0 +1,22 @@
+before_script:
+- apt-get update -yqq
+- apt-get install apt-transport-https -yqq
+- java -version
+build:
+  artifacts:
+    paths:
+    - artifacts/
+  script:
+  - chmod +x gradlew
+  - ./gradlew setupCIWorkspace build uploadArchives
+  - mkdir artifacts
+  - cp build/libs/* artifacts/
+  - curl --data "content=$MESSAGE&username=$NAME&avatar_url=$IMG" $DISCORD_HOOK
+  variables:
+    IMG: https://cdn.discordapp.com/icons/131019825681006592/9df46a9d968c06e8eb264c590cc23a43.jpg
+    MESSAGE: '$CI_PROJECT_NAME build $CI_BUILD_ID successful: $(git log -1 --pretty=%B)'
+    NAME: Builds stalker
+cache:
+  paths:
+  - /root/.gradle/
+image: java:8

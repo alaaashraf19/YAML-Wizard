@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_10631",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 414,
+  "description": "Create a GitLab CI pipeline using the node:lts Docker image and two stages: test and build. In the test stage add an audit job that runs `cd src/server` then `npm audit`, is allowed to fail, and runs only for merge requests and the master branch. Also in test add a lint-client job that runs `cd src/client`, `npm install`, and `npm run lint`, and a lint-server job that runs `cd src/server`, `npm install`, and `npm run lint`; both jobs run only for merge requests and master. No caches, artifacts, services, or deployment targets are defined.",
+  "tags": [
+    "node",
+    "npm",
+    "lint",
+    "audit",
+    "gitlab-ci"
+  ]
+}

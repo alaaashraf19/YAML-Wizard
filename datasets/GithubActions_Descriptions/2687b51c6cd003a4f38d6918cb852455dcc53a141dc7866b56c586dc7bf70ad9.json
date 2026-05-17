@@ -1,0 +1,14 @@
+{
+  "sha": "2687b51c6cd003a4f38d6918cb852455dcc53a141dc7866b56c586dc7bf70ad9",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1055,
+  "description": "Create a GitHub Actions workflow named CI on OSX that runs on push and pull request events to the master branch, excluding changes to docs/. Use a matrix strategy to run a build job on macos-14 for Debug and RelWithDebInfo build types. The job checks out the repository, installs required packages with Homebrew, compiles the code with CMake, runs tests, and executes a test suite.",
+  "tags": [
+    "osx",
+    "ci",
+    "cmake",
+    "homebrew",
+    "tests"
+  ]
+}

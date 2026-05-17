@@ -1,0 +1,14 @@
+{
+  "sha": "8ed6be057d5aa6bc11b2f4ec5d89fd8c19ceca5cc91a04c5687f3225181b5b6c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1255,
+  "description": "Create a GitHub Actions workflow named CI that runs on push and pull request events to the master branch, and can be triggered manually. The workflow uses an ubuntu-latest job running in a custom container from a specified registry, authenticating with provided Docker credentials. It checks out a repository from a specific GitHub URL, then in a specified working directory, runs make and creates a zip archive of build outputs.",
+  "tags": [
+    "ci",
+    "ubuntu",
+    "docker",
+    "make",
+    "github"
+  ]
+}

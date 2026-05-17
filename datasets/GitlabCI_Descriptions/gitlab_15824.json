@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_15824",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 468,
+  "description": "Create a GitLab CI pipeline with a single test stage using the ubuntu:24.04 Docker image. Add a job named test:ubuntu that runs in the test stage, runs apt-get update then apt-get install -y gcc git m4 openssl libssl-dev autogen autoconf automake libtool libltdl7 libltdl-dev byacc flex check libjansson4 libjansson-dev pkg-config build-essential in a before_script, then executes ./autogen.sh, ./configure --enable-debugging --enable-assert --enable-libjansson, and make distcheck in the script. The job archives any plexus-*.tar.gz files as artifacts that expire after one week. No caches, services, or conditional rules are defined.",
+  "tags": [
+    "ubuntu",
+    "gcc",
+    "autogen",
+    "configure",
+    "make-distcheck",
+    "artifact"
+  ]
+}

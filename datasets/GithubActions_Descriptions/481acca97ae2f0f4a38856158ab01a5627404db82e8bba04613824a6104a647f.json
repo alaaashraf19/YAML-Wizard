@@ -1,0 +1,15 @@
+{
+  "sha": "481acca97ae2f0f4a38856158ab01a5627404db82e8bba04613824a6104a647f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4071,
+  "description": "Create a GitHub Actions workflow named Windows that runs on push events. The workflow should have three jobs: clang-cl, msvc, and mingw. The clang-cl and msvc jobs run on a windows-2025 environment, check out the repository, cache CPM.cmake packages, and then configure and build a project using CMake with clang-cl and MSVC, respectively, and run unit tests. The mingw job runs on an ubuntu-latest environment with a Fedora container, installs dependencies, checks out the repository, and builds the project using CMake and MinGW.",
+  "tags": [
+    "windows",
+    "cmake",
+    "mingw",
+    "msvc",
+    "clang-cl",
+    "github-actions"
+  ]
+}

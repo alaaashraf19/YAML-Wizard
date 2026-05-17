@@ -1,0 +1,33 @@
+image: node:latest
+release:
+  except:
+  - tags
+  only:
+  - master
+  script:
+  - npm ci
+  - export VERSION=$(node -p "require('./package.json').version")
+  - npm run publish:vsce
+  - curl -Lis -H "PRIVATE-TOKEN:${GITLAB_AUTH_TOKEN}" -XPOST "https://gitlab.com/api/v4/projects/balazs4%2Fgitlab-pipeline-monitor/repository/tags?tag_name=${VERSION}&ref=master"
+    | npx alola
+  stage: release
+stages:
+- test
+- release
+test:
+  script:
+  - npm ci
+  - npm test
+  stage: test
+version:
+  except:
+  - master
+  - tags
+  only:
+  - branches
+  script:
+  - export VERSION=$(node -p "require('./package.json').version")
+  - echo "Check ${VERSION}..."
+  - curl -f -s -H "PRIVATE-TOKEN:${GITLAB_AUTH_TOKEN}" -XGET "https://gitlab.com/api/v4/projects/balazs4%2Fgitlab-pipeline-monitor/repository/tags/${VERSION}"
+    && exit -1 || exit 0
+  stage: release

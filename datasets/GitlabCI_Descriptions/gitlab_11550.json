@@ -1,0 +1,22 @@
+{
+  "sha": "gitlab_11550",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 8164,
+  "description": "Create a GitLab CI pipeline that defines variables for Docker images (python:3.11.9, node:16.16, alpine:3.11, docker:20.10.24, openapi-generator-cli, sentry-cli) and the stages schema, api, static, build, test, deploy, sentry_release, trigger, and security. In the schema stage run a schema job (python image) that installs requirements with \"pip install --no-cache-dir --no-deps -r requirements.txt --force-reinstall .\" and generates the OpenAPI schema via \"./manage.py spectacular\", storing the satnogs-db-api-client directory as an artifact; in the api stage run an api job (openapi-generator-cli image) that executes two \"docker-entrypoint.sh generate\" commands for python and html2 generators, outputting to satnogs-db-api-client and its html2 subdirectory and archiving the client as an artifact. In the static stage run static (python image) with \"tox run -e \\\"flake8,isort,yapf,pylint\\\"\" and static_js_css (node image) with \"npm ci\" and \"node_modules/.bin/gulp\", publishing db/static/lib as an artifact; in the build stage run build (python image) that installs tox, removes dist, and runs \"tox run -e \\\"build\\\"\", and build_api (python image) that installs tox with client constraints, cd into satnogs-db-api-client, cleans dist, and runs \"tox run -e \\\"build\\\"\", both publishing their dist directories as artifacts. In the test stage run test (python image) that installs tox and runs \"tox run-parallel -e \\\"deps,pytest\\\"\" after static_js_css, and test_api (python image) that cd into satnogs-db-api-client and runs \"tox run -e \\\"deps\\\"\" after api. In the deploy stage run deploy and deploy_api (python image) that install tox, clean dist, and run \"tox run -e \\\"upload\\\"\" for PyPI, limited to tag refs and requiring PYPI_USERNAME and PYPI_PASSWORD; run a docker job (docker image) with docker:dind service that builds and pushes the satnogs-db image to the GitLab registry and Docker Hub using conditional login and tagging, and runs on master or tags; add a pages job (alpine image) that moves docs/_build/html and the generated API HTML to public/ on tags, a sentry_release job (sentry-cli image) that creates a Sentry release on tags requiring SENTRY_AUTH_TOKEN and SENTRY_ORG, trigger_latest and trigger_master jobs (alpine image) that curl POST to configured pipelines on tags or master respectively, and security jobs container_scanning, dependency_scanning, sast, and secret_detection with appropriate rules. All artifacts expire after one week and jobs use the specified only/except or rules clauses as defined.",
+  "tags": [
+    "python",
+    "node",
+    "docker",
+    "openapi",
+    "sentry",
+    "pypi",
+    "pages",
+    "security",
+    "lint",
+    "test",
+    "build",
+    "deploy",
+    "trigger"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_07989",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 740,
+  "description": "Create a GitLab CI pipeline that uses the java:8 Docker image and runs a before_script that replaces the placeholder CI_MOD_VERSION with $CI_BUILD_REF in build.gradle and src/main/java/de/garantiertnicht/mobexample/MobExample.java, makes gradlew executable, and runs ./gradlew setupCiWorkspace. Define a single build stage. Add a development job in the build stage that runs on all refs except the master branch of the Garantiertnicht/MobTest project and pipeline triggers, and executes ./gradlew build. Add a release job in the same stage that runs only on the master branch of that project and on triggers, runs ./gradlew build, then pack200 -q -E9 build/libs/mobtest-$CI_BUILD_REF.pack.gz build/libs/mobtest-$CI_BUILD_REF.jar, moves the generated pack.gz file to the project root, and publishes mobtest-$CI_BUILD_REF.pack.gz as a job artifact.",
+  "tags": [
+    "java",
+    "gradle",
+    "pack200",
+    "gitlab-ci",
+    "artifact"
+  ]
+}

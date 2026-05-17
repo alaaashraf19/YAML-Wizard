@@ -1,0 +1,18 @@
+cache:
+  paths:
+  - node_modules/
+image: node:23.4.0-slim
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  pages:
+    publish: public
+  script:
+  - npm ci
+  - npm run build
+  - find ./public -type f -exec sh -c 'gzip -c "$1" > "$1.gz"' _ {} \;
+  - node -p 'require("./package.json").version' > public/version.txt
+  stage: deploy

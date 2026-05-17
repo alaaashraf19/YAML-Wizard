@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_07435",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 425,
+  "description": "Create a GitLab CI pipeline that uses the node:latest Docker image. Define a deploy stage with a job named pages that runs only on the master branch. In the before_script of pages, execute `wget -qO- https://github.com/git-lfs/git-lfs/releases/download/v2.1.1/git-lfs-linux-amd64-2.1.1.tar.gz | tar xz` then `mv git-lfs-*/git-lfs /usr/bin/ && rm -rf git-lfs-* && git lfs install && git lfs pull`. In the script, run `git lfs pull`, `yarn`, `NODE_ENV=production npm run build`, and `cp -r dist public`. Publish the `public` directory as a GitLab Pages artifact.",
+  "tags": [
+    "node",
+    "yarn",
+    "npm",
+    "git-lfs",
+    "gitlab-pages",
+    "deploy"
+  ]
+}

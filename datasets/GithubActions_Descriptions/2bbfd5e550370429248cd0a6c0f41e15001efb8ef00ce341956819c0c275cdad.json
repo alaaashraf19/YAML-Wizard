@@ -1,0 +1,15 @@
+{
+  "sha": "2bbfd5e550370429248cd0a6c0f41e15001efb8ef00ce341956819c0c275cdad",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4435,
+  "description": "Create a GitHub Actions workflow named ci that runs on push to main, on pull requests to main, and on a daily schedule. The workflow has multiple jobs for different environments: macos ventura 13, ros 2 foxy on ubuntu, ubuntu 20.04 focal, and ubuntu 20.04 focal with apt. Each job checks out the code, performs environment-specific setup, and runs build and test scripts.",
+  "tags": [
+    "ci",
+    "macos",
+    "ubuntu",
+    "ros",
+    "schedule",
+    "concurrency"
+  ]
+}

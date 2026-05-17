@@ -1,0 +1,16 @@
+{
+  "sha": "10889a7a69bb5f2e934fdd5bf59a7b100a5d66b1a571cc7404f28f79a7942728",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 9561,
+  "description": "Create a GitHub Actions workflow named continuous-integration that runs on every push and pull request. The workflow should have three jobs: linux-os, windows-os, and macOS, each running on a different operating system. The linux-os job should update APT, install dependencies, checkout repositories, get dependencies for AppImage, build AppImage, and upload artifacts. The windows-os job should define variables, download and install tools, setup Python, clone repositories, configure and build, and upload artifacts with different configurations for various platforms. The macOS and iOS-Simulator jobs should checkout repositories, clone dependencies, build, and upload artifacts.",
+  "tags": [
+    "continuous-integration",
+    "multi-os",
+    "appimage",
+    "love2d",
+    "xcode",
+    "cmake",
+    "python"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "sha": "c58bf5980f3662bba4642f0e9a9c48df86438bf5192fd45006b24861c282ad45",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2860,
+  "description": "Create a GitHub Actions workflow named Build smartmontools with MSVC17 that can be triggered manually. The workflow should have two jobs: one on ubuntu-latest to create a configured source and another on windows-latest to create Windows binaries from that source. The source job should install dependencies, checkout the repository with a deep fetch, configure the source, and upload it as an artifact. The build job should download the source, set up MSBuild, and build and upload various Windows binaries and debug files as separate artifacts.",
+  "tags": [
+    "windows",
+    "msvc",
+    "msbuild",
+    "mingw",
+    "autotools",
+    "ci",
+    "artifacts"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_03773",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1400,
+  "description": "Create a GitLab CI pipeline that uses the continuumio/miniconda3 Docker image. In the deploy stage add a pages job that runs only on the release branch (if $CI_COMMIT_REF_NAME == \"release\") and executes: apt update; apt-get install -qy --no-install-recommends build-essential xvfb xauth python3-pyqt5 texlive-latex-extra dvipng; conda install hyperspy sphinx sphinx_rtd_theme -c conda-forge -y; pip3 install .; cd doc/; bash make_all_documentation_images.sh; make html; cd ..; mv doc/_build/html public; then publishes the public directory as a GitLab Pages artifact. Also in the deploy stage add a pages_development job that runs only on the main branch (if $CI_COMMIT_REF_NAME == \"main\") and runs the same commands except installing exspy with conda, and moves the built site to public_development, publishing that as an artifact. Add a run_style_check job in the default test stage that installs black via conda (conda install black -c conda-forge -y) and runs python3 -m black atomap/ --diff --check --quiet. Finally add a run_tests job in the default test stage that installs hyperspy, exspy and pytest via conda (conda install hyperspy exspy pytest -c conda-forge -y), installs the package in editable mode (pip3 install -e .), and runs python3 -m pytest --env nogui --doctest-modules atomap/ followed by python3 -m pytest --env nogui --doctest-glob=\"*.rst\" doc/.",
+  "tags": [
+    "miniconda",
+    "sphinx",
+    "gitlab-pages",
+    "documentation",
+    "black",
+    "pytest",
+    "conda"
+  ]
+}

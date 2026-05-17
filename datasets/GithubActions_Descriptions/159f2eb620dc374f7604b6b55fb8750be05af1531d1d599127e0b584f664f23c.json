@@ -1,0 +1,14 @@
+{
+  "sha": "159f2eb620dc374f7604b6b55fb8750be05af1531d1d599127e0b584f664f23c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2285,
+  "description": "Create a GitHub Actions workflow named Build and Deploy to npm that triggers on published releases. Run a precompile job on a matrix of ubuntu-18.04, windows-latest, and macos-latest environments with Node.js 16.x, installing dependencies, building nodegui, compressing files, and uploading artifacts. Then, run a publish-npm-package job on ubuntu-latest that installs dependencies, configures npm, and publishes the package to npm using NPM_PUBLISH_TOKEN from secrets.",
+  "tags": [
+    "nodejs",
+    "npm",
+    "release",
+    "github-actions",
+    "nodegui"
+  ]
+}

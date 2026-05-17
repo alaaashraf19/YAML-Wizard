@@ -1,0 +1,31 @@
+before_script:
+- mkdir -p /cache/.gradle
+- ln -s /cache/.gradle .cache
+- export GRADLE_USER_HOME=.cache/
+build:
+  artifacts:
+    paths:
+    - build/libs/
+  dependencies:
+  - integrationTest
+  only:
+    refs:
+    - master
+  script: ./gradlew shadowJar
+  stage: build
+image: openjdk:12-jdk
+integrationTest:
+  dependencies:
+  - test
+  script: ./gradlew integrationTest
+  stage: integrationTest
+stages:
+- test
+- integrationTest
+- build
+test:
+  cache:
+    paths:
+    - .cache
+  script: ./gradlew clean check --info
+  stage: test

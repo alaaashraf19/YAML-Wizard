@@ -1,0 +1,17 @@
+{
+  "sha": "34a9b5580ba05bc3a1f04cd06d2517045f001c4d677356646b0836d900a92667",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 9677,
+  "description": "Create a comprehensive GitHub Actions workflow for mc_rtc CI that runs on pushes to all branches and on pull requests to any branch. The workflow should use a matrix strategy across Ubuntu, macOS, and Windows environments, with various build types and compilers. For each job, it should check out the repository, perform OS-specific cleanup, install dependencies, build and test the project with different configurations, and handle ROS integration and documentation upload.",
+  "tags": [
+    "ci",
+    "ubuntu",
+    "macos",
+    "windows",
+    "cmake",
+    "ros",
+    "github-actions",
+    "matrix-build"
+  ]
+}

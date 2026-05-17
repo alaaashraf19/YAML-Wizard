@@ -1,0 +1,15 @@
+{
+  "sha": "e6228daf737f038ee34dbf21b00a57a5dca7dca82916850eb68164e07e1ec8b7",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4555,
+  "description": "Create a GitHub Actions workflow named CI - Ubuntu that runs on push to master and tags matching v[0-9]+\\.[0-9]+\\.[0-9]+, and on pull requests. Use an ubuntu-24.04 job that checks out the repository with submodules, restores and stores file mtimes, installs Qt 6.8.3 and python zstandard, configures and builds PokeFinder with CMake, and creates AppImage and tar.gz artifacts. Publish release artifacts on tag push.",
+  "tags": [
+    "ubuntu",
+    "qt",
+    "cmake",
+    "appimage",
+    "release",
+    "github-actions"
+  ]
+}

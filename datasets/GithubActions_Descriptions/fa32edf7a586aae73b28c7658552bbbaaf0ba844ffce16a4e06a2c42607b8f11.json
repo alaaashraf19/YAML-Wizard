@@ -1,0 +1,14 @@
+{
+  "sha": "fa32edf7a586aae73b28c7658552bbbaaf0ba844ffce16a4e06a2c42607b8f11",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1126,
+  "description": "Create a GitHub Actions workflow named Build Wheels that runs on push to main, on create, and on workflow dispatch. Use a matrix job strategy to build wheels on multiple operating systems including Ubuntu, Windows, and macOS. For each OS, check out the code, set up Python 3.x with pip caching, cythonize, build wheels using cibuildwheel, and upload the resulting wheels as artifacts.",
+  "tags": [
+    "python",
+    "cibuildwheel",
+    "wheels",
+    "multi-os",
+    "github-actions"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_08961",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2033,
+  "description": "Create a GitLab CI pipeline where all jobs extend the .run template and run in the report stage. Add nine report jobs—`compliance-group:recently-delivered`, `plan-stage:end-of-release-refinement`, `plan-stage:security-issue-check`, `quality:leading-org-report`, `quality:triage-report`, `security-policies-group:blocked-issues`, `security-products:community-merge-requests-report`, `verify:community-merge-requests-report`, and `verify:component-merge-requests-report`—each guarded by a rule that checks its corresponding $TRIAGE_* variable and sets the TRIAGE_POLICY_FILE variable to the specific policy file path (e.g., policies/groups/gitlab-org/compliance-group/compliance-recently-delivered.yml, policies/plan-stage/end-of-release-refinement.yml, etc.). No additional scripts, images, services, caches, or artifacts are defined, so each job simply relies on the inherited .run configuration to execute the policy check.",
+  "tags": [
+    "gitlab-ci",
+    "triage",
+    "report",
+    "policy",
+    "compliance"
+  ]
+}

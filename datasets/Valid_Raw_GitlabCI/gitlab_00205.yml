@@ -1,0 +1,13 @@
+before_script:
+- TEXMFHOME=`kpsewhich -var-value TEXMFHOME`
+- LOCALTEX=$TEXMFHOME/tex/latex
+- mkdir -p $LOCALTEX
+build:
+  artifacts:
+    paths:
+    - ./example/example-*.pdf
+  image: adnrv/texlive:tools
+  script:
+  - ln -s `pwd` $LOCALTEX/mcv-academic
+  - cd example
+  - make all

@@ -1,0 +1,14 @@
+{
+  "sha": "3c62a116a1bea152aca8f970da174fb8ac6f516fd3fb5bf5926da9bff4bbb64b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1736,
+  "description": "Create a GitHub Actions workflow named fluent.runtime that runs on push and pull requests to the main branch, but only for specific paths. The workflow has two jobs: unit and lint. The unit job runs on ubuntu-20.04, uses a matrix strategy to test multiple Python versions and fluent-syntax versions, checks out the code, sets up Python, installs dependencies, and runs tests. The lint job runs on ubuntu-latest, checks out the code, sets up Python 3.9, installs dependencies, and runs flake8 linting.",
+  "tags": [
+    "python",
+    "tests",
+    "linting",
+    "ubuntu",
+    "github-actions"
+  ]
+}

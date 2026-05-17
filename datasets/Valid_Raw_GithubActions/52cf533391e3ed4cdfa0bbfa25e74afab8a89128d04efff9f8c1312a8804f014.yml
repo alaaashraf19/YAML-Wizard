@@ -1,0 +1,25 @@
+name: Create new release
+
+on:
+  push:
+    branches:
+      - 'master'
+
+jobs:
+  build:
+    name: Create new release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: sudo apt-get install python3-setuptools python3-wheel
+      - run: pip3 install platformio
+      - run: echo "$HOME/.local/bin" >> $GITHUB_PATH
+      - run: platformio run
+      - run: echo "VERSION=$(./scripts/create_version_tag.py)" >> $GITHUB_ENV
+      - uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ env.VERSION }}
+          commit: Release ${{ env.VERSION }}
+          generateReleaseNotes: true
+          artifacts: ".pio/build/lora_board/firmware.bin,data/is-cfg.json"
+          token: ${{ secrets.GITHUB_TOKEN }}

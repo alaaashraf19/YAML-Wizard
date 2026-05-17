@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_10781",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 412,
+  "description": "Create a GitLab CI pipeline that uses the node:latest Docker image with the docker service and defines the environment variable TRAVIS_HOST=127.0.0.1 TRAVIS_PORT=4001. Define two stages: build and test. In the build stage add an install_dependencies job that runs docker pull rqlite/rqlite, docker run -d -p 127.0.0.1:4001:4001 -p 127.0.0.1:4002:4002 rqlite/rqlite, docker ps -a, then npm install, and stores the node_modules/ directory as an artifact. In the test stage add a test_with_lab job that runs npm test.",
+  "tags": [
+    "node",
+    "npm",
+    "docker",
+    "rqlite",
+    "build",
+    "test"
+  ]
+}

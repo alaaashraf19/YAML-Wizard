@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_07464",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 546,
+  "description": "Create a GitLab CI pipeline with a single job named test that runs in the default test stage using the debian:stretch-slim Docker image. The job defines a variable fingerprint set to 37D2C98789D8311948394E3E41E7044E1DBA2E89. In the script, run apt update -y, then apt-get install -y --no-install-recommends bash ca-certificates dirmngr gnupg grep wget, then for f in *.sh */*.sh; do bash -n $f; done, then execute '! (gpg --list-keys | grep pub)', then while ! gpg --keyserver pgp.mit.edu --recv-key $fingerprint; do sleep 10; done, then gpg --list-key --fingerprint | tr -d '[:space:]' | grep $fingerprint, then echo \"${fingerprint}:6:\" | gpg --import-ownertrust, and finally ./get_packages.sh. The pipeline has no caches, artifacts, services, or additional stages.",
+  "tags": [
+    "debian",
+    "gpg",
+    "apt",
+    "bash",
+    "script-validation"
+  ]
+}

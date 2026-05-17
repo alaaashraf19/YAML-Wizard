@@ -1,0 +1,16 @@
+{
+  "sha": "c3f43cca2acee34b121c0caa88491c07a2aec55f95053563863e0ddfe2c7f5fb",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4323,
+  "description": "Create a GitHub Actions workflow named Check style that runs on push to all branches except gh-readonly-queue/** and master, on pull requests, and on merge groups. Use an ubuntu-latest job that checks out the repository with submodules, prepares the Linux environment, caches Rust dependencies, and then performs various style checks including ClangFormat, Shellcheck, shell formatting, Pylint, and several custom script checks.",
+  "tags": [
+    "style",
+    "checks",
+    "clang-format",
+    "shellcheck",
+    "pylint",
+    "rust",
+    "ubuntu"
+  ]
+}

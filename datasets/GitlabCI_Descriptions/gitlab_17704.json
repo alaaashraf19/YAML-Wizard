@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_17704",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 850,
+  "description": "Create a GitLab CI pipeline with stages build, test, artefact, and publish. In the build stage add a build job that runs ./gradlew -i -g .gradle classes. In the test stage add a test job that runs ./gradlew -i -g .gradle check, always stores the build/reports/tests directory as an artifact for 1 week. In the artefact stage add an artefact job that runs ./gradlew -i -g .gradle assemble and stores the built JAR files (build/libs/*.jar) as artifacts for 1 week. In the publish stage add a publish job that runs ./gradlew -i -g .gradle -PbintrayUser=$BINTRAY_USER -PbintrayKey=$BINTRAY_KEY -PsonatypeOssUser=$SONATYPE_OSS_USER -PsonatypeOssPassword=$SONATYPE_OSS_PASSWORD bintrayUpload, stores the JARs and Maven metadata as artifacts for 1 week, runs only on the master branch, and is manual. Cache the .gradle/wrapper and .gradle/caches directories between jobs.",
+  "tags": [
+    "gradle",
+    "java",
+    "bintray",
+    "maven",
+    "publish",
+    "test",
+    "build",
+    "artefact",
+    "cache"
+  ]
+}

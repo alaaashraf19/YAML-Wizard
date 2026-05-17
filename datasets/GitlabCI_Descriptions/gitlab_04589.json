@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_04589",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 230,
+  "description": "Create a GitLab CI pipeline that uses the ubuntu:latest Docker image. Define a single job named test in the default test stage that runs the following shell commands in order: pycodestyle sp *.py, flake8 sp *.py, ./lxdhelper.py, ./sp -l -c 101 /home/gitlab-runner/sosreport-ACustomer.10101-20180904170335.tar.xz, and ./sp -l -c 102 /home/gitlab-runner/102/. No services, caches, artifacts, or special rules are required.",
+  "tags": [
+    "ubuntu",
+    "pycodestyle",
+    "flake8",
+    "lxdhelper",
+    "sp"
+  ]
+}

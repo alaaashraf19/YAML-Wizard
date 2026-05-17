@@ -1,0 +1,15 @@
+{
+  "sha": "c484df9428508eb375b2709099dc2b401a314b5b736893ccecd907ae82e18bd5",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2545,
+  "description": "Create a GitHub Actions workflow named Test that runs on push, pull request, and workflow dispatch events. The workflow has two jobs: win-makepkg and win-test, both running on windows-latest. The win-makepkg job uses a matrix strategy to build a package with different MSYS2 environments, while the win-test job depends on win-makepkg and uses a similar matrix to test the package.",
+  "tags": [
+    "windows",
+    "msys2",
+    "make",
+    "test",
+    "matrix",
+    "ci"
+  ]
+}

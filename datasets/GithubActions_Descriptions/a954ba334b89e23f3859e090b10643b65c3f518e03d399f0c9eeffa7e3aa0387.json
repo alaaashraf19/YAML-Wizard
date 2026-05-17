@@ -1,0 +1,14 @@
+{
+  "sha": "a954ba334b89e23f3859e090b10643b65c3f518e03d399f0c9eeffa7e3aa0387",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4880,
+  "description": "Create a GitHub Actions workflow named Weekly Tests that runs a suite of very-long tests. The workflow is triggered manually via a workflow dispatch. It consists of multiple jobs: get-date to fetch the current date, testlib-very-long-tests to run various long tests in parallel on self-hosted Linux runners with a 3-day timeout, gpu-tests to run GPU tests on a different self-hosted runner, and dramsys-tests for DRAMSys checks. Each job checks out the code, sets up a container environment, and uploads test results as artifacts.",
+  "tags": [
+    "github-actions",
+    "self-hosted-runners",
+    "long-tests",
+    "gpu-tests",
+    "dramsys"
+  ]
+}

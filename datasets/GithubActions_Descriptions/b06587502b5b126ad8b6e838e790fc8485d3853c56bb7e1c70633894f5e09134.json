@@ -1,0 +1,14 @@
+{
+  "sha": "b06587502b5b126ad8b6e838e790fc8485d3853c56bb7e1c70633894f5e09134",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 930,
+  "description": "Create a GitHub Actions workflow named Python package that runs on every push to the master branch and on pull requests to master. Use a single ubuntu-latest job with a matrix strategy to test multiple Python versions (3.6, 3.7, 3.8, 3.9). For each version, check out the repository, set up Python, install dependencies from requirements-dev.txt, build the package with setup.py, and run tests with pytest.",
+  "tags": [
+    "python",
+    "tests",
+    "linting",
+    "matrix",
+    "ubuntu"
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "sha": "gitlab_17420",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1097,
+  "description": "Create a GitLab CI pipeline that uses the rust:latest Docker image and defines two stages: pre and test. Add a formatting job in the pre stage that runs rustup component add rustfmt-preview, then rustc --version && cargo --version and bash ./bin/check-formatting. Add a pages job in the pre stage that runs apt-get update -yqq and apt-get install -yqq --no-install-recommends libzmq3-dev, caches the target/doc directory, executes cargo doc --no-deps, moves the generated docs to a public folder, writes a meta refresh index file with '<meta http-equiv=\\\"refresh\\\" content=0;url=jupyter_client/index.html>', publishes the public/ directory as a pages artifact, and only runs on the dev branch. Add a test:nightly job in the test stage that runs apt-get update -yqq, apt-get install -yqq --no-install-recommends libzmq3-dev, rustup install nightly, caches target/debug, then runs rustc --version && cargo --version and RUST_VERSION=nightly bash ./bin/test. Add a test:stable job in the test stage that runs apt-get update -yqq, apt-get install -yqq --no-install-recommends libzmq3-dev, caches target/debug, then runs rustc --version && cargo --version and bash ./bin/test.",
+  "tags": [
+    "rust",
+    "cargo",
+    "formatting",
+    "pages",
+    "documentation",
+    "gitlab-pages",
+    "nightly",
+    "stable",
+    "apt",
+    "libzmq3-dev",
+    "test"
+  ]
+}

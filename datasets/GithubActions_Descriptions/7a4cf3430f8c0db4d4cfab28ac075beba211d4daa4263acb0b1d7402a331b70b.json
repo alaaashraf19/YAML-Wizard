@@ -1,0 +1,14 @@
+{
+  "sha": "7a4cf3430f8c0db4d4cfab28ac075beba211d4daa4263acb0b1d7402a331b70b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1653,
+  "description": "Create a CodeQL GitHub Actions workflow that analyzes C++ code. The workflow should run on push to the main branch, on pull requests to the main branch, and on a weekly schedule. Use an ubuntu-latest job with read permissions for actions and contents, and write permission for security events. The workflow should check out the repository, initialize CodeQL tools for C++, install dependencies, build the project using a bash script, and then perform the CodeQL analysis.",
+  "tags": [
+    "codeql",
+    "cpp",
+    "ubuntu",
+    "security",
+    "analysis"
+  ]
+}

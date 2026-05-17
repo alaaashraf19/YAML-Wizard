@@ -1,0 +1,21 @@
+before_script:
+- docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+build:
+  except:
+  - master
+  script:
+  - docker build --pull -t "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG"  --build-arg "commit_ref=${CI_COMMIT_SHA}"
+    .
+  - docker push "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG"
+  stage: build
+build-master:
+  only:
+  - master
+  script:
+  - docker build --pull -t "$CI_REGISTRY_IMAGE" --build-arg "commit_ref=${CI_COMMIT_SHA}"
+    .
+  - docker push "$CI_REGISTRY_IMAGE"
+  stage: build
+image: docker:latest
+services:
+- docker:dind

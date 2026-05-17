@@ -1,0 +1,16 @@
+{
+  "sha": "0e50d02087ecfcebb6aa074ea09b093fec9bf70ed36c82a0cb7974a931bfa4fa",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2384,
+  "description": "Create a GitHub Actions workflow named Tests that runs on push and pull request events. The workflow should have multiple jobs for testing on different environments: macOS-latest, ubuntu-18.04 with GCC, ubuntu-18.04 with Clang, and windows-latest. Each job should check out the repository, initialize submodules, install dependencies, and run tests using custom scripts.",
+  "tags": [
+    "tests",
+    "multijob",
+    "osx",
+    "ubuntu",
+    "windows",
+    "gcc",
+    "clang"
+  ]
+}

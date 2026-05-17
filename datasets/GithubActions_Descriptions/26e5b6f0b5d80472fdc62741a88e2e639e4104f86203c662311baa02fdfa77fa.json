@@ -1,0 +1,16 @@
+{
+  "sha": "26e5b6f0b5d80472fdc62741a88e2e639e4104f86203c662311baa02fdfa77fa",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 6330,
+  "description": "Create a GitHub Actions workflow named CI that runs on every push and pull request. Use three jobs: build-windows on windows-2019, build-linux-gcc on ubuntu-18.04 with GCC, and build-linux-clang on ubuntu-18.04 with Clang. Each job uses a matrix strategy to build with different configurations and platforms. Checkout code, setup tools, build, and upload OpenXRay artifacts.",
+  "tags": [
+    "ci",
+    "windows",
+    "linux",
+    "gcc",
+    "clang",
+    "openxray",
+    "matrix-build"
+  ]
+}

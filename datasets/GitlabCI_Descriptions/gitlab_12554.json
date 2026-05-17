@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_12554",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 415,
+  "description": "Create a GitLab CI pipeline that installs TeX Live packages in a before_script (apt-get update -qq && apt-get install -y -qq texlive texlive-xetex texlive-fonts-recommended texlive-fonts-extra, then xelatex -v). Define a deploy stage with a latex job that runs xelatex -synctex=1 -interaction=nonstopmode learn_linux_amr.tex twice, stores learn_linux_amr.pdf as an artifact that expires in one month, and runs only on the master branch or tags.",
+  "tags": [
+    "latex",
+    "xelatex",
+    "texlive",
+    "pdf",
+    "gitlab-ci"
+  ]
+}

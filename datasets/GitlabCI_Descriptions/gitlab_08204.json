@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_08204",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1406,
+  "description": "Create a GitLab CI pipeline using the alpine:latest Docker image. Define a single test stage (default) and add jobs api_fuzzing, cluster-image-scanning, container-scanning, coverage_fuzzing, dast, dast-with-details, sam_scan, sast-eslint, sast-pmd-apex, sast-sobelow, sast-spotbugs, and secrets, each running the script `echo NOOP` and publishing a specific report artifact (e.g., api_fuzzing → samples/api-fuzzing.json, cluster-image-scanning → samples/cluster-image-scanning.json, container-scanning → samples/container-scanning.json, coverage_fuzzing → samples/coverage-fuzzing.json, dast → samples/dast.json, dast-with-details → samples/dast-with-details.json, sam_scan → samples/samscan-report.json, sast-eslint → samples/sast-eslint.json, sast-pmd-apex → samples/saat-pmd-apex.json, sast-sobelow → samples/saat-sobelow.json, sast-spotbugs → samples/sast-spotbugs.json, secrets → samples/secret-detection.json). Include the built‑in Dependency‑Scanning template via `include: - template: Jobs/Dependency-Scanning.latest.gitlab-ci.yml`. No caches, variables, rules, or deployment targets are defined.",
+  "tags": [
+    "alpine",
+    "dependency-scanning",
+    "api-fuzzing",
+    "cluster-image-scanning",
+    "container-scanning",
+    "coverage-fuzzing",
+    "dast",
+    "sast",
+    "secret-detection"
+  ]
+}

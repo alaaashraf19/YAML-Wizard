@@ -1,0 +1,15 @@
+{
+  "sha": "6c61ca0bf8d5307a701b7e7a6e8fec1f68157a17c3e0b7e13fb08da54a8fe8a0",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2114,
+  "description": "Create a GitHub Actions workflow named msvc that runs on push to master and development branches and on pull requests to master. The workflow should have three jobs: build-windows-msvc-stl, build-windows-msvc-no-stl, and build-windows-msvc-stl-force-cpp03, each running on a windows-2022 environment. For each job, check out the repository with submodules, add msbuild to PATH, build using cmake and MSBuild, and run tests.",
+  "tags": [
+    "windows",
+    "msvc",
+    "msbuild",
+    "cmake",
+    "tests",
+    "c++"
+  ]
+}

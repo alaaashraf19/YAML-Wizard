@@ -1,0 +1,14 @@
+{
+  "sha": "a876eea6bd3751756d9e436d8c0f1129f419d9c7825884dfe7835bc3be3c2c35",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1537,
+  "description": "Create a GitHub Actions workflow named Build and push to DockerHub that triggers on push and pull request events. Use an ubuntu-latest job to inject environment variables, decide whether to push to DockerHub based on the branch or tag, checkout the code, set up Docker Buildx, build the Docker image, login to DockerHub using secrets, and push the image to DockerHub if conditions are met.",
+  "tags": [
+    "docker",
+    "dockerhub",
+    "build",
+    "push",
+    "github-actions"
+  ]
+}

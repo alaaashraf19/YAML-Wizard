@@ -1,0 +1,14 @@
+{
+  "sha": "bc2915e91383482e6908d9c281fe226e53107ce49af5d0907cf3ff8218c2cb8f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2615,
+  "description": "Create a GitHub Actions workflow named Code Scan: Cpplint that runs on push to devel and release branches and on pull requests to those branches, excluding certain paths. Use an ubuntu-22.04 job with read permissions for actions, contents, and write for security events. The job should check out the repository with submodules, install cpplint, xsltproc, and sarif tools, run cpplint, convert results to SARIF and Markdown, and upload the SARIF file to GitHub Code Scanning Alerts.",
+  "tags": [
+    "cpplint",
+    "code-scanning",
+    "ubuntu",
+    "security-events",
+    "github-actions"
+  ]
+}

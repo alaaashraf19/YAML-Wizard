@@ -1,0 +1,14 @@
+{
+  "sha": "c61ea3f3c9f0b507747ca7882085df77f1db47fb413a806dcefc563cc2da4978",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3342,
+  "description": "Create a GitHub Actions workflow named Live that runs on push events, excluding tags matching *RC* or *DB*. The workflow consists of four jobs: osx_job on macOS-latest, linux_job and linux_docker_job on ubuntu-18.04, and windows_job on windows-latest. Each job checks out the repository, sets up the AWS CLI, determines a tag, initializes submodules, installs dependencies, and then builds and deploys an artifact to AWS, with some jobs using Docker or specific build scripts.",
+  "tags": [
+    "aws",
+    "multi-os",
+    "docker",
+    "deployment",
+    "github-actions"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_11703",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 161,
+  "description": "Create a GitLab CI pipeline that uses the default Ruby environment, runs a before_script that prints the Ruby version, shows the Ruby binary path, installs Bundler without documentation, and runs bundle install with parallel jobs using $(nproc) and any FLAGS. Define a single job named rspec that executes `bundle exec rspec`. No stages, caches, artifacts, or rules are specified.",
+  "tags": [
+    "ruby",
+    "bundler",
+    "rspec",
+    "testing"
+  ]
+}

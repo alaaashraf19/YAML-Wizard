@@ -1,0 +1,15 @@
+{
+  "sha": "76bd308a6a0f859f56847a64aeb7139a124d0d235135b4a972369fcf6a3e10a5",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3297,
+  "description": "Create a GitHub Actions workflow named Build that runs on push. It has three jobs: test, build, and release. The test job runs on ubuntu-latest, checks out the repository, sets up Python 3.x, installs Poetry, and runs tests with pytest. The build job depends on test, runs on ubuntu-latest if the push is a tag, checks out the repository, sets up Python 3.x, installs Poetry, and builds the project with poetry build. The release job depends on build, runs on ubuntu-latest with write permission to repository contents, checks out the repository, sets up Python 3.x, installs Poetry, downloads the build artifact, generates a changelog, and releases the project to GitHub and PyPI.",
+  "tags": [
+    "python",
+    "poetry",
+    "pytest",
+    "github-release",
+    "pypi",
+    "ubuntu"
+  ]
+}

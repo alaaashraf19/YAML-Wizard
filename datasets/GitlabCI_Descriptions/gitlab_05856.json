@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_05856",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 280,
+  "description": "Create a GitLab CI pipeline that runs a single job named tests in the test stage using the Docker image registry.gitlab.com/craigbarnes/dockerfiles/lua-testing. The job should first execute `apt-get update && apt-get -y install libsass-dev` to install libsass development files, then run a loop over Lua versions 5.4 5.3 5.2 5.1 executing `luarocks --lua-version=$v make SASS_LIBDIR=/usr/lib/x86_64-linux-gnu` and `lua$v test.lua` for each version. No services, caches, artifacts, or special rules are required.",
+  "tags": [
+    "lua",
+    "luarocks",
+    "sass",
+    "docker-image",
+    "testing"
+  ]
+}

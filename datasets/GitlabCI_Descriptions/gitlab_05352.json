@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_05352",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 241,
+  "description": "Create a GitLab CI pipeline that defines a single stage called deploy. Add a pages job in the deploy stage that uses the alpine Docker image, runs `apk add --update --no-cache make` followed by `make deploy_to_pages`, and publishes the public directory as an artifact that expires after one week. Configure the job to run only on the master branch or any tag of the chusiang/gup repository.",
+  "tags": [
+    "alpine",
+    "make",
+    "gitlab-pages",
+    "deploy",
+    "pages"
+  ]
+}

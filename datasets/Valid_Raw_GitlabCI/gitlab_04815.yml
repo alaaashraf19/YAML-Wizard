@@ -1,0 +1,14 @@
+coverage:
+  allow_failure: true
+  script: TOXENV=coverage tox
+  type: test
+flake8:
+  allow_failure: true
+  script: TOXENV=flake8 tox
+  type: test
+pyqt5:
+  script: TOXENV=pyqt5 tox
+  type: test
+sphinx:
+  script: TOXENV=sphinx tox
+  type: test

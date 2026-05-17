@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_12585",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1508,
+  "description": "Create a GitLab CI pipeline that uses the docker:latest image with a docker:dind service and sets the DOCKER_DRIVER variable to overlay2. Define two stages: test and release. In the test stage add an integration-tests job that runs on the msvechla/golang-dind image and executes: mkdir -p /go/src/gitlab.com/msvechla/; cp -R /builds/msvechla/* /go/src/gitlab.com/msvechla/; cd /go/src/gitlab.com/msvechla/vaultbeat; make integration-tests-environment. In the release stage add a build-latest job that runs: docker login -u msvechla -p $DOCKER_PASS; docker build -t msvechla/vaultbeat:latest .; docker push msvechla/vaultbeat:latest, publishing the latest image to Docker Hub. Also in the release stage add a build-semver job that runs only on tags, uploads artifacts named vaultbeat-${CI_COMMIT_TAG} containing vaultbeat* fields.yml and _meta/, and runs: docker login -u msvechla -p $DOCKER_PASS; docker build -t msvechla/vaultbeat:${CI_COMMIT_TAG} .; docker push msvechla/vaultbeat:${CI_COMMIT_TAG}; export MAJOR=$(echo ${CI_COMMIT_TAG}|cut -d '.' -f1); export MINOR=$(echo ${CI_COMMIT_TAG}|cut -d '.' -f2); docker tag msvechla/vaultbeat:${CI_COMMIT_TAG} msvechla/vaultbeat:${MAJOR}; docker push msvechla/vaultbeat:${MAJOR}; docker tag msvechla/vaultbeat:${MAJOR} msvechla/vaultbeat:${MAJOR}.${MINOR}; docker push msvechla/vaultbeat:${MAJOR}.${MINOR}; docker run --rm -v \"$PWD\":/go/src/gitlab.com/msvechla/vaultbeat -w /go/src/gitlab.com/msvechla/vaultbeat golang:latest bash -c 'go get .;go get github.com/mitchellh/gox;gox -output=\"{{.Dir}}-{{.OS}}-{{.Arch}}\" -osarch=\"darwin/amd64 linux/amd64 windows/amd64\"', which builds multi‑platform binaries and pushes the versioned Docker images.",
+  "tags": [
+    "docker",
+    "dind",
+    "golang",
+    "integration-tests",
+    "release",
+    "docker-hub"
+  ]
+}

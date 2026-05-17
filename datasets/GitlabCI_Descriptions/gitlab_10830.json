@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_10830",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 3679,
+  "description": "Create a GitLab CI pipeline with stages registry_update, format_check, build, test, and coverage, using variables BT_BY_KT_IMAGE_TAG, BT_DEPS_IMAGE_TAG and BT_DEPS_REGISTRY. In the registry_update stage add a pull_bt-deps job that runs on the docker:stable image with a docker:dind service, executes docker login -u gitlab+deploy-token-4527 -p $BT_DEPS_REGISTRY_TOKEN registry.gitlab.com, docker pull \"$BT_DEPS_REGISTRY/clang_deps:$BT_DEPS_IMAGE_TAG\", docker pull \"$BT_DEPS_REGISTRY/gcc_deps:$BT_DEPS_IMAGE_TAG\", docker pull \"$BT_DEPS_REGISTRY/analysis:$BT_DEPS_IMAGE_TAG\", docker logout registry.gitlab.com, docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com, docker tag \"$BT_DEPS_REGISTRY/clang_deps:$BT_DEPS_IMAGE_TAG\" \"$CI_REGISTRY_IMAGE/clang_deps:$BT_BY_KT_IMAGE_TAG\", docker push \"$CI_REGISTRY_IMAGE/clang_deps:$BT_BY_KT_IMAGE_TAG\", docker tag \"$BT_DEPS_REGISTRY/gcc_deps:$BT_DEPS_IMAGE_TAG\" \"$CI_REGISTRY_IMAGE/gcc_deps:$BT_BY_KT_IMAGE_TAG\", docker push \"$CI_REGISTRY_IMAGE/gcc_deps:$BT_BY_KT_IMAGE_TAG\", docker tag \"$BT_DEPS_REGISTRY/analysis:$BT_DEPS_IMAGE_TAG\" \"$CI_REGISTRY_IMAGE/analysis:$BT_BY_KT_IMAGE_TAG\", docker push \"$CI_REGISTRY_IMAGE/analysis:$BT_BY_KT_IMAGE_TAG\", and runs only when the variable $JOB_PULL_BT_DEPS_IMAGE is set. In the format_check stage add a clang_format_check job using the analysis image that runs $CI_PROJECT_DIR/CI/clang_format_check.sh \"$CI_PROJECT_DIR\". In the build stage add clang:debug, clang:release, gcc:debug and gcc:release jobs each using their respective clang_deps or gcc_deps images, run the script: set -e; ln -s /BT-Deps/lib \"$CI_PROJECT_DIR/lib\" && ln -s /BT-Deps/include \"$CI_PROJECT_DIR/include\"; mkdir build && cd build; cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE ..; cmake --build . -- -j $(nproc); and store the build/* directory as a 1‑hour artifact, with BUILD_TYPE set to Debug for the debug jobs and Release for the release jobs. In the test stage add a clang:test job using the clang_deps image that runs the linking commands, cd build, and executes ./unittests_battleTanksd, publishing build/* as a 1‑hour artifact and depending on clang:debug. In the coverage stage add a clang:coverage job using the analysis image that runs cd build; bash <(curl -s https://codecov.io/bash) -g /usr/include || echo \"Error in codecov.io uploader\"; the linking commands; cmake -DCMAKE_BUILD_TYPE=Debug ..; make BattleTanksStandalone_lcov_coverage; sh $CI_PROJECT_DIR/CI/codacy_upload.sh, always uploads the coverage_report and coverage_report.lcov artifacts for 30 days, allows failure, and depends on clang:test.",
+  "tags": [
+    "c++",
+    "clang",
+    "gcc",
+    "cmake",
+    "docker",
+    "coverage",
+    "format-check"
+  ]
+}

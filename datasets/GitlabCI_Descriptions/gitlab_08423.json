@@ -1,0 +1,12 @@
+{
+  "sha": "gitlab_08423",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 423,
+  "description": "Create a GitLab CI pipeline with a single job named report-built-images that runs in the report stage using the Docker image defined by the ALPINE_IMAGE variable. The job should execute the following shell commands: set -- \"${CI_PROJECT_DIR}\"/*-built-image.txt; while [ \"$#\" -gt 0 ] && [ ! -f \"$1\" ]; do shift; done; if [ -f \"$1\" ]; then cat *-built-image.txt > all-built-images.txt; cat all-built-images.txt; else echo \"No images built\"; fi. It should collect the file all-built-images.txt as an artifact, keep it for 90 days, and store it at the path all-built-images.txt. No additional services, caches, or deployment rules are required.",
+  "tags": [
+    "alpine",
+    "report",
+    "artifacts"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_09153",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 326,
+  "description": "Create a GitLab CI pipeline with two jobs. The check_code job runs in the default stage, uses the coala/base Docker image and executes the command `coala --ci`. The release job runs only on the master branch, uses the python:3-alpine image, runs a before_script to install twine, then runs `python .ci/adjust_version.py bugspots3/VERSION -b `date --utc +%Y%m%d%H%M%S`` followed by `python setup.py sdist bdist_wheel` and `twine upload dist/* -u \"$PYPIUSER\" -p \"$PYPIPW\"`, referencing the PYPIUSER and PYPIPW secret variables.",
+  "tags": [
+    "coala",
+    "python",
+    "twine",
+    "pypi",
+    "release",
+    "master-only"
+  ]
+}

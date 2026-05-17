@@ -1,0 +1,24 @@
+build:
+  number: 2
+  string: abc
+package:
+  name: fpd_live_imaging
+  version: 0.0.2
+requirements:
+  build:
+  - python
+  - setuptools
+  - psutil
+  - h5py
+  - scipy
+  - numpy
+  - matplotlib
+  - psutil
+  - conda-build
+  - pyqt 5.*
+  run:
+  - python
+source:
+  patches:
+  - remove_pip_pyqt5.patch
+  path: ../

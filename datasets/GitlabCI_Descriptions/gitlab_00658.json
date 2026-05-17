@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_00658",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1408,
+  "description": "Create a GitLab CI pipeline using the openjdk:8-jdk Docker image with three variables ANDROID_BUILD_TOOLS, ANDROID_COMPILE_SDK and ANDROID_SDK_TOOLS, and define two stages: build and test. Add a before_script that runs apt-get update and installs wget, tar, unzip, lib32stdc++6 and lib32z1, downloads the Android SDK tarball from https://dl.google.com/android/android-sdk_r${ANDROID_SDK_TOOLS}-linux.tgz, extracts it, silently updates the SDK for android-${ANDROID_COMPILE_SDK}, platform-tools, build-tools-${ANDROID_BUILD_TOOLS}, extra-android-m2repository, extra-google-google_play_services and extra-google-m2repository, sets ANDROID_HOME to the extracted directory, prepends its platform-tools to PATH, and makes ./gradlew executable. In the build stage add a build job that executes ./gradlew assembleDebug and publishes the app/build/outputs/ directory as an artifact. In the test stage add a unitTests job that runs ./gradlew test.",
+  "tags": [
+    "android",
+    "gradle",
+    "openjdk-8",
+    "build",
+    "unit-tests",
+    "ci"
+  ]
+}

@@ -1,0 +1,476 @@
+.needs_5_15_kernel:
+  extends: .private_test_only
+.needs_ext4_support:
+  stage: test_only
+.needs_samba-def-build:
+  extends: .shared_template_test_only
+  needs:
+  - artifacts: true
+    job: samba-def-build
+  - job: samba-codecheck
+.needs_samba-def-build-ext4:
+  extends:
+  - .needs_samba-def-build
+  - .needs_ext4_support
+.needs_samba-h5l-build:
+  extends: .shared_template_test_only
+  needs:
+  - artifacts: true
+    job: samba-h5l-build
+.needs_samba-h5l-build-ext4:
+  extends:
+  - .needs_samba-h5l-build
+  - .needs_ext4_support
+.needs_samba-mit-build:
+  extends: .shared_template_test_only
+  needs:
+  - artifacts: true
+    job: samba-mit-build
+  - job: samba-codecheck
+  variables:
+    SAMBA_CI_JOB_IMAGE: ${SAMBA_CI_CONTAINER_IMAGE_fedora42}
+.needs_samba-mit-build-ext4:
+  extends:
+  - .needs_samba-mit-build
+  - .needs_ext4_support
+.needs_samba-no-opath-build:
+  extends: .shared_template_test_only
+  needs:
+  - artifacts: true
+    job: samba-no-opath-build
+.needs_samba-no-opath-build-ext4:
+  extends:
+  - .needs_samba-no-opath-build
+  - .needs_ext4_support
+.needs_samba-nt4-build:
+  extends: .shared_template_test_only
+  needs:
+  - artifacts: true
+    job: samba-nt4-build
+.needs_samba-nt4-build-ext4:
+  extends:
+  - .needs_samba-nt4-build
+  - .needs_ext4_support
+.needs_samba-without-smb1-build:
+  extends: .shared_template_test_only
+  needs:
+  - artifacts: true
+    job: samba-without-smb1-build
+.needs_samba-without-smb1-build-5_15:
+  extends:
+  - .needs_samba-without-smb1-build
+  - .needs_5_15_kernel
+.private_test_only:
+  extends: .private_runner_test
+  rules:
+  - if: $CI_MERGE_REQUEST_ID
+    when: never
+  - if: $SUPPORT_PRIVATE_TEST == "yes"
+  stage: test_private
+.samba-o3-template:
+  extends: .shared_template
+  rules:
+  - if: $CI_MERGE_REQUEST_ID
+    when: never
+  - if: $AUTOBUILD_SKIP_SAMBA_O3 == "1"
+    when: never
+  - if: $SAMBA_CI_AUTOBUILD_ENABLE_COVERAGE == ""
+  variables:
+    AUTOBUILD_JOB_NAME: samba-o3
+.shared_runner_build_image:
+  extends: .shared_runner_build
+  image: ${SAMBA_CI_CONTAINER_REGISTRY}/samba-ci-${SAMBA_CI_JOB_IMAGE}:${SAMBA_CI_CONTAINER_TAG}
+  variables:
+    SAMBA_CI_JOB_IMAGE: ${SAMBA_CI_CONTAINER_IMAGE}
+.shared_template:
+  after_script:
+  - mount
+  - df -h
+  - cat /proc/swaps
+  - free -h
+  - CCACHE_BASEDIR="${PWD}" CCACHE_DIR="${PWD}/ccache" ccache -s -c
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - '*.stdout'
+    - '*.stderr'
+    - '*.info'
+    - public
+    - system-info.txt
+  before_script:
+  - uname -a
+  - ls -l /sys/module/
+  - ls -l /sys/kernel/security/
+  - if [ -e /sys/kernel/security/lsm ]; then cat /sys/kernel/security/lsm ; echo;
+    fi
+  - if [ -e /proc/config.gz ]; then sudo zcat /proc/config.gz; echo; fi
+  - lsb_release -a
+  - cat /etc/os-release
+  - id
+  - cat /proc/self/status
+  - lscpu
+  - cat /proc/cpuinfo
+  - mount
+  - df -h
+  - cat /proc/swaps
+  - free -h
+  - if [ -n "$SAMBA_CI_AUTOBUILD_ENABLE_COVERAGE" ]; then sudo ln -sf $(which ld.bfd)
+    $(which ld); fi
+  - echo "SAMBA_CI_CONTAINER_REGISTRY[${SAMBA_CI_CONTAINER_REGISTRY}]"
+  - echo "SAMBA_CI_CONTAINER_TAG[${SAMBA_CI_CONTAINER_TAG}]"
+  - echo "SAMBA_CI_JOB_IMAGE[${SAMBA_CI_JOB_IMAGE}]"
+  - echo "CI_JOB_IMAGE[${CI_JOB_IMAGE}]"
+  - bootstrap/template.py --sha1sum > /tmp/sha1sum-template.txt
+  - diff -u bootstrap/sha1sum.txt /tmp/sha1sum-template.txt
+  - echo "${SAMBA_CI_CONTAINER_TAG}" > /tmp/sha1sum-tag.txt
+  - diff -u bootstrap/sha1sum.txt /tmp/sha1sum-tag.txt
+  - diff -u bootstrap/sha1sum.txt /sha1sum.txt
+  - echo "${CI_COMMIT_SHA} ${CI_COMMIT_TITLE}" > /tmp/commit.txt
+  - export CCACHE_BASEDIR="${PWD}"
+  - export CCACHE_DIR="${PWD}/ccache" && mkdir -pv "$CCACHE_DIR"
+  - export CC="ccache cc"
+  - export CXX="ccache c++"
+  - ccache -z -M 500M
+  - ccache -s
+  - git config --global --add safe.directory '*'
+  cache:
+    key: ccache.${CI_JOB_NAME}.${SAMBA_CI_JOB_IMAGE}.${SAMBA_CI_FLAVOR}
+    paths:
+    - ccache
+  extends: .shared_runner_build_image
+  interruptible: true
+  needs:
+  - artifacts: false
+    job: samba-def-build
+  retry:
+    max: 2
+    when:
+    - runner_system_failure
+    - stuck_or_timeout_failure
+    - api_failure
+    - runner_unsupported
+    - stale_schedule
+    - archived_failure
+    - scheduler_failure
+    - data_integrity_failure
+  rules:
+  - if: $CI_MERGE_REQUEST_ID
+    when: never
+  - when: on_success
+  script:
+  - script/autobuild.py $AUTOBUILD_JOB_NAME $SAMBA_CI_AUTOBUILD_ENABLE_COVERAGE  --verbose
+    --nocleanup --keeplogs --tail --full-testbase /builds/samba-testbase
+  stage: build
+  timeout: 2h
+  variables:
+    AUTOBUILD_JOB_NAME: $CI_JOB_NAME
+.shared_template_build_only:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - '*.stdout'
+    - '*.stderr'
+    - '*.info'
+    - system-info.txt
+    - samba-testbase.tar
+  extends: .shared_template
+  needs: null
+  script:
+  - script/autobuild.py $AUTOBUILD_JOB_NAME $SAMBA_CI_AUTOBUILD_ENABLE_COVERAGE  --verbose
+    --nocleanup --keeplogs --tail --full-testbase /builds/samba-testbase
+  - cp -a /sha1sum.txt /builds/samba-testbase/image-sha1sum.txt
+  - cp -a /tmp/commit.txt /builds/samba-testbase/commit.txt
+  - ln -s /builds/samba-testbase/${AUTOBUILD_JOB_NAME}/ /builds/samba-testbase/build_subdir_link
+  - pushd /builds && getfacl -R samba-testbase > samba-testbase.acl.dump && popd
+  - chmod -R +w /builds/samba-testbase
+  - mv /builds/samba-testbase.acl.dump /builds/samba-testbase/
+  - tar $SAMBA_TESTBASE_TAR_OPTIONS -cf samba-testbase.tar /builds/samba-testbase
+  - ls -la samba-testbase.tar
+  - sha1sum samba-testbase.tar
+  timeout: 2h
+.shared_template_test_only:
+  extends:
+  - .shared_template
+  - .shared_runner_test
+  script:
+  - if [ -x "$(command -v krb5-config)" ]; then krb5-config --version; fi
+  - ls -la samba-testbase.tar
+  - sha1sum samba-testbase.tar
+  - tar $SAMBA_TESTBASE_TAR_OPTIONS -xf samba-testbase.tar -C /
+  - diff -u /builds/samba-testbase/image-sha1sum.txt /sha1sum.txt
+  - diff -u /builds/samba-testbase/commit.txt /tmp/commit.txt
+  - mv /builds/samba-testbase/samba-testbase.acl.dump /builds/samba-testbase.acl.dump
+  - pushd /builds && setfacl --restore=/builds/samba-testbase.acl.dump && popd
+  - ls -la /builds/samba-testbase/
+  - ls -la /builds/samba-testbase/build_subdir_link
+  - ls -la /builds/samba-testbase/build_subdir_link/
+  - if [ -n "$SAMBA_CI_AUTOBUILD_ENABLE_COVERAGE" ]; then find /builds/samba-testbase/build_subdir_link/
+    -type d -printf "'%p'\n" | xargs chmod u+w; fi
+  - ls -la /builds/samba-testbase/build_subdir_link/
+  - script/autobuild.py $AUTOBUILD_JOB_NAME $SAMBA_CI_AUTOBUILD_ENABLE_COVERAGE --skip-dependencies
+    --verbose --nocleanup --keeplogs --tail --full-testbase /builds/samba-testbase
+  stage: test_only
+centos9s-samba-o3:
+  extends: .samba-o3-template
+  variables:
+    SAMBA_CI_JOB_IMAGE: ${SAMBA_CI_CONTAINER_IMAGE_centos9s}
+coverity:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - cov-int/*.txt
+    when: on_failure
+  extends: .shared_runner_build_image
+  only:
+    refs:
+    - master
+    - schedules
+    variables:
+    - $COVERITY_SCAN_TOKEN != null
+    - $COVERITY_SCAN_PROJECT_NAME != null
+    - $COVERITY_SCAN_EMAIL != null
+  script:
+  - wget https://scan.coverity.com/download/linux64 --post-data "token=$COVERITY_SCAN_TOKEN&project=$COVERITY_SCAN_PROJECT_NAME"
+    -O /tmp/coverity_tool.tgz
+  - tar xf /tmp/coverity_tool.tgz
+  - ./configure.developer --with-cluster-support
+  - cov-analysis-linux64-*/bin/coverity capture --dir cov-int --project-dir ./
+  - tar czf cov-int.tar.gz cov-int
+  - curl --form token=$COVERITY_SCAN_TOKEN --form email=$COVERITY_SCAN_EMAIL --form
+    file=@cov-int.tar.gz --form version="`git describe --tags`" --form description="CI
+    build" https://scan.coverity.com/builds?project=$COVERITY_SCAN_PROJECT_NAME
+  stage: build
+  variables:
+    SAMBA_CI_JOB_IMAGE: ${SAMBA_CI_CONTAINER_IMAGE_opensuse155}
+ctdb:
+  extends: .shared_template
+debian11-samba-32bit:
+  extends: .shared_template
+  variables:
+    AUTOBUILD_JOB_NAME: samba-32bit
+    SAMBA_CI_JOB_IMAGE: ${SAMBA_CI_CONTAINER_IMAGE_debian11_32bit}
+debian11-samba-o3:
+  extends: .samba-o3-template
+  variables:
+    SAMBA_CI_JOB_IMAGE: ${SAMBA_CI_CONTAINER_IMAGE_debian11}
+debian12-samba-o3:
+  extends: .samba-o3-template
+  variables:
+    SAMBA_CI_JOB_IMAGE: ${SAMBA_CI_CONTAINER_IMAGE_debian12}
+fedora42-samba-o3:
+  extends: .samba-o3-template
+  variables:
+    SAMBA_CI_JOB_IMAGE: ${SAMBA_CI_CONTAINER_IMAGE_fedora42}
+include:
+- bootstrap/.gitlab-ci.yml
+opensuse155-samba-o3:
+  extends: .samba-o3-template
+  variables:
+    SAMBA_CI_JOB_IMAGE: ${SAMBA_CI_CONTAINER_IMAGE_opensuse155}
+others:
+  extends: .shared_template
+  script:
+  - script/autobuild.py pidl     $SAMBA_CI_AUTOBUILD_ENABLE_COVERAGE --verbose --nocleanup
+    --keeplogs --tail --full-testbase /builds/samba-testbase/pidl
+  - script/autobuild.py replace  $SAMBA_CI_AUTOBUILD_ENABLE_COVERAGE --verbose --nocleanup
+    --keeplogs --tail --full-testbase /builds/samba-testbase/replace
+  - script/autobuild.py talloc   $SAMBA_CI_AUTOBUILD_ENABLE_COVERAGE --verbose --nocleanup
+    --keeplogs --tail --full-testbase /builds/samba-testbase/talloc
+  - script/autobuild.py tdb      $SAMBA_CI_AUTOBUILD_ENABLE_COVERAGE --verbose --nocleanup
+    --keeplogs --tail --full-testbase /builds/samba-testbase/tdb
+  - script/autobuild.py tevent   $SAMBA_CI_AUTOBUILD_ENABLE_COVERAGE --verbose --nocleanup
+    --keeplogs --tail --full-testbase /builds/samba-testbase/tevent
+  - script/autobuild.py samba-xc $SAMBA_CI_AUTOBUILD_ENABLE_COVERAGE --verbose --nocleanup
+    --keeplogs --tail --full-testbase /builds/samba-testbase/samba-xc
+  - script/autobuild.py docs-xml $SAMBA_CI_AUTOBUILD_ENABLE_COVERAGE --verbose --nocleanup
+    --keeplogs --tail --full-testbase /builds/samba-testbase/docs-xml
+  - make -C coverity
+pages:
+  artifacts:
+    expire_in: 30 days
+    paths:
+    - public
+  dependencies:
+  - others
+  - samba
+  - samba-mitkrb5
+  - samba-admem
+  - samba-ad-dc-2
+  - samba-ad-dc-3
+  - samba-ad-dc-4a
+  - samba-ad-dc-4b
+  - samba-ad-dc-5
+  - samba-ad-dc-6
+  - samba-libs
+  - samba-minimal-smbd
+  - samba-nopython
+  - samba-fuzz
+  - samba-ctdb
+  - samba-ad-dc-ntvfs
+  - samba-admem-mit
+  - samba-addc-mit-4a
+  - samba-addc-mit-4b
+  - samba-ad-back1
+  - samba-ad-back2
+  - samba-fileserver
+  - samba-fileserver-without-smb1
+  - samba-ad-dc-1
+  - samba-nt4
+  - samba-schemaupgrade
+  - samba-addc-mit-1
+  - samba-fips
+  - samba-no-opath1
+  - samba-no-opath2
+  - ubuntu2204-samba-o3
+  extends: .shared_runner_build_image
+  only:
+    variables:
+    - $SAMBA_CI_AUTOBUILD_ENABLE_COVERAGE == "--enable-coverage"
+  script:
+  - ls -la *.info
+  - ./configure.developer
+  - make -j
+  - ls -la *.info
+  - lcov $(ls *.info | xargs -I{} echo -n "-a {} ") -o all.info
+  - ls -la *.info
+  - genhtml all.info --ignore-errors source --output-directory public --prefix=$(pwd)
+    --title "coverage report for $CI_COMMIT_REF_NAME $CI_COMMIT_SHORT_SHA"
+  stage: report
+rocky8-samba-o3:
+  extends: .samba-o3-template
+  variables:
+    SAMBA_CI_JOB_IMAGE: ${SAMBA_CI_CONTAINER_IMAGE_rocky8}
+samba:
+  extends: .shared_template
+samba-ad-back1:
+  extends: .needs_samba-def-build
+samba-ad-back2:
+  extends: .needs_samba-def-build
+samba-ad-dc-1:
+  extends: .needs_samba-def-build-ext4
+samba-ad-dc-2:
+  extends: .needs_samba-def-build
+samba-ad-dc-3:
+  extends: .needs_samba-def-build
+samba-ad-dc-4a:
+  extends: .needs_samba-def-build
+samba-ad-dc-4b:
+  extends: .needs_samba-def-build
+samba-ad-dc-5:
+  extends: .needs_samba-def-build
+samba-ad-dc-6:
+  extends: .needs_samba-def-build
+samba-ad-dc-ntvfs:
+  extends: .needs_samba-def-build
+samba-addc-mit-1:
+  extends: .needs_samba-mit-build-ext4
+samba-addc-mit-4a:
+  extends: .needs_samba-mit-build
+samba-addc-mit-4b:
+  extends: .needs_samba-mit-build
+samba-admem:
+  extends: .needs_samba-def-build
+samba-admem-mit:
+  extends: .needs_samba-mit-build
+samba-codecheck:
+  extends: .shared_template
+  needs: null
+  stage: build_first
+samba-ctdb:
+  extends: .shared_template
+samba-def-build:
+  extends: .shared_template_build_only
+  stage: build_first
+samba-fileserver:
+  extends: .needs_samba-h5l-build-ext4
+samba-fileserver-without-smb1:
+  extends: .needs_samba-without-smb1-build
+samba-fips:
+  extends: .shared_template
+  variables:
+    SAMBA_CI_JOB_IMAGE: ${SAMBA_CI_CONTAINER_IMAGE_fedora42}
+samba-fuzz:
+  extends: .shared_template
+  variables:
+    SAMBA_CI_JOB_IMAGE: ${SAMBA_CI_CONTAINER_IMAGE_ubuntu2004}
+samba-h5l-build:
+  extends: .shared_template_build_only
+samba-ktest-mit:
+  extends: .shared_template
+samba-libs:
+  extends: .shared_template
+samba-minimal-smbd:
+  extends: .shared_template
+samba-mit-build:
+  extends: .shared_template_build_only
+  stage: build_first
+  variables:
+    SAMBA_CI_JOB_IMAGE: ${SAMBA_CI_CONTAINER_IMAGE_fedora42}
+samba-mitkrb5:
+  extends: .shared_template
+  variables:
+    SAMBA_CI_JOB_IMAGE: ${SAMBA_CI_CONTAINER_IMAGE_fedora42}
+samba-no-opath-build:
+  extends: .shared_template_build_only
+samba-no-opath1:
+  extends: .needs_samba-no-opath-build-ext4
+samba-no-opath2:
+  extends: .needs_samba-no-opath-build-ext4
+samba-nopython:
+  extends: .shared_template
+samba-nt4:
+  extends: .needs_samba-nt4-build-ext4
+samba-nt4-build:
+  extends: .shared_template_build_only
+samba-schemaupgrade:
+  extends: .needs_samba-def-build
+samba-without-smb1-build:
+  extends: .shared_template_build_only
+stages:
+- images
+- build_first
+- build
+- test_only
+- test_private
+- report
+ubuntu2004-samba-o3:
+  extends: .samba-o3-template
+  variables:
+    SAMBA_CI_JOB_IMAGE: ${SAMBA_CI_CONTAINER_IMAGE_ubuntu2004}
+ubuntu2204-samba-o3:
+  extends: .shared_template
+  rules:
+  - if: $CI_MERGE_REQUEST_ID
+    when: never
+  - if: $AUTOBUILD_SKIP_SAMBA_O3 == "1"
+    when: never
+  - when: on_success
+  variables:
+    AUTOBUILD_JOB_NAME: samba-o3
+    SAMBA_CI_AUTOBUILD_ENABLE_COVERAGE: --enable-coverage
+    SAMBA_CI_JOB_IMAGE: ${SAMBA_CI_CONTAINER_IMAGE_ubuntu2204}
+ubuntu2404-samba-o3:
+  extends: .samba-o3-template
+  variables:
+    SAMBA_CI_JOB_IMAGE: ${SAMBA_CI_CONTAINER_IMAGE_ubuntu2404}
+variables:
+  ARTIFACT_DOWNLOAD_ATTEMPTS: '3'
+  EXECUTOR_JOB_SECTION_ATTEMPTS: '3'
+  GET_SOURCES_ATTEMPTS: '3'
+  GIT_DEPTH: '3'
+  GIT_STRATEGY: fetch
+  RESTORE_CACHE_ATTEMPTS: '3'
+  SAMBA_CI_CONTAINER_IMAGE: ubuntu2204
+  SAMBA_CI_CONTAINER_IMAGE_centos9s: centos9s
+  SAMBA_CI_CONTAINER_IMAGE_debian11: debian11
+  SAMBA_CI_CONTAINER_IMAGE_debian11_32bit: debian11-32bit
+  SAMBA_CI_CONTAINER_IMAGE_debian12: debian12
+  SAMBA_CI_CONTAINER_IMAGE_fedora42: fedora42
+  SAMBA_CI_CONTAINER_IMAGE_opensuse155: opensuse155
+  SAMBA_CI_CONTAINER_IMAGE_rocky8: rocky8
+  SAMBA_CI_CONTAINER_IMAGE_ubuntu2004: ubuntu2004
+  SAMBA_CI_CONTAINER_IMAGE_ubuntu2204: ubuntu2204
+  SAMBA_CI_CONTAINER_IMAGE_ubuntu2404: ubuntu2404
+  SAMBA_CI_CONTAINER_REGISTRY: registry.gitlab.com/samba-team/devel/samba
+  SAMBA_CI_CONTAINER_TAG: 10d513aa79bd89a7884621fe3db3f77fffcb6217
+  SAMBA_TESTBASE_TAR_OPTIONS: -z

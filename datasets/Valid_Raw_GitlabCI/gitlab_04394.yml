@@ -1,0 +1,34 @@
+before_script:
+- apt-get update
+- apt-get install -y python-pip
+image: ubuntu:latest
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - tags
+  - triggers
+  script:
+  - pip install mkdocs
+  - PYTHONPATH=. python gitutils/git_utils.py -m > www/mkdocs_docs/commands.md
+  - cd www
+  - mkdocs build --clean
+  - cd ..
+  - VERSION=$( PYTHONPATH=. python gitutils/git_utils.py -v )
+  - echo { \"version\":\"$VERSION\" } > public/version.json
+  - mkdir public/release
+  - python setup.py sdist
+  - cp dist/gitutils*.tar.gz public/release
+  - cp gitutils/update.py public
+  stage: deploy
+stages:
+- test
+- deploy
+unit-tests:
+  script:
+  - apt-get install -y git
+  - git config --global user.name "Test User"
+  - git config --global user.email "testuser@gmail.com"
+  - python -m unittest discover -v
+  stage: test

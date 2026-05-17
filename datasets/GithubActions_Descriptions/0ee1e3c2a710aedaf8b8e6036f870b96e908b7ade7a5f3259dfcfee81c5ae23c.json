@@ -1,0 +1,15 @@
+{
+  "sha": "0ee1e3c2a710aedaf8b8e6036f870b96e908b7ade7a5f3259dfcfee81c5ae23c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2016,
+  "description": "Create a GitHub Actions workflow named macOS CI that runs on every push to main and on pull requests, as well as on pushes with tags matching **. Use a matrix job on macos-latest that checks out the repository with submodules, detects package metadata, and runs a CI task using ansible-playbook with various parameters. The workflow also publishes and moves a package to Cloudsmith and attaches it to the GitHub release.",
+  "tags": [
+    "macos",
+    "ci",
+    "ansible",
+    "cloudsmith",
+    "github-release",
+    "llvm"
+  ]
+}

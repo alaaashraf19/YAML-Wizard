@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_09100",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 3167,
+  "description": "Create a GitLab CI pipeline with a single coordinated:deploy:canary stage that coordinates canary deployments, environment metrics, notifications, and deployment tracking. Add a .cells_deployment job that runs in this stage, allows failure, needs auto_deploy:start, prepare, and optional notify_success:gstg-cny and validate_ownership:gstg-cny jobs, and triggers when $AUTO_DEPLOY_TAG is set or when the commit tag matches the regex ^\\d+\\.\\d+\\.\\d{12}$; it inherits no script but serves as a coordination point. Add .environment-lock-state-metric and .environment-state-metric jobs that extend .common-job-setup and .mimir-query-auth, allow failure, use resource groups set‑environment‑locked‑state‑metric‑$DEPLOY_ENVIRONMENT and set‑environment‑state‑metric‑$DEPLOY_ENVIRONMENT respectively, and are tagged \"release\". Add .notify_failure, .notify_start, and .notify_success jobs that extend a .notify_base which runs `bundle exec rake 'auto_deploy:notify'` with DEPLOY_USER, DEPLOY_VERSION, and TRIGGER_REF variables; each job has rules to skip when SKIP_REF_CNY_DEPLOYMENT or SKIP_GSTG_CNY_DEPLOYMENT match the environment, and runs on_failure (failure) or on_success (start and success) only when $AUTO_DEPLOY_TAG or a matching tag is present. Add .track_deployment_started and .track_deployment_completed jobs that extend .common-job-setup, run `bundle exec rake 'metrics:deployment_started'` and `bundle exec rake 'metrics:deployment_completed'` respectively, share the same rule set as the notify jobs, and allow failure for the completed job. All jobs inherit common setup and mimir query authentication, and no explicit Docker image or services are defined, so the default runner image is used.",
+  "tags": [
+    "ruby",
+    "rake",
+    "deployment",
+    "canary",
+    "gitlab-ci",
+    "metrics",
+    "notifications"
+  ]
+}

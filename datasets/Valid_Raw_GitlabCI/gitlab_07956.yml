@@ -1,0 +1,154 @@
+.build:
+  retry: 2
+  script: &id001
+  - ci/build.sh
+  stage: build
+before_script:
+- docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+image: docker:19.03.2
+prepare_2019_1_3f1:
+  artifacts:
+    paths:
+    - licence_request.alf
+  retry: 2
+  script:
+  - ci/prepare.sh
+  stage: prepare
+  variables:
+    BUILD: f1
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: /certs
+    DOWNLOAD_URL: https://beta.unity3d.com/download/dc414eb9ed43/UnitySetup-2019.1.3f1
+    SHA1: ea97ef4c42180bd833e5b31b56f083b727a99cc8
+    TAG: 2019.1.3f1
+    VERSION: 2019.1.3
+services:
+- docker:19.03.2-dind
+stages:
+- test
+- prepare
+- build
+test-ci-generator:
+  artifacts:
+    paths:
+    - ci-generator/htmlcov
+  before_script:
+  - cd ci-generator
+  - python -V
+  - pip install virtualenv
+  - virtualenv venv
+  - source venv/bin/activate
+  - pip install -r requirements.txt
+  cache:
+    paths:
+    - .cache/pip
+    - ci-generator/venv/
+  coverage: /^TOTAL.*\s+(\d+\%)$/
+  image: python:3.7-alpine
+  script:
+  - coverage run -m unittest tests/test*.py
+  - coverage report
+  - coverage html
+  stage: test
+  variables:
+    PIP_CACHE_DIR: $CI_PROJECT_DIR/.cache/pip
+unity_2019_1_3f1-android:
+  retry: 2
+  script: *id001
+  stage: build
+  variables:
+    ANDROID_SDK_VERSION: custom_value_here
+    BUILD: f1
+    COMPONENTS: Android
+    DOCKERFILE_NAME: unitysetup-android
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: /certs
+    DOWNLOAD_URL: https://beta.unity3d.com/download/dc414eb9ed43/UnitySetup-2019.1.3f1
+    RELEASE_NOTES: https://unity3d.com/unity/whats-new/2019.1.3f1
+    RELEASE_URL: https://beta.unity3d.com/download/dc414eb9ed43/public_download.html
+    SHA1: ea97ef4c42180bd833e5b31b56f083b727a99cc8
+    TAG: 2019.1.3f1-android
+    VERSION: 2019.1.3
+unity_2019_1_3f1-ios:
+  retry: 2
+  script: *id001
+  stage: build
+  variables:
+    BUILD: f1
+    COMPONENTS: iOS
+    DOCKERFILE_NAME: unitysetup
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: /certs
+    DOWNLOAD_URL: https://beta.unity3d.com/download/dc414eb9ed43/UnitySetup-2019.1.3f1
+    RELEASE_NOTES: https://unity3d.com/unity/whats-new/2019.1.3f1
+    RELEASE_URL: https://beta.unity3d.com/download/dc414eb9ed43/public_download.html
+    SHA1: ea97ef4c42180bd833e5b31b56f083b727a99cc8
+    TAG: 2019.1.3f1-ios
+    VERSION: 2019.1.3
+unity_2019_1_3f1-linux-il2cpp:
+  retry: 2
+  script: *id001
+  stage: build
+  variables:
+    BUILD: f1
+    COMPONENTS: Linux-IL2CPP
+    DOCKERFILE_NAME: unitysetup-linux-il2cpp
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: /certs
+    DOWNLOAD_URL: https://beta.unity3d.com/download/dc414eb9ed43/UnitySetup-2019.1.3f1
+    RELEASE_NOTES: https://unity3d.com/unity/whats-new/2019.1.3f1
+    RELEASE_URL: https://beta.unity3d.com/download/dc414eb9ed43/public_download.html
+    SHA1: ea97ef4c42180bd833e5b31b56f083b727a99cc8
+    TAG: 2019.1.3f1-linux-il2cpp
+    VERSION: 2019.1.3
+unity_2019_1_3f1-mac:
+  retry: 2
+  script: *id001
+  stage: build
+  variables:
+    BUILD: f1
+    COMPONENTS: Mac,Mac-Mono
+    DOCKERFILE_NAME: unitysetup
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: /certs
+    DOWNLOAD_URL: https://beta.unity3d.com/download/dc414eb9ed43/UnitySetup-2019.1.3f1
+    RELEASE_NOTES: https://unity3d.com/unity/whats-new/2019.1.3f1
+    RELEASE_URL: https://beta.unity3d.com/download/dc414eb9ed43/public_download.html
+    SHA1: ea97ef4c42180bd833e5b31b56f083b727a99cc8
+    TAG: 2019.1.3f1-mac
+    VERSION: 2019.1.3
+unity_2019_1_3f1-webgl:
+  retry: 2
+  script: *id001
+  stage: build
+  variables:
+    BUILD: f1
+    COMPONENTS: WebGL
+    DOCKERFILE_NAME: unitysetup
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: /certs
+    DOWNLOAD_URL: https://beta.unity3d.com/download/dc414eb9ed43/UnitySetup-2019.1.3f1
+    RELEASE_NOTES: https://unity3d.com/unity/whats-new/2019.1.3f1
+    RELEASE_URL: https://beta.unity3d.com/download/dc414eb9ed43/public_download.html
+    SHA1: ea97ef4c42180bd833e5b31b56f083b727a99cc8
+    TAG: 2019.1.3f1-webgl
+    VERSION: 2019.1.3
+unity_2019_1_3f1-windows:
+  retry: 2
+  script: *id001
+  stage: build
+  variables:
+    BUILD: f1
+    COMPONENTS: Windows,Windows-Mono
+    DOCKERFILE_NAME: unitysetup
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: /certs
+    DOWNLOAD_URL: https://beta.unity3d.com/download/dc414eb9ed43/UnitySetup-2019.1.3f1
+    RELEASE_NOTES: https://unity3d.com/unity/whats-new/2019.1.3f1
+    RELEASE_URL: https://beta.unity3d.com/download/dc414eb9ed43/public_download.html
+    SHA1: ea97ef4c42180bd833e5b31b56f083b727a99cc8
+    TAG: 2019.1.3f1-windows
+    VERSION: 2019.1.3
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: /certs

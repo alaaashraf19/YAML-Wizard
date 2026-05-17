@@ -1,0 +1,17 @@
+{
+  "sha": "307337de6a4f454b364fea43131f7ed9253613e1c4990cf58602c3620633571a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1204,
+  "description": "Create a GitHub Actions workflow named cpack-builder that runs on pull requests, pushes to mainline and release_* branches, and on a daily schedule. The workflow should set up a bash shell, define environment variables for AWS credentials and a commit ID, and use a matrix strategy to build CPack on ubuntu-24.04 and ubuntu-24.04-arm runners. For each matrix entry, check out the repository, set up Miniforge3 with a dev environment, and run a bash script to build CPack.",
+  "tags": [
+    "cpack",
+    "conda",
+    "miniforge",
+    "ubuntu",
+    "aws",
+    "s3",
+    "matrix",
+    "bash"
+  ]
+}

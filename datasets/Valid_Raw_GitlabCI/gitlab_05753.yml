@@ -1,0 +1,117 @@
+.machine_build:
+  allow_failure: true
+  artifacts: &id001
+    paths:
+    - build/
+  script: &id002
+  - source $CI_PROJECT_DIR/init-build-env
+  - test -r /etc/openembedded/site.conf && cp /etc/openembedded/site.conf $BUILDDIR/conf/site.conf
+  - bitbake containos-image-base
+  stage: build
+  tags: &id003
+  - private
+  - linux
+.machine_test:
+  artifacts: &id004
+    paths:
+    - build/testimage/qemu_boot_log
+    - build/testimage/ssh_target_log
+    - build/temp/log.do_testimage
+  script: &id005
+  - vncserver :1 &
+  - source $CI_PROJECT_DIR/init-build-env
+  - test -r /etc/openembedded/site.conf && cp /etc/openembedded/site.conf $BUILDDIR/conf/site.conf
+  - echo "INHERIT += \"testimage\"" >> $BUILDDIR/conf/local.conf
+  - bitbake -c testimage containos-image-base
+  stage: test
+  tags: &id006
+  - private
+  - linux
+before_script:
+- set -x -e
+- test $(id -u) == 0 && apt-get update -qq
+- test $(id -u) == 0 && apt-get install -y -qq gawk wget git-core diffstat unzip python3
+  texinfo gcc-multilib build-essential chrpath libsdl1.2-dev xterm cpio locales
+- test $(id -u) == 0 && apt-get install -y -qq sysstat iproute2 vnc4server
+- "if test $(id -u) == 0 && ! grep -q '^en_US.UTF-8 \\+UTF-8' /etc/locale.gen; then\n\
+  \  echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen;\n  locale-gen;\nfi\n"
+- test $(id -u) == 0 && adduser --disabled-password --home /build ciuser
+- locale
+- git --version
+- python --version
+- python3 --version
+cache:
+  key: global
+  paths:
+  - /var/cache/gitlab-ci/sstate-cache/
+  - /var/cache/gitlab-ci/downloads/
+qemuarm_build:
+  allow_failure: true
+  artifacts: *id001
+  script: *id002
+  stage: build
+  tags: *id003
+  variables:
+    MACHINE: qemuarm
+qemuarm_test:
+  allow_failure: true
+  artifacts: *id004
+  dependencies:
+  - qemuarm_build
+  script: *id005
+  stage: test
+  tags: *id006
+  variables:
+    DISPLAY: :1
+    MACHINE: qemuarm
+    TEST_IMAGE: '1'
+qemux86_build:
+  allow_failure: true
+  artifacts: *id001
+  script: *id002
+  stage: build
+  tags: *id003
+  variables:
+    MACHINE: qemux86
+qemux86_test:
+  allow_failure: true
+  artifacts: *id004
+  dependencies:
+  - qemux86_build
+  script: *id005
+  stage: test
+  tags: *id006
+  variables:
+    DISPLAY: :1
+    MACHINE: qemux86
+    TEST_IMAGE: '1'
+quickstart:
+  script:
+  - mkdir build-tmp
+  - cd build-tmp
+  - setuser= ; if [ $(id -u) == 0 ]; then setuser='su -p ciuser --'; fi
+  - source $CI_PROJECT_DIR/init-build-env
+  - $setuser bitbake --dry-run containos-image-base
+  stage: lint
+  tags:
+  - private
+  - linux
+  variables:
+    MACHINE: bananapi
+stages:
+- lint
+- build
+- test
+- deploy
+variables:
+  ARTIFACT_DOWNLOAD_ATTEMPTS: '3'
+  BB_GENERATE_MIRROR_TARBALLS: '1'
+  DL_DIR: /var/cache/gitlab-ci/downloads
+  GET_SOURCES_ATTEMPTS: '3'
+  GIT_DEPTH: '100'
+  GIT_SUBMODULE_STRATEGY: recursive
+  LANG: en_US.UTF-8
+  OE_STRICT_CHECKSUMS: '1'
+  PATCH_RESOLVE: noop
+  RESTORE_CACHE_ATTEMPTS: '3'
+  SSTATE_DIR: /var/cache/gitlab-ci/sstate-cache

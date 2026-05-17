@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_12488",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2216,
+  "description": "Create a GitLab CI pipeline that uses the docker:latest image with a docker:dind service and defines the variables APP_NAME=ico-reputation-analyzer and REPO_NAME=gitlab.com/monetha/ico-reputation-analyzer. Define two stages: build and deploy_live. In the build stage add a job named \"build and test\" that runs `apk --no-cache add bash` then `bash -x ./build/linux-build.sh`, and publishes the paths ./artifacts/ico-reputation-analyzer and ./artifacts/VERSION as artifacts that expire in 1 month. In the deploy_live stage add a job named \"deploy to mthlive\" with environment name live that runs only on the master branch and executes a long script: install bash, jq, curl, git, openssh-client, python and sudo via `apk add --no-cache bash jq curl git openssh-client python sudo`; export AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_DEFAULT_REGION, GITHUB_OAUTH_TOKEN, ROOT_PATH and update PATH; start ssh-agent, add the $MTHOPS_GL_SSH_PRIVATE_KEY and $MTHOPS_GH_SSH_PRIVATE_KEY, configure ~/.ssh/known_hosts for gitlab.com and github.com; download and unzip Terraform 0.11.14, make it executable; install Gruntwork binaries gruntkms (v0.0.8) and terragrunt (v0.18.6) via `gruntwork-install`; clone the infrastructure-live repo, cd into the environment‑specific directory, set TERRAGRUNT_IAM_ROLE, source the VERSION file, set TF_VAR_lambda_version and TF_VAR_source_path, then run `terragrunt plan` and `terragrunt apply -auto-approve` to deploy the Lambda to the live AWS environment.",
+  "tags": [
+    "docker",
+    "dind",
+    "terraform",
+    "terragrunt",
+    "aws",
+    "bash",
+    "apk"
+  ]
+}

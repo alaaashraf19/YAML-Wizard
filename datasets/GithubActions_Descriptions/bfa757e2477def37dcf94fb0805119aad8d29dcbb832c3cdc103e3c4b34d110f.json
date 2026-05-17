@@ -1,0 +1,14 @@
+{
+  "sha": "bfa757e2477def37dcf94fb0805119aad8d29dcbb832c3cdc103e3c4b34d110f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1767,
+  "description": "Create a GitHub Actions workflow named chores that runs on push to the main branch. The workflow should have two jobs: regen-i18n and code-format, both running on ubuntu-latest. The regen-i18n job should check out the code, cancel previous runs, fetch submodules, install gettext, regenerate i18n files with make regen-i18n, clean up, and create a pull request. The code-format job should check out the code, cancel previous runs, fetch submodules, format code with ./tools/code-format/format.sh, and create a pull request.",
+  "tags": [
+    "github-actions",
+    "chores",
+    "i18n",
+    "code-format",
+    "pull-requests"
+  ]
+}

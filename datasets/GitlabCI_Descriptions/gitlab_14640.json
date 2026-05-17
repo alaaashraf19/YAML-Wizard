@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_14640",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2541,
+  "description": "Create a GitLab CI pipeline using the java:8-jdk Docker image and define Android SDK variables (ANDROID_BUILD_TOOLS, ANDROID_COMPILE_SDK, etc.). In a global before_script, run apt-get update and install wget tar unzip lib32stdc++6 lib32z1, set ANDROID_SDK_HOME, ANDROID_HOME, GRADLE_USER_HOME, download and unzip the Android SDK tools, use the android command to install android-${ANDROID_COMPILE_SDK}, platform-tools, build-tools-${ANDROID_BUILD_TOOLS}, extra-android-m2repository, extra-google-google_play_services, extra-google-m2repository, update PATH and LD_LIBRARY_PATH, make ./gradlew executable, create gradle.properties with JVM args, and accept SDK licenses; after_script echoes \"End CI\". Define three stages (build, test, test_coverage) with a cache on .gradle/wrapper and .gradle/caches. In the build job (stage build) run ./gradlew assemble and publish the generated APKs (app/build/outputs/apk/*.apk) as artifacts. In the test job (stage test) run ./gradlew check. In the test_coverage job (stage test_coverage) run ./gradlew clean jacocoTestReport, install libxml2-utils, extract coverage from the Jacoco HTML report using xmllint, and echo the coverage value.",
+  "tags": [
+    "java",
+    "android",
+    "gradle",
+    "apk",
+    "jacoco",
+    "gitlab-ci"
+  ]
+}

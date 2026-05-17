@@ -1,0 +1,60 @@
+.lein-cache:
+  after_script: &id001
+  - rm -rf ./.local-m2 && cp -r ~/.m2 ./.local-m2
+  before_script: &id002
+  - mkdir -p ~/.m2
+  - cp -r ./.local-m2 ~/.m2 || mkdir .local-m2
+  cache: &id003
+    key: all-y-all
+    paths:
+    - .local-m2
+before_script:
+- export LEIN_SNAPSHOTS_IN_RELEASE=true
+image: clojure:lein-2.7.0
+production:
+  after_script: *id001
+  artifacts:
+    paths:
+    - target/uberjar/memento.jar
+  before_script: *id002
+  cache: *id003
+  only:
+  - master
+  script:
+  - lein uberjar
+  - HEROKU_API_KEY=$HEROKU_PRODUCTION_API_KEY lein heroku deploy
+  stage: deploy
+stages:
+- test
+- build
+- deploy
+test:
+  after_script: *id001
+  before_script: *id002
+  cache: *id003
+  script:
+  - apt-get update -y
+  - apt-get install postgresql-client -y
+  - psql -h postgres -U postgres < db-setup.sql
+  - echo $DATABASE_URL
+  - cp resources/test-config.default.edn ./test-config.edn
+  - lein with-profile test run migrate
+  - lein with-profile test cloverage --codecov
+  - bash <(curl -s https://codecov.io/bash) -f target/coverage/codecov.json -t $CODECOV_KEY
+  services:
+  - postgres:latest
+  stage: test
+uberjar:
+  after_script: *id001
+  artifacts:
+    paths:
+    - target/uberjar/memento.jar
+  before_script: *id002
+  cache: *id003
+  only:
+  - tags
+  script:
+  - lein uberjar
+  stage: build
+variables:
+  DATABASE_URL: postgresql://memento:testdb@postgres:5432/memento_test

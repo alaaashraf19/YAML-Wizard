@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_17183",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 266,
+  "description": "Create a GitLab CI pipeline with a single test stage. Add a test_tox job that runs in the python:3.6-alpine Docker image and executes the exact shell commands: apk add --update gcc musl-dev openssl libffi-dev libjpeg-turbo postgresql-dev git; pwd; ls -lah; which git; pip install tox codecov; tox; codecov -e $CODECOV_TOKEN. No services, caches, artifacts, or special rules are defined.",
+  "tags": [
+    "python-3.6-alpine",
+    "tox",
+    "codecov",
+    "alpine",
+    "test"
+  ]
+}

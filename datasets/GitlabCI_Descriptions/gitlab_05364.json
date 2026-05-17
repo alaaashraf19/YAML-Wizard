@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_05364",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 5220,
+  "description": "Create a GitLab CI pipeline with stages build, analysis, publish, and site using the default runner and a before_script that sources ~/env, enables exit on error, prints host and CI variables, sets CI_OPT_MVN_DEPLOY_PUBLISH_SEGREGATION, sources circ.sh, clears a Maven repository path, sets MAVEN_OPTS if unset, lists ~/.m2, and shows Maven version. In the build stage add build_releases (only hotfix, release, or support branches) and build_snapshots (except master, hotfix, release, support, and version tags) jobs that run the script: if CI_OPT_MAVEN_EFFECTIVE_POM is empty set it to true; time ./mvnw ${MAVEN_GLOBAL_SETTINGS} -e -ntp -U clean verify; optionally format .mvn/profiler-report JSON with jq and column; remove the profiler-report directory; archive all untracked non‑jar files into artifacts.tar.gz and publish it as an artifact that expires in 1 day. In the analysis stage add an analysis job (only develop) that extracts artifacts.tar.gz, runs time CI_OPT_SONAR=\"true\" ./mvnw ${MAVEN_GLOBAL_SETTINGS} -e -ntp -Dmaven.clean.skip=true sonar:sonar, processes profiler output, and retains the same artifact. In the publish stage add publish_releases (only hotfix, release, or support) and publish_snapshots (except master, hotfix, release, support, and version tags) jobs that depend on their respective build jobs, extract artifacts, run time CI_OPT_FAST=\"true\" ./mvnw ${MAVEN_GLOBAL_SETTINGS} -e -ntp -U -Dmaven.clean.skip=true deploy, process profiler output, then run time CI_OPT_FAST=\"true\" CI_OPT_INFRASTRUCTURE=\"custom\" CI_OPT_MAVEN_PACKAGES_SKIP=\"true\" CI_OPT_MVN_DEPLOY_PUBLISH_SEGREGATION=\"true\" CI_OPT_NEXUS2_STAGING=\"false\" ./mvnw ${MAVEN_GLOBAL_SETTINGS} -e -ntp -Dmaven.clean.skip=true -Dmaven.install.skip=true deploy, process profiler output again, re‑archive files into artifacts.tar.gz, and publish the artifact. In the site stage add site_releases (only hotfix, release, or support) and site_snapshots (only develop) jobs that depend on their publish jobs, extract artifacts, run time ./mvnw ${MAVEN_GLOBAL_SETTINGS} -e -ntp -Dmaven.clean.skip=true -DskipITs=true -DskipTests=true site-deploy, process profiler output, and keep the artifact.",
+  "tags": [
+    "maven",
+    "java",
+    "gitlab-ci",
+    "sonar",
+    "site-deploy",
+    "artifact",
+    "pipeline"
+  ]
+}

@@ -1,0 +1,48 @@
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+  - .npm
+  - cache/Cypress
+  - node_modules
+cypress-e2e:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - cypress/screenshots
+    - cypress/videos
+    reports:
+      junit:
+      - results/TEST-*.xml
+    when: always
+  image: cypress/base:10
+  script:
+  - $(npm bin)/cypress run
+  stage: test
+cypress-e2e-chrome:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - cypress/screenshots
+    - cypress/videos
+    reports:
+      junit:
+      - results/TEST-*.xml
+    when: always
+  image: cypress/browsers:chrome67
+  script:
+  - $(npm bin)/cypress run --browser chrome
+  stage: test
+install:
+  image: cypress/base:10
+  script:
+  - npm ci
+  - $(npm bin)/cypress cache path
+  - $(npm bin)/cypress cache list
+  - $(npm bin)/cypress verify
+  stage: build
+stages:
+- build
+- test
+variables:
+  CYPRESS_CACHE_FOLDER: $CI_PROJECT_DIR/cache/Cypress
+  npm_config_cache: $CI_PROJECT_DIR/.npm

@@ -1,0 +1,17 @@
+build:
+  image: registry.gitlab.com/robigalia/runner:latest
+  script:
+  - git submodule update --init --recursive
+  - for config in configs/*_defconfig; do make $(basename $config) || exit; echo $config;
+    make V=2 || exit; make clean || exit; done
+verify_signatures:
+  image: ubuntu:17.04
+  script:
+  - apt update
+  - apt install --assume-yes python-pexpect gnupg2 git
+  - git clone --depth=1 https://gitlab.com/robigalia/meta
+  - gpg2 --list-keys
+  - (gpg2 --export --no-default-keyring --keyring ./meta/.gnupg/pubring.kbx || true)
+    | gpg2 --import
+  - gpg2 --list-keys --fingerprint --fingerprint --verbose
+  - ./meta/verify-signatures.py HEAD ./meta/.mailmap

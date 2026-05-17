@@ -1,0 +1,14 @@
+{
+  "sha": "6e188b802e1b1f790f77f2cf12cac96691563cb0dce45a5c78f988a74ee0f996",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1058,
+  "description": "Create a GitHub Actions workflow named ci that runs on push to main, on pull requests to main, on a scheduled cron job, and on workflow dispatch. The workflow should run jobs with concurrency control, cancelling previous runs when triggered by pull requests. The jobs should include cmake_installed, bazel_download, cmake_installed_apt, pip, poetry, and file_sync. The file_sync job runs on ubuntu-latest, checks out the repository, sets up Python 3.12, and runs a file_sync test.",
+  "tags": [
+    "python",
+    "ci",
+    "ubuntu",
+    "tests",
+    "concurrency"
+  ]
+}

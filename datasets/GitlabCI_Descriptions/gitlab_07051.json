@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_07051",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 303,
+  "description": "Create a GitLab CI pipeline with a single job named build that runs in the default stage using the golang:1-alpine Docker image. Set the variable CGO_CFLAGS to -DSQLITE_ENABLE_FTS5. In the script, install gcc and libc-dev via apk add gcc libc-dev, create the directory $GOPATH/src/gitlab.com/dtjm/linky, copy the repository contents into it, change to that directory, and compile the Go program with go build -v main.go. No caches, artifacts, or special rules are required.",
+  "tags": [
+    "golang",
+    "alpine",
+    "go-build",
+    "cgo",
+    "sqlite",
+    "apk"
+  ]
+}

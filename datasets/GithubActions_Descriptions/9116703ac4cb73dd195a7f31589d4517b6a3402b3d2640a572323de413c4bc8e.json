@@ -1,0 +1,16 @@
+{
+  "sha": "9116703ac4cb73dd195a7f31589d4517b6a3402b3d2640a572323de413c4bc8e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2676,
+  "description": "Create a CodeQL GitHub Actions workflow that analyzes code in C++, Python, and JavaScript. The workflow should trigger on push events to master and maint branches, on pull requests to the master branch, and on a scheduled basis every Tuesday at 07:43. Use an ubuntu-latest job that checks out the repository, initializes CodeQL for the specified languages, and performs the CodeQL analysis. Optionally build C++ code using cmake and make if autobuild fails.",
+  "tags": [
+    "codeql",
+    "cpp",
+    "python",
+    "javascript",
+    "ubuntu",
+    "analysis",
+    "security"
+  ]
+}

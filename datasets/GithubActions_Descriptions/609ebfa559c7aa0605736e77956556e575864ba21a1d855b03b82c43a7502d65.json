@@ -1,0 +1,15 @@
+{
+  "sha": "609ebfa559c7aa0605736e77956556e575864ba21a1d855b03b82c43a7502d65",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3961,
+  "description": "Create a GitHub Actions workflow named Windows build that runs on pull requests and pushes to the master branch or tags starting with v*. The workflow has three jobs: winstore, mingw, and winmvsc, all running on windows-latest. The winstore job checks out code, installs dependencies, builds, creates a certificate, sets up the Visual Studio shell, deploys, and uploads the build. The mingw job checks out code, installs dependencies, sets up msys2 and mingw-w64, and builds using a matrix strategy for different environments. The winmvsc job checks out code, installs Qt, sets up the Visual Studio shell, installs dependencies, and builds.",
+  "tags": [
+    "windows",
+    "build",
+    "msvc",
+    "mingw",
+    "qt",
+    "github-actions"
+  ]
+}

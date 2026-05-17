@@ -1,0 +1,16 @@
+{
+  "sha": "a5fd05c380d694afa8429f7bf48c6fdea0e5bb5d4bd8528ac0cf82d582de7e2a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3291,
+  "description": "Create a GitHub Actions workflow named CI that runs on every push to the master branch, with concurrency settings to cancel in-progress jobs for the same reference. The workflow consists of two jobs: build-product and integration. The build-product job runs on ubuntu-latest, checks out the repository, sets up Python, downloads Android Python builds, installs requirements, creates local properties, builds the product, and uploads the Maven repository. The integration job depends on build-product, runs on a matrix of OS and AGP versions, checks out the repository, sets up Python with extra versions, downloads the Maven repository, installs requirements, creates local properties, and runs tests.",
+  "tags": [
+    "python",
+    "android",
+    "maven",
+    "gradle",
+    "ci",
+    "ubuntu",
+    "tests"
+  ]
+}

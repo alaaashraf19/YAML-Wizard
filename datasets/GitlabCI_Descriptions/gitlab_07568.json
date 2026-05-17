@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_07568",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 180,
+  "description": "Create a GitLab CI pipeline that uses the node:8.10 Docker image and caches the node_modules/ directory. Define a single stage called test. Add a job named test:supersite in the test stage that runs the commands npm install yarn, npx yarn install, and npm test. The job should be executed on runners tagged with docker.",
+  "tags": [
+    "node",
+    "npm",
+    "yarn",
+    "docker",
+    "test"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_10827",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 3359,
+  "description": "Create a GitLab CI pipeline with three stages: prepare, build, and publish, using the docker:dind service and the DOCKER_DRIVER=overlay2 variable. In the prepare stage add a base_images job that runs on the docker tag with the tmaier/docker-compose:latest image, pulls existing clang, gcc and analysis images, builds gcc_image, clang_image and analysis_image via docker‑compose, retags them with the current commit SHA and pushes both the SHA‑tagged and latest tags to the registry. In the build stage add build:clang and build:gcc jobs that run on the respective clang and gcc images from the registry, execute a script that creates build_release and build_debug directories, runs `cmake \"..\" -DCMAKE_BUILD_TYPE=Release && make -j 2` and `cmake \"..\" -DCMAKE_BUILD_TYPE=Debug && make -j 2`, and store the $CI_PROJECT_DIR/all_dependencies directory as a 1‑hour artifact. In the publish stage add publish:clang and publish:gcc jobs that depend on their corresponding build jobs, log in to the GitLab registry, build a dependency image with `docker build . --build-arg BASE_IMAGE=$CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG/$BASE_NAME:$CI_COMMIT_SHA -t \"$CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG/${BASE_NAME}_deps:$CI_COMMIT_SHA\"`, tag it as latest, and push both tags to the registry.",
+  "tags": [
+    "docker",
+    "docker-dind",
+    "cmake",
+    "make",
+    "docker-compose",
+    "clang",
+    "gcc",
+    "ci-pipeline"
+  ]
+}

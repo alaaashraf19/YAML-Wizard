@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_07120",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 233,
+  "description": "Create a GitLab CI pipeline that runs npm install in a before_script and caches the node_modules directory. Define three jobs named test:node:14, test:node:16, and test:node:latest, each using the node:14, node:16, and node:latest Docker images respectively, and each executing the command npm test. No explicit stages or rules are needed, so they run in the default stage and share the cache across jobs.",
+  "tags": [
+    "node",
+    "npm",
+    "cache",
+    "test"
+  ]
+}

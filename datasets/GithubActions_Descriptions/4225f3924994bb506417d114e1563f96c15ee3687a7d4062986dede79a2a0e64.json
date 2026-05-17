@@ -1,0 +1,15 @@
+{
+  "sha": "4225f3924994bb506417d114e1563f96c15ee3687a7d4062986dede79a2a0e64",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2440,
+  "description": "Create a GitHub Actions workflow named CI that runs on every pull request. Use a matrix strategy with multiple targets (native_static, native_dyn, win32_static, win32_dyn) on an ubuntu-latest environment. For each target, use a specific container image, install dependencies, and compile the code using meson and ninja with customized environment variables and configuration options.",
+  "tags": [
+    "ci",
+    "matrix",
+    "meson",
+    "ninja",
+    "ubuntu",
+    "cross-compiling"
+  ]
+}

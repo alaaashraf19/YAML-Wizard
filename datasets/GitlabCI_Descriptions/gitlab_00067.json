@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_00067",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 577,
+  "description": "Create a GitLab CI pipeline using the python:latest Docker image with a pip cache at .cache/pip and a cached virtualenv directory. Define a global before_script that runs python -V, installs virtualenv, creates a venv, and activates it for all jobs. Add a pages job in the deploy stage that installs sphinx and sphinx‑rtd‑theme, runs make html, moves build/html/ to ../public/, publishes the public/ directory as a Pages artifact, and only runs on the master branch. Add a run job in the test stage that builds a wheel with python setup.py bdist_wheel, installs the wheel with pip install dist/*, and stores the resulting .whl files as artifacts. Add a test job in the test stage that runs python setup.py test, installs tox and flake8, executes tox -e py36 and flake8, using the PIP_CACHE_DIR variable set to $CI_PROJECT_DIR/.cache/pip.",
+  "tags": [
+    "python",
+    "sphinx",
+    "make",
+    "wheel",
+    "tox",
+    "flake8",
+    "gitlab-pages",
+    "virtualenv",
+    "cache"
+  ]
+}

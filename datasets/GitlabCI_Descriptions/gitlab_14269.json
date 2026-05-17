@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_14269",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 679,
+  "description": "Create a GitLab CI pipeline with two stages (build and deploy), using the node:20-bookworm-slim Docker image for the build job and busybox for the pages job, and define a global cache keyed by ${CI_COMMIT_REF_SLUG} that caches node_modules/, .cache/, and public/. In the build stage add a job named build that sets the variable PREFIX_PATHS=true, runs npm install --cpu=x64 --os=linux --libc=glibc sharp, then npm install, npm run build, and ls -la, publishes the public/ directory as an artifact that expires in 1 day, and triggers only when the commit branch equals the default branch or when a merge request ID is present. In the deploy stage add a pages job that needs the build job, uses the busybox image, echoes \"Deploying to GitLab Pages...\", publishes the same public/ artifact (expire_in 1 day), and runs only on the default branch.",
+  "tags": [
+    "node",
+    "npm",
+    "gitlab-pages",
+    "cache",
+    "build",
+    "deploy"
+  ]
+}

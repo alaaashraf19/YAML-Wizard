@@ -1,0 +1,15 @@
+{
+  "sha": "587fdf4f38552eb6770a9d918bf890b80e48a6ba6f780114dba02b6240dc2a98",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 6105,
+  "description": "Create a GitHub Actions workflow named windows that runs on push to master and tags starting with v*. The workflow has two jobs, package-exe and package-msi, both running on windows-latest. These jobs check out the code, set up build variables, install Qt, and then build and package the project into exe and msi files respectively. The jobs also upload the artifacts and create a release with the packaged files.",
+  "tags": [
+    "windows",
+    "qt",
+    "msi",
+    "exe",
+    "release",
+    "github-actions"
+  ]
+}

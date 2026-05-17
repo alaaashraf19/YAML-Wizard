@@ -1,0 +1,126 @@
+.build:
+  artifacts: &id001
+    expire_in: 6 hours
+    paths:
+    - build/
+  cache: &id002
+    key: $CI_BUILD_REF_NAME
+    paths:
+    - build
+    untracked: true
+  script: &id003
+  - cd build
+  - cmake ../src -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=Release
+    -G Ninja
+  - ninja HearthLauncher check
+  stage: build
+.darwin:
+  tags: &id004
+  - darwin
+.deploy:
+  only: &id007
+  - tags
+  script: &id008
+  - python3 CI/deploy.py
+  stage: deploy
+  when: on_success
+.linux:
+  tags: &id005
+  - linux
+.release:
+  artifacts: &id009
+    expire_in: 6 hours
+    paths:
+    - release
+  only: &id010
+  - tags
+  stage: release
+.windows:
+  tags: &id006
+  - windows
+build:darwin:
+  artifacts: *id001
+  before_script:
+  - export PATH=/usr/local/opt/qt/bin:$PATH
+  cache: *id002
+  script: *id003
+  stage: build
+  tags: *id004
+build:linux:
+  artifacts: *id001
+  cache: *id002
+  script:
+  - cd build
+  - cmake ../src -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -DCMAKE_BUILD_TYPE=Release
+    -G Ninja
+  - ninja HearthLauncher HLTest
+  stage: build
+  tags: *id005
+build:windows:
+  artifacts: *id001
+  cache: *id002
+  script:
+  - cd build
+  - cmake ../src -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -DCMAKE_BUILD_TYPE=Release
+    -G Ninja -DZLIB_INCLUDE_DIR=c:/zlib-1.2.11 -DQUAZIP_INCLUDE_DIR=c:/quazip -DQUAZIP_LIBRARIES=c:/quazip/release/libquazip.a
+  - ninja HearthLauncher HLTest
+  stage: build
+  tags: *id006
+deploy:darwin:
+  dependencies:
+  - release:darwin
+  only: *id007
+  script: *id008
+  stage: deploy
+  tags: *id004
+  when: on_success
+deploy:linux:
+  dependencies:
+  - release:linux
+  only: *id007
+  script: *id008
+  stage: deploy
+  tags: *id005
+  when: on_success
+deploy:windows:
+  dependencies:
+  - release:windows
+  only: *id007
+  script: *id008
+  stage: deploy
+  tags: *id006
+  when: on_success
+release:darwin:
+  artifacts: *id009
+  dependencies:
+  - build:darwin
+  only: *id010
+  script:
+  - ./CI/macrelease.sh
+  stage: release
+  tags: *id004
+release:linux:
+  artifacts: *id009
+  dependencies:
+  - build:linux
+  only: *id010
+  script:
+  - ./CI/linuxrelease.sh
+  stage: release
+  tags: *id005
+release:windows:
+  artifacts: *id009
+  dependencies:
+  - build:windows
+  only: *id010
+  script:
+  - ./CI/windowsrelease.bat
+  stage: release
+  tags: *id006
+stages:
+- build
+- release
+- deploy
+variables:
+  HL_BUILDER: $CI_RUNNER_DESCRIPTION
+  HL_JOB_ID: $CI_JOB_ID

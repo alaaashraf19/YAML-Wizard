@@ -1,0 +1,361 @@
+.default_nightly_test:
+  after_script: &id001
+  - cp -R /tmp/SiaTesting $CI_PROJECT_DIR/SiaTesting
+  artifacts: &id002
+    name: SiaTesting-$CI_JOB_NAME
+    paths:
+    - $CI_PROJECT_DIR/SiaTesting
+    - $CI_PROJECT_DIR/cover/cover.out
+    when: always
+  before_script: &id003
+  - date
+  - go version
+  - mkdir -p .cache/gocache
+  - export PATH=$PATH:$CI_PROJECT_DIR/.cache/bin/
+  - export GOPATH="$CI_PROJECT_DIR/.cache"
+  except: &id009
+  - ''
+  image: nebulouslabs/sia-ci
+  only: &id010
+  - schedules
+  stage: test
+.default_nightly_windows_test:
+  after_script: &id004
+  - XCOPY "C:\Windows\Temp\SiaTesting\*" "$CI_PROJECT_DIR\SiaTesting" /S /I /Y > $null
+  artifacts: &id005
+    name: SiaTesting-$CI_JOB_NAME
+    paths:
+    - $CI_PROJECT_DIR/SiaTesting
+    - $CI_PROJECT_DIR/cover/cover.out
+    when: always
+  before_script: &id006
+  - Get-Date -format r
+  - go version
+  - $env:USERNAME
+  - New-Item -ItemType Directory -Force .cache\gocache
+  - $env:PATH += ";$CI_PROJECT_DIR\.cache\bin"
+  - $env:PATH
+  - $env:GOPATH = "$CI_PROJECT_DIR\.cache"
+  - $env:GOPATH
+  except: &id011
+  - ''
+  only: &id012
+  - schedules
+  stage: test
+  tags: &id007
+  - nebulous-windows
+.default_test:
+  after_script: *id001
+  artifacts: *id002
+  before_script: *id003
+  except: &id008
+  - schedules
+  image: nebulouslabs/sia-ci
+  stage: test
+.default_test_common:
+  after_script: *id001
+  artifacts: *id002
+.default_test_common_windows:
+  after_script: *id004
+  artifacts: *id005
+.default_windows:
+  before_script: *id006
+.default_windows_test:
+  after_script: *id004
+  artifacts: *id005
+  before_script: *id006
+  except:
+  - schedules
+  stage: test
+  tags: *id007
+build:
+  artifacts:
+    name: Binaries
+    paths:
+    - $CI_PROJECT_DIR/artifacts
+  image: nebulouslabs/sia-ci
+  script:
+  - ./check-builds.sh
+  stage: lint
+default:
+  before_script: *id003
+  image: nebulouslabs/sia-ci
+deploy:
+  only:
+  - master
+  script:
+  - curl -X POST -H "Content-Type:application/json" --data '{"name":"'"$CI_COMMIT_REF_NAME"'"}'
+    $docker_hub_dev_hook
+  stage: deploy
+legacy-tests:
+  after_script: *id001
+  artifacts: *id002
+  before_script: *id003
+  cache:
+    key: legacy-cache
+    paths:
+    - .cache
+  except: *id008
+  image: nebulouslabs/sia-ci
+  script:
+  - make test-long run=. pkgs="$legacy_pkgs"
+  stage: test
+legacy-tests-nightly:
+  after_script: *id001
+  artifacts: *id002
+  before_script: *id003
+  except: *id009
+  image: nebulouslabs/sia-ci
+  only: *id010
+  script:
+  - make test-vlong run=. pkgs="$legacy_pkgs"
+  stage: test
+legacy-windows-tests-nightly:
+  after_script: *id004
+  artifacts: *id005
+  before_script: *id006
+  except: *id011
+  only: *id012
+  script:
+  - make test-vlong-windows run=. pkgs="$legacy_pkgs"
+  stage: test
+  tags: *id007
+lint:
+  cache:
+    key: lint-cache
+    paths:
+    - .cache
+  script:
+  - export GOCACHE=$CI_PROJECT_DIR/.cache/gocache
+  - make vet
+  - make lint
+  - make markdown-spellcheck
+  - make test
+  stage: lint
+package-host-tests:
+  after_script: *id001
+  artifacts: *id002
+  before_script: *id003
+  cache:
+    key: package-cache
+    paths:
+    - .cache
+  except: *id008
+  image: nebulouslabs/sia-ci
+  script:
+  - make test-long run=. pkgs="$package_host_pkgs"
+  stage: test
+package-host-tests-nightly:
+  after_script: *id001
+  artifacts: *id002
+  before_script: *id003
+  except: *id009
+  image: nebulouslabs/sia-ci
+  only: *id010
+  script:
+  - make test-vlong run=. pkgs="$package_host_pkgs"
+  stage: test
+package-host-windows-tests-nightly:
+  after_script: *id004
+  artifacts: *id005
+  before_script: *id006
+  except: *id011
+  only: *id012
+  script:
+  - make test-vlong-windows run=. pkgs="$package_host_pkgs"
+  stage: test
+  tags: *id007
+package-renter-tests:
+  after_script: *id001
+  artifacts: *id002
+  before_script: *id003
+  cache:
+    key: package-cache
+    paths:
+    - .cache
+  except: *id008
+  image: nebulouslabs/sia-ci
+  script:
+  - make test-long run=. pkgs="$package_renter_pkgs"
+  stage: test
+package-renter-tests-nightly:
+  after_script: *id001
+  artifacts: *id002
+  before_script: *id003
+  except: *id009
+  image: nebulouslabs/sia-ci
+  only: *id010
+  script:
+  - make test-vlong run=. pkgs="$package_renter_pkgs"
+  stage: test
+package-renter-windows-tests-nightly:
+  after_script: *id004
+  artifacts: *id005
+  before_script: *id006
+  except: *id011
+  only: *id012
+  script:
+  - make test-vlong-windows run=. pkgs="$package_renter_pkgs"
+  stage: test
+  tags: *id007
+package-tests:
+  after_script: *id001
+  artifacts: *id002
+  before_script: *id003
+  cache:
+    key: package-cache
+    paths:
+    - .cache
+  except: *id008
+  image: nebulouslabs/sia-ci
+  script:
+  - make test-long run=. pkgs="$package_pkgs"
+  stage: test
+package-tests-nightly:
+  after_script: *id001
+  artifacts: *id002
+  before_script: *id003
+  except: *id009
+  image: nebulouslabs/sia-ci
+  only: *id010
+  script:
+  - make test-vlong run=. pkgs="$package_pkgs"
+  stage: test
+package-windows-tests-nightly:
+  after_script: *id004
+  artifacts: *id005
+  before_script: *id006
+  except: *id011
+  only: *id012
+  script:
+  - make test-vlong-windows run=. pkgs="$package_pkgs"
+  stage: test
+  tags: *id007
+siatest-renter-sub-tests:
+  after_script: *id001
+  artifacts: *id002
+  before_script: *id003
+  cache:
+    key: siatest-renter-sub-tests-cache
+    paths:
+    - .cache
+  except: *id008
+  image: nebulouslabs/sia-ci
+  script:
+  - apt-get update
+  - apt-get install -y fuse
+  - make test-long run=. pkgs="$siatest_renter_sub_pkgs"
+  stage: test
+siatest-renter-sub-tests-nightly:
+  after_script: *id001
+  artifacts: *id002
+  before_script: *id003
+  except: *id009
+  image: nebulouslabs/sia-ci
+  only: *id010
+  script:
+  - apt-get update
+  - apt-get install -y fuse
+  - make test-vlong run=. pkgs="$siatest_renter_sub_pkgs"
+  stage: test
+siatest-renter-sub-windows-tests-nightly:
+  after_script: *id004
+  artifacts: *id005
+  before_script: *id006
+  except: *id011
+  only: *id012
+  script:
+  - make test-vlong-windows run=. pkgs="$siatest_renter_sub_pkgs"
+  stage: test
+  tags: *id007
+siatest-renter-tests:
+  after_script: *id001
+  artifacts: *id002
+  before_script: *id003
+  cache:
+    key: siatest-renter-tests-cache
+    paths:
+    - .cache
+  except: *id008
+  image: nebulouslabs/sia-ci
+  script:
+  - apt-get update
+  - apt-get install -y fuse
+  - make test-long run=. pkgs="$siatest_renter_pkgs"
+  stage: test
+siatest-renter-tests-nightly:
+  after_script: *id001
+  artifacts: *id002
+  before_script: *id003
+  except: *id009
+  image: nebulouslabs/sia-ci
+  only: *id010
+  script:
+  - apt-get update
+  - apt-get install -y fuse
+  - make test-vlong run=. pkgs="$siatest_renter_pkgs"
+  stage: test
+siatest-renter-windows-tests-nightly:
+  after_script: *id004
+  artifacts: *id005
+  before_script: *id006
+  except: *id011
+  only: *id012
+  script:
+  - make test-vlong-windows run=. pkgs="$siatest_renter_pkgs"
+  stage: test
+  tags: *id007
+siatest-tests:
+  after_script: *id001
+  artifacts: *id002
+  before_script: *id003
+  cache:
+    key: siatest-cache
+    paths:
+    - .cache
+  except: *id008
+  image: nebulouslabs/sia-ci
+  script:
+  - make test-long run=. pkgs="$siatest_pkgs"
+  stage: test
+siatest-tests-nightly:
+  after_script: *id001
+  artifacts: *id002
+  before_script: *id003
+  except: *id009
+  image: nebulouslabs/sia-ci
+  only: *id010
+  script:
+  - make test-vlong run=. pkgs="$siatest_pkgs"
+  stage: test
+siatest-windows-tests-nightly:
+  after_script: *id004
+  artifacts: *id005
+  before_script: *id006
+  except: *id011
+  only: *id012
+  script:
+  - make test-vlong-windows run=. pkgs="$siatest_pkgs"
+  stage: test
+  tags: *id007
+stages:
+- lint
+- test
+- deploy
+variables:
+  docker_hub_dev_hook: https://hub.docker.com/api/build/v1/source/57afb708-6926-411b-98fc-44c79f59097c/trigger/513a6d92-9f8b-4f04-b20a-ebd51b193b5d/call/
+  legacy_pkgs: ./node ./node/api ./node/api/server
+  package_host_pkgs: ./modules/host ./modules/host/contractmanager ./modules/host/mdm
+  package_pkgs: ./build ./cmd/sia-node-scanner ./cmd/siac ./cmd/siad ./cmd/skynet-benchmark
+    ./compatibility ./crypto ./modules ./modules/accounting ./modules/consensus ./modules/explorer
+    ./modules/feemanager ./modules/gateway ./modules/miner ./modules/wallet ./modules/transactionpool
+    ./profile ./persist ./sync ./skykey ./types
+  package_renter_pkgs: ./modules/renter ./modules/renter/contractor ./modules/renter/filesystem
+    ./modules/renter/filesystem/siafile ./modules/renter/filesystem/siadir ./modules/renter/hostdb
+    ./modules/renter/hostdb/hosttree ./modules/renter/proto ./modules/renter/skynetblocklist
+    ./modules/renter/skynetportals
+  siatest_pkgs: ./siatest ./siatest/accounting ./siatest/consensus ./siatest/daemon
+    ./siatest/feemanager ./siatest/gateway ./siatest/host ./siatest/miner ./siatest/transactionpool
+    ./siatest/wallet
+  siatest_renter_pkgs: ./siatest/renter
+  siatest_renter_sub_pkgs: ./siatest/renter/contractor ./siatest/renter/hostdb ./siatest/renterhost

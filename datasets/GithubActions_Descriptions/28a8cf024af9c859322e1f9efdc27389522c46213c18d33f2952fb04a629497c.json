@@ -1,0 +1,18 @@
+{
+  "sha": "28a8cf024af9c859322e1f9efdc27389522c46213c18d33f2952fb04a629497c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5753,
+  "description": "Create a GitHub Actions workflow named Build that runs on every push and pull request. The workflow should have two jobs, linux and windows, each running on a different environment. For linux, use an ubuntu-latest container, install dependencies, download and install the Vulkan SDK, checkout the code, configure CMake with different compilers, build, and upload artifacts. For windows, use a windows-latest environment, install dependencies, download and install the Vulkan SDK, checkout the code, configure CMake with MSVC, build, and upload artifacts.",
+  "tags": [
+    "github-actions",
+    "cmake",
+    "vulkan",
+    "conan",
+    "ubuntu",
+    "windows",
+    "msvc",
+    "clang",
+    "gcc"
+  ]
+}

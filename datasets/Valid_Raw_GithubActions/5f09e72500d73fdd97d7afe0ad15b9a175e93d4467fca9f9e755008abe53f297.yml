@@ -1,0 +1,39 @@
+# https://peterevans.dev/posts/github-actions-how-to-automate-code-formatting-in-pull-requests/
+name: Format Source Code
+
+on:
+  # pull_request would be OK, but will ignore direct pushes to the master (which can't be protected on private repos) - therefore just run it always (force-push as you wish on your private branches)
+  push:
+    branches:
+      - 'master'
+      - 'develop'
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    if: ${{ github.repository == 'Open-Smartwatch/open-smartwatch-os' }}
+    steps:
+      - name: Checkout repository and submodules
+        uses: nschloe/action-cached-lfs-checkout@v1
+        with:
+          # submodules: recursive # do not access any submodules to not accidentially modify them
+          ref: ${{ github.head_ref }}
+      - name: astyle
+        uses: addnab/docker-run-action@v3
+        with:
+          image: weberlars/astyle:latest
+          options: -v ${{ github.workspace }}:/workspace
+          run: astyle --style=google --recursive /workspace/*.c,*.cc,*.cpp,*.h,*.hpp --suffix=none --indent=spaces --align-pointer=type --align-reference=type --convert-tabs --preserve-date --lineend=linux
+      - name: Check for modified files
+        id: git-check
+        run: echo "modified=$(if git diff-index --quiet HEAD --; then echo 'false'; else echo 'true'; fi)" >> $GITHUB_OUTPUT
+      - name: Push changes
+        if: steps.git-check.outputs.modified == 'true'
+        run: |
+          git config --global user.email 'action@github.com'
+          git config --global user.name 'GitHub Action'
+          git commit -am 'Applied formatting'
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}

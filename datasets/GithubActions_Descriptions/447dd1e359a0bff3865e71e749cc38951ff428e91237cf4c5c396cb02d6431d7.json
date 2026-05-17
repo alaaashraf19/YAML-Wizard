@@ -1,0 +1,14 @@
+{
+  "sha": "447dd1e359a0bff3865e71e749cc38951ff428e91237cf4c5c396cb02d6431d7",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 870,
+  "description": "Create a GitHub Actions workflow named Push Mirror that triggers on push and delete events. Use an ubuntu-18.04 job to check out the repository, mirror the repository to a remote Git repository using provided credentials, retrieve the current branch name, and then trigger a pipeline on a GitLab project by making a POST request with a token and branch reference.",
+  "tags": [
+    "mirror",
+    "gitlab",
+    "github-actions",
+    "ci",
+    "trigger-pipeline"
+  ]
+}

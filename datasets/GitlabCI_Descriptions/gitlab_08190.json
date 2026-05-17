@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_08190",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 462,
+  "description": "Create a GitLab CI pipeline with two jobs, alpine and ubuntu, both in the default test stage. The alpine job uses the alpine:latest Docker image and runs: apk add git git-lfs --update-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing/, then git lfs pull, then ls -al Cat_poster_1.jpg. The ubuntu job uses the ubuntu:xenial Docker image and runs: apt-get update -qyy, apt-get install -y curl, curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash, apt-get install -y git-core git-lfs, git lfs pull, and ls -al Cat_poster_1.jpg, with no caches, artifacts, or special rules defined.",
+  "tags": [
+    "alpine",
+    "ubuntu",
+    "git-lfs",
+    "git",
+    "curl"
+  ]
+}

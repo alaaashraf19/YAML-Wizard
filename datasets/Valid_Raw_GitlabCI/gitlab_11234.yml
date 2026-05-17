@@ -1,0 +1,5 @@
+image: scorpil/rust:beta
+test:cargo:
+  script:
+  - cargo build --verbose
+  - cargo test --verbose

@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_11819",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 828,
+  "description": "Create a GitLab CI pipeline that uses the node:latest Docker image and caches the node_modules directory with a key of $CI_BUILD_REF_NAME, including untracked files. Define three stages: verify, test, and publish, and add a before_script that sets a VERSION variable to the tag or branch name and echoes it. In the verify stage add a codestyle job that runs \"npm ci\" then \"npm test\". In the test stage add a node:latest job that runs \"npm ci\" then \"npm run unit\" and records coverage using the regex /^All files[^|]*\\|[^|]*\\s+([\\d\\.]+)/. In the publish stage add an npm job that runs only on tags matching ^v\\d+\\.\\d+\\.\\d+(-rc\\.\\d+|)$, is manual, sets VERSION_TAG to \"next\" if the tag contains \"-rc\" otherwise \"latest\", writes the NPM auth token to .npmrc, runs \"npm ci\" and \"npm publish --tag $VERSION_TAG\", and sets the environment named npm with the URL https://www.npmjs.com/package/${CI_PROJECT_NAME}.",
+  "tags": [
+    "node",
+    "npm",
+    "cache",
+    "codestyle",
+    "test",
+    "publish",
+    "gitlab-ci"
+  ]
+}

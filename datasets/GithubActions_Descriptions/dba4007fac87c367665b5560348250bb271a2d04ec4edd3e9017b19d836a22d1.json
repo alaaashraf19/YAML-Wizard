@@ -1,0 +1,12 @@
+{
+  "sha": "dba4007fac87c367665b5560348250bb271a2d04ec4edd3e9017b19d836a22d1",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1243,
+  "description": "Create a GitHub Actions workflow named CI that runs on every push. It consists of multiple jobs: format, build-linux, build-linux-python, coverage, build-windows, build-windows-python, and semantic-release. The format job is run first, and then the other jobs run in parallel with dependencies. Each job uses a reusable workflow from Geode-solutions/actions and inherits secrets.",
+  "tags": [
+    "ci",
+    "github-actions",
+    "reusable-workflows"
+  ]
+}

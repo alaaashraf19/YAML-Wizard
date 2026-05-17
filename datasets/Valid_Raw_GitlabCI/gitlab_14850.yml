@@ -1,0 +1,100 @@
+.code_quality:codechecker:base:
+  before_script: []
+  dependencies:
+  - generate-compilation_database
+  script:
+  - apt install -y libglu1-mesa-dev
+  stage: test
+build:linux:
+  script:
+  - conan install . -b missing
+  - qbs build
+  stage: build
+codechecker:
+  extends:
+  - .code_quality:codechecker:base
+  - .psy:codechecker
+  variables:
+    PSY_CODECHECKER_CREATE_HTML_REPORT: 1
+    PSY_CODECHECKER_SKIPFILE: CodeChecker.SKIPFILE
+    PSY_CODECHECKER_TIDY_CONFIG: .clang-tidy
+cppcheck:
+  extends: .psy:cppcheck
+  stage: test
+  variables:
+    PSY_CPPCHECK_CREATE_HTML_REPORT: 1
+default:
+  before_script:
+  - conan config set storage.path=${CI_PROJECT_DIR}/conan_cache
+  - conan user
+  - conan profile new default --detect
+  - conan profile update settings.compiler.libcxx=libstdc++11 default
+  - conan remote add gitlab_psy-kai_conan-qbs https://gitlab.com/api/v4/projects/16102444/packages/conan
+  - conan remote add gitlab_psy-kai_standard_paths https://gitlab.com/api/v4/projects/17629327/packages/conan
+  - conan remote add gitlab_psy-kai_conan-hidapi https://gitlab.com/api/v4/projects/25463060/packages/conan
+  - conan install Qbs/1.17.0@psy-kai/stable -r gitlab_psy-kai_conan-qbs -g virtualenv
+  - source activate.sh
+  image: conanio/gcc8
+fbinfer:
+  extends:
+  - .code_quality:codechecker:base
+  - .psy:fbinfer
+  variables:
+    PSY_FBINFER_CREATE_HTML_REPORT: 1
+generate-compilation_database:
+  after_script:
+  - mv default/compile_commands.json  compilation_database.json
+  artifacts:
+    expire_in: 2 hours
+    paths:
+    - compilation_database.json
+    - default
+    - ${CI_PROJECT_DIR}/conan_cache/**/package
+  script:
+  - qbs generate --generator clangdb
+  stage: build
+include:
+- file:
+  - codechecker.yml
+  - cppcheck.yml
+  - fbinfer.yml
+  - gcovr.yml
+  - gtest-reports.yml
+  project: Psy-Kai/psy-ci-templates
+pages:
+  artifacts:
+    expire_in: 2 days
+    paths:
+    - public
+  before_script:
+  - ':'
+  dependencies:
+  - test:linux
+  - codechecker
+  - cppcheck
+  - fbinfer
+  only:
+  - master
+  script:
+  - mkdir public
+  - mv gcovr public
+  - mv codechecker public
+  - mv cppcheck public
+  - mv fbinfer public
+  stage: deploy
+stages:
+- build
+- test
+- deploy
+test:linux:
+  dependencies: []
+  extends:
+  - .psy:gtest-reports
+  - .psy:gcovr
+  script:
+  - conan install . -b missing
+  - qbs modules.cpp.driverFlags:--coverage
+  - qbs build -p autotest-runner
+  stage: test
+variables:
+  CONAN_SYSREQUIRES_MODE: enabled

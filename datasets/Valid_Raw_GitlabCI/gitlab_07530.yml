@@ -1,0 +1,72 @@
+.apt-template: "set -e\nset -x\necho Etc/UTC > /etc/timezone\necho 'quiet \"1\";'\
+  \ \\\n     'APT::Install-Recommends \"0\";' \\\n     'APT::Install-Suggests \"0\"\
+  ;' \\\n     'APT::Acquire::Retries \"20\";' \\\n     'APT::Get::Assume-Yes \"true\"\
+  ;' \\\n     'Dpkg::Use-Pty \"0\";' \\\n    > /etc/apt/apt.conf.d/99gitlab\napt-get\
+  \ update\napt-get dist-upgrade\n"
+.setup-template: &id001
+- "set -e\nset -x\necho Etc/UTC > /etc/timezone\necho 'quiet \"1\";' \\\n     'APT::Install-Recommends\
+  \ \"0\";' \\\n     'APT::Install-Suggests \"0\";' \\\n     'APT::Acquire::Retries\
+  \ \"20\";' \\\n     'APT::Get::Assume-Yes \"true\";' \\\n     'Dpkg::Use-Pty \"\
+  0\";' \\\n    > /etc/apt/apt.conf.d/99gitlab\napt-get update\napt-get dist-upgrade\n"
+- apt-get install curl fdroidserver git python3-babel python3-bleach python3-cryptography
+  python3-django-allauth python3-django-compressor python3-django-modeltranslation
+  python3-django-sass-processor python3-dockerpycreds python3-libcloud python3-libsass
+  python3-magic python3-pip python3-psycopg2 python3-qrcode python3-rcssmin python3-rjsmin
+  python3-setuptools python3-websocket python3-webview python3-wheel rsync
+docker:
+  before_script:
+  - echo $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin registry.gitlab.com
+  environment:
+    name: docker
+  image: docker:git
+  only:
+  - master
+  script:
+  - docker build -t $CI_REGISTRY_IMAGE:latest .
+  - docker tag $CI_REGISTRY_IMAGE:latest $CI_REGISTRY_IMAGE:bullseye
+  - docker tag $CI_REGISTRY_IMAGE:latest $CI_REGISTRY_IMAGE:django-2
+  - docker push $CI_REGISTRY_IMAGE:latest
+  - docker push $CI_REGISTRY_IMAGE:bullseye
+  - docker push $CI_REGISTRY_IMAGE:django-2
+  services:
+  - docker:dind
+  stage: deploy
+  when: on_success
+image: debian:bullseye
+pycodestyle:
+  script:
+  - "set -e\nset -x\necho Etc/UTC > /etc/timezone\necho 'quiet \"1\";' \\\n     'APT::Install-Recommends\
+    \ \"0\";' \\\n     'APT::Install-Suggests \"0\";' \\\n     'APT::Acquire::Retries\
+    \ \"20\";' \\\n     'APT::Get::Assume-Yes \"true\";' \\\n     'Dpkg::Use-Pty \"\
+    0\";' \\\n    > /etc/apt/apt.conf.d/99gitlab\napt-get update\napt-get dist-upgrade\n"
+  - apt-get install pycodestyle
+  - ./tests/test-pep8.sh
+  stage: test
+pylint:
+  before_script:
+  - *id001
+  - pip3 install -r requirements.txt
+  - pip3 install -r requirements-dev.txt
+  script:
+  - ./tests/test-pylint.sh
+  stage: test
+stages:
+- test
+- deploy
+units:
+  before_script:
+  - *id001
+  - apt-get install npm
+  - ./setup.sh
+  - pip3 install -r requirements-dev.txt
+  - npm install --user
+  cache:
+    paths:
+    - /usr/local/lib/python*/dist-packages
+    - node_modules
+  script:
+  - ./tests/test-units.sh
+  stage: test
+variables:
+  DEBIAN_FRONTEND: noninteractive
+  LC_ALL: C.UTF-8

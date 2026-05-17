@@ -1,0 +1,15 @@
+{
+  "sha": "dcfbc0b9aec93d075e1b66a15ac18749afe375cc13f270f59a6a7ded3caf912b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1587,
+  "description": "Create a scheduled GitHub Actions workflow named Scheduled CI that runs daily at 2am on weekdays. For the feelpp/feelpp repository, if the commit message does not start with 'Release ' and does not contain 'ci skip', trigger a build job with a matrix strategy across multiple Ubuntu and Debian flavors and versions. The build job dispatches a repository event to trigger a build with a specific flavor and version based on the scheduled day.",
+  "tags": [
+    "scheduled",
+    "ci",
+    "ubuntu",
+    "debian",
+    "matrix",
+    "repository-dispatch"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "5163221204c1150dee60ca1520521fd36a18dc059e48d39bf86bfe1aa77b0c0b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3031,
+  "description": "Create a GitHub Actions workflow named CI that runs on every push and pull request. Use two jobs, one for ubuntu-latest and one for windows-latest, to build and test the project. On ubuntu-latest, update packages, install dependencies, and build and run tests. On windows-latest, set up MSVC, restore artifacts, install dependencies, generate project files, build projects, and run tests.",
+  "tags": [
+    "ci",
+    "ubuntu",
+    "windows",
+    "cmake",
+    "vcpkg",
+    "tests"
+  ]
+}

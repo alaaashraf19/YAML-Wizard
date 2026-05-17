@@ -1,0 +1,146 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+      - '[0-9].[0-9]+'  # matches to backport branches, e.g. 3.6
+    tags: [ 'v*' ]
+  pull_request:
+    branches:
+      - master
+      - '[0-9].[0-9]+'
+  schedule:
+    - cron:  '0 6 * * *'  # Daily 6AM UTC build
+
+
+jobs:
+
+  lint:
+    name: Linter
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Setup Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+    - name: Cache PyPI
+      uses: actions/cache@v2
+      with:
+        key: pip-lint-${{ hashFiles('requirements-dev.txt') }}
+        path: ~/.cache/pip
+        restore-keys: |
+            pip-lint-
+    - name: Install dependencies
+      uses: py-actions/py-dependency-install@v2
+      with:
+        path: requirements-dev.txt
+    - name: Install itself
+      run: |
+        pip install .
+    - name: Lint
+      run: |
+        make lint
+    - name: Prepare twine checker
+      run: |
+        pip install -U build twine wheel
+        python -m build
+    - name: Run twine checker
+      run: |
+        twine check dist/*
+
+  test:
+    name: Test
+    strategy:
+      matrix:
+        pyver: ['3.7', '3.8', '3.9', '3.10', '3.11']
+        os: [ubuntu, macos, windows]
+        include:
+          - pyver: pypy-3.8
+            os: ubuntu
+    runs-on: ${{ matrix.os }}-latest
+    timeout-minutes: 15
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Setup Python ${{ matrix.pyver }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.pyver }}
+    - name: Get pip cache dir
+      id: pip-cache
+      run: |
+        echo "::set-output name=dir::$(pip cache dir)"    # - name: Cache
+    - name: Cache PyPI
+      uses: actions/cache@v2
+      with:
+        key: pip-ci-${{ runner.os }}-${{ matrix.pyver }}-${{ hashFiles('requirements-dev.txt') }}
+        path: ${{ steps.pip-cache.outputs.dir }}
+        restore-keys: |
+            pip-ci-${{ runner.os }}-${{ matrix.pyver }}-
+    - name: Install dependencies
+      uses: py-actions/py-dependency-install@v2
+      with:
+        path: requirements.txt
+    - name: Install JS dependencies
+      run: grablib
+      env:
+        PYTHONIOENCODING: 'utf-8'
+    - name: Run unittests
+      run: pytest --cov-report xml --cov-report html
+      env:
+        COLOR: 'yes'
+    - run: python -m coverage xml
+    - name: Upload coverage
+      uses: codecov/codecov-action@v1
+      with:
+        file: ./coverage.xml
+        flags: unit
+        fail_ci_if_error: false
+
+  check:  # This job does nothing and is only used for the branch protection
+    if: always()
+
+    needs: [lint, test]
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Decide whether the needed jobs succeeded or failed
+      uses: re-actors/alls-green@release/v1
+      with:
+        jobs: ${{ toJSON(needs) }}
+
+  deploy:
+    name: Deploy
+    environment: release
+    if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
+    needs: [check]
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2.4.0
+    - name: Update pip, wheel, setuptools, build, twine, grablib
+      run: |
+        python -m pip install -U pip wheel setuptools build twine grablib
+    - name: Install JS dependencies
+      run: grablib
+      env:
+        PYTHONIOENCODING: 'utf-8'
+    - name: Build dists
+      run: |
+        python -m build
+    - name: Make Release
+      uses: aio-libs/create-release@v1.3.3
+      with:
+        changes_file: CHANGES.txt
+        name: aiohttp-devtools
+        version_file: aiohttp_devtools/__init__.py
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        pypi_token: ${{ secrets.PYPI_API_TOKEN }}
+        dist_dir: dist
+        fix_issue_regex: "`#(\\d+) <https://github.com/aio-libs/aiohttp-devtools/issues/\\1>`"
+        fix_issue_repl: "(#\\1)"

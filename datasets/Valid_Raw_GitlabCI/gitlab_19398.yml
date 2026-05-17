@@ -1,0 +1,36 @@
+before_script:
+- which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y  )
+- which rsync || ( apt-get update -y && apt-get install rsync -y )
+- eval $(ssh-agent -s)
+- npm install
+build_and_deploy:
+  environment: production
+  only:
+  - master
+  script:
+  - echo "$DIGITAL_OCEAN_SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+  - mkdir -p ~/.ssh
+  - chmod 700 ~/.ssh
+  - ssh-keyscan $DIGITAL_OCEAN_SERVER_IP >> ~/.ssh/known_hosts
+  - chmod 644 ~/.ssh/known_hosts
+  - npm run build
+  - rsync -avuz --exclude=".*" $CI_PROJECT_DIR $DIGITAL_OCEAN_SERVER_USER@$DIGITAL_OCEAN_SERVER_IP:~
+  - ssh $DIGITAL_OCEAN_SERVER_USER@$DIGITAL_OCEAN_SERVER_IP '. /etc/profile; service
+    nginx restart'
+  stage: build_and_deploy
+cache:
+  paths:
+  - node_modules/
+image: node:latest
+lint:
+  script:
+  - npm run lint
+  stage: lint
+stages:
+- lint
+- test
+- build_and_deploy
+test:
+  script:
+  - npm run test
+  stage: test

@@ -1,0 +1,37 @@
+build:
+  script:
+  - go build ./...
+  stage: build
+default:
+  image: golang:1.17
+deploy:
+  allow_failure: true
+  script:
+  - git checkout master
+  - git push -f https://:$HEROKU_API_KEY@git.heroku.com/tl-demo.git master
+  stage: deploy
+release:
+  rules:
+  - if: $CI_COMMIT_TAG != null
+  script:
+  - ./release.sh
+  stage: release
+stages:
+- build
+- test
+- deploy
+- release
+test:
+  artifacts:
+    paths:
+    - screenshot.png
+    when: on_failure
+  script:
+  - test -z "$(gofmt -l . | tee /dev/stderr)"
+  - curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh
+    | sh -s -- -b $(go env GOPATH)/bin v1.43.0
+  - golangci-lint run -v --timeout=5m
+  - apt-get update
+  - apt-get install -y --no-install-recommends chromium
+  - go test -cover -tags e2e ./...
+  stage: test

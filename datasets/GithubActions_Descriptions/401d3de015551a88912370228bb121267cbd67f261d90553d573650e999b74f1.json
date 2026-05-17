@@ -1,0 +1,14 @@
+{
+  "sha": "401d3de015551a88912370228bb121267cbd67f261d90553d573650e999b74f1",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 888,
+  "description": "Create a GitHub Actions workflow named PlatformIO CI that runs on every push to the master branch and on pull requests to master. The workflow should have two jobs: precompile on ubuntu-latest and build on a self-hosted runner. The precompile job should install dependencies, install platformio, check out the repository, run pio, and upload build files as an artifact. The build job should download the build files, check for updates, run cppcheck, and compile with platformio.",
+  "tags": [
+    "platformio",
+    "ci",
+    "ubuntu",
+    "self-hosted",
+    "cppcheck"
+  ]
+}

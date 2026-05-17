@@ -1,0 +1,22 @@
+before_script:
+- yarn install
+image: node:9.11.1
+pages:
+  artifacts:
+    paths:
+    - public
+  cache:
+    paths:
+    - node_modules/
+  only:
+  - master
+  script:
+  - yarn build
+  stage: deploy
+test:
+  cache:
+    paths:
+    - node_modules/
+  script:
+  - yarn test-ci
+  stage: test

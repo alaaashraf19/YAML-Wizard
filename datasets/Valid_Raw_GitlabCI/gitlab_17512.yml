@@ -1,0 +1,41 @@
+before_script:
+- apt-get update -yqq
+- apt-get install -yqq --no-install-recommends build-essential libsodium-dev
+cache:
+  paths:
+  - apt/
+  - cargo/
+  - target/
+cargo bench:
+  artifacts:
+    name: benchmark_results
+    paths:
+    - target/criterion
+  script:
+  - rustc --version && cargo --version
+  - cargo bench
+  stage: benchmark
+cargo build:
+  artifacts:
+    name: iridium
+    paths:
+    - target/release/iridium
+  script:
+  - rustc --version && cargo --version
+  - cargo build --release
+  - strip target/release/iridium
+  stage: test
+cargo test:
+  allow_failure: true
+  script:
+  - rustc --version && cargo --version
+  - cargo test --all --verbose
+  stage: test
+image: rust:latest
+stages:
+- test
+- benchmark
+- build
+variables:
+  APT_CACHE_DIR: $CI_PROJECT_DIR/apt
+  CARGO_HOME: $CI_PROJECT_DIR/cargo

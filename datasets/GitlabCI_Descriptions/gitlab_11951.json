@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_11951",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1445,
+  "description": "Create a GitLab CI pipeline with two stages: download and deploy, using the global variable DOCKER_DRIVER=overlay2 and the docker:dind service. In the download stage add a download job that runs on debian:unstable-slim, executes apt-get update, apt-get -y install chromium-driver python3-selenium wget, sets URL=$(./find_download_url.py), FILENAME=$(basename $(echo $URL | cut -d? -f1)), VERSION=$(echo $FILENAME | cut -d_ -f3), creates a download directory, and downloads the file with wget -O download/$FILENAME $URL, then stores the download/ directory as an artifact. In the deploy stage add a deploy job that depends on download, runs on docker:latest, logs in to registry.gitlab.com with docker login -u gitlab-ci-token -p $CI_JOB_TOKEN, extracts VERSION=$(ls download/*.zip | cut -d_ -f3), moves the downloaded files, builds a Docker image using FROM=nvidia/cudagl:9.1-runtime-centos7 and MESA=, tags it with $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA, $CI_REGISTRY_IMAGE:$VERSION and $CI_REGISTRY_IMAGE:latest, pushes it, then builds a second image using FROM=nvidia/cuda:9.1-runtime-centos7 and MESA=mesa-dri-drivers, tags it with ${CI_REGISTRY_IMAGE}/mesa:$CI_COMMIT_SHA, ${CI_REGISTRY_IMAGE}/mesa:$VERSION and ${CI_REGISTRY_IMAGE}/mesa:latest, and pushes it to the GitLab Container Registry. No caches or conditional rules are defined.",
+  "tags": [
+    "docker",
+    "dind",
+    "debian",
+    "download",
+    "artifact",
+    "gitlab-registry",
+    "nvidia",
+    "cuda",
+    "ci-pipeline"
+  ]
+}

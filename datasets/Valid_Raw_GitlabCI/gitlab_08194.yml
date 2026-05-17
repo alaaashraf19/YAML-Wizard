@@ -1,0 +1,41 @@
+before_script:
+- apt update -yqq
+- apt install git libpq-dev libzip-dev zip -yqq
+- docker-php-ext-install pdo_mysql pdo_pgsql zip
+- curl -sS https://getcomposer.org/installer | php
+- php composer.phar install
+cache:
+  paths:
+  - vendor/
+image: php:8.1
+services:
+- mysql
+- postgres
+test:mysql:
+  script:
+  - vendor/bin/phpunit --configuration phpunit_mysql.xml --coverage-text
+test:pgsql:
+  script:
+  - vendor/bin/phpunit --configuration phpunit_pgsql.xml --coverage-text
+test:php7.4:mysql:
+  image: php:7.4
+  script:
+  - vendor/bin/phpunit --configuration phpunit_mysql.xml --coverage-text
+test:php7.4:pgsql:
+  image: php:7.4
+  script:
+  - vendor/bin/phpunit --configuration phpunit_pgsql.xml --coverage-text
+test:php8.0:mysql:
+  image: php:8.0
+  script:
+  - vendor/bin/phpunit --configuration phpunit_mysql.xml --coverage-text
+test:php8.0:pgsql:
+  image: php:8.0
+  script:
+  - vendor/bin/phpunit --configuration phpunit_pgsql.xml --coverage-text
+variables:
+  MYSQL_DATABASE: hello_world_test
+  MYSQL_ROOT_PASSWORD: mysql
+  POSTGRES_DB: hello_world_test
+  POSTGRES_PASSWORD: postgres
+  POSTGRES_USER: postgres

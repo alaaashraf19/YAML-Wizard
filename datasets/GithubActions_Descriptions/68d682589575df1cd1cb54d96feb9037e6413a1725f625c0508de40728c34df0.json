@@ -1,0 +1,20 @@
+{
+  "sha": "68d682589575df1cd1cb54d96feb9037e6413a1725f625c0508de40728c34df0",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5586,
+  "description": "Create a comprehensive GitHub Actions CI workflow that runs on push to master, on pull request events, on a scheduled Monday 7AM cron job, and on workflow dispatch. The workflow uses a matrix strategy to run jobs on ubuntu-latest and macos-latest with g++ and clang++ compilers in Debug and Release build types. For each job, check out the repository, set up Python 3.8, install system and Python packages, configure and use ccache, configure CMake, build, run tests, and upload code coverage to Codecov.",
+  "tags": [
+    "ci",
+    "ubuntu",
+    "macos",
+    "python",
+    "c++",
+    "cmake",
+    "ccache",
+    "codecov",
+    "tests",
+    "scheduled",
+    "dispatch"
+  ]
+}

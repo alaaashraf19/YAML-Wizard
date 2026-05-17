@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_07122",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 797,
+  "description": "Create a GitLab CI pipeline that uses a global before_script to create a build directory, cd into it, set CXXFLAGS=-Werror and enable CTEST_OUTPUT_ON_FAILURE. Define five jobs (arch, buster, stretch, static-analysis, thread-safety-analysis) each using the appropriate Docker image from registry.gitlab.com/eidheim/docker-images (arch, buster, stretch). In the arch, buster, and stretch jobs run the shared script: cmake -DCMAKE_BUILD_TYPE=Release .. && make && make test, then rm -r *, then cmake -DCMAKE_BUILD_TYPE=Release -DUSE_STANDALONE_ASIO=ON .. && make && make test. In the static-analysis job run scan-build cmake .. && scan-build --status-bugs make. In the thread-safety-analysis job run CXX=clang++ cmake .. && make, all executing in the default stage.",
+  "tags": [
+    "cmake",
+    "make",
+    "scan-build",
+    "arch",
+    "buster",
+    "stretch",
+    "static-analysis",
+    "thread-safety"
+  ]
+}

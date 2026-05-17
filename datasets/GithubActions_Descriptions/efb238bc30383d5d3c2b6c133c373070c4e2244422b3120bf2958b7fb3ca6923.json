@@ -1,0 +1,15 @@
+{
+  "sha": "efb238bc30383d5d3c2b6c133c373070c4e2244422b3120bf2958b7fb3ca6923",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1887,
+  "description": "Create a GitHub Actions workflow named Build and tests that runs on push to any branch except when README.md changes, on any pull request, and manually dispatched. Use a matrix job that runs on various platforms including Linux and with different configurations and build types. For each job, check out the repository with submodules, install dependencies if on Linux, configure the build with CMake, build, and run tests.",
+  "tags": [
+    "cmake",
+    "tests",
+    "matrix",
+    "linux",
+    "ubuntu",
+    "build"
+  ]
+}

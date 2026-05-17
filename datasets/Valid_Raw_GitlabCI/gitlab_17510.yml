@@ -1,0 +1,11 @@
+image: registry.gitlab.com/pages/hugo/hugo_extended:0.139.4
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - hugo
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive

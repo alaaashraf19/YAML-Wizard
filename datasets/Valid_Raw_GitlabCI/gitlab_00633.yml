@@ -1,0 +1,15 @@
+image: node:8.9.0
+pages:
+  artifacts:
+    paths:
+    - public
+  cache:
+    paths:
+    - node_modules/
+  only:
+  - master
+  script:
+  - npm install hexo-cli -g
+  - npm install
+  - hexo clean
+  - hexo deploy

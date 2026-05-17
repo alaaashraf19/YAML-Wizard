@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_00838",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 78,
+  "description": "Create a GitLab CI pipeline that defines a single job named pages, which runs in the deploy stage (the default for a Pages job). The job has no script commands (script is null) and publishes the public/ directory as a Pages artifact. Configure the job to run only on the master branch and to store the artifact path public. Use the default Docker image provided by GitLab CI.",
+  "tags": [
+    "pages",
+    "gitlab-pages",
+    "master-only",
+    "artifact"
+  ]
+}

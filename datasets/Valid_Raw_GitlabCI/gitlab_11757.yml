@@ -1,0 +1,24 @@
+before_script:
+- apt-get update -qq && apt-get install -y -qq postgresql postgresql-contrib libpq-dev
+  cmake
+- ruby -v
+- which ruby
+- gem install bundler --no-ri --no-rdoc
+- cp config/database.ci.yml config/database.yml
+- RAILS_ENV=test bundle install --jobs $(nproc) "${FLAGS[@]}"
+- echo "47e28e2b254622df5fb9ad367537715f" > config/master.key
+cache:
+  paths:
+  - vendor/ruby
+image: ruby:2.5.1
+rails:
+  script:
+  - RAILS_ENV=test bundle exec rake db:create db:schema:load
+rspec:
+  script:
+  - RAILS_ENV=test bundle exec rspec
+services:
+- postgres:latest
+variables:
+  POSTGRES_DB: librecademy_test
+  POSTGRES_USER: postgres

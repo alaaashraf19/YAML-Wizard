@@ -1,0 +1,14 @@
+{
+  "sha": "cbbfe0af9f060e4ec7888806998bc777b76956d56b0b8b9206e0413b4568d63a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1230,
+  "description": "Create a GitHub Actions workflow named fpp-to-json Test that runs on push to devel and release branches and on pull requests to those branches, excluding certain paths. The workflow should cancel in-progress runs if a newer run is started on a given PR, except for devel and release branches. Use an ubuntu-22.04 job to check out the repository with submodules, set up the environment, generate a Ref deployment, and run fpp-to-json on the Ref topology.",
+  "tags": [
+    "github-actions",
+    "ubuntu",
+    "fpp-to-json",
+    "ref-deployment",
+    "concurrency"
+  ]
+}

@@ -1,0 +1,66 @@
+before_script:
+- docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+build:
+  only:
+  - develop
+  - master
+  script:
+  - docker build --pull -t $CONTAINER_TEST_IMAGE .
+  - docker push $CONTAINER_TEST_IMAGE
+  stage: build
+deploy:
+  only:
+  - master
+  script:
+  - apk add --no-cache curl jq python py-pip
+  - pip install awscli
+  - $(aws ecr get-login --no-include-email --region eu-west-1)
+  - docker pull $CONTAINER_TEST_IMAGE
+  - docker tag $CONTAINER_TEST_IMAGE $REPOSITORY_URL
+  - docker push $REPOSITORY_URL
+  stage: deploy
+image: docker:latest
+purge:
+  only:
+  - master
+  script:
+  - echo "Purge not configured"
+  stage: purge
+services:
+- docker:dind
+stages:
+- build
+- test
+- deploy
+- purge
+test_behat:
+  only:
+  - develop
+  - master
+  script:
+  - docker run -d --name ci $CONTAINER_TEST_IMAGE
+  - echo "behat"
+  stage: test
+test_cs:
+  only:
+  - develop
+  - master
+  script:
+  - echo "phpcs"
+  stage: test
+test_unit:
+  only:
+  - develop
+  - master
+  script:
+  - docker run -d --name ci $CONTAINER_TEST_IMAGE
+  - docker exec ci composer test
+  stage: test
+variables:
+  AWS_PUBLIC_IP: ${AWS_EC2_PUBLIC_IP}
+  AWS_SSH: ${AWS_EC2_USER}@${AWS_EC2_PUBLIC_IP}
+  AWS_USER: ${AWS_EC2_USER}
+  CONTAINER_RELEASE_IMAGE: registry.gitlab.com/didou/${CI_PROJECT_NAME}:${CI_BUILD_REF}
+  CONTAINER_TEST_IMAGE: registry.gitlab.com/didou/${CI_PROJECT_NAME}:${CI_BUILD_REF}_test
+  DOCKER_DRIVER: overlay2
+  REPOSITORY_URL: 933438876997.dkr.ecr.eu-west-1.amazonaws.com/gitlab-ci

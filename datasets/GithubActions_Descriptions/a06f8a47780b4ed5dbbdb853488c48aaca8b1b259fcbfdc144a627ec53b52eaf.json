@@ -1,0 +1,15 @@
+{
+  "sha": "a06f8a47780b4ed5dbbdb853488c48aaca8b1b259fcbfdc144a627ec53b52eaf",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 7882,
+  "description": "Create a GitHub Actions workflow named rdsn Unit Test that runs on every pull request to specific branches and paths, and allows manual triggering. The workflow has four ubuntu-latest jobs that run in a Docker container with specific environment variables and volumes. Each job checks out the code, filters paths, and then either unpacks prebuilt third-parties or rebuilds them. Finally, each job compiles and runs unit tests with different sanitizer options.",
+  "tags": [
+    "github-actions",
+    "ubuntu",
+    "docker",
+    "cmake",
+    "testing",
+    "sanitizers"
+  ]
+}

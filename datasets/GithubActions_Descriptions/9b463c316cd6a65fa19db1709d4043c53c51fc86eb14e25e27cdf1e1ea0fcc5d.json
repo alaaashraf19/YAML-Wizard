@@ -1,0 +1,16 @@
+{
+  "sha": "9b463c316cd6a65fa19db1709d4043c53c51fc86eb14e25e27cdf1e1ea0fcc5d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2052,
+  "description": "Create a reusable GitHub Actions workflow named Build that can be called by other workflows. The workflow uses a matrix strategy to run on two Ubuntu environments (x86_64 and ARM64) and performs a series of steps: checks out the code with submodules, installs dependencies, generates a project with cmake, compiles and deploys the project, builds a DEB package, tests the installation, and uploads the DEB package as an artifact.",
+  "tags": [
+    "ubuntu",
+    "cmake",
+    "qt6",
+    "deb",
+    "package",
+    "matrix",
+    "reusable-workflow"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_19213",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 257,
+  "description": "Create a GitLab CI pipeline that uses the sdesbure/yamllint:latest Docker image. Add a lint-ci-gitlab job (default stage) that runs only when any *.yml file changes and executes the command `yamllint .gitlab-ci.yml .gitlab/ci lib/gitlab/ci/templates changelogs`. The job inherits default tags, retry, and only settings via .default-tags, .default-retry, and .default-only. No caches, artifacts, or services are defined.",
+  "tags": [
+    "yamllint",
+    "yaml-lint",
+    "gitlab-ci",
+    "lint"
+  ]
+}

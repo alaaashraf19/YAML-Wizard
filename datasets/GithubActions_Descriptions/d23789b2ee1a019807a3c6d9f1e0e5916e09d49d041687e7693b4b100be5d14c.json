@@ -1,0 +1,18 @@
+{
+  "sha": "d23789b2ee1a019807a3c6d9f1e0e5916e09d49d041687e7693b4b100be5d14c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2855,
+  "description": "Create a GitHub Actions workflow named CI Testing that runs on push to the master branch and on pull requests to master. The workflow uses a matrix strategy to test multiple Python versions and operating systems concurrently, canceling any in-progress jobs when a new workflow run is triggered. For each job, set up a Miniconda environment with the specified Python version and environment file, install jams, log installed packages, run tests with pytest, and upload coverage to Codecov.",
+  "tags": [
+    "python",
+    "ci",
+    "conda",
+    "pytest",
+    "codecov",
+    "matrix",
+    "ubuntu",
+    "macos",
+    "windows"
+  ]
+}

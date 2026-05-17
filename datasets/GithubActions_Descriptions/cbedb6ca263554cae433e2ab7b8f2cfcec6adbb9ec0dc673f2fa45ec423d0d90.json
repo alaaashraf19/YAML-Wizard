@@ -1,0 +1,15 @@
+{
+  "sha": "cbedb6ca263554cae433e2ab7b8f2cfcec6adbb9ec0dc673f2fa45ec423d0d90",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1064,
+  "description": "Create a GitHub Actions workflow named Publish library that triggers on push events with any tag. The workflow has two jobs: test and publish. The test job runs on ubuntu-latest with a matrix of Python versions 2.7, 3.6-3.10, checking out the code, setting up Python, installing dependencies, and testing with tox. The publish job depends on test, runs on ubuntu-latest, checks out the code, sets up Python 3.9, builds artifacts, and publishes a Python distribution to PyPI using a token from secrets.",
+  "tags": [
+    "python",
+    "pypi",
+    "tox",
+    "tests",
+    "release",
+    "tags"
+  ]
+}

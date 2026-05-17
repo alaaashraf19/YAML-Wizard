@@ -1,0 +1,10 @@
+image: busybox:1.26.2
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - mkdir public && cp -R html_en/* public
+  stage: deploy

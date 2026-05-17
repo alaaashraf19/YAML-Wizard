@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_12255",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1555,
+  "description": "Create a GitLab CI pipeline that uses the python:3.8-bullseye Docker image (overridden by python:3.6-bullseye for py36, python:3.7-bullseye for py37, and python:3.8-bullseye for py38), defines a cache keyed by $CI_JOB_NAME storing $XDG_CACHE_HOME/pip/ and $XDG_CACHE_HOME/apt/, and sets the variable XDG_CACHE_HOME to $CI_PROJECT_DIR/.cache. In the test stage add a coverage job that runs the global before_script `ci/apt install -y -qqq --no-install-recommends xvfb ffmpeg libmpv1 libmediainfo0v5 pyqt5-dev-tools x11-utils` and `pip3 install \"tox<4\"`, then executes `tox -e $CI_JOB_NAME` and uploads coverage.xml and htmlcov/ as a 14‑day artifact named coverage. Also in test add py36, py37, and py38 jobs that use their respective Python images, inherit the same before_script and run `tox -e $CI_JOB_NAME`, plus a test-dist job that runs its own before_script `ci/apt install -y -qqq --no-install-recommends pyqt5-dev-tools` and then `ci/dist_test sdist`, `ci/dist_test bdist`, `ci/dist_test bdist_wheel`. In the deploy stage add a dist job that runs before_script `ci/apt install -y -qqq --no-install-recommends pyqt5-dev-tools asciidoctor make` and `pip3 install -rreqs/requirements-deploy.txt`, then builds packages with `python3 setup.py sdist` and `python3 setup.py bdist_wheel` and uploads them via `twine upload dist/* -u \"$PYPI_USER\" -p \"$PYPI_PASS\"`, publishing the dist/ directory as an artifact named ${CI_PROJECT_NAME}-${CI_BUILD_REF_NAME} only on tags or triggers. Finally add a pages job that installs asciidoctor with `ci/apt install -y -qq --no-install-recommends asciidoctor`, runs `ci/gen-pages`, and publishes the public/ folder as a pages artifact, running only on master, tags, or triggers.",
+  "tags": [
+    "python",
+    "tox",
+    "coverage",
+    "pypi",
+    "twine",
+    "pages",
+    "ci-apt",
+    "dist",
+    "test"
+  ]
+}

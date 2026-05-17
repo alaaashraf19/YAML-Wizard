@@ -1,0 +1,78 @@
+build:gcc:
+  artifacts:
+    name: cenisys-gcc-${CI_BUILD_REF:0:7}
+    paths:
+    - usr/
+  cache:
+    paths:
+    - build/
+    untracked: true
+  script:
+  - mkdir -p build
+  - cd build
+  - CC=gcc CXX=g++ cmake -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=/usr
+    -DVERSION_SUFFIX=`[ -z "$CI_BUILD_TAG" ] && echo "${CI_BUILD_REF:0:7}" || echo
+    ""` ..
+  - DESTDIR=.. ninja install
+  stage: build
+build:unit-test:
+  artifacts:
+    name: cenisys-test-${CI_BUILD_REF:0:7}
+    paths:
+    - prefix/
+  cache:
+    paths:
+    - build/
+    untracked: true
+  dependencies: []
+  script:
+  - mkdir -p build
+  - cd build
+  - CC=clang CXX=clang++ CFLAGS="-fprofile-instr-generate -fcoverage-mapping" CXXFLAGS="-fprofile-instr-generate
+    -fcoverage-mapping" LDFLAGS="-fprofile-instr-generate" cmake -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo
+    -DCMAKE_INSTALL_PREFIX=../prefix/ -DBUILD_DOC=OFF -DBUILD_TEST=ON -DVERSION_SUFFIX=`[
+    -z "$CI_BUILD_TAG" ] && echo "${CI_BUILD_REF:0:7}" || echo ""` ..
+  - ninja install
+  stage: build
+clang-static:
+  artifacts:
+    name: cenisys-clang-report-${CI_BUILD_REF:0:7}
+    paths:
+    - report/
+  dependencies: []
+  script:
+  - mkdir -p build
+  - cd build
+  - scan-build -o ../report cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug -DBUILD_DOC=OFF
+    -DBUILD_TEST=ON -DVERSION_SUFFIX=`[ -z "$CI_BUILD_TAG" ] && echo "${CI_BUILD_REF:0:7}"
+    || echo ""` ..
+  - scan-build -o ../report ninja
+  stage: build
+image: registry.gitlab.com/itxtech/docker-env-cenisys
+pages:
+  artifacts:
+    paths:
+    - public/
+  dependencies:
+  - build:gcc
+  only:
+  - master
+  script:
+  - cp -r usr/share/doc/cenisys/html/ public
+  stage: deploy
+stages:
+- build
+- test
+- deploy
+test:unit-test:
+  artifacts:
+    name: cenisys-test-cov-${CI_BUILD_REF:0:7}
+    paths:
+    - unit-test.profdata
+  dependencies:
+  - build:unit-test
+  script:
+  - LLVM_PROFILE_FILE="unit-test.profraw" LD_LIBRARY_PATH="./prefix/lib/" ./prefix/bin/cenisys-test
+  - llvm-profdata merge -o unit-test.profdata unit-test.profraw
+  - llvm-cov report ./prefix/lib/libCenisysCore.so -instr-profile=unit-test.profdata
+  stage: test

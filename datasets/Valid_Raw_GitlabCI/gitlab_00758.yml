@@ -1,0 +1,31 @@
+before_script:
+- apt-get update -y
+- apt-get install --yes cmake git psmisc
+- git submodule update --init --recursive
+- cd lib/RF24
+- ./configure --driver=SPIDEV
+- make
+- make install
+- cp -r utility/ /usr/local/include/RF24/
+- cd ../../
+build:
+  script:
+  - mkdir build
+  - cd build
+  - cmake ../src/baldur
+  - make
+  - make install
+  - baldur --nopen &
+  - killall baldur
+  stage: build
+  tags:
+  - linux
+image: gcc
+test:
+  script:
+  - mkdir tests
+  - cd tests
+  - cmake ../src/baldur-test
+  - make
+  - ./baldur-test
+  stage: test

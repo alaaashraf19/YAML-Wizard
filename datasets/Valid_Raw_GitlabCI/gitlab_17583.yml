@@ -1,0 +1,789 @@
+.all-builds_build_variables:
+  PUBSUB_STATIC_CONFIG: 1
+  S2OPC_EVENT_MANAGEMENT: 1
+  WITH_CONST_ADDSPACE: 1
+  WITH_STATIC_SECURITY_DATA: 1
+.all-tests_build_variables:
+  WITH_PYS2OPC: 1
+.build-linux:
+  artifacts: &id002
+    expire_in: 1 week
+    name: bin-${CI_COMMIT_REF_SLUG}_${CI_COMMIT_SHA}_job${CI_JOB_ID}
+    paths:
+    - '*.log'
+    - build/
+    when: always
+  image: docker.aix.systerel.fr/c838/build@sha256:2fdc121cf7c346c7e46e40fd05fc52ecaf759867b5d0b3ffaab809cbf89f0247
+  script: &id001
+  - ./build.sh && cd $BUILD_DIR || exit 1
+  stage: build
+  variables: &id006
+    BUILD_DIR: build
+    DOCKER_DIGEST: sha256:2fdc121cf7c346c7e46e40fd05fc52ecaf759867b5d0b3ffaab809cbf89f0247
+.nominal_build_variables:
+  S2OPC_EVENT_MANAGEMENT: 1
+  S2OPC_EXTERNAL_HISTORY_RAW_READ_SERVICE: 1
+  S2OPC_HAS_AUDITING: 1
+  S2OPC_NODE_MANAGEMENT: 1
+.nominal_test_variables:
+  TEST_CLIENT_XML_CONFIG: S2OPC_Client_Test_Config.xml
+  TEST_PASSWORD_CACERT: S2OPC
+  TEST_PASSWORD_PRIVATE_KEY: password
+  TEST_PASSWORD_USER: password
+  TEST_PASSWORD_USER_ME: 1234
+  TEST_PASSWORD_USER_SECUADMIN: 1234
+  TEST_SERVER_XML_ADDRESS_SPACE: S2OPC_Test_NodeSet.xml
+  TEST_SERVER_XML_CONFIG: S2OPC_Server_UACTT_Config.xml
+  TEST_USERNAME: user1
+  TEST_USERS_XML_CONFIG: S2OPC_UACTT_Users.xml
+.pikeos-job:
+  tags: &id003
+  - pikeos
+.test-linux:
+  stage: test
+.test-uactt:
+  artifacts: &id007
+    expire_in: 1 week
+    name: uactt-logs-${CI_COMMIT_REF_SLUG}_${CI_COMMIT_SHA}_job${CI_JOB_ID}
+    paths:
+    - build/bin/**/*.tap
+    - build/bin/**/*.log
+    - tests/ClientServer/acceptance_tools/*.log
+    - '**/*.*.gcda'
+    - '**/*.*.gcno'
+    when: always
+  image: com.systerel.fr:5000/c838/uactt-linux@sha256:a0ae7d8858cf7da2a5cb02631807a6181f3511cc6c59498a2f2d4d92d95c048f
+  script: &id008
+  - ulimit -n 1024
+  - cd tests/ClientServer/acceptance_tools/ && ./launch_acceptance_tests.sh
+  stage: test
+.test-unit:
+  artifacts: &id009
+    expire_in: 1 week
+    name: test-unit-results-${CI_COMMIT_REF_SLUG}_${CI_COMMIT_SHA}_job${CI_JOB_ID}
+    paths:
+    - build/bin/**/*.tap
+    - build/bin/**/*.log
+    - build/tests/**/Testing
+    - build/samples/**/Testing
+    - build/**/*.*.gcda
+    - build/**/*.*.gcno
+    when: always
+  image: docker.aix.systerel.fr/c838/test@sha256:8fbec254f6b8c8467b780d407c6f3c2e87d87899e141b8b2c9013ba30b4f0c8d
+  script: &id010
+  - ./.set-bin-root.sh
+  - ./test-all.sh
+  stage: test
+build-freertos:
+  artifacts:
+    expire_in: 1 week
+    name: bin-freertos-${CI_COMMIT_REF_SLUG}_${CI_COMMIT_SHA}_job${CI_JOB_ID}
+    paths:
+    - build_freertos/
+    when: always
+  image: docker.aix.systerel.fr/c838/freertos_build@sha256:d3da42d15ae8e1973d388cd09e75fc3dfb316763d6fd10115d0fe790e3c81346
+  needs: []
+  rules:
+  - if: $CROSS_COMPILE != null || $ALL_BUILDS != null || $CI_PIPELINE_SOURCE == 'merge_request_event'
+      || $CI_COMMIT_TAG
+    when: always
+  script:
+  - samples/embedded/platform_dep/freertos/ci/build-freertos-samples-docker.sh NUCLEO-H723ZG
+    cli_client
+  - test -f build_freertos/cli_client_NUCLEO-H723ZG.elf
+  - rm -rf /tmp/ws_freertos/build
+  - samples/embedded/platform_dep/freertos/ci/build-freertos-samples-docker.sh NUCLEO-H723ZG
+    cli_pubsub_server --nocrypto
+  - test -f build_freertos/cli_pubsub_server_NUCLEO-H723ZG.elf
+  - rm -rf /tmp/ws_freertos/build
+  stage: build-others
+build-fuzz:
+  artifacts:
+    expire_in: 30 days
+    name: bin_${CI_COMMIT_SHA}_job${CI_JOB_ID}_fuzz
+    paths:
+    - '*.log'
+    - build_fuzz/bin
+    - tests/ClientServer/scripts/*
+  image: docker.aix.systerel.fr/c838/build@sha256:2fdc121cf7c346c7e46e40fd05fc52ecaf759867b5d0b3ffaab809cbf89f0247
+  needs: []
+  rules:
+  - if: $TEST_NETWORK_FUZZ != null
+    when: always
+  script: *id001
+  stage: build-others
+  tags:
+  - fuzzing
+  timeout: 24 hours
+  variables:
+    BUILD_DIR: build_fuzz
+    CMAKE_C_FLAGS: -DSOPC_MAX_SOCKETS=1500 -DSOPC_MAX_SOCKETS_CONNECTIONS=1500 -DSOPC_MAX_SECURE_CONNECTIONS=1100
+      -DSOPC_MAX_SESSIONS=1000
+    DOCKER_DIGEST: sha256:2fdc121cf7c346c7e46e40fd05fc52ecaf759867b5d0b3ffaab809cbf89f0247
+    S2OPC_EVENT_MANAGEMENT: 1
+    S2OPC_EXTERNAL_HISTORY_RAW_READ_SERVICE: 1
+    S2OPC_HAS_AUDITING: 1
+    S2OPC_NODE_MANAGEMENT: 1
+build-linux-faulty-packet:
+  artifacts:
+    expire_in: 1 week
+    name: bin-${CI_COMMIT_REF_SLUG}_${CI_COMMIT_SHA}_job${CI_JOB_ID}_faulty
+    paths:
+    - '*.log'
+    - build_faulty/bin/toolkit_test_server
+    - build_faulty/bin/*.xml
+    - build_faulty/bin/S2OPC_Demo_PKI
+    - build_faulty/bin/S2OPC_Users_PKI
+    - build_faulty/bin/server_public
+    - build_faulty/bin/server_private
+    - build_faulty/bin/user_public
+  image: docker.aix.systerel.fr/c838/build@sha256:2fdc121cf7c346c7e46e40fd05fc52ecaf759867b5d0b3ffaab809cbf89f0247
+  needs: []
+  rules:
+  - if: $ALL_BUILDS != null
+    when: on_success
+  script: *id001
+  stage: build-others
+  variables:
+    BUILD_DIR: build_faulty
+    CMAKE_C_FLAGS: -DSOPC_MAX_SESSIONS=50 -DSOPC_MAX_SECURE_CONNECTIONS=51
+    DOCKER_DIGEST: sha256:2fdc121cf7c346c7e46e40fd05fc52ecaf759867b5d0b3ffaab809cbf89f0247
+    S2OPC_EVENT_MANAGEMENT: 1
+    S2OPC_EXTERNAL_HISTORY_RAW_READ_SERVICE: 1
+    S2OPC_HAS_AUDITING: 1
+    S2OPC_NODE_MANAGEMENT: 1
+    WITH_ASAN: 1
+    WITH_UBSAN: 1
+build-linux64-ASan:
+  artifacts: *id002
+  image: docker.aix.systerel.fr/c838/build@sha256:2fdc121cf7c346c7e46e40fd05fc52ecaf759867b5d0b3ffaab809cbf89f0247
+  needs: []
+  rules:
+  - if: $HIL_TESTS == null && $WINDOWS_TEST == null && $CROSS_COMPILE == null && $WITH_COVERITY
+      == null && $WITH_COVERAGE == null && $WITH_DOC == null && $NO_ASAN == null &&
+      $ALL_TESTS == null && $ALL_BUILDS == null && $HIL_TESTS == null && $SCAN_SBOM
+      == null && $TEST_NETWORK_FUZZ == null
+    when: on_success
+  script: *id001
+  stage: build
+  variables:
+    BUILD_DIR: build
+    BUILD_SHARED_LIBS: 'true'
+    DOCKER_DIGEST: sha256:2fdc121cf7c346c7e46e40fd05fc52ecaf759867b5d0b3ffaab809cbf89f0247
+    S2OPC_EVENT_MANAGEMENT: 1
+    S2OPC_EXTERNAL_HISTORY_RAW_READ_SERVICE: 1
+    S2OPC_HAS_AUDITING: 1
+    S2OPC_NODE_MANAGEMENT: 1
+    WITH_ASAN: 1
+    WITH_UBSAN: 1
+build-linux64-NoASan-NoPyS2OPC:
+  artifacts: *id002
+  image: docker.aix.systerel.fr/c838/build@sha256:2fdc121cf7c346c7e46e40fd05fc52ecaf759867b5d0b3ffaab809cbf89f0247
+  needs: []
+  rules:
+  - if: $WITH_COVERAGE != null
+    when: on_success
+  script: *id001
+  stage: build
+  variables:
+    BUILD_DIR: build
+    DOCKER_DIGEST: sha256:2fdc121cf7c346c7e46e40fd05fc52ecaf759867b5d0b3ffaab809cbf89f0247
+    S2OPC_EVENT_MANAGEMENT: 1
+    S2OPC_EXTERNAL_HISTORY_RAW_READ_SERVICE: 1
+    S2OPC_HAS_AUDITING: 1
+    S2OPC_NODE_MANAGEMENT: 1
+build-linux64-pys2opc:
+  artifacts: *id002
+  image: docker.aix.systerel.fr/c838/build@sha256:2fdc121cf7c346c7e46e40fd05fc52ecaf759867b5d0b3ffaab809cbf89f0247
+  needs: []
+  rules:
+  - if: $ALL_TESTS != null || $WITH_COVERAGE == null && $NO_ASAN != null
+    when: on_success
+  script: *id001
+  stage: build
+  variables:
+    BUILD_DIR: build
+    DOCKER_DIGEST: sha256:2fdc121cf7c346c7e46e40fd05fc52ecaf759867b5d0b3ffaab809cbf89f0247
+    WITH_PYS2OPC: 1
+build-linux64-static-conf:
+  artifacts: *id002
+  image: docker.aix.systerel.fr/c838/build@sha256:2fdc121cf7c346c7e46e40fd05fc52ecaf759867b5d0b3ffaab809cbf89f0247
+  needs: []
+  rules:
+  - if: $ALL_BUILDS != null
+    when: on_success
+  script: *id001
+  stage: build
+  variables:
+    BUILD_DIR: build
+    DOCKER_DIGEST: sha256:2fdc121cf7c346c7e46e40fd05fc52ecaf759867b5d0b3ffaab809cbf89f0247
+    PUBSUB_STATIC_CONFIG: 1
+    S2OPC_EVENT_MANAGEMENT: 1
+    WITH_CONST_ADDSPACE: 1
+    WITH_STATIC_SECURITY_DATA: 1
+build-pikeos:
+  artifacts:
+    expire_in: 1 week
+    name: bin-pikeos-${CI_COMMIT_REF_SLUG}_${CI_COMMIT_SHA}_job${CI_JOB_ID}
+    paths:
+    - build_pikeos/
+    when: always
+  image: docker.aix.systerel.fr/c838/pikeos@sha256:3d5dcbab75b0c98a8d27d1cfa239bfa43b5b87bc1bbaca2a7c8a5bfe2adc5aeb
+  needs: []
+  rules:
+  - if: $CROSS_COMPILE != null || $ALL_BUILDS != null || $CI_PIPELINE_SOURCE == 'merge_request_event'
+      || $CI_COMMIT_TAG
+    when: always
+  script:
+  - samples/embedded/platform_dep/pikeos/ci/build-pikeos-samples-docker.sh $BUILD_PIKEOS_OPTIONS
+  stage: build-others
+  tags: *id003
+  variables:
+    BUILD_PIKEOS_OPTIONS: --no-tests --no-samples
+build-rpi:
+  artifacts:
+    expire_in: 1 week
+    name: bin-rpi-${CI_COMMIT_REF_SLUG}_${CI_COMMIT_SHA}_job${CI_JOB_ID}
+    paths:
+    - $BUILD_DIR/bin
+    - $BUILD_DIR/lib
+    - '*.log'
+  image: docker.aix.systerel.fr/c838/rpi-build@sha256:070b1ca58667ee5908902ba3eb03e5fa05993d3a86d2c8ddeb6f7f41ed62609c
+  needs: []
+  rules:
+  - if: $CROSS_COMPILE != null || $ALL_BUILDS != null || $CI_PIPELINE_SOURCE == 'merge_request_event'
+      || $CI_COMMIT_TAG
+    when: always
+  script:
+  - . /usr/local/cross_venv/bin/activate
+  - ./build.sh && cd $BUILD_DIR || exit 1
+  stage: build-others
+  variables:
+    BUILD_DIR: build_toolchain
+    CMAKE_BUILD_TYPE: Debug
+    CMAKE_TOOLCHAIN_FILE: /toolchain-rpi.cmake
+    DOCKER_DIGEST: sha256:070b1ca58667ee5908902ba3eb03e5fa05993d3a86d2c8ddeb6f7f41ed62609c
+    PYS2OPC_WHEEL_NAME: pys2opc-1.6.0-cp39-cp39-linux_arm.whl
+    WITH_PYS2OPC: 1
+build-win32:
+  artifacts:
+    expire_in: 1 week
+    name: bin-w32-${CI_COMMIT_REF_SLUG}_${CI_COMMIT_SHA}_job${CI_JOB_ID}
+    paths:
+    - $BUILD_DIR/bin/
+  image: docker.aix.systerel.fr/c838/mingw_build@sha256:d158e52c51d2f97d4bd13bcc93ebbe5793025c0032dd7e6116bdf9293fc790bf
+  needs: &id004 []
+  rules:
+  - if: $CROSS_COMPILE != null || $ALL_BUILDS != null || $CI_PIPELINE_SOURCE == 'merge_request_event'
+      || $CI_COMMIT_TAG
+    when: always
+  script: &id005
+  - export WITH_PYS2OPC=OFF
+  - ./build.sh && cd $BUILD_DIR || exit 1
+  stage: build-others
+  variables:
+    BUILD_DIR: build_toolchain
+    CMAKE_TOOLCHAIN_FILE: toolchain-mingw32-w64.cmake
+    DOCKER_DIGEST: sha256:d158e52c51d2f97d4bd13bcc93ebbe5793025c0032dd7e6116bdf9293fc790bf
+    S2OPC_CLIENTSERVER_ONLY: 1
+    WARNINGS_AS_ERRORS: 0
+build-win64:
+  artifacts:
+    expire_in: 1 week
+    name: bin-w64-${CI_COMMIT_REF_SLUG}_${CI_COMMIT_SHA}_job${CI_JOB_ID}
+    paths:
+    - $BUILD_DIR/bin
+  image: docker.aix.systerel.fr/c838/mingw_build@sha256:d158e52c51d2f97d4bd13bcc93ebbe5793025c0032dd7e6116bdf9293fc790bf
+  needs: *id004
+  rules:
+  - if: $CROSS_COMPILE != null || $ALL_BUILDS != null || $CI_PIPELINE_SOURCE == 'merge_request_event'
+      || $CI_COMMIT_TAG
+    when: always
+  script: *id005
+  stage: build-others
+  variables:
+    BUILD_DIR: build_toolchain
+    CMAKE_TOOLCHAIN_FILE: toolchain-mingw32-w64_x86_64.cmake
+    DOCKER_DIGEST: sha256:d158e52c51d2f97d4bd13bcc93ebbe5793025c0032dd7e6116bdf9293fc790bf
+    S2OPC_CLIENTSERVER_ONLY: 1
+    WARNINGS_AS_ERRORS: 0
+build-zephyr:
+  artifacts:
+    expire_in: 1 week
+    name: bin-zephyr-${CI_COMMIT_REF_SLUG}_${CI_COMMIT_SHA}_job${CI_JOB_ID}
+    paths:
+    - build_zephyr/
+  image:
+    entrypoint:
+    - ''
+    name: docker.aix.systerel.fr/c838/zephyr_build@sha256:a3361ba6c51ce52026650d6ed5b9344db7d99343b803fc4eaf4c9c4d39f14536
+  needs: []
+  rules:
+  - if: $CROSS_COMPILE != null || $ALL_BUILDS != null || $CI_PIPELINE_SOURCE == 'merge_request_event'
+      || $CI_COMMIT_TAG
+    when: always
+  script:
+  - ln -s $(pwd) /zephyrproject/modules/lib/s2opc
+  - samples/embedded/platform_dep/zephyr/ci/build-zephyr-samples-docker.sh stm32h735g_disco
+    cli_client
+  - samples/embedded/platform_dep/zephyr/ci/build-zephyr-samples-docker.sh nucleo_h745zi_q/stm32h745xx/m7
+    cli_client -DCONFIG_NET_GPTP=y
+  - samples/embedded/platform_dep/zephyr/ci/build-zephyr-samples-docker.sh mimxrt1064_evk
+    cli_pubsub_server
+  - samples/embedded/platform_dep/zephyr/ci/build-zephyr-samples-docker.sh stm32h747i_disco/stm32h747xx/m7
+    cli_pubsub_server --nocrypto
+  stage: build-others
+check_doc:
+  artifacts:
+    expire_in: 1 week
+    name: check_doc-results-${CI_COMMIT_REF_SLUG}_${CI_COMMIT_SHA}_job${CI_JOB_ID}
+    paths:
+    - $BUILD_DIR/doc.log
+    when: on_failure
+  image: docker.aix.systerel.fr/c838/build@sha256:2fdc121cf7c346c7e46e40fd05fc52ecaf759867b5d0b3ffaab809cbf89f0247
+  rules:
+  - if: $ALL_BUILDS != null || $ALL_TESTS != null || $CI_PIPELINE_SOURCE == 'merge_request_event'
+    when: on_success
+  script:
+  - cd $BUILD_DIR
+  - cmake --build . --target doc &> doc.log
+  - test $(grep -c 'warning:' doc.log) -eq 0
+  stage: doc
+  variables:
+    BUILD_DIR: build
+    DOCKER_DIGEST: sha256:2fdc121cf7c346c7e46e40fd05fc52ecaf759867b5d0b3ffaab809cbf89f0247
+coverage-analysis:
+  artifacts:
+    expire_in: 1 week
+    name: coverage-report-${CI_COMMIT_REF_SLUG}_${CI_COMMIT_SHA}_job${CI_JOB_ID}
+    paths:
+    - report
+  image: docker.aix.systerel.fr/c838/test@sha256:8fbec254f6b8c8467b780d407c6f3c2e87d87899e141b8b2c9013ba30b4f0c8d
+  rules:
+  - if: $WITH_COVERAGE != null
+  script:
+  - ./.gen_coverage.sh
+  stage: analyses
+generate_sbom:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - sbom.json
+    - conan.lock
+    when: on_success
+  image: docker.aix.systerel.fr/c838/cyberwatch@sha256:003b648857636b08825c6214c7ae86390e7c958a6814f15ee4c170c737347292
+  needs: []
+  rules:
+  - changes:
+      compare_to: master
+      paths:
+      - conanfile.py
+  - if: $SCAN_SBOM != null
+  script:
+  - conan remote add gitlab ${CI_API_V4_URL}/projects/$CI_PROJECT_ID/packages/conan
+    False
+  - conan user ci_user -r gitlab -p ${CI_JOB_TOKEN}
+  - conan lock create conanfile.py
+  - if [ ! -e sbom.json ]; then touch sbom.json; fi
+  - trivy fs --format cyclonedx --output sbom.json --insecure .
+  stage: test
+generation:
+  artifacts:
+    expire_in: 1 week
+    name: bgenc-${CI_COMMIT_REF_SLUG}_${CI_COMMIT_SHA}_job${CI_JOB_ID}
+    paths:
+    - pre-build.log
+    when: always
+  image: com.systerel.fr:5000/c838/gen-ext@sha256:66cadeb219f3904e78ade14ef85e57aa0309eff4416e9625b0fd4bea8e976cd7
+  rules:
+  - if: $HIL_TESTS == null && $NO_GEN == null && $WINDOWS_TEST == null && $CROSS_COMPILE
+      == null && $WITH_COVERITY == null && $S2OPC_PUBSUB_ONLY == null &&$ALL_BUILDS
+      == null && $ALL_TESTS == null && $WITH_DOC == null && $SCAN_SBOM == null &&
+      $TEST_NETWORK_FUZZ == null
+    when: on_success
+  script:
+  - ./clean.sh gen
+  - ./.validates_xml_schemas.sh
+  - ./.pre-build-ext.sh
+  - rm ./src/ClientServer/services/bgenc/constants_bs.h_
+  - ./.check_generated_code.sh
+  stage: gen
+hil-build-freertos:
+  artifacts:
+    expire_in: 1 week
+    name: bin-freertos-${CI_COMMIT_REF_SLUG}_${CI_COMMIT_SHA}_job${CI_JOB_ID}
+    paths:
+    - build_freertos/
+    when: always
+  image:
+    entrypoint:
+    - ''
+    name: docker.aix.systerel.fr/c838/freertos_build@sha256:d3da42d15ae8e1973d388cd09e75fc3dfb316763d6fd10115d0fe790e3c81346
+  needs: []
+  rules:
+  - if: $HIL_TESTS != null
+    when: always
+  script:
+  - cd .systerel/HIL_tests
+  - ./build.py --os freertos
+  stage: hil-build
+hil-build-zephyr:
+  artifacts:
+    expire_in: 1 week
+    name: bin-zephyr-${CI_COMMIT_REF_SLUG}_${CI_COMMIT_SHA}_job${CI_JOB_ID}
+    paths:
+    - build_zephyr/
+    when: always
+  image:
+    entrypoint:
+    - ''
+    name: docker.aix.systerel.fr/c838/zephyr_build@sha256:a3361ba6c51ce52026650d6ed5b9344db7d99343b803fc4eaf4c9c4d39f14536
+  needs: []
+  rules:
+  - if: $HIL_TESTS != null
+    when: always
+  script:
+  - ln -s $(pwd) /zephyrproject/modules/lib/s2opc
+  - cd .systerel/HIL_tests
+  - ./build.py --os zephyr
+  stage: hil-build
+hil-test:
+  artifacts:
+    expire_in: 1 week
+    name: bin-freertos-${CI_COMMIT_REF_SLUG}_${CI_COMMIT_SHA}_job${CI_JOB_ID}
+    paths:
+    - log/
+    when: always
+  needs:
+  - hil-build-zephyr
+  - hil-build-freertos
+  rules:
+  - if: $HIL_TESTS != null
+    when: always
+  script:
+  - cd .systerel/HIL_tests
+  - ./flash_all.py
+  stage: hil-test
+  tags:
+  - hil
+pages:
+  artifacts:
+    expire_in: 30 days
+    paths:
+    - public
+  dependencies: []
+  image: docker.aix.systerel.fr/c838/build@sha256:2fdc121cf7c346c7e46e40fd05fc52ecaf759867b5d0b3ffaab809cbf89f0247
+  rules:
+  - if: $WITH_DOC != null
+  - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'master'
+  script:
+  - mkdir $BUILD_DIR
+  - cd $BUILD_DIR
+  - cmake -DS2OPC_NODE_MANAGEMENT=yes -DS2OPC_EVENT_MANAGEMENT=yes -DS2OPC_HAS_AUDITING=yes
+    -DS2OPC_EXTERNAL_HISTORY_RAW_READ_SERVICE=yes -DWITH_PYS2OPC=yes ..
+  - cmake --build . --target doc
+  - mv apidoc/html ../public/
+  stage: doc
+  variables:
+    BUILD_DIR: build
+    DOCKER_DIGEST: sha256:2fdc121cf7c346c7e46e40fd05fc52ecaf759867b5d0b3ffaab809cbf89f0247
+scan_repository:
+  image: docker.aix.systerel.fr/c838/cyberwatch@sha256:003b648857636b08825c6214c7ae86390e7c958a6814f15ee4c170c737347292
+  rules:
+  - if: $SCAN_SBOM != null
+  script:
+  - trivy --insecure repo .
+  stage: test
+scan_sbom:
+  artifacts:
+    expire_in: 1 month
+    paths:
+    - vulnerabilities_table.txt
+    when: on_failure
+  image: docker.aix.systerel.fr/c838/cyberwatch@sha256:003b648857636b08825c6214c7ae86390e7c958a6814f15ee4c170c737347292
+  needs:
+  - job: generate_sbom
+  rules:
+  - changes:
+      compare_to: master
+      paths:
+      - conanfile.py
+  - if: $SCAN_SBOM != null
+  script:
+  - trivy sbom sbom.json --severity HIGH,CRITICAL --exit-code 1 --insecure --output
+    vulnerabilities_table.txt
+  stage: test
+stages:
+- gen
+- hil-build
+- hil-test
+- build
+- test
+- build-others
+- test-others
+- analyses
+- doc
+test-build-from-export:
+  artifacts: null
+  image: docker.aix.systerel.fr/c838/build@sha256:2fdc121cf7c346c7e46e40fd05fc52ecaf759867b5d0b3ffaab809cbf89f0247
+  needs:
+  - build-linux64-ASan
+  rules:
+  - if: $NO_TESTS == null && $WINDOWS_TEST == null && $CROSS_COMPILE == null && $WITH_COVERITY
+      == null && $WITH_COVERAGE == null && $WITH_DOC == null && $S2OPC_PUBSUB_ONLY
+      == null && $S2OPC_CLIENTSERVER_ONLY == null && $ALL_BUILDS == null && $ALL_TESTS
+      == null && $HIL_TESTS == null && $SCAN_SBOM == null && $TEST_NETWORK_FUZZ ==
+      null
+    when: on_success
+  script:
+  - mkdir -p -p ${CI_PROJECT_DIR}/samples/ClientServer/write_from_export/build
+  - cp ${CI_PROJECT_DIR}/samples/ClientServer/CMakeLists.example.txt ${CI_PROJECT_DIR}/samples/ClientServer/write_from_export/CMakeLists.txt
+  - cd ${CI_PROJECT_DIR}/samples/ClientServer/write_from_export/build
+  - s2opc_DIR=${CI_PROJECT_DIR}/build cmake ..
+  - cmake --build .
+  - mkdir -p ${CI_PROJECT_DIR}/samples/ClientServer/build_samples
+  - cd ${CI_PROJECT_DIR}/samples/ClientServer/build_samples
+  - s2opc_DIR=${CI_PROJECT_DIR}/build cmake ..
+  - cmake --build .
+  - mkdir -p ${CI_PROJECT_DIR}/samples/PubSub/build_samples
+  - cd ${CI_PROJECT_DIR}/samples/PubSub/build_samples
+  - s2opc_DIR=${CI_PROJECT_DIR}/build cmake ..
+  - cmake --build .
+  - mkdir -p ${CI_PROJECT_DIR}/samples/PubSub_ClientServer/build_samples
+  - cd ${CI_PROJECT_DIR}/samples/PubSub_ClientServer/build_samples
+  - s2opc_DIR=${CI_PROJECT_DIR}/build cmake ..
+  - cmake --build .
+  - mkdir -p ${CI_PROJECT_DIR}/samples/embedded/build_samples
+  - cd ${CI_PROJECT_DIR}/samples/embedded/build_samples
+  - s2opc_DIR=${CI_PROJECT_DIR}/build cmake ..
+  - cmake --build .
+  stage: test
+  variables: *id006
+test-check:
+  artifacts:
+    expire_in: 1 week
+    name: test-check-results-${CI_COMMIT_REF_SLUG}_${CI_COMMIT_SHA}_job${CI_JOB_ID}
+    paths:
+    - pre-build-check.log
+    - clang_tidy.log
+    - build-analyzer/analyzer-report
+    when: on_failure
+  image: docker.aix.systerel.fr/c838/check@sha256:8be8c50cd484989c987b6c28ded2e03f30e81ec27bb53e41cecde8cdc3bb86c8
+  needs: []
+  rules:
+  - if: $NO_TESTS == null && $WINDOWS_TEST == null && $CROSS_COMPILE == null && $WITH_COVERITY
+      == null && $WITH_COVERAGE == null && $WITH_DOC == null && $ALL_TESTS == null
+      && $ALL_BUILDS == null && $HIL_TESTS == null && $SCAN_SBOM == null && $TEST_NETWORK_FUZZ
+      == null
+    when: on_success
+  script:
+  - ./.check-code.sh
+  - ./scripts/gen-sopc-types.py ./schemas/Opc.Ua.Types.bsd
+  - ./scripts/generate-embedded-base-type-info.py ./schemas/Opc.Ua.NodeSet2.xml src/Common/opcua_types/sopc_embedded_nodeset2.h
+  - ./scripts/gen-sopc-types.py --types_prefix Custom --ns_index 1 ./tests/ClientServer/data/types/customTypes.bsd
+    --files_path ./tests/ClientServer/unit_tests/helpers/
+  - ./scripts/gen-sopc-types.py --types_prefix Custom2 --ns_index 2 ./tests/ClientServer/data/types/level2Types.bsd
+    --files_path ./tests/ClientServer/unit_tests/helpers/ --imported_ns_prefixes Custom
+  - ./.format.sh
+  - ${CI_PROJECT_DIR}/scripts/generate-s2opc-address-space.py ${CI_PROJECT_DIR}/samples/embedded/cli_pubsub_server/xml/s2opc_pubsub_embedded_nodeset.xml
+    ${CI_PROJECT_DIR}/samples/embedded/cli_pubsub_server/src/test_address_space.c
+    --const_addspace
+  - ${CI_PROJECT_DIR}/scripts/generate-s2opc_pubsub-static-config.py ${CI_PROJECT_DIR}/tests/embedded/validation_test/config_pubsub.xml
+    ${CI_PROJECT_DIR}/tests/embedded/validation_test/pubsub_config_static.c
+  - ${CI_PROJECT_DIR}/scripts/generate-s2opc-address-space.py ${CI_PROJECT_DIR}/tests/embedded/validation_test/xml/s2opc_pubsub_embedded_nodeset.xml
+    ${CI_PROJECT_DIR}/tests/embedded/validation_test/embedded_address_space.c --const_addspace
+  - ./.format.sh
+  - ./.verify-no-git-changes.sh
+  - cd samples/ClientServer/data/address_space && ./generate_demo_nodesets.sh && cd
+    -
+  - ./.verify-no-git-changes.sh
+  - cd samples/PubSub_ClientServer/data/address_space && ./generate_demo_nodesets.sh
+    && cd -
+  - ./.format.sh
+  - ./.verify-no-git-changes.sh
+  stage: test
+  variables:
+    DOCKER_DIGEST: sha256:8be8c50cd484989c987b6c28ded2e03f30e81ec27bb53e41cecde8cdc3bb86c8
+test-faulty-packets:
+  artifacts:
+    expire_in: 1 week
+    name: bin-${CI_COMMIT_REF_SLUG}_${CI_COMMIT_SHA}_job${CI_JOB_ID}_test_faulty
+    paths:
+    - build_faulty/bin/**/*.log
+    - /tmp/browse_packets.txt
+    - tests/ClientServer/scripts/*.tap
+    when: on_failure
+  image: docker.aix.systerel.fr/c838/test@sha256:8fbec254f6b8c8467b780d407c6f3c2e87d87899e141b8b2c9013ba30b4f0c8d
+  needs:
+  - build-linux-faulty-packet
+  rules:
+  - if: $ALL_BUILDS != null
+    when: on_success
+  script:
+  - ./tests/ClientServer/scripts/faulty_packet_tester_launcher.sh build_faulty/bin
+  stage: test-others
+test-fuzz:
+  artifacts:
+    expire_in: 30 days
+    name: fuzzing_results_job${CI_JOB_ID}
+    paths:
+    - ./boofuzz-results
+    - ./build_fuzz/bin/toolkit_demo_server_logs
+    when: on_failure
+  dependencies:
+  - build-fuzz
+  image: docker.aix.systerel.fr/c838/opcua-network-fuzzer@sha256:35e40ba847bdfe5f3e7112f465adb2c70d1f0694521f6ba8d018c55f651ef205
+  needs:
+  - build-fuzz
+  rules:
+  - if: $TEST_NETWORK_FUZZ != null
+    when: on_success
+  script:
+  - ./.network_fuzzing.sh build_fuzz/bin
+  stage: test-others
+  tags:
+  - fuzzing
+  timeout: 24 hours
+test-pikeos:
+  artifacts:
+    expire_in: 1 week
+    name: test-pikeos-${CI_COMMIT_REF_SLUG}_${CI_COMMIT_SHA}_job${CI_JOB_ID}
+    paths:
+    - build_pikeos/
+    when: on_failure
+  image: docker.aix.systerel.fr/c838/pikeos:1.2.1@sha256:3d5dcbab75b0c98a8d27d1cfa239bfa43b5b87bc1bbaca2a7c8a5bfe2adc5aeb
+  needs:
+  - build-pikeos
+  rules:
+  - if: $PIKEOS_TEST == null
+    when: never
+  - if: $CROSS_COMPILE != null || $ALL_BUILDS != null || $CI_PIPELINE_SOURCE == 'merge_request_event'
+      || $CI_COMMIT_TAG
+    when: on_success
+  script:
+  - samples/embedded/platform_dep/pikeos/ci/test-embedded-docker.sh
+  stage: test-others
+  tags: *id003
+  variables:
+    TEST_CLIENT_XML_CONFIG: S2OPC_Client_Test_Config.xml
+    TEST_PASSWORD_CACERT: S2OPC
+    TEST_PASSWORD_PRIVATE_KEY: password
+    TEST_PASSWORD_USER: password
+    TEST_PASSWORD_USER_ME: 1234
+    TEST_PASSWORD_USER_SECUADMIN: 1234
+    TEST_SERVER_XML_ADDRESS_SPACE: S2OPC_Test_NodeSet.xml
+    TEST_SERVER_XML_CONFIG: S2OPC_Server_UACTT_Config.xml
+    TEST_USERNAME: user1
+    TEST_USERS_XML_CONFIG: S2OPC_UACTT_Users.xml
+test-uactt:
+  artifacts: *id007
+  image: com.systerel.fr:5000/c838/uactt-linux@sha256:a0ae7d8858cf7da2a5cb02631807a6181f3511cc6c59498a2f2d4d92d95c048f
+  rules:
+  - if: $NO_TESTS != null || $WINDOWS_TEST != null || $CROSS_COMPILE != null || $WITH_COVERITY
+      != null || $WITH_COVERAGE != null || $WITH_DOC != null || $S2OPC_PUBSUB_ONLY
+      != null || $ALL_BUILDS != null || $ALL_TESTS != null || $HIL_TESTS != null
+    when: never
+  - if: $CI_PIPELINE_SOURCE == 'merge_request_event' || $CI_COMMIT_BRANCH == 'master'
+      || $CI_COMMIT_TAG || $RUN_UACTT != null
+    when: on_success
+  script: *id008
+  stage: test
+  variables:
+    LINUX_UACTT: 1
+    TEST_CLIENT_XML_CONFIG: S2OPC_Client_Test_Config.xml
+    TEST_PASSWORD_CACERT: S2OPC
+    TEST_PASSWORD_PRIVATE_KEY: password
+    TEST_PASSWORD_USER: password
+    TEST_PASSWORD_USER_ME: 1234
+    TEST_PASSWORD_USER_SECUADMIN: 1234
+    TEST_SERVER_XML_ADDRESS_SPACE: S2OPC_Test_NodeSet.xml
+    TEST_SERVER_XML_CONFIG: S2OPC_Server_UACTT_Config.xml
+    TEST_USERNAME: user1
+    TEST_USERS_XML_CONFIG: S2OPC_UACTT_Users.xml
+test-uactt-all-tests:
+  artifacts: *id007
+  image: com.systerel.fr:5000/c838/uactt-linux@sha256:a0ae7d8858cf7da2a5cb02631807a6181f3511cc6c59498a2f2d4d92d95c048f
+  rules:
+  - if: $ALL_TESTS != null && $S2OPC_PUBSUB_ONLY == null && $ALL_BUILDS == null
+  script: *id008
+  stage: test
+  variables:
+    LINUX_UACTT: 1
+    TEST_PASSWORD_PRIVATE_KEY: password
+test-unit:
+  artifacts: *id009
+  image: docker.aix.systerel.fr/c838/test@sha256:8fbec254f6b8c8467b780d407c6f3c2e87d87899e141b8b2c9013ba30b4f0c8d
+  rules:
+  - if: $NO_TESTS == null && $WINDOWS_TEST == null && $CROSS_COMPILE == null && $WITH_COVERITY
+      == null && $WITH_DOC == null && $ALL_TESTS == null && $HIL_TESTS == null &&
+      $SCAN_SBOM == null && $ALL_BUILDS == null && $TEST_NETWORK_FUZZ == null
+    when: on_success
+  script: *id010
+  stage: test
+  variables:
+    S2OPC_EVENT_MANAGEMENT: 1
+    S2OPC_EXTERNAL_HISTORY_RAW_READ_SERVICE: 1
+    S2OPC_HAS_AUDITING: 1
+    S2OPC_NODE_MANAGEMENT: 1
+    TEST_CLIENT_XML_CONFIG: S2OPC_Client_Test_Config.xml
+    TEST_PASSWORD_CACERT: S2OPC
+    TEST_PASSWORD_PRIVATE_KEY: password
+    TEST_PASSWORD_USER: password
+    TEST_PASSWORD_USER_ME: 1234
+    TEST_PASSWORD_USER_SECUADMIN: 1234
+    TEST_SERVER_XML_ADDRESS_SPACE: S2OPC_Test_NodeSet.xml
+    TEST_SERVER_XML_CONFIG: S2OPC_Server_UACTT_Config.xml
+    TEST_USERNAME: user1
+    TEST_USERS_XML_CONFIG: S2OPC_UACTT_Users.xml
+test-unit-all-builds:
+  artifacts: *id009
+  image: docker.aix.systerel.fr/c838/test@sha256:8fbec254f6b8c8467b780d407c6f3c2e87d87899e141b8b2c9013ba30b4f0c8d
+  rules:
+  - if: $ALL_BUILDS != null && $ALL_TESTS == null
+    when: on_success
+  script: *id010
+  stage: test
+  variables:
+    PUBSUB_STATIC_CONFIG: 1
+    S2OPC_EVENT_MANAGEMENT: 1
+    TEST_CLIENT_XML_CONFIG: S2OPC_Client_Test_Config.xml
+    TEST_PASSWORD_CACERT: S2OPC
+    TEST_PASSWORD_PRIVATE_KEY: password
+    TEST_PASSWORD_USER: password
+    TEST_PASSWORD_USER_ME: 1234
+    TEST_PASSWORD_USER_SECUADMIN: 1234
+    TEST_SERVER_XML_ADDRESS_SPACE: S2OPC_Test_NodeSet.xml
+    TEST_SERVER_XML_CONFIG: S2OPC_Server_UACTT_Config.xml
+    TEST_USERNAME: user1
+    TEST_USERS_XML_CONFIG: S2OPC_UACTT_Users.xml
+    WITH_CONST_ADDSPACE: 1
+    WITH_STATIC_SECURITY_DATA: 1
+test-unit-all-tests:
+  artifacts: *id009
+  image: docker.aix.systerel.fr/c838/test@sha256:8fbec254f6b8c8467b780d407c6f3c2e87d87899e141b8b2c9013ba30b4f0c8d
+  needs:
+  - build-linux64-pys2opc
+  rules:
+  - if: $ALL_TESTS != null
+    when: on_success
+  script: *id010
+  stage: test
+  variables:
+    TEST_PASSWORD_CACERT: S2OPC
+    TEST_PASSWORD_PRIVATE_KEY: password
+    TEST_PASSWORD_USER: password
+    TEST_PASSWORD_USER_ME: 1234
+    TEST_PASSWORD_USER_SECUADMIN: 1234
+    TEST_USERNAME: user1
+variables:
+  FF_ENABLE_BASH_EXIT_CODE_CHECK: 'true'
+  FF_NETWORK_PER_BUILD: 'true'
+workflow:
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  - if: $CI_PIPELINE_SOURCE == "schedule"
+  - if: $CI_PIPELINE_SOURCE == "web"
+  - if: $CI_COMMIT_TAG
+  - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+    when: never
+  - if: $CI_COMMIT_BRANCH

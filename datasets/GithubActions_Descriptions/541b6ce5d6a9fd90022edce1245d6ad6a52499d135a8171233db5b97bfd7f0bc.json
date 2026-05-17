@@ -1,0 +1,17 @@
+{
+  "sha": "541b6ce5d6a9fd90022edce1245d6ad6a52499d135a8171233db5b97bfd7f0bc",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1813,
+  "description": "Create a GitHub Actions workflow named push CI CD that triggers on push to the master branch. Run two jobs: testing_job and build_and_publish_job. The testing_job runs on an ubuntu-latest environment with a matrix of Python versions 3.9 to 3.13, checks out the code, installs dependencies, lints with flake8, tests with pytest, and uploads coverage to Codecov. The build_and_publish_job depends on testing_job, sets up Python 3.x, installs dependencies, builds the package, and publishes it to PyPI using a token from secrets.",
+  "tags": [
+    "python",
+    "ci",
+    "cd",
+    "pytest",
+    "flake8",
+    "codecov",
+    "pypi",
+    "build"
+  ]
+}

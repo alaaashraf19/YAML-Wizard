@@ -1,0 +1,14 @@
+{
+  "sha": "04306b168bc123b5584d489ba422a51d84fed0097f4937113612ac74d4f5301a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1443,
+  "description": "Create a GitHub Actions workflow named release-please that automates releasing on push to main and on workflow dispatch. Use an ubuntu-latest job to harden the runner, then trigger release-please action with a config file and manifest file. If a release is created, in a dependent job, harden the runner again, checkout code, set up Node.js, and publish to npm with provenance and public access using NPM_TOKEN from secrets.",
+  "tags": [
+    "release-please",
+    "nodejs",
+    "npm",
+    "github-actions",
+    "automation"
+  ]
+}

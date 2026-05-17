@@ -1,0 +1,25 @@
+coverage:
+  script:
+  - python3-coverage report
+  stage: checks
+stages:
+- tests
+- checks
+test:
+  artifacts:
+    paths:
+    - .coverage
+  cache:
+    key: $CI_BUILD_REF_NAME
+    paths:
+    - .coverage
+    untracked: true
+  script:
+  - pip3 install -r requirements.txt
+  - python3-coverage run --source=src -m unittest discover -s tests/ -v
+  stage: tests
+type_checking:
+  allow_failure: true
+  script:
+  - mypy src/*.py --ignore-missing-import
+  stage: checks

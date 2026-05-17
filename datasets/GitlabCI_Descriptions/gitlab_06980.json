@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_06980",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 270,
+  "description": "Create a GitLab CI pipeline that uses the java:latest Docker image. Define two stages: build and execute. Add a build job that runs /usr/lib/jvm/java-8-openjdk-amd64/bin/javac HelloWorld.java, stores the compiled HelloWorld.* files as artifacts, and runs in the build stage. Add an execute job that runs /usr/lib/jvm/java-8-openjdk-amd64/bin/java HelloWorld in the execute stage, with no caches or special triggers.",
+  "tags": [
+    "java",
+    "javac",
+    "java-execute",
+    "gitlab-ci",
+    "artifact"
+  ]
+}

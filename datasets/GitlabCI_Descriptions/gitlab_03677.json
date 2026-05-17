@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_03677",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 309,
+  "description": "Create a GitLab CI pipeline using the mono:latest Docker image. Define a pages job (default stage) that runs only on the master branch, executes apt-get update, apt-get install wget -y, apt-get install unzip -y, downloads docfx v2.22.2 with wget, unzips it, and runs mono docfx/docfx.exe -o public, then publishes the public/ directory as a Pages artifact. No services, caches, or extra variables are needed.",
+  "tags": [
+    "mono",
+    "docfx",
+    "gitlab-pages",
+    "apt",
+    "pages"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_06709",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 546,
+  "description": "Create a GitLab CI pipeline with two stages: test and deploy, using the node:14 Docker image. In the test stage add a test job that caches the node_modules/ directory, runs `yarn install` then `yarn test`. In the deploy stage add a deploy job that runs before_script commands `yarn global add react-scripts`, `yarn global add netlify-cli`, and `yarn install && yarn build`, then executes `netlify deploy --site=\\\"$NETLIFY_SITE\\\" --auth=\\\"$NETLIFY_AUTH_TOKEN\\\" --dir=build/ --prod --message=\\\"$CI_COMMIT_MESSAGE\\\"`. The deploy job should only run on the master branch of the denkmal/denkmal-website-admin project and uses the NETLIFY_SITE variable. No artifacts are defined.",
+  "tags": [
+    "node",
+    "yarn",
+    "netlify",
+    "react-scripts",
+    "gitlab-ci",
+    "deploy"
+  ]
+}

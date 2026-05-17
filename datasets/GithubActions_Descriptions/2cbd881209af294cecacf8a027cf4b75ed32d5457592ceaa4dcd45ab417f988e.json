@@ -1,0 +1,15 @@
+{
+  "sha": "2cbd881209af294cecacf8a027cf4b75ed32d5457592ceaa4dcd45ab417f988e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1548,
+  "description": "Create a GitHub Actions workflow named Mac Matrix on PRs that runs on every pull request. Use a macos-latest job matrix to test different build configurations with varying build types and shared library settings. For each matrix combination, check out the repository, install dependencies with Homebrew and pip, configure Conan, build the project with CMake and Ninja, install the build artifacts, and run tests with CTest.",
+  "tags": [
+    "macos",
+    "conan",
+    "cmake",
+    "ninja",
+    "tests",
+    "matrix"
+  ]
+}

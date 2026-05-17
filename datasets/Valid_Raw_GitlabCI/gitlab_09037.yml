@@ -1,0 +1,50 @@
+.if-security-release-early-merge:
+  if: ($CI_PIPELINE_SOURCE =~ /^(pipeline|web|api)$/) && ($SECURITY_RELEASE_PIPELINE
+    =~ /^(early_merge|true)$/)
+.security-release-early-merge-base:
+  extends: .common-job-setup
+  needs:
+  - security_release_early_merge:start
+  rules:
+  - if: ($CI_PIPELINE_SOURCE =~ /^(pipeline|web|api)$/) && ($SECURITY_RELEASE_PIPELINE
+      =~ /^(early_merge|true)$/)
+  stage: security_release:early_merge
+security_release_early_merge:merge:
+  extends:
+  - .security-release-early-merge-base
+  - .common-ci-tokens
+  script:
+  - bundle exec rake 'security:merge[:merge_default:'true']'
+security_release_early_merge:start:
+  extends: .common-job-setup
+  needs: []
+  rules:
+  - if: ($CI_PIPELINE_SOURCE =~ /^(pipeline|web|api)$/) && ($SECURITY_RELEASE_PIPELINE
+      =~ /^(early_merge|true)$/)
+  script:
+  - bundle exec rake 'security:early_merge:start'
+  stage: security_release:early_merge:start
+  when: manual
+security_release_early_merge:verify_pending_deploy:
+  extends: .common-job-setup
+  needs:
+  - security_release_early_merge:verify_pending_merge
+  rules:
+  - if: ($CI_PIPELINE_SOURCE =~ /^(pipeline|web|api)$/) && ($SECURITY_RELEASE_PIPELINE
+      =~ /^(early_merge|true)$/)
+  script:
+  - bundle exec rake 'security:early_merge:verify_pending_deploy'
+  stage: security_release:early_merge
+  when: manual
+security_release_early_merge:verify_pending_merge:
+  extends: .common-job-setup
+  needs:
+  - security_release_early_merge:merge
+  rules:
+  - if: ($CI_PIPELINE_SOURCE =~ /^(pipeline|web|api)$/) && ($SECURITY_RELEASE_PIPELINE
+      =~ /^(early_merge|true)$/)
+    start_in: 120 minutes
+    when: delayed
+  script:
+  - bundle exec rake 'security:early_merge:verify_pending_merge'
+  stage: security_release:early_merge

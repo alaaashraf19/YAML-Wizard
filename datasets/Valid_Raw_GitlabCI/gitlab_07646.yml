@@ -1,0 +1,13 @@
+before_script:
+- export GRADLE_USER_HOME=$(pwd)/.gradle
+- chmod +x ./gradlew
+build:
+  artifacts:
+    paths:
+    - app/build/outputs/apk/release/app-release-unsigned.apk
+  script:
+  - ./gradlew assembleRelease
+  stage: build
+image: jangrewe/gitlab-ci-android
+stages:
+- build

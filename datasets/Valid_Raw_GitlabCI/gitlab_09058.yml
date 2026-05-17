@@ -1,0 +1,22 @@
+build:delivery-metrics:
+  extends:
+  - .ci-image-ops
+  - .delivery-metrics-ops
+  - .common-ci-tokens
+  script:
+  - ./scripts/delivery-metrics.sh build
+  - ./scripts/delivery-metrics.sh release
+  stage: build
+metrics:
+  extends:
+  - .common-job-setup
+  - .mimir-query-auth
+  rules:
+  - allow_failure: true
+    if: $MIMIR_URL && $PUSHGATEWAY_URL && $PUSH_METRICS
+    when: always
+  script:
+  - bundle exec rake metrics
+  stage: metrics
+  tags:
+  - release

@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_13923",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 797,
+  "description": "Create a GitLab CI pipeline that uses the golang:1.17 Docker image and defines four stages: build, test, deploy, and release. In the build stage add a build job that runs `go build ./...`. In the test stage add a test job that runs `test -z \"$(gofmt -l . | tee /dev/stderr)\"`, then downloads and installs golangci-lint with `curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.43.0`, runs `golangci-lint run -v --timeout=5m`, updates apt with `apt-get update`, installs Chromium via `apt-get install -y --no-install-recommends chromium`, and finally executes `go test -cover -tags e2e ./...`; this job uploads `screenshot.png` as an artifact only on failure. In the deploy stage add a deploy job that allows failure and runs `git checkout master` followed by `git push -f https://:$HEROKU_API_KEY@git.heroku.com/tl-demo.git master` to deploy to Heroku using the HEROKU_API_KEY secret. In the release stage add a release job that runs only when `$CI_COMMIT_TAG` is set and executes `./release.sh`.",
+  "tags": [
+    "golang",
+    "build",
+    "test",
+    "lint",
+    "heroku",
+    "release",
+    "docker-image"
+  ]
+}

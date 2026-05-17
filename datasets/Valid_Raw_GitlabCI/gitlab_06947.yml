@@ -1,0 +1,24 @@
+before_script:
+- pip install -r requirements.txt
+- curl -SsL https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 > /usr/local/bin/jq
+  && chmod 755 /usr/local/bin/jq
+- mkdir public
+image: python:3.4
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - python validate.py schema.json < interview-questions.yml > public/interview-questions.json
+  - python render.py < public/interview-questions.json > public/index.html
+  - '(echo -n ''var interview_questions = {qs: ''; jq -c . public/interview-questions.json
+    ; echo ''};'' ) > public/interview-questions.js'
+  - cp style.css public/
+  stage: deploy
+test:
+  script:
+  - python validate.py schema.json < interview-questions.yml > questions.json
+  - ./filter.sh | python render.py > questions.html
+  stage: test

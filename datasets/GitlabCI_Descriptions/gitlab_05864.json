@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_05864",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 244,
+  "description": "Create a GitLab CI pipeline with two stages: test and release. Add a playbook job in the test stage that runs ansible-playbook deploy.yml --diff --check --skip-tags check-skip and is limited to runners tagged opx. Add a release_staging job in the release stage that runs ansible-playbook deploy.yml --diff and also uses the opx tag. No Docker image, services, caches, artifacts, or special rules are required.",
+  "tags": [
+    "ansible",
+    "playbook",
+    "opx",
+    "test",
+    "release"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_13681",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 777,
+  "description": "Create a GitLab CI pipeline that uses the Docker image registry.gitlab.com/noughmad/serde_any_ci:latest. Define a test stage with a job named test:cargo that runs the commands: rustc --version && cargo --version; cargo test --all; cargo doc; linkchecker target/doc/serde_any/; cargo tarpaulin --out Xml; and uploads coverage via bash <(curl -s https://codecov.io/bash). Also add a job named test:features in the same stage that runs rustc --version && cargo --version followed by cargo build --no-default-features and cargo build --no-default-features --features=json; cargo build --no-default-features --features=yaml; cargo build --no-default-features --features=toml; cargo build --no-default-features --features=ron; cargo build --no-default-features --features=\"json, yaml\"; cargo build --no-default-features --features=\"toml, ron\"; cargo build --no-default-features --features=\"json, yaml, toml, ron\". No caches, artifacts, services, or conditional rules are defined.",
+  "tags": [
+    "rust",
+    "cargo",
+    "test",
+    "coverage",
+    "doc",
+    "linkchecker",
+    "codecov",
+    "tarpaulin",
+    "features"
+  ]
+}

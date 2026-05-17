@@ -1,0 +1,26 @@
+.common:docker-in-docker:
+  services:
+  - docker:${DOCKER_VERSION}-dind
+  tags:
+  - gitlab-org-docker
+  variables:
+    DOCKER_DRIVER: overlay2
+    DOCKER_HOST: tcp://docker:2376/
+    DOCKER_TLS_CERTDIR: /certs
+.common:stage-done:
+  extends:
+  - .rules:merge-requests
+  image: alpine:latest
+  script:
+  - echo "${CI_JOB_STAGE} done!"
+  - exit 0
+  variables:
+    GIT_STRATEGY: none
+default:
+  image: docker:${DOCKER_VERSION}
+  tags:
+  - gitlab-org
+variables:
+  CI_IMAGE: registry.gitlab.com/gitlab-org/ci-cd/docker-machine/ci:go1.24.6-alpine3.22
+  DOCKER_VERSION: 28.2.2
+  USE_CONTAINER: 'true'

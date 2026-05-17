@@ -1,0 +1,25 @@
+cache:
+  paths:
+  - node_modules/
+image: node:10-alpine
+publish to npmjs.com:
+  only:
+  - master
+  retry: 2
+  script:
+  - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+  - if [ $(npm view $(node -p "require('./package.json').name") version) != $(node
+    -p "require('./package.json').version") ]; then npm publish ; fi
+  stage: deploy
+stages:
+- test
+- deploy
+tests:
+  retry: 1
+  script:
+  - node -v
+  - npm -v
+  - npm rebuild
+  - npm install
+  - npm test
+  stage: test

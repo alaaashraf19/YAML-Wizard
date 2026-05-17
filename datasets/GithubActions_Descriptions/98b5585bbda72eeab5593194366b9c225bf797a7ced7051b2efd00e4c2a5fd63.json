@@ -1,0 +1,16 @@
+{
+  "sha": "98b5585bbda72eeab5593194366b9c225bf797a7ced7051b2efd00e4c2a5fd63",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2520,
+  "description": "Create a GitHub Actions workflow named runtime-k210 that triggers on push and pull request events. The workflow should run on an ubuntu-18.04 environment, checking out the code, setting up ninja, downloading and installing K210 toolchains and SDK, setting up Python 3.7, installing Conan, and then configuring and running a CMake build with a custom toolchain. The workflow should also upload a build artifact named nncaseruntime-k210.",
+  "tags": [
+    "k210",
+    "cmake",
+    "conan",
+    "python",
+    "ubuntu",
+    "runtime",
+    "artifact"
+  ]
+}

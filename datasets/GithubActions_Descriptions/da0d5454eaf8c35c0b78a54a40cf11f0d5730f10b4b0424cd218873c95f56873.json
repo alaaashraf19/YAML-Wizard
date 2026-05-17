@@ -1,0 +1,15 @@
+{
+  "sha": "da0d5454eaf8c35c0b78a54a40cf11f0d5730f10b4b0424cd218873c95f56873",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1333,
+  "description": "Create a GitHub Actions workflow named CI Analyze sources that runs on every push to main, dev, and dotnet8 branches. Use an ubuntu-latest job to analyze the code with SonarScanner, checking out the repository with a deep fetch, and then running a dotnet test with code coverage analysis using highbyte/sonarscan-dotnet, providing SONAR_TOKEN and GITHUB_TOKEN from secrets.",
+  "tags": [
+    "dotnet",
+    "sonarqube",
+    "code-coverage",
+    "tests",
+    "ci",
+    "ubuntu"
+  ]
+}

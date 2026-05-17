@@ -1,0 +1,14 @@
+{
+  "sha": "05747a9cec9a1f4a9eb3a95f825f56e0de20e17c1857589cfb0806b3277d799b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 866,
+  "description": "Create a GitHub Actions workflow named linux that runs on push and pull request events to the master branch. Use a matrix job strategy to build on both ubuntu-16.04 and ubuntu-latest, skipping workflow runs if a commit message contains '[ci skip]'. Checkout the repository with submodules, install required packages, configure the build environment with cmake, build the project with make, and run tests with ./bin/polyscope-test.",
+  "tags": [
+    "linux",
+    "cmake",
+    "make",
+    "tests",
+    "ubuntu"
+  ]
+}

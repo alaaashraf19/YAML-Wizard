@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_10450",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 172,
+  "description": "Create a GitLab CI pipeline that uses the node:12 Docker image and caches the node_modules directory. Define a variable NPM_TOKEN with value '00'. Add a single test stage and a ci_tests job in that stage that runs the shell command `sh devel/ci/alptraum install_and ci_tests`. The job has no artifacts, services, or conditional rules and runs on every pipeline execution.",
+  "tags": [
+    "node",
+    "npm",
+    "ci-tests",
+    "cache"
+  ]
+}

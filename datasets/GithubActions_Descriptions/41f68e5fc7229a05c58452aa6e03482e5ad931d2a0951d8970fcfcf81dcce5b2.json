@@ -1,0 +1,14 @@
+{
+  "sha": "41f68e5fc7229a05c58452aa6e03482e5ad931d2a0951d8970fcfcf81dcce5b2",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3224,
+  "description": "Create a GitHub Actions workflow named Dev Build that runs on workflow dispatch, push to specific branches and tags, and pull requests to those branches. The workflow has three jobs: linux, windows, and macos, each running on a ubuntu-18.04 environment. For each job, checkout the code, build and package using make.sh, and upload the resulting artifact. The linux job also builds and pushes a Docker image to Docker Hub.",
+  "tags": [
+    "docker",
+    "multi-os",
+    "make",
+    "github-actions",
+    "ci"
+  ]
+}

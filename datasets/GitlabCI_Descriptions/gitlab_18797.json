@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_18797",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1089,
+  "description": "Create a GitLab CI pipeline that uses the php Docker image globally and runs a before_script that executes `apt-get -qq update`, `apt-get -y -qq install git unzip`, `curl -Lo /usr/local/bin/composer https://getcomposer.org/composer.phar`, `chmod +x /usr/local/bin/composer`, and `composer install --prefer-dist -n -q`. Define a test stage with a `test` job that inherits the global before_script and then runs `./vendor/bin/phpunit`, and a `test:5` job that uses the php:5 image and runs `./vendor/bin/phpunit`. Add a `phpcs` job (allow_failure) in the test stage that overrides the before_script with `echo`, then downloads PHP_CodeSniffer via `curl -OL https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar` and runs `php phpcs.phar --standard=psr2 src/`. In a deploy stage, create an `insight` job that uses the tutum/curl image, runs only on the master branch, and posts a POST request with header `Accept: application/vnd.com.sensiolabs.insight+xml` to the SensioLabs Insight API using the $INSIGHT_USER, $INSIGHT_TOKEN and $INSIGHT_PROJECT variables. Also in the deploy stage add a `packagist` job that uses the tutum/curl image, runs only on tags, and sends a POST request with `content-type:application/json` to the Packagist update endpoint, passing $PACKAGIST_API_TOKEN in the JSON payload.",
+  "tags": [
+    "php",
+    "composer",
+    "phpunit",
+    "phpcs",
+    "curl",
+    "insight",
+    "packagist",
+    "deploy",
+    "test"
+  ]
+}

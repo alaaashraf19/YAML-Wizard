@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_18231",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1111,
+  "description": "Create a GitLab CI pipeline that uses the ruby:3.1.2 Docker image and defines a before_script that runs `apt-get update >/dev/null`, `apt-get install -y locales >/dev/null`, writes \"en_US UTF-8\" to /etc/locale.gen, executes `locale-gen en_US.UTF-8`, exports LANG, LANGUAGE and LC_ALL as en_US.UTF-8, and runs `bundle install`. Define a single stage called deploy and add a pages job in that stage that executes the following shell commands in order: `for remote in `git branch -r | grep -v /HEAD`; do git checkout --track $remote ; done`, `git branch -a`, `git checkout release`, `bundle exec jekyll build -d public`, and a multi‑line loop that iterates over each local branch, prints the branch name, and for branches whose name starts with \"RF\" creates a temporary _config.<branch>.yml with `baseurl` and `branch_name`, displays it, then runs `bundle exec jekyll build -d public/<branch> --config _config.yml,_config.<branch>.yml`. Configure the pages job to publish the `public` directory as an artifact, set job variables `ARTIFACT_COMPRESSION_LEVEL=fastest` and `FF_USE_FASTZIP=true`, and set a global variable `JEKYLL_ENV=production`. The pipeline has no explicit rules, so the job runs on all pushes.",
+  "tags": [
+    "ruby",
+    "jekyll",
+    "gitlab-pages",
+    "bundle",
+    "deploy"
+  ]
+}

@@ -1,0 +1,59 @@
+.build-bleed:
+  script:
+  - docker build --pull -t $CI_REGISTRY_IMAGE:bleed-$CI_BUILD_REF_NAME -f Dockerfile-bleed
+    .
+  - docker push $CI_REGISTRY_IMAGE:bleed-$CI_BUILD_REF_NAME
+  stage: build-images
+  tags:
+  - docker
+.release-bleed:
+  only:
+  - master
+  script:
+  - docker pull $CI_REGISTRY_IMAGE:bleed-$CI_BUILD_REF_NAME
+  - docker tag $CI_REGISTRY_IMAGE:bleed-$CI_BUILD_REF_NAME $CI_REGISTRY_IMAGE:bleed
+  - docker push $CI_REGISTRY_IMAGE:bleed
+  stage: release
+  tags:
+  - docker
+before_script:
+- docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+build-base:
+  script:
+  - docker build --pull -t $CI_REGISTRY_IMAGE:base -f Dockerfile-base .
+  - docker push $CI_REGISTRY_IMAGE:base
+  stage: build-base
+  tags:
+  - docker
+build-release:
+  script:
+  - docker build --pull -t $CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME --build-arg HUGO_VERSION=$HUGO_VERSION
+    -f Dockerfile .
+  - docker push $CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME
+  stage: build-images
+  tags:
+  - docker
+image: docker:latest
+release-image:
+  only:
+  - master
+  script:
+  - docker pull $CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME
+  - docker tag $CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME $CI_REGISTRY_IMAGE:$HUGO_VERSION
+  - docker tag $CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME $CI_REGISTRY_IMAGE:latest
+  - docker tag $CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME $CI_REGISTRY_IMAGE:release
+  - docker push $CI_REGISTRY_IMAGE:latest
+  - docker push $CI_REGISTRY_IMAGE:release
+  stage: release
+  tags:
+  - docker
+services:
+- docker:dind
+stages:
+- build-base
+- build-images
+- test
+- release
+variables:
+  BOOTSTRAP_VERSION: 4.6.0
+  HUGO_VERSION: 0.81.0

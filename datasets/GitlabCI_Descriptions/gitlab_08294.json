@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_08294",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 9976,
+  "description": "Create a GitLab CI pipeline that uses the preflight image ${PREFLIGHT_IMAGE_REGISTRY_PREFIX}/${PREFLIGHT_IMAGE_PREFIX}/preflight:${PREFLIGHT_IMAGE_TAG} for container‑scanning jobs and defines two preparation stages (prepare and prepare:phase-zero). In the prepare stage run a ubi‑stable job that executes `record_stable_image \"${UBI_IMAGE}\"` and `record_stable_image \"${UBI_MICRO_IMAGE}\"`; in the prepare:phase-zero stage run a gitlab‑ubi‑builder job that runs `export CONTAINER_VERSION=$(get_gitlab_ubi_builder_version)` followed by `build_final_image --build-arg UBI_IMAGE=\"${UBI_IMAGE}\"`. For every component (certificates, cfssl‑self‑sign, gitaly, gitlab‑agentk, gitlab‑base, gitlab‑container‑registry, gitlab‑cosign, gitlab‑elasticsearch‑indexer, gitlab‑exiftool, gitlab‑exporter, gitlab‑geo‑logcursor, gitlab‑go, gitlab‑gomplate, gitlab‑graphicsmagick, gitlab‑kas, gitlab‑logger, gitlab‑mailroom, gitlab‑openbao, gitlab‑pages, gitlab‑python, gitlab‑rails‑ce, gitlab‑rails‑ee, gitlab‑ruby, gitlab‑rust, gitlab‑shell, gitlab‑sidekiq‑ce, gitlab‑sidekiq‑ee, gitlab‑toolbox‑ce, gitlab‑toolbox‑ee, gitlab‑webservice‑ce, gitlab‑webservice‑ee, gitlab‑workhorse‑ce, gitlab‑workhorse‑ee, gitlab‑zoekt, kubectl, postgresql) define a job that extends its component template, declares its `needs` list, and sets component‑specific variables (e.g. IMAGE_NAME, UBI_BUILD_IMAGES, ONLY_ASSET_IMAGE, RAILS_EE). For each component also create a Certification job that extends .preflight‑certification, runs `podman login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}` and `podman login -u ${CI_REGISTRY_USER} -p ${COM_REGISTRY_PASSWORD} ${COM_REGISTRY}`, ensures a `reports` directory exists, echoes the scanned image, optionally resolves PROJECT_ID via `yq`, runs `preflight check container --pyxis-api-token=${REDHAT_API_TOKEN} --docker-config /run/containers/0/auth.json --certification-project-id ${PROJECT_ID} --submit ${COM_REGISTRY}/${COM_CNG_REGISTRY_PATH}/${IMAGE_NAME}:${CI_COMMIT_REF_NAME} > reports/${IMAGE_NAME}-cert.yaml`, and validates the result with `test $(jq .passed reports/${IMAGE_NAME}-cert.yaml) == 'true'`. All Certification jobs allow failure, retry once, produce artifacts in `reports/*`, and inherit the .no‑ubi‑artifacts rule that excludes `artifacts/ubi/*`; the .ubi‑skipped jobs are disabled with `when: never`.",
+  "tags": [
+    "preflight",
+    "podman",
+    "container-scanning",
+    "ubi",
+    "gitlab-components",
+    "certification",
+    "prepare",
+    "artifacts"
+  ]
+}

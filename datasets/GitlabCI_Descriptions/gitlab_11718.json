@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_11718",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 336,
+  "description": "Create a GitLab CI pipeline that uses the docker:latest image with a docker:dind service. Define a single stage named build and a job called build that runs in this stage. The job should export IMAGE_TAG by converting $CI_COMMIT_REF_NAME to a safe string with \"export IMAGE_TAG=$(echo -en $CI_COMMIT_REF_NAME | tr -c '[:alnum:]_.-' '-')\", then log in to $CI_REGISTRY using \"docker login -u \\\"gitlab-ci-token\\\" -p \\\"$CI_JOB_TOKEN\\\" $CI_REGISTRY\", build the Docker image with \"docker build --pull -t \\\"$CI_REGISTRY_IMAGE:$IMAGE_TAG\\\" .\" and finally push it with \"docker push \\\"$CI_REGISTRY_IMAGE:$IMAGE_TAG\\\"\". The job runs on every commit without additional rules.",
+  "tags": [
+    "docker",
+    "dind",
+    "build",
+    "registry",
+    "ci"
+  ]
+}

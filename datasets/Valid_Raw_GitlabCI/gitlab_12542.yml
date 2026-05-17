@@ -1,0 +1,75 @@
+.binary:
+  artifacts: &id001
+    paths:
+    - $CI_PROJECT_DIR/signal-*
+  image: golang:latest
+  script: &id002
+  - go get github.com/signal-golang/textsecure
+  - cd pkg/mod/github.com/signal-golang/textsecure*/cmd/textsecure/
+  - go build
+  - mv textsecure ${CI_PROJECT_DIR}/signal-${GOARCH}${GOARM}
+  stage: build
+binary-amd64:
+  artifacts: *id001
+  image: golang:latest
+  script: *id002
+  stage: build
+  variables:
+    GOARCH: amd64
+binary-arm64:
+  artifacts: *id001
+  image: golang:latest
+  script: *id002
+  stage: build
+  variables:
+    GOARCH: arm64
+binary-arm7:
+  artifacts: *id001
+  image: golang:latest
+  script: *id002
+  stage: build
+  variables:
+    GOARCH: arm
+    GOARM: '7'
+docker-multiarch:
+  image: docker:latest
+  only:
+    refs:
+    - master
+  script:
+  - apk --no-cache add bash
+  - bash .gitlab-ci/docker.sh
+  stage: build
+  tags:
+  - multiarch
+  variables:
+    BUILDX_VERSION: 0.6.1
+    DOCKER_DRIVER: overlay2
+    PLATFORMS: linux/amd64,linux/arm64,linux/arm/v7
+pages:
+  artifacts:
+    paths:
+    - ${CI_PROJECT_DIR}/public
+  image: alpine:latest
+  script:
+  - apk --no-cache add git openssl
+  - wget https://github.com/spf13/hugo/releases/download/v${HUGO}/hugo_${HUGO}_Linux-64bit.tar.gz
+  - tar xf hugo_${HUGO}_Linux-64bit.tar.gz && cp hugo /usr/bin/
+  - hugo version
+  - git submodule update --init
+  - cd docs
+  - hugo
+  - mv public ${CI_PROJECT_DIR}
+  variables:
+    HUGO: 0.62.1
+shellcheck:
+  image: ubuntu:focal
+  script:
+  - apt-get -qq update
+  - apt-get -qq -y install shellcheck
+  - shellcheck docker/entrypoint.sh
+  stage: test
+stages:
+- test
+- build
+- pages

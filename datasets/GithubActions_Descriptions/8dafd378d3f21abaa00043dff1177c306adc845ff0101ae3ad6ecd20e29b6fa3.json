@@ -1,0 +1,14 @@
+{
+  "sha": "8dafd378d3f21abaa00043dff1177c306adc845ff0101ae3ad6ecd20e29b6fa3",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1724,
+  "description": "Create a GitHub Actions workflow named Publish to Pypi that allows manual dispatch. The workflow should have three jobs: build_wheels to build wheels on multiple operating systems (ubuntu-20.04, windows-2019, macos-12), build_sdist to build a source distribution on ubuntu-latest, and upload_pypi to upload the artifacts to PyPI using a token from secrets. The upload job should depend on the successful completion of the build jobs.",
+  "tags": [
+    "python",
+    "pypi",
+    "release",
+    "github-actions",
+    "cibuildwheel"
+  ]
+}

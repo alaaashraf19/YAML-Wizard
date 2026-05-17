@@ -1,0 +1,15 @@
+{
+  "sha": "081940661dc7a6382c57ff89ad6e45780d824db5f25622abd2de78f13d21a784",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1426,
+  "description": "Create a Python CI workflow that runs on every push and on pull requests to the master branch. Use a matrix strategy to test on multiple Python versions (3.7-3.11, pypy-3.9) and operating systems (ubuntu-latest, macos-latest, windows-latest), excluding some combinations. For each job, check out the code, set up Python, install dependencies with pip and poetry, run tests with py.test, perform type checks with pytest-mypy, and optionally verify and upload coverage results.",
+  "tags": [
+    "python",
+    "ci",
+    "matrix",
+    "poetry",
+    "tests",
+    "coverage"
+  ]
+}

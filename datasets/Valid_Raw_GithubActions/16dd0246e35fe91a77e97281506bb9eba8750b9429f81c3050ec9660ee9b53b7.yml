@@ -1,0 +1,24 @@
+name: check_teensy41_size
+
+on:
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - 'README.md'
+      - '**/README.md'
+  pull_request_target:
+    branches:
+      - master
+    paths-ignore:
+      - 'README.md'
+      - '**/README.md'
+
+jobs:
+  build:
+    uses: ./.github/workflows/build_template_binary_size.yml
+    with:
+      board: teensy41
+      max_size: 107000
+      max_size_apa102: 88000
+

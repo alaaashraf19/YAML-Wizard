@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_12505",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 3034,
+  "description": "Create a GitLab CI pipeline using the elixir:1.10.2-alpine Docker image, a cache keyed by $CI_COMMIT_REF_SLUG that stores deps, _build and .pip, and a before_script that runs `apk add --update --no-cache build-base cmake curl git rust cargo py-pip`, `pip --cache-dir=.pip install -U pip`, and `pip --cache-dir=.pip install transifex-client`. Define three stages: test, deploy, and extras. In the test stage add a unit-testing job that runs `make manual-deps`, `if [ ! -z \"$TX_TOKEN\" ]; then make dev-l8n-download ; else echo \"Skipping...\"; fi`, `mix compile --force`, `mix ecto.create`, `mix ecto.migrate`, and `mix coveralls --preload-modules`, using a postgres:9.6.6 service with fsync, synchronous_commit and full_page_writes disabled. In the extras stage add a docs job (only on develop) that runs `make manual-deps`, `MIX_ENV=dev mix deps.get`, `MIX_ENV=dev mix docs`, `mv doc public`, `pip --cache-dir=.pip install awscli`, then conditionally syncs public/ to the S3 bucket $DOCS_STAGING_BUCKET and creates a CloudFront invalidation for $DOCS_STAGING_DISTRIBUTION_ID, publishing the public directory as an artifact; also add an l8n-upload job (only on master) that runs `make manual-deps`, `make dev-l8n-extract`, and if $TX_TOKEN is set executes `tx push --source --no-interactive`, publishing public as an artifact. In the deploy stage add a stable-build-and-push job (only on master) and a staging-build-and-push job (only on develop) that both use the docker:stable image with the docker:stable-dind service, run `make dev-l8n-download` (or conditionally), `make build`, `docker login -u $CI_REGISTRY_USER -p \"$CI_REGISTRY_PASSWORD\" $CI_REGISTRY`, then conditionally push the built images with `make push_stable`/`make push_hq` or `make push`, and finally, if $MAIL_KEY is present, deploy to Moodle HQ with `make hq_deploy_stable` or `make hq_deploy_staging`.",
+  "tags": [
+    "elixir",
+    "docker",
+    "postgres",
+    "make",
+    "aws",
+    "transifex",
+    "ci",
+    "docs",
+    "deployment",
+    "moodle"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_17596",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2930,
+  "description": "Create a GitLab CI pipeline with two stages — test and web — using the ubuntu:22.04 Docker image for all test jobs and fedora:36 for the pages job, and run them on runners tagged docker-trial. In the test stage define three jobs (trial-dmd-2.100.0, trial-ldc-1.30.0, and examples) that share a before_script which creates vendor/apt, moves any existing .dub, runs apt‑get update and installs build‑essential libssl-dev libevent-dev libcurl4 gcc wget libc6-dev git libmagickwand-dev rsync xz-utils, cache the vendor/apt and vendor/dub directories with a key of $CI_JOB_NAME, and an after_script that moves /root/.dub back to vendor/dub; each job uploads the .trial directory as an artifact (trial‑ldc also publishes JUnit reports from .trial/xunit/*.xml). trial-dmd-2.100.0 and examples both download and install DMD 2.100.0 (deb package) then execute `dub test`; examples additionally runs `dub test` in examples/spec, examples/unittest and examples/test‑class directories. trial-ldc-1.30.0 downloads LDC 1.30.0 tarball, extracts it, rsyncs it to /usr/local, returns to the project root and runs `dub test`. The web stage adds a pages job that runs only on Git tags, uses fedora:36, updates dnf, installs npm, wget, gcc, glibc-devel, libcurl, libgcc, installs allure‑commandline@1.4.23, installs DMD 2.100.0 (rpm), builds documentation with `dub build -b ddox`, runs npm install and node scripts, moves the generated site into a public folder, copies built .deb and .rpm files, reorganises API docs, generates Allure reports, and publishes the public directory as a GitLab Pages artifact.",
+  "tags": [
+    "dlang",
+    "dub",
+    "ubuntu",
+    "fedora",
+    "pages",
+    "ddox",
+    "allure",
+    "docker-trial",
+    "test"
+  ]
+}

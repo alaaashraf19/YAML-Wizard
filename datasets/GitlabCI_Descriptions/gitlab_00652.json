@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_00652",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 767,
+  "description": "Create a GitLab CI pipeline that uses the docker:latest Docker image with a docker:dind service and defines the variables CANONICAL_NAME as ${REGISTRY}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}, PROJECT_NAME as ${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}, and REGISTRY as registry.gitlab.com. Define two stages, build and rebuild. In the build stage add a docker:build job that runs the exact script: docker login -u gitlab-ci-token -p ${CI_BUILD_TOKEN} ${REGISTRY}; docker build . -t ${CANONICAL_NAME}:latest -t ${CANONICAL_NAME}; docker push ${CANONICAL_NAME}:latest; VERSION=$(docker run ${CANONICAL_NAME} docker-compose -v | grep -o '\\d\\+\\.\\d\\+\\.\\d\\+'); docker tag ${CANONICAL_NAME} ${CANONICAL_NAME}:${VERSION}; docker push ${CANONICAL_NAME}:${VERSION}. In the rebuild stage add a docker:rebuild job that uses the same script, is manual (when: manual), and runs after the rebuild stage.",
+  "tags": [
+    "docker",
+    "dind",
+    "docker-build",
+    "docker-rebuild",
+    "gitlab-ci",
+    "registry"
+  ]
+}

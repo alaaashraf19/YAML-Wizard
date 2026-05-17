@@ -1,0 +1,14 @@
+{
+  "sha": "c6f9abcc2e4b9682bcb70b79caccd85ca71cf9535228e4f92e8fe12b44e09a80",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3029,
+  "description": "Create a GitHub Actions workflow named Build OSW-OS that runs on push and pull requests to master and develop branches, ignoring changes to markdown files and certain directories. The workflow checks if a build should be skipped based on duplicate actions, and if not, it checks out the repository, determines feature flags, default models, and languages, then uses this information to build OSW-OS in a matrix of configurations with Python 3.10 and PlatformIO.",
+  "tags": [
+    "python",
+    "ubuntu",
+    "github-actions",
+    "matrix-build",
+    "osw-os"
+  ]
+}

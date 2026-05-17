@@ -1,0 +1,14 @@
+{
+  "sha": "e4bada89725a41061303d98ca6625b90c41a6fdbb4015691ffc13d9e2fd033a9",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2032,
+  "description": "Create a GitHub Actions workflow named release that triggers on push events with any tag. The workflow should have three jobs: create_release to create a release with a version number derived from the GitHub reference, and two build jobs, win64_msys2 and win32_msvc, running on windows-latest and windows-2019 respectively. Each build job should checkout the code, configure and build the project using cmake, package it with cpack, and then use the softprops/action-gh-release action to upload the package to the release created by the create_release job.",
+  "tags": [
+    "release",
+    "windows",
+    "cmake",
+    "cpack",
+    "github-release"
+  ]
+}

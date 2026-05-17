@@ -1,0 +1,16 @@
+image: nixos/nix:latest
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - '# Build Snowflake.'
+  - (cd tool && nix-build)
+  - '# Build site.'
+  - (cd site && ../tool/result/snowflake build site)
+  - '# Install site.'
+  - mkdir public
+  - cp site/result/* public
+  stage: deploy

@@ -1,0 +1,20 @@
+image: alpine:latest
+include:
+- local: /build/pipeline/Build.gitlab-ci.yml
+- local: /build/pipeline/Release.gitlab-ci.yml
+- local: /build/pipeline/Review.gitlab-ci.yml
+- local: /build/pipeline/Test.gitlab-ci.yml
+stages:
+- analyze
+- build
+- test
+- release
+- deploy
+- healthcheck
+- performance
+- cleanup
+- notification
+variables:
+  BUILD_IMAGE_NAME: $CI_REGISTRY_IMAGE:$CI_BUILD_REF_SLUG
+  DOCKER_DRIVER: overlay2
+  RELEASE_IMAGE_NAME: $CI_REGISTRY_IMAGE:latest

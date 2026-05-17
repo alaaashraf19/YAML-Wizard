@@ -1,0 +1,84 @@
+check-docs:
+  image: rust:latest
+  only:
+    changes:
+    - src/**/*
+    - Cargo.toml
+    - .gitlab-ci.yml
+    refs:
+    - branches
+    - merge_requests
+  script:
+  - cargo rustdoc -- -D warnings
+  stage: test
+check-formatting:
+  image: rust:latest
+  only:
+    changes:
+    - src/**/*
+    - examples/**/*
+    - Cargo.toml
+    - .gitlab-ci.yml
+    refs:
+    - branches
+    - merge_requests
+  script:
+  - cargo fmt -- --check
+  stage: test
+default:
+  before_script:
+  - export PATH=$PATH:/root/.cargo/bin/
+  - rustup component add clippy
+  - rustup component add rustfmt
+  image: rust:1.65.0
+pages:
+  artifacts:
+    paths:
+    - public
+  image: rust:latest
+  only:
+    changes:
+    - src/**/*
+    - Cargo.toml
+    - .gitlab-ci.yml
+    refs:
+    - master
+  script:
+  - cargo doc --release --no-deps
+  - mv ./target/doc ./public
+  - echo '<meta http-equiv="refresh" content="0; url=https://docs.tbot.rs/tbot/">'
+    > ./public/index.html
+  stage: docs
+run-clippy:
+  image: rust:latest
+  only:
+    changes:
+    - src/**/*
+    - examples/**/*
+    - Cargo.toml
+    - .gitlab-ci.yml
+    - clippy.toml
+    refs:
+    - branches
+    - merge_requests
+  script:
+  - cargo clippy --examples --no-default-features --features "tls" -- -D warnings
+  - cargo clippy --examples --no-default-features --features "rustls" -- -D warnings
+  - cargo clippy --examples --features "proxy" -- -D warnings
+  stage: test
+run-tests:
+  only:
+    changes:
+    - src/**/*
+    - examples/**/*
+    - Cargo.toml
+    - .gitlab-ci.yml
+    refs:
+    - branches
+    - merge_requests
+  script:
+  - cargo +1.65.0 test --features="proxy"
+  stage: test
+stages:
+- test
+- docs

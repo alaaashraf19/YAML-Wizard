@@ -1,0 +1,15 @@
+{
+  "sha": "d2f14c5619ba196e48e000e4ee8f657e99807b109da99930261297794076b780",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2919,
+  "description": "Create a GitHub Actions workflow named C++ that runs on workflow dispatch, push to main, and pull requests to main. The workflow has two jobs: clang-format and clang-tidy, both running on ubuntu-24.04. The clang-format job checks out the repository, installs Clang Format 19, and runs it on C++ files. The clang-tidy job checks out the repository, sets up C++, caches, installs clang-tidy 19 and bear, builds the project with bear, and runs clang-tidy on C++ files.",
+  "tags": [
+    "c++",
+    "clang-format",
+    "clang-tidy",
+    "ubuntu",
+    "cpp",
+    "workflow-dispatch"
+  ]
+}

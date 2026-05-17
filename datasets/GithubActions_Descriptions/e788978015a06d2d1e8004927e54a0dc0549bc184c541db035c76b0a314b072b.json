@@ -1,0 +1,16 @@
+{
+  "sha": "e788978015a06d2d1e8004927e54a0dc0549bc184c541db035c76b0a314b072b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3240,
+  "description": "Create a GitHub Actions workflow named Emscripten that runs on push and pull request events. The workflow should have three jobs: build-win10, build-linux, and build-macos, each running on a different OS (Windows 10, Linux, and macOS) with a matrix strategy for Debug and Release configurations. For each job, clone the repository with submodules, validate code format, set up Ninja and Emscripten SDK, configure CMake, and build the project.",
+  "tags": [
+    "emscripten",
+    "cmake",
+    "ninja",
+    "windows",
+    "linux",
+    "macos",
+    "github-actions"
+  ]
+}

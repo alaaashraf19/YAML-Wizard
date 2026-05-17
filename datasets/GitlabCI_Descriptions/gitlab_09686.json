@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_09686",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 393,
+  "description": "Create a GitLab CI pipeline using the registry.gitlab.com/gopherburrow/golang-git Docker image. Define a single job named test that runs in the default test stage. The job exports PACKAGE as the project URL without the https:// prefix, sets PACKAGE_DIR to $GOPATH/src/$PACKAGE, derives PACKAGE_PARENT_DIR as the parent of PACKAGE_DIR, creates that directory, symlinks the repository directory into $PACKAGE_DIR, runs go get ./... inside the package directory, returns to the original directory, and finally executes go test -cover ${PACKAGE}. No caches, artifacts, or conditional rules are defined.",
+  "tags": [
+    "go",
+    "golang",
+    "test",
+    "coverage",
+    "gitlab-ci"
+  ]
+}

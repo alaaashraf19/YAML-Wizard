@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_05128",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 395,
+  "description": "Create a GitLab CI pipeline that includes the official security scanning templates for Dependency Scanning, Secret Detection, SAST, and IaC SAST. Add four jobs named dependency_scanning, secret_detection, sast, and iac-sast, each with an empty before_script and no explicit needs, running in the default test stage provided by the templates. Use the include keyword to import Jobs/Dependency-Scanning.latest.gitlab-ci.yml, Jobs/Secret-Detection.latest.gitlab-ci.yml, Jobs/SAST.latest.gitlab-ci.yml, and Jobs/SAST-IaC.latest.gitlab-ci.yml. No custom image, variables, caches, artifacts, or rules are defined, so the jobs inherit the defaults from the templates.",
+  "tags": [
+    "dependency-scanning",
+    "secret-detection",
+    "sast",
+    "iac-sast",
+    "gitlab-security"
+  ]
+}

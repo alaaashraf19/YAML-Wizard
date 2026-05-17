@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_04081",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 32767,
+  "description": "Create a GitLab CI pipeline that uses the docker:24 Docker image with the docker:24-dind service and defines three stages: test, build, and deploy. In the test stage add a job named \"test\" that runs the functions code_quality, sast, dependency_scanning, container_scanning, and license_management, each invoking a specific Docker run command against the GitLab security‑products images (e.g., \"docker run --env SOURCE_CODE=\\$PWD --volume \\$PWD:/code .../codequality:$SP_VERSION /code\"). In the build stage add a job named \"build\" that calls the build function: it logs in to the GitLab Container Registry, builds the application either from a Dockerfile (using \"docker build\" with proxy build‑args) or via the herokuish image, tags the image as $CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG and pushes it with \"docker push\". In the deploy stage add a job named \"deploy\" that executes the deploy function, which sets Helm values (image repository, tag, replica count, PostgreSQL settings, etc.) and runs \"helm upgrade --install\" followed by \"kubectl rollout status\"; also add a \"scale\" job that runs the scale function to adjust replica counts via Helm. The pipeline caches the Docker layers implicitly, publishes security scan reports as artifacts, and uses rules so that the test and build jobs run on all branches, the deploy job runs only on the main branch, and a release job (if a tag is pushed) would run the same deploy steps for production.",
+  "tags": [
+    "docker",
+    "dind",
+    "helm",
+    "kubernetes",
+    "auto-devops",
+    "security-scanning",
+    "container-registry",
+    "ci-cd"
+  ]
+}

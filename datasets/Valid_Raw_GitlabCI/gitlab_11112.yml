@@ -1,0 +1,26 @@
+before_script:
+- yarn
+build:
+  script: yarn build
+  stage: build
+cache:
+  paths:
+  - node_modules/
+image: node:11
+publish:
+  only:
+  - tags
+  - triggers
+  script:
+  - yarn build
+  - echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}'>.npmrc
+  - npm publish
+  stage: deploy
+stages:
+- test
+- build
+- deploy
+test:
+  coverage: /^All files\s*\|\s*\d+\.*\d*\s*\|\s*(\d+\.*\d*)/
+  script: yarn test
+  stage: test

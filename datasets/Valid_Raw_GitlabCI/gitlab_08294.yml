@@ -1,0 +1,419 @@
+.no-ubi-artifacts:
+  artifacts:
+    exclude:
+    - artifacts/ubi/*
+.preflight-certification:
+  allow_failure: true
+  artifacts:
+    paths:
+    - reports/*
+  before_script:
+  - podman login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
+  - podman login -u ${CI_REGISTRY_USER} -p ${COM_REGISTRY_PASSWORD} ${COM_REGISTRY}
+  - '[[ -d reports ]] || mkdir reports'
+  dependencies: []
+  extends:
+  - .redhat_certification
+  image: ${PREFLIGHT_IMAGE_REGISTRY_PREFIX}/${PREFLIGHT_IMAGE_PREFIX}/preflight:${PREFLIGHT_IMAGE_TAG}
+  needs:
+  - sync-images-gitlab-com
+  retry: 1
+  script:
+  - 'echo "Scanning image: ${COM_REGISTRY}/${COM_CNG_REGISTRY_PATH}/${IMAGE_NAME}:${CI_COMMIT_REF_NAME}"'
+  - '[[ -z "${PROJECT_ID}" ]] && PROJECT_ID=$(yq .${IMAGE_NAME}.pid redhat-projects.yaml)'
+  - preflight check container --pyxis-api-token=${REDHAT_API_TOKEN} --docker-config
+    /run/containers/0/auth.json --certification-project-id ${PROJECT_ID} --submit
+    ${COM_REGISTRY}/${COM_CNG_REGISTRY_PATH}/${IMAGE_NAME}:${CI_COMMIT_REF_NAME} >
+    reports/${IMAGE_NAME}-cert.yaml
+  - test $(jq .passed reports/${IMAGE_NAME}-cert.yaml) == 'true'
+  stage: container-scanning
+.ubi-skipped:
+  rules:
+  - when: never
+  script:
+  - echo "NOOP"; exit 1
+  stage: phase-zero
+certificates:
+  extends: .certificates
+  needs:
+  - gitlab-base
+certificates Certification:
+  extends: .preflight-certification
+  variables:
+    IMAGE_NAME: certificates
+cfssl-self-sign:
+  extends: .cfssl-self-sign
+  needs:
+  - gitlab-ubi-builder
+  variables:
+    UBI_BUILD_IMAGES: cfssl-self-sign
+cfssl-self-sign Certification:
+  extends: .preflight-certification
+  variables:
+    IMAGE_NAME: cfssl-self-sign
+gitaly:
+  extends: .gitaly
+  needs:
+  - gitlab-go
+  - gitlab-logger
+  - gitlab-python
+  - gitlab-base
+  variables:
+    UBI_BUILD_IMAGES: gitlab-logger gitaly gitlab-go gitlab-python
+gitaly Certification:
+  extends: .preflight-certification
+  variables:
+    IMAGE_NAME: gitaly
+gitaly-init-cgroups:
+  extends: .gitaly-init-cgroups
+  needs:
+  - gitaly
+gitlab-agentk:
+  extends: .gitlab-agentk
+  needs:
+  - gitlab-go
+  - ubi-stable
+  variables:
+    UBI_BUILD_IMAGES: gitlab-go gitlab-agentk
+gitlab-agentk Certification:
+  extends: .preflight-certification
+  variables:
+    IMAGE_NAME: gitlab-agentk
+gitlab-base:
+  extends: .gitlab-base
+  needs:
+  - ubi-stable
+  - gitlab-gomplate
+  variables:
+    UBI_BUILD_IMAGES: gitlab-gomplate
+gitlab-container-registry:
+  extends: .gitlab-container-registry
+  needs:
+  - gitlab-base
+  - gitlab-go
+  - gitlab-gomplate
+  variables:
+    UBI_BUILD_IMAGES: gitlab-go gitlab-gomplate gitlab-container-registry
+gitlab-container-registry Certification:
+  extends: .preflight-certification
+  variables:
+    IMAGE_NAME: gitlab-container-registry
+gitlab-cosign:
+  extends: .gitlab-cosign
+  needs:
+  - gitlab-go
+  - ubi-stable
+  variables:
+    ONLY_ASSET_IMAGE: 'true'
+gitlab-elasticsearch-indexer:
+  extends: .gitlab-elasticsearch-indexer
+  needs:
+  - gitlab-ubi-builder
+  - gitlab-go
+  variables:
+    ONLY_ASSET_IMAGE: 'true'
+    UBI_BUILD_IMAGES: gitlab-go
+gitlab-exiftool:
+  extends: .gitlab-exiftool
+  needs:
+  - gitlab-ubi-builder
+  variables:
+    ONLY_ASSET_IMAGE: 'true'
+gitlab-exporter:
+  extends: .gitlab-exporter
+  needs:
+  - gitlab-ruby
+  - postgresql
+  variables:
+    UBI_BUILD_IMAGES: gitlab-exporter gitlab-ruby postgresql
+gitlab-exporter Certification:
+  extends: .preflight-certification
+  variables:
+    IMAGE_NAME: gitlab-exporter
+gitlab-geo-logcursor:
+  extends:
+  - .gitlab-geo-logcursor
+  - .no-ubi-artifacts
+  needs:
+  - gitlab-ruby
+  - gitlab-rails-ee
+gitlab-geo-logcursor Certification:
+  extends: .preflight-certification
+  variables:
+    IMAGE_NAME: gitlab-geo-logcursor
+gitlab-go:
+  extends: .gitlab-go
+  needs:
+  - gitlab-ubi-builder
+  variables:
+    ONLY_ASSET_IMAGE: 'true'
+    SEPARATE_FIPS_IMAGE: 'true'
+gitlab-gomplate:
+  extends: .gitlab-gomplate
+  needs:
+  - gitlab-ubi-builder
+  - gitlab-go
+  variables:
+    ONLY_ASSET_IMAGE: 'true'
+    UBI_BUILD_IMAGES: gitlab-go
+gitlab-graphicsmagick:
+  extends: .gitlab-graphicsmagick
+  needs:
+  - gitlab-ubi-builder
+  variables:
+    ONLY_ASSET_IMAGE: 'true'
+gitlab-kas:
+  extends: .gitlab-kas
+  needs:
+  - gitlab-go
+  - ubi-stable
+  variables:
+    UBI_BUILD_IMAGES: gitlab-go gitlab-kas
+gitlab-kas Certification:
+  extends: .preflight-certification
+  variables:
+    IMAGE_NAME: gitlab-kas
+gitlab-logger:
+  extends: .gitlab-logger
+  needs:
+  - gitlab-ubi-builder
+  - gitlab-go
+  variables:
+    ONLY_ASSET_IMAGE: 'true'
+    UBI_BUILD_IMAGES: gitlab-go
+gitlab-mailroom:
+  extends: .gitlab-mailroom
+  needs:
+  - gitlab-ruby
+  variables:
+    UBI_BUILD_IMAGES: gitlab-mailroom gitlab-ruby
+gitlab-mailroom Certification:
+  extends: .preflight-certification
+  variables:
+    IMAGE_NAME: gitlab-mailroom
+gitlab-openbao:
+  extends: .gitlab-openbao
+  needs:
+  - gitlab-base
+  - gitlab-go
+  variables:
+    UBI_BUILD_IMAGES: gitlab-go gitlab-openbao
+gitlab-openbao Certification:
+  extends: .preflight-certification
+  variables:
+    IMAGE_NAME: gitlab-openbao
+gitlab-pages:
+  extends: .gitlab-pages
+  needs:
+  - gitlab-base
+  - gitlab-go
+  variables:
+    UBI_BUILD_IMAGES: gitlab-go gitlab-pages
+gitlab-pages Certification:
+  extends: .preflight-certification
+  variables:
+    IMAGE_NAME: gitlab-pages
+gitlab-python:
+  extends: .gitlab-python
+  needs:
+  - gitlab-ubi-builder
+  variables:
+    ONLY_ASSET_IMAGE: 'true'
+gitlab-rails-ce:
+  extends: .gitlab-rails-ce
+  needs:
+  - gitlab-ruby
+  - gitlab-rust
+  - postgresql
+  - gitlab-graphicsmagick
+  - gitlab-exiftool
+  - gitlab-go
+  - gitlab-python
+  variables:
+    IMAGE_FLAVOR: ubi
+    UBI_BUILD_IMAGES: gitlab-ruby gitlab-rust gitlab-python postgresql gitlab-graphicsmagick
+      gitlab-exiftool gitlab-rails-ce
+gitlab-rails-ee:
+  extends: .gitlab-rails-ee
+  needs:
+  - gitlab-ruby
+  - gitlab-rust
+  - postgresql
+  - gitlab-elasticsearch-indexer
+  - gitlab-graphicsmagick
+  - gitlab-exiftool
+  - gitlab-go
+  - gitlab-python
+  variables:
+    IMAGE_FLAVOR: ubi
+    RAILS_EE: 'true'
+    UBI_BUILD_IMAGES: gitlab-ruby gitlab-rust gitlab-python postgresql gitlab-elasticsearch-indexer
+      gitlab-graphicsmagick gitlab-exiftool gitlab-rails-ee
+gitlab-ruby:
+  extends: .gitlab-ruby
+  needs:
+  - gitlab-base
+  - gitlab-rust
+  variables:
+    UBI_BUILD_IMAGES: gitlab-ruby gitlab-rust
+gitlab-rust:
+  extends: .gitlab-rust
+  needs:
+  - gitlab-ubi-builder
+  variables:
+    ONLY_ASSET_IMAGE: 'true'
+gitlab-shell:
+  extends: .gitlab-shell
+  needs:
+  - gitlab-base
+  - gitlab-go
+  - gitlab-ruby
+  - gitlab-logger
+  - gitlab-gomplate
+  variables:
+    UBI_BUILD_IMAGES: gitlab-go gitlab-ruby gitlab-shell gitlab-logger
+gitlab-shell Certification:
+  extends: .preflight-certification
+  variables:
+    IMAGE_NAME: gitlab-shell
+gitlab-sidekiq-ce:
+  extends:
+  - .gitlab-sidekiq-ce
+  - .no-ubi-artifacts
+  needs:
+  - gitlab-ruby
+  - gitlab-rails-ce
+  - gitlab-python
+  - gitlab-cosign
+  - gitlab-logger
+  variables:
+    UBI_BUILD_IMAGES: gitlab-sidekiq-ce gitlab-python gitlab-cosign gitlab-logger
+gitlab-sidekiq-ee:
+  extends:
+  - .gitlab-sidekiq-ee
+  - .no-ubi-artifacts
+  needs:
+  - gitlab-ruby
+  - gitlab-rails-ee
+  - gitlab-python
+  - gitlab-cosign
+  - gitlab-logger
+  variables:
+    RAILS_EE: 'true'
+    UBI_BUILD_IMAGES: gitlab-sidekiq-ee gitlab-python gitlab-cosign gitlab-logger
+gitlab-sidekiq-ee Certification:
+  extends: .preflight-certification
+  variables:
+    IMAGE_NAME: gitlab-sidekiq-ee
+gitlab-toolbox-ce:
+  extends:
+  - .gitlab-toolbox-ce
+  - .no-ubi-artifacts
+  needs:
+  - gitlab-rails-ce
+  - gitlab-python
+  - gitaly
+  variables:
+    UBI_BUILD_IMAGES: gitlab-toolbox-ce gitlab-python gitaly
+gitlab-toolbox-ee:
+  extends:
+  - .gitlab-toolbox-ee
+  - .no-ubi-artifacts
+  needs:
+  - gitlab-rails-ee
+  - gitlab-python
+  - gitaly
+  variables:
+    RAILS_EE: 'true'
+    UBI_BUILD_IMAGES: gitlab-toolbox-ee gitlab-python gitaly
+gitlab-toolbox-ee Certification:
+  extends: .preflight-certification
+  variables:
+    IMAGE_NAME: gitlab-toolbox-ee
+gitlab-ubi-builder:
+  extends: .job-base
+  needs:
+  - ubi-stable
+  script:
+  - export CONTAINER_VERSION=$(get_gitlab_ubi_builder_version)
+  - build_final_image --build-arg UBI_IMAGE="${UBI_IMAGE}"
+  stage: prepare:phase-zero
+gitlab-webservice-ce:
+  extends:
+  - .gitlab-webservice-ce
+  - .no-ubi-artifacts
+  needs:
+  - gitlab-rails-ce
+  - gitlab-python
+  - gitlab-logger
+  variables:
+    UBI_BUILD_IMAGES: gitlab-webservice-ce gitlab-python gitlab-logger
+gitlab-webservice-ee:
+  extends:
+  - .gitlab-webservice-ee
+  - .no-ubi-artifacts
+  needs:
+  - gitlab-rails-ee
+  - gitlab-python
+  - gitlab-logger
+  variables:
+    RAILS_EE: 'true'
+    UBI_BUILD_IMAGES: gitlab-webservice-ee gitlab-python gitlab-logger
+gitlab-webservice-ee Certfication:
+  extends: .preflight-certification
+  variables:
+    IMAGE_NAME: gitlab-webservice-ee
+gitlab-workhorse-ce:
+  extends:
+  - .gitlab-workhorse-ce
+  - .no-ubi-artifacts
+  needs:
+  - gitlab-rails-ce
+  - gitlab-go
+  - gitlab-exiftool
+  variables:
+    UBI_BUILD_IMAGES: gitlab-workhorse-ce gitlab-exiftool gitlab-go gitlab-rails-ce
+gitlab-workhorse-ee:
+  extends:
+  - .gitlab-workhorse-ee
+  - .no-ubi-artifacts
+  needs:
+  - gitlab-rails-ee
+  - gitlab-go
+  - gitlab-exiftool
+  variables:
+    RAILS_EE: 'true'
+    UBI_BUILD_IMAGES: gitlab-workhorse-ee gitlab-exiftool gitlab-go gitlab-rails-ee
+gitlab-workhorse-ee Certification:
+  extends: .preflight-certification
+  variables:
+    IMAGE_NAME: gitlab-workhorse-ee
+gitlab-zoekt:
+  extends: .gitlab-zoekt
+  needs:
+  - gitlab-go
+  - ubi-stable
+  variables:
+    UBI_BUILD_IMAGES: gitlab-zoekt gitlab-go
+kubectl:
+  extends: .kubectl
+  needs:
+  - gitlab-ubi-builder
+  variables:
+    UBI_BUILD_IMAGES: kubectl
+kubectl Certification:
+  extends: .preflight-certification
+  variables:
+    IMAGE_NAME: kubectl
+postgresql:
+  extends: .postgresql
+  needs:
+  - gitlab-ubi-builder
+  variables:
+    ONLY_ASSET_IMAGE: 'true'
+ubi-stable:
+  extends: .job-base
+  script:
+  - record_stable_image "${UBI_IMAGE}"
+  - record_stable_image "${UBI_MICRO_IMAGE}"
+  stage: prepare

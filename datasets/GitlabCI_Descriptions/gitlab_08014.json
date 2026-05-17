@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_08014",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 665,
+  "description": "Create a GitLab CI pipeline that uses the maven:3.3.9-jdk-8 Docker image for both build and test jobs, caches the local Maven repository at .m2/repository, and defines MAVEN_CLI_OPTS (batch mode, errors, fail‑at‑end, show‑version, installAtEnd, deployAtEnd) and MAVEN_OPTS (local repo, SLF4J warnings, timestamps, headless) variables. Define two stages: build and test. In the build stage add a validate:jdk8 job that runs the script 'mvn $MAVEN_CLI_OPTS test-compile' using the specified image and cache. In the test stage add a verify:jdk8 job that runs the script 'mvn $MAVEN_CLI_OPTS verify' with the same image and cache. Both jobs inherit the hidden .validate and .verify templates for their scripts.",
+  "tags": [
+    "maven",
+    "jdk8",
+    "java",
+    "cache",
+    "gitlab-ci"
+  ]
+}

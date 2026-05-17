@@ -1,0 +1,31 @@
+name: nightly-opensuse-qt6
+
+on:
+  schedule:
+    - cron: "32 2 * * *"
+  workflow_dispatch:
+
+env:
+  BUILDDIR: /build
+  SRCDIR: ${{ github.workspace }}
+  CMAKE_ARGS: |
+    -DKDE_INSTALL_USE_QT_SYS_PATHS=ON
+    -DCMAKE_BUILD_TYPE=Debug
+    -DWITH_QT6=ON
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: docker://opensuse/tumbleweed
+      options: --tmpfs /build:rw --user 0:0
+    steps:
+      - name: "prepare source"
+        uses: calamares/actions/generic-checkout@v4
+      - name: "install dependencies"
+        shell: bash
+        run: |
+          ./github/workflows/nightly-opensuse-qt6.sh
+      - name: "build"
+        id: build
+        uses: calamares/actions/generic-build@v4

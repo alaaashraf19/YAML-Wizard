@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_05700",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 225,
+  "description": "Create a GitLab CI pipeline that uses the Docker image referenced by $BUILD_IMAGE_NAME and caches the vendor/ directory and composer.lock file. Define a variable DEBUG with the value 'on' and configure the pipeline to run only on branch pipelines. Add a test stage containing a phpunit job that runs in the test stage, executes the script ./build/src/test.sh, and applies the coverage pattern /^\\s*Lines:\\s*\\d+.\\d+\\%/. No artifacts, services, or deployment targets are specified.",
+  "tags": [
+    "phpunit",
+    "php",
+    "composer",
+    "cache",
+    "test"
+  ]
+}

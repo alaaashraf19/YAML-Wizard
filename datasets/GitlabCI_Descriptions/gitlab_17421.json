@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_17421",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 238,
+  "description": "Create a GitLab CI pipeline that uses the Docker image registry.gitlab.com/srwk/docker-middleman-builder:1.0 and caches the vendor directory. Define a pages job that runs the shell command \"middleman build\", publishes the public/ directory as a pages artifact, and is limited to the master branch via an only rule. Define a test job that also runs \"middleman build\" but is excluded from the master branch using an except rule. Both jobs run in the default test stage and inherit the same image and cache settings.",
+  "tags": [
+    "middleman",
+    "gitlab-pages",
+    "docker",
+    "cache",
+    "vendor"
+  ]
+}

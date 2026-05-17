@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_14314",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 951,
+  "description": "Create a GitLab CI pipeline using the ubuntu:20.04 Docker image with DEBIAN_FRONTEND=noninteractive and CXX=/usr/bin/g++. Include a before_script that updates apt, installs curl gnupg2 lsb-release, adds the ROS 2 Foxy apt repository, installs ros-foxy-ros-base, sources its setup, installs g++, git, python3-rosdep2, colcon-common-extensions, ros-foxy-gazebo-ros, ros-foxy-gazebo-plugins, and socat, then clones the robosub_msgs repository. Define a build job in the default stage that runs `colcon build`. Define a lint job in the same stage that changes directory to `robosub` and runs `ament_flake8 --linelength 80` followed by `ament_cpplint`. No caches, artifacts, or conditional rules are required.",
+  "tags": [
+    "ubuntu",
+    "ros2",
+    "colcon",
+    "ament",
+    "flake8",
+    "cpplint"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_18496",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 590,
+  "description": "Create a GitLab CI pipeline using the python:2 Docker image with two stages: test and deploy. In the test stage add a check job that runs the command python checkcsv.py data/women-leaders-openness.csv. In the deploy stage add a pages job that runs mkdir .public, cp -r * .public/, mv .public public, then executes sed 's/\\( csv_path *[:=] *[\\\"'\\''']data\\/women-leaders-openness\\.csv\\)\\([\\\"'\\''']\\)/\\1?h='$(git rev-parse --short HEAD)'\\2/' index.html >public/index.html and sed 's/\\( csv_path *[:=] *[\\\"'\\''']data\\/women-leaders-openness\\.csv\\)\\([\\\"'\\''']\\)/\\1?h='$(git rev-parse --short HEAD)'\\2/' map.html >public/map.html, and publishes the public/ directory as a pages artifact. The pages job should only run on the master branch.",
+  "tags": [
+    "python2",
+    "csv-check",
+    "gitlab-pages",
+    "sed",
+    "master-branch",
+    "deploy"
+  ]
+}

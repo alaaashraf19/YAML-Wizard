@@ -1,0 +1,34 @@
+name: "CodeQL"
+
+on:
+  schedule:
+    - cron: '38 21 * * 4'
+  workflow_dispatch:
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: 'cpp'
+
+      - name: Install dependencies
+        # https://doc.qt.io/qt-6/linux.html
+        run: sudo apt install build-essential libgl1-mesa-dev qt6-base-dev libqt6svg6-dev -y
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v2
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2

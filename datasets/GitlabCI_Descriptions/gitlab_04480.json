@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_04480",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 6398,
+  "description": "Create a GitLab CI pipeline using the Docker image registry.gitlab.com/fdroid/ci-images-client:latest with cache paths .gradle/wrapper and .gradle/caches and a before_script that sets GRADLE_USER_HOME, extracts ANDROID_COMPILE_SDK from app/build.gradle, aliases sdkmanager to use --no_https, and installs the matching Android platform. Define two stages, test and deploy. In the test stage add the connected 22 default armeabi‑v7a, connected 23 default x86, connected 25 default x86, connected 26 google_apis x86, connected 27 google_apis_playstore x86, connected 28 default x86_64, and connected 29 default x86_64 jobs, each running the .connected-template script (gradlew assembleFullDebug, export AVD_SDK/TAG/ARCH, install or download the emulator, create the AVD, start the emulator, wait‑for‑emulator, run ./gradlew connectedFullDebugAndroidTest with retries and capture logcat on failure) and using the .kvm-template after_script to download debug artifacts, store logcat.txt, app/build/reports and APK outputs as artifacts on failure, allow_failure where indicated, and restrict execution to branches@eighthave/fdroidclient (plus branches@fdroid/fdroidclient for job 26) with tags fdroid and kvm. Also include an errorprone job that appends config/errorprone.gradle to build.gradle and runs ./gradlew assembleDebug, and a test_lint_pmd_checkstyle job that runs ./gradlew assemble, patches build.gradle, executes unit tests, lint, pmd, checkstyle, format‑string and translation checks, exiting with a non‑zero code on any failure, uploading the same failure artifacts. Finally, add a deploy_nightly job in the deploy stage that runs only on the master branch, aborts if DEBUG_KEYSTORE is unset, updates the app name to F‑Nightly, rewrites default_repos.xml to point to the nightly repo, computes a new versionCode from the DB version and timestamp, builds the debug APK with ./gradlew assembleDebug, and publishes it with fdroid nightly -v.",
+  "tags": [
+    "android",
+    "gradle",
+    "fdroid",
+    "kvm",
+    "connected-tests",
+    "deploy",
+    "lint"
+  ]
+}

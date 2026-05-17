@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_13674",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 605,
+  "description": "Create a GitLab CI pipeline that uses the ruby:3.4-alpine Docker image for all jobs and defines a cache of the vendor/ruby directory keyed by ${CI_COMMIT_REF_SLUG}. Set a global before_script that runs ruby -v, installs bundler with gem install bundler --no-document, adds coreutils git make gcc libc-dev via apk, configures bundler to use the vendor path, installs dependencies with bundle install -j $(nproc) and runs bundle exec rake install. Define two stages, test and deploy, and a test:3.4 job in the test stage that executes bundle exec rubocop followed by bundle exec rake test. Add a pages job in the deploy stage that runs only on the master branch, executes bundle exec yard doc, creates a public directory, moves the generated documentation into it, and publishes the public/ folder as a pages artifact. Both jobs inherit the before_script and use the same ruby:3.4-alpine image.",
+  "tags": [
+    "ruby",
+    "rubocop",
+    "rake",
+    "yard",
+    "pages",
+    "alpine",
+    "cache",
+    "gitlab-ci"
+  ]
+}

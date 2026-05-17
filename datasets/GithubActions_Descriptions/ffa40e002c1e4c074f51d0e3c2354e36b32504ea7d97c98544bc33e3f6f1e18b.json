@@ -1,0 +1,16 @@
+{
+  "sha": "ffa40e002c1e4c074f51d0e3c2354e36b32504ea7d97c98544bc33e3f6f1e18b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 6494,
+  "description": "Create a GitHub Actions workflow named Fuzzer that runs on push, pull request, and a scheduled cron job. The workflow clones the Godot repository and a module, then checks out a fuzzer backend. It configures the fuzzer, installs dependencies, and uses a cache for SCons. The workflow then sets up Python, installs SCons, compiles the project with specific flags, runs the fuzzer, and uploads the results as artifacts.",
+  "tags": [
+    "godot",
+    "fuzzer",
+    "scons",
+    "python",
+    "ubuntu",
+    "ci",
+    "scheduled"
+  ]
+}

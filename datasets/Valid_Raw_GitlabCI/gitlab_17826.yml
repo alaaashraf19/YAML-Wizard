@@ -1,0 +1,33 @@
+debian-testing:
+  allow_failure: true
+  image: debian:testing
+  script: ./test.sh debserver-testing
+debian7:
+  image: debian:wheezy
+  script: ./test.sh debserver7
+debian8:
+  image: debian:jessie
+  script: ./test.sh debserver8
+debian9:
+  image: debian:stretch
+  script: ./test.sh debserver9
+shellcheck-debserver-testing:
+  image: rdeavila/docker-shellcheck:latest
+  script:
+  - shellcheck --version
+  - shellcheck -x -e SC2154 -e SC2086 -s bash debserver-testing
+shellcheck-debserver7:
+  image: rdeavila/docker-shellcheck:latest
+  script:
+  - shellcheck --version
+  - shellcheck -x -e SC2154 -e SC2086 -s bash debserver7
+shellcheck-debserver8:
+  image: rdeavila/docker-shellcheck:latest
+  script:
+  - shellcheck --version
+  - shellcheck -x -e SC2154 -e SC2086 -s bash debserver8
+shellcheck-debserver9:
+  image: rdeavila/docker-shellcheck:latest
+  script:
+  - shellcheck --version
+  - shellcheck -x -e SC2154 -e SC2086 -s bash debserver9

@@ -1,0 +1,47 @@
+#### Build and tests all pushes, also code coverage
+name: 📦 Publish nuget
+on:
+  release:
+    types:
+      - released
+      - prereleased
+jobs:
+  deploy_nuget:
+    name: 📦 publish nuget packages
+    runs-on: ubuntu-latest
+    environment: CI - release environment
+    steps:
+      - name: 📤 Checkout the repository
+        uses: actions/checkout@main
+        with:
+          fetch-depth: 0
+
+      - name: ⏭️ Get next version
+        id: version
+        run: |
+          latest=$(git describe --tags $(git rev-list --tags --max-count=1))
+          echo Current version:    $latest
+          echo "::set-output name=version::$latest"
+
+      - name: 🥅 Install .Net 6
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: "6.0.x" # SDK Version
+
+      # - name: 🔖 Set version number
+      #   run: |
+      #     sed -i "/        private const string Version = /c\        private const string Version =  \"${{ steps.version.outputs.version }}\";" ${{github.workspace}}/src/DaemonRunner/DaemonRunner/Service/RunnerService.cs
+      - name: 🎁 Pack AppModel
+        run: dotnet pack src/AppModel/NetDaemon.AppModel/NetDaemon.AppModel.csproj --configuration Release -p:PackageVersion=${{ steps.version.outputs.version }}
+      - name: 🎁 Pack HassModel
+        run: dotnet pack src/HassModel/NetDeamon.HassModel/NetDaemon.HassModel.csproj --configuration Release -p:PackageVersion=${{ steps.version.outputs.version }}
+      - name: 🎁 Pack HassModel integration
+        run: dotnet pack src/HassModel/NetDaemon.HassModel.Integration/NetDaemon.HassModel.Integration.csproj --configuration Release -p:PackageVersion=${{ steps.version.outputs.version }}
+      - name: 🎁 Pack HassModel codegen
+        run: dotnet pack src/HassModel/NetDaemon.HassModel.CodeGenerator/NetDaemon.HassModel.CodeGenerator.csproj --configuration Release -p:PackageVersion=${{ steps.version.outputs.version }}
+      - name: 🎁 Pack scheduling extensions
+        run: dotnet pack src/Extensions/NetDaemon.Extensions.Scheduling/NetDaemon.Extensions.Scheduling.csproj --configuration Release -p:PackageVersion=${{ steps.version.outputs.version }}
+      - name: 🎁 Pack logging extensions
+        run: dotnet pack src/Extensions/NetDaemon.Extensions.Logging/NetDaemon.Extensions.Logging.csproj --configuration Release -p:PackageVersion=${{ github.event.inputs.tag }}
+      - name: 📨 Push to nuget
+        run: dotnet nuget push **/*.nupkg --api-key ${{secrets.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json --no-symbols true

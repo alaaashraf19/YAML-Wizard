@@ -1,0 +1,15 @@
+before_script:
+- cp -r /app/dependencies_linux ./dependencies_linux
+- cp /app/settings.txt ./settings.txt
+- pwd
+- ls
+- cmake .
+- make -j8
+image: registry.gitlab.com/quatomic/qengine:4
+test:linux:
+  script:
+  - ./bin/all-testing
+  tags:
+  - linux
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive

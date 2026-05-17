@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_10629",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 175,
+  "description": "Create a GitLab CI pipeline using the openjdk:8-jdk Docker image with a single build stage. Add a global before_script that runs chmod +x ./gradlew. Define a deploy job in the build stage that executes ./gradlew jar --stacktrace, is restricted to the master branch via only, and does not allow failure. No services, caches, or artifacts are defined.",
+  "tags": [
+    "java",
+    "gradle",
+    "openjdk8",
+    "build"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_17279",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 200,
+  "description": "Create a GitLab CI pipeline that uses the node:latest Docker image and caches the node_modules/ directory. Define a deploy stage with a pages job that runs npm install then npm run build:prod then mv dist public, and publishes the public/ directory as a GitLab Pages artifact. The pages job should only run on the master branch.",
+  "tags": [
+    "node",
+    "npm",
+    "pages",
+    "gitlab-pages",
+    "cache",
+    "deploy"
+  ]
+}

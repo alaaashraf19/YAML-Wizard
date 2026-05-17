@@ -1,0 +1,14 @@
+image: registry.gitlab.com/islandoftex/images/texlive:latest
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - make
+  - mkdir -p public
+  - mv nfd-docs.pdf public/ndn-0021-nfd-guide.pdf
+  - echo "<html><p><a href='ndn-0021-nfd-guide.pdf'>See the latest version of the
+    TR</a></p>" > public/index.html
+  stage: build

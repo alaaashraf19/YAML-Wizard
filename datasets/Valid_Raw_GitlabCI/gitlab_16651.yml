@@ -1,0 +1,11 @@
+image: sheerun/node4-npm3-git
+pages:
+  artifacts:
+    paths:
+    - public
+  cache:
+    paths:
+    - node_modules/
+  script:
+  - npm install
+  - npm run build

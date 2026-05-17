@@ -1,0 +1,16 @@
+{
+  "sha": "40ee1cca824fc01d7e70a989a76309ef9467df9ad70210dc568878c0c5495c88",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1677,
+  "description": "Create a GitHub Actions workflow named C/C++ CI macos that triggers on push events. Use a macos-latest job with a matrix strategy for Debug and Release build types. Checkout the code, install required packages with Homebrew, set up depot tools, fetch the WebRTC repository, build it with CMake and make, and package it with CPack. Upload the resulting artifact and create a GitHub release if the workflow is triggered by a tag.",
+  "tags": [
+    "c",
+    "cpp",
+    "macos",
+    "webrtc",
+    "cmake",
+    "ci",
+    "release"
+  ]
+}

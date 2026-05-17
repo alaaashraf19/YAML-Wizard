@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_12013",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2176,
+  "description": "Create a GitLab CI pipeline that caches the build directory, includes the Taranta.gitlab-ci.yml template from MaxIV/gitlab-ci-templates, and defines variables DEPLOY_BACKEND='true', IMAGE_REPOSITORY_VAR='TANGOQL_IMAGE_REPOSITORY', IMAGE_TAG_VAR='TANGOQL_IMAGE_TAG'. Define three stages: linting, test, and deploy. In the linting stage add a linting job using the continuumio/miniconda3 image that runs apt-get update, apt-get -y install build-essential, conda update -n base conda, conda env create --name tangogql --file=environment.yml, source activate tangogql, black --line-length 79 tangogql/ tests/, isort --profile black -w 79 tangogql/ tests/, flake8 --show-source --statistics --ignore=F401,W503 --max-line-length=180 tangogql/ tests/, mkdir -p build/reports, pip3 install pylint-junit, pylint tangogql/ tests/ || true, pylint --output-format=json:build/reports/lint.json tangogql/ tests/ || true, pylint --output-format=pylint_junit.JUnitReporter:build/reports/linting-python.xml tangogql/ tests/ || true, and stores the build/ directory as an artifact; the job is allowed to fail. In the test stage add a test job using the same image that runs apt-get update, apt-get -y install build-essential, conda update -n base conda, conda env create --name tangogql --file=environment.yml, source activate tangogql, mkdir -p build/reports, pip3 install --upgrade pip, pip3 install -r requirements.txt, export TANGO_HOST=localhost:10000, pytest -s tangogql/ tests/ --cov=tangogql --cov-report=term-missing --cov-report=html tests/unit/, rm -rf build/htmlcov, mv htmlcov/ build/, and stores build/ as an artifact. In the deploy stage add a pages job using the same image that runs apt-get update, apt-get -y install build-essential, conda update -n base conda, conda env create --name tangogql python=3.9 --file=environment.yml, conda activate tangogql, git clone https://gitlab.com/MaxIV/python3-taurus-core, cd python3-taurus-core && python setup.py install, pip install sphinx, pip install sphinx_rtd_theme, cd ../docs, make html, mv build/html/ ../public/, and publishes the public/ directory as a pages artifact, running only on the master branch.",
+  "tags": [
+    "conda",
+    "linting",
+    "pytest",
+    "sphinx",
+    "gitlab-pages",
+    "cache",
+    "include-template"
+  ]
+}

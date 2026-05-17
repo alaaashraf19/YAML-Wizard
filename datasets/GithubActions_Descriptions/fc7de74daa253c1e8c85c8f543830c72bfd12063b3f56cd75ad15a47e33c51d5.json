@@ -1,0 +1,14 @@
+{
+  "sha": "fc7de74daa253c1e8c85c8f543830c72bfd12063b3f56cd75ad15a47e33c51d5",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 7217,
+  "description": "Create a GitHub Actions workflow named Build Nuget that compiles and packages native backends for multiple platforms. The workflow should trigger on a workflow dispatch event with an optional input to publish the package. It should have a build job that runs on multiple operating systems, installs dependencies, builds native backends, processes artifacts, and uploads them. A second job, pack_nuget, should download the artifacts, and then package and upload NuGet packages, conditional on the publish input.",
+  "tags": [
+    "nuget",
+    "native",
+    "backends",
+    "multi-os",
+    "github-actions"
+  ]
+}

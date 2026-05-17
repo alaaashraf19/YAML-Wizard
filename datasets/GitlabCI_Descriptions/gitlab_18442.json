@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_18442",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 867,
+  "description": "Create a GitLab CI pipeline using the ubuntu:16.04 Docker image with a before_script that runs `apt-get -qq update && apt-get -qq install -y lua5.3 make` and `lua5.3 -v`. Define a single stage test and three jobs: test_diff runs `echo -e \"\\033[36mBuilding initial compiler\\033[0m\"`, `make LUA=lua5.3 all`, `echo -e \"\\033[36mBuilding compiler using new compiler\\033[0m\"`, `make LUA=lua5.3 all`, `echo -e \"\\033[36mComparing output of compiler\\033[0m\"`, sets `TEMP_DIR=$(mktemp -d)`, runs `make LUA=lua5.3 OUT_DIR=\"$TEMP_DIR\" all`, and asserts `! (diff -rq \"$TEMP_DIR\" bin | grep \"$TEMP_DIR\")`; test_docs runs `echo -e \"\\033[36mBuilding initial compiler\\033[0m\"`, `make LUA=lua5.3 all`, `echo -e \"\\033[36mGenerating docs\\033[0m\"`, `make LUA=lua5.3 docs`; test_run runs `echo -e \"\\033[36mBuilding initial compiler\\033[0m\"`, `make LUA=lua5.3 all`, `echo -e \"\\033[36mRunning tests\\033[0m\"`, `make LUA=lua5.3 -k test`. All jobs are in the test stage with no artifacts, caches, or special rules.",
+  "tags": [
+    "ubuntu-16.04",
+    "lua5.3",
+    "make",
+    "compiler-test",
+    "gitlab-ci"
+  ]
+}

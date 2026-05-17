@@ -1,0 +1,14 @@
+{
+  "sha": "43d323096eb1a9a297fa922d99885842d6a2b818f209c285a6fe9d82f725ec0a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 521,
+  "description": "Create a GitHub Actions workflow named Validate Android that runs on pull requests, pushes to main and release-* branches, and manual workflow dispatches. Use a matrix job that builds on both ubuntu-latest and windows-latest OS in Debug and Release modes. Check out the repository, then use a custom setup action and run a gradlew assemble command with the current mode.",
+  "tags": [
+    "android",
+    "gradle",
+    "matrix",
+    "workflow-dispatch",
+    "ci"
+  ]
+}

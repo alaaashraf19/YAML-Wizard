@@ -1,0 +1,14 @@
+{
+  "sha": "1ab9186e365621f36851c3fa3742139100b838ca6aa5c4ab80af36549111e00f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3208,
+  "description": "Create a GitHub Actions workflow named build that runs on push to any branch and tags v*.* and snapshot-*, and on any pull request. The workflow has two jobs: release and build. The release job runs on ubuntu-latest, checks out the code, sets up Python, determines the release type, creates a draft release if not a dev release, and uploads the release URL as an artifact. The build job runs on multiple platforms (lin, mac, win) with different configurations (static, dynamic), depends on the release job, checks out the code, sets up Python, downloads the release URL artifact, and builds and uploads the package as a release asset or artifact depending on the release type and build configuration.",
+  "tags": [
+    "python",
+    "release",
+    "multi-platform",
+    "github-actions",
+    "build"
+  ]
+}

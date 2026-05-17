@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_12745",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 596,
+  "description": "Create a GitLab CI pipeline using the image registry.gitlab.com/n11t/tombola/pipeline/build:1.0 with a global before_script that runs bash ci/composer_install.sh > /dev/null and caches the vendor/ directory and composer.phar file. Define three stages: static-analysis, tests, and build. In the static-analysis stage add a lint job that executes bash ci/phplint.sh, and a phpcs job that runs vendor/bin/phpcs --standard=PSR2 src. In the tests stage add a phpunit job that runs ./vendor/bin/phpunit --coverage-text --colors=never. In the build stage add a build job that creates a tombola.tgz archive of app src vendor web LICENSE README.md using tar czvf tombola.tgz app src vendor web LICENSE README.md, stores tombola.tgz as an artifact, and runs only on the master branch.",
+  "tags": [
+    "php",
+    "composer",
+    "phplint",
+    "phpcs",
+    "phpunit",
+    "static-analysis",
+    "tests",
+    "build",
+    "cache",
+    "gitlab-ci"
+  ]
+}

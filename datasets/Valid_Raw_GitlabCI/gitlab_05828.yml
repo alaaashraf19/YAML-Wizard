@@ -1,0 +1,10 @@
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - issIcons
+  script:
+  - mkdir .public
+  - cp -r * .public
+  - mv .public public

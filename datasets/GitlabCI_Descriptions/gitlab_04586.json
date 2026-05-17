@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_04586",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 299,
+  "description": "Create a GitLab CI pipeline that uses the python:3.8-alpine Docker image and defines a single stage called release. Add a publish job that runs only for tag pipelines, is manual, and executes the following shell commands in order: apk add --no-cache build-base libffi-dev libressl-dev musl-dev libffi-dev; pip install poetry; poetry config pypi-token.pypi ${POETRY_PYPI_TOKEN_PYPI}; poetry publish --build. The job publishes the built package to PyPI using the provided token.",
+  "tags": [
+    "python",
+    "poetry",
+    "pypi",
+    "alpine",
+    "release"
+  ]
+}

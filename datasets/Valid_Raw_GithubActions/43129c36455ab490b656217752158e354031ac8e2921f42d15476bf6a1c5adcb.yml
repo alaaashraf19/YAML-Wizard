@@ -1,0 +1,102 @@
+name: CI
+on:
+  push:
+    branches: [ '**' ]
+    tags: [ 'v*.*.*' ]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      force-rebuild:
+        type: boolean
+        required: false
+        description: Force rebuild
+permissions: {}
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    outputs:
+      cache-key: ${{ steps.gen-cache-key.outputs.key }}
+    steps:
+      - uses: actions/checkout@v5
+      - id: gen-cache-key
+        run: |
+          if [ "${{ inputs.force-rebuild }}" = true ]; then
+            key=$(date +%s)
+          else
+            key=${{ hashFiles('lib/**', 'src/**', 'build.sh', 'Dockerfile') }}
+          fi
+          echo "key=$key" >> $GITHUB_OUTPUT
+      - uses: actions/cache@v4
+        id: cache
+        with:
+          path: |
+            lib
+            versions.json
+          key: ${{ steps.gen-cache-key.outputs.key }}
+      - name: Build
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          docker build -t wasm-vips .
+          docker run --rm -v ${{ github.workspace }}:/src wasm-vips
+  CI:
+    needs: build
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-24.04
+            nodejs_version: 16
+          - os: macos-13
+            nodejs_version: 16
+          - os: windows-2022
+            nodejs_version: 16
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.nodejs_version }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: |
+            lib
+            versions.json
+          key: ${{ needs.build.outputs.cache-key }}
+          enableCrossOsArchive: true
+          fail-on-cache-miss: true
+      - name: Install dependencies
+        run: npm install
+      - name: Install test dependencies
+        run: npm --prefix test/unit install
+      - name: Test
+        run: npm test
+  release:
+    if: github.ref_type == 'tag'
+    needs:
+      - build
+      - CI
+    permissions:
+      contents: write # for gh release create
+      id-token: write # for npm publish
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+      - uses: actions/cache/restore@v4
+        with:
+          path: |
+            lib
+            versions.json
+          key: ${{ needs.build.outputs.cache-key }}
+          fail-on-cache-miss: true
+      # Ensure npm 11.5.1 or later for trusted publishing
+      - run: npm install -g npm@latest
+      - name: Publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          npm publish
+          gh release create ${{ github.ref_name }}

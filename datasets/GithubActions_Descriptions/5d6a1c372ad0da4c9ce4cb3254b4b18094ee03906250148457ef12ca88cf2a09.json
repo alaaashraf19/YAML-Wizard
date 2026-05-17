@@ -1,0 +1,14 @@
+{
+  "sha": "5d6a1c372ad0da4c9ce4cb3254b4b18094ee03906250148457ef12ca88cf2a09",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2943,
+  "description": "Create a GitHub Actions workflow named release that runs on push to the release branch. Use a windows-latest job to set Git to use LF, check out the code, set up .NET Core SDK 8.0.x, restore NuGet packages, and then build and publish the application. The workflow should dynamically set build and release versions, zip the release, and upload it with a generated tag and release notes.",
+  "tags": [
+    "dotnet",
+    "release",
+    "windows",
+    "zip",
+    "github-release"
+  ]
+}

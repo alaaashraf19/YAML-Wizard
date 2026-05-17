@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_16254",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 806,
+  "description": "Create a GitLab CI pipeline using the python:3.6-alpine3.6 Docker image and define two stages: test and deploy, with PYPI_USER and PYPI_PASSWORD variables. In the test stage add a python36 job that runs pip --no-cache-dir install tox, export SETUPTOOLS_SCM_PRETEND_VERSION=0.0.1, set TOX_ENV=$(tox -l | grep \"${TOX_PY}-\" | tr '\\n' ','), and execute tox -e $TOX_ENV. Also in the test stage add a flake8 job that runs pip --no-cache-dir install flake8 and then flake8. In the deploy stage add a deploy_pypi job that runs only on tags matching the regex /^v\\d+\\.\\d+\\.\\d+([abc]\\d*)?$/ and not on branches, installs git with apk --no-cache add git, writes a ~/.pypirc file containing the PYPI_USER and PYPI_PASSWORD credentials, and uploads the package using python setup.py check sdist bdist_wheel upload.",
+  "tags": [
+    "python-3.6-alpine",
+    "tox",
+    "flake8",
+    "pypi-deploy",
+    "gitlab-ci",
+    "docker-image"
+  ]
+}

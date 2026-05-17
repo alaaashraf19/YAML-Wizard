@@ -1,0 +1,14 @@
+{
+  "sha": "36ca13e9215a873060fbbf0bcc0846db0b5ed14345b5ce646cc1b6feaf149615",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1422,
+  "description": "Create a GitHub Actions workflow named Deploy to Pypi that runs on workflow dispatch with a required input for the PyPI repository and on push of tags. Use an ubuntu-latest job that checks out the code, sets up Python 3.8, installs dependencies and the package, builds a binary wheel and source tarball, and publishes the package to either TestPyPI or PyPI based on the workflow dispatch input.",
+  "tags": [
+    "python",
+    "pypi",
+    "release",
+    "twine",
+    "github-actions"
+  ]
+}

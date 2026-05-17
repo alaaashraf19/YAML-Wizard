@@ -1,0 +1,99 @@
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: py-build
+
+on:
+  push:
+    paths:
+      - 'plugin/PySrc/**'
+      - 'test/PySrc/**'
+      - '**/*.py'
+      - '*.ini'
+      - '.github/**'
+  pull_request:
+    paths:
+      - 'plugin/PySrc/**'
+      - 'test/PySrc/**'
+      - '**/*.py'
+      - '*.ini'
+      - '.github/**'
+
+jobs:
+  py-build:
+
+    if: >
+      github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name !=
+      github.event.pull_request.base.repo.full_name
+    strategy:
+      fail-fast: true
+      matrix:
+        platform: [ubuntu-20.04, macos-latest, windows-latest]
+        # Keep synchronized with setup.py and tox.ini
+        python-version: ["3.6", "3.7", "3.8", "3.9", "3.10", "3.11"]
+    runs-on: ${{ matrix.platform }}
+    env:
+      PYTHON: ${{ matrix.python-version }}
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install tox coverage
+#      - name: Set up Emacs
+#        uses: purcell/setup-emacs@v3.0
+#        with:
+#          version: 24.4
+      - name: Test with tox and pytest
+        run: python -m tox -e py
+      - name: Test with tox and pytest, plus Pillow
+        run: python -m tox -e py-pil -- --cov-append
+      - name: Test with tox and pytest, plus matplotlib
+        run: python -m tox -e py-mpl -- --cov-append
+#      - name: Test with Emacs
+#        id: emacs-tests
+#        continue-on-error: true
+#        run: |
+#          emacs -Q --batch -L emacs-live-py-mode --eval '(setq byte-compile-error-on-warn t)' -f batch-byte-compile emacs-live-py-mode/*.el
+#          # Fake a tty with the script command.
+#          script -e -temacs-timing -c "emacs -Q -nw -L emacs-live-py-mode -L plugin/PySrc -l live-py-mode.el -l live-py-test.el -f ert-run-tests-batch-and-exit"
+#      - name: Display Emacs Test Results
+#        if: ${{ steps.emacs-tests.outcome == 'failure' }}
+#        run: |
+#          scriptreplay emacs-timing
+#          exit 1
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          env_vars: PYTHON
+
+  build-python2:
+    runs-on: ubuntu-latest
+    env:
+      PYTHON: "2.7"
+    if: >
+      github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name !=
+      github.event.pull_request.base.repo.full_name
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 2.7
+      - name: Install coverage.py
+        run: |
+          python -m pip install coverage==5.5
+      - name: Test Python2 warning
+        run: |
+          python -m coverage run --source=plugin/PySrc test/PySrc/tests/validate_legacy_python.py
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          env_vars: PYTHON

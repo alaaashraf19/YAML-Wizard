@@ -1,0 +1,15 @@
+{
+  "sha": "08facf22691d7570755a87c7d6dbe1f199341e2942e19478b87722a7af54d6e6",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1878,
+  "description": "Create a GitHub Actions workflow named Release that triggers on push events with tags matching v*. The workflow should run on an ubuntu-latest environment, checking out the code, setting up Poetry and Docker, logging in to DockerHub, GitHub Container Registry, and Aliyun Container Registry. It should then verify the version, generate tags, and build and publish Docker images to these registries with the correct tags and labels.",
+  "tags": [
+    "docker",
+    "release",
+    "poetry",
+    "github",
+    "aliyun",
+    "container-registry"
+  ]
+}

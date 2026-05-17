@@ -1,0 +1,14 @@
+{
+  "sha": "0969d0cc0b2212495e6e33a1e81702028a00187909042e2ffa3c900d6dda50ca",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2724,
+  "description": "Create a GitHub Actions workflow that triggers on push to main and release branches, excluding certain CI configuration files. Run a matrix job on ubuntu-latest for multiple Linux environments (Ubuntu 20.04 and Debian 11) with different architectures (armhf, arm64, ppc64el), checking out the code, installing qemu-user-static, pulling a Docker image, setting up environment variables, and running a series of scripts to install, build, and test a project using a Docker container.",
+  "tags": [
+    "linux",
+    "multiarch",
+    "docker",
+    "qemu",
+    "github-actions"
+  ]
+}

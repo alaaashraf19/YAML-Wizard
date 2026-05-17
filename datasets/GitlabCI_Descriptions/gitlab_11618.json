@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_11618",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1506,
+  "description": "Create a GitLab CI pipeline using the lkdevelopment/ionic-docker:latest Docker image, with a cache keyed by $CI_PROJECT_ID for node_modules/ and .yarn, and a before_script that updates apt, installs locales, configures en_US.UTF-8, sets the yarn cache folder and runs yarn. Define stages build, test, e2e_de, e2e_en, and deploy. In the build stage add a build:web job that runs 'npm run build' and stores the www/ directory as an artifact. In the test stage add a .est:karma job that runs 'npm run test'. In the e2e_de and e2e_en stages add test:e2e:de and test:e2e:en jobs that depend on build:web, echo a start message, and execute 'TEST_API_KEY=$TEST_API_KEY SCREENSHOTS=false LANG=de node test-config/protractor.server.js' (or LANG=en for the en job). In the deploy stage add a deploy:web job that only runs on the release branch and runs 'curl $FORGE_DATA', a .build:android job that runs 'ionic cordova platform rm android', 'ionic cordova platform add android', 'npm run android:release', lists the generated APKs, and publishes platforms/android/build/outputs/apk/ as an artifact, and a .build:ios job that installs cocoapods, runs 'pods setup', removes and adds the ios platform via ionic cordova, and runs 'npm run ios:release'.",
+  "tags": [
+    "ionic",
+    "cordova",
+    "android",
+    "ios",
+    "karma",
+    "e2e",
+    "docker",
+    "node",
+    "yarn",
+    "cache"
+  ]
+}

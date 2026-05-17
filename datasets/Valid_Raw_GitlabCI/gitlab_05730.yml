@@ -1,0 +1,105 @@
+build_visplayrenderer_linux:
+  image: registry.gitlab.com/coloradoschoolofmines/visplay/build:$containerVersion
+  script:
+  - cd /builds/ColoradoSchoolOfMines/visplay/visplayrenderer/
+  - meson build
+  - cd build
+  - ninja
+build_visplayrenderer_windows:
+  artifacts:
+    paths:
+    - cicd/azure_forwarding/artifacts/*
+  image: python:alpine
+  only:
+  - master
+  script:
+  - mkdir ./cicd/azure_forwarding/artifacts
+  - pip3 install azure-devops
+  - python3 ./cicd/azure_forwarding/azure_build.py
+  variables:
+    AZURE_ORG: robozman
+    AZURE_PIPELINE_ID: 2
+    AZURE_PROJECT_ID: aed191ba-6ec9-4bfa-a964-a579ed0562a1
+docker:image:
+  image: docker:1.13
+  only:
+    variables:
+    - $rebuildDocker == "True"
+  script:
+  - docker version
+  - docker build -t $CI_REGISTRY_IMAGE/build:latest ./cicd/testImage
+  - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+  - docker push $CI_REGISTRY_IMAGE/build
+  services:
+  - docker:dind
+  stage: build-container
+lint_js:
+  before_script:
+  - cd visplay/frontend
+  - npm install
+  image: node
+  script:
+  - npm run lint
+lint_python:
+  allow_failure: true
+  before_script:
+  - apk add gcc musl-dev
+  - pip install -r requirements.txt
+  image: python:3.7-alpine
+  script:
+  - flake8 --version
+  - flake8
+pages:
+  artifacts:
+    paths:
+    - public
+  before_script:
+  - ./cicd/pages/before_script.sh
+  image: registry.gitlab.com/coloradoschoolofmines/visplay/build:$containerVersion
+  only:
+  - master
+  script:
+  - ./cicd/pages/script.sh
+  stage: deploy
+pushdocker:image:
+  image: docker:1.13
+  only:
+    variables:
+    - $rebuildDocker == "True"
+  script:
+  - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+  - docker pull $CI_REGISTRY_IMAGE/build:latest
+  - docker tag $CI_REGISTRY_IMAGE/build:latest $CI_REGISTRY_IMAGE/build:stable
+  - docker push $CI_REGISTRY_IMAGE/build:stable
+  services:
+  - docker:dind
+  stage: update-container
+serverdocker:image:
+  image: docker:1.13
+  only:
+  - master
+  - Server-Docker-CICD
+  script:
+  - docker version
+  - docker build -t $CI_REGISTRY_IMAGE/server:stable ./cicd/serverImage
+  - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+  - docker push $CI_REGISTRY_IMAGE/server:stable
+  services:
+  - docker:dind
+  stage: deploy
+stages:
+- build-container
+- build
+- test
+- deploy
+- update-container
+test_python:
+  before_script:
+  - apk add mpv make gcc musl-dev
+  - pip3 install -r requirements.txt
+  - pip install .
+  image: python:3.6-alpine
+  script:
+  - make doctest
+variables:
+  containerVersion: stable

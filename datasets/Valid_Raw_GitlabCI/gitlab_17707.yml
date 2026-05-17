@@ -1,0 +1,9 @@
+pages:
+  artifacts:
+    paths:
+    - public
+  script:
+  - mkdir -p public/
+  - mv fdroid public/
+  variables:
+    GIT_DEPTH: 1

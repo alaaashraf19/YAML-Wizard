@@ -1,0 +1,17 @@
+build-examples:
+  script:
+  - cargo build --examples
+  stage: build
+build-lib:
+  script:
+  - cargo build --lib --features strict
+  stage: build
+image: rust:1.31
+stages:
+- build
+- test
+test:
+  script:
+  - cargo test
+  - cargo test --no-default-features --lib --tests
+  stage: test

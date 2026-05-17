@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_11103",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 269,
+  "description": "Create a GitLab CI pipeline that uses the registry.gitlab.com/keithwberry/connectiq:latest Docker image. Define two stages named build and release. In the build stage add a build job that runs the shell command \"make test\" and publishes any PNG files under test_results/ as artifacts. In the release stage add a release job that runs the shell command \"make package\" and publishes the generated .iq files under bin/ as artifacts.",
+  "tags": [
+    "connectiq",
+    "make",
+    "build",
+    "release",
+    "artifacts"
+  ]
+}

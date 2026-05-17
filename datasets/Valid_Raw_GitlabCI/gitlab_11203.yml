@@ -1,0 +1,34 @@
+.node:
+  before_script: &id001
+  - npm install
+  cache: &id002
+    key: $CI_COMMIT_REF_NAME
+    paths:
+    - node_modules/
+  image: node:7
+deploy_develop:
+  before_script: *id001
+  cache: *id002
+  environment:
+    name: develop
+  image: node:7
+  only:
+  - develop
+  script:
+  - npm run build -- -e $CI_ENVIRONMENT_SLUG
+  - npm run deploy
+  stage: deploy
+deploy_production:
+  before_script: *id001
+  cache: *id002
+  environment:
+    name: production
+  image: node:7
+  only:
+  - master
+  script:
+  - npm run build -- -e $CI_ENVIRONMENT_SLUG
+  - npm run deploy
+  stage: deploy
+stages:
+- deploy

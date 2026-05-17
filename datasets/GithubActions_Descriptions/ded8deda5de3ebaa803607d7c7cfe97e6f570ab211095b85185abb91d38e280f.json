@@ -1,0 +1,15 @@
+{
+  "sha": "ded8deda5de3ebaa803607d7c7cfe97e6f570ab211095b85185abb91d38e280f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2547,
+  "description": "Create a GitHub Actions workflow named Build - Dev that runs on workflow dispatch, push to master branch (excluding tags starting with v), and pull requests to master. The workflow should have concurrency control, cancelling in-progress runs for non-master refs. It sets various environment variables and runs three jobs: linux-x64, win-x64, and osx-x64, each on an ubuntu-latest runner. Each job checks out the code, populates the environment, builds and packages, and uploads artifacts to GitHub. Additionally, the linux-x64 job logs in to Docker Hub and pushes the Docker image.",
+  "tags": [
+    "docker",
+    "multi-os",
+    "github-actions",
+    "make",
+    "ci",
+    "cd"
+  ]
+}

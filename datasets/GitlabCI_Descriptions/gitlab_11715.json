@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_11715",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 181,
+  "description": "Create a GitLab CI pipeline that uses the blang/latex:ctanfull Docker image and defines a single stage called build. Add a job named build that runs in the build stage and executes the shell commands: xelatex main, bibtex main, xelatex main, and xelatex main. Configure the job to collect all generated PDF files (\"*.pdf\") as artifacts. No services, caches, or conditional rules are required.",
+  "tags": [
+    "latex",
+    "xelatex",
+    "bibtex",
+    "pdf",
+    "gitlab-ci"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "d951a86cc33ae330c3506c8eaff0a35551a600a7ff59d7f62b7fce250c72efdb",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4957,
+  "description": "Create a GitHub Actions workflow named Ubuntu Release that runs on push and pull request events. The workflow should have a matrix job that builds and tests on ubuntu-20.04 with two Elasticsearch services (versions 8.11.1 and 7.17.15) running in the background. Install dependencies, checkout code with submodules, configure the build with CMake, load and use a ccache cache, build the project, run unit tests, and perform additional tests for program arguments and node functionality.",
+  "tags": [
+    "ubuntu",
+    "release",
+    "elasticsearch",
+    "cmake",
+    "ccache",
+    "tests"
+  ]
+}

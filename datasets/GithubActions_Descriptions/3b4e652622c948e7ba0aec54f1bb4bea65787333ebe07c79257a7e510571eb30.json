@@ -1,0 +1,18 @@
+{
+  "sha": "3b4e652622c948e7ba0aec54f1bb4bea65787333ebe07c79257a7e510571eb30",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3665,
+  "description": "Create a GitHub Actions workflow named Linux build that triggers on push and pull request events. The workflow consists of two jobs: prechecks and build. The prechecks job runs on ubuntu-24.04, clones DiligentCore and DiligentTools repositories, validates code format, and runs codespell. The build job depends on prechecks, runs on ubuntu-24.04 with a matrix strategy for GCC and Clang compilers, builds and tests DiligentTools with various configurations, and uploads artifacts.",
+  "tags": [
+    "linux",
+    "ubuntu",
+    "gcc",
+    "clang",
+    "cmake",
+    "build",
+    "test",
+    "gpu-test",
+    "artifact-upload"
+  ]
+}

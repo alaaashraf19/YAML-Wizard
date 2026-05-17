@@ -1,0 +1,112 @@
+.build-template:
+  extends:
+  - .image_template__docker
+  script:
+  - . ./scripts/version.sh
+  - ./scripts/docker_wait_for_daemon.sh
+  - ./scripts/docker_check_version.sh ${DOCKER_VERSION}
+  - ./scripts/create_docker_images.sh "${CI_REGISTRY_IMAGE}" "${DOCKER_IMAGE_TAG_SUFFIX}"
+    "${DOCKER_IMAGE_TAG_CACHE_SUFFIX}" "${DOCKER_IMAGE_TAG_EXTRA}" "${TARGETARCH}"
+  - ./scripts/check_versions.sh "${CI_REGISTRY_IMAGE}" "${DOCKER_IMAGE_TAG_SUFFIX}"
+    "${TARGETARCH}"
+  - ./scripts/docker_push_all.sh "${CI_REGISTRY_IMAGE}" "${DOCKER_IMAGE_TAG_SUFFIX}"
+    "${DOCKER_IMAGE_TAG_EXTRA}" "${TARGETARCH}"
+  services:
+  - docker:${DOCKER_VERSION}-dind
+  stage: build
+  variables:
+    DOCKER_VERSION: 24.0.7
+    TARGETARCH: ''
+.image_template__docker:
+  before_script:
+  - ./scripts/docker_registry_auth.sh
+  image: ${CI_REGISTRY}/tezos/docker-images/ci-docker:v1.9.0
+.rules__not_tezos_namespace:
+  rules:
+  - if: $CI_PROJECT_NAMESPACE != "tezos"
+.rules__protected:
+  rules:
+  - if: $AWS_ACCESS_KEY_ID && $AWS_SECRET_ACCESS_KEY && $AWS_ECR
+.rules__tezos_namespace:
+  rules:
+  - if: $CI_PROJECT_NAMESPACE == "tezos"
+build:
+  extends:
+  - .build-template
+  - .rules__not_tezos_namespace
+  variables:
+    DOCKER_IMAGE_TAG_CACHE_SUFFIX: ''
+    DOCKER_IMAGE_TAG_SUFFIX: ''
+build-runtime-amd64:
+  extends:
+  - .build-template
+  - .rules__tezos_namespace
+  variables:
+    TARGETARCH: amd64
+build-runtime-arm64:
+  extends:
+  - .build-template
+  - .rules__tezos_namespace
+  tags:
+  - gcp_arm64
+  variables:
+    TARGETARCH: arm64
+default:
+  interruptible: true
+  tags:
+  - gcp
+hadolint:
+  image: hadolint/hadolint:v2.10.0-debian
+  script:
+  - hadolint *Dockerfile
+  stage: lint
+merge-manifests-runtime:
+  extends:
+  - .image_template__docker
+  - .rules__tezos_namespace
+  script:
+  - ./scripts/docker_merge_manifests.sh "${CI_REGISTRY_IMAGE}" "${DOCKER_IMAGE_TAG_SUFFIX}"
+  stage: publish
+mirror:
+  extends:
+  - .image_template__docker
+  - .rules__protected
+  script:
+  - ./scripts/mirror.sh "${CI_REGISTRY_IMAGE}" "${DOCKER_IMAGE_TAG_SUFFIX}" "${AWS_ECR_IMAGE}"
+  - ./scripts/mirror.sh "${CI_REGISTRY_IMAGE}" "${DOCKER_IMAGE_TAG_SUFFIX}" "${GCP_ARTIFACT_REGISTRY_IMAGE}"
+  stage: mirror
+  variables:
+    AWS_ECR_IMAGE: ${AWS_ECR}/${CI_PROJECT_PATH}
+    GCP_ARTIFACT_REGISTRY_IMAGE: ${GCP_REGISTRY}/${CI_PROJECT_PATH}
+shellcheck:
+  image: koalaman/shellcheck-alpine:v0.9.0
+  script:
+  - shellcheck -x scripts/*.sh
+  stage: lint
+shfmt:
+  image: mvdan/shfmt:v3.6.0-alpine
+  script:
+  - shfmt -i 2 -sr -d scripts/*.sh
+  stage: lint
+stages:
+- lint
+- build
+- publish
+- mirror
+variables:
+  DOCKER_IMAGE_TAG_CACHE_SUFFIX: ${CI_MERGE_REQUEST_DIFF_BASE_SHA}
+  DOCKER_IMAGE_TAG_EXTRA: ${CI_COMMIT_REF_SLUG}
+  DOCKER_IMAGE_TAG_SUFFIX: ${CI_COMMIT_SHA}
+workflow:
+  name: '[$PIPELINE_TYPE] $CI_COMMIT_TITLE'
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    variables:
+      PIPELINE_TYPE: mr
+  - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+    when: never
+  - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+    variables:
+      PIPELINE_TYPE: branch
+    when: always
+  - when: never

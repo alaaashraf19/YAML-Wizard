@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_18162",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 426,
+  "description": "Create a GitLab CI pipeline that uses the docker:stable Docker image with a docker:dind service, sets the DOCKER_DRIVER to overlay2 and DOCKER_HOST to tcp://docker:2375/, and runs a before_script executing `docker info` and `apk --no-cache add make`. Define a single stage named build and add a job called build-master in that stage that is limited to the master branch. In the build-master job run `docker login -u \\\"$CI_REGISTRY_USER\\\" -p \\\"$CI_REGISTRY_PASSWORD\\\"`, then `docker build -t thereference/drupal-kubernetes-builder:latest .`, and finally `docker push thereference/drupal-kubernetes-builder:latest`.",
+  "tags": [
+    "docker",
+    "dind",
+    "drupal",
+    "kubernetes",
+    "build-master",
+    "gitlab-ci"
+  ]
+}

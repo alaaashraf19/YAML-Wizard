@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_03797",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 924,
+  "description": "Create a GitLab CI pipeline that uses the atomsandbits/python-meteor-test-environment:latest Docker image and defines two stages: test and deploy. Add a global before_script that runs `npm install` for all jobs. In the test stage create six jobs—test_service_database, test_service_image_generator, test_service_psi4, test_service_pyscf, test_service_tensormol, and test_service_webapp—each limited to the master branch. For the first five test jobs run `cd ./services/<service-name>`, then `npm install` and `npm test`; for test_service_tensormol add an empty before_script and run `cd ./services/tensormol` followed by `./scripts/test.sh`. In the deploy stage add a deploy_production job that also runs only on master and executes `echo \"deployed!\"`.",
+  "tags": [
+    "python-meteor-test-environment",
+    "npm",
+    "test",
+    "deploy",
+    "master",
+    "services"
+  ]
+}

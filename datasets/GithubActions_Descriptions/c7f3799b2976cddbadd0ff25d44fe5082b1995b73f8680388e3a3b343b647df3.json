@@ -1,0 +1,14 @@
+{
+  "sha": "c7f3799b2976cddbadd0ff25d44fe5082b1995b73f8680388e3a3b343b647df3",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1913,
+  "description": "Create a GitHub Actions workflow named pull_request that runs on every pull request synchronization, reopening, and labeling for specific branches and paths. The workflow consists of two jobs: lint and test. The lint job runs on an ubuntu-latest environment with a clang-format container, clones the Apache Pegasus source, and checks code format. The test job depends on lint, runs on another ubuntu-latest environment with a custom container, clones the source, unpacks third-party binaries, compiles the code, and runs unit tests.",
+  "tags": [
+    "github-actions",
+    "apache-pegasus",
+    "clang-format",
+    "ubuntu",
+    "tests"
+  ]
+}

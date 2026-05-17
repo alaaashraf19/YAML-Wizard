@@ -1,0 +1,16 @@
+{
+  "sha": "e0083102ef01d7642f4fce5b24266591c6e8a18ba5f8b50720962aeb2b9d2ebb",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1817,
+  "description": "Create a GitHub Actions workflow to build Pinocchio on Windows using Conda. The workflow should trigger on push to master and devel branches and on pull requests. Use a matrix strategy to run a single job on a Windows environment with Clang-CL compiler. In this job, check out the repository and submodules, set up Miniconda with Python 3.7 and a specific environment, install CMake, and then build Pinocchio using CMake and Visual Studio.",
+  "tags": [
+    "windows",
+    "conda",
+    "cmake",
+    "clang-cl",
+    "pinocchio",
+    "build",
+    "ci"
+  ]
+}

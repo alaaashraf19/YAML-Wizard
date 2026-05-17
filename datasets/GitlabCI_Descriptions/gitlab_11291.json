@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_11291",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 495,
+  "description": "Create a GitLab CI pipeline using the node:6 Docker image with postgres and redis services. Set a cache keyed by $CI_BUILD_REF_NAME that stores node_modules and web/public/jspm_packages and includes untracked files. Define a test stage and a test job that runs in the test stage, uses the docker tag, runs before_script commands npm install and npm run init, then executes npm test, and sets job-level variables DATABASE_URL, DEBUG, REDIS_URL. Also define global variables POSTGRES_DB, POSTGRES_USER, POSTGRES_PASSWORD for the postgres service. The job should run on runners tagged docker.",
+  "tags": [
+    "node",
+    "npm",
+    "postgres",
+    "redis",
+    "cache",
+    "test",
+    "docker"
+  ]
+}

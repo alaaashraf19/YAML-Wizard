@@ -1,0 +1,301 @@
+.build-product:
+  after_script: &id001
+  - source ci/mvn-helpers.sh
+  - maven ch.ringler.tools:m2cachecleanup:1.0.4:cleanup-cache
+  before_script: &id002
+  - source ci/mvn-helpers.sh
+  cache: &id003
+    key: mvn-java-8
+    paths:
+    - $M2_CACHED_REPOSITORY
+  dependencies: &id006
+  - build-backend
+  - build-frontend
+  image: maven:3-jdk-8-alpine
+  script: &id007
+  - mv frontend-dist frontend/dist
+  - maven dependency:purge-local-repository --non-recursive -DmanualInclude="org.ow2.petals:petals-cockpit-server,org.ow2.petals:petals-cockpit-parent"
+    -DreResolve=false -DsnapshotsOnly=true
+  - maven --projects cockpit verify antrun:run@build-product-dist
+  - export COCKPIT_VERSION=`ls cockpit/target/petals-cockpit-*-capsule.jar | sed --regexp-extended
+    's/.*petals-cockpit-(.*)-capsule.jar/\1/'`
+  - echo $COCKPIT_VERSION > version.txt
+  - mv cockpit/target/dist petals-cockpit-$COCKPIT_VERSION
+  stage: package
+  tags:
+  - docker
+.mvn-java-8:
+  after_script: *id001
+  before_script: *id002
+  cache: *id003
+  image: maven:3-jdk-8-alpine
+  tags: &id008
+  - docker
+.node-10:
+  before_script: &id004
+  - yarn config set cache-folder $PWD/$YARN_CACHE_DIRECTORY --global
+  - yarn global add spa-http-server
+  - du --human-readable --summarize $PWD/$YARN_CACHE_DIRECTORY || true
+  - cd frontend
+  - export PATH=`yarn bin`:$PATH
+  - time yarn --frozen-lockfile --link-duplicates --non-interactive
+  - yarn run webdriver-manager update --versions.chrome=73.0.3683.68
+  - ./node_modules/protractor/bin/webdriver-manager update --versions.chrome=73.0.3683.68
+  - du --human-readable --summarize node_modules || true
+  - cd ..
+  cache: &id005
+    key: node-yarn
+    paths:
+    - $YARN_CACHE_DIRECTORY
+  image: registry.gitlab.com/linagora/node-java-yarn-docker:n10-j8
+  tags: &id009
+  - docker
+build-backend:
+  after_script: *id001
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - backend-apidocs
+    - $M2_STAGING_DIRECTORY
+    - '**/target'
+  before_script: *id002
+  cache: *id003
+  except:
+  - /^front\/.*$/
+  image: maven:3-jdk-8-alpine
+  script:
+  - maven --projects backend --also-make versions:lock-snapshots
+  - maven_build --projects backend --also-make deploy | grep -vE "^INFO  \[.*\] liquibase.*$"
+  - maven --projects backend --also-make com.webcohesion.enunciate:enunciate-slim-maven-plugin:docs
+    && mv backend/target/site/apidocs backend-apidocs || true
+  stage: build
+  tags:
+  - docker
+build-frontend:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - frontend-dist
+  before_script: *id004
+  cache: *id005
+  except:
+  - /^front\/.*$/
+  - /^back\/.*$/
+  image: registry.gitlab.com/linagora/node-java-yarn-docker:n10-j8
+  script:
+  - cd frontend
+  - time yarn run build:product:ci && mv dist ../frontend-dist
+  - du --human-readable --summarize ../frontend-dist
+  stage: build
+  tags:
+  - docker
+build-frontend-pages:
+  artifacts:
+    expire_in: 1 day
+    paths:
+    - frontend-demo
+  before_script: *id004
+  cache: *id005
+  image: registry.gitlab.com/linagora/node-java-yarn-docker:n10-j8
+  only:
+  - master
+  script:
+  - cd frontend
+  - time yarn run build:demo:ci && mv dist ../frontend-demo || true
+  - du --human-readable --summarize ../frontend-demo || true
+  stage: build
+  tags:
+  - docker
+check-frontend:
+  before_script: *id004
+  cache: *id005
+  except:
+  - /^back\/.*$/
+  - /^product\/.*$/
+  - tags
+  image: registry.gitlab.com/linagora/node-java-yarn-docker:n10-j8
+  script:
+  - cd frontend
+  - time yarn run check
+  stage: build
+  tags:
+  - docker
+package-product:
+  after_script: *id001
+  artifacts:
+    expire_in: 1 week
+    name: petals-cockpit-$(cat version.txt)-${CI_BUILD_REF:0:7}
+    paths:
+    - petals-cockpit-*
+  before_script: *id002
+  cache: *id003
+  dependencies: *id006
+  except:
+  - master
+  - tags
+  - /^front\/.*$/
+  - /^back\/.*$/
+  image: maven:3-jdk-8-alpine
+  script: *id007
+  stage: package
+  tags:
+  - docker
+package-product-master:
+  after_script: *id001
+  artifacts:
+    name: petals-cockpit-$(cat version.txt)-${CI_BUILD_REF:0:7}
+    paths:
+    - petals-cockpit-*
+  before_script: *id002
+  cache: *id003
+  dependencies: *id006
+  image: maven:3-jdk-8-alpine
+  only:
+  - master
+  script: *id007
+  stage: package
+  tags:
+  - docker
+pages:
+  allow_failure: true
+  artifacts:
+    expire_in: 1 day
+    paths:
+    - public
+  dependencies:
+  - build-backend
+  - build-frontend-pages
+  image: alpine:3.6
+  only:
+  - master
+  script:
+  - mv frontend-demo public
+  - mv backend-apidocs public/apidocs
+  stage: package
+  tags:
+  - docker
+  variables:
+    GIT_STRATEGY: none
+release-product:
+  after_script: *id001
+  artifacts:
+    name: petals-cockpit-$(cat version.txt)
+    paths:
+    - petals-cockpit-*
+  before_script: *id002
+  cache: *id003
+  dependencies: *id006
+  image: maven:3-jdk-8-alpine
+  only:
+  - tags
+  script: *id007
+  stage: package
+  tags:
+  - docker
+sonar-backend:
+  after_script: *id001
+  allow_failure: true
+  before_script: *id002
+  cache: *id003
+  dependencies:
+  - build-backend
+  image: maven:3-jdk-8-alpine
+  only:
+  - master
+  script:
+  - maven_build --file backend/pom.xml sonar:sonar -Dsonar.projectKey=petals-cockpit-backend
+  stage: report
+  tags: *id008
+  variables:
+    GIT_DEPTH: '0'
+sonar-frontend:
+  allow_failure: true
+  before_script: *id004
+  cache: *id005
+  dependencies:
+  - test-frontend-0
+  image: registry.gitlab.com/linagora/node-java-yarn-docker:n10-j8
+  only:
+  - master
+  script:
+  - cd frontend
+  - yarn run sonar-scanner -Dsonar.host.url=$SONAR_HOST_URL
+  stage: report
+  tags: *id009
+  variables:
+    GIT_DEPTH: '0'
+stages:
+- build
+- report
+- package
+- integration
+test-frontend-0:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - frontend/coverage/lcov.info
+  before_script: *id004
+  cache: *id005
+  except:
+  - /^back\/.*$/
+  - /^product\/.*$/
+  - tags
+  image: registry.gitlab.com/linagora/node-java-yarn-docker:n10-j8
+  script:
+  - cd frontend
+  - time yarn run test:ci
+  - time yarn run e2e:ci --port 4200 --webdriver-update false
+  - time yarn run build:no-ldap:ci
+  - nohup http-server --push-state --silent -p 4200 dist &
+  - echo $! > pid-nohup.txt
+  - sleep 5s
+  - time yarn cypress:e2e-no-ldap
+  - kill -9 $(cat pid-nohup.txt)
+  - rm pid-nohup.txt
+  stage: build
+  tags:
+  - docker
+test-frontend-1:
+  before_script: *id004
+  cache: *id005
+  except:
+  - /^back\/.*$/
+  - /^product\/.*$/
+  - tags
+  image: registry.gitlab.com/linagora/node-java-yarn-docker:n10-j8
+  script:
+  - cd frontend
+  - time yarn run build:ldap:ci
+  - nohup http-server --push-state --silent -p 4200 dist &
+  - echo $! > pid-nohup.txt
+  - sleep 5s
+  - time yarn cypress:e2e-test-frontend-1
+  - kill -9 $(cat pid-nohup.txt)
+  - rm pid-nohup.txt
+  stage: build
+  tags:
+  - docker
+test-frontend-2:
+  before_script: *id004
+  cache: *id005
+  except:
+  - /^back\/.*$/
+  - /^product\/.*$/
+  - tags
+  image: registry.gitlab.com/linagora/node-java-yarn-docker:n10-j8
+  script:
+  - cd frontend
+  - time yarn run build:ldap:ci
+  - nohup http-server --push-state --silent -p 4200 dist &
+  - echo $! > pid-nohup.txt
+  - sleep 5s
+  - time yarn cypress:e2e-test-frontend-2
+  - kill -9 $(cat pid-nohup.txt)
+  - rm pid-nohup.txt
+  stage: build
+  tags:
+  - docker
+variables:
+  M2_CACHED_REPOSITORY: m2cache
+  M2_STAGING_DIRECTORY: staging
+  YARN_CACHE_DIRECTORY: yarncache

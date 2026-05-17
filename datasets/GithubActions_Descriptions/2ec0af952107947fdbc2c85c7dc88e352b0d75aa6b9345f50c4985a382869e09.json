@@ -1,0 +1,18 @@
+{
+  "sha": "2ec0af952107947fdbc2c85c7dc88e352b0d75aa6b9345f50c4985a382869e09",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 11463,
+  "description": "Create a comprehensive GitHub Actions workflow named FBGEMMCI that runs on push to main and on pull requests to main. The workflow should have multiple jobs running on different operating systems (ubuntu-latest, macos-latest, windows-2019) with various steps including checking out the repository, syncing submodules, getting CPU info, building and testing FBGEMM libraries in static and shared configurations, and testing the installation of fbgemm_gpu on different platforms (CUDA, ROCm).",
+  "tags": [
+    "fbgemm",
+    "github-actions",
+    "ci",
+    "ubuntu",
+    "macos",
+    "windows",
+    "cuda",
+    "rocm",
+    "pytorch"
+  ]
+}

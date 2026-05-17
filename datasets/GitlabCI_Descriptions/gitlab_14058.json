@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_14058",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 548,
+  "description": "Create a GitLab CI pipeline that uses the Docker image registry.gitlab.com/role_unit/role_unit_containers:build with a docker:dind service, sets the DEBIAN_FRONTEND=noninteractive and DOCKER_DRIVER=overlay2 variables, and installs py-dnspython and ipvsadm via apk in a before_script. Define six jobs—cluster_debian8, cluster_debian9, single_debian8, single_debian9, syntax_debian8, and syntax_debian9—all running in the default test stage. Each job executes the exact script: `RU_ENV_IMAGE=${CI_JOB_NAME/*_/} tests/bash_unit tests/tests_keepalived_${CI_JOB_NAME/_*/}`. No caches, artifacts, or conditional rules are defined, and the pipeline does not deploy anywhere.",
+  "tags": [
+    "docker",
+    "apk",
+    "keepalived",
+    "bash-unit",
+    "debian8",
+    "debian9"
+  ]
+}

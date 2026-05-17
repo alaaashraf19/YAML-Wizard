@@ -1,0 +1,14 @@
+{
+  "sha": "ef345f252d9d073a9d9d0eab66783154f339dae3299875f8736cc49279c9fc32",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1413,
+  "description": "Create a GitHub Actions workflow named build that runs on push to master and develop branches, and on pull requests to those branches. Use a matrix strategy to run a build job on multiple operating systems (ubuntu-latest, macos-latest, windows-latest) and Python versions (3.9, 3.5, 3.6, 3.7, 3.8, pypy3), checking out the code, setting up Python, installing dependencies with make install, running tests with nosetests or make test and make local, and uploading coverage to Codecov for ubuntu-latest with Python 3.9.",
+  "tags": [
+    "python",
+    "tests",
+    "coverage",
+    "matrix",
+    "multi-os"
+  ]
+}

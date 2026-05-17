@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_09950",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 248,
+  "description": "Create a GitLab CI pipeline using the archlinux/base Docker image. Include a before_script that runs pacman -Suy --noconfirm and pacman --noconfirm -S rust base-devel clang before each job. Define a binary job that runs cargo build --release, stores the target/release/aurs binary as an artifact that expires in one week, and runs in the default test stage. Define a test job that runs cargo test, also in the default test stage. No additional caches, services, or deployment targets are configured.",
+  "tags": [
+    "archlinux",
+    "rust",
+    "cargo",
+    "binary",
+    "test"
+  ]
+}

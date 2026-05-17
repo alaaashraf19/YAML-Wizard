@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_00093",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1043,
+  "description": "Create a GitLab CI pipeline using the ruby:2.6 Docker image and caching the .apt and vendor directories. Define a deploy stage with a pages job that runs only on the master branch. In the before_script, export LC_ALL, LANG and LANGUAGE, echo $CI_PROJECT_DIR, set APT_DIR=$CI_PROJECT_DIR/.apt and configure APT lists and archives paths, write these settings to /etc/apt/apt.conf, create the partial directories, run apt-get update -y and apt-get install -yq rsync, start ssh-agent, add the $SSH_KEY_ED25519 key, create ~/.ssh, set permissions, and disable strict host key checking. In the script, execute gem install bundler, bundle config set path 'vendor', bundle install, bundle exec jekyll build -d public, and rsync -av --delete public/ git@communitydocs.accessnow.org:./communitydocs. Publish the public/ directory as a pages artifact.",
+  "tags": [
+    "ruby",
+    "jekyll",
+    "bundler",
+    "pages",
+    "rsync",
+    "ssh",
+    "apt",
+    "deploy"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "34d89bec9d7731ee44015918bc310ede030098281f7daa9b73e57a842e04b5fd",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2411,
+  "description": "Create a GitHub Actions workflow that builds and uploads a Python package to PyPI. The workflow should trigger on push and pull request events. It should have three jobs: build_wheels, build_sdist, and upload_pypi. The build_wheels job should run on a matrix of ubuntu-18.04, windows-latest, and macos-latest, and build wheels for Python 3.7 using cibuildwheel. The build_sdist job should run on ubuntu-latest and build a source distribution using setup.py. The upload_pypi job should upload the artifacts to PyPI when a tag starting with 'v' is pushed.",
+  "tags": [
+    "python",
+    "pypi",
+    "cibuildwheel",
+    "github-actions",
+    "release"
+  ]
+}

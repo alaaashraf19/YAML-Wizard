@@ -1,0 +1,11 @@
+before_script:
+- mix local.rebar --force
+- mix local.hex --force
+- mix deps.get
+image: elixir:latest
+mix:
+  script:
+  - mix test
+services:
+- redis:latest
+- postgres:latest

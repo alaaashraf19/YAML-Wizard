@@ -1,0 +1,29 @@
+.verify:
+  except: &id001
+  - develop
+  script: &id002
+  - mvn $MAVEN_CLI_OPTS verify
+  stage: test
+cache:
+  paths:
+  - .m2/repository
+deploy:jdk11:
+  only:
+  - develop
+  script:
+  - if [ ! -f ci_settings.xml ]; then echo "CI settings missing\!"; fi
+  - mvn $MAVEN_CLI_OPTS deploy -s ci_settings.xml
+  - curl --request POST --form token=8e76cbcd5d853a20877c173e737c53 --form ref=develop
+    https://gitlab.com/api/v4/projects/18659127/trigger/pipeline
+  stage: deploy
+image: maven:3.8.5-openjdk-11
+variables:
+  MAVEN_CLI_OPTS: --batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true
+    -DdeployAtEnd=true
+  MAVEN_OPTS: -Dhttps.protocols=TLSv1.2 -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository
+    -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN
+    -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true
+verify:jdk11:
+  except: *id001
+  script: *id002
+  stage: test

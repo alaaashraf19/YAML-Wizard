@@ -1,0 +1,16 @@
+{
+  "sha": "41724f80e2be29ac6358be8c381ea4b9cbea25d7681711ff80f1acff146d9526",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1366,
+  "description": "Create a GitHub Actions workflow named clang-tidy that runs on push and pull request events. Use a single ubuntu-latest job in a Debian container, checking out the code and running meson and ninja to generate necessary build files. Then, use the cpp-linter/cpp-linter-action to run clang-tidy checks on changed files and lines, using the .clang-tidy configuration and a compile_commands.json database. If any checks fail, print an error message and exit with a non-zero status.",
+  "tags": [
+    "clang-tidy",
+    "cpp",
+    "linting",
+    "meson",
+    "ninja",
+    "ubuntu",
+    "debian"
+  ]
+}

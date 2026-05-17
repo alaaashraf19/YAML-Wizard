@@ -1,0 +1,706 @@
+.cache-composercache: &id001
+  key:
+    files:
+    - vendor_bundled/composer.lock
+    prefix: composer
+  paths:
+  - .composercache/
+  policy: pull-push
+.cache-vendor_bundled: &id006
+  key:
+    files:
+    - vendor_bundled/composer.lock
+    prefix: vendor_bundled
+  paths:
+  - vendor_bundled/vendor
+  policy: pull
+.composer-lock:
+  after_script:
+  - mkdir after || true
+  - cp vendor_bundled/composer.json vendor_bundled/composer.lock after
+  - diff -u before/composer.lock after/composer.lock
+  allow_failure:
+    exit_codes: 1
+  artifacts:
+    expire_in: 2 days
+    paths:
+    - before
+    - after
+    when: always
+  before_script:
+  - mkdir before || true
+  - cp vendor_bundled/composer.json vendor_bundled/composer.lock before
+  cache:
+  - *id001
+  image: ${DEPENDENCY_PROXY_PREFIX}${BASE_QA_IMAGE}
+  needs:
+  - composer
+  script:
+  - cp $(command -v composer) temp/composer.phar
+  - php temp/composer.phar -V | grep "version 2" || php temp/composer.phar self-update
+    --2
+  - php doc/devtools/update_composer_lock.php
+  stage: tiki-check
+.node_dependencies_cache:
+  cache:
+    key:
+      files:
+      - package-lock.json
+    paths:
+    - .npm
+    policy: pull
+  image:
+    name: ${DEPENDENCY_PROXY_PREFIX}${NODE_IMAGE}
+.template-tiki-schema-upgrade:
+  after_script: &id002
+  - echo "SHOW CREATE DATABASE tikiold" | mysql -u root --password=$MYSQL_ROOT_PASSWORD
+    -h mysql
+  - echo "SHOW CREATE DATABASE tikinew" | mysql -u root --password=$MYSQL_ROOT_PASSWORD
+    -h mysql
+  - mysqldump --column-statistics=0  --default-character-set=utf8mb4 -u root --password=$MYSQL_ROOT_PASSWORD
+    -h mysql tikiold > tikiold.sql
+  - mysqldump --column-statistics=0  --default-character-set=utf8mb4 -u root --password=$MYSQL_ROOT_PASSWORD
+    -h mysql tikinew > tikinew.sql
+  artifacts: &id003
+    expire_in: 2 days
+    paths:
+    - tikiold.sql
+    - tikinew.sql
+    when: always
+  image: ${DEPENDENCY_PROXY_PREFIX}${BASE_QA_IMAGE}
+  needs: &id004
+  - composer
+  - composer-dbdiff
+  script: &id005
+  - 'mysql -u root --password=$MYSQL_ROOT_PASSWORD -h mysql --skip-column-names -B
+    -e "SELECT CONCAT(''Version: '', VERSION(), CHAR(13), ''sql_mode: '', @@GLOBAL.sql_mode);SET
+    GLOBAL log_bin_trust_function_creators = 1;"'
+  - echo "GRANT ALL ON tikiold.* TO '${MYSQL_USER}';" | mysql -u root --password=$MYSQL_ROOT_PASSWORD
+    -h mysql
+  - echo "GRANT ALL ON tikinew.* TO '${MYSQL_USER}';" | mysql -u root --password=$MYSQL_ROOT_PASSWORD
+    -h mysql
+  - '[ ! -d doc/devtools/dbdiff/cache ] && mkdir doc/devtools/dbdiff/cache'
+  - '[ ! -f doc/devtools/dbdiff/cache/$DBFILE ] && curl -sS https://gitlab.com/tikiwiki/tikiwiki-ci-databases/raw/master/$DBFILE.gz
+    -o doc/devtools/dbdiff/cache/$DBFILE.gz && gzip -d doc/devtools/dbdiff/cache/$DBFILE.gz'
+  - php -d display_errors=On doc/devtools/check_schema_upgrade.php -m $DBVER -e $ENGINE
+    --db1=$MYSQL_USER:$MYSQL_PASSWORD@mysql:tikiold --db2=$MYSQL_USER:$MYSQL_PASSWORD@mysql:tikinew
+  services: &id007
+  - alias: mysql,
+    command:
+    - --character-set-server=utf8mb4
+    - --collation-server=utf8mb4_unicode_ci
+    name: ${DEPENDENCY_PROXY_PREFIX}$IMAGE
+  stage: tiki-check
+.template-tiki-schema-upgrade-mysql8:
+  after_script: *id002
+  artifacts: *id003
+  image: ${DEPENDENCY_PROXY_PREFIX}${BASE_QA_IMAGE}
+  needs: *id004
+  script: *id005
+  services: &id008
+  - alias: mysql
+    command:
+    - --default-authentication-plugin=mysql_native_password
+    - --character-set-server=utf8mb4
+    - --collation-server=utf8mb4_unicode_ci
+    name: ${DEPENDENCY_PROXY_PREFIX}$IMAGE
+  stage: tiki-check
+.template-unit-tests:
+  artifacts:
+    expire_in: 2 days
+    paths:
+    - report.xml
+    reports:
+      junit: report.xml
+    when: always
+  image: ${DEPENDENCY_PROXY_PREFIX}tikiwiki/tikiwiki-ci:${PHP_VERSION}-qa
+  needs:
+  - composer
+  script:
+  - 'echo -n "PHP Version: " && php -v | grep "^PHP"'
+  - 'echo -n "MySQL/MariaDB Version: " && mysql -u root --password=$MYSQL_ROOT_PASSWORD
+    -h mysql --skip-column-names -B -e "SELECT VERSION()" 2>/dev/null'
+  - 'echo -n "ElasticSearch Version: " && curl -sS -XGET ''http://elasticsearch:9200''
+    | grep ''"number"'' | sed ''s/.*:.*"\(.*\)".*/\1/'''
+  - 'echo -n "Manticore Version: " && mysql -h manticore -P 9306 -e "status" | grep
+    "Server version:" | sed "s/^[^:]*:[[:space:]]*//"'
+  - echo '<?php $host_tiki = "mysql"; $user_tiki = "tikiuser"; $pass_tiki = "tikipass";
+    $dbs_tiki = "tikitest"; $client_charset = "utf8mb4"; ' > lib/test/local.php
+  - php -d display_errors=On vendor_bundled/vendor/phpunit/phpunit/phpunit --colors=always
+    --log-junit report.xml --display-deprecations --display-notices --display-warnings
+  services:
+  - alias: mysql
+    command:
+    - --default-authentication-plugin=mysql_native_password
+    - --explicit-defaults-for-timestamp=off
+    name: ${DEPENDENCY_PROXY_PREFIX}${DB_IMAGE}
+  - alias: elasticsearch
+    name: ${DEPENDENCY_PROXY_PREFIX}elasticsearch:5
+  - alias: manticore
+    name: ${DEPENDENCY_PROXY_PREFIX}manticoresearch/manticore:${MANTICORE_NEWEST_SUPPORTED}
+  stage: unit-tests
+  variables:
+    EXTRA: 1
+    MCL: 1
+.vendor-security-check:
+  allow_failure: false
+  image: ${DEPENDENCY_PROXY_PREFIX}${BASE_QA_IMAGE}
+  needs:
+  - composer
+  only:
+    refs:
+    - schedules
+    variables:
+    - $SCHEDULER == "vendor_check"
+  script:
+  - composer -V | grep "version 2" || composer self-update --2
+  - cp composer.json.dist composer.json
+  - composer require jerome-breton/casperjs-installer:dev-master --no-progress
+  - composer require enygma/expose:^3.0 --no-progress
+  - composer require fakerphp/faker dev-master --no-progress
+  - composer require google/apiclient ^2.2.2 --no-progress
+  - composer require mpdf/mpdf ^8.0.0 --no-progress
+  - composer require xorti/mxgraph-editor ^3.9.12.2 --no-progress
+  - composer require tikiwiki/diagram ^10 --no-progress
+  - composer require thiagoalessio/tesseract_ocr ^2.7.0 --no-progress
+  - composer require mathjax/mathjax ^2.7 --no-progress
+  - composer require tikiwiki/media-alchemyst ^4.2 --no-progress
+  - composer require npm-asset/pdfjs-dist ~2.0.487 --no-progress
+  - composer require bower-asset/wodo.texteditor ^0.5.9 --no-progress
+  - composer require j0k3r/php-readability ^1.1.10 --no-progress
+  stage: vendors-security
+check-alphabetical-list:
+  allow_failure: false
+  image: ${DEPENDENCY_PROXY_PREFIX}${BASE_QA_IMAGE}
+  needs:
+  - composer
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    when: always
+  - if: $CI_PIPELINE_SOURCE == "push"
+    when: always
+  script:
+  - chmod +x doc/devtools/check_alphabetical_list.php
+  - php doc/devtools/check_alphabetical_list.php
+  stage: unit-tests
+check-bom-encoding:
+  image: ${DEPENDENCY_PROXY_PREFIX}${BASE_QA_IMAGE}
+  needs: []
+  script:
+  - php doc/devtools/check_bom_encoding.php
+  stage: lint
+check-custom-folder:
+  needs: []
+  rules:
+  - changes:
+    - _custom/**/*
+    if: $CI_PROJECT_PATH == $PROJECT_PATH && $CI_PIPELINE_SOURCE == "merge_request_event"
+    when: always
+  script:
+  - echo "Changes in the _custom directory are not allowed to merge into mainstream."
+  - exit 1
+  stage: tiki-check
+check-directories:
+  image: ${DEPENDENCY_PROXY_PREFIX}${BASE_QA_IMAGE}
+  needs:
+  - composer
+  script:
+  - php console.php dev:buildwsconfs --generate
+  - php console.php dev:buildwsconfs
+  stage: package-tiki
+check-platform-binaries:
+  image: ${DEPENDENCY_PROXY_PREFIX}${BASE_QA_IMAGE}
+  needs: []
+  script:
+  - sh doc/devtools/check_platform_binaries.sh
+  stage: tiki-check
+composer:
+  artifacts:
+    expire_in: 2 days
+    paths:
+    - vendor_bundled/vendor/
+  cache:
+  - *id001
+  - *id006
+  image: ${DEPENDENCY_PROXY_PREFIX}${BASE_QA_IMAGE}
+  needs: []
+  script:
+  - composer -V | grep "version 2" || composer self-update --2
+  - composer --ansi install -d vendor_bundled --no-progress --prefer-dist --no-interaction
+  stage: build
+  variables:
+    COMPOSER_DISCARD_CHANGES: 'true'
+    COMPOSER_NO_INTERACTION: '1'
+composer-could-update-lock:
+  allow_failure: true
+  cache:
+  - *id001
+  image: ${DEPENDENCY_PROXY_PREFIX}${BASE_QA_IMAGE}
+  needs:
+  - composer
+  script:
+  - composer -V | grep "version 2" || composer self-update --2
+  - composer update -d vendor_bundled --dry-run
+  stage: tiki-check
+composer-dbdiff:
+  artifacts:
+    expire_in: 2 days
+    paths:
+    - doc/devtools/dbdiff/vendor/
+    when: always
+  cache:
+    key:
+      files:
+      - doc/devtools/dbdiff/composer.lock
+      prefix: composer-dbdiff
+    paths:
+    - .composercache-dbdiff/
+    policy: pull-push
+  image: ${DEPENDENCY_PROXY_PREFIX}${BASE_QA_IMAGE}
+  needs: []
+  script:
+  - composer -V | grep "version 2" || composer self-update --2
+  - composer --ansi install -d doc/devtools/dbdiff/ --no-progress --prefer-dist -n
+  stage: build
+  variables:
+    COMPOSER_CACHE_DIR: ${CI_PROJECT_DIR}/.composercache-dbdiff
+    COMPOSER_DISCARD_CHANGES: 'true'
+    COMPOSER_NO_INTERACTION: '1'
+composer-ext-check:
+  image: ${DEPENDENCY_PROXY_PREFIX}${BASE_QA_IMAGE}
+  needs: []
+  script:
+  - php doc/devtools/check_composer_extensions.php
+  stage: tiki-check
+composer-operator-check:
+  allow_failure: false
+  image: ${DEPENDENCY_PROXY_PREFIX}${BASE_QA_IMAGE}
+  needs:
+  - composer
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    when: always
+  - if: $CI_PIPELINE_SOURCE == "push"
+    when: always
+  script:
+  - apt-get update && apt-get install -y jq
+  - chmod +x doc/devtools/check_caret_operator.sh
+  - ./doc/devtools/check_caret_operator.sh
+  stage: composer-stability
+composer-stability:
+  allow_failure: true
+  artifacts:
+    when: always
+  image: ${DEPENDENCY_PROXY_PREFIX}${BASE_QA_IMAGE}
+  needs:
+  - composer
+  rules:
+  - if: $CI_COMMIT_BRANCH == "master"
+    when: never
+  - if: $CI_PIPELINE_SOURCE == "schedule"
+    when: always
+  - when: manual
+  script:
+  - php doc/devtools/check_composer_stability.php --ci
+  stage: composer-stability
+composer-validates:
+  image: ${DEPENDENCY_PROXY_PREFIX}${BASE_QA_IMAGE}
+  needs: []
+  script:
+  - composer -V | grep "version 2" || composer self-update --2
+  - composer validate -d vendor_bundled --no-check-all
+  stage: tiki-check
+console-php-works:
+  image: ${DEPENDENCY_PROXY_PREFIX}${BASE_QA_IMAGE}
+  needs:
+  - composer
+  script:
+  - php console.php
+  stage: tiki-check
+db-upgrade-24-mysql:
+  after_script: *id002
+  artifacts: *id003
+  image: ${DEPENDENCY_PROXY_PREFIX}${BASE_QA_IMAGE}
+  needs: *id004
+  script: *id005
+  services: *id007
+  stage: tiki-check
+  variables:
+    DBFILE: ci_24.sql
+    DBVER: 24
+    ENGINE: InnoDB
+    IMAGE: ${MYSQL_5_IMAGE}
+db-upgrade-25-mysql:
+  after_script: *id002
+  artifacts: *id003
+  image: ${DEPENDENCY_PROXY_PREFIX}${BASE_QA_IMAGE}
+  needs: *id004
+  script: *id005
+  services: *id007
+  stage: tiki-check
+  variables:
+    DBFILE: ci_25.sql
+    DBVER: 25
+    ENGINE: InnoDB
+    IMAGE: ${MYSQL_5_IMAGE}
+db-upgrade-26-mysql:
+  after_script: *id002
+  artifacts: *id003
+  image: ${DEPENDENCY_PROXY_PREFIX}${BASE_QA_IMAGE}
+  needs: *id004
+  script: *id005
+  services: *id007
+  stage: tiki-check
+  variables:
+    DBFILE: ci_26.sql
+    DBVER: 26
+    ENGINE: InnoDB
+    IMAGE: ${MYSQL_5_IMAGE}
+db-upgrade-27-mysql:
+  after_script: *id002
+  artifacts: *id003
+  image: ${DEPENDENCY_PROXY_PREFIX}${BASE_QA_IMAGE}
+  needs: *id004
+  script: *id005
+  services: *id008
+  stage: tiki-check
+  variables:
+    DBFILE: ci_27.sql
+    DBVER: 27
+    ENGINE: InnoDB
+    IMAGE: ${MYSQL_IMAGE_NEWEST_SUPPORTED}
+db-upgrade-28-mysql:
+  after_script: *id002
+  artifacts: *id003
+  image: ${DEPENDENCY_PROXY_PREFIX}${BASE_QA_IMAGE}
+  needs: *id004
+  script: *id005
+  services: *id008
+  stage: tiki-check
+  variables:
+    DBFILE: ci_28.sql
+    DBVER: 28
+    ENGINE: InnoDB
+    IMAGE: ${MYSQL_IMAGE_NEWEST_SUPPORTED}
+eslint:
+  image:
+    name: ${DEPENDENCY_PROXY_PREFIX}${NODE_IMAGE}
+  needs:
+  - node_modules
+  script:
+  - npx eslint .
+  stage: lint
+node_build:
+  artifacts:
+    expire_in: 2 days
+    paths:
+    - public/generated/
+    - themes/**/*.css
+    - themes/**/*.css.map
+  image:
+    name: ${DEPENDENCY_PROXY_PREFIX}${NODE_IMAGE}
+  needs:
+  - node_modules
+  - composer
+  script:
+  - npm run build
+  stage: build
+node_modules:
+  artifacts:
+    expire_in: 2 days
+    paths:
+    - node_modules
+    - src/**/node_modules
+  cache:
+    policy: pull-push
+  extends: .node_dependencies_cache
+  needs: []
+  script:
+  - npm ci --prefer-offline
+  stage: build
+phpcs:
+  cache:
+  - key:
+      files:
+      - phpcs.xml.dist
+      - doc/devtools/codesniffer/standards/TikiIgnore/ignore_list.json
+      prefix: phpcs
+    paths:
+    - phpcs.cache
+    policy: pull-push
+  image: ${DEPENDENCY_PROXY_PREFIX}${BASE_QA_IMAGE}
+  needs:
+  - composer
+  script:
+  - php vendor_bundled/vendor/squizlabs/php_codesniffer/bin/phpcs --cache=phpcs.cache
+    -s --runtime-set ignore_warnings_on_exit true --parallel=8
+  stage: lint
+phplint:
+  cache:
+    key: phplint${PHP_VERSION}
+    paths:
+    - phplint.cache
+  image: ${DEPENDENCY_PROXY_PREFIX}tikiwiki/tikiwiki-ci:${PHP_VERSION}-qa
+  needs:
+  - composer
+  parallel:
+    matrix:
+    - PHP_VERSION:
+      - '8.1'
+      - '8.2'
+      - '8.3'
+      - '8.4'
+      - '8.5'
+  script:
+  - php vendor_bundled/vendor/overtrue/phplint/bin/phplint -n --configuration=doc/devtools/phplint.yml
+  stage: lint
+schema-naming-convention:
+  image: ${DEPENDENCY_PROXY_PREFIX}${BASE_QA_IMAGE}
+  needs: []
+  script:
+  - php -d display_errors=On doc/devtools/check_schema_naming_convention.php
+  stage: tiki-check
+schema-sql-drop:
+  image: ${DEPENDENCY_PROXY_PREFIX}${BASE_QA_IMAGE}
+  needs: []
+  script:
+  - php -d display_errors=On doc/devtools/check_schema_sql_drop.php
+  stage: tiki-check
+shlint:
+  image: koalaman/shellcheck-alpine:latest
+  needs: []
+  script:
+  - shellcheck ./*.sh
+  - shellcheck ./doc/devtools/*.sh
+  stage: lint
+smarty-lint:
+  image: ${DEPENDENCY_PROXY_PREFIX}${BASE_QA_IMAGE}
+  needs:
+  - composer
+  script:
+  - php vendor_bundled/vendor/umakantp/smartylint/smartyl -p --files=lib/test,templates,themes
+    --rules=doc/devtools/smartyl.rules.xml
+  stage: lint
+sql-engine:
+  image: ${DEPENDENCY_PROXY_PREFIX}${BASE_QA_IMAGE}
+  needs: []
+  script:
+  - php -d display_errors=On doc/devtools/check_sql_engine.php
+  stage: tiki-check
+sql-engine-conversion:
+  after_script:
+  - echo "SHOW CREATE DATABASE tikiold" | mysql -u root --password=$MYSQL_ROOT_PASSWORD
+    -h mysql
+  - echo "SHOW CREATE DATABASE tikinew" | mysql -u root --password=$MYSQL_ROOT_PASSWORD
+    -h mysql
+  - mysqldump --column-statistics=0 -u root --password=$MYSQL_ROOT_PASSWORD -h mysql
+    tikiold > tikiold.sql
+  - mysqldump --column-statistics=0 -u root --password=$MYSQL_ROOT_PASSWORD -h mysql
+    tikinew > tikinew.sql
+  artifacts:
+    expire_in: 2 days
+    paths:
+    - tikiold.sql
+    - tikinew.sql
+    when: always
+  image: ${DEPENDENCY_PROXY_PREFIX}${BASE_QA_IMAGE}
+  needs:
+  - composer
+  - composer-dbdiff
+  script:
+  - 'mysql -u root --password=$MYSQL_ROOT_PASSWORD -h mysql --skip-column-names -B
+    -e "SELECT CONCAT(''Version: '', VERSION(), CHAR(13), ''sql_mode: '', @@GLOBAL.sql_mode)"'
+  - echo "GRANT ALL ON tikiold.* TO '${MYSQL_USER}';" | mysql -u root --password=$MYSQL_ROOT_PASSWORD
+    -h mysql
+  - echo "GRANT ALL ON tikinew.* TO '${MYSQL_USER}';" | mysql -u root --password=$MYSQL_ROOT_PASSWORD
+    -h mysql
+  - php -d display_errors=On doc/devtools/check_sql_engine_conversion.php --db1=$MYSQL_USER:$MYSQL_PASSWORD@mysql:tikiold
+    --db2=$MYSQL_USER:$MYSQL_PASSWORD@mysql:tikinew
+  services:
+  - alias: mysql
+    name: ${DEPENDENCY_PROXY_PREFIX}${MYSQL_IMAGE_NEWEST_SUPPORTED}
+  stage: tiki-check
+stages:
+- build
+- lint
+- tiki-check
+- unit-tests
+- package-tiki
+- vendors-security
+- vendors_update
+- composer-stability
+tiki-package:
+  allow_failure: true
+  artifacts:
+    expire_in: 2 days
+    paths:
+    - tiki-${CI_COMMIT_SHORT_SHA}-${CI_COMMIT_REF_SLUG}.tar.gz
+  cache:
+  - *id001
+  image: ${DEPENDENCY_PROXY_PREFIX}${BASE_QA_IMAGE}
+  needs:
+  - composer
+  - node_build
+  script:
+  - echo "=> Removing Composer dev dependencies ..."
+  - composer -V | grep "version 2" || composer self-update --2
+  - composer --ansi install -d vendor_bundled --no-dev --optimize-autoloader --no-progress
+    --prefer-dist -n
+  - php console.php dev:buildwsconfs --generate
+  - echo "=> Cleanup ..."
+  - rm -fr temp && git checkout temp
+  - rm -fr bin
+  - echo "=> Files in the folder not tracked in git ..."
+  - git ls-files --others | grep -v vendor_bundled/vendor/ | grep -v .composercache/
+    || echo "Ignore Failure"
+  - echo "=> Optimize language files ..."
+  - find lang/ -name language.php -exec php doc/devtools/stripcomments.php {} \;
+  - echo "=> Fix permissions ..."
+  - find . -type f -exec chmod 0664 {} \;
+  - chown 0775 setup.sh
+  - find . -type d -exec chmod 0755 {} \;
+  - echo "=> Pack tiki ..."
+  - tar --exclude *.DS_Store --exclude tests --exclude doc/devtools --exclude .git
+    --exclude .gitignore --exclude .composercache -pczf tiki-${CI_COMMIT_SHORT_SHA}-${CI_COMMIT_REF_SLUG}.tar.gz
+    *
+  stage: package-tiki
+translation:
+  allow_failure: true
+  image: ${DEPENDENCY_PROXY_PREFIX}${BASE_QA_IMAGE}
+  needs:
+  - composer
+  script:
+  - git log --first-parent --pretty="format:%h" -1 --skip=1 | xargs -I gitHash php
+    -d display_errors=On console.php translation:englishupdate --audit
+  stage: tiki-check
+translation-standards:
+  image: ${DEPENDENCY_PROXY_PREFIX}${BASE_QA_IMAGE}
+  needs:
+  - composer
+  script:
+  - php doc/devtools/check_template_translation_standards.php --all
+  stage: tiki-check
+unit-tests:
+  allow_failure: false
+  extends: .template-unit-tests
+  parallel:
+    matrix:
+    - DB_IMAGE: ${MYSQL_IMAGE_OLDEST_SUPPORTED}
+      PHP_VERSION: '8.1'
+    - DB_IMAGE: ${MYSQL_IMAGE_NEWEST_SUPPORTED}
+      PHP_VERSION: '8.2'
+    - DB_IMAGE: ${MARIADB_IMAGE_OLDEST_SUPPORTED}
+      PHP_VERSION: '8.1'
+    - DB_IMAGE: ${MARIADB_IMAGE_NEWEST_SUPPORTED}
+      PHP_VERSION: '8.3'
+    - DB_IMAGE: ${MARIADB_IMAGE_NEWEST_SUPPORTED}
+      PHP_VERSION: '8.4'
+    - DB_IMAGE: ${MYSQL_IMAGE_NEWEST_SUPPORTED}
+      PHP_VERSION: '8.5'
+unit-tests-icon-generator:
+  image:
+    name: ${DEPENDENCY_PROXY_PREFIX}${BASE_QA_IMAGE}
+  needs:
+  - composer
+  - node_modules
+  script:
+  - php console.php build:generateiconlist
+  stage: unit-tests
+unit-tests-node:
+  coverage: /All files(?:[^|]*\|){4}\s*(\S+)/
+  image:
+    name: ${DEPENDENCY_PROXY_PREFIX}${NODE_IMAGE}
+  needs:
+  - node_modules
+  script:
+  - npm run testci
+  stage: unit-tests
+unix-ending-line:
+  image: ${DEPENDENCY_PROXY_PREFIX}${BASE_QA_IMAGE}
+  needs: []
+  script:
+  - php doc/devtools/check_unix_ending_line.php
+  stage: lint
+update_vendor_bundled_dependencies:
+  before_script:
+  - git config --global user.email "${GITLAB_USER_EMAIL}"
+  - git config --global user.name "${GITLAB_USER_NAME}"
+  image: ${DEPENDENCY_PROXY_PREFIX}${BASE_QA_IMAGE}
+  needs:
+  - composer
+  only:
+    refs:
+    - schedules
+    variables:
+    - $SCHEDULER == "update_vendor_bundled"
+  script:
+  - composer -V | grep "version 2" || composer self-update --2
+  - DATE=`date +%Y%m%d`
+  - BRANCH_NAME="${BRANCH_NAME}_${DATE}"
+  - php doc/devtools/update_vendor_bundled.php
+  - if git diff --quiet --exit-code vendor_bundled/composer.lock; then exit 0; fi;
+  - if git rev-parse --verify ${BRANCH_NAME}; then git branch -D ${BRANCH_NAME}; fi;
+  - git checkout -b ${BRANCH_NAME}
+  - git add vendor_bundled/composer.lock
+  - git commit -m "${COMMIT_MESSAGE}"
+  - git push ${CI_REPOSITORY_URL} HEAD:${BRANCH_NAME} --quiet
+  - 'HOST=${CI_PROJECT_URL} CI_PROJECT_ID=${CI_PROJECT_ID} SOURCE_BRANCH=${BRANCH_NAME}
+    TARGET_BRANCH=${CI_COMMIT_REF_NAME} GITLAB_USER_ID=${GITLAB_USER_ID} PRIVATE_TOKEN=${GITLAB_USER_TOKEN}
+    TARGET_PROJECT_ID=${TARGET_PROJECT_ID} SET_MERGE=${SET_MERGE} \
+
+    /bin/bash ./doc/devtools/gitlab/auto_merge_request.sh "${COMMIT_MESSAGE} (${DATE})"
+
+    '
+  stage: vendors_update
+  variables:
+    BRANCH_NAME: ${CI_COMMIT_REF_NAME}_vendor_bundled_update
+    CI_REPOSITORY_URL: https://${GITLAB_USER_LOGIN}:${GITLAB_USER_TOKEN}@gitlab.com/${CI_PROJECT_PATH}.git
+    COMMIT_MESSAGE: '[UPD] Update ${CI_COMMIT_REF_NAME} vendor_bundled dependencies'
+    COMPOSER_DISCARD_CHANGES: 'true'
+    COMPOSER_NO_INTERACTION: '1'
+variables:
+  BASE_QA_IMAGE: tikiwiki/tikiwiki-ci:8.1-qa
+  COMPOSER_CACHE_DIR: ${CI_PROJECT_DIR}/.composercache
+  DEPENDENCY_PROXY_PREFIX: ''
+  ELASTICSEARCH_HOST: elasticsearch
+  MANTICORE_DSN: http://manticore
+  MANTICORE_NEWEST_SUPPORTED: 6.3.6
+  MARIADB_IMAGE_NEWEST_SUPPORTED: mariadb:10.11.7
+  MARIADB_IMAGE_OLDEST_SUPPORTED: mariadb:10.5.11
+  MYSQL_5_IMAGE: mysql:5.7.44
+  MYSQL_DATABASE: tikitest
+  MYSQL_IMAGE_NEWEST_SUPPORTED: mysql:8.0.36
+  MYSQL_IMAGE_OLDEST_SUPPORTED: mysql:8.0.29
+  MYSQL_PASSWORD: tikipass
+  MYSQL_ROOT_PASSWORD: secret
+  MYSQL_USER: tikiuser
+  NODE_IMAGE: node:20
+  PROJECT_PATH: tikiwiki/tiki
+  TZ: UTC
+  USE_GITLAB_PROXY: ''
+  npm_config_cache: $CI_PROJECT_DIR/.npm
+vendor-bundled-security-check:
+  allow_failure: true
+  image: ${DEPENDENCY_PROXY_PREFIX}${BASE_QA_IMAGE}
+  needs:
+  - composer
+  rules:
+  - changes:
+    - vendor_bundled/composer.json
+    - vendor_bundled/composer.lock
+    if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  - if: $CI_PIPELINE_SOURCE == "schedule" && $SCHEDULER == "vendor_check"
+  script:
+  - composer -V | grep "version 2\.[6-9]" || composer self-update 2.6.3
+  - cd vendor_bundled
+  - composer audit --locked --no-dev
+  stage: vendors-security
+workflow:
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "push" && ($CI_COMMIT_BRANCH != "master" && $CI_COMMIT_BRANCH
+      !~ /^\d*\.x$/)
+    when: never
+  - if: $CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX != "" && $USE_GITLAB_PROXY == 'true'
+    variables:
+      DEPENDENCY_PROXY_PREFIX: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/
+  - when: always

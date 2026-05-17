@@ -1,0 +1,14 @@
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - mkdir .public
+  - sed "s/##ANALYTICS_ID##/$ANALYTICS_ID/g" -i index.html
+  - cp -r * .public
+  - mv .public public
+  stage: deploy
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive

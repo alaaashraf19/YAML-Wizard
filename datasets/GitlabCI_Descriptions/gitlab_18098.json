@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_18098",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1919,
+  "description": "Create a GitLab CI pipeline for a .NET library using a Windows runner. Define stages build, test, analyze. In the build stage add a build_job that restores NuGet packages with \"& \\\"$env:NUGET_PATH\\\" restore \\\"$env:SOLUTION_PATH\\\"\" then builds the solution with \"& \\\"$env:MSBUILD_PATH\\\" \\\"$env:SOLUTION_PATH\\\" /p:Configuration=Release /clp:ErrorsOnly /t:Rebuild /m\" and publishes the test output folder ($env:TEST_FOLDER) as an artifact that expires in 2 days. In the test stage add a test_job that depends on build_job and runs the NUnit console via \"& \\\"$env:NUNIT_PATH\\\\nunit3-console.exe\\\" \\\"$env:TEST_FOLDER\\\\JustAnotherNetworkLib.Test.dll\\\"\". In the analyze stage add an analyze_with_sonar_job that depends on build_job and runs SonarScanner begin with \"& \\\"$env:SONAR_PATH\\\" begin /k:\\\"justanothernetworklib\\\" /d:sonar.organization=\\\"tollstudios\\\" /d:sonar.host.url=\\\"https://sonarcloud.io\\\" /d:sonar.login=\\\"$env:SonarCloud_Token\\\" /d:sonar.cs.vscoveragexml.reportsPaths=\\\".\\\\code.coveragexml\\\"\", restores NuGet packages, rebuilds the solution, collects code coverage with \"& \\\"$env:CODECOVERAGE_PATH\\\" collect /output:\\\".\\\\code.coverage\\\" \\\"$env:NUNIT_PATH\\\\nunit3-console.exe\\\" \\\"$env:TEST_FOLDER\\\\JustAnotherNetworkLib.Test.dll\\\"\", analyzes coverage with \"& \\\"$env:CODECOVERAGE_PATH\\\" analyze /output:\\\".\\\\code.coveragexml\\\" \\\".\\\\code.coverage\\\"\", ends SonarScanner with \"& \\\"$env:SONAR_PATH\\\" end /d:sonar.login=\\\"$env:SonarCloud_Token\\\"\", and stops MSBuild processes with \"Stop-Process -Name \\\"MSBuild\\\"\". All jobs run only on branch pipelines and use the defined variables.",
+  "tags": [
+    "windows",
+    "dotnet",
+    "nuget",
+    "msbuild",
+    "nunit",
+    "sonarqube",
+    "code-coverage"
+  ]
+}

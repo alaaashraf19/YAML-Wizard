@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_19240",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 491,
+  "description": "Create a GitLab CI pipeline that uses the generic python Docker image and defines a before_script that downloads get-pip.py, runs it with python, and installs ZODB, tox, and pytest via pip. Define three stages named test, build, and release. In the test stage add five jobs—python2, python34, python35, python36, and python37—each overriding the image to python:2.7, python:3.4, python:3.5, python:3.6, and python:3.7-rc respectively, and each executing the single command tox -e py27 (or py34, py35, py36, py37). No caches, artifacts, services, or conditional rules are required.",
+  "tags": [
+    "python",
+    "tox",
+    "pytest",
+    "zodb",
+    "multiple-python-versions"
+  ]
+}

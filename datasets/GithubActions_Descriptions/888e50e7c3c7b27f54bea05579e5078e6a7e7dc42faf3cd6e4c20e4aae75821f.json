@@ -1,0 +1,14 @@
+{
+  "sha": "888e50e7c3c7b27f54bea05579e5078e6a7e7dc42faf3cd6e4c20e4aae75821f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 686,
+  "description": "Create a GitHub Actions workflow named linters that runs on every push to master and on pull requests to master. Run two jobs in parallel on ubuntu-20.04, one for rubocop and one for clang-format. The rubocop job checks out the repository, sets up Ruby 2.7, installs dependencies with bundle install, and runs rubocop. The clang-format job checks out the repository with a fetch depth of 2, installs clang-format, and runs ./bin/check-clang-format.",
+  "tags": [
+    "ruby",
+    "linters",
+    "clang-format",
+    "rubocop",
+    "ubuntu"
+  ]
+}

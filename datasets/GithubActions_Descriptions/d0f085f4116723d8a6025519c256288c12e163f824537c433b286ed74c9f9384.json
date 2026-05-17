@@ -1,0 +1,14 @@
+{
+  "sha": "d0f085f4116723d8a6025519c256288c12e163f824537c433b286ed74c9f9384",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1310,
+  "description": "Create a GitHub Actions workflow that runs on push and pull request events. The workflow has two jobs: testcc and pass. The testcc job runs on an ubuntu-latest environment with a specified container, works around a permission issue, checks out the code, and runs several scripts to test C++ code with lammps and pytest. The pass job depends on the testcc job and simply outputs a success message.",
+  "tags": [
+    "c++",
+    "ubuntu",
+    "lammps",
+    "pytest",
+    "codecov"
+  ]
+}

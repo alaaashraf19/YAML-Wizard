@@ -1,0 +1,15 @@
+{
+  "sha": "a85fad02884a69d958bb27c4279da8dd41f3c7d6bddc4a25b887ca8a90b5f28e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2358,
+  "description": "Create a GitHub Actions workflow named OpenWISP Network Topology CI Build that runs on push to the master branch and on pull requests to master. Use a matrix job with multiple Python and Django versions on ubuntu-24.04, setting up Python, installing dependencies, running QA checks and tests with coverage, and uploading coverage to Coveralls. The job also starts a Redis service and uses Docker Compose to start InfluxDB.",
+  "tags": [
+    "python",
+    "django",
+    "ci",
+    "ubuntu",
+    "tests",
+    "coveralls"
+  ]
+}

@@ -1,0 +1,35 @@
+build:
+  artifacts:
+    paths:
+    - calculator
+    - calculator.gcno
+    - operations.gcno
+  script:
+  - gcc -fprofile-arcs -ftest-coverage -fPIC operations.c calculator.c -o calculator
+  stage: build
+image: gcc
+module tests:
+  before_script:
+  - apt update && apt -y install gcovr
+  coverage: /^TOTAL.*\s+(\d+\%)$/
+  script:
+  - test $(./calculator 1 + 1) = 2
+  - test $(./calculator 100 - 10) = 90
+  - test $(./calculator 25 \* 5) = 125
+  - (! ./calculator 30 / 5)
+  - gcovr -r .
+  stage: test
+stages:
+- static analysis
+- build
+- test
+static analysis:
+  image: rsmmr/clang
+  script:
+  - scan-build --status-bugs gcc operations.c calculator.c
+  stage: static analysis
+unit tests:
+  script:
+  - gcc operations.c unit_tests/minunit.c -o minunit_tests
+  - ./minunit_tests
+  stage: test

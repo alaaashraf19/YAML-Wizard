@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_17630",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 234,
+  "description": "Create a GitLab CI pipeline that uses the rust Docker image and defines a single stage called build. Add a build job named build that runs in the build stage and executes the following shell commands in order: rustup component add rustfmt, cargo fmt --all -- --check, cargo build --verbose, cargo test --verbose, rustup component add clippy-preview, and cargo clippy. No services, caches, artifacts, or special rules are needed.",
+  "tags": [
+    "rust",
+    "cargo",
+    "clippy",
+    "fmt",
+    "build"
+  ]
+}

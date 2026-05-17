@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_17155",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 333,
+  "description": "Create a GitLab CI pipeline with a single deploy job named master that runs only on the master branch. Use the default Ruby image and execute the shell commands: gem install dpl, git config --global push.default matching, and dpl --skip_cleanup --deployment_branch=master --provider=openshift --user=$OPENSHIFT_USERNAME --password=$OPENSHIFT_PASSWORD --domain=$OPENSHIFT_APPLICATION_DOMAIN --app=$OPENSHIFT_MASTER_APPLICATION_NAME. The job is of type deploy, runs in the deploy stage, and does not define caches, artifacts, or services. It relies on the environment variables OPENSHIFT_USERNAME, OPENSHIFT_PASSWORD, OPENSHIFT_APPLICATION_DOMAIN, and OPENSHIFT_MASTER_APPLICATION_NAME for authentication and target application.",
+  "tags": [
+    "ruby",
+    "openshift",
+    "dpl",
+    "deployment",
+    "gitlab-ci"
+  ]
+}

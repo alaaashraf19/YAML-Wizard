@@ -1,0 +1,16 @@
+{
+  "sha": "5a8535ec7ab43b600347b889cec49dcb56210ac1d97d226b6d28796fb61c4707",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3017,
+  "description": "Create a GitHub Actions workflow named Build NPM Packages that can be triggered manually or called by another workflow. The workflow consists of two jobs: build-slice-compilers and pack-npm. The build-slice-compilers job uses a matrix strategy to build slice2js compilers for different operating systems and architectures, and uploads the compiled artifacts. The pack-npm job depends on the build-slice-compilers job, downloads the compiler artifacts, copies the binaries to a staging path, builds JavaScript, packs an NPM package, and uploads the resulting NPM packages.",
+  "tags": [
+    "npm",
+    "nodejs",
+    "multi-os",
+    "compiler",
+    "make",
+    "matrix",
+    "artifacts"
+  ]
+}

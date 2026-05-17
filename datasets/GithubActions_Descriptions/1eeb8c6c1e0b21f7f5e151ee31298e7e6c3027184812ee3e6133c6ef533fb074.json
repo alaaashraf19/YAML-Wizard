@@ -1,0 +1,16 @@
+{
+  "sha": "1eeb8c6c1e0b21f7f5e151ee31298e7e6c3027184812ee3e6133c6ef533fb074",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1768,
+  "description": "Create a GitHub Actions workflow named macOS that runs on every push to the master branch and on pull requests to master. The workflow has two jobs: build on macOS and test on Ubuntu. The build job checks out the repository, sets up build variables, installs Qt 5.15.2, sets up kColorPicker and kImageAnnotator, builds the project with CMake and make, and uploads the build artifacts. The test job depends on the build job, downloads the artifacts, and runs tests with make.",
+  "tags": [
+    "macos",
+    "ubuntu",
+    "cmake",
+    "make",
+    "qt",
+    "ci",
+    "tests"
+  ]
+}

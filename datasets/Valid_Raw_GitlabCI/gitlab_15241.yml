@@ -1,0 +1,89 @@
+Build da Imagem de CI:
+  before_script:
+  - apk add --update bash git
+  image: docker:stable
+  only:
+    changes:
+    - scripts/ci/00_ci_build.sh
+    - scripts/ci/01_ci_release.sh
+    - scripts/dockerfiles/CI
+  script:
+  - bash scripts/ci/run_ci.sh ci_build
+  stage: Build CI
+Imagem de Teste:
+  script: bash scripts/ci/run_ci.sh teste_build
+  stage: Builds
+Imagem do Nginx:
+  script: bash scripts/ci/run_ci.sh nginx_build
+  stage: Builds
+"Implanta\xE7\xE3o":
+  environment: production
+  only:
+  - master
+  script: bash scripts/ci/run_ci.sh implantacao
+  stage: "Implanta\xE7\xE3o"
+'Linter: Shellcheck':
+  script: bash scripts/ci/run_ci.sh linter shellcheck
+  stage: Pre testes
+Migrations:
+  script: bash scripts/ci/run_ci.sh testa_migrations_esquecidas
+  services:
+  - docker:dind
+  - postgres:latest
+  stage: Testes
+  variables:
+    DOCKER_DRIVER: overlay2
+    DOCKER_HOST: tcp://docker:2375/
+    POSTGRES_DB: radar
+    POSTGRES_PASSWORD: radar
+    POSTGRES_USER: radar
+Migrations alteradas manualmente:
+  script: bash scripts/ci/run_ci.sh testa_migrations_modificadas_manualmente
+  stage: Pre testes
+Principal:
+  only:
+  - master
+  script: bash scripts/ci/run_ci.sh producao_release
+  stage: Release das imagens
+Release da Imagem de CI:
+  before_script:
+  - apk add --update bash git
+  image: docker:stable
+  only:
+    changes:
+    - scripts/ci/00_ci_build.sh
+    - scripts/ci/01_ci_release.sh
+    - scripts/dockerfiles/CI
+    refs:
+    - master
+  script: bash scripts/ci/run_ci.sh ci_release
+  stage: Release CI
+Suite de testes Python:
+  script: bash scripts/ci/run_ci.sh testa_aplicacao
+  services:
+  - docker:dind
+  - postgres:latest
+  stage: Testes
+  variables:
+    DOCKER_DRIVER: overlay2
+    DOCKER_HOST: tcp://docker:2375/
+    POSTGRES_DB: radar
+    POSTGRES_PASSWORD: radar
+    POSTGRES_USER: radar
+image: registry.gitlab.com/radar-parlamentar/radar/ci:latest
+nginx:
+  only:
+    refs:
+    - master
+  script: bash scripts/ci/run_ci.sh nginx_release
+  stage: Release das imagens
+services:
+- docker:19.03.5-dind
+stages:
+- Pre testes
+- Build CI
+- Release CI
+- Builds
+- Testes
+- Release das imagens
+- "Implanta\xE7\xE3o"

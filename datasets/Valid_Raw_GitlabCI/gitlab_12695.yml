@@ -1,0 +1,14 @@
+Phing:
+  artifacts:
+    paths:
+    - build/phpunit-coverage/
+    - build/pdepend/
+  script:
+  - ./gitlab-ci/bootstrap.sh
+  tags:
+  - php71
+  - composer
+cache:
+  paths:
+  - vendor/
+  untracked: true

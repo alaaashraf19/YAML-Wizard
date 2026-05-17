@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_06039",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 564,
+  "description": "Create a GitLab CI pipeline with two stages: lint and release. In the lint stage add a lint-bash job that runs the commands apt-get update, apt-get install -y --no-install-recommends shellcheck, shellcheck bin/pg_dump_anon.sh and shellcheck docker/anon.sh using the default runner image. Also in the lint stage add a lint-go job that uses the golang:alpine image and executes apk add --no-cache gcc musl-dev, cd ./pg_dump_anon/, go mod download github.com/lib/pq and go vet main.go. In the release stage add a release_pg_dump_anon job that uses the goreleaser/goreleaser image with an empty entrypoint, sets the variable GIT_DEPTH to 0, runs cd pg_dump_anon and goreleaser release --rm-dist, and is configured to run only for tag pipelines.",
+  "tags": [
+    "bash",
+    "shellcheck",
+    "go",
+    "golang",
+    "goreleaser",
+    "lint",
+    "release"
+  ]
+}

@@ -1,0 +1,23 @@
+build:
+  script:
+  - docker-compose down
+  - docker volume prune -f
+  - docker-compose build
+  stage: build
+cleanup:
+  script:
+  - docker-compose down
+  - docker volume prune -f
+  - docker rm -f $(docker ps -qa) || echo ""
+  stage: cleanup
+  when: always
+stages:
+- build
+- testing
+- cleanup
+testing:
+  retry: 2
+  script:
+  - docker-compose up -d
+  - docker-compose exec -T cidemon python test_app.py
+  stage: testing

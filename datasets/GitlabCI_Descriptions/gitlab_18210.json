@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_18210",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1172,
+  "description": "Create a GitLab CI pipeline using the image registry.gitlab.com/tvaughan/gitlab-ci-docker-builder:latest with docker:dind and postgres:12 services and define POSTGRES_PASS and POSTGRES_USER variables. Define three stages: test, create-ami, and deploy-ami. In the test stage add a test job that runs `make build`, then exports STARTERKIT_DATABASE_HOSTNAME=$POSTGRES_PORT_5432_TCP_ADDR, STARTERKIT_DATABASE_TCP_PORT=$POSTGRES_PORT_5432_TCP_PORT, STARTERKIT_DATABASE_USERNAME=$POSTGRES_USER, STARTERKIT_DATABASE_PASSWORD=$POSTGRES_PASS and runs `make lint`, repeats the same exports and runs `make test`, and finally runs `make push`. In the create-ami stage add a create-ami job that runs `make create-ami`, stores any packer-*-manifest.json files as artifacts, runs only on the master branch, and targets the production environment. In the deploy-ami stage add a deploy-ami job that depends on create-ami, runs `make deploy-ami`, runs only on master, and also targets the production environment.",
+  "tags": [
+    "docker",
+    "dind",
+    "postgres",
+    "make",
+    "ami",
+    "gitlab-ci"
+  ]
+}

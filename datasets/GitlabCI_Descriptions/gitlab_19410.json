@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_19410",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 759,
+  "description": "Create a GitLab CI pipeline with three jobs using the node image for build and pages and ubuntu:18.04 for publish_snap, all limited to the master branch. In the build stage add a build job that runs `apt-get update`, `apt-get install -y rpm`, `npm install`, and `npm run build`, then stores the `dist` and `page` directories as artifacts. In the deploy stage add a pages job that depends on and needs the build job, runs `mkdir .public`, `cp -r page/* .public`, and `mv .public public`, and publishes the `public` directory as a GitLab Pages artifact. Also in the deploy stage add a publish_snap job that depends on and needs the build job, runs `apt-get update -qy`, `apt-get install -y snapcraft`, decodes `$SNAPCRAFT_LOGIN_FILE` into `snapcraft.login`, logs into Snapcraft with `snapcraft login --with snapcraft.login`, and pushes the generated snap file `dist/*.snap` to the Snap Store on the edge channel. Ensure each job only runs on the master branch.",
+  "tags": [
+    "node",
+    "npm",
+    "ubuntu",
+    "snapcraft",
+    "gitlab-pages",
+    "snap",
+    "master-branch"
+  ]
+}

@@ -1,0 +1,45 @@
+build-dev:
+  except:
+  - master
+  only:
+  - branches
+  script:
+  - hugo
+  stage: build
+build-prod:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - hugo
+  stage: build
+deploy-prod:
+  environment:
+    name: production
+    url: https://guide.cdmeb.org/
+  only:
+  - master
+  script:
+  - apt-get update -y && apt-get install openssh-client git rsync -y
+  - eval $(ssh-agent -s)
+  - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+  - mkdir -p ~/.ssh
+  - chmod 700 ~/.ssh
+  - ssh-keyscan $DEPLOY_HOST >> ~/.ssh/known_hosts
+  - chmod 644 ~/.ssh/known_hosts
+  - find public/ -type f -exec chmod 664 {} \;
+  - find public/ -type d -exec chmod 775 {} \;
+  - rsync $RSYNC_OPTS public/ $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/
+  stage: deploy
+image: monachus/hugo
+stages:
+- build
+- deploy
+variables:
+  DEPLOY_HOST: vps08.taqamaqa.com
+  DEPLOY_PATH: /var/www-vhosts/guide.cdmeb.org
+  DEPLOY_USER: deploy-guide-cdmeb-org
+  GIT_SUBMODULE_STRATEGY: recursive
+  RSYNC_OPTS: -avz --delete

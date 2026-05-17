@@ -1,0 +1,18 @@
+stages:
+- test
+test_python37:
+  before_script:
+  - rm docker-compose.override.yml
+  - export COMPOSE_PROJECT_NAME="vaulthelpers${CI_JOB_ID}"
+  - docker-compose pull
+  - docker-compose build --pull
+  script:
+  - "function run_tox_tests() {\n  docker-compose up postgres vault &\n  sleep 10;\n\
+    \  docker-compose run --rm test tox -e \"$1\";\n  docker-compose stop || true;\n\
+    \  docker-compose down -v || true;\n}\n"
+  - run_tox_tests 'py37-django111'
+  - run_tox_tests 'py37-django220'
+  - run_tox_tests 'py37-django300'
+  stage: test
+  tags:
+  - docker-compose

@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_11192",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1369,
+  "description": "Create a GitLab CI pipeline that uses the node:8.11 Docker image with the gitlab-org runner tag and sets GIT_STRATEGY to fetch. Define four stages: install, test, build, and publish. In the install stage add an install job that runs `yarn install` and stores the node_modules directory as a 1‑day artifact. In the test stage add a lint job (depends on install) that runs `yarn lint`, and a test job (depends on install) that runs `yarn test --ci --color --coverage` and saves the coverage directory as a 1‑month artifact. In the build stage add a build job that runs only on release branches, depends on install, runs `yarn build`, and archives the dist folder as a 1‑day artifact. In the publish stage add a \"publish to npm\" job that runs only on release branches, depends on build, writes the npm auth token to .npmrc with `echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}' > .npmrc`, extracts the package version via `export PACKAGE_VERSION=$(node -p -e \"require('./package.json').version\")`, echoes a message, then executes `npm publish && git tag v${PACKAGE_VERSION} && git push --tags`.",
+  "tags": [
+    "node",
+    "yarn",
+    "npm",
+    "release",
+    "install",
+    "test",
+    "lint",
+    "coverage",
+    "build",
+    "publish"
+  ]
+}

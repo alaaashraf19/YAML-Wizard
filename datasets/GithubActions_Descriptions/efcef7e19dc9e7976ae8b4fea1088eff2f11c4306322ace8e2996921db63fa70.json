@@ -1,0 +1,16 @@
+{
+  "sha": "efcef7e19dc9e7976ae8b4fea1088eff2f11c4306322ace8e2996921db63fa70",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1264,
+  "description": "Create a GitHub Actions workflow named CodeQL that analyzes code on every push to the master branch, on pull requests to the master branch, and on a scheduled basis every Saturday at 21:00 UTC. Use an ubuntu-latest job with write permission to security events to check out the repository, initialize CodeQL for C++ and Python, install Qt 5.14.1 and additional dependencies, configure and build a CMake project, and then perform a CodeQL analysis.",
+  "tags": [
+    "codeql",
+    "cpp",
+    "python",
+    "qt",
+    "cmake",
+    "ubuntu",
+    "scheduled"
+  ]
+}

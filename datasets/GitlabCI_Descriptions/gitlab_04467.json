@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_04467",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 126,
+  "description": "Create a GitLab CI pipeline that runs a job named test using the python:3.7 Docker image. In the default test stage, the job executes apt-get update -qy, then pip install -r requirements.txt, and finally runs python3 tests/run_tests.py. No additional services, caches, artifacts, or rules are defined.",
+  "tags": [
+    "python-3.7",
+    "apt-get",
+    "pip",
+    "tests"
+  ]
+}

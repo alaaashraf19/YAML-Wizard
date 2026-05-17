@@ -1,0 +1,14 @@
+{
+  "sha": "3d7eb2e3efa78605c56c52bd5e4e2b85d126ff5fee390b45789e31db7211b4ea",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3108,
+  "description": "Create a GitHub Actions workflow named Release that triggers on published releases, a scheduled cron job, and workflow dispatch. The workflow has two jobs: update-autorevision and update-archive. The update-autorevision job runs on ubuntu-22.04, checks out the repository, updates AutoRevision.txt with git revision information, finds the target branch, and creates a pull request. The update-archive job runs on ubuntu-22.04, checks out the repository, updates AutoRevision.txt, creates a tar.gz and zip archive of the repository, and uploads the archives as a release asset.",
+  "tags": [
+    "release",
+    "github",
+    "archive",
+    "autorevision",
+    "cron"
+  ]
+}

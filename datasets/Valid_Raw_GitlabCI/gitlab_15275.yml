@@ -1,0 +1,50 @@
+build:
+  image: maven:3.6.0-jdk-8-alpine
+  script:
+  - mvn clean install -B -DskipTests
+  stage: build
+cache:
+  paths:
+  - .m2/
+code_quality:
+  allow_failure: true
+  artifacts:
+    reports:
+      codequality: gl-code-quality-report.json
+  cache: {}
+  image: docker:stable
+  script:
+  - export SP_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
+  - docker run --env SOURCE_CODE="$PWD" --volume "$PWD":/code --volume /var/run/docker.sock:/var/run/docker.sock
+    "registry.gitlab.com/gitlab-org/security-products/codequality:$SP_VERSION" /code
+  services:
+  - docker:stable-dind
+  stage: code_quality
+  variables:
+    DOCKER_DRIVER: overlay2
+sast:
+  allow_failure: true
+  artifacts:
+    reports:
+      sast: gl-sast-report.json
+  cache: {}
+  image: docker:stable
+  script:
+  - export SP_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
+  - docker run --env SAST_CONFIDENCE_LEVEL="${SAST_CONFIDENCE_LEVEL:-3}" --volume
+    "$PWD:/code" --volume /var/run/docker.sock:/var/run/docker.sock "registry.gitlab.com/gitlab-org/security-products/sast:$SP_VERSION"
+    /app/bin/run /code
+  services:
+  - docker:stable-dind
+  stage: code_quality
+  variables:
+    DOCKER_DRIVER: overlay2
+stages:
+- build
+- test
+- code_quality
+test:
+  image: maven:3.6.0-jdk-8-alpine
+  script:
+  - mvn clean install -B
+  stage: test

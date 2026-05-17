@@ -1,0 +1,14 @@
+{
+  "sha": "e77d652a1c166e60cfb51dbfbc7f9abacf683c8b9f144a7cd491c7beda9d3dd1",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4985,
+  "description": "Create a GitHub Actions workflow named mnn_release that triggers on push with tags and workflow dispatch. The workflow extracts the version from the tag or sets it to 'dev' if not a tag, then uses this version to build and package MNN for various platforms (Linux, Windows, macOS, Android, iOS) with specific configurations and upload the artifacts. Finally, upload all the artifacts to a GitHub release.",
+  "tags": [
+    "mnn",
+    "release",
+    "multi-platform",
+    "github-release",
+    "actions"
+  ]
+}

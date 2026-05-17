@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_17240",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1418,
+  "description": "Create a GitLab CI pipeline that builds the OCaml project with five jobs named ocaml:4030, ocaml:4042, ocaml:4050, ocaml:4060 and ocaml:4070, each using the ocaml/opam2 Docker image for the matching OCaml version (4.03‑4.07) and running the command bash -c \\\"$BUILD_SCRIPT\\\". Add a pages job that runs bash -c \\\"$BUILD_SCRIPT\\\" followed by bash -c \\\"$BUILD_DOC\\\", publishes the public/ directory as a GitLab Pages artifact, and is limited to the master branch. Add a testpages job that runs the same two commands but is excluded from the master branch. All jobs use the BUILD_SCRIPT and BUILD_DOC variables defined in the pipeline and run in the default stage.",
+  "tags": [
+    "ocaml",
+    "opam",
+    "gitlab-pages",
+    "dune",
+    "odoc",
+    "docker"
+  ]
+}

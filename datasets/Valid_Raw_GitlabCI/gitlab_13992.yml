@@ -1,0 +1,152 @@
+.before_script_docker:
+  before_script: &id006
+  - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  image: docker:latest
+  services: &id007
+  - docker:dind
+  stage: docker
+.before_script_python:
+  before_script:
+  - python -V
+  - pip install virtualenv
+  - virtualenv venv
+  - source venv/bin/activate
+.syntax_checking:
+  except: &id008
+  - schedules
+  stage: linting
+  tags: &id009
+  - gitlab-org
+.vvp_checking:
+  artifacts: &id001
+    paths:
+    - onap_tests/reports
+    when: always
+  before_script: &id002
+  - mkdir -p onap_tests/reports
+  except: &id003
+  - schedules
+  image: &id004
+    entrypoint:
+    - ''
+    name: nexus3.onap.org:10001/onap/vvp/validation-scripts
+  stage: VVP
+  tags: &id005
+  - gitlab-org
+basic_vm:
+  artifacts: *id001
+  before_script: *id002
+  except: *id003
+  image: *id004
+  script:
+  - pytest /vvp/tests --template-directory=onap_tests/templates/heat_files/ubuntu16
+    --output-directory=onap_tests/reports
+  stage: VVP
+  tags: *id005
+container_scanning:
+  variables:
+    CI_APPLICATION_REPOSITORY: rregistry.gitlab.com/orange-opensource/lfn/onap/onap-tests
+    CI_APPLICATION_TAG: latest
+docker:
+  before_script: *id006
+  except:
+  - master
+  image: docker:latest
+  script:
+  - docker build --pull -t "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG" ./docker/
+  - docker push "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG"
+  services: *id007
+  stage: docker
+docker-master:
+  before_script: *id006
+  image: docker:latest
+  only:
+  - master
+  script:
+  - docker build --pull -t "$CI_REGISTRY_IMAGE" ./docker/
+  - docker push "$CI_REGISTRY_IMAGE"
+  services: *id007
+  stage: docker
+freeradius_nbi:
+  artifacts: *id001
+  before_script: *id002
+  except: *id003
+  image: *id004
+  script:
+  - pytest /vvp/tests --template-directory=onap_tests/templates/heat_files/freeRadius
+    --output-directory=onap_tests/reports
+  stage: VVP
+  tags: *id005
+image: python:latest
+include:
+- remote: https://gitlab.com/Orange-OpenSource/lfn/ci_cd/gitlab-ci-templates/raw/master/pylint.gitlab-ci.yml
+- remote: https://gitlab.com/Orange-OpenSource/lfn/ci_cd/gitlab-ci-templates/raw/master/pydocstyle.gitlab-ci.yml
+- template: Container-Scanning.gitlab-ci.yml
+- remote: https://gitlab.com/Orange-OpenSource/lfn/ci_cd/gitlab-ci-templates/raw/master/Code-Quality.gitlab-ci.yml
+- remote: https://gitlab.com/Orange-OpenSource/lfn/ci_cd/gitlab-ci-templates/raw/master/SAST.gitlab-ci.yml
+- template: License-Management.gitlab-ci.yml
+- template: Dependency-Scanning.gitlab-ci.yml
+markdown_linting:
+  except: *id008
+  image: vpgrp/linter:markdown
+  script:
+  - mdl .
+  stage: linting
+  tags: *id009
+pytest:
+  artifacts:
+    paths:
+    - coverage
+    reports:
+      junit: pytest-*.xml
+  image: python:3.6
+  script:
+  - pip install -e .
+  - python setup.py test
+  stage: unit_test
+stages:
+- linting
+- VVP
+- unit_test
+- docker
+- test
+variables:
+  PIP_CACHE_DIR: $CI_PROJECT_DIR/.cache/pip
+  SAST_GOSEC_LEVEL: 3
+  SRC_PATH: /onap_tests
+vfw:
+  artifacts: *id001
+  before_script: *id002
+  except: *id003
+  image: *id004
+  script:
+  - pytest /vvp/tests --template-directory=onap_tests/templates/heat_files/vfw --output-directory=onap_tests/reports
+  stage: VVP
+  tags: *id005
+vfwcl:
+  allow_failure: true
+  artifacts: *id001
+  before_script: *id002
+  except: *id003
+  image: *id004
+  script:
+  - pytest /vvp/tests --template-directory=onap_tests/templates/heat_files/vfwcl --output-directory=onap_tests/reports
+  stage: VVP
+  tags: *id005
+vims:
+  artifacts: *id001
+  before_script: *id002
+  except: *id003
+  image: *id004
+  script:
+  - pytest /vvp/tests --template-directory=onap_tests/templates/heat_files/clearwater
+    --output-directory=onap_tests/reports
+  stage: VVP
+  tags: *id005
+yaml_linting:
+  except: *id008
+  image: sdesbure/yamllint:latest
+  script:
+  - yamllint onap_tests/onap-conf onap_tests/templates/vnf-services
+  stage: linting
+  tags: *id009

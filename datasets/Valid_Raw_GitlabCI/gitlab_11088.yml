@@ -1,0 +1,59 @@
+build:production:
+  image: docker:latest
+  only:
+  - master
+  script:
+  - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  - mv nebula/nebula/settings_production.py nebula/nebula/settings_injected.py
+  - docker build -f Dockerfile -t $IMAGE .
+  - docker push $IMAGE
+  stage: build
+deploy-production-hard:
+  environment:
+    name: nebula
+    url: https://nebula.kdemeul.fr
+  image: debian:latest
+  only:
+  - master
+  script:
+  - source bin/allow_ssh.sh
+  - source bin/scp_secrets.sh $HOST
+  - scp docker-compose.yml $HOST:~/docker-compose.yml
+  - ssh $HOST "sudo docker stack deploy -c docker-compose.yml NEBULA --with-registry-auth"
+  stage: deploy
+  when: manual
+deploy:production:
+  environment:
+    name: nebula
+    url: https://nebula.kdemeul.fr
+  image: debian:latest
+  only:
+  - master
+  script:
+  - source bin/allow_ssh.sh
+  - source bin/scp_secrets.sh $HOST
+  - scp docker-compose.yml $HOST:~/docker-compose.yml
+  - ssh $HOST "sudo docker service update --with-registry-auth --image $IMAGE NEBULA_nebula"
+  stage: deploy
+image: docker:latest
+services:
+- docker:dind
+stages:
+- test
+- build
+- deploy
+test:flake8:
+  image: python:3
+  script:
+  - pip install flake8
+  - flake8
+  stage: test
+test:unit-tests:
+  image: python:3
+  script:
+  - pip install -r requirements.txt
+  - pytest nebula/ --cov=nebula
+  stage: test
+variables:
+  HOST: ec2-user@ec2-54-93-88-96.eu-central-1.compute.amazonaws.com
+  IMAGE: registry.gitlab.com/kdemeul/nebula:latest

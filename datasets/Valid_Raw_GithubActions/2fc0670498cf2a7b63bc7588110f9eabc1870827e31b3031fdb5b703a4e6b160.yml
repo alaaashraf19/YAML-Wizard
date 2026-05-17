@@ -1,0 +1,13 @@
+name: digix-SAM3X8E
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    uses: ./.github/workflows/build_template.yml
+    with:
+      board: digix

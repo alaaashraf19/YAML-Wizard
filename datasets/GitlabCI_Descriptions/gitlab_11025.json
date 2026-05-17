@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_11025",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 294,
+  "description": "Create a GitLab CI pipeline that uses the node:latest Docker image and defines two stages: build and deploy. Add a build job that runs in the build stage, caches the node_modules/ directory, and executes the shell commands npm install and npm run build. Add a deploy_prod job that runs in the deploy stage, sets the environment name to production with URL http://argos.sh, is limited to the master branch, and runs the shell commands npm install and ./start.sh. Ensure the pipeline respects the only: master rule for the deploy job.",
+  "tags": [
+    "node",
+    "npm",
+    "build",
+    "deploy",
+    "production"
+  ]
+}

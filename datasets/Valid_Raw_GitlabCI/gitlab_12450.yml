@@ -1,0 +1,77 @@
+.checks_common:
+  before_script:
+  - curl -O https://bootstrap.pypa.io/get-pip.py
+  - python get-pip.py
+  - pip install tox
+  except:
+  - /^v\d+\.\d+(\.\d+([abc]\d*)?)?$/
+deploy_pypi:
+  after_script:
+  - rm -vf ~/.pypirc
+  before_script:
+  - curl -O https://bootstrap.pypa.io/get-pip.py
+  - python get-pip.py
+  - pip install tox
+  except:
+  - branches
+  image: python:3.7
+  only:
+  - /^v\d+\.\d+(\.\d+([abc]\d*)?)?$/
+  script:
+  - echo "[distutils]" > ~/.pypirc
+  - echo "index-servers =" >> ~/.pypirc
+  - echo "  pypi" >> ~/.pypirc
+  - echo >> ~/.pypirc
+  - echo "[pypi]" >> ~/.pypirc
+  - echo "username=" ${PYPI_USER} >> ~/.pypirc
+  - echo "password=" ${PYPI_PASSWORD} >> ~/.pypirc
+  - tox -e release
+  - echo > ~/.pypirc
+  stage: deploy
+linting:
+  before_script:
+  - curl -O https://bootstrap.pypa.io/get-pip.py
+  - python get-pip.py
+  - pip install tox pre-commit
+  extends: .checks_common
+  image: python:3.7
+  script: tox -e lint
+  stage: lint
+python35:
+  extends: .checks_common
+  image: python:3.5
+  script: tox -e py35
+  stage: test
+python36:
+  extends: .checks_common
+  image: python:3.6
+  script: tox -e py36
+  stage: test
+python37:
+  extends: .checks_common
+  image: python:3.7
+  script: tox -e py37
+  stage: test
+stages:
+- lint
+- test
+- release
+- deploy
+tag:
+  before_script:
+  - git config user.name "Test User"
+  - git config user.email "test@redhat.com"
+  - npm install @semantic-release/gitlab -D
+  image: node:10
+  only:
+  - master
+  script:
+  - npx semantic-release@15
+  stage: release
+  variables:
+    GIT_SSL_NO_VERIFY: 'true'
+    HOME: .
+    NODE_TLS_REJECT_UNAUTHORIZED: 0
+variables:
+  PYPI_PASSWORD: SECURE
+  PYPI_USER: SECURE

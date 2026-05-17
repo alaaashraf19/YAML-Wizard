@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_08535",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 3886,
+  "description": "Create a GitLab CI pipeline with a Docker‑in‑Docker image (via .docker:build-docker-in-docker) and macOS runner images (via .installation:mac-os-job) that runs all jobs in a single \"novel\" stage. Add a novel:linux-amd64 job that executes ./support/docker ci-build-novel-image \"${BUILD_OS_VERSION}\" for each matrix value (arch and ubuntu) and follows the .rules:novel trigger. Add a novel:macos job that sets GDK_REPO_URL, echoes the install URL, curls the install script and pipes it to bash with ts logging, runs in the novel stage and uses variables GIT_STRATEGY=none, RUBY_OPENSSL_VERIFY_MODE=none, SSL_CERT_FILE=/etc/ssl/cert.pem. Add a postgres-upgrade:macos job that saves gdk-install.log, gitlab_log/ and gdk_log/ as artifacts, runs a series of shell commands to compare current and target PostgreSQL versions, modifies .tool-versions, runs gdk configuration and update commands, and is gated by .rules:postgres-upgrade. Finally, add an update:macos job that also archives gitlab_log/ and gdk_log/, runs ./support/install with ts logging, activates mise, sources utils.sh and runs support/ci/verify-update, also triggered by .rules:installation-changes.",
+  "tags": [
+    "docker",
+    "dind",
+    "macos",
+    "postgres-upgrade",
+    "gdk",
+    "novel"
+  ]
+}

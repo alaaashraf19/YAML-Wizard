@@ -1,0 +1,58 @@
+build:linux:cli:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - $PSXACT_CLI_OUTPUT
+  before_script:
+  - apt update && apt -y install libsdl2-dev
+  image: rust:buster
+  script:
+  - cd psxact-cli
+  - cargo build --release
+  - cargo test --release
+  stage: build
+  tags:
+  - docker
+build:linux:lib:
+  image: rust:buster
+  script:
+  - cd psxact
+  - cargo build --release
+  - cargo test --release
+  stage: build
+  tags:
+  - docker
+build:linux:libretro:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - $PSXACT_LIBRETRO_OUTPUT
+  image: rust:buster
+  script:
+  - cd psxact-libretro
+  - cargo build --release
+  - cargo test --release
+  stage: build
+  tags:
+  - docker
+package:linux:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - out/*
+  dependencies:
+  - build:linux:cli
+  - build:linux:libretro
+  image: debian:buster
+  script:
+  - mkdir out
+  - cp $PSXACT_CLI_OUTPUT $CI_PROJECT_DIR/out/.
+  - cp $PSXACT_LIBRETRO_OUTPUT $CI_PROJECT_DIR/out/.
+  stage: package
+stages:
+- build
+- package
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+  PSXACT_CLI_OUTPUT: ./psxact-cli/target/release/psxact-cli
+  PSXACT_LIBRETRO_OUTPUT: ./psxact-libretro/target/release/libpsxact_libretro.so

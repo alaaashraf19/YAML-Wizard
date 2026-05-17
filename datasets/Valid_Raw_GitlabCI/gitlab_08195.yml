@@ -1,0 +1,21 @@
+host-auth:
+  image: postgres
+  script:
+  - psql -h "postgres" -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "SELECT 'OK' AS status;"
+  services:
+  - postgres
+  variables:
+    POSTGRES_DB: custom_db
+    POSTGRES_HOST_AUTH_METHOD: trust
+    POSTGRES_USER: custom_user
+password-auth:
+  image: postgres
+  script:
+  - export PGPASSWORD=$POSTGRES_PASSWORD
+  - psql -h "postgres" -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "SELECT 'OK' AS status;"
+  services:
+  - postgres
+  variables:
+    POSTGRES_DB: custom_db
+    POSTGRES_PASSWORD: custom_pass
+    POSTGRES_USER: custom_user

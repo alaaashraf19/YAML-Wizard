@@ -1,0 +1,66 @@
+build_job:
+  artifacts:
+    name: $CI_COMMIT_TAG
+    paths:
+    - .build
+  cache:
+    paths:
+    - node_modules
+    - .build
+  image: node:10.12.0-jessie
+  only:
+  - tags
+  script:
+  - npm run build
+  stage: build
+deploy_job:
+  before_script:
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+  - docker info
+  image: docker:stable
+  only:
+  - tags
+  script:
+  - docker pull $CONTAINER_IMAGE:latest || true
+  - docker build --cache-from $CONTAINER_IMAGE:latest --tag $CONTAINER_IMAGE:$CI_COMMIT_TAG
+    --tag $CONTAINER_IMAGE:latest .
+  - docker push $CONTAINER_IMAGE:$CI_COMMIT_TAG
+  - docker push $CONTAINER_IMAGE:latest
+  services:
+  - docker:dind
+  stage: deploy
+install_job:
+  cache:
+    paths:
+    - node_modules
+  image: node:10.12.0-jessie
+  only:
+  - tags
+  script:
+  - npm install
+  stage: install
+stages:
+- install
+- test
+- build
+- deploy
+test_job:
+  artifacts:
+    reports:
+      junit: ./junit.xml
+  cache:
+    paths:
+    - node_modules
+  coverage: /All files[^|]*\|[^|]*\s+([\d\.]+)/
+  image: node:10.12.0-jessie
+  only:
+  - tags
+  script:
+  - npm run jest
+  stage: test
+variables:
+  CONTAINER_IMAGE: registry.gitlab.com/$CI_PROJECT_PATH
+  DOCKER_DRIVER: overlay2
+  DOCKER_HOST: tcp://docker:2375/
+  GIT_STRATEGY: fetch
+  Timeout: 10

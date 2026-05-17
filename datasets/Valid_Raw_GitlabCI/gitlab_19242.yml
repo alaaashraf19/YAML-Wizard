@@ -1,0 +1,54 @@
+.test_template:
+  before_script: &id001
+  - apt-get update -q
+  - curl -sL https://deb.nodesource.com/setup_10.x | bash - && apt-get install -y
+    nodejs
+  - ruby -v
+  - which ruby
+  - gem install bundler --no-document
+  - bundle install -j $(nproc) --path vendor/ruby
+  - cp config/database.yml.gitlab config/database.yml
+  cache: &id002
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+    - vendor/ruby
+  image: ruby:2.6.5-stretch
+  services: &id003
+  - postgres:latest
+  stage: test
+  tags: &id004
+  - yale
+  variables: &id005
+    POSTGRES_DB: gitlab_ci_test
+    POSTGRES_HOST_AUTH_METHOD: trust
+    POSTGRES_USER: runner
+audit:
+  before_script: *id001
+  cache: *id002
+  image: ruby:2.6.5-stretch
+  script:
+  - bundle exec rake bundler:audit
+  services: *id003
+  stage: test
+  tags: *id004
+  variables: *id005
+spec:
+  before_script: *id001
+  cache: *id002
+  image: ruby:2.6.5-stretch
+  script:
+  - bundle exec rspec
+  services: *id003
+  stage: test
+  tags: *id004
+  variables: *id005
+style:
+  before_script: *id001
+  cache: *id002
+  image: ruby:2.6.5-stretch
+  script:
+  - bundle exec rake check_style 'git diff origin/master --name-status'
+  services: *id003
+  stage: test
+  tags: *id004
+  variables: *id005

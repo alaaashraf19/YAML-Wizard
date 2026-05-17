@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_11197",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 255,
+  "description": "Create a GitLab CI pipeline that defines a deploy stage with a pages job. The pages job runs on the default Docker image, sets the variable GIT_SUBMODULE_STRATEGY to recursive, and executes the exact script commands: mkdir .public, sed \"s/##ANALYTICS_ID##/$ANALYTICS_ID/g\" -i index.html, cp -r * .public, and mv .public public. It publishes the public/ directory as a pages artifact and is restricted to the master branch using an only rule. No services, caches, or additional deployment targets are configured.",
+  "tags": [
+    "gitlab-pages",
+    "deploy",
+    "sed",
+    "analytics-id",
+    "master-only"
+  ]
+}

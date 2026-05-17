@@ -1,0 +1,20 @@
+before_script:
+- node -v
+- npm -v
+- npm install gulp-cli bower -g
+- npm install
+- bower install --allow-root
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+  - node_modules/
+image: node:8.9.1
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - gulp build
+  stage: deploy

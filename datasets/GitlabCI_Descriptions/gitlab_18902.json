@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_18902",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 117,
+  "description": "Create a GitLab CI pipeline with a single job called terminal that runs in the default test stage. The job uses the default runner image, runs apt-get update in a before_script step, then executes the script command sleep 60. It defines the variables NODE_ENV and RAILS_ENV both set to test for the job. No additional stages, caches, artifacts, services, or rules are required.",
+  "tags": [
+    "apt-get",
+    "sleep",
+    "environment-variables",
+    "terminal"
+  ]
+}

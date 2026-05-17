@@ -1,0 +1,59 @@
+name: CI
+
+on: 
+  push:
+  pull_request:
+  schedule:
+    - cron: 0 0 * * *
+
+jobs:
+  format:
+    uses: Geode-solutions/actions/.github/workflows/format.yml@master
+    secrets:
+      TOKEN: ${{ secrets.TOKEN }}
+      
+  build-linux:
+    needs: format
+    uses: Geode-solutions/actions/.github/workflows/ci-linux.yml@master
+    with:
+      directory: opengeode
+    secrets:
+      TOKEN: ${{ secrets.TOKEN }}
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  build-linux-python:
+    needs: format
+    uses: Geode-solutions/actions/.github/workflows/ci-linux-python.yml@master
+    with:
+      name: OPENGEODE
+      directory: opengeode
+    secrets:
+      TOKEN: ${{ secrets.TOKEN }}
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      
+  coverage:
+    needs: format
+    uses: Geode-solutions/actions/.github/workflows/coverage.yml@master
+    with:
+      directory: opengeode
+    secrets:
+      TOKEN: ${{ secrets.TOKEN }}
+
+  build-windows:
+    needs: format
+    uses: Geode-solutions/actions/.github/workflows/ci-windows.yml@master
+    with:
+      name: OPENGEODE
+      directory: opengeode
+    secrets:
+      TOKEN: ${{ secrets.TOKEN }}
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        
+  semantic-release:
+    needs: [build-linux, build-linux-python, build-windows]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - run: npx semantic-release
+      env:
+        GITHUB_TOKEN: ${{ secrets.TOKEN }}

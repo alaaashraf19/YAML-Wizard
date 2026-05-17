@@ -1,0 +1,16 @@
+{
+  "sha": "ef56a6f60a3f151a050ae851457b312d68085beda6ce18ef83157a0dcce4fe76",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1904,
+  "description": "Create a GitHub Actions workflow named Source package that triggers on push and pull request events. The workflow should have two ubuntu-latest jobs: build and docs. The build job checks out the code, sets up Python 3.10, installs dependencies, runs unit tests with pytest, creates a source package with poetry, and uploads the artifact. The docs job checks out the code, sets up Python 3.13, installs dependencies, builds Sphinx documentation, and uploads it.",
+  "tags": [
+    "python",
+    "poetry",
+    "sphinx",
+    "ubuntu",
+    "tests",
+    "docs",
+    "artifacts"
+  ]
+}

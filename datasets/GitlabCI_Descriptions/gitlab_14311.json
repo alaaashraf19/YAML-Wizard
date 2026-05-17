@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_14311",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 401,
+  "description": "Create a GitLab CI pipeline that uses the default Docker image and runs a before_script installing python-pip with `apt-get update -qq && apt-get install -y -qq python-pip` followed by `pip install platformio`. Define a single job called linux (in the default stage) that executes two PlatformIO CI commands: `platformio ci --lib=\".\" --board=nodemcuv2 examples/basic/basic.ino -O \"build_flags = -Wall -Wextra -Wno-unused-parameter -Werror\"` and `platformio ci --lib=\".\" --board=esp32dev examples/basic/basic.ino -O \"build_flags = -Wall -Wextra -Wno-unused-parameter -Werror -std=c++14\"`. No caches, artifacts, services, or conditional rules are specified.",
+  "tags": [
+    "platformio",
+    "arduino",
+    "esp32",
+    "nodemcu",
+    "ci"
+  ]
+}

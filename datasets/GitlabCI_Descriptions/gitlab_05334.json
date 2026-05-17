@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_05334",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 995,
+  "description": "Create a GitLab CI pipeline with a single stage install-environment and a job install-go that only runs on the master branch. The job sets GO_VERSION=1.6.2 and PROJECT=hnbot, removes existing $HOME/golang and src directories, creates $HOME/golang and $HOME/gopath/src/gitlab.com/chubbssolutions/${PROJECT}, downloads and extracts the Go ${GO_VERSION} Linux AMD64 tarball, sets GOROOT and GOPATH and updates PATH, verifies the Go version, copies the project from /builds/chubbssolutions/${PROJECT} into the GOPATH, runs go get, go test, prints the working directory, and builds the binary with go build. No Docker image, services, caches, artifacts, or deployment targets are defined.",
+  "tags": [
+    "go",
+    "golang",
+    "install",
+    "gitlab-ci"
+  ]
+}

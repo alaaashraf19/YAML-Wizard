@@ -1,0 +1,14 @@
+{
+  "sha": "19edfee2deb11632843d73f01887d99c85f8425182cd1fd8ae490e2e4521bd8e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 502,
+  "description": "Create a GitHub Actions workflow named Lint that runs on workflow dispatch, on push to master branch excluding tags starting with v*, and on pull requests to master. Use a single ubuntu-latest job with environment variables for BUILD_VERSION, GITHUB_PULL_REQUEST, and PYTHON, that checks out the repository and runs two lint scripts: main.sh and extended_lint/main.sh.",
+  "tags": [
+    "linting",
+    "ubuntu",
+    "python",
+    "workflow-dispatch",
+    "pull-requests"
+  ]
+}

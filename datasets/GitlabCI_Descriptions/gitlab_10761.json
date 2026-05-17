@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_10761",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 688,
+  "description": "Create a GitLab CI pipeline using the femtopixel/multiarchbuilder Docker image with a docker:dind service and set DOCKER_HOST to tcp://docker:2375. Define a single stage called build and a job named build that runs only on the master branch. In the before_script of the build job, install git, register QEMU static binaries with multiarch/qemu-user-static, clone and build manifest-tool version v0.9.0 using make and install it, copy qemu-static-conf files to /lib/binfmt.d, and log in to Docker Hub using the DOCKER_HUB_LOGIN and DOCKER_HUB_PASSWORD variables. Then in the script step run make. No caches, artifacts, or deployments are defined.",
+  "tags": [
+    "multiarch",
+    "docker",
+    "make",
+    "manifest-tool",
+    "qemu"
+  ]
+}

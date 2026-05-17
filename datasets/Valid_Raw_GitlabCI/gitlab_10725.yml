@@ -1,0 +1,23 @@
+before_script:
+- stack upgrade
+- apt-get update
+- apt-get install make xz-utils
+cache:
+  paths:
+  - .stack-work
+  - .stack
+  untracked: true
+image: haskell:8.2
+src_build:
+  script:
+  - stack build
+  stage: build
+src_test:
+  script:
+  - stack test
+  stage: test
+stages:
+- build
+- test
+variables:
+  STACK_ROOT: ${CI_PROJECT_DIR}/.stack

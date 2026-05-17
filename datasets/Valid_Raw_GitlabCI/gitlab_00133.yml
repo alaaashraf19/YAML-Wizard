@@ -1,0 +1,15 @@
+image: openjdk:8
+job1:
+  only:
+  - master
+  script:
+  - ./gradlew groovydoc
+  - ./gradlew jars pom
+  stage: build
+stages:
+- build
+- test
+testjob:
+  script:
+  - ./gradlew test
+  stage: test

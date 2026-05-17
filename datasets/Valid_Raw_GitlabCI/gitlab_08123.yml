@@ -1,0 +1,18 @@
+image: registry.gitlab.com/gitlab-org/gitlab-build-images:doc-gitlab-com
+pages:
+  artifacts:
+    paths:
+    - public/
+  environment:
+    name: production
+    url: https://docs.gitlab.com
+  only:
+  - master
+  script:
+  - ruby -v
+  - ruby generate.rb
+  - for i in `find public -name README.html`; do ln -sf README.html $(dirname $i)/index.html;
+    done
+  stage: deploy
+variables:
+  PROGRESS: '1'

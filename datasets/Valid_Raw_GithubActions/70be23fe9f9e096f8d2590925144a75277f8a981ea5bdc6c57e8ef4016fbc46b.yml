@@ -1,0 +1,42 @@
+name: Update gitpod integration repository 
+
+on:
+  # schedule:
+  #   # Every day at 3 am
+  #   - cron: '0 3 * * *'
+   
+  # Enable manual triggering of this workflow 
+  workflow_dispatch:
+      inputs:
+        logLevel:
+          description: 'Log level'     
+          required: true
+          default: 'warning'
+        tags:
+          description: 'Test scenario tags' 
+
+jobs:
+  update-gitpod-integration-repo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          repository: 'LukasBreitwieser/gitpod-vnc'
+          ref: master
+
+      - name: Update gitpod.Dockerfile
+        run: |
+          sed -i "s/[a-fA-F0-9]\{40\} /$GITHUB_SHA /g" gitpod.Dockerfile
+
+      - name: Push new gitpod.Dockerfile
+        uses: dmnemec/copy_file_to_another_repo_action@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+        with:
+          source_file: 'gitpod.Dockerfile'
+          destination_repo: 'LukasBreitwieser/gitpod-vnc'
+          destination_branch: 'master'
+          user_email: 'lukas.breitwieser@cern.ch'
+          user_name: 'Lukas Breitwieser'
+          commit_message: 'Update BioDynaMo commit id'

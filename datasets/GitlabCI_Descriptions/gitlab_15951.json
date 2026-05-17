@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_15951",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2960,
+  "description": "Create a GitLab CI pipeline with stages lint, tests, dist, and deploy, using the variables DEBIAN_FRONTEND=noninteractive and SAST_DEFAULT_ANALYZERS=bandit. In the lint stage add a prospector job using the python:latest image that runs a before_script installing prospector[with_everything] defusedxml requests zxcvbn dominate and then executes `make lint`; allow it to fail without breaking the pipeline. Also in lint add a shellcheck job using the koalaman/shellcheck-alpine image that runs `shellcheck --shell=bash import.bash`. In the tests stage define four jobs named python 3.8, python 3.9, python 3.10, and python 3.11, each using the corresponding python:<version> image, inheriting a before_script that installs make, gpg, pass, python3-pip, grep, wget, dbus, gnome-keyring, pandoc, then runs the shared script which installs pip packages, creates a dummy lpass command, copies a gnome‑keyring file, runs `make`, `dbus-run-session -- make tests`, `make docs`, `make install`, changes to home, and runs `pass import --help`. The python 3.11 job also uploads the coverage directory `htmlcov/` as an artifact that expires in 2 days and records coverage with the regex `/\\d+\\%\\s*$/`. Finally, in the deploy stage add a pages job that runs only on the default branch, moves `htmlcov/` to `public/`, and publishes the `public/` directory as a Pages artifact that expires in 1 day, depending on the python 3.11 job.",
+  "tags": [
+    "gitlab-ci",
+    "lint",
+    "prospector",
+    "shellcheck",
+    "python-tests",
+    "coverage",
+    "pages",
+    "docker-images"
+  ]
+}

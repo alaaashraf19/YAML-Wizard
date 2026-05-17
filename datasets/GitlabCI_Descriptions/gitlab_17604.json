@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_17604",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 488,
+  "description": "Create a GitLab CI pipeline using the maven:3.3.9-jdk-8 Docker image and setting MAVEN_OPTS to use a local .m2 repository. Define three stages: build, test, and deploy. In the build stage add a build job that runs `mvn install -B` and caches the .m2/ directory. In the test stage add a coverage job that runs `mvn cobertura:cobertura` and stores the generated target/site/cobertura directory as an artifact, and a site job that runs `mvn site` and stores target/site as an artifact. In the deploy stage add a pages job that depends on the site job, moves target/site/ to a public/ folder, publishes the public directory as a GitLab Pages artifact (expires in 30 days), and runs only on the master branch.",
+  "tags": [
+    "maven",
+    "cobertura",
+    "site",
+    "gitlab-pages",
+    "cache-m2",
+    "java8"
+  ]
+}

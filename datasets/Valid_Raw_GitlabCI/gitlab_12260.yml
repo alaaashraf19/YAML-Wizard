@@ -1,0 +1,306 @@
+build deployment docker image:
+  before_script:
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+  environment:
+    name: deployment
+  image: docker:latest
+  only:
+  - branches
+  script:
+  - docker build -t registry.gitlab.com/mhuber84/klickibunti-deployment:latest Build/Docker
+  - docker push registry.gitlab.com/mhuber84/klickibunti-deployment
+  services:
+  - docker:dind
+  stage: build-deployment
+  tags:
+  - mtug-dind
+  variables:
+    DOCKER_DRIVER: overlay2
+  when: manual
+build production data on review:
+  before_script:
+  - eval $(ssh-agent -s)
+  - ssh-add <(echo "$GITLABRUNNER_SSH_PRIVATE_KEY")
+  environment:
+    name: review/$CI_COMMIT_REF_NAME
+    url: http://$CI_COMMIT_REF_NAME.review.mtug.bgm-hosting.com
+  except:
+  - master
+  image: registry.gitlab.com/mhuber84/klickibunti-deployment:latest
+  only:
+  - branches
+  script:
+  - Build/Shell/DataDeployment.sh $REVIEW_DB_PASSWORD
+  stage: build-review
+  tags:
+  - mtug
+  variables:
+    DEPLOY_TARGET_DB_HOST: 127.0.0.1
+    DEPLOY_TARGET_DB_NAME: www1_mtug_review
+    DEPLOY_TARGET_DB_PORT: '3306'
+    DEPLOY_TARGET_DB_USER: mtug
+    DEPLOY_TARGET_FILES_PATH: /var/www/www1/vhosts/mtug/review/.files/
+    DEPLOY_TARGET_HOST: tau.bgm-hosting.com
+    DEPLOY_TARGET_PORT: '20022'
+    DEPLOY_TARGET_USER: mh
+    DOCKER_DRIVER: overlay2
+    EXCLUDE_TABLES: sys_dmail_maillog,tx_realurl_urlencodecache,tx_solr_statistics,tx_realurl_urldecodecache,sys_log,tx_realurl_errorlog,tx_powermail_domain_model_mail,tx_powermail_domain_model_mails,tx_powermail_domain_model_answer,tx_powermail_domain_model_answers,tt_address,sys_history,tx_extensionmanager_domain_model_extension,tx_zargesproducts_domain_model_importconfiguration,tx_solr_indexqueue_item,fe_session_data,tx_solr_indexqueue_indexing_property,tx_scheduler_task,tx_solr_indexqueue_file,tx_solr_cache_tags,cache_sys_dmail_stat,fe_sessions,tx_solr_cache,tx_l10nmgr_exportdata,tx_solr_last_searches
+  when: manual
+build production data on staging:
+  before_script:
+  - eval $(ssh-agent -s)
+  - ssh-add <(echo "$GITLABRUNNER_SSH_PRIVATE_KEY")
+  environment:
+    name: staging
+    url: http://staging.mtug.bgm-hosting.com
+  image: registry.gitlab.com/mhuber84/klickibunti-deployment:latest
+  only:
+  - master
+  script:
+  - Build/Shell/DataDeployment.sh $STAGING_DB_PASSWORD
+  stage: build-staging
+  tags:
+  - mtug
+  variables:
+    DEPLOY_TARGET_DB_HOST: 127.0.0.1
+    DEPLOY_TARGET_DB_NAME: www1_mtug_staging
+    DEPLOY_TARGET_DB_PORT: '3306'
+    DEPLOY_TARGET_DB_USER: mtug
+    DEPLOY_TARGET_FILES_PATH: /var/www/www1/vhosts/mtug/staging/shared/files/
+    DEPLOY_TARGET_HOST: tau.bgm-hosting.com
+    DEPLOY_TARGET_PORT: '20022'
+    DEPLOY_TARGET_USER: mh
+    DOCKER_DRIVER: overlay2
+deploy webroot to production:
+  before_script:
+  - eval $(ssh-agent -s)
+  - ssh-add <(echo "$GITLABRUNNER_SSH_PRIVATE_KEY")
+  - git config user.email "$GITLAB_USER_EMAIL" && git config user.name "gitlab-runner"
+    && git remote set-url --push origin git@gitlab.com:mhuber84/klickibunti-deployment.git
+  - bundle config path "$PWD/$GEM_PATH"
+  cache:
+    key: production/webroot
+    paths:
+    - Build/.gems
+    - Build/.surfworkspace
+    - vendor
+  environment:
+    name: production
+    url: http://production.mtug.bgm-hosting.com
+  image: registry.gitlab.com/mhuber84/klickibunti-deployment:latest
+  only:
+  - master
+  script:
+  - Build/Surf/surf.phar --configurationPath="Build/Surf" -vvv deploy ProductionDeployment
+  stage: deploy-production
+  tags:
+  - mtug
+  variables:
+    DOCKER_DRIVER: overlay2
+    GEM_PATH: Build/.gems
+    SURF_WORKSPACE: Build/.surfworkspace
+    TEST_BACKEND_URL: http://bgmweb:webbgm@production.mtug.bgm-hosting.com/typo3/
+    TEST_URL: http://bgmweb:webbgm@production.mtug.bgm-hosting.com/index.php?id=34
+    USER_FILES: /var/www/www1/vhosts/mtug/production/shared/files
+  when: manual
+deploy webroot to review:
+  before_script:
+  - eval $(ssh-agent -s)
+  - ssh-add <(echo "$GITLABRUNNER_SSH_PRIVATE_KEY")
+  - git config user.email "$GITLAB_USER_EMAIL" && git config user.name "gitlab-runner"
+    && git remote set-url --push origin git@gitlab.com:mhuber84/klickibunti-deployment.git
+  - bundle config path "$PWD/$GEM_PATH"
+  cache:
+    key: review/webroot/$CI_COMMIT_REF_NAME
+    paths:
+    - Build/.gems
+    - Build/.surfworkspace
+    - vendor
+  environment:
+    name: review/$CI_COMMIT_REF_NAME
+    url: http://$CI_COMMIT_REF_NAME.review.mtug.bgm-hosting.com
+  except:
+  - master
+  image: registry.gitlab.com/mhuber84/klickibunti-deployment:latest
+  only:
+  - branches
+  script:
+  - Build/Surf/surf.phar --configurationPath="Build/Surf" -vvv deploy ReviewDeployment
+  stage: deploy-review
+  tags:
+  - mtug
+  variables:
+    DEPLOY_TARGET_HOST: tau.bgm-hosting.com
+    DEPLOY_TARGET_PORT: '20022'
+    DEPLOY_TARGET_USER: mh
+    DOCKER_DRIVER: overlay2
+    EXCLUDE_TABLES: sys_dmail_maillog,tx_realurl_urlencodecache,tx_solr_statistics,tx_realurl_urldecodecache,sys_log,tx_realurl_errorlog,tx_powermail_domain_model_mail,tx_powermail_domain_model_mails,tx_powermail_domain_model_answer,tx_powermail_domain_model_answers,tt_address,sys_history,tx_extensionmanager_domain_model_extension,tx_zargesproducts_domain_model_importconfiguration,tx_solr_indexqueue_item,fe_session_data,tx_solr_indexqueue_indexing_property,tx_scheduler_task,tx_solr_indexqueue_file,tx_solr_cache_tags,cache_sys_dmail_stat,fe_sessions,tx_solr_cache,tx_l10nmgr_exportdata,tx_solr_last_searches
+    GEM_PATH: Build/.gems
+    SURF_WORKSPACE: Build/.surfworkspace
+    TEST_BACKEND_URL: http://bgmweb:webbgm@$CI_COMMIT_REF_NAME.review.mtug.bgm-hosting.com/typo3/
+    TEST_URL: http://bgmweb:webbgm@$CI_COMMIT_REF_NAME.review.mtug.bgm-hosting.com/index.php?id=34
+    USER_FILES: /var/www/www1/vhosts/mtug/review/.files
+deploy webroot to staging:
+  before_script:
+  - eval $(ssh-agent -s)
+  - ssh-add <(echo "$GITLABRUNNER_SSH_PRIVATE_KEY")
+  - git config user.email "$GITLAB_USER_EMAIL" && git config user.name "gitlab-runner"
+    && git remote set-url --push origin git@gitlab.com:mhuber84/klickibunti-deployment.git
+  - bundle config path "$PWD/$GEM_PATH"
+  cache:
+    key: staging/webroot
+    paths:
+    - Build/.gems
+    - Build/.surfworkspace
+    - vendor
+  environment:
+    name: staging
+    url: http://staging.mtug.bgm-hosting.com
+  image: registry.gitlab.com/mhuber84/klickibunti-deployment:latest
+  only:
+  - master
+  script:
+  - Build/Surf/surf.phar --configurationPath="Build/Surf" -vvv deploy StagingDeployment
+  stage: deploy-staging
+  tags:
+  - mtug
+  variables:
+    DOCKER_DRIVER: overlay2
+    GEM_PATH: Build/.gems
+    SURF_WORKSPACE: Build/.surfworkspace
+    TEST_BACKEND_URL: http://bgmweb:webbgm@staging.mtug.bgm-hosting.com/typo3/
+    TEST_URL: http://bgmweb:webbgm@staging.mtug.bgm-hosting.com/index.php?id=34
+    USER_FILES: /var/www/www1/vhosts/mtug/staging/shared/files
+prepare review:
+  before_script:
+  - eval $(ssh-agent -s)
+  - ssh-add <(echo "$GITLABRUNNER_SSH_PRIVATE_KEY")
+  environment:
+    name: review/$CI_COMMIT_REF_NAME
+    on_stop: stop review
+    url: http://$CI_COMMIT_REF_NAME.review.mtug.bgm-hosting.com
+  except:
+  - master
+  image: registry.gitlab.com/mhuber84/klickibunti-deployment:latest
+  only:
+  - branches
+  script:
+  - Build/Shell/PrepareReview.sh
+  stage: prepare-review
+  tags:
+  - mtug
+  variables:
+    DEPLOY_TARGET_HOST: tau.bgm-hosting.com
+    DEPLOY_TARGET_PORT: '20022'
+    DEPLOY_TARGET_USER: mh
+    DOCKER_DRIVER: overlay2
+stages:
+- build-deployment
+- prepare-review
+- build-review
+- deploy-review
+- test-review
+- stop-review
+- build-staging
+- deploy-staging
+- test-staging
+- build-production
+- deploy-production
+- test-production
+stop review:
+  before_script:
+  - eval $(ssh-agent -s)
+  - ssh-add <(echo "$GITLABRUNNER_SSH_PRIVATE_KEY")
+  - git config user.email "$GITLAB_USER_EMAIL" && git config user.name "gitlab-runner"
+    && git remote set-url --push origin git@gitlab.com:mhuber84/klickibunti-deployment.git
+  environment:
+    action: stop
+    name: review/$CI_COMMIT_REF_NAME
+    url: http://$CI_COMMIT_REF_NAME.review.mtug.bgm-hosting.com
+  except:
+  - master
+  image: registry.gitlab.com/mhuber84/klickibunti-deployment:latest
+  only:
+  - branches
+  script:
+  - ssh -p"$DEPLOY_TARGET_PORT" "$DEPLOY_TARGET_USER@$DEPLOY_TARGET_HOST" "rm -rf
+    /var/www/www1/vhosts/mtug/review/$(echo "$CI_COMMIT_REF_NAME" | tr '[:upper:]'
+    '[:lower:]'); rm -rf /var/www/www1/vhosts/mtug/review/.files/typo3temp_$(echo
+    "$CI_COMMIT_REF_NAME" | tr '[:upper:]' '[:lower:]')"
+  stage: stop-review
+  tags:
+  - mtug
+  variables:
+    DEPLOY_TARGET_HOST: tau.bgm-hosting.com
+    DEPLOY_TARGET_PORT: '20022'
+    DEPLOY_TARGET_USER: mh
+    DOCKER_DRIVER: overlay2
+    GIT_STRATEGY: none
+  when: manual
+test production:
+  before_script:
+  - eval $(ssh-agent -s)
+  - ssh-add <(echo "$GITLABRUNNER_SSH_PRIVATE_KEY")
+  - git config user.email "$GITLAB_USER_EMAIL" && git config user.name "gitlab-runner"
+    && git remote set-url --push origin git@gitlab.com:mhuber84/klickibunti-deployment.git
+  environment:
+    name: production
+    url: http://production.mtug.bgm-hosting.com
+  image: registry.gitlab.com/mhuber84/klickibunti-deployment:latest
+  only:
+  - master
+  script:
+  - Build/Test/Alive.sh
+  stage: test-production
+  tags:
+  - mtug
+  variables:
+    DOCKER_DRIVER: overlay2
+    TEST_BACKEND_URL: http://bgmweb:webbgm@production.mtug.bgm-hosting.com/typo3/
+    TEST_URL: http://bgmweb:webbgm@production.mtug.bgm-hosting.com
+test review:
+  before_script:
+  - eval $(ssh-agent -s)
+  - ssh-add <(echo "$GITLABRUNNER_SSH_PRIVATE_KEY")
+  - git config user.email "$GITLAB_USER_EMAIL" && git config user.name "gitlab-runner"
+    && git remote set-url --push origin git@gitlab.com:mhuber84/klickibunti-deployment.git
+  environment:
+    name: review/$CI_COMMIT_REF_NAME
+    url: http://$CI_COMMIT_REF_NAME.review.mtug.bgm-hosting.com
+  except:
+  - master
+  image: registry.gitlab.com/mhuber84/klickibunti-deployment:latest
+  only:
+  - branches
+  script:
+  - Build/Test/Alive.sh
+  stage: test-review
+  tags:
+  - mtug
+  variables:
+    DOCKER_DRIVER: overlay2
+    TEST_BACKEND_URL: http://bgmweb:webbgm@$CI_COMMIT_REF_NAME.review.mtug.bgm-hosting.com/typo3/
+    TEST_URL: http://bgmweb:webbgm@$CI_COMMIT_REF_NAME.review.mtug.bgm-hosting.com
+test staging:
+  before_script:
+  - eval $(ssh-agent -s)
+  - ssh-add <(echo "$GITLABRUNNER_SSH_PRIVATE_KEY")
+  - git config user.email "$GITLAB_USER_EMAIL" && git config user.name "gitlab-runner"
+    && git remote set-url --push origin git@gitlab.com:mhuber84/klickibunti-deployment.git
+  environment:
+    name: staging
+    url: http://staging.mtug.bgm-hosting.com
+  image: registry.gitlab.com/mhuber84/klickibunti-deployment:latest
+  only:
+  - master
+  script:
+  - Build/Test/Alive.sh
+  - Build/Test/SitemapCheck.sh
+  stage: test-staging
+  tags:
+  - mtug
+  variables:
+    DOCKER_DRIVER: overlay2
+    SITEMAP_URL: http://bgmweb:webbgm@staging.mtug.bgm-hosting.com/sitemap.xml
+    TEST_BACKEND_URL: http://bgmweb:webbgm@staging.mtug.bgm-hosting.com/typo3/
+    TEST_URL: http://bgmweb:webbgm@staging.mtug.bgm-hosting.com

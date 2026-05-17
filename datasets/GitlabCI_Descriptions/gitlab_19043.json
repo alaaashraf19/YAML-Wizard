@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_19043",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 769,
+  "description": "Create a GitLab CI pipeline that uses the python:3.10.8 Docker image, defines a cache for .cache/pip and venv/, and sets the variable PIP_CACHE_DIR to $CI_PROJECT_DIR/.cache/pip. Add a .pre stage with a prepare job that runs apt-get update, apt-get -y install libgirepository1.0-dev libpoppler-glib-dev gir1.2-poppler-0.18, pip install virtualenv, virtualenv venv, source venv/bin/activate, pip install build, and pip install -U '.[tests]'. Add a build stage with a build job that extends .activate-deps (which runs apt-get update, apt-get -y install libgirepository1.0-dev libpoppler-glib-dev gir1.2-poppler-0.18, source venv/bin/activate) and then runs python -m build -n and pip install --upgrade . . Add a test stage with a test job that also extends .activate-deps and runs make check-type, make check-code, and make test. No artifacts, services, or deployment targets are defined.",
+  "tags": [
+    "python",
+    "pip",
+    "make",
+    "apt",
+    "virtualenv",
+    "build",
+    "test"
+  ]
+}

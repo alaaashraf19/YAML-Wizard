@@ -1,0 +1,16 @@
+{
+  "sha": "815bfd035525b973d3d71c844447069a89cc3086fc010d6f1200d0f8910ed62f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 8359,
+  "description": "Create a GitHub Actions workflow named Build that runs on every push to all branches except staging.tmp, trying.tmp, and staging-squash-merge.tmp, and on every pull request. Use a matrix strategy to build and test the project on multiple operating systems (ubuntu-latest, macOS-latest, windows-latest, ubuntu-20.04) with different configurations, including debug and release modes, and upload artifacts and Codecov reports.",
+  "tags": [
+    "cmake",
+    "matrix",
+    "ubuntu",
+    "macos",
+    "windows",
+    "codecov",
+    "artifacts"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_07022",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1132,
+  "description": "Create a GitLab CI pipeline that uses the maven:3-eclipse-temurin-17 Docker image and caches the Maven repository at .m2/repository. Define variables MAVEN_CLI_OPTS set to '--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true' and MAVEN_OPTS set to '-Dmaven.repo.local=.m2/repository -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true'. Define three stages: build, test, and deploy. Add a validate job in the build stage that runs 'mvn $MAVEN_CLI_OPTS test-compile'. Add a test job in the test stage that runs 'mvn $MAVEN_CLI_OPTS test'. Add a verify job in the test stage that runs 'mvn $MAVEN_CLI_OPTS verify' and is excluded from the master branch. Add a deploy job in the deploy stage that runs 'mvn $MAVEN_CLI_OPTS deploy -P ci-release -s ci/settings.xml' and runs only on the master branch.",
+  "tags": [
+    "maven",
+    "java",
+    "gitlab-ci",
+    "cache",
+    "deploy",
+    "test"
+  ]
+}

@@ -1,0 +1,18 @@
+cache:
+  paths:
+  - target/
+captcha-server-deploy:
+  script:
+  - bash captcha-server-deploy.sh
+  stage: captcha-server-deploy
+deploy:
+  script:
+  - bash deploy.sh
+  stage: deploy
+package:
+  script: mvn --settings ./settings.xml clean package -U -DskipTests=false
+  stage: mvn-package
+stages:
+- captcha-server-deploy
+- mvn-package
+- deploy

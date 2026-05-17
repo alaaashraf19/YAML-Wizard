@@ -1,0 +1,226 @@
+.install-ruby: &id001
+- ruby -v
+- bundle --version
+- bundle config --local path vendor
+- bundle install -j $(nproc)
+.install-ruby-and-compile: &id004
+- *id001
+- bundle exec rake compile
+.install-rust: &id003
+- curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --quiet
+  --default-toolchain=${RUST_VERSION} --profile=minimal
+- source "$HOME/.cargo/env"
+.test-job:
+  artifacts: &id002
+    paths:
+    - coverage/
+  image: ruby:${RUBY_VERSION}
+  script: &id007
+  - ls -al lib/prometheus/client
+  - '[ $(stat -c %a "lib/prometheus/client.rb") -eq 644 ] || exit 1'
+  - bundle exec rake spec
+  - cd ext/fast_mmaped_file_rs && cargo nextest run
+  stage: test
+  variables: &id006
+    BUILDER_IMAGE_REVISION: 5.22.0
+    RUBY_VERSION: '3.2'
+    SKIP_C_EXTENSION_TESTING: '1'
+    prometheus_multiproc_dir: tmp/
+.test-ruby: &id005
+- bundle exec rake spec
+archlinux:ruby:3.0:
+  artifacts: *id002
+  before_script:
+  - pacman -Sy --noconfirm git gcc clang make ruby ruby-bundler ruby-rdoc ruby-rake
+    which grep gawk procps-ng glibc
+  - *id003
+  - *id004
+  - curl -LsSf https://get.nexte.st/0.9/linux | tar zxf - -C ${CARGO_HOME:-~/.cargo}/bin
+  image: archlinux/archlinux:base
+  script:
+  - *id005
+  stage: test
+  variables: *id006
+before_script:
+- apt-get update
+- apt-get install -y curl ruby ruby-dev build-essential llvm-dev libclang-dev clang
+- *id003
+- *id004
+builder:almalinux_8:
+  artifacts: *id002
+  before_script:
+  - *id004
+  image: registry.gitlab.com/gitlab-org/gitlab-omnibus-builder/almalinux_8:${BUILDER_IMAGE_REVISION}
+  script:
+  - *id005
+  stage: test
+  variables: *id006
+builder:centos_7:
+  artifacts: *id002
+  before_script:
+  - source /opt/rh/llvm-toolset-7/enable
+  - *id004
+  image: registry.gitlab.com/gitlab-org/gitlab-omnibus-builder/centos_7:${BUILDER_IMAGE_REVISION}
+  script:
+  - *id005
+  stage: test
+  variables: *id006
+cache:
+  key:
+    files:
+    - Gemfile.lock
+    prefix: $CI_JOB_IMAGE
+  paths:
+  - vendor/ruby
+clippy check:
+  before_script:
+  - apt-get update
+  - apt-get install -y curl ruby ruby-dev build-essential llvm-dev libclang-dev clang
+    git
+  - *id003
+  - rustup component add clippy
+  image: debian:bookworm-slim
+  script:
+  - cargo clippy --manifest-path ext/fast_mmaped_file_rs/Cargo.toml
+fuzzbert:
+  image: ruby:3.2
+  script:
+  - bundle exec fuzzbert fuzz/**/fuzz_*.rb --handler PrintAndExitHandler --limit 10000
+  variables:
+    prometheus_multiproc_dir: tmp/
+i386/debian:bookworm:
+  artifacts: *id002
+  before_script:
+  - apt-get update
+  - apt-get install -y curl ruby ruby-dev ruby-bundler build-essential llvm-dev libclang-dev
+    clang git
+  - curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --quiet
+    --default-toolchain=${RUST_VERSION} --profile=minimal --default-host=i686-unknown-linux-gnu
+  - source "$HOME/.cargo/env"
+  - *id004
+  - curl -LsSf https://get.nexte.st/0.9/linux | tar zxf - -C ${CARGO_HOME:-~/.cargo}/bin
+  - export LANG=C.UTF-8
+  image: i386/debian:bookworm
+  script:
+  - *id005
+  stage: test
+  variables: *id006
+include:
+- template: Workflows/MergeRequest-Pipelines.gitlab-ci.yml
+- component: gitlab.com/gitlab-org/components/gem-release/gem-release@1dbde0475a4c2a51d2fb7e7b0ee0eab875a43802
+  inputs:
+    build_native_gems: 'true'
+    smoke_test_before_script: gem install pkg/*-x86_64-linux-gnu.gem
+    smoke_test_script: ruby -r 'prometheus/client' -e "exit 0"
+    target_platforms:
+    - aarch64-linux-gnu
+    - aarch64-linux-musl
+    - arm64-darwin
+    - x86_64-darwin
+    - x86_64-linux-gnu
+    - x86_64-linux-musl
+pages:
+  artifacts:
+    expire_in: 30 days
+    paths:
+    - public
+  dependencies:
+  - 'ruby: [3.1]'
+  image: ruby:3.1
+  only:
+  - master
+  script:
+  - mv coverage/ public/
+  stage: deploy
+parsing Address-Sanitizer:
+  allow_failure: true
+  before_script:
+  - apt-get update
+  - apt-get install -y git build-essential curl llvm-dev libclang-dev clang
+  - curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --quiet
+    --default-toolchain=nightly-2023-10-05 --profile=minimal
+  - source "$HOME/.cargo/env"
+  - rustup component add rust-src
+  - *id004
+  image: ruby:3.1
+  script:
+  - bundle exec rspec
+  - RB_SYS_EXTRA_CARGO_ARGS='-Zbuild-std' CARGO_BUILD_TARGET=x86_64-unknown-linux-gnu
+    bundle exec rake compile -- --enable-address-sanitizer
+  - DB_FILE=$(basename $(find tmp -name '*.db' | head -n 1))
+  - test -n $DB_FILE
+  - for ((i=1;i<=100;i++)); do cp tmp/$DB_FILE tmp/$i$DB_FILE; done
+  - export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libasan.so.8
+  - export ASAN_OPTIONS=atexit=true:verbosity=1
+  - export LSAN_OPTIONS=suppressions=known-leaks-suppression.txt
+  - bundle exec bin/parse -t tmp/*.db > /dev/null
+rspec Address-Sanitizer:
+  allow_failure: true
+  before_script:
+  - apt-get update
+  - apt-get install -y git build-essential curl llvm-dev libclang-dev clang
+  - curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --quiet
+    --default-toolchain=nightly-2023-10-05 --profile=minimal
+  - source "$HOME/.cargo/env"
+  - rustup component add rust-src
+  - *id001
+  image: ruby:3.1
+  script:
+  - RB_SYS_EXTRA_CARGO_ARGS='-Zbuild-std' CARGO_BUILD_TARGET=x86_64-unknown-linux-gnu
+    bundle exec rake compile -- --enable-address-sanitizer
+  - export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libasan.so.8
+  - export ASAN_OPTIONS=atexit=true:verbosity=1
+  - export LSAN_OPTIONS=suppressions=known-leaks-suppression.txt
+  - prometheus_rust_mmaped_file=false bundle exec rspec > /dev/null
+  - bundle exec rspec > /dev/null
+ruby:
+  artifacts: *id002
+  before_script:
+  - apt-get update
+  - apt-get install -y llvm-dev libclang-dev clang
+  - *id003
+  - *id004
+  - curl -LsSf https://get.nexte.st/0.9/linux | tar zxf - -C ${CARGO_HOME:-~/.cargo}/bin
+  image: ruby:${RUBY_VERSION}
+  parallel:
+    matrix:
+    - RUBY_VERSION:
+      - '3.1'
+      - '3.2'
+      - '3.3'
+      - '3.4'
+    - RUST_VERSION:
+      - 1.73.0
+      - 1.89.0
+  script: *id007
+  stage: test
+  variables: *id006
+ruby-head:
+  allow_failure: true
+  artifacts: *id002
+  before_script:
+  - apt-get update
+  - apt-get install -y llvm-dev libclang-dev clang
+  - *id003
+  - *id004
+  - curl -LsSf https://get.nexte.st/0.9/linux | tar zxf - -C ${CARGO_HOME:-~/.cargo}/bin
+  image: rubylang/ruby:master-debug-dev
+  script: *id007
+  stage: test
+  variables: *id006
+rustfmt check:
+  before_script:
+  - apt-get update
+  - apt-get install -y curl
+  - *id003
+  - rustup component add rustfmt
+  image: debian:bookworm-slim
+  script:
+  - cargo fmt --manifest-path ext/fast_mmaped_file_rs/Cargo.toml -- --check
+stages:
+- test
+- smoke_test
+- deploy
+variables:
+  FF_DISABLE_UMASK_FOR_DOCKER_EXECUTOR: 'true'
+  RUST_VERSION: 1.73.0

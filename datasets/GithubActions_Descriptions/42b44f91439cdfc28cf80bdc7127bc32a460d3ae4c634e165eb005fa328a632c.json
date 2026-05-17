@@ -1,0 +1,15 @@
+{
+  "sha": "42b44f91439cdfc28cf80bdc7127bc32a460d3ae4c634e165eb005fa328a632c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3827,
+  "description": "Create a GitHub Actions workflow named Test 'pip' Package that runs on every push to dev and main branches and on pull requests to these branches. The workflow uses a concurrency group and cancels in-progress jobs. It consists of two jobs: a cache job that sets up Python 3.12, installs ISOFIT, and caches extras, and a test job that runs in a matrix of Python versions 3.8-3.12, installs ISOFIT and dependencies, and executes tests with Pytest.",
+  "tags": [
+    "python",
+    "pip",
+    "pytest",
+    "tests",
+    "ubuntu",
+    "cache"
+  ]
+}

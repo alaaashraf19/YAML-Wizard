@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_19056",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 292,
+  "description": "Create a GitLab CI pipeline using the rust:latest Docker image and a before_script that updates apt and installs libgtk-3-dev, libglib2.0-dev, libatk1.0-dev, libcairo2-dev, libgdk-pixbuf2.0-dev, libpango1.0-dev, libdbus-1-dev and libzmq3-dev. Define a single job named test:cargo (default test stage) that runs the commands `rustc --version && cargo --version` followed by `cargo test --all --verbose`. The pipeline has no additional stages, caches, artifacts, services, or rules.",
+  "tags": [
+    "rust",
+    "cargo",
+    "apt",
+    "test"
+  ]
+}

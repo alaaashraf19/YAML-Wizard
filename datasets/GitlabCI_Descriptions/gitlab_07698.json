@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_07698",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 5068,
+  "description": "Create a GitLab CI pipeline using the Docker image `clickable/ci-$UT_VERSION-$ARCH:$CLICKABLE_VERSION` with stages deps-prepare, deps, build, publish, debug-deps, and debug, and set global variables CLICKABLE_VERSION, UT_VERSION, TDLIB_VERSION, DOCKER_DRIVER, GIT_SUBMODULE_STRATEGY and workflow rules that set RUNNER_TAG based on the project namespace. In the deps-prepare stage define tdlib-prepare (amd64) that runs `clickable build --libs tdlib-prepare`, caches `build/$ARCH_TRIPLET/tdlib-prepare` and `libs/vendor/tdlib` with key `$CI_JOB_NAME-$TDLIB_VERSION-A`, and stores `libs/vendor/tdlib` as an artifact. In the deps stage add quickflux‑*, rlottie‑*, rlottie‑qml‑*, and tdlib‑* jobs for each arch (amd64, arm64, armhf) that run `clickable build --libs <lib>` (e.g., quickflux, rlottie, rlottie‑qml, tdlib), depend on tdlib-prepare where needed, cache tdlib builds with the same key, and publish the respective install directories as week‑long artifacts. In the build stage add teleports‑* jobs for each arch that depend on the corresponding tdlib, quickflux, rlottie, and rlottie‑qml jobs and execute `clickable build --clean`, storing `build/$ARCH_TRIPLET/app` as an artifact. In the debug-deps and debug stages add manual tdlib‑*-debug, teleports‑*-debug, and teleports‑*-tdlib‑debug jobs that set debug variables (`CLICKABLE_DEBUG_BUILD=1`, `CLICKABLE_ENV_TDLIB_DEBUG=1`) and run the same build commands, but are only triggered manually. Finally, in the publish stage add a publish job that runs only on tag pipelines, depends on all teleports jobs, and runs `clickable publish --arch amd64 -- \"$CI_COMMIT_MESSAGE\"`, `clickable publish --arch arm64`, and `clickable publish --arch armhf`, publishing the generated `.click` files as 30‑day artifacts.",
+  "tags": [
+    "clickable",
+    "multi-arch",
+    "tdlib",
+    "quickflux",
+    "rlottie",
+    "gitlab-ci",
+    "docker-image",
+    "publish"
+  ]
+}

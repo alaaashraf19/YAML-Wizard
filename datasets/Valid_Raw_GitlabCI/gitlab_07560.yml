@@ -1,0 +1,55 @@
+before_script:
+- export GRADLE_USER_HOME=`pwd`/.gradle
+build:
+  cache:
+    key: $CI_COMMIT_REF_NAME
+    paths:
+    - build
+    - .gradle
+    policy: push
+  script: gradle --build-cache assemble
+  stage: build
+deploy:
+  artifacts:
+    paths:
+    - Configs/build/libs/Configs-1.0.0.jar
+    - GUI/build/libs/GUI-1.0.0.jar
+    - Utility/build/libs/Utility-1.0.0.jar
+    - Logging/build/libs/Logging-1.0.0.jar
+    - Modding/build/libs/Modding-1.0.0.jar
+    - Components/build/libs/Components-1.0.0.jar
+    - Taks/build/libs/Tasks-1.0.0.jar
+    - Dialogs/build/libs/Dialogs-1.0.0.jar
+  cache:
+    key: $CI_COMMIT_REF_NAME
+    paths:
+    - build
+    - .gradle
+    policy: push
+  only:
+  - tags
+  - master
+  script: gradle build
+  stage: deploy
+image: gradle:4.9-jdk10
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  - tags
+  script:
+  - echo 'Nothing to do...'
+  stage: deploy
+test:
+  cache:
+    key: $CI_COMMIT_REF_NAME
+    paths:
+    - build
+    - .gradle
+    policy: pull
+  script: gradle check
+  stage: test
+variables:
+  GRADLE_OPTS: -Dorg.gradle.daemon=false

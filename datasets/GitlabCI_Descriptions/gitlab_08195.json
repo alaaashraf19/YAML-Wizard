@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_08195",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 565,
+  "description": "Create a GitLab CI pipeline with two jobs: host-auth and password-auth, both using the postgres Docker image and a postgres service. Define variables POSTGRES_DB=custom_db, POSTGRES_HOST_AUTH_METHOD=trust, POSTGRES_USER=custom_user for host-auth, and POSTGRES_DB=custom_db, POSTGRES_PASSWORD=custom_pass, POSTGRES_USER=custom_user for password-auth. In the host-auth job run the script `psql -h \"postgres\" -U \"$POSTGRES_USER\" -d \"$POSTGRES_DB\" -c \"SELECT 'OK' AS status;\"`. In the password-auth job first export PGPASSWORD=$POSTGRES_PASSWORD then run the same psql command. Both jobs run in the default test stage.",
+  "tags": [
+    "postgres",
+    "psql",
+    "auth",
+    "host-auth",
+    "password-auth"
+  ]
+}

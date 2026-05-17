@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_12347",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 672,
+  "description": "Create a GitLab CI pipeline that uses the maven:3.3.9-jdk-8 Docker image, caches the .m2/repository and target directories, and defines MAVEN_CLI_OPTS and MAVEN_OPTS variables as given. Define three stages: compile, test, and package. In the compile stage add a compile job that runs `mvn $MAVEN_CLI_OPTS clean compile`. In the test stage add a test job that runs `mvn $MAVEN_CLI_OPTS test`. In the package stage add a package job that runs `mvn $MAVEN_CLI_OPTS package` and publishes the resulting target/*.jar files as artifacts.",
+  "tags": [
+    "maven",
+    "java",
+    "jar",
+    "cache",
+    "gitlab-ci"
+  ]
+}

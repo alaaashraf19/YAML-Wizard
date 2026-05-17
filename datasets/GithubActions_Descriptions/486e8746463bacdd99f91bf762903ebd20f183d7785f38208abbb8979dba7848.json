@@ -1,0 +1,14 @@
+{
+  "sha": "486e8746463bacdd99f91bf762903ebd20f183d7785f38208abbb8979dba7848",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 634,
+  "description": "Create a GitHub Actions workflow named Docker Images that runs on every pull request and push to the master branch. Use an ubuntu-20.04 job with a matrix strategy to build Docker images for multiple templates. For each template, check out the repository with submodules, run make to generate a Dockerfile, and then build a Docker image with the generated Dockerfile.",
+  "tags": [
+    "docker",
+    "make",
+    "ubuntu",
+    "github-actions",
+    "matrix"
+  ]
+}

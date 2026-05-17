@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_00035",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 353,
+  "description": "Create a GitLab CI pipeline using the Docker image 4lt4/gif2spr-build with a single stage named build. Add a build-linux job in the build stage that runs the command `make`. Add a build-windows job in the same stage that runs `make TARGET_PLAT=win32 win-gui`, and configure it to publish artifacts named `gif2spr-$CI_JOB_NAME-$CI_COMMIT_REF_NAME` containing gif2spr.exe, gif2spr-gui.exe, LICENSE.txt, LICENSE_3rd_party, README.md, and THANKS.md. No caches or special rules are defined.",
+  "tags": [
+    "make",
+    "windows",
+    "linux",
+    "gif2spr",
+    "docker-image"
+  ]
+}

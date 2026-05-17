@@ -1,0 +1,52 @@
+before_script:
+- python -V
+- locale
+image: python:latest
+pages:
+  artifacts:
+    expire_in: 1 day
+    paths:
+    - public
+  except:
+  - schedules
+  script:
+  - mkdir public
+  - mv coverage_html_report public/coverage
+  - pip install pycco
+  - pycco pays/*.py -d public -i
+  stage: deploy
+pypi:
+  only:
+  - tags
+  script:
+  - python -V
+  - apt update && apt -y install pandoc
+  - pip install pypandoc pandoc
+  - printf "[distutils]\nindex-servers =\n    pypi\n\n" >> ~/.pypirc
+  - printf "[pypi]\n""repository:"" https://upload.pypi.org/legacy/\n" >> ~/.pypirc
+  - printf "username= ${PYPI_USER}\n" >> ~/.pypirc
+  - printf "password= ${PYPI_PASSWORD}\n" >> ~/.pypirc
+  - python setup.py check sdist upload -r pypi
+  - echo "" > ~/.pypirc && rm ~/.pypirc
+  stage: deploy
+stages:
+- test
+- deploy
+unittesting:
+  artifacts:
+    expire_in: 1 day
+    untracked: true
+    when: always
+  except:
+  - schedules
+  script:
+  - pip install -r requirements.txt
+  - git submodule update --remote
+  - pip install coverage
+  - python update.py
+  - coverage run setup.py test
+  - coverage html
+  - coverage report
+  stage: test
+variables:
+  GIT_SUBMODULE_STRATEGY: normal

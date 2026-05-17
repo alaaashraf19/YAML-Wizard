@@ -1,0 +1,15 @@
+{
+  "sha": "f0e328a346fb1920dc1bcb30edd4803ed78bf6901fb5bef09e497d31c04782a3",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1600,
+  "description": "Create a GitHub Actions workflow named litecli that runs on every pull request, excluding changes to markdown files and the AUTHORS file. The workflow consists of two jobs: tests and tests-no-extras. The tests job runs on an ubuntu-latest environment with a matrix strategy across Python 3.9 to 3.13, checking out the repository, setting up uv and Python, installing dependencies with uv sync, and running unit tests with tox. The tests-no-extras job runs on ubuntu-latest with Python 3.13, performing similar steps but without extras.",
+  "tags": [
+    "python",
+    "tests",
+    "github-actions",
+    "uv",
+    "tox",
+    "matrix-testing"
+  ]
+}

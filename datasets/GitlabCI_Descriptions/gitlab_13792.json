@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_13792",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 648,
+  "description": "Create a GitLab CI pipeline using the python:latest Docker image with a pip cache at .cache/pip and a virtual‑environment cache at venv/. Define three stages: test, build, and deploy (the deploy stage is unused). Add a before_script that runs `pip3 install -r requirements.txt` for all jobs. In the test stage add a test job that executes `cd autogram`, `wget https://core.telegram.org/bots/api -O tgbotapi.html`, `python3 _gen.py`, `cd ..`, `python3 setup.py install`, `pip3 install -r requirements_tests.txt`, and `python3 -m pytest`. In the build stage add a wheel job that runs the same first three commands, then `cd ..` and `python3 setup.py bdist_wheel`, and publishes the generated wheels matching `dist/Autogram-*.whl` as artifacts. Set the variable PIP_CACHE_DIR to `$CI_PROJECT_DIR/.cache`.",
+  "tags": [
+    "python",
+    "pip",
+    "pytest",
+    "wheel",
+    "cache",
+    "gitlab-ci"
+  ]
+}

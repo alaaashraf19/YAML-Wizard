@@ -1,0 +1,11 @@
+build:
+  script:
+  - touch touchme
+  stage: build
+cache:
+  key: $CI_BUILD_REF
+  untracked: true
+test:
+  script:
+  - ls touchme
+  stage: test

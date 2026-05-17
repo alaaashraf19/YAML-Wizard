@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_09674",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 685,
+  "description": "Create a GitLab CI pipeline using the image registry.gitlab.com/benjamin.boortz/docker-build-image:v0.2-2018-11-11-06-26-48 with a docker:dind service and set DOCKER_DRIVER=overlay2 and DOCKER_HOST=tcp://docker:2375/. Define three stages: build, test, and deploy, and a global before_script that echoes \"Before script section\", runs \"apk update && apk upgrade\", installs git and make via \"apk add --update git make\", shows Docker info with \"docker info\", and logs into the registry using \"docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY\". Also add a global after_script that echoes \"After script section\". In the build stage add a build job that runs \"echo \\\"building ...\\\"\", then \"make docker_build\" and \"make docker_push\". In the test stage add a test job that runs \"echo \\\"testing ...\\\"\" followed by \"make test\". In the deploy stage add a deploy job that runs \"echo \\\"deployment ...\\\"\" and then \"make docker_push\".",
+  "tags": [
+    "docker-build-image",
+    "docker-dind",
+    "make",
+    "alpine",
+    "gitlab-ci"
+  ]
+}

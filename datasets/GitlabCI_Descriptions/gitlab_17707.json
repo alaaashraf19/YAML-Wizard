@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_17707",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 127,
+  "description": "Create a GitLab CI pipeline that defines a single job named pages (in the default stage) using the default Docker image. The job sets the variable GIT_DEPTH to 1, runs the shell commands \"mkdir -p public/\" and \"mv fdroid public/\", and publishes the public/ directory as a GitLab Pages artifact. The job has no specific rules, services, caches, or additional deployment targets and runs on every pipeline execution.",
+  "tags": [
+    "pages",
+    "gitlab-pages",
+    "artifact",
+    "fdroid",
+    "static-site"
+  ]
+}

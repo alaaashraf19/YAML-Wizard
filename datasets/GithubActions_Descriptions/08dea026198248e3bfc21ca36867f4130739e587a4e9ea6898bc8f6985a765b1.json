@@ -1,0 +1,16 @@
+{
+  "sha": "08dea026198248e3bfc21ca36867f4130739e587a4e9ea6898bc8f6985a765b1",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4508,
+  "description": "Create a GitHub Actions workflow named CI that runs on push, pull request, workflow dispatch, and a monthly schedule. The workflow has three jobs: build-linux, build-flatpak, and build-windows. The build-linux job runs on ubuntu-18.04, builds on Linux with Release and Debug configurations, and uploads artifacts. The build-flatpak job runs under Flatpak on ubuntu-latest and builds with a manifest path. The build-windows job runs on windows-2019, builds on Windows with Release and Debug configurations and COF options, and uploads artifacts.",
+  "tags": [
+    "ci",
+    "linux",
+    "flatpak",
+    "windows",
+    "rust",
+    "cmake",
+    "github-actions"
+  ]
+}

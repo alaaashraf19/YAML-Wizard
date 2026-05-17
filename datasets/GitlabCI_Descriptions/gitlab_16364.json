@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_16364",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 861,
+  "description": "Create a GitLab CI pipeline using node:latest as the default Docker image and overriding it with node:8 for the build-project job, with a global cache of the node_modules directory. Define a build-project job (running in the default build stage) that executes the exact commands: useradd -m -p 123 builder; apt-get update; apt-get -yq install chromium; apt-get -yq install git; npm install -g bower grunt-cli; npm install; bower install --allow-root; chmod 777 -fR .; su builder -c \"grunt test\"; find . -name lcov.info | xargs -d '\\n' cat | node_modules/.bin/codacy-coverage -t $CODACY_PROJECT_TOKEN; su builder -c \"grunt release\", then archives the coverage/, doc/ and dist/ directories as artifacts that expire in 1 day and captures line coverage via the regex /Lines\\s*:\\s*(\\d+\\.\\d+)%/. Add a pages job in the deploy stage that depends on build-project, runs only on the master branch, uses the node:latest image, runs ls -l, creates a .public folder, moves coverage/ and doc/ into .public, renames .public to public, and publishes the public/ directory as a GitLab Pages artifact that expires in 90 days.",
+  "tags": [
+    "node",
+    "bower",
+    "grunt",
+    "codacy",
+    "pages",
+    "coverage"
+  ]
+}

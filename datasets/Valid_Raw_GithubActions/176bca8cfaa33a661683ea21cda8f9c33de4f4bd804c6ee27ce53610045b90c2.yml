@@ -1,0 +1,34 @@
+name: docs
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+  release:
+    types:
+      - published
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+        submodules: recursive
+    - uses: actions/checkout@v2
+      with:
+        repository: MikePopoloski/m.css
+        path: m.css
+    - name: Install dependencies
+      run: |
+        pip install jinja2 pygments
+        wget https://sourceforge.net/projects/doxygen/files/rel-1.9.5/doxygen-1.9.5.linux.bin.tar.gz
+        tar -xvf doxygen-1.9.5.linux.bin.tar.gz
+        cp doxygen-1.9.5/bin/doxygen /usr/local/bin
+    - name: Build
+      run: |
+        cmake -B build -DSLANG_INCLUDE_DOCS=ON -DSLANG_INCLUDE_TESTS=OFF -DDOXYGENPY_PATH=$GITHUB_WORKSPACE/m.css/documentation/doxygen.py
+        cmake --build build --target docs -j

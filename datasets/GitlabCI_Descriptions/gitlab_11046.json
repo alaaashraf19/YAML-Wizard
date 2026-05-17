@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_11046",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 411,
+  "description": "Create a GitLab CI pipeline that uses the runner's default Docker image and runs a before_script installing apt packages (apt-get update -qq && apt-get install -y -qq python-pip python-setuptools wget unzip tar build-essential python-dev) and then pip install mkdocs. Define two jobs in the default test stage: a test job that executes sh ./do get_libs then mkdocs build -c. A pages job that runs mkdir -p public/pub, sh ./do get_libs, python ./setup.py sdist --dist-dir public/pub, and mkdocs build -c -d public, publishes the public/ directory as a pages artifact, and only runs on the master branch, deploying to GitLab Pages. No caches, services, or extra variables are defined.",
+  "tags": [
+    "mkdocs",
+    "python",
+    "apt-get",
+    "gitlab-pages",
+    "pages-job"
+  ]
+}

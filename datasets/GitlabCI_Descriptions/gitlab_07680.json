@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_07680",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1013,
+  "description": "Create a GitLab CI pipeline that uses the ubuntu:xenial Docker image and defines a single stage called test. In the test stage add a job_test_100 job that runs the following script lines: `apt-get update && apt-get install -y apt-utils locales git && export TESTS=1 && export POSTGRESQL_VERSION=10`, `git clone https://gitlab.com/flectra-hq/developer-quality-tools.git ${CI_PROJECT_DIR}/developer-quality-tools && export PATH=${CI_PROJECT_DIR}/developer-quality-tools/gitlab-ci:${PATH}`, `ls -alh && gitlab_ci_install_flectra`, and `su - flectra -c \"export PATH=${CI_PROJECT_DIR}/developer-quality-tools/gitlab-ci:${PATH} && gitlab_run_tests\"`. Also add a job_test_96 job in the same test stage that runs the same four script lines except the first line omits the POSTGRESQL_VERSION export (`apt-get update && apt-get install -y apt-utils locales git && export TESTS=1`). No caches, artifacts, or conditional rules are defined.",
+  "tags": [
+    "ubuntu",
+    "apt",
+    "git",
+    "flectra",
+    "test"
+  ]
+}

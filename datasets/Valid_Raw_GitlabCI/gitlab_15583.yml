@@ -1,0 +1,31 @@
+before_script:
+- npm --version
+- node --version
+- npm install hexo-cli -g
+- npm install
+cache:
+  paths:
+  - node_modules/
+image: node:24
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - hexo generate
+  - npm install netlify-cli@23.7.3 -g
+  - netlify --version
+  - netlify deploy --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN --prod --dir
+    public/
+  stage: deploy
+stages:
+- test
+- deploy
+test:
+  except:
+  - master
+  script:
+  - hexo generate
+  stage: test

@@ -1,0 +1,22 @@
+before_script:
+- npm install -g gulp -q
+build_and_deploy_job:
+  environment:
+    name: production
+    url: https://www.buytwitter.org
+  only:
+  - master
+  script:
+  - npm install -q
+  - cp config-prod.js config.js
+  - gulp build
+  - gulp deploy
+  stage: deploy
+cache:
+  key: $CI_BUILD_REF_NAME
+  paths:
+  - node_modules/
+  untracked: true
+image: node:8
+stages:
+- deploy

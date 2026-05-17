@@ -1,0 +1,15 @@
+{
+  "sha": "204cf763ea58f474f99ce89c8900b79c6dbf16cfa03c2fc035b27c44be545ef3",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2432,
+  "description": "Create a Linux build and test workflow that runs on push and pull request events. The workflow should use a matrix strategy to test Thug with Python versions 3.9 through 3.13 on ubuntu-22.04. It should check out the repository, set up Python, install dependencies, libemu, Tox, and Thug configuration, setup the environment, and then test Thug with Tox while setting up and using ElasticSearch and MongoDB. Finally, it should upload the coverage report to Codecov.",
+  "tags": [
+    "python",
+    "linux",
+    "tests",
+    "elasticsearch",
+    "mongodb",
+    "codecov"
+  ]
+}

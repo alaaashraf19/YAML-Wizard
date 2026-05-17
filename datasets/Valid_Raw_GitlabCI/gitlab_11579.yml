@@ -1,0 +1,24 @@
+build-distribution:
+  artifacts:
+    paths:
+    - dist
+  script:
+  - echo "Building..."
+  - mkdir -p /root/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS,RPMS/noarch}
+  - export RPMDIR=/root/rpmbuild
+  - ./build-distribution
+  - cp ./deployment/index.html ./dist
+  stage: build
+image: registry.gitlab.com/limitland/flatbedcursors/xcursorgen
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - echo "Deploying to public pages..."
+  - mkdir -p ./public
+  - rm -rf ./public/FlatbedCursors-*
+  - cp ./dist/* ./public/
+  stage: deploy

@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_07209",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2065,
+  "description": "Create a GitLab CI pipeline with three stages: container, style, and build. In the build stage define two jobs, build-fedora and build-ubuntu, each using the image ${CI_REGISTRY_IMAGE}/${NAME}:latest (with NAME set to build-fedora or build-ubuntu) and running the commands: meson --prefix=\"`pwd`/vroot\" -Denable-gtk-doc=true build; ninja -C build dist; and if [ test -f /usr/bin/rpmbuild ]; then rpmbuild --nodeps --define \"_sourcedir `pwd`\" -ta --clean entangle*.tar.xz ; fi. In the style stage add a clang-format job using the image ${CI_REGISTRY_IMAGE}/build-fedora:latest that runs meson build, ninja -C build clang-format, and a git diff check that writes clang-format.patch and fails on changes, publishing the patch as an artifact that expires in one week and is kept only on failure, and also add a syntax-check job using the same image that runs make syntax-check. In the container stage add container-build-fedora and container-build-ubuntu jobs that use the docker:stable image with the docker:dind service, export TAG and COMMON_TAG variables, log in to the GitLab registry, pull the existing image tags, build a new image from ci/$NAME.docker using cache‑from the previous tags, and push the new tag; each job runs the after_script docker logout. No additional caches or rules are required.",
+  "tags": [
+    "meson",
+    "ninja",
+    "docker",
+    "dind",
+    "clang-format",
+    "make",
+    "container-build",
+    "build-fedora",
+    "build-ubuntu",
+    "gitlab-ci"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "a942bb6a299f0b1d40bc0d3a7c99d6f7514be6d7321f7c644d44e949763d3097",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 887,
+  "description": "Create a GitHub Actions workflow named CI that runs on push and pull request events. Use a matrix job that builds on multiple operating systems (ubuntu-16.04, macos-latest, windows-latest) and Python versions (2.7, 3.x), excluding macos-latest and windows-latest with Python 3.x. For each matrix combination, set up Python, check out the repository with submodules, create a directory, run cmake and build, then execute unit tests, C-API tests, and tests.",
+  "tags": [
+    "cmake",
+    "python",
+    "ci",
+    "multios",
+    "tests"
+  ]
+}

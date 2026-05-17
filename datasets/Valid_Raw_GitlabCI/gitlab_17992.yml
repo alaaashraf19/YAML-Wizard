@@ -1,0 +1,93 @@
+.mariadb_run_valgrind_latest:
+  image: ubuntu:18.04
+  script:
+  - export CC=gcc-6
+  - ./.tools/jobs/install.sh "mysql-client gcc-6 git-core make autoconf automake autopoint
+    libssl-dev openssl libtool libmariadbclient-dev libz-dev libpcre3-dev valgrind"
+  - grep -nR CRYPTO_new_ex_data /usr/include/openssl/
+  - ls /usr/lib/x86_64-linux-gnu/ | grep libcrypto
+  - nm /usr/lib/x86_64-linux-gnu/libcrypto.a | grep CRYPTO_new
+  - ldd /usr/bin/openssl
+  - ./.tools/jobs/cloneall.sh
+  - ./.tools/jobs/initdb.sh mariadb
+  - ./.tools/jobs/build.sh "--enable-packetver=${packetver} --enable-epoll --enable-debug
+    --disable-manager --enable-Werror --enable-buildbot" "--enable-werror"
+  - ./.tools/jobs/runservervalgrind.sh mariadb
+  services:
+  - mariadb:latest
+  stage: test
+before_script:
+- uname -a
+image: ubuntu:22.04
+licensecheck:
+  image: ubuntu:22.04
+  script:
+  - ./.tools/jobs/licensecheck.sh
+  stage: test
+  tags:
+  - lightweight
+mysql_run_8.0:
+  image: ubuntu:22.04
+  script:
+  - export CC=gcc-9
+  - ./.tools/jobs/install.sh "mysql-client=8.0.28-0ubuntu4 libmysqlclient21=8.0.28-0ubuntu4
+    gcc-9 git-core make autoconf automake autopoint libssl-dev libtool libmysqlclient-dev=8.0.28-0ubuntu4
+    libz-dev libpcre3-dev"
+  - ./.tools/jobs/cloneall.sh
+  - ./.tools/jobs/initdb.sh mysql
+  - ./.tools/jobs/build.sh "--enable-packetver=${packetver} --enable-epoll --enable-debug
+    --enable-sanitize=full --disable-manager --enable-Werror --enable-buildbot" "--enable-werror
+    --enable-lto --enable-sanitize"
+  - ./.tools/jobs/runserver.sh mysql
+  services:
+  - mysql:8.0
+  stage: build
+mysql_run_latest:
+  allow_failure: true
+  image: ubuntu:22.04
+  script:
+  - export CC=gcc-12
+  - ./.tools/jobs/install.sh "mysql-client gcc-12 git-core make autoconf automake
+    autopoint libssl-dev libtool libmysqlclient-dev libz-dev libpcre3-dev"
+  - ./.tools/jobs/cloneall.sh
+  - ./.tools/jobs/initdb.sh mysql
+  - ./.tools/jobs/build.sh "--enable-packetver=${packetver} --enable-epoll --enable-debug
+    --enable-sanitize=full --disable-manager --enable-buildbot" "--enable-lto --enable-sanitize"
+  - ./.tools/jobs/runserver.sh mysql
+  services:
+  - mysql:8.0
+  stage: build
+newlines:
+  artifacts:
+    expire_in: 3 week
+    untracked: true
+    when: always
+  image: debian:bookworm
+  script:
+  - ./.tools/jobs/install.sh "dos2unix git-core"
+  - ./.tools/jobs/newlines.sh
+  stage: test
+  tags:
+  - lightweight
+spaces:
+  allow_failure: true
+  artifacts:
+    expire_in: 3 week
+    untracked: true
+    when: always
+  image: debian:bookworm
+  script:
+  - ./.tools/jobs/install.sh "sed git-core"
+  - cd npc
+  - ../.tools/jobs/spaces.sh
+  stage: test
+  tags:
+  - lightweight
+stages:
+- test
+- build
+variables:
+  ARTIFACT_DOWNLOAD_ATTEMPTS: '5'
+  GET_SOURCES_ATTEMPTS: '5'
+  MYSQL_ROOT_PASSWORD: root
+  packetver: '20170517'

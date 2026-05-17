@@ -1,0 +1,24 @@
+name: poptimizer
+
+on: [push, pull_request]
+
+jobs:
+  install:
+    name: Lint and Test
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout poptimizer
+        uses: actions/checkout@v3
+
+      - name: Install go-task
+        run: brew install go-task
+
+      - name: Setup venv, install tools and dependencies
+        run: task install
+
+      - name: Lint
+        run: task lint
+
+      - name: Test
+        run: task test

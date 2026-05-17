@@ -1,0 +1,93 @@
+.build_click:
+  artifacts:
+    expire_in: 1 week
+  before_script:
+  - "if [ \"${CI_COMMIT_BRANCH}\" = \"master\" ]; then\n  git checkout master\nelse\n\
+    \  echo \"Append date/time to version number here...\"\n  VERSION=$(grep \"set(VERSION\"\
+    \ CMakeLists.txt | cut -d\\\" -f2)\n  VERSION=${VERSION}-$(date \"+%Y%m%d-%H%M%S\"\
+    )\n  echo \"${VERSION}\"\n  sh bin/pre-commit_semantic-release.sh ${VERSION}\n\
+    fi\n"
+  script:
+  - grep "set(VERSION" CMakeLists.txt
+  - grep "readonly property var appVersion" src/app/qml/main.qml
+  - clickable build
+  stage: build
+.node_anchors:
+  image_clickable_amd64: clickable/ci-${UT_VERSION}-amd64
+  image_clickable_arm64: clickable/ci-${UT_VERSION}-arm64
+  image_clickable_armhf: clickable/ci-${UT_VERSION}-armhf
+  image_commitlint: myii/ssf-commitlint:11
+  image_eslint: &id001
+    entrypoint:
+    - /bin/ash
+    - -c
+    name: cytopia/eslint:latest
+  image_semantic-release: myii/ssf-semantic-release-gitlab:17.3
+  image_shellcheck: koalaman/shellcheck-alpine:latest
+  image_yamllint: &id006
+    entrypoint:
+    - /bin/ash
+    - -c
+    name: cytopia/yamllint:latest
+  only_branch_master_parent_repo: &id005
+  - master@myii/ut-tweak-tool
+  paths_amd64: &id002
+  - build/x86_64-linux-gnu/app/*.click
+  paths_arm64: &id003
+  - build/aarch64-linux-gnu/app/*.click
+  paths_armhf: &id004
+  - build/arm-linux-gnueabihf/app/*.click
+  stage_build: build
+  stage_lint: lint
+  stage_release: release
+commitlint:
+  image: myii/ssf-commitlint:11
+  script:
+  - git remote add upstream https://gitlab.com/myii/ut-tweak-tool.git
+  - git fetch --all
+  - commitlint --from "$(git merge-base upstream/master HEAD)" --to   "${CI_COMMIT_SHA}"
+    --verbose
+  stage: lint
+eslint:
+  image: *id001
+  script:
+  - eslint .
+  stage: lint
+focal_amd64_click:
+  artifacts:
+    paths: *id002
+  extends: .build_click
+  image: clickable/ci-${UT_VERSION}-amd64
+focal_arm64_click:
+  artifacts:
+    paths: *id003
+  extends: .build_click
+  image: clickable/ci-${UT_VERSION}-arm64
+focal_armhf_click:
+  artifacts:
+    paths: *id004
+  extends: .build_click
+  image: clickable/ci-${UT_VERSION}-armhf
+semantic-release:
+  image: myii/ssf-semantic-release-gitlab:17.3
+  only: *id005
+  script:
+  - semantic-release
+  stage: release
+shellcheck:
+  image: koalaman/shellcheck-alpine:latest
+  script:
+  - shellcheck --version
+  - find . -type f \( -iname \*.sh -o -iname \*.bash -o -iname \*.ksh \) | xargs shellcheck
+  stage: lint
+stages:
+- lint
+- release
+- build
+variables:
+  UT_VERSION: '20.04'
+yamllint:
+  image: *id006
+  script:
+  - yamllint -s .
+  stage: lint

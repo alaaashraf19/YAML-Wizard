@@ -1,0 +1,17 @@
+{
+  "sha": "6e742795643b32d92e04cb97d275d53bef61b9dcec232763432a9a572c7cc1ff",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1040,
+  "description": "Create a GitHub Actions workflow named p4c-lint that runs on push to main, on pull requests to main, and on merge groups to main. Use an ubuntu-20.04 job with specific environment variables, checking out submodules recursively, setting up Python, using ccache for caching, and then running a series of build and linting commands including cpplint, clang-format, black, and isort.",
+  "tags": [
+    "ubuntu",
+    "linting",
+    "clang-format",
+    "cpplint",
+    "black",
+    "isort",
+    "python",
+    "c++"
+  ]
+}

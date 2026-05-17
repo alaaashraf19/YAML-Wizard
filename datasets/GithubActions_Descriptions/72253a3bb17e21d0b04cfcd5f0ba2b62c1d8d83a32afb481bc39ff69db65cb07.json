@@ -1,0 +1,14 @@
+{
+  "sha": "72253a3bb17e21d0b04cfcd5f0ba2b62c1d8d83a32afb481bc39ff69db65cb07",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1116,
+  "description": "Create a GitHub Actions deployment workflow that triggers on push to release/* branches and tags starting with v*. Use an ubuntu-latest job in the production environment, checking out submodules recursively, setting up Python 3.9, installing dependencies with pip, running deployment tests with tox, building a Python source tarball, and publishing the package to PyPI if the push event is a tag.",
+  "tags": [
+    "python",
+    "deployment",
+    "pypi",
+    "tox",
+    "tags"
+  ]
+}

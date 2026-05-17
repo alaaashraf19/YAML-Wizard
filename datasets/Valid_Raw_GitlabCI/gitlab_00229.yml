@@ -1,0 +1,79 @@
+.test-base:
+  before_script: &id001
+  - ddev config global --instrumentation-opt-in=true
+  - ddev config global --omit-containers=ddev-ssh-agent
+  - ddev mutagen reset && ddev config global --mutagen-enabled=false
+  - source d
+  - make start
+  - ddev composer config allow-plugins.wikimedia/composer-merge-plugin false
+  - ddev composer install --no-progress
+  - ddev composer config allow-plugins.wikimedia/composer-merge-plugin true
+  - ddev composer install --no-progress
+  - make install workers
+  image: &id002
+    docker:
+      user: ddev:ddev
+    entrypoint:
+    - ''
+    name: registry.gitlab.com/consensus.enterprises/drumkit/ddev
+  services: &id003
+  - alias: docker
+    command:
+    - --tls=false
+    name: docker:20-dind
+  stage: test
+  variables: &id004
+    DOCKER_DRIVER: overlay2
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ''
+    FF_DISABLE_UMASK_FOR_DOCKER_EXECUTOR: 'true'
+    FF_NETWORK_PER_BUILD: 'true'
+cache:
+  key: $CI_BUILD_REF_NAME
+  paths:
+  - $LOCAL_DIR
+  - $COMPOSER_CACHE_DIR
+pages:
+  allow_failure: true
+  artifacts:
+    paths:
+    - public
+  before_script:
+  - . d
+  - make hugo
+  - hugo version
+  image:
+    entrypoint:
+    - ''
+    name: registry.gitlab.com/consensus.enterprises/drumkit/base:latest
+  only:
+  - main@aegir/aegir
+  script:
+  - hugo -s docs
+  stage: publish
+  when: always
+stages:
+- test
+- publish
+test:behat:
+  before_script: *id001
+  image: *id002
+  script:
+  - make run-behat SUITE=ci
+  services: *id003
+  stage: test
+  variables: *id004
+test:phpunit:
+  before_script: *id001
+  image: *id002
+  script:
+  - make run-phpunit
+  services: *id003
+  stage: test
+  variables: *id004
+variables:
+  COMPOSER_CACHE_DIR: $CI_PROJECT_DIR/build/composer/cache
+  DEBIAN_FRONTEND: noninteractive
+  GIT_SUBMODULE_STRATEGY: recursive
+  LOCAL_DIR: $CI_PROJECT_DIR/build/local
+  PYTHONUNBUFFERED: 'true'

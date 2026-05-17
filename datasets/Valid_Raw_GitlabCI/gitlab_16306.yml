@@ -1,0 +1,18 @@
+ansible-lint:
+  before_script:
+  - chmod 700 .
+  image: sdwolfz/ansible-lint:latest
+  script:
+  - make lint/ansible
+editorconfig:
+  image: sdwolfz/editorconfig-checker:latest
+  script:
+  - make lint/editorconfig
+shellcheck:
+  image: sdwolfz/shellcheck:latest
+  script:
+  - make lint/shellcheck
+yamllint:
+  image: sdwolfz/yamllint:latest
+  script:
+  - make lint/yamllint

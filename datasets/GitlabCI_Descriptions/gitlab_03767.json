@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_03767",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1889,
+  "description": "Create a GitLab CI pipeline using the openjdk:8-jdk Docker image and three stages: setup, build, and deploy. In the setup stage add a prepare job that runs apt-get update, installs wget tar unzip lib32stdc++6 lib32z1, downloads the Android SDK zip, extracts it to android-sdk-linux, runs sdkmanager to install build-tools;27.0.3, build-tools;26.0.2, extras;android;m2repository, extras;google;m2repository, extras;google;google_play_services, platform-tools, and platforms;android-27, caches the android-sdk-linux directory with key androidsdk (pull policy) and stores it as an artifact. In the build stage add a build job that exports ANDROID_HOME=$PWD/android-sdk-linux, adds platform-tools to PATH, cd into NavigateAR, appends \"android.builder.sdkDownload=false\" to gradle.properties, chmod +x ./gradlew, and runs ./gradlew assembleDebug, publishing the debug APK at NavigateAR/app/build/outputs/apk/debug as an artifact. In the deploy stage add a deploy job that runs only on the master branch of asu-capstone-team-6/ar-navigator, installs wget, downloads the gdrive binary, chmod +x gdrive, creates $HOME/.gdrive, writes $GDRIVE_ACCESS_CREDS to token_v2.json, and executes ./gdrive update --name NavigateAR.apk 1YAQsiFWQ4aNq1oL095VeJu2zjyvhef7u NavigateAR/app/build/outputs/apk/debug/app-debug.apk to upload the APK to Google Drive.",
+  "tags": [
+    "android",
+    "gradle",
+    "openjdk8",
+    "apk",
+    "gdrive",
+    "gitlab-ci",
+    "ci-cd",
+    "setup",
+    "build",
+    "deploy"
+  ]
+}

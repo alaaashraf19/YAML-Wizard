@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_07347",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 191,
+  "description": "Create a GitLab CI pipeline that defines a single rspec job running in the default test stage using the ruby:2.6 Docker image. The job should execute the commands `bundle install --path vendor --without production --jobs $(nproc)` followed by `bin/rspec`. It should run on runners tagged with `docker` and does not define any caches, artifacts, services, or special rules.",
+  "tags": [
+    "ruby",
+    "rspec",
+    "bundler",
+    "docker"
+  ]
+}

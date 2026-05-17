@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_18516",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 997,
+  "description": "Create a GitLab CI pipeline with stages smoke-test, build, test, and benchmark using the default Docker image. In the smoke-test stage add a compile job that runs echo -e '\\033[36mValidating Lua syntax\\033[0m' then make compile, and a lint job that allows failure, runs echo -e '\\033[36mPerforming static analysis\\033[0m' then make lint. In the test stage add a test job that runs echo -e '\\033[36mRunning tests\\033[0m' then make test. In the benchmark stage add a benchmark job that caches battleground/, creates an artifact named benchmark_results_${CI_COMMIT_SHA} from benchmark_results.json, runs echo -e '\\033[36mPerforming benchmarks\\033[0m' then make benchmark, and a benchmark-foreign job that also caches battleground/, creates an artifact benchmark_results_f_${CI_COMMIT_SHA} from benchmark_results_f.json, runs echo -e '\\033[36mPerforming foreign benchmarks\\033[0m' then make benchmark-foreign. Finally add a wipe_cache job in the benchmark stage that runs on failure and executes rm -r battleground.",
+  "tags": [
+    "benchmark",
+    "make",
+    "lua",
+    "smoke-test",
+    "cache",
+    "artifact"
+  ]
+}

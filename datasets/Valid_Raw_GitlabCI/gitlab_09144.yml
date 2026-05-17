@@ -1,0 +1,41 @@
+build-deb:
+  before_script:
+  - apk update && apk add openssl make dpkg ca-certificates gnupg tar
+  - update-ca-certificates
+  image:
+    entrypoint:
+    - /bin/sh
+    - -c
+    name: nlknguyen/alpine-shellcheck
+  script:
+  - make deb
+  stage: build
+cache:
+  paths:
+  - $BUNDLE_PATH
+  - $CI_PROJECT_DIR/data/
+kitchen-test-job:
+  before_script:
+  - apk update && apk add coreutils curl build-base openssh-client jq rsync
+  image: ruby:2.4-alpine
+  script:
+  - make kitchen
+  stage: integration
+publish:
+  before_script:
+  - apk update && apk add make curl
+  image: alpine:latest
+  only:
+  - master
+  script:
+  - make publish
+  stage: publish
+stages:
+- build
+- integration
+- publish
+variables:
+  BUNDLE_PATH: $CI_PROJECT_DIR/.bundle
+  DEBIAN_FRONTEND: noninteractive
+  DIGITALOCEAN_TESTBOX_FQDN: ${CI_PROJECT_NAME}.${CI_PROJECT_NAMESPACE}.ci.gitlab.test
+  KITCHEN_YAML: .kitchen.ci.yml

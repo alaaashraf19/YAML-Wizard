@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_03864",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 520,
+  "description": "Create a GitLab CI pipeline that uses a before_script to set up the environment with apt-get update -yqq, apt-get install -yqq git, pecl install xdebug, docker-php-ext-enable xdebug, curl -sS https://getcomposer.org/installer | php, and php composer.phar update --no-interaction --prefer-source --prefer-stable, and caches the vendor/ directory. Define two jobs in the default test stage, test:7.1 and test:7.2, each using the php:7.1 and php:7.2 Docker images respectively. Each job runs the script vendor/bin/phpunit --configuration phpunit.xml.dist --coverage-text --colors=never. No additional stages, services, artifacts, or rules are defined.",
+  "tags": [
+    "php",
+    "phpunit",
+    "composer",
+    "xdebug",
+    "cache",
+    "apt",
+    "php-7.1",
+    "php-7.2"
+  ]
+}

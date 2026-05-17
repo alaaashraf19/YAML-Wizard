@@ -1,0 +1,26 @@
+before_script:
+- docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+build:
+  except:
+  - master
+  script:
+  - docker build --no-cache=true -t $CONTAINER_BUILD_IMAGE .
+  - docker images
+  stage: build
+image: docker:git
+release:
+  only:
+  - master
+  script:
+  - docker build --no-cache=true -t $CONTAINER_RELEASE_IMAGE .
+  - docker images
+  - docker push $CONTAINER_RELEASE_IMAGE
+  stage: release
+services:
+- docker:dind
+stages:
+- build
+- release
+variables:
+  CONTAINER_BUILD_IMAGE: registry.gitlab.com/rilis/docker-ci:$CI_BUILD_REF_NAME
+  CONTAINER_RELEASE_IMAGE: registry.gitlab.com/rilis/docker-ci:ci-latest

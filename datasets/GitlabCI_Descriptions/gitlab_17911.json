@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_17911",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1026,
+  "description": "Create a GitLab CI pipeline using the fpco/stack-build:latest Docker image and a global before_script that adds the Mono repository key, writes the Mono apt sources, runs apt-get update and installs make, xz-utils, libmono-2.0-dev, fsharp and libglib2.0-dev, sets STACK_ROOT to the .stack directory, runs stack setup and installs only dependencies with stack install --only-dependencies. Define a single job named build in the default test stage that caches the directories _cache and .stack-work. In the build job run the commands: stack build --test clr-typed, stack build clr-typed-demo, stack build clr-win-linker, stack build --test clr-import-gen, stack build --test clr-inline, stack build --bench clr-inline, and finally stack exec clr-typed-demo. No additional services, artifacts, or branch rules are required.",
+  "tags": [
+    "haskell",
+    "stack",
+    "mono",
+    "fpco-stack-build",
+    "docker"
+  ]
+}

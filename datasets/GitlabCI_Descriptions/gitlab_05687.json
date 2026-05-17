@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_05687",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 615,
+  "description": "Create a GitLab CI pipeline that runs a test job in the test stage using the rabbitmq:alpine Docker image. In the before_script, update apk and install gcc python2 python2-dev musl-dev bzip2-dev coreutils dpkg-dev dpkg gdbm-dev libc-dev libnsl-dev libtirpc-dev linux-headers make ncurses-dev pax-utils readline-dev sqlite-dev tk postgresql-dev libxml2-dev libxslt-dev libffi-dev libgcc curl jpeg-dev zlib-dev freetype-dev lcms2-dev openjpeg-dev tiff-dev tk-dev tcl-dev py-pip, start rabbitmq-server in detached mode, install psycopg2 via pip, install development requirements with pip install -r requirements-dev.txt, and append SECRET_KEY=test to .env inside the radarlegislativo directory. Then run python manage.py test as the script. No caches, artifacts, or special rules are defined.",
+  "tags": [
+    "rabbitmq",
+    "python",
+    "pip",
+    "django",
+    "alpine",
+    "test"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_11221",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 545,
+  "description": "Create a GitLab CI pipeline with multiple Rust jobs, all running in the default test stage. Use the rust Docker image for the clippy, rustfmt, and test:stable jobs, rust:1.61 for the test:1.61 job, and rustlang/rust:nightly for the test:nightly job. The clippy job runs \"rustc --version && cargo --version\", then \"rustup component add clippy-preview\", and finally \"cargo clippy --verbose\". The rustfmt job runs \"rustc --version && cargo --version\", then \"rustup component add rustfmt-preview\", and finally \"cargo fmt -- --check\". The test:1.61, test:nightly, and test:stable jobs each run \"rustc --version && cargo --version\", then \"cargo test --all --verbose\", and then \"cargo test --all --all-features --verbose\".",
+  "tags": [
+    "rust",
+    "clippy",
+    "rustfmt",
+    "cargo-test",
+    "nightly",
+    "stable",
+    "1-61"
+  ]
+}

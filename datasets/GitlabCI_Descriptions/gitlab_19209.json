@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_19209",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 641,
+  "description": "Create a GitLab CI pipeline using the hashicorp/terraform:light Docker image with a custom entrypoint, caching the .terraform directory. Define stages validate, build, test, deploy and a variable PLAN set to plan.tfplan. Add a validate job in the validate stage that runs terraform validate. Add a plan job in the build stage that runs terraform plan -out=$PLAN, stores the $PLAN file as an artifact named plan, and caches .terraform. Add an apply job in the deploy stage that runs only on the master branch, is manual, targets the production environment, and runs terraform apply -input=false $PLAN. Include a before_script that runs terraform --version and terraform init for all jobs.",
+  "tags": [
+    "terraform",
+    "gitlab-ci",
+    "docker",
+    "cache",
+    ".terraform",
+    "manual-deploy",
+    "production",
+    "plan-artifact"
+  ]
+}

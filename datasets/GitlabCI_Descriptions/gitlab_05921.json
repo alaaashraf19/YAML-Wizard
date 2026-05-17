@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_05921",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 4972,
+  "description": "Create a GitLab CI pipeline using the python:3.5 Docker image and a global before_script that runs `pip install -r requirements.txt`. Define stages build and test; in the build stage add check_week_4_additional (allow_failure true, runs `test -e week_4/week4a.py`), check_week_4_mandatory (allow_failure false, runs `test -e week_4/week4.py` `test -e week_4/test_week4.py` `test -e week_4/m1facade.txt`), and prep_week_3, prep_week_4, prep_week_5, prep_week_6, prep_week_7, prep_week_8 each executing their listed flake8 or file‑existence checks, all triggered only on branch regexes matching the respective week and excluded from master and the CSUI-AdvProg-2017/lab-exercises project. In the test stage add grade_week_1_additional (allow_failure true, runs `file week_1/form_a1.py` `python week_1/form_a1.py`), grade_week_1_mandatory (allow_failure false, runs `file week_1/form_m{1,2,3}.py` `python week_1/form_m{1,2,3}.py`), grade_week_2_additional (allow_failure true, runs `cd week_2/factory-method-pattern` `python Tutorial2-FM-Dynamic.py` `cat factoryMethodPattern.txt`), grade_week_2_mandatory (allow_failure false, runs a series of python scripts and cat commands across factory‑method and singleton patterns), grade_week_3_additional, grade_week_3_mandatory, grade_week_4_additional, grade_week_4_mandatory (including `python -m unittest discover week_4`), grade_week_5_additional, grade_week_5_mandatory, grade_week_6_additional, grade_week_6_mandatory, grade_week_7_additional, grade_week_7_mandatory each with their exact script commands, allow_failure settings, and only regex triggers for their week numbers, also excluding master and the lab‑exercises branches. No caches, artifacts, services, or deployment targets are defined.",
+  "tags": [
+    "python-3.5",
+    "lab-exercises",
+    "build",
+    "test",
+    "flake8",
+    "unittest",
+    "allow-failure"
+  ]
+}

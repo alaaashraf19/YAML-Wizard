@@ -1,0 +1,24 @@
+docker-compose-build:
+  before_script:
+  - apk --update add 'py-pip==9.0.1-r1'
+  - pip install docker-compose
+  - chmod +x /usr/bin/docker-compose
+  script:
+  - docker-compose build
+  stage: build
+docker-compose-deploy:
+  before_script:
+  - apk --update add 'py-pip==9.0.1-r1'
+  - pip install docker-compose
+  - chmod +x /usr/bin/docker-compose
+  script:
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+  - docker-compose push collect-service control-service picking-process-manager simple-legacy_adapter
+    picking-projector picking-processor
+  stage: deploy
+image: docker
+services:
+- docker:dind
+stages:
+- build
+- deploy

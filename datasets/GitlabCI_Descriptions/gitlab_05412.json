@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_05412",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1250,
+  "description": "Create a GitLab CI pipeline that uses the Docker image registry.gitlab.com/clarin-eric/build-image:1.3.5 with the docker:28.0.2-dind service and sets Docker-related variables (DOCKER_CERT_PATH, DOCKER_DRIVER, DOCKER_HOST, DOCKER_TLS_CERTDIR, DOCKER_TLS_VERIFY, GIT_SUBMODULE_STRATEGY). Define stages lint, build, test, security, and release. Add a shell-check job in the lint stage that runs `timeout 1440 bash -x ./build.sh --lint-shell`. Add a build job in the build stage (tagged docker) that runs `timeout 1440 bash -x ./build.sh --build` and publishes all untracked files as artifacts, and a test job in the test stage (tagged docker) that depends on build, runs `timeout 1440 bash -x ./build.sh --test` and also publishes all untracked files as artifacts. Add two security jobs: informative-vulnerability-scan (allow_failure true, variable SCAN_SEVERITY_THRESHOLD=low) and normative-vulnerability-scan (tagged docker, allow_failure false, variables SCAN_FAIL_ON=all, SCAN_SEVERITY_THRESHOLD=critical, SNYK_POLICY_FILE=.snyk) both executing `timeout 1440 bash -x ./build.sh --scan`; finally add a release job in the release stage (tagged docker) that runs `timeout 1440 bash -x ./build.sh --release` and is limited to tags and triggers.",
+  "tags": [
+    "docker",
+    "dind",
+    "build-image",
+    "vulnerability-scan",
+    "lint",
+    "release"
+  ]
+}

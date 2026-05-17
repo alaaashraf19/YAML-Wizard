@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_17090",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 303,
+  "description": "Create a GitLab CI pipeline using the gcc Docker image with no additional services. Define two stages: build and test. In the build stage add a build job that runs before_script \"apt update && apt -y install make cmake\", then script \"mkdir build && cd build && cmake .. && make all\", and publishes the paths build/snigl, build/libsnigl.a, and build/libsnigl.so as artifacts. In the test stage add a test job that runs the built binary with script \"build/snigl test/all.sl\".",
+  "tags": [
+    "gcc",
+    "cmake",
+    "make",
+    "c",
+    "artifact",
+    "build-test"
+  ]
+}

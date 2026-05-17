@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_12035",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 258,
+  "description": "Create a GitLab CI pipeline that defines a deploy stage with a single job named pages. The pages job runs on the master branch only, uses the default runner image, and executes the exact shell commands: gem install ronn, mv docs_src public, cd public, ronn -5 --style toc --manual BUILD.PY --organization Ma_124 *.ronn, cp buildpy.1.html index.html, and ls. It then publishes the public directory as a GitLab Pages artifact by specifying artifacts.paths: public. Ensure the job is limited to the master branch via an only rule.",
+  "tags": [
+    "ruby",
+    "ronn",
+    "gitlab-pages",
+    "documentation",
+    "master-only"
+  ]
+}

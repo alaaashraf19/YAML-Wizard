@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_06900",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 104,
+  "description": "Create a GitLab CI pipeline that uses the publysher/hugo Docker image. Add a pages job (default stage) that runs the shell command hugo, stores the generated public/ directory as an artifact, and is configured with an only rule to run exclusively on the master branch, publishing the site via GitLab Pages.",
+  "tags": [
+    "hugo",
+    "gitlab-pages",
+    "docker",
+    "static-site"
+  ]
+}

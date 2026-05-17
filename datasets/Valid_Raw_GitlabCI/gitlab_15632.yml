@@ -1,0 +1,14 @@
+build:
+  artifacts:
+    reports:
+      junit: ./**/report.xml
+  script:
+  - docker build .
+  stage: build
+image: docker:latest
+services:
+- docker:dind
+stages:
+- build
+variables:
+  GIT_SUBMODULE_STRATEGY: normal

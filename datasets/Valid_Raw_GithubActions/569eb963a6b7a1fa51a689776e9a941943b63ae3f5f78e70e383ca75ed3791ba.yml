@@ -1,0 +1,67 @@
+name: Ubuntu 22.04 for Qt on Android
+
+# See https://doc.qt.io/qt-5/android-getting-started.html
+# See https://github.com/jurplel/install-qt-action
+# See https://github.com/miurahr/aqtinstall/
+
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - '.github/workflows/**'
+
+jobs:
+  build:
+    name: Ubuntu+android - Build
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: zulu
+          java-version: 17
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          packages: "platform-tools platforms;android-29 build-tools;29.0.2 ndk;23.1.7779620"
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v3
+        with:
+          version: '5.15.2'
+          host: 'linux'
+          target: 'android'
+          arch: 'android'
+          install-deps: 'true'
+          cache: true
+          cache-key-prefix: ${{ runner.os }}
+          setup-python: false
+      - name: Dump Qt installation data
+        run:  echo ${Qt5_DIR}
+      - name: List Qt installation
+        run:  ls -l ../Qt/5.15.2/android/
+      - name: Configure build project
+        run: "cmake -B build
+                    -DCMAKE_TOOLCHAIN_FILE=${ANDROID_HOME}/ndk/23.1.7779620/build/cmake/android.toolchain.cmake
+                    -DANDROID_NDK=${ANDROID_HOME}/ndk/23.1.7779620/
+                    -DANDROID_ABI=arm64-v8a
+                    -DANDROID_PLATFORM=android-29
+                    -DANDROID_STL=c++_shared
+                    -DANDROID_LD=lld
+                    -DOSMSCOUT_BUILD_IMPORT=OFF
+                    -DOSMSCOUT_BUILD_GPX=ON
+                    -DOSMSCOUT_BUILD_DEMOS=OFF
+                    -DOSMSCOUT_BUILD_TOOL_DUMPDATA=OFF
+                    -DOSMSCOUT_BUILD_DOC_API=OFF
+                    -DOSMSCOUT_BUILD_WEBPAGE=OFF
+                    -DOSMSCOUT_BUILD_TESTS=OFF
+                    -DQt5_DIR=${Qt5_DIR}/lib/cmake/Qt5
+                    -DCMAKE_FIND_ROOT_PATH_MODE_PACKAGE=ON
+                    -Wno-dev"
+      - name: Build project
+        run:  cmake --build build

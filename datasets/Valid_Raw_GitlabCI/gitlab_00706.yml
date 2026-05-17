@@ -1,0 +1,34 @@
+linux:
+  artifacts:
+    expire_in: 2 weeks
+    paths:
+    - target/release/dispatch-ng
+    when: always
+  cache:
+    key: cargo
+    paths:
+    - cargo
+  image: rust:alpine
+  script:
+  - apk add build-base curl
+  - export CARGO_HOME="$PWD/cargo"
+  - cargo test --release
+  - cargo build --release
+  - ./deploy.sh
+mingw-w64:
+  artifacts:
+    expire_in: 2 weeks
+    paths:
+    - target/x86_64-pc-windows-gnu/release/dispatch-ng.exe
+    when: always
+  cache:
+    key: cargo-mingw-w64
+    paths:
+    - cargo
+  image: rust:alpine
+  script:
+  - apk add build-base mingw-w64-gcc curl
+  - rustup target add x86_64-pc-windows-gnu
+  - export CARGO_HOME="$PWD/cargo"
+  - cargo build --release --target="x86_64-pc-windows-gnu"
+  - ./deploy.sh

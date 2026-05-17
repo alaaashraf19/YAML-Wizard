@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_04731",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1525,
+  "description": "Create a GitLab CI pipeline with three stages: build, docker, and deploy, and define variables DOCKER_DRIVER=overlay2, DOCKER_HOST=tcp://localhost:2375, GCLOUD_CLUSTER=guestbook, GCLOUD_PROJECT=dictionaryproject-33, MAVEN_CLI_OPTS='--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true', MAVEN_OPTS='-Dhttps.protocols=TLSv1.2 -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true', SPRING_PROFILES_ACTIVE=local, USER_GITLAB=burakb. In the build stage add a maven-build job using the maven:3.5-jdk-10-slim image, caching .m2/repository, running mvn $MAVEN_CLI_OPTS package -B, storing target/*.jar as artifacts, and executing only on the master branch or when triggered. In the docker stage add a docker-build job using the docker:latest image with the docker:dind service, only on master, that logs in to $CI_REGISTRY with $CI_REGISTRY_USER and $CI_REGISTRY_PASSWORD via stdin, builds the image with tag $CI_REGISTRY_IMAGE:${CI_COMMIT_SHA:0:6}, and pushes it to the registry. In the deploy stage add a k8s-deploy job using the google/cloud-sdk image, only on master, that writes $GOOGLE_CLOUD_KEY to key.json, authenticates with gcloud, sets compute zone to europe-west3-c, selects project $GCLOUD_PROJECT, gets credentials for cluster $GCLOUD_CLUSTER, and runs /bin/sh deploy.sh $CI_REGISTRY_IMAGE:${CI_COMMIT_SHA:0:6} to deploy the image to the Kubernetes cluster.",
+  "tags": [
+    "docker",
+    "docker-build",
+    "k8s-deploy",
+    "maven",
+    "gcloud",
+    "kubernetes",
+    "gitlab-ci"
+  ]
+}

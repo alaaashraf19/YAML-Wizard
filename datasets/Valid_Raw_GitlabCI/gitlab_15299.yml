@@ -1,0 +1,33 @@
+publish:image:creation:
+  extends: .build
+  variables:
+    CONTEXT: .
+    DOCKERFILE: docker/Dockerfile.publish
+    IMAGE_TAG: ${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_SLUG}-publish
+publish:image:test:
+  script:
+  - 'docker container run \
+
+    --name ${CONTAINER_NAME} \
+
+    --publish 8080:8080 \
+
+    --detach \
+
+    ${IMAGE_TAG}
+
+    '
+  - 'docker container run \
+
+    --rm curlimages/curl:7.74.0 \
+
+    $(docker inspect ${CONTAINER_NAME} -f ''{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}''):8080
+
+    '
+  stage: test-publish
+  variables:
+    CONTAINER_NAME: rafaeldutra-me.published
+variables:
+  CONTEXT: .
+  DOCKERFILE: docker/Dockerfile.publish
+  IMAGE_TAG: ${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_SLUG}-publish

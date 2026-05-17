@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_04447",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 760,
+  "description": "Create a GitLab CI pipeline that uses the global before_script to update apt, install development libraries, install PHP extensions (mbstring, mcrypt, pdo_pgsql, curl, json, intl, gd, xml, zip, bz2, opcache), download and run the Composer installer, and execute php composer.phar install, with a cache on the vendor/ directory. Define two test jobs: test:5.6 runs in the default test stage using the php:5.6 image and runs vendor/bin/phpunit; test:7.1 runs in the test stage using php:7.1, adds a job‑specific before_script that installs xdebug via pecl and enables it, then runs vendor/bin/phpunit --coverage-text --colors=never. Both jobs inherit the global before_script and the cache and run on all branches.",
+  "tags": [
+    "php",
+    "php-5.6",
+    "php-7.1",
+    "composer",
+    "phpunit",
+    "xdebug",
+    "cache",
+    "apt",
+    "docker-php-ext"
+  ]
+}

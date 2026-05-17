@@ -1,0 +1,13 @@
+{
+  "sha": "26c2d4c6786f8639870b3f9a0f604dee16023f16184084f36452e9ae8e5e6380",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2486,
+  "description": "Create a GitHub Actions workflow named release that triggers on push events with any tag. The workflow should have two jobs: create-release and build-release. The create-release job runs on ubuntu-latest, checks out the repository, generates release notes, extracts the version from the tag, and creates a draft GitHub release. The build-release job depends on create-release, runs on ubuntu-latest, checks out the repository, builds the project, and uploads tar.gz and tar.bz2 archives to the release.",
+  "tags": [
+    "github-release",
+    "ubuntu",
+    "autotools",
+    "release-asset-upload"
+  ]
+}

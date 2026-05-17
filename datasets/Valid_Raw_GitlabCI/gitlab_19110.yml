@@ -1,0 +1,281 @@
+.auto-deploy:
+  image: registry.gitlab.com/gitlab-org/cluster-integration/auto-deploy-image:v0.1.0
+.manual_rollout_template:
+  artifacts: &id001
+    paths:
+    - environment_url.txt
+  environment: &id002
+    name: production
+    url: http://$CI_PROJECT_PATH_SLUG.$KUBE_INGRESS_BASE_DOMAIN
+  except: &id007
+    variables:
+    - $INCREMENTAL_ROLLOUT_MODE == "timed"
+  extends: .auto-deploy
+  only: &id008
+    kubernetes: active
+    refs:
+    - master
+    variables:
+    - $INCREMENTAL_ROLLOUT_MODE == "manual"
+    - $INCREMENTAL_ROLLOUT_ENABLED
+  script: &id003
+  - auto-deploy check_kube_domain
+  - auto-deploy download_chart
+  - auto-deploy ensure_namespace
+  - auto-deploy initialize_tiller
+  - auto-deploy create_secret
+  - auto-deploy deploy rollout $ROLLOUT_PERCENTAGE
+  - auto-deploy scale stable $((100-ROLLOUT_PERCENTAGE))
+  - auto-deploy delete canary
+  - auto-deploy persist_environment_url
+  stage: production
+  when: manual
+.production:
+  artifacts: &id004
+    paths:
+    - environment_url.txt
+  environment: &id005
+    name: production
+    url: http://$CI_PROJECT_PATH_SLUG.$KUBE_INGRESS_BASE_DOMAIN
+  extends: .auto-deploy
+  script: &id006
+  - auto-deploy check_kube_domain
+  - auto-deploy download_chart
+  - auto-deploy ensure_namespace
+  - auto-deploy initialize_tiller
+  - auto-deploy create_secret
+  - auto-deploy deploy
+  - auto-deploy delete canary
+  - auto-deploy delete rollout
+  - auto-deploy persist_environment_url
+  stage: production
+.rollout:
+  artifacts: *id001
+  environment: *id002
+  extends: .auto-deploy
+  script: *id003
+.timed_rollout_template:
+  artifacts: *id001
+  environment: *id002
+  extends: .auto-deploy
+  only: &id009
+    kubernetes: active
+    refs:
+    - master
+    variables:
+    - $INCREMENTAL_ROLLOUT_MODE == "timed"
+  script: *id003
+  start_in: 5 minutes
+  when: delayed
+canary:
+  environment:
+    name: production
+    url: http://$CI_PROJECT_PATH_SLUG.$KUBE_INGRESS_BASE_DOMAIN
+  extends: .auto-deploy
+  only:
+    kubernetes: active
+    refs:
+    - master
+    variables:
+    - $CANARY_ENABLED
+  script:
+  - auto-deploy check_kube_domain
+  - auto-deploy download_chart
+  - auto-deploy ensure_namespace
+  - auto-deploy initialize_tiller
+  - auto-deploy create_secret
+  - auto-deploy deploy canary
+  stage: canary
+  when: manual
+production:
+  artifacts: *id004
+  environment: *id005
+  except:
+    variables:
+    - $STAGING_ENABLED
+    - $CANARY_ENABLED
+    - $INCREMENTAL_ROLLOUT_ENABLED
+    - $INCREMENTAL_ROLLOUT_MODE
+  extends: .auto-deploy
+  only:
+    kubernetes: active
+    refs:
+    - master
+  script: *id006
+  stage: production
+production_manual:
+  allow_failure: false
+  artifacts: *id004
+  environment: *id005
+  except:
+    variables:
+    - $INCREMENTAL_ROLLOUT_ENABLED
+    - $INCREMENTAL_ROLLOUT_MODE
+  extends: .auto-deploy
+  only:
+    kubernetes: active
+    refs:
+    - master
+    variables:
+    - $STAGING_ENABLED
+    - $CANARY_ENABLED
+  script: *id006
+  stage: production
+  when: manual
+review:
+  artifacts:
+    paths:
+    - environment_url.txt
+  environment:
+    name: review/$CI_COMMIT_REF_NAME
+    on_stop: stop_review
+    url: http://$CI_PROJECT_ID-$CI_ENVIRONMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN
+  except:
+    refs:
+    - master
+    variables:
+    - $REVIEW_DISABLED
+  extends: .auto-deploy
+  only:
+    kubernetes: active
+    refs:
+    - branches
+    - tags
+  script:
+  - auto-deploy check_kube_domain
+  - auto-deploy download_chart
+  - auto-deploy ensure_namespace
+  - auto-deploy initialize_tiller
+  - auto-deploy create_secret
+  - auto-deploy deploy
+  - auto-deploy persist_environment_url
+  stage: review
+rollout 10%:
+  artifacts: *id001
+  environment: *id002
+  except: *id007
+  extends: .auto-deploy
+  only: *id008
+  script: *id003
+  stage: production
+  variables:
+    ROLLOUT_PERCENTAGE: 10
+  when: manual
+rollout 100%:
+  allow_failure: false
+  artifacts: *id004
+  environment: *id005
+  except: *id007
+  extends: .auto-deploy
+  only: *id008
+  script: *id006
+  stage: production
+  when: manual
+rollout 25%:
+  artifacts: *id001
+  environment: *id002
+  except: *id007
+  extends: .auto-deploy
+  only: *id008
+  script: *id003
+  stage: production
+  variables:
+    ROLLOUT_PERCENTAGE: 25
+  when: manual
+rollout 50%:
+  artifacts: *id001
+  environment: *id002
+  except: *id007
+  extends: .auto-deploy
+  only: *id008
+  script: *id003
+  stage: production
+  variables:
+    ROLLOUT_PERCENTAGE: 50
+  when: manual
+staging:
+  environment:
+    name: staging
+    url: http://$CI_PROJECT_PATH_SLUG-staging.$KUBE_INGRESS_BASE_DOMAIN
+  extends: .auto-deploy
+  only:
+    kubernetes: active
+    refs:
+    - master
+    variables:
+    - $STAGING_ENABLED
+  script:
+  - auto-deploy check_kube_domain
+  - auto-deploy download_chart
+  - auto-deploy ensure_namespace
+  - auto-deploy initialize_tiller
+  - auto-deploy create_secret
+  - auto-deploy deploy
+  stage: staging
+stop_review:
+  allow_failure: true
+  environment:
+    action: stop
+    name: review/$CI_COMMIT_REF_NAME
+  except:
+    refs:
+    - master
+    variables:
+    - $REVIEW_DISABLED
+  extends: .auto-deploy
+  only:
+    kubernetes: active
+    refs:
+    - branches
+    - tags
+  script:
+  - auto-deploy initialize_tiller
+  - auto-deploy delete
+  stage: cleanup
+  variables:
+    GIT_STRATEGY: none
+  when: manual
+timed rollout 10%:
+  artifacts: *id001
+  environment: *id002
+  extends: .auto-deploy
+  only: *id009
+  script: *id003
+  stage: incremental rollout 10%
+  start_in: 5 minutes
+  variables:
+    ROLLOUT_PERCENTAGE: 10
+  when: delayed
+timed rollout 100%:
+  artifacts: *id004
+  environment: *id005
+  extends: .auto-deploy
+  only: *id009
+  script: *id006
+  stage: incremental rollout 100%
+  start_in: 5 minutes
+  variables:
+    ROLLOUT_PERCENTAGE: 100
+  when: delayed
+timed rollout 25%:
+  artifacts: *id001
+  environment: *id002
+  extends: .auto-deploy
+  only: *id009
+  script: *id003
+  stage: incremental rollout 25%
+  start_in: 5 minutes
+  variables:
+    ROLLOUT_PERCENTAGE: 25
+  when: delayed
+timed rollout 50%:
+  artifacts: *id001
+  environment: *id002
+  extends: .auto-deploy
+  only: *id009
+  script: *id003
+  stage: incremental rollout 50%
+  start_in: 5 minutes
+  variables:
+    ROLLOUT_PERCENTAGE: 50
+  when: delayed

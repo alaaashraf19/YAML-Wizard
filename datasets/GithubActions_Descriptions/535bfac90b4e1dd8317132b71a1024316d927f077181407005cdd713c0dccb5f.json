@@ -1,0 +1,15 @@
+{
+  "sha": "535bfac90b4e1dd8317132b71a1024316d927f077181407005cdd713c0dccb5f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3176,
+  "description": "Create a scheduled GitHub Actions workflow named CodeQL that runs every Thursday at 18:00 and on push of tags matching v*.*.* and pull requests to the master branch. Use a windows-2019 job with read permissions to analyze C++ code using CodeQL. Checkout the repository, initialize CodeQL with a custom config file, and perform the analysis after setting up and building the project.",
+  "tags": [
+    "codeql",
+    "cpp",
+    "windows",
+    "scheduled",
+    "security",
+    "analysis"
+  ]
+}

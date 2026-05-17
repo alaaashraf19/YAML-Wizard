@@ -1,0 +1,23 @@
+before_script:
+- export GRADLE_USER_HOME=`pwd`/.gradle
+build:
+  cache:
+    key: $CI_COMMIT_REF_NAME
+    paths:
+    - build
+    - .gradle
+    policy: push
+  script: gradle --build-cache assemble
+  stage: build
+image: gradle:alpine
+test:
+  cache:
+    key: $CI_COMMIT_REF_NAME
+    paths:
+    - build
+    - .gradle
+    policy: pull
+  script: gradle run
+  stage: test
+variables:
+  GRADLE_OPTS: -Dorg.gradle.daemon=false

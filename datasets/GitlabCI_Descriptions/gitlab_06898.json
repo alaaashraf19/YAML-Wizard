@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_06898",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 224,
+  "description": "Create a GitLab CI pipeline using microsoft/dotnet:1.1-sdk as the default Docker image and defining two jobs. In the build stage add a build-and-test job that runs ./install, then test/all, then ./ditto --help. In the deploy stage add a pages job that overrides the image to alpine:latest, runs cp -R docs/ public/, and publishes the public/ directory as a Pages artifact. The pages job should only run on the master branch.",
+  "tags": [
+    "dotnet",
+    "alpine",
+    "pages",
+    "build-test",
+    "gitlab-ci"
+  ]
+}

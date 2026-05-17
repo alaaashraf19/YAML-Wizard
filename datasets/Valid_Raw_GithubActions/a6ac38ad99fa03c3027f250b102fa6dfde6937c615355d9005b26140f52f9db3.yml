@@ -1,0 +1,60 @@
+name: Linux
+
+on: [ push, pull_request ]
+
+env:
+  BUILD_TYPE: Release
+  QT_VERSION: "5.15.2"
+  QT_ARCH: "gcc_64"
+
+jobs:
+  build:
+    # https://github.com/probonopd/linuxdeployqt/issues/377
+    runs-on: ubuntu-18.04
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Cache Qt
+        id: cache-qt
+        uses: actions/cache@v2
+        with:
+          path: ${{runner.workspace}}/Qt
+          key: qt-${{env.QT_VERSION}}-${{env.QT_ARCH}}
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v2
+        with:
+          cached: ${{steps.cache-qt.outputs.cache-hit}}
+          version: ${{env.QT_VERSION}}
+          arch: ${{env.QT_ARCH}}
+
+      - name: Configure CMake
+        run: cmake . -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_INSTALL_PREFIX=/usr -DUSE_TESTS=ON -DUSE_LTO=ON
+
+      - name: Build
+        run: cmake --build . --config $BUILD_TYPE
+
+      - name: Test
+        run: ${{runner.workspace}}/spotify-qt/lib/test/spotify-qt-lib-test
+
+      - name: Install
+        run: make DESTDIR="${{runner.workspace}}/dist" install
+
+      - name: Download linuxdeploy
+        run: |
+          curl -L "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage" -o ${{runner.workspace}}/linuxdeploy-x86_64.AppImage
+          curl -L "https://github.com/linuxdeploy/linuxdeploy-plugin-appimage/releases/download/continuous/linuxdeploy-plugin-appimage-x86_64.AppImage" -o ${{runner.workspace}}/linuxdeploy-plugin-appimage-x86_64.AppImage
+          curl -L "https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage" -o ${{runner.workspace}}/linuxdeploy-plugin-qt-x86_64.AppImage
+          chmod +x ${{runner.workspace}}/linuxdeploy-*.AppImage
+
+      - name: Package
+        run: |
+          export OUTPUT="spotify-qt-${{runner.os}}-${{env.VERSION}}-${{inputs.build_type}}-x86_64.AppImage"
+          ${{runner.workspace}}/linuxdeploy-x86_64.AppImage --appdir ${{runner.workspace}}/dist --output appimage --plugin qt -v 0 -d ${{runner.workspace}}/dist/usr/share/applications/spotify-qt.desktop
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: spotify-qt
+          path: ${{runner.workspace}}/spotify-qt/spotify-qt-*.AppImage

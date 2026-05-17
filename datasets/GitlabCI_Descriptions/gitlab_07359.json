@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_07359",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2085,
+  "description": "Create a GitLab CI pipeline with lint and test stages, using global variables ARTIFACT_DOWNLOAD_ATTEMPTS, GET_SOURCES_ATTEMPTS, MYSQL_ROOT_PASSWORD, and packetver. In the lint stage add a newlines job that runs on debian:unstable, executes \"./.tools/jobs/install.sh \\\"dos2unix git-core\\\"\" then \"./.tools/jobs/newlines.sh\", and always stores all untracked files as artifacts for 3 weeks. Also add a spaces job on debian:unstable that runs \"./.tools/jobs/install.sh \\\"sed git-core\\\"\", changes directory to npc, then runs \"../.tools/jobs/spaces.sh\", with the same artifact settings. In the test stage add a mariadb_run_latest_gcc10 job using debian:unstable image and mariadb:latest service, sets CC=gcc-10, HERCCPPFLAGS=\" -Wno-format-overflow\" and ASAN_OPTIONS=\"detect_stack_use_after_return=true:strict_init_order=true:detect_odr_violation=0\", runs install.sh with mysql-client gcc-10 git-core make autoconf automake autopoint libtool libmariadbclient-dev-compat libz-dev libpcre3-dev, then cloneall.sh, initdb.sh mariadb, build.sh with \"--enable-packetver=${packetver} --enable-epoll --enable-debug --enable-sanitize=full --disable-manager --enable-Werror --enable-buildbot\" \"--enable-werror --enable-lto --enable-sanitize\", and runserver.sh mariadb, storing all untracked files as artifacts for 3 weeks. Also add a mariadb_run_valgrind_latest job on debian:stretch image with mariadb:latest service, sets CC=gcc-6, runs install.sh with mysql-client gcc-6 git-core make autoconf automake autopoint libtool mariadb-client libmariadbclient-dev-compat libz-dev libpcre3-dev valgrind, then cloneall.sh, initdb.sh mariadb, build.sh with \"--enable-packetver=${packetver} --enable-epoll --enable-debug --disable-manager --enable-Werror --enable-buildbot\" \"--enable-werror\", and runservervalgrind.sh mariadb, also archiving all untracked files for 3 weeks.",
+  "tags": [
+    "debian",
+    "mariadb",
+    "gcc10",
+    "gcc6",
+    "valgrind",
+    "lint",
+    "test",
+    "ci"
+  ]
+}

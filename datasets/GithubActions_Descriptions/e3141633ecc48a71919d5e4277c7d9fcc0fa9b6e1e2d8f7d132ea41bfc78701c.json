@@ -1,0 +1,18 @@
+{
+  "sha": "e3141633ecc48a71919d5e4277c7d9fcc0fa9b6e1e2d8f7d132ea41bfc78701c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 6606,
+  "description": "Create a GitHub Actions workflow named CI that runs on push and pull request events to the ng branch. The workflow consists of four jobs: code_style, missing_migrations, settings_test, and python_tests. Each job runs on an ubuntu-22.04 environment, checks out the code, installs system packages, configures Mise, and installs tools. The jobs then perform specific tasks such as checking code formatting, verifying missing migrations, testing settings, and running Python tests with coverage.",
+  "tags": [
+    "github-actions",
+    "ubuntu",
+    "mise",
+    "python",
+    "tests",
+    "ci",
+    "code-style",
+    "migrations",
+    "settings"
+  ]
+}

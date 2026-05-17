@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_07354",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 405,
+  "description": "Create a GitLab CI pipeline using the node:latest Docker image with a global before_script that runs npm install --silent and caches the node_modules/ directory. Define a deploy stage with a job named staging that executes npm run build, npm run lint, apt-get update -qy, apt-get install -y ruby-dev, apt-get install -y rubygems, gem install dpl, and dpl --provider=heroku --app=urban-snake-2k17 --api-key=$HEROKU_STAGING_API_KEY, stores the dist/ folder as an artifact, runs only on the master branch, and is marked as a deploy job.",
+  "tags": [
+    "node",
+    "npm",
+    "heroku",
+    "dpl",
+    "docker",
+    "cache"
+  ]
+}

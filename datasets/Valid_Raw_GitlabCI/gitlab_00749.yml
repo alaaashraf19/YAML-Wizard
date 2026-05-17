@@ -1,0 +1,24 @@
+android:
+  artifacts:
+    paths:
+    - NavdyOBD*.apk
+  script:
+  - npm install
+  - VERS=$(node scripts/version.js)
+  - echo Y |cordova platform add android
+  - cordova build android --release -- --keystore=navdy_alelec.jks --storePassword=alelec
+    --alias=navdy_alelec --password=alelec
+  - mv platforms/android/app/build/outputs/apk/release/app-release.apk NavdyOBD-${VERS}.apk
+  stage: android
+image: registry.gitlab.com/alelec/docker-android:latest
+release:
+  image: python:3
+  only:
+  - tags
+  script:
+  - pip3 install gitlab_release
+  - python3 -m gitlab_release $PRIVATE_TOKEN *.apk
+  stage: release
+stages:
+- android
+- release

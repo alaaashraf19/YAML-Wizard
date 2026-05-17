@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_14282",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 410,
+  "description": "Create a GitLab CI pipeline that uses the hugomods/hugo:exts Docker image and defines the variables HUGO_ENV=production and THEME_URL=github.com/adityatelange/hugo-PaperMod. Add a global before_script that runs `hugo version` and `hugo mod get -u $THEME_URL` before every job. Define a test job in the default test stage that runs only when $CI_COMMIT_REF_NAME is not the default branch, executing `hugo --minify`. Define a create-pages job in the deploy stage with `pages: true` that runs only when $CI_COMMIT_REF_NAME equals the default branch, also executing `hugo --minify` and publishing the site to GitLab Pages. No caches, artifacts, or additional services are configured.",
+  "tags": [
+    "hugo",
+    "gitlab-pages",
+    "docker",
+    "ci",
+    "deployment"
+  ]
+}

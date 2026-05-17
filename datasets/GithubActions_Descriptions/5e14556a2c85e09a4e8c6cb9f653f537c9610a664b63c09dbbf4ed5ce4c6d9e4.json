@@ -1,0 +1,16 @@
+{
+  "sha": "5e14556a2c85e09a4e8c6cb9f653f537c9610a664b63c09dbbf4ed5ce4c6d9e4",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4542,
+  "description": "Create a nightly GitHub Actions workflow that triggers on push to the master branch. Run a Windows job that checks out the repository, sets up environment variables with Git describe and date information, and modifies version files. Install the XP Toolset, download dependencies, add msbuild to PATH, compile the source code for x86 and x64, pull translations and data patch, copy data to bin, generate build log, and archive logs, artifacts, and installer.",
+  "tags": [
+    "windows",
+    "nightly",
+    "openxcom",
+    "installer",
+    "msbuild",
+    "powershell",
+    "bash"
+  ]
+}

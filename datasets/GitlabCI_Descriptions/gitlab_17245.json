@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_17245",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 524,
+  "description": "Create a GitLab CI pipeline using the golang:latest Docker image and define a REPO_NAME variable set to gitlab.com/namespace/project. Add a global before_script that creates the GOPATH src directory for the repository, symlinks the project directory into $GOPATH/src/$REPO_NAME, and changes into that directory. In the test stage define a format job that runs go fmt on all non‑vendor packages, then go vet on the same set, and finally executes go test -cover. In the build stage define a compile job that builds the binary with go build -race -ldflags \"-extldflags '-static'\" -o $CI_PROJECT_DIR/Tree and publishes the resulting Tree file as an artifact.",
+  "tags": [
+    "golang",
+    "go-build",
+    "go-test",
+    "gitlab-ci",
+    "docker-image",
+    "static-binary"
+  ]
+}

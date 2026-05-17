@@ -1,0 +1,15 @@
+{
+  "sha": "1a14dac36de638f2322b980b138c7e341abd206c62edca88d8a0d08ecf3f6cd3",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3227,
+  "description": "Create a GitHub Actions workflow named Native that runs on push and pull request events for files in the csharp directory and .github/workflows/native.yml. The workflow uses a matrix strategy to run on ubuntu-18.04, windows-2019, and macos-10.15. For each OS, it sets up NuGet, checks out the code, installs dependencies, configures Conan, and builds and packs a .NET project using dotnet build and nuget pack. The workflow then uploads the resulting NuGet packages as artifacts.",
+  "tags": [
+    "dotnet",
+    "conan",
+    "nuget",
+    "csharp",
+    "multios",
+    "github-actions"
+  ]
+}

@@ -1,0 +1,50 @@
+cache:
+  key: always
+  paths:
+  - node_modules/
+image: node:latest
+job_build:
+  artifacts:
+    paths:
+    - dist/
+    - coverage/
+  script:
+  - npm prune
+  - npm install
+  - npm run build --production
+  stage: build
+job_deploy_demo:
+  dependencies:
+  - job_build
+  environment: demo
+  except:
+  - tags
+  only:
+  - master
+  script:
+  - bash deploy-gitlab.sh
+  stage: deploy
+job_deploy_testreport:
+  dependencies:
+  - job_build
+  except:
+  - tags
+  script:
+  - bash <(curl -s https://codecov.io/bash)
+  stage: deploy
+job_release:
+  dependencies:
+  - job_build
+  only:
+  - tags
+  - /\^v(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)(?:-[\da-z\-]+(?:\.[\da-z\-]+)*)?(?:\+[\da-z\-]+(?:\.[\da-z\-]+)*)?$/i
+  script:
+  - npm prune
+  - npm update
+  - npm run ci-publish
+  stage: release
+services: null
+stages:
+- build
+- release
+- deploy

@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_10845",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 687,
+  "description": "Create a GitLab CI pipeline that uses the billyteves/alpine-golang-glide:1.2.0 Docker image and defines three stages: build, verify, and publish. Add a global before_script that runs: export GO_PROJECT_PATH=\"$GOPATH/src/gitlab.com/$CI_PROJECT_NAMESPACE\", echo $GO_PROJECT_PATH, mkdir -p $GO_PROJECT_PATH, ln -s $(pwd) $GO_PROJECT_PATH, export GO_PROJECT_PATH=\"$GO_PROJECT_PATH/$CI_PROJECT_NAME\", echo $GO_PROJECT_PATH, cd $GO_PROJECT_PATH, and glide install -v. In the build stage add a go_build job (tagged docker) that executes the command go build. In the verify stage add a go_test job (tagged docker) that executes go test -cover $(go list ./... | grep -v \"vendor\"). In the publish stage add a go_publish job (tagged docker) that runs go build, saves the resulting binary as an artifact at path $CI_PROJECT_NAME, and is configured to run only on tag pipelines.",
+  "tags": [
+    "go",
+    "glide",
+    "docker",
+    "gitlab-ci",
+    "build",
+    "test",
+    "publish"
+  ]
+}

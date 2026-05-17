@@ -1,0 +1,16 @@
+{
+  "sha": "0284461e3a0421253809716c9dc2bfbe2ba54d522c63df245678c221963dc3fa",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4872,
+  "description": "Create a GitHub Actions workflow named build that runs on every push and pull request. The workflow has multiple jobs: GCC, Tarball, Clang, Docker push, and Docs push. Each job runs on ubuntu-20.04 or ubuntu-latest, checks out the repository with submodules, and runs various scripts to build and test the project. The Docker push job builds and pushes a Docker image to Docker Hub, while the Docs push job generates documentation and pushes it to a GitHub repository.",
+  "tags": [
+    "ubuntu",
+    "gcc",
+    "clang",
+    "docker",
+    "docs",
+    "ci",
+    "build"
+  ]
+}

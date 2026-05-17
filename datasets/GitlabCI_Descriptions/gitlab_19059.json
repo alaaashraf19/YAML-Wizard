@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_19059",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 308,
+  "description": "Create a GitLab CI pipeline that uses the clojure:lein Docker image and includes a mock-api-service service from registry.gitlab.com/xapix/mock-api-service:v0.0.1 with the alias mock-api-service. Define a single test stage and set the variable LEIN_SNAPSHOTS_IN_RELEASE to \"true\". Add a clj-soap-tests job in the test stage that runs the command lein cloverage --fail-threshold 81. Configure the job to collect the target/coverage/ directory as an artifact after execution. The job runs on all branches without additional rules or caches.",
+  "tags": [
+    "clojure",
+    "lein",
+    "cloverage",
+    "mock-api-service",
+    "test"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "sha": "f41f5d07412cd33fc70227c9baab12ae624227a23aefb90e2796152b10c67cb8",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1602,
+  "description": "Create a GitHub Actions workflow named C/C++ CI linux that runs on every push. Use an ubuntu-latest job with a matrix strategy for Debug and Release build types. Checkout the repository, fetch additional dependencies, install required packages, clone depot tools, fetch WebRTC, build with CMake and make, create a package with CPack, and upload the resulting artifact. If the push is a tag, create a GitHub release with the artifact.",
+  "tags": [
+    "c",
+    "cpp",
+    "linux",
+    "ci",
+    "webrtc",
+    "cmake",
+    "make",
+    "cpack",
+    "github-release"
+  ]
+}

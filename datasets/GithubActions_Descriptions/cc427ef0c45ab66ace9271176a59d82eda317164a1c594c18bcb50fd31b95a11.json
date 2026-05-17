@@ -1,0 +1,14 @@
+{
+  "sha": "cc427ef0c45ab66ace9271176a59d82eda317164a1c594c18bcb50fd31b95a11",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1457,
+  "description": "Create a GitHub Actions workflow named CI that runs on push, pull request, and a scheduled cron job. The workflow consists of multiple jobs: format, build-linux, build-linux-python, coverage, build-windows, and semantic-release. The format job uses a reusable workflow from Geode-solutions/actions. The build jobs use reusable workflows from Geode-solutions/actions with specific inputs and secrets. The semantic-release job runs on ubuntu-latest, checks out the code, and runs semantic-release with a GITHUB_TOKEN from secrets.",
+  "tags": [
+    "ci",
+    "cron",
+    "reusable-workflows",
+    "semantic-release",
+    "ubuntu"
+  ]
+}

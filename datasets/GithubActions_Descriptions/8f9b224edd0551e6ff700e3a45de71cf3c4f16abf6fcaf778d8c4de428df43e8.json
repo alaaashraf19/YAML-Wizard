@@ -1,0 +1,14 @@
+{
+  "sha": "8f9b224edd0551e6ff700e3a45de71cf3c4f16abf6fcaf778d8c4de428df43e8",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2413,
+  "description": "Create a GitHub Actions workflow named MacSrc that runs on push and pull request events. Use a matrix job strategy with a single macos-latest job that checks out the repository, then conditionally runs different build and deploy scripts based on whether the workflow was triggered by a tag or not. Also, perform a VirusTotal scan on the build artifacts if upload is enabled.",
+  "tags": [
+    "macos",
+    "build",
+    "deploy",
+    "virustotal",
+    "github-actions"
+  ]
+}

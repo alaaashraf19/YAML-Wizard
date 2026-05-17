@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_04445",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 413,
+  "description": "Create a GitLab CI pipeline using the Docker image registry.gitlab.com/bff/rn with a cache keyed by $CACHE_KEY that stores /root/.cargo. Define a single stage named test. Add a release_build job in the test stage that runs only on tags and the master branch, executes the commands: rustup update, cargo build --release, mkdir -p bin/linux_x64, cp target/release/rn bin/linux_x64/rn, cp rn.sh bin/, and publishes the bin/ directory as an artifact named rn. Also add a unit_test job in the test stage that runs rustup update and ./kcov.sh.",
+  "tags": [
+    "rust",
+    "cargo",
+    "kcov",
+    "gitlab-ci",
+    "cache"
+  ]
+}

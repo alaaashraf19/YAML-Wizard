@@ -1,0 +1,14 @@
+{
+  "sha": "95cedd249e65770329361aaa26c843c7b563b6ec7137d73465ebb999cc640d3c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 9262,
+  "description": "Create a GitHub Actions workflow named PlatformIO CI/CD that automates testing and building of ESP32 projects using PlatformIO on multiple platforms. The workflow triggers on pull requests, pushes to specific branches, a weekly schedule, and a workflow dispatch. It includes a matrix strategy to build for multiple ESP32 boards on Linux, Windows, and macOS, caching pip and PlatformIO dependencies, setting up Python 3.9.13, installing PlatformIO, and running pio commands to clean and build the projects. Additionally, it includes a job to deploy code on a testboard, applying test credentials, and querying the testboard response.",
+  "tags": [
+    "platformio",
+    "esp32",
+    "github-actions",
+    "ci-cd",
+    "python"
+  ]
+}

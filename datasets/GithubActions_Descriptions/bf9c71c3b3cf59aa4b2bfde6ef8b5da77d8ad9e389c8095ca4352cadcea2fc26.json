@@ -1,0 +1,16 @@
+{
+  "sha": "bf9c71c3b3cf59aa4b2bfde6ef8b5da77d8ad9e389c8095ca4352cadcea2fc26",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2823,
+  "description": "Create a nightly GitHub Actions workflow named Analysis that runs SonarCloud static analysis on Linux. The workflow should trigger on scheduled intervals and on pull requests to specific branches and paths, excluding certain branches and tags. Use an ubuntu-latest job with a CentOS 7 container, and perform steps including code checkout, environment installation, build directory creation, configuration, build, testing, code coverage report generation, and SonarCloud scanning.",
+  "tags": [
+    "linux",
+    "sonarcloud",
+    "gcc",
+    "cmake",
+    "ctest",
+    "code-coverage",
+    "nightly-build"
+  ]
+}

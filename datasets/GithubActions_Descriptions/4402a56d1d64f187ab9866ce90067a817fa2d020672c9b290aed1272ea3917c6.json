@@ -1,0 +1,14 @@
+{
+  "sha": "4402a56d1d64f187ab9866ce90067a817fa2d020672c9b290aed1272ea3917c6",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1669,
+  "description": "Create a GitHub Actions workflow named documentation that runs on push to the master branch and on pull requests to master. Use a matrix job that runs on ubuntu-latest with Python 3.7, checking out the repository, setting up Python, installing dependencies including mkdocs and Pygments, building documentation with mkdocs build, and deploying to a GitHub Pages repository using the github-pages-deploy-action, with separate deployment steps for push and pull request events.",
+  "tags": [
+    "python",
+    "documentation",
+    "github-pages",
+    "mkdocs",
+    "deployment"
+  ]
+}

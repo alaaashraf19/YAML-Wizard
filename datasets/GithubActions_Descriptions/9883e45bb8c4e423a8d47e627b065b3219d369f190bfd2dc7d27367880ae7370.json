@@ -1,0 +1,14 @@
+{
+  "sha": "9883e45bb8c4e423a8d47e627b065b3219d369f190bfd2dc7d27367880ae7370",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1334,
+  "description": "Create a GitHub Actions workflow named Release that triggers on published releases. The workflow should have two jobs: update-autorevision and update-archive. The update-autorevision job should run on ubuntu-latest, checkout the repository, generate an AutoRevision.txt file with git revision information, and commit the changes. The update-archive job should run on ubuntu-latest, depend on update-autorevision, checkout the repository, create a build directory, create tar.gz and zip archives of the repository, and upload them as release assets if the workflow is triggered by a tag.",
+  "tags": [
+    "release",
+    "github",
+    "archive",
+    "autorevision",
+    "ubuntu"
+  ]
+}

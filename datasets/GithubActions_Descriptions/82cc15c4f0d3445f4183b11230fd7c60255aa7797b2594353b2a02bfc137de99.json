@@ -1,0 +1,14 @@
+{
+  "sha": "82cc15c4f0d3445f4183b11230fd7c60255aa7797b2594353b2a02bfc137de99",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1253,
+  "description": "Create a GitHub Actions workflow named Coverage that runs on workflow dispatch, push to master, and pull requests to master. Use an ubuntu-latest job to check out the repository with full history, install dependencies including g++-14 and lcov, configure with cmake, build, run tests with ctest, process coverage info, and submit to codecov.io using a token from secrets.",
+  "tags": [
+    "ubuntu",
+    "coverage",
+    "codecov",
+    "cmake",
+    "cpp"
+  ]
+}

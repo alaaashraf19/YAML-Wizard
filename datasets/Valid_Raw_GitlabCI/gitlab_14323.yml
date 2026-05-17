@@ -1,0 +1,81 @@
+build:
+  artifacts:
+    name: build_output
+    paths:
+    - build/
+    - cmake-build/
+    when: always
+  before_script:
+  - apt update -qq
+  - apt-get install -qq wget software-properties-common
+  - wget -q https://cmake.org/files/v3.10/cmake-3.10.0-rc4-Linux-x86_64.sh
+  - mkdir /opt/cmake
+  - sh cmake-3.10.0-rc4-Linux-x86_64.sh --skip-license --prefix=/opt/cmake
+  - ln -s /opt/cmake/bin/cmake /usr/bin/cmake
+  - ln -s /opt/cmake/bin/cpack /usr/bin/cpack
+  - apt-get install -qq zlib1g-dev libopenblas-dev liblapack-dev libuv-dev build-essential
+    libssl-dev git python
+  - add-apt-repository ppa:ubuntu-toolchain-r/test
+  - apt-get update
+  - apt install -qq -y g++-7
+  - update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 60  --slave /usr/bin/g++
+    g++ /usr/bin/g++-7
+  - update-alternatives --config gcc
+  - cmake --version
+  - g++ --version
+  cache:
+    key: deps
+    paths:
+    - cmake-build
+    - trainServer/dependencies/mxnet
+    - trainServer/dependencies/seasocks
+    - /root/.hunter
+  dependencies:
+  - frontend
+  script:
+  - mkdir -p cmake-build
+  - cd cmake-build
+  - cmake ..
+  - make -j $(nproc)
+  - cpack -G DEB -V
+  - cpack -G TGZ
+  stage: build
+frontend:
+  artifacts:
+    name: build_frontend
+    paths:
+    - build/web
+  cache:
+    key: nodeModules
+    paths:
+    - frontend-angular/node_modules/
+  image: johnpapa/angular-cli
+  script:
+  - cd frontend-angular
+  - npm install
+  - ng build --prod
+  stage: frontend
+image: ubuntu:16.04
+install-packages:
+  artifacts:
+    name: openhabai-install-package
+    paths:
+    - build/pack
+  dependencies:
+  - build
+  script:
+  - ls
+  stage: install-packages
+stages:
+- frontend
+- build
+- test
+- install-packages
+test:
+  dependencies:
+  - build
+  script:
+  - ./build/catflow-test
+  stage: test
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive

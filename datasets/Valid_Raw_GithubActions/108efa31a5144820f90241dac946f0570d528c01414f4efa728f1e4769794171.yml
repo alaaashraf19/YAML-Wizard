@@ -1,0 +1,151 @@
+name: CI-MacOS
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+  # Allows you to run this workflow manually from the Actions tab.
+  workflow_dispatch:
+    inputs:
+      debug_enabled:
+        type: boolean
+        description: 'Run the build with tmate debugging enabled'
+        required: false
+        default: false
+
+env:
+    VNOTE_VER: 3.18.1
+    CMAKE_VER: 3.24.3
+
+jobs:
+  build:
+    name: Build On MacOS
+    timeout-minutes: 120
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - name: "Build on Arm64"
+            os: macos-latest
+            arch: universal
+            qt: 6.5.3
+
+    runs-on: ${{matrix.config.os}}
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE.
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+
+      - name: Init Submodules
+        run: |
+          auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+          git submodule sync --recursive
+          git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
+
+      - name: Install Dependencies
+        run: |
+          brew install tree libiodbc libpq
+
+      - name: Fix SQL
+        run: |
+          sudo mkdir -p /usr/local/opt/libiodbc/lib
+          sudo ln -s /opt/homebrew/opt/libiodbc/lib/libiodbc.2.dylib /usr/local/opt/libiodbc/lib/libiodbc.2.dylib
+          sudo mkdir -p /Applications/Postgres.app/Contents/Versions/14/lib
+          sudo ln -s /opt/homebrew/Cellar/libpq/16.3/lib/libpq.5.dylib /Applications/Postgres.app/Contents/Versions/14/lib/libpq.5.dylib
+
+      - name: Install a fresh CMake
+        run: |
+          wget --no-verbose https://github.com/Kitware/CMake/releases/download/v${CMAKE_VER}/cmake-${CMAKE_VER}-macos-universal.tar.gz
+          tar xzf cmake-${CMAKE_VER}-macos-universal.tar.gz
+          sudo rm -f /usr/local/bin/cmake /usr/local/bin/cpack
+          sudo ln -s ${{runner.workspace}}/cmake-${CMAKE_VER}-macos-universal/CMake.app/Contents/bin/cmake /usr/local/bin/cmake
+          sudo ln -s ${{runner.workspace}}/cmake-${CMAKE_VER}-macos-universal/CMake.app/Contents/bin/cpack /usr/local/bin/cpack
+        working-directory: ${{runner.workspace}}
+
+      - name: Install macdeployqtfix
+        run: |
+          git clone https://github.com/tamlok/macdeployqtfix.git macdeployqtfix --depth=1
+        working-directory: ${{runner.workspace}}
+
+      - name: Install optool
+        run: |
+          wget --no-verbose https://github.com/alexzielenski/optool/releases/download/0.1/optool.zip
+          unzip ./optool.zip
+          sudo ln -s ./optool /usr/local/bin/optool
+        working-directory: ${{runner.workspace}}
+
+      - name: Cache Qt
+        id: cache-qt
+        uses: actions/cache@v1  # not v2!
+        with:
+          path: ../Qt
+          key: ${{ runner.os }}-QtCache-6.5
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v3
+        with:
+          version: ${{matrix.config.qt}}
+          target: desktop
+          modules: 'qtwebengine qtwebchannel qtpositioning qtpdf qtimageformats qt5compat qtserialport'
+          cache: 'true'
+
+      - name: Create Build Dir
+        run: mkdir build
+        working-directory: ${{runner.workspace}}
+
+      - name: Configure Project
+        run: |
+          qmake -v
+          cmake --version
+          cmake -DMACDEPLOYQTFIX_EXECUTABLE=${{runner.workspace}}/macdeployqtfix/macdeployqtfix.py -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64"  ${GITHUB_WORKSPACE}
+        working-directory: ${{runner.workspace}}/build
+
+      - name: Build Project
+        run: |
+          cmake --build . --target pack
+          ls -ls .
+          ls -ls src
+          mv src/VNote.dmg VNote-${{env.VNOTE_VER}}-mac-${{matrix.config.arch}}.dmg
+        working-directory: ${{runner.workspace}}/build
+
+      # Enable tmate debugging of manually-triggered workflows if the input option was provided
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
+
+      - name: Archive Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: VNote-${{env.VNOTE_VER}}-mac-${{matrix.config.arch}}
+          path: ${{runner.workspace}}/build/VNote-${{env.VNOTE_VER}}-mac-${{matrix.config.arch}}.dmg
+
+      - name: Update Tag
+        if: github.ref == 'refs/heads/master'
+        run: |
+          git tag --force continuous-build ${GITHUB_SHA}
+          git push --force --tags
+
+      - name: Update Continuous Build Release
+        if: github.ref == 'refs/heads/master'
+        uses: johnwbyrd/update-release@v1.0.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          files: ${{runner.workspace}}/build/VNote-${{env.VNOTE_VER}}-mac-${{matrix.config.arch}}.dmg
+          release: Continuous Build
+          tag: continuous-build
+
+      - name: Release
+        if: github.ref == 'refs/heads/master' && startsWith(github.event.head_commit.message, '[Release]')
+        uses: ncipollo/release-action@v1.11.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          artifacts: ${{runner.workspace}}/build/VNote-${{env.VNOTE_VER}}-mac-${{matrix.config.arch}}.dmg
+          commit: master
+          tag: v${{env.VNOTE_VER}}
+          allowUpdates: true
+          draft: true

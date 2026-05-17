@@ -1,0 +1,301 @@
+before_script:
+- export SHORT_SHA=${CI_COMMIT_SHA:0:8}
+- echo "\$CI_COMMIT_SHA $CI_COMMIT_SHA"
+- echo "\$AWS_DOCKER_IMAGE $AWS_DOCKER_IMAGE"
+- echo "\$CI_COMMIT_REF_SLUG $CI_COMMIT_REF_SLUG"
+build-and-deploy-to-aws:
+  only:
+  - master
+  script:
+  - apk add --no-cache curl jq python3 py-pip
+  - pip install awscli
+  - docker info
+  - echo "\$CI_COMMIT_SHA $CI_COMMIT_SHA"
+  - echo "\$AWS_DOCKER_IMAGE $AWS_DOCKER_IMAGE"
+  - echo "\$CI_COMMIT_REF_SLUG $CI_COMMIT_REF_SLUG"
+  - $(aws ecr get-login --no-include-email --region $AWS_REGION)
+  - docker build -f Dockerfile.flightchainapi -t $AWS_CONTAINER_REGISTRY_URL:$CI_COMMIT_SHA
+    .
+  - docker tag  $AWS_CONTAINER_REGISTRY_URL:$CI_COMMIT_SHA $AWS_CONTAINER_REGISTRY_URL:$CI_COMMIT_SHA
+  - docker tag  $AWS_CONTAINER_REGISTRY_URL:$CI_COMMIT_SHA $AWS_CONTAINER_REGISTRY_URL:latest
+  - docker push $AWS_CONTAINER_REGISTRY_URL
+  stage: build
+  tags:
+  - docker
+  when: manual
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+  - node_modules/
+deploy-airline-or-airport:
+  image: coxauto/aws-ebcli
+  only:
+  - master
+  script:
+  - echo "\$CI_COMMIT_SHA $CI_COMMIT_SHA"
+  - echo "\$AWS_DOCKER_IMAGE $AWS_DOCKER_IMAGE"
+  - echo "\$CI_COMMIT_REF_SLUG $CI_COMMIT_REF_SLUG"
+  - eb --version
+  - git rev-parse --abbrev-ref HEAD
+  - pwd
+  - ls -al
+  - cp Dockerrun.template.aws.json Dockerrun.aws.json
+  - sed -ri "s|\"AWS_DOCKER_CONTAINER_IMAGE_TAG\"|\"$AWS_DOCKER_IMAGE\"|" Dockerrun.aws.json
+  - git add Dockerrun.aws.json
+  - cat Dockerrun.aws.json
+  - echo "\$AWS_EB_ENV_NAME $AWS_EB_ENV_NAME"
+  - eb deploy $AWS_EB_ENV_NAME --verbose --debug --label $CI_COMMIT_SHA
+  stage: deploy
+  tags:
+  - docker
+  when: manual
+deploy-docs-to-elasticbeanstalk:
+  image: coxauto/aws-ebcli
+  only:
+  - master
+  script:
+  - echo "\$CI_COMMIT_SHA $CI_COMMIT_SHA"
+  - echo "\$AWS_DOCKER_IMAGE $AWS_DOCKER_IMAGE"
+  - echo "\$CI_COMMIT_REF_SLUG $CI_COMMIT_REF_SLUG"
+  - eb --version
+  - git rev-parse --abbrev-ref HEAD
+  - pwd
+  - ls -al
+  - cp Dockerrun.template.aws.json Dockerrun.aws.json
+  - sed -ri "s|\"AWS_DOCKER_CONTAINER_IMAGE_TAG\"|\"$AWS_DOCKER_IMAGE\"|" Dockerrun.aws.json
+  - git add Dockerrun.aws.json
+  - cat Dockerrun.aws.json
+  - echo "Deploying to FlightChainAPI-docs environment"
+  - eb deploy FlightChainAPI-docs --verbose --debug --label $CI_COMMIT_SHA
+  stage: deploy
+  tags:
+  - docker
+  when: manual
+docker-build:
+  script:
+  - ls -al
+  - docker login -u ${CI_REGISTRY_USER} -p ${CI_BUILD_TOKEN} ${CI_REGISTRY}
+  - docker build -f Dockerfile.flightchainapi -t ${CI_REGISTRY_IMAGE} --build-arg
+    PROJECT=${CI_PROJECT_NAME} --build-arg VERSION=${VERSION} .
+  - docker tag ${CI_REGISTRY_IMAGE}:latest ${CI_REGISTRY_IMAGE}:${VERSION}.${SHORT_SHA}
+  - docker push ${CI_REGISTRY_IMAGE}
+  stage: package
+  tags:
+  - shared
+image: docker:latest
+k8s-deploy-ba-dev:
+  image: google/cloud-sdk
+  script:
+  - cd gitlab-k8s
+  - chmod +x k8s-deploy.sh
+  - ./k8s-deploy.sh
+  - cd ..
+  stage: deploy
+  tags:
+  - sandbox-k8s-aws
+  variables:
+    CERT_DATA: $BA_CERT_DATA_DEV
+    FABRIC_USE_TLS: 'true'
+    IDENTITY: $BA_USERNAME
+    PRIVATE_KEY: $BA_PRIVATEKEY_DEV
+    PUBLIC_KEY: $BA_PUBLICKEY_DEV
+    SERVICE_NAME: fchainapi-ba
+    SIGNING_IDENTITY: $BA_SIGNING_IDENTITY_DEV
+k8s-deploy-ba-prod:
+  image: google/cloud-sdk
+  script:
+  - cd gitlab-k8s
+  - chmod +x k8s-deploy.sh
+  - ./k8s-deploy.sh
+  - cd ..
+  stage: deploy
+  tags:
+  - sandbox-k8s-aws-prod
+  variables:
+    CERT_DATA: $BA_CERT_DATA_PROD
+    DEPLOYMENT_DOMAIN: ''
+    FABRIC_USE_TLS: 'true'
+    IDENTITY: $BA_USERNAME
+    PRIVATE_KEY: $BA_PRIVATEKEY_PROD
+    PUBLIC_KEY: $BA_PUBLICKEY_PROD
+    SERVICE_NAME: fchainapi-ba
+    SIGNING_IDENTITY: $BA_SIGNING_IDENTITY_PROD
+  when: manual
+k8s-deploy-lhr-dev:
+  image: google/cloud-sdk
+  script:
+  - cd gitlab-k8s
+  - chmod +x k8s-deploy.sh
+  - ./k8s-deploy.sh
+  - cd ..
+  stage: deploy
+  tags:
+  - sandbox-k8s-aws
+  variables:
+    CERT_DATA: $LHR_CERT_DATA_DEV
+    IDENTITY: $LHR_USERNAME
+    PRIVATE_KEY: $LHR_PRIVATEKEY_DEV
+    PUBLIC_KEY: $LHR_PUBLICKEY_DEV
+    SERVICE_NAME: fchainapi-lhr
+    SIGNING_IDENTITY: $LHR_SIGNING_IDENTITY_DEV
+  when: manual
+k8s-deploy-lhr-prod:
+  image: google/cloud-sdk
+  script:
+  - cd gitlab-k8s
+  - chmod +x k8s-deploy.sh
+  - ./k8s-deploy.sh
+  - cd ..
+  stage: deploy
+  tags:
+  - sandbox-k8s-aws-prod
+  variables:
+    CERT_DATA: $LHR_CERT_DATA_PROD
+    DEPLOYMENT_DOMAIN: ''
+    FABRIC_USE_TLS: 'true'
+    IDENTITY: $LHR_USERNAME
+    PRIVATE_KEY: $LHR_PRIVATEKEY_PROD
+    PUBLIC_KEY: $LHR_PUBLICKEY_PROD
+    SERVICE_NAME: fchainapi-lhr
+    SIGNING_IDENTITY: $LHR_SIGNING_IDENTITY_PROD
+  when: manual
+k8s-deploy-mia-dev:
+  image: google/cloud-sdk
+  script:
+  - cd gitlab-k8s
+  - chmod +x k8s-deploy.sh
+  - ./k8s-deploy.sh
+  - cd ..
+  stage: deploy
+  tags:
+  - sandbox-k8s-aws
+  variables:
+    CERT_DATA: $MIA_CERT_DATA_DEV
+    IDENTITY: $MIA_USERNAME
+    PRIVATE_KEY: $MIA_PRIVATEKEY_DEV
+    PUBLIC_KEY: $MIA_PUBLICKEY_DEV
+    SERVICE_NAME: fchainapi-mia
+    SIGNING_IDENTITY: $MIA_SIGNING_IDENTITY_DEV
+  when: manual
+k8s-deploy-mia-prod:
+  image: google/cloud-sdk
+  script:
+  - cd gitlab-k8s
+  - chmod +x k8s-deploy.sh
+  - ./k8s-deploy.sh
+  - cd ..
+  stage: deploy
+  tags:
+  - sandbox-k8s-aws-prod
+  variables:
+    CERT_DATA: $MIA_CERT_DATA_PROD
+    DEPLOYMENT_DOMAIN: ''
+    FABRIC_USE_TLS: 'true'
+    IDENTITY: $MIA_USERNAME
+    PRIVATE_KEY: $MIA_PRIVATEKEY_PROD
+    PUBLIC_KEY: $MIA_PUBLICKEY_PROD
+    SERVICE_NAME: fchainapi-mia
+    SIGNING_IDENTITY: $MIA_SIGNING_IDENTITY_PROD
+  when: manual
+k8s-deploy-mk-dev:
+  image: google/cloud-sdk
+  script:
+  - cd gitlab-k8s
+  - chmod +x k8s-deploy.sh
+  - ./k8s-deploy.sh
+  - cd ..
+  stage: deploy
+  tags:
+  - sandbox-k8s-aws
+  variables:
+    CERT_DATA: $MK_CERT_DATA_DEV
+    FABRIC_USE_TLS: 'true'
+    IDENTITY: $MK_USERNAME
+    PRIVATE_KEY: $MK_PRIVATEKEY_DEV
+    PUBLIC_KEY: $MK_PUBLICKEY_DEV
+    SERVICE_NAME: fchainapi-mk
+    SIGNING_IDENTITY: $MK_SIGNING_IDENTITY_DEV
+  when: manual
+k8s-deploy-mu-dev:
+  image: google/cloud-sdk
+  script:
+  - cd gitlab-k8s
+  - chmod +x k8s-deploy.sh
+  - ./k8s-deploy.sh
+  - cd ..
+  stage: deploy
+  tags:
+  - sandbox-k8s-aws
+  variables:
+    CERT_DATA: $MU_CERT_DATA_DEV
+    FABRIC_USE_TLS: 'true'
+    IDENTITY: $MU_USERNAME
+    PRIVATE_KEY: $MU_PRIVATEKEY_DEV
+    PUBLIC_KEY: $MU_PUBLICKEY_DEV
+    SERVICE_NAME: fchainapi-mu
+    SIGNING_IDENTITY: $MU_SIGNING_IDENTITY_DEV
+  when: manual
+k8s-deploy-qantas-dev:
+  image: google/cloud-sdk
+  script:
+  - cd gitlab-k8s
+  - chmod +x k8s-deploy.sh
+  - ./k8s-deploy.sh
+  - cd ..
+  stage: deploy
+  tags:
+  - sandbox-k8s-aws
+  variables:
+    CERT_DATA: $QANTAS_CERT_DATA_DEV
+    FABRIC_USE_TLS: 'true'
+    IDENTITY: $QANTAS_USERNAME
+    PRIVATE_KEY: $QANTAS_PRIVATEKEY_DEV
+    PUBLIC_KEY: $QANTAS_PUBLICKEY_DEV
+    SERVICE_NAME: fchainapi-qantas
+    SIGNING_IDENTITY: $QANTAS_SIGNING_IDENTITY_DEV
+  when: manual
+k8s-deploy-swissport-dev:
+  image: google/cloud-sdk
+  script:
+  - cd gitlab-k8s
+  - chmod +x k8s-deploy.sh
+  - ./k8s-deploy.sh
+  - cd ..
+  stage: deploy
+  tags:
+  - sandbox-k8s-aws
+  variables:
+    CERT_DATA: $SWISSPORT_CERT_DATA_DEV
+    FABRIC_USE_TLS: 'true'
+    IDENTITY: $SWISSPORT_USERNAME
+    PRIVATE_KEY: $SWISSPORT_PRIVATEKEY_DEV
+    PUBLIC_KEY: $SWISSPORT_PUBLICKEY_DEV
+    SERVICE_NAME: fchainapi-swissport
+    SIGNING_IDENTITY: $SWISSPORT_SIGNING_IDENTITY_DEV
+  when: manual
+services:
+- docker:dind
+stages:
+- build
+- package
+- deploy
+variables:
+  APP_NAME: flightchainapi
+  AWS_CONTAINER_REGISTRY_URL: 428277080451.dkr.ecr.eu-west-1.amazonaws.com/flightchain
+  AWS_DOCKER_IMAGE: 428277080451.dkr.ecr.eu-west-1.amazonaws.com/flightchain:$CI_COMMIT_SHA
+  AWS_EB_ENV_NAME: FlightchainAPI-BA
+  AWS_REGION: eu-west-1
+  DEPLOYMENT_DOMAIN: -dev
+  DOCKER_DRIVER: overlay
+  FABRIC_USE_TLS: 'false'
+  HFC_STORE_PATH: /etc/hfc-key-store
+  IMG_NAME: flightchain2/flightchainapi
+  INGRESS_DOMAIN: blockchainsandbox.aero
+  K8S_NAMESPACE: ${NAMESPACE}
+  K8S_REPLICAS: '1'
+  LISTENING_PORT: '3000'
+  NAMESPACE: adapters
+  PORT_TYPE: NodePort
+  SPRING_PROFILES_ACTIVE: gitlab-ci
+  UI_REGISTRY_IMAGE: registry.gitlab.com/flightchain2/flightchainui
+  VERSION: kosversionlabel

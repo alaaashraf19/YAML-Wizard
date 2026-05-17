@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_15801",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2188,
+  "description": "Create a GitLab CI pipeline using the image registry.gitlab.com/rilis/docker-ci:ci-latest with three stages: test, stats, and docs. In the test stage add a test job that runs `hell --install -r \"=\" -r \"RILI_COLOR_TESTS=ON\" -i \"CMAKE_BUILD_TYPE=Release\" -i \"CMAKE_CXX_STANDARD=11\" -G \"Ninja\"`, creates a build directory, runs `cmake ../ -G\"Ninja\" -DRILI_COLOR_TESTS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../.hell/install -DCMAKE_CXX_STANDARD=11`, builds with `ninja install`, and executes `./rili-color_tests`. In the stats stage add a clang-format job that runs `find * -iname '*.hpp' -o -iname '*.cpp' | xargs clang-format -i -style=file`, writes `git status --porcelain > ../status.log`, shows `git diff`, and fails if the status log is non‑empty; a coverage job that runs `hell --install -r \"=\" -r \"RILI_COLOR_TESTS=ON\" -r \"RILI_COLOR_COVERAGE=ON\" -i \"CMAKE_BUILD_TYPE=Release\" -i \"CMAKE_CXX_STANDARD=11\" -G \"Ninja\"`, creates and enters a build directory, runs `cmake ../ -G\"Ninja\" -DRILI_COLOR_TESTS=ON -DRILI_COLOR_COVERAGE=ON -DCMAKE_INSTALL_PREFIX=../.hell/install -DCMAKE_CXX_STANDARD=11`, builds with `ninja install`, executes `./rili-color_tests`, then generates coverage with `lcov` and `genhtml`, publishing the `coverage` directory as an always artifact named `$CI_JOB_NAME` that expires in 1 day; a cpplint job that runs `find * -iname '*.cpp' -o -iname '*.hpp' | xargs cpplint.py --linelength=120 --extensions=hpp,cpp --filter=-legal/copyright,-build/include_order,-build/c++11,+build/c++14,-runtime/references`; and a valgrind job that performs a Debug build using the same `hell` and `cmake` commands with `CMAKE_BUILD_TYPE=Debug` and then runs the test binary under `valgrind --leak-check=full --show-leak-kinds=all --error-exitcode=123 ./rili-color_tests`. In the docs stage add a doxygen job that runs `doxygen Doxyfile` and publishes the `doxygen/html` directory as an artifact that expires in 1 week.",
+  "tags": [
+    "c++",
+    "clang-format",
+    "coverage",
+    "cpplint",
+    "doxygen",
+    "valgrind",
+    "gitlab-ci"
+  ]
+}

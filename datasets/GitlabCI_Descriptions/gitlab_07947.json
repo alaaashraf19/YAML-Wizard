@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_07947",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1063,
+  "description": "Create a GitLab CI pipeline using the rocker/verse:latest Docker image and define stages build, check, test, deploy. Include a before_script that conditionally runs .gitlab-ci/gitlab-com.R, installs the remotes package with R --vanilla -e 'install.packages(\"remotes\", repos = \"https://cloud.r-project.org/\")', installs the packager package via R --vanilla -e 'remotes::install_gitlab(\"fvafrcu/packager\")', installs all dependencies with R --vanilla -e 'packager::install_deps(path = \".\", repos = \"http://ftp5.gwdg.de/pub/misc/cran/\")', and optionally executes ./.gitlab-ci/apt-script.cl if present. In the build stage add a build_and_check job that runs R CMD build --no-manual --no-build-vignettes . . In the check stage add a packager job that runs R --vanilla -e 'packager::rcmdcheck_and_log(\".\", build_args = c(\"--no-manual\",\"--no-build-vignettes\"))'. In the test stage add a coverage job that runs R --vanilla -e 'install.packages(\"covr\", repos = \"https://cloud.r-project.org/\"); covr::package_coverage()' and uses a coverage regex /^.*\\s*Coverage:\\s*\\d+.\\d+\\%$/. In the deploy stage add a pages job that creates a .public directory, copies all files into it, renames it to public, and publishes the public/ directory as a GitLab Pages artifact, running only on the master branch.",
+  "tags": [
+    "r",
+    "rocker",
+    "rcmdcheck",
+    "coverage",
+    "gitlab-pages",
+    "packager"
+  ]
+}

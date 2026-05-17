@@ -1,0 +1,16 @@
+{
+  "sha": "000250fd0913d95463b8d9a690a1fdf24077474a288e4de1f50d0d7e4303a419",
+  "provider": "groq",
+  "model": "llama-3.3-70b-versatile",
+  "yaml_bytes": 2969,
+  "description": "Create a GitHub Actions workflow named unittest_ubuntu that triggers on pull requests to branches devel and cvmfs*, on push, and on workflow dispatch. The workflow runs on ubuntu-latest and performs several steps including checking the Linux distribution, checking out the repository, creating and restoring a cache, checking for and generating build dependencies, installing dependencies, hashing externals, building CVMFS, and running unittests with mockfuse and regular tests.",
+  "tags": [
+    "cvmfs",
+    "ubuntu",
+    "unittests",
+    "mockfuse",
+    "github-actions",
+    "cache",
+    "build-deps"
+  ]
+}

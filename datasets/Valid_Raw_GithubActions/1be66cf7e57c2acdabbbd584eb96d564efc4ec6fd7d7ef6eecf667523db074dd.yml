@@ -1,0 +1,111 @@
+name: puNES
+
+on:
+  push:
+    branches:
+      - master
+
+concurrency: 
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { msystem: mingw64, env: x86_64, bit: 64, qt5ver: 5.15.0, url1: www.dropbox.com/s/xd9dq7dr713ao95, url2: www.dropbox.com/s/d632cjezybz6a74 }
+          - { msystem: mingw32, env: i686,   bit: 32, qt5ver: 5.6.3,  url1: www.dropbox.com/s/tc6wy8vpitkdlm1, url2: www.dropbox.com/s/ye00129nyacdl05 }
+    name: Build puNES${{ matrix.bit }} (Windows)
+    runs-on: windows-latest
+    env:
+      cxxflags: ${{ contains(matrix.bit, '64') && '' || '-Wno-deprecated-copy' }}
+      pdzip : punes${{ matrix.bit }}.wip.d3d9.zip
+      pozip : punes${{ matrix.bit }}.wip.opengl.zip
+
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: 'Setup ${{ matrix.env }} MSYS2'
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: ${{ matrix.msystem }}
+          release: false
+          update: true
+          install: >-
+            base-devel
+            git
+            wget
+            p7zip
+            unzip
+            automake
+            autoconf
+            perl
+            ruby
+            mingw-w64-${{ matrix.env }}-cmake
+            mingw-w64-${{ matrix.env }}-toolchain
+
+      - name: 'Environment configuration'
+        shell: msys2 {0}
+        run: |
+          mkdir -p artifacts/dll
+          mkdir -p artifacts/tmp
+          mkdir -p build/d3d9
+          mkdir -p build/opengl
+
+      - name: 'Download QT5 and DLLs'
+        shell: msys2 {0}
+        working-directory: artifacts/tmp
+        run: |
+          wget --no-check-cert -O qt5_${{ matrix.qt5ver }}_${{ matrix.env }}.7z 'https://${{ matrix.url1 }}/qt5_${{ matrix.qt5ver }}_${{ matrix.env }}.7z?dl=1' 1>/dev/null 2>&1
+          wget --no-check-cert -O puNES_${{ matrix.env }}_dlls.zip 'https://${{ matrix.url2 }}/puNES_${{ matrix.env }}_dlls.zip?dl=1' 1>/dev/null 2>&1
+
+      - name: 'Extract QT5 and DLLs'
+        working-directory: artifacts/tmp
+        run: |
+          7z x qt5_${{ matrix.qt5ver }}_${{ matrix.env }}.7z -oC:\msys64\${{ matrix.msystem }}
+          7z x puNES_${{ matrix.env }}_dlls.zip -o${{ github.workspace }}\artifacts\dll
+
+      - name: 'autogen.sh'
+        shell: msys2 {0}
+        run: ./autogen.sh
+
+      - name: 'Build D3D9 version'
+        shell: msys2 {0}
+        working-directory: build\d3d9
+        run: |
+          WIPS_VERSION=true CPPFLAGS='-O3 -mmmx -msse -msse2 -msse3 -mfpmath=sse' CFLAGS='' CXXFLAGS='${{ env.cxxflags }}' ../../configure --with-d3d9
+          make -j3
+          strip src/punes.exe
+
+      - name: 'Build OpenGL version'
+        shell: msys2 {0}
+        working-directory: build\opengl
+        run: |
+          WIPS_VERSION=true CPPFLAGS='-O3 -mmmx -msse -msse2 -mfpmath=sse' CFLAGS='' CXXFLAGS='${{ env.cxxflags }}' ../../configure --with-opengl
+          make -j3
+          strip src/punes.exe
+
+      - name: 'Build artifacts'
+        working-directory: artifacts\dll
+        run: |
+          cp ..\..\build\d3d9\src\punes.exe .
+          7z.exe a ..\${{ env.pdzip }} *.*
+          cp ..\..\build\opengl\src\punes.exe .
+          7z.exe a ..\${{ env.pozip }} *.*
+
+      - name: 'Upload ${{ env.pdzip }}'
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.pdzip }}
+          path: artifacts\${{ env.pdzip }}
+
+      - name: 'Upload ${{ env.pozip }}'
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.pozip }}
+          path: artifacts\${{ env.pozip }}

@@ -1,0 +1,20 @@
+{
+  "sha": "63034b945c77abcb5c2f1df8b68c9a3f7cfa874b1c03b04027228a63fd42c4cb",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 6221,
+  "description": "Create a comprehensive GitHub Actions workflow named CI that runs on push to master, pull requests, and workflow dispatch. The workflow has three jobs: unix-like, linux_lint, and windows. The unix-like job runs on a matrix of ubuntu-20.04 and macos-10.15 with various configurations, installing Java, Python, and Go, and running tests and benchmarks. The linux_lint job runs on ubuntu-20.04, installing Python, GCC, and clang-tidy, and running lint tests. The windows job runs on a matrix of windows-2022, windows-2019, and windows-2016 with various configurations, installing Java, Python, and Go, and running tests and benchmarks.",
+  "tags": [
+    "java",
+    "python",
+    "go",
+    "gcc",
+    "clang",
+    "ubuntu",
+    "macos",
+    "windows",
+    "tests",
+    "benchmarks",
+    "lint"
+  ]
+}

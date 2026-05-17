@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_17145",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2026,
+  "description": "Create a GitLab CI pipeline using the docker:latest image with a docker:19.03.5-dind service, define DOCKER_DRIVER=overlay and IMAGE_TAG=$CI_REGISTRY_IMAGE:latest variables, and three stages named \"Convert YAML to LaTeX\", \"Create Resume PDF\", and \"Build and Publish Container\". Add a global before_script that echoes the working directory, updates apk, installs ruby, make, ca-certificates, openssl and python, updates CA certificates, writes $GCLOUD_SERVICE_KEY to ${HOME}/gcloud-service-key.json, disables IPv6, downloads and installs the Google Cloud SDK, adds its bin to PATH, updates components, activates the service account, logs into GCR with the JSON key, and installs gsutil and kubectl. In the \"Convert YAML\" job (stage Convert YAML to LaTeX, runs only on master) run ruby create-resume.rb. In the \"Create PDF\" job (stage Create Resume PDF, runs only on master) run ruby create-resume.rb then docker run --rm -t -v ${PWD}:/source schickling/latex pdflatex resume.tex. In the \"Build and Publish Container\" job (stage Build and Publish Container, runs only on master) run ruby create-resume.rb, docker run --rm -t -v ${PWD}:/source schickling/latex pdflatex resume.tex, docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY, docker build -t $IMAGE_TAG ., docker push $IMAGE_TAG, docker tag registry.gitlab.com/sinajames/resume:latest us.gcr.io/resume-178118/resume:latest, google-cloud-sdk/bin/gcloud auth activate-service-account --key-file ${HOME}/gcloud-service-key.json, gcloud auth configure-docker --quiet, and docker push us.gcr.io/resume-178118/resume:latest, with all jobs tagged for the docker runner.",
+  "tags": [
+    "docker",
+    "gcr",
+    "gitlab-registry",
+    "latex",
+    "ruby",
+    "google-cloud-sdk",
+    "ci"
+  ]
+}

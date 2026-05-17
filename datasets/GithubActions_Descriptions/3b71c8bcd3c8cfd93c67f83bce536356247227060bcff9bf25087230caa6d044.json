@@ -1,0 +1,17 @@
+{
+  "sha": "3b71c8bcd3c8cfd93c67f83bce536356247227060bcff9bf25087230caa6d044",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3623,
+  "description": "Create a GitHub Actions workflow named test-suite that runs on push to master and develop branches, excluding docs/, and on pull requests to those branches. Use an ubuntu-latest job with a matrix strategy to test with Python 3.7 and 3.8 and databases sqlite3, postgresql, and mysql. For each matrix combination, set up the database, wait for it to activate, install Python dependencies, initialize Evennia, run the test suite with coverage, and upload results to Coveralls and Codacy for the sqlite3 and Python 3.7 combination.",
+  "tags": [
+    "python",
+    "evennia",
+    "tests",
+    "postgresql",
+    "mysql",
+    "sqlite3",
+    "coveralls",
+    "codacy"
+  ]
+}

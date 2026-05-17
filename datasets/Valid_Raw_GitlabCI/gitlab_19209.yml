@@ -1,0 +1,41 @@
+apply:
+  dependencies:
+  - plan
+  environment:
+    name: production
+  only:
+  - master
+  script:
+  - terraform apply -input=false $PLAN
+  stage: deploy
+  when: manual
+before_script:
+- terraform --version
+- terraform init
+cache:
+  paths:
+  - .terraform
+image:
+  entrypoint:
+  - /usr/bin/env
+  - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+  name: hashicorp/terraform:light
+plan:
+  artifacts:
+    name: plan
+    paths:
+    - $PLAN
+  script:
+  - terraform plan -out=$PLAN
+  stage: build
+stages:
+- validate
+- build
+- test
+- deploy
+validate:
+  script:
+  - terraform validate
+  stage: validate
+variables:
+  PLAN: plan.tfplan

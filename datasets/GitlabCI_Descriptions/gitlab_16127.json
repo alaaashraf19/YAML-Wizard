@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_16127",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1926,
+  "description": "Create a GitLab CI pipeline using the docker:stable image with a docker:stable-dind service, defining variables DEFAULT_ARTIFACT_BASE, DOCKER_DRIVER=overlay2, and DOCKER_TAG=$CI_COMMIT_REF_NAME and a global before_script that sources .ci/protect-secrets.sh, .ci/describe-system.sh, .ci/update-env.sh and .ci/setup-make-parallelity.sh. Define stages build, test, and release. In the build stage add a build-from-latest job that runs `apk --update add coreutils rsync`, then `.ci/build-docker.sh | tee gitlab-build-docker.log | .ci/head-tail.sh 1048576`, then `.ci/push-gitlab.sh sagemath-dev`, `.ci/push-gitlab.sh sagemath`, and `DOCKER_TAG=$CI_COMMIT_SHA .ci/push-gitlab.sh sagemath`, and always stores `gitlab-build-docker.log` and `html` as artifacts for 1 month; also add a build-from-clean job that extends build-from-latest, overrides artifacts to expire in 99 years, runs only on master, develop, tags and web, retries twice, runs on runners tagged big, and sets ARTIFACT_BASE=source-clean. In the test stage add test-cli, test-dev, and test-jupyter jobs that each pull the corresponding image from GitLab with `.ci/pull-gitlab.sh` and then execute their respective test scripts (`.ci/test-cli.sh \"$DOCKER_IMAGE\"`, `.ci/test-dev.sh \"$DOCKER_IMAGE\"`, `.ci/test-jupyter.sh \"$DOCKER_IMAGE\" docker`). In the release stage add push-dockerhub and push-dockerhub-dev jobs that run only on branches/tags (or master, develop, tags) when $SECRET_DOCKER_PASS is present, pull the appropriate image from GitLab and run `.ci/push-dockerhub.sh` to push to Docker Hub.",
+  "tags": [
+    "docker",
+    "dind",
+    "sagemath",
+    "build",
+    "test",
+    "release",
+    "dockerhub",
+    "ci",
+    "pipeline",
+    "artifacts"
+  ]
+}

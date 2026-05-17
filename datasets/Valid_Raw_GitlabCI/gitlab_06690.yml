@@ -1,0 +1,13 @@
+deploy:
+  script:
+  - scripts/deploy.sh
+  stage: deploy
+image: docker:latest
+services:
+- docker:dind
+test:
+  script:
+  - apk add --no-cache py-pip
+  - pip install docker-compose
+  - scripts/ci.sh
+  stage: test

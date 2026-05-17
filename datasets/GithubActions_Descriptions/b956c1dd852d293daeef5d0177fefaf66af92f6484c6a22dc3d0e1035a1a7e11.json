@@ -1,0 +1,16 @@
+{
+  "sha": "b956c1dd852d293daeef5d0177fefaf66af92f6484c6a22dc3d0e1035a1a7e11",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3116,
+  "description": "Create a GitHub Actions workflow named Ubuntu System CI that runs daily at 3 am and on pull requests to the master branch. The workflow should use a matrix strategy to build on ubuntu-18.04 and ubuntu-20.04, installing dependencies, setting up the environment, caching pyenv and third-party packages, building BioDynaMo, and running valgrind and system tests. Finally, notify Slack with the job status.",
+  "tags": [
+    "ubuntu",
+    "ci",
+    "valgrind",
+    "system-tests",
+    "slack",
+    "notifications",
+    "matrix-build"
+  ]
+}

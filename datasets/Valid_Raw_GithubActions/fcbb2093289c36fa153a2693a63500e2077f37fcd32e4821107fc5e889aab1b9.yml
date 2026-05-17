@@ -1,0 +1,46 @@
+name: Build Docker Images
+
+on: push
+
+jobs:
+  basic_ci:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.7, 3.8, 3.9]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install clang-format-10
+        run: |
+          sudo apt install -y software-properties-common gnupg wget
+          wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+          sudo add-apt-repository 'deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-10 main'
+          sudo apt-get update -y
+          sudo apt-get install -y clang-format-10 libgraphviz-dev
+      - name: Install black and pytest
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install setuptools
+          python -m pip install mypy
+          python -m pip install black
+      - name: Update git submodules 
+        run: git submodule update --init --recursive
+      - name: C++ lint
+        run: |
+          python third_party/run-clang-format/run-clang-format.py \
+          polytracker/include/dfsan/*.h  polytracker/src/*/*.cpp \
+          --exclude 'polytracker/src/dfsan_rt/sanitizer_common/*' \
+          --exclude 'polytracker/src/dfsan_rt/interception/*'
+      - name: Python lint/typecheck 
+        run: |
+          black --check polytracker tests --exclude '/(polytracker/src|polytracker/scripts)/' --line-length=127
+          mypy --python-version ${{ matrix.python-version }} --ignore-missing-imports polytracker tests
+      - name: Build the base image
+        run: docker build . --file Dockerfile --tag trailofbits/polytracker --no-cache
+      - name: Poly* tests 
+        run: |
+          docker run --rm trailofbits/polytracker pytest --json=tests/test_data/polytracker_process_set.json --forest=tests/test_data/polytracker_forest.bin

@@ -1,0 +1,62 @@
+before_script:
+- unset http_proxy ; unset https_proxy
+- env | grep ^CI_
+build_centos_7:
+  artifacts:
+    expire_in: 1 day
+    paths:
+    - result/*
+  image: buildpkg/centos:7
+  script:
+  - ci-build-pkg
+  stage: build
+  tags:
+  - docker
+build_fedora_25:
+  artifacts:
+    expire_in: 1 day
+    paths:
+    - result/*
+  image: buildpkg/fedora:25
+  script:
+  - ci-build-pkg
+  stage: build
+  tags:
+  - docker
+pages:
+  artifacts:
+    paths:
+    - public
+  dependencies:
+  - sign
+  environment:
+    name: PPA
+    url: http://${CI_PROJECT_NAMESPACE}.gitlab.io/${CI_PROJECT_NAME}
+  image: buildpkg/debian:stretch
+  only:
+  - master
+  script:
+  - ci-pages-ppa
+  - ci-pages-home
+  - ci-pages-tree
+  stage: deploy
+  tags:
+  - docker
+sign:
+  artifacts:
+    expire_in: 1 day
+    paths:
+    - result/*
+  dependencies:
+  - build_centos_7
+  - build_fedora_25
+  image: buildpkg/debian:stretch
+  script:
+  - ci-sign-pkg
+  stage: sign
+  tags:
+  - docker
+stages:
+- build
+- sign
+- deploy

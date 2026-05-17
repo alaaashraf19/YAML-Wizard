@@ -1,0 +1,50 @@
+build:
+  artifacts:
+    paths:
+    - node_modules
+    - build
+  cache:
+    paths:
+    - node_modules
+    - build
+  image: node:13
+  script:
+  - npm install
+  - npm run build
+  stage: build
+docker:
+  image: docker:latest
+  script:
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  - docker build --tag $CI_REGISTRY/simonbreiter/color-name:$CI_COMMIT_SHORT_SHA --tag
+    $CI_REGISTRY/simonbreiter/color-name:latest .
+  - docker push $CI_REGISTRY/simonbreiter/color-name:$CI_COMMIT_SHORT_SHA
+  - docker push $CI_REGISTRY/simonbreiter/color-name:latest
+  services:
+  - docker:dind
+  stage: docker
+docker:arm64:
+  before_script:
+  - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  - docker buildx create --driver docker-container --use
+  - docker buildx inspect --bootstrap
+  image: jonoh/docker-buildx-qemu
+  script:
+  - update-binfmts --enable
+  - docker buildx build --platform linux/arm64 -t $CI_REGISTRY/simonbreiter/color-name:$CI_COMMIT_SHORT_SHA-arm64
+    --push .
+  services:
+  - docker:dind
+  stage: docker
+stages:
+- build
+- test
+- docker
+- deploy
+test:
+  image: node:13
+  script:
+  - npm run test
+  stage: test
+variables:
+  DOCKER_HOST: tcp://docker:2375/

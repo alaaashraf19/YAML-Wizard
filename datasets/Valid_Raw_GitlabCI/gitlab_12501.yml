@@ -1,0 +1,89 @@
+cache:
+  paths:
+  - node_modules
+  - src/locales
+  - .pip
+default:
+  before_script:
+  - yarn install
+  - mkdir -p .pip
+  - export PATH=$PATH:.pip
+  - apk add --update --no-cache py-pip build-base
+  - pip --cache-dir=.pip install -U pip
+  - pip --cache-dir=.pip install awscli
+  - if [ ! -z "$TX_TOKEN" ]; then pip --cache-dir=.pip install transifex-client ;
+    else echo "Skipping..."; fi
+  - export GIT_PYTHON_REFRESH=quiet
+  - make dev-l8n-download
+deploy-prod:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - make dev-l8n-extract
+  - if [ ! -z "$TX_TOKEN" ]; then tx push --source --no-interactive ; else echo "Skipping...";
+    fi
+  - REACT_APP_GRAPHQL_ENDPOINT=https://moodle.net/api/graphql REACT_APP_MOTHERSHIP_API_ID=KVG4RFL0JJ
+    REACT_APP_MOTHERSHIP_API_KEY=${PROD_MOTHERSHIP_API_KEY} REACT_APP_MOTHERSHIP_ENV=moodlenet_mothership
+    CI=false yarn build --prod
+  - rm -rf public
+  - mv build public
+  - cp public/index.html public/404.html
+  - if [ ! -z "$PRODUCTION_BUCKET" ]; then aws s3 sync public/ s3://${PRODUCTION_BUCKET}
+    --delete --exclude .git --exclude README.md --acl public-read ; else echo "Skipping...";
+    fi
+  - if [ ! -z "$PRODUCTION_DISTRIBUTION_ID" ]; then aws cloudfront create-invalidation
+    --distribution-id ${PRODUCTION_DISTRIBUTION_ID} --paths '/*' ; else echo "Skipping...";
+    fi
+deploy-staging:
+  artifacts:
+    paths:
+    - public
+  only:
+  - develop
+  script:
+  - REACT_APP_GRAPHQL_ENDPOINT=/api/graphql REACT_APP_MOTHERSHIP_API_ID=KVG4RFL0JJ
+    REACT_APP_MOTHERSHIP_API_KEY=${HQ_MOTHERSHIP_API_KEY} REACT_APP_MOTHERSHIP_ENV=moodlenet_mothership_next
+    CI=false yarn build --prod
+  - rm -rf public
+  - mv build public
+  - cp public/index.html public/404.html
+  - mkdir -p docs && mv docs public/
+  - if [ ! -z "$STAGING_BUCKET" ]; then aws s3 sync public/ s3://${STAGING_BUCKET}
+    --delete --exclude .git --exclude README.md --acl public-read ; else echo "Skipping...";
+    fi
+  - if [ ! -z "$STAGING_DISTRIBUTION_ID" ]; then aws cloudfront create-invalidation
+    --distribution-id ${STAGING_DISTRIBUTION_ID} --paths '/*' ; else echo "Skipping...";
+    fi
+  - if [ ! -z "$TEAM_BUCKET" ]; then aws s3 sync public/ s3://${TEAM_BUCKET} --delete
+    --exclude .git --exclude README.md --acl public-read ; else echo "Skipping...";
+    fi
+  - if [ ! -z "$TEAM_DISTRIBUTION_ID" ]; then aws cloudfront create-invalidation --distribution-id
+    ${TEAM_DISTRIBUTION_ID} --paths '/*' ; else echo "Skipping..."; fi
+  - if [ ! -z "$MOTHERSHIP_BUCKET" ]; then aws s3 sync public/ s3://${MOTHERSHIP_BUCKET}
+    --delete --exclude .git --exclude README.md --acl public-read ; else echo "Skipping...";
+    fi
+  - if [ ! -z "$MOTHERSHIP_DISTRIBUTION_ID" ]; then aws cloudfront create-invalidation
+    --distribution-id ${MOTHERSHIP_DISTRIBUTION_ID} --paths '/*' ; else echo "Skipping...";
+    fi
+docs:
+  artifacts:
+    paths:
+    - docs
+  only:
+  - develop
+  script:
+  - mkdir docs
+  - yarn build-storybook
+  - mv storybook-static docs/ui
+  - if [ ! -z "$DOCS_STAGING_BUCKET" ]; then aws s3 sync docs/ s3://${DOCS_STAGING_BUCKET}/docs/client/
+    --delete --exclude .git --acl public-read ; else echo "Skipping..."; fi
+  - if [ ! -z "$DOCS_STAGING_DISTRIBUTION_ID" ]; then aws cloudfront create-invalidation
+    --distribution-id ${DOCS_STAGING_DISTRIBUTION_ID} --paths '/docs/client/*' ; else
+    echo "Skipping..."; fi
+image: node:alpine
+variables:
+  AWS_DEFAULT_REGION: eu-west-1
+  GIT_SUBMODULE_STRATEGY: recursive

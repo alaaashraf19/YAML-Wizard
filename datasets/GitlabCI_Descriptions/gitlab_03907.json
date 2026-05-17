@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_03907",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2277,
+  "description": "Create a GitLab CI pipeline using the docker/compose:${COMPOSE_VERSION} image (with an empty entrypoint) and a docker:24.0.6-dind service, running on runners tagged gitlab-org-docker. Define stages test and build and workflow rules to run on merge requests, the default branch, or tags. Add three dev jobs (dev CE, dev EE, dev FOSS) in the test stage that execute the sequence: retry 5 su git -mc 'make deps'; su git -mc 'git -C gitlab-rails checkout $GITLAB_RAILS_BRANCH'; su git -mc 'make gitaly-compile'; su git -mc 'make rails-compile'; su git -mc 'make webpack-compile'; su git -mc 'make create-dev', then after_script runs su git -mc 'make logs > logs.txt' and always archives logs.txt for one month. Add three test jobs (test CE, test EE, test FOSS) in the test stage that run the same initial steps plus su git -mc 'make create-test' and su git -mc 'make command' with COMMAND set to bin/rspec spec/models/chat_name_spec.rb spec/features/projects/badges/pipeline_badge_spec.rb, also collecting logs as artifacts. Add a bats unit tests job in the test stage that installs bats via apk and runs 'bats bats/', all jobs inheriting a before_script that installs make, bash, git, creates a git user, sets CUSTOM_HOSTNAME and DOCKER_HOST, and defines a retry helper function.",
+  "tags": [
+    "docker-compose",
+    "dind",
+    "make",
+    "bats",
+    "gitlab-rails",
+    "ci",
+    "pipeline",
+    "test",
+    "dev"
+  ]
+}

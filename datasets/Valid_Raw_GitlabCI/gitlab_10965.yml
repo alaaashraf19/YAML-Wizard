@@ -1,0 +1,42 @@
+.release:
+  artifacts:
+    paths:
+    - fogtrack
+  only:
+  - tags
+  script:
+  - cp bin/fogtrack .
+  stage: release
+build linux:
+  artifacts:
+    paths:
+    - bin
+  before_script:
+  - shards install --production
+  image: crystallang/crystal:0.34.0-alpine
+  script:
+  - shards build --release --production --static
+  stage: build
+build macos:
+  artifacts:
+    paths:
+    - bin
+  before_script:
+  - shards install --production
+  script:
+  - PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig" shards build --release
+    --production
+  stage: build
+  tags:
+  - macos
+release linux:
+  dependencies:
+  - build linux
+  extends: .release
+release macos:
+  dependencies:
+  - build macos
+  extends: .release
+stages:
+- build
+- release

@@ -1,0 +1,17 @@
+{
+  "sha": "6690d5d3073ba387ee4d8547af438c2d35a7170404fac2ccdcdf21682b26f4ce",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2751,
+  "description": "Create a GitHub Actions workflow named Build IDE examples that runs on every pull request, excluding changes to specific files. The workflow has read permission to repository contents and consists of three parallel jobs: build-linux, build-windows, and build-mac. Each job runs on a different environment (ubuntu-latest, windows-latest, macOS-latest), checks out the repository with submodules, sets up Python 3.x, and caches the ./tools/dist directory. The build-linux job uses a matrix strategy to build LwIP examples in parallel across multiple chunks, while the build-windows and build-mac jobs build a single sketch.",
+  "tags": [
+    "arduino",
+    "esp8266",
+    "cross-platform",
+    "build",
+    "ide",
+    "examples",
+    "lwip",
+    "python"
+  ]
+}

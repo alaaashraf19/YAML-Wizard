@@ -1,0 +1,66 @@
+build_package:
+  artifacts:
+    paths:
+    - dist/
+  script:
+  - uv venv --python 3.12
+  - uv build
+  - ls -l dist
+coverage:
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.xml
+  coverage: /(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/
+  script:
+  - uv venv --python 3.12
+  - uv sync --group dev
+  - uv run pytest --cov=src/ --color=yes tests
+  - uv run coverage xml
+image: ghcr.io/astral-sh/uv:python3.12-bookworm-slim
+stages:
+- test
+- test_install
+style:
+  script:
+  - uv venv --python 3.12
+  - uv sync --group dev
+  - uv run ruff check src/ tests/
+test_docs:
+  artifacts:
+    paths:
+    - docs/
+    - site/
+  script:
+  - apt update && apt install -y make
+  - uv venv --python 3.12
+  - uv sync --group dev
+  - make docs
+test_install:
+  dependencies:
+  - build_package
+  script:
+  - uv venv --python 3.12 --no-project -v
+  - ls -l dist
+  - uv pip install dist/*.whl
+  - ls -l .venv/lib/*/site-packages/
+  - uv run python -c 'import pytest_regtest; print(pytest_regtest.pytest_regtest)'
+  stage: test_install
+tests:
+  parallel:
+    matrix:
+    - PYTHON_VERSION:
+      - '3.9'
+      - '3.10'
+      - '3.11'
+      - '3.12'
+  script:
+  - uv venv --python ${PYTHON_VERSION}
+  - uv sync --group dev
+  - uv run pytest -v tests
+  - uv build
+variables:
+  GIT_DEPTH: '1'
+  GIT_STRATEGY: clone
+  UV_LINK_MODE: copy

@@ -1,0 +1,17 @@
+{
+  "sha": "877506f3b3aab2b2beb25e1ef36c3a586cc4bb19bea509494bbfe2f74c3d7ef7",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2419,
+  "description": "Create a GitHub Actions workflow named release that triggers on push to tags matching *.*.* and any branch. Run a build-windows job on a windows-2025 environment, checking out the repository with submodules and a full fetch depth. Install the Windows 10.0.26100 SDK and WDK using winget. Determine if the workflow is running for a tag and extract version information. Build the project using the build_all.ps1 script. Upload installers and unpacked build artifacts.",
+  "tags": [
+    "windows",
+    "release",
+    "powershell",
+    "winget",
+    "sdk",
+    "wdk",
+    "build",
+    "artifacts"
+  ]
+}

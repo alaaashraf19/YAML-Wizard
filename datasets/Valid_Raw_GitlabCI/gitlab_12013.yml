@@ -1,0 +1,80 @@
+cache:
+  paths:
+  - build
+include:
+- file: Taranta.gitlab-ci.yml
+  project: MaxIV/gitlab-ci-templates
+linting:
+  allow_failure: true
+  artifacts:
+    paths:
+    - build/
+  image: continuumio/miniconda3
+  script:
+  - apt-get update
+  - apt-get -y install build-essential
+  - conda update -n base conda
+  - conda env create --name tangogql --file=environment.yml
+  - source activate tangogql
+  - black --line-length 79 tangogql/ tests/
+  - isort --profile black -w 79 tangogql/ tests/
+  - flake8 --show-source --statistics --ignore=F401,W503 --max-line-length=180 tangogql/
+    tests/
+  - mkdir -p build/reports
+  - pip3 install pylint-junit
+  - pylint tangogql/ tests/ || true
+  - pylint --output-format=json:build/reports/lint.json tangogql/ tests/ || true
+  - pylint --output-format=pylint_junit.JUnitReporter:build/reports/linting-python.xml
+    tangogql/ tests/ || true
+  stage: linting
+pages:
+  artifacts:
+    paths:
+    - public
+  image: continuumio/miniconda3
+  only:
+  - master
+  script:
+  - apt-get update
+  - apt-get -y install build-essential
+  - conda update -n base conda
+  - conda env create --name tangogql python=3.9 --file=environment.yml
+  - conda activate tangogql
+  - git clone https://gitlab.com/MaxIV/python3-taurus-core
+  - cd python3-taurus-core && python setup.py install
+  - pip install sphinx
+  - pip install sphinx_rtd_theme
+  - cd ../docs
+  - make html
+  - mv build/html/ ../public/
+  stage: deploy
+stages:
+- build
+- test
+- linting
+- deploy
+test:
+  allow_failure: false
+  artifacts:
+    paths:
+    - build/
+  image: continuumio/miniconda3
+  script:
+  - apt-get update
+  - apt-get -y install build-essential
+  - conda update -n base conda
+  - conda env create --name tangogql --file=environment.yml
+  - source activate tangogql
+  - mkdir -p build/reports
+  - pip3 install --upgrade pip
+  - pip3 install -r requirements.txt
+  - export TANGO_HOST=localhost:10000
+  - pytest -s tangogql/ tests/ --cov=tangogql --cov-report=term-missing --cov-report=html
+    tests/unit/
+  - rm -rf build/htmlcov
+  - mv htmlcov/ build/
+  stage: test
+variables:
+  DEPLOY_BACKEND: 'true'
+  IMAGE_REPOSITORY_VAR: TANGOQL_IMAGE_REPOSITORY
+  IMAGE_TAG_VAR: TANGOQL_IMAGE_TAG

@@ -1,0 +1,14 @@
+{
+  "sha": "664960640e133f9bd66c11fcee3e8c4d4053f2749e8c4275feb64d151f6f9dac",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 864,
+  "description": "Create a GitHub Actions workflow named run install script that runs on push to the develop branch, ignoring certain paths, and allows manual dispatch. Use an ubuntu-latest job with a matrix strategy to run an install script for both develop and stable branches, with and without HDF5 1.12.0. The script checks out the repository and executes a bash script ubuntu.sh with branch and HDF5 version as arguments.",
+  "tags": [
+    "ubuntu",
+    "matrix",
+    "script",
+    "github-actions",
+    "install"
+  ]
+}

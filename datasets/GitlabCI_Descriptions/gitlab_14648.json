@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_14648",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 670,
+  "description": "Create a GitLab CI pipeline that uses the mahdyadi/docker-react-native Docker image and defines three stages: test, build, and deploy. All jobs inherit a before_script that runs `cd ./Ngangkot`, `npm install --silent`, `yarn`, and `chmod +x ./android/gradlew`. In the test stage add a unit_test job that executes `npm test` then `npm run test_coverage` and stores the files under Ngangkot/coverage/* as artifacts. In the build stage add a build job that runs `yarn install`, `cd ./android`, and `./gradlew assembleDebug`, then publishes the generated APKs from Ngangkot/android/app/build/outputs/apk/ as artifacts. In the deploy stage add a publish_pages job that depends on unit_test, runs `mkdir ../public` and `cp -r ./coverage/lcov-report/* ../public/`, and publishes both the public/ directory and Ngangkot/coverage/* as artifacts that expire after 30 days.",
+  "tags": [
+    "react-native",
+    "docker",
+    "npm",
+    "yarn",
+    "gradle",
+    "android",
+    "coverage",
+    "pages",
+    "apk"
+  ]
+}

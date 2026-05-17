@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_07462",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 511,
+  "description": "Create a GitLab CI pipeline with stages build and publish using the node:10-alpine Docker image. In the build stage define an npm-build job that runs npm install then npm run build, and saves the dist directory as an artifact expiring in 30 minutes. Also in the build stage define an npm-lint job that runs npm install then npm run lint. In the publish stage define an npm-publish job that runs only on tags, executes npm version --allow-same-version --no-git-tag-version ${CI_COMMIT_REF_NAME}, writes the NPM token to .npmrc with echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}'>.npmrc, and runs npm publish to publish the package.",
+  "tags": [
+    "node",
+    "npm",
+    "build",
+    "lint",
+    "publish",
+    "npm-registry"
+  ]
+}

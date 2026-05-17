@@ -1,0 +1,40 @@
+.build:
+  coverage: '/Statements[ ]+: \d{0,3}+\.?\d{0,2}/'
+  script: &id001
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  - docker build -t $IMAGE .
+  - docker push $IMAGE
+  stage: build
+  variables:
+    IMAGE: ''
+build:
+  coverage: '/Statements[ ]+: \d{0,3}+\.?\d{0,2}/'
+  except:
+  - master
+  only:
+  - branches
+  script: *id001
+  stage: build
+  variables:
+    IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+build and push latest:
+  coverage: '/Statements[ ]+: \d{0,3}+\.?\d{0,2}/'
+  only:
+  - master
+  script: *id001
+  stage: build
+  variables:
+    IMAGE: $CI_REGISTRY_IMAGE:latest
+build and push tag:
+  coverage: '/Statements[ ]+: \d{0,3}+\.?\d{0,2}/'
+  only:
+  - tags
+  script: *id001
+  stage: build
+  variables:
+    IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG
+image: docker:latest
+services:
+- docker:dind
+stages:
+- build

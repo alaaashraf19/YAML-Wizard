@@ -1,0 +1,16 @@
+{
+  "sha": "d8ab77f82932243400f6c5d01f963492941575ed02d028125f34692291a7cf03",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2020,
+  "description": "Create a GitHub Actions workflow named macOS 11 CI that runs on pull requests and pushes to main branch or tags. Use a macos-12 job matrix to test with LLVM versions 12, 13, 14, and 16. For each job, checkout sources with submodules, detect package metadata, install ansible, run a CI task with ansible-playbook, and publish or move the package depending on the presence of a Cloudsmith API key.",
+  "tags": [
+    "macos",
+    "llvm",
+    "ansible",
+    "cloudsmith",
+    "github-actions",
+    "ci",
+    "package-management"
+  ]
+}

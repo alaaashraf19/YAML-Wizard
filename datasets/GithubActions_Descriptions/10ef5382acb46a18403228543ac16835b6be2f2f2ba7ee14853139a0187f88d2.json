@@ -1,0 +1,16 @@
+{
+  "sha": "10ef5382acb46a18403228543ac16835b6be2f2f2ba7ee14853139a0187f88d2",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5238,
+  "description": "Create a GitHub Actions workflow named macOS System CI that runs daily at 3 am and on pull requests to the master branch. The workflow uses a matrix strategy to run on macOS 10.15 and macOS 11.0, setting up Xcode versions and installing BioDynaMo. It then builds BioDynaMo, runs notebooks, and performs system tests. Finally, it notifies Slack with a custom message.",
+  "tags": [
+    "macos",
+    "xcode",
+    "biodynamo",
+    "ci",
+    "slack",
+    "schedule",
+    "pull-request"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_18796",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1095,
+  "description": "Set up a pipeline using the php Docker image with a global before_script that runs apt-get -qq update, installs git and unzip, downloads Composer via curl -Lo /usr/local/bin/composer https://getcomposer.org/composer.phar, makes it executable, and runs composer install --prefer-dist -n -q. Add a test stage job named test that executes ./vendor/bin/phpunit, and a parallel job test:5 that uses the php:5 image and also runs ./vendor/bin/phpunit. Add a phpcs job in the test stage that allows failure, runs an echo, then downloads PHP_CodeSniffer via curl -OL https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar and runs php phpcs.phar --standard=psr2 src/. Add a deploy stage job insight that uses the tutum/curl image, runs only on the master branch, runs an echo then posts analysis data to the SensioLabs Insight API with curl -X POST -H \"Accept: application/vnd.com.sensiolabs.insight+xml\" \"https://$INSIGHT_USER:$INSIGHT_TOKEN@insight.sensiolabs.com/api/projects/$INSIGHT_PROJECT/analyses\". Add a deploy stage job packagist that also uses tutum/curl, runs only on tags, runs an echo then triggers a Packagist update via curl -XPOST -H'content-type:application/json' \"https://packagist.org/api/update-package?username=b17&apiToken=$PACKAGIST_API_TOKEN\" -d'{\"repository\":{\"url\":\"https://gitlab.com/vnphp/media-extension-bundle\"}}'.",
+  "tags": [
+    "php",
+    "composer",
+    "phpunit",
+    "phpcs",
+    "insight",
+    "packagist",
+    "curl",
+    "deploy",
+    "test"
+  ]
+}

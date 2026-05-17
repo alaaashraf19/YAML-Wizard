@@ -1,0 +1,18 @@
+{
+  "sha": "6b2f28e37a87d0368cdeb49c19f78a62831d8b09b76797b0916e41c6828e6095",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1813,
+  "description": "Create a GitHub Actions workflow named Build that runs on every push. Use a matrix strategy across multiple Linux images, including Amazon Linux, Arch Linux, AlmaLinux, Rocky Linux, Debian, Fedora, and Ubuntu, with a GNU compiler in Release build type. For each job, install Git, check out the code, install dependencies, build and install ckb-next, run ckb-next-daemon --help, package ckb-next, and upload the package as a workflow artifact.",
+  "tags": [
+    "linux",
+    "matrix",
+    "cmake",
+    "gcc",
+    "gnu",
+    "ubuntu",
+    "fedora",
+    "debian",
+    "artifacts"
+  ]
+}

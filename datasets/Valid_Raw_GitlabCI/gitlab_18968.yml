@@ -1,0 +1,16 @@
+deploy:
+  only:
+  - master
+  script:
+  - echo "instruksi untuk migrasi data"
+  - echo "instruksi untuk menjalankan aplikasi/services"
+environment:
+  script:
+  - echo "instruksi untuk menginstall module yang dibutuhkan"
+  - echo "instruksi untuk set-up environment variable"
+test:
+  only:
+  - master
+  script:
+  - python manage.py test
+  - echo "instruksi untuk test UI"

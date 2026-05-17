@@ -1,0 +1,116 @@
+cache:
+  key: $CI_JOB_NAME-$CI_COMMIT_REF_NAME
+coverage:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - $COVERAGE_STATIC_DIR
+  coverage: /TOTAL.*\s+(\d+\%)/
+  needs: []
+  script:
+  - pip3 install coveralls
+  - PACKAGE_NAME=`python3 -c 'from setuptools import find_packages;print(find_packages(exclude=["tests"])[0])'`
+  - coverage run --source=$PACKAGE_NAME setup.py test
+  - coverage html
+  - coverage report
+  - mv htmlcov/ $COVERAGE_STATIC_DIR
+  stage: test
+dist:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - dist/*
+  dependencies: []
+  needs: []
+  script:
+  - ./setup.py sdist
+  stage: package
+image: python:latest
+include:
+- https://gitlab.com/nobodyinperson/ci-templates/raw/master/python-black-pep8.yml
+- https://gitlab.com/nobodyinperson/ci-templates/raw/master/pypi-upload.yml
+- https://gitlab.com/nobodyinperson/python3-openrepos-webclient/-/raw/master/openrepos-upload-rpm.gitlab-ci.yml
+openrepos-upload-rpm:
+  dependencies:
+  - rpm-sfos
+  extends: .openrepos-upload-rpm
+  only:
+  - tags
+  stage: deploy
+  variables:
+    OPENREPOS_UPLOAD_RPM_APPNAME: python3-sensemapi
+    OPENREPOS_UPLOAD_RPM_CATEGORY: Libraries
+    OPENREPOS_UPLOAD_RPM_PLATFORM: SailfishOS
+pages:
+  artifacts:
+    paths:
+    - $PAGES_DIR/
+  before_script: []
+  dependencies:
+  - sphinx
+  - coverage
+  environment:
+    name: GitLab Pages
+    url: https://tue-umphy.gitlab.io/co2mofetten/software/python3-sensemapi
+  image: alpine
+  only:
+  - tags
+  script:
+  - rm -rf $PAGES_DIR/
+  - mv $SPHINX_DOC_DIR $PAGES_DIR/
+  - mv $COVERAGE_STATIC_DIR $PAGES_DIR/
+  stage: deploy
+  variables:
+    GIT_STRATEGY: none
+pypi-upload:
+  dependencies:
+  - dist
+  environment:
+    name: Python Package Index
+    url: https://pypi.org/project/sensemapi/
+  only:
+  - tags
+  stage: deploy
+python-black-pep8:
+  needs: []
+  stage: test
+rpm-sfos:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - '*.rpm'
+  before_script:
+  - apt update -qq
+  - apt install -y -qq rpm >/dev/null
+  dependencies: []
+  image: python:3.8
+  needs: []
+  script:
+  - make rpm-sfos
+  - mv dist/*.rpm .
+  stage: package
+sphinx:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - $SPHINX_DOC_DIR
+  dependencies: []
+  image: ubuntu
+  needs: []
+  script:
+  - apt-get -qq update 2>&1 >/dev/null
+  - apt-get -y -qq install pandoc python3-pip git >/dev/null
+  - pip3 install --user .
+  - pip3 install sphinx sphinx_rtd_theme jupyter ipython==6.5
+  - make docs
+  - mv docs/_build/html $SPHINX_DOC_DIR
+  stage: package
+stages:
+- test
+- package
+- deploy
+variables:
+  COVERAGE_STATIC_DIR: coverage-report
+  PAGES_DIR: public
+  PYPIRC: ~/.pypirc
+  SPHINX_DOC_DIR: sphinx-doc

@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_12879",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1436,
+  "description": "Create a GitLab CI pipeline using the python:3.7.2-stretch Docker image. Define variables AWS_DEFAULT_REGION=eu-central-1 and S3_BUCKET=aws-lambda-price-grabber and four stages: build, test, package, deploy. In the build stage add a build job that runs `echo \\\"Building\\\"` then `pip3 install -r requirements.txt -t source/` and stores the source/ directory as an artifact. In the test stage add a test job that runs `echo \\\"Testing\\\"` then `pip3 install -r requirements_unit_test.txt`, copies the source files with `cp -R source/* .`, and executes `nose2 -v`. In the package stage add a package job that runs `apt-get update`, `apt-get -y install zip`, changes into the source directory with `cd source`, creates a zip archive using `zip -r source.zip *`, and publishes the source/ directory as an artifact. In the deploy stage add a deploy job that installs awscli with `pip3 install awscli`, uploads `source/source.zip` and `source/website-monitor-list.yml` to `s3://$S3_BUCKET/` via `aws s3 cp`, runs `aws cloudformation package --template-file ./deployment/aws-create-lambda.json --s3-bucket $S3_BUCKET --output-template template-export.yml`, then `aws cloudformation deploy --template-file template-export.yml --stack-name aws-lambda-price-grabber-stack --capabilities CAPABILITY_IAM --no-fail-on-empty-changeset`, and finally updates two Lambda functions with `aws lambda update-function-code --function-name grab-price --s3-bucket $S3_BUCKET --s3-key source.zip` and `aws lambda update-function-code --function-name grab-invoke --s3-bucket $S3_BUCKET --s3-key source.zip`, publishing ./template-export.yml as an artifact.",
+  "tags": [
+    "python-3.7",
+    "aws",
+    "lambda",
+    "s3",
+    "cloudformation",
+    "zip",
+    "nose2",
+    "gitlab-ci"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "5e0562be87aa4cd4d4313f18e4f842cbb53a564c407e20a4b9f7766ac56d479f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 971,
+  "description": "Create a GitHub Actions workflow named CI that runs on every push and pull request. Use a matrix job on ubuntu-latest to test with Python 3.7, 3.8, 3.9, and 3.10. For each Python version, check out the repository, install Miniforge, create a test environment, activate it, install dependencies, run tests with coverage, and optionally upload coverage to Codecov for Python 3.8.",
+  "tags": [
+    "python",
+    "ci",
+    "conda",
+    "miniforge",
+    "tests",
+    "codecov"
+  ]
+}

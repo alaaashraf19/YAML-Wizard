@@ -1,0 +1,17 @@
+{
+  "sha": "b8bd8f444f973026786335b16edfbef7a2478a24ab708abf1d7789e14793211a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1554,
+  "description": "Create a GitHub Actions workflow named linux-wheel-builder that runs on pull requests, pushes, and daily on a schedule. The workflow should set up an ubuntu-latest environment with read permissions to repository contents, using bash as the shell. It should have two jobs: one to build and test Python wheels on Linux, and another to build CPack. Both jobs should check out submodules, provision a micromamba environment, and then execute specific bash scripts for building and testing.",
+  "tags": [
+    "python",
+    "linux",
+    "wheel",
+    "cpack",
+    "conda",
+    "ubuntu",
+    "schedule",
+    "github-actions"
+  ]
+}

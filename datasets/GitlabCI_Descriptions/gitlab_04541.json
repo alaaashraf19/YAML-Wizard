@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_04541",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 313,
+  "description": "Create a GitLab CI pipeline that uses the gcc Docker image. Define a single stage called build and a job named build that runs in the build stage. The job should execute the following shell commands in order: pwd; commits=`git log -1 --pretty=format:\"%H %P\"`; git diff --name-only $commits > changed_files.txt; changed_dir=`python yenart/scripts/get_dir.py changed_files.txt`; echo $changed_dir; cd $changed_dir; make. The job should store the resulting mybinary file as a build artifact. No caches, services, or special rules are required.",
+  "tags": [
+    "gcc",
+    "make",
+    "git",
+    "artifact",
+    "ci"
+  ]
+}

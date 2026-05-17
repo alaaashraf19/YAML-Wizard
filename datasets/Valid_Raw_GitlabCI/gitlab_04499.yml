@@ -1,0 +1,15 @@
+image: alpine:latest
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - mkdir -p public
+  - cp -R media public/
+  - cp -R img public/
+  - cp *.css public/
+  - cp *.html public/
+  - cp *.js public/
+  stage: deploy

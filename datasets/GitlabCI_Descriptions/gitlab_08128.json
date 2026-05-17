@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_08128",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 862,
+  "description": "Create a GitLab CI pipeline that uses the golang:1.25 Docker image and defines two stages: test and report. In the test stage add a test job that inherits a before_script running `go get` and `go build`, then executes `go test ./... -v -cover`, and runs only for merge request events. In the report stage add a report job that also inherits the same `go get` and `go build` before_script, copies `oncall-settings-example.yaml` to `~/.oncall-settings.yaml` with `cp oncall-settings-example.yaml ~/.oncall-settings.yaml`, runs `./oncall-robot-assistant $ADD_ONCALL $DEBUG`, sets variables `ADD_ONCALL=add-oncall` and `DEBUG=--debug`, and provides a `GITLAB_API_TOKEN` secret sourced from a Vault ID token (`VAULT_ID_TOKEN` with audience https://vault.gitlab.net) located at `access_tokens/gitlab-com/gitlab-com/gl-infra/_group_access_tokens/oncall-robot-assistant/token@ci`; this job runs only when the pipeline is on the default branch of the ops.gitlab.net instance. Ensure the pipeline respects the defined rules and uses the specified Vault ID token for authentication.",
+  "tags": [
+    "golang",
+    "go-test",
+    "vault",
+    "id-token",
+    "gitlab-ci",
+    "report"
+  ]
+}

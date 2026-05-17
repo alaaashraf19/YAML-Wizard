@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_17427",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 212,
+  "description": "Create a GitLab CI pipeline with a single stage called build. Add a job named build that runs in the build stage and executes the commands: echo \"gradle clean....\", gradle clean, echo \"gradle checkstyleMain start\", gradle checkstyleMain --info, echo \"gradle build start\", and gradle build. No additional services, caches, artifacts, or rules are required.",
+  "tags": [
+    "gradle",
+    "build",
+    "checkstyle",
+    "ci"
+  ]
+}

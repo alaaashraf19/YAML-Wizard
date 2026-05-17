@@ -1,0 +1,15 @@
+before_script:
+- yarn config set cache-folder .yarn
+- yarn install
+image: node:latest
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - yarn build
+  - rm -rf public
+  - mv build public
+  stage: deploy

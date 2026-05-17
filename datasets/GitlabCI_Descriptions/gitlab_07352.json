@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_07352",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1630,
+  "description": "Create a GitLab CI pipeline using the docker:latest image with a docker:dind service. Define variables REGISTRY and CONTAINER_LATEST_IMAGE, and a before_script that logs into the GitLab registry and computes BASE_VERSION, MINOR_VERSION, MAJOR_VERSION, CONTAINER_TEST_IMAGE, CONTAINER_VERSION_IMAGE, CONTAINER_MINOR_VERSION_IMAGE, and CONTAINER_MAJOR_VERSION_IMAGE. Add a build job in the build stage that runs `docker build --pull -t $CONTAINER_TEST_IMAGE .` and `docker push $CONTAINER_TEST_IMAGE`. Add a lint job in the test stage that runs `docker pull $CONTAINER_TEST_IMAGE` then `docker run $CONTAINER_TEST_IMAGE npm run lint`. Add a test job in the test stage that runs `docker pull $CONTAINER_TEST_IMAGE` then `docker run $CONTAINER_TEST_IMAGE npm test`. Add a release-latest job in the release stage that only runs on the master branch, pulls the test image, tags it as $CONTAINER_LATEST_IMAGE and pushes it. Add a release-version job in the release stage that only runs on tags, pulls the test image, tags it as $CONTAINER_VERSION_IMAGE, $CONTAINER_MINOR_VERSION_IMAGE, $CONTAINER_MAJOR_VERSION_IMAGE and pushes each.",
+  "tags": [
+    "docker",
+    "docker-dind",
+    "npm",
+    "gitlab-registry",
+    "release",
+    "version-tags",
+    "ci-pipeline"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "sha": "8d1a3753bd23b6af5154c47c4a3e098034255db23bf15c77b776c70b94ad8d3b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5395,
+  "description": "Create a GitHub Actions workflow named Continuous Integration that runs on push to master branch and tags, pull requests to master, and workflow dispatch events. The workflow has two jobs: build and linter. The build job uses a matrix strategy to run on Linux, macOS, and Windows with different compilers and shells, installing dependencies, configuring, building, and testing the project. The linter job uses a matrix strategy to run Cppcheck and Clang-Tidy on ubuntu-24.04, installing dependencies, configuring, and running the linters.",
+  "tags": [
+    "ci",
+    "cd",
+    "gcc",
+    "clang",
+    "cppcheck",
+    "clang-tidy",
+    "ubuntu",
+    "macos",
+    "windows",
+    "msys2"
+  ]
+}

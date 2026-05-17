@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_08104",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2372,
+  "description": "Create a GitLab CI pipeline with two stages: init and test, using the default Docker image. In the init stage add three jobs: ssh_init runs the inline function ssh_init \"$TEST_PRIVATE_KEY\" \"$TEST_HOST_NAME\" then executes ssh $TEST_USER_NAME@$TEST_HOST_NAME \"echo logged-in !\"; ssh_init_sh runs curl -sL https://gitlab.com/gitlab-cd/ssh-template/raw/master/ssh-init.sh | bash and then calls ssh_run \"$TEST_USER_NAME\" \"$TEST_HOST_NAME\" \"$TEST_PRIVATE_KEY\" \"echo logged-in !\" with variables SSH_KNOWN_HOSTS set to $TEST_HOST_NAME and SSH_PRIVATE_KEY set to $TEST_PRIVATE_KEY; ssh_init_sh_no_host also curls the script and runs ssh_run with the same arguments but only defines SSH_PRIVATE_KEY. In the test stage add a ssh_run job that directly runs ssh_run \"$TEST_USER_NAME\" \"$TEST_HOST_NAME\" \"$TEST_PRIVATE_KEY\" \"echo logged-in !\". Include a before_script that defines the ssh_init and ssh_run functions used by all jobs, and reference the variables TEST_PRIVATE_KEY, TEST_HOST_NAME, TEST_USER_NAME, SSH_KNOWN_HOSTS and SSH_PRIVATE_KEY. No caches, artifacts, or special rules are configured.",
+  "tags": [
+    "ssh",
+    "gitlab-ci",
+    "init-stage",
+    "test-stage",
+    "curl",
+    "ssh-agent"
+  ]
+}

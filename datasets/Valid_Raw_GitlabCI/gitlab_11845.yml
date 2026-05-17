@@ -1,0 +1,8 @@
+production:
+  only:
+  - master
+  script:
+  - npm test
+  type: deploy
+types:
+- deploy

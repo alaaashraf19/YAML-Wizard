@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_04405",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1030,
+  "description": "Create a GitLab CI pipeline using the electronuserland/builder:wine Docker image with a global before_script that runs yarn install and a global cache of node_modules/ and .yarn. Define three stages (test, build, deploy) and a test job in the test stage that executes yarn run lint then yarn run test. Add a deploy job in the deploy stage that runs only on the master branch, performs apt-get update, installs software-properties-common, adds the Flatpak PPA, installs flatpak and flatpak-builder, sets ELECTRON_CACHE and ELECTRON_BUILDER_CACHE environment variables, runs yarn run release, removes the wine cache directory, caches node_modules keyed by yarn.lock and Electron caches keyed by electron-builder.json, and publishes the dist/* directory as an artifact that never expires. Include a pages job also in the deploy stage that runs only for the pages pipeline, creates a .public directory, copies all files into it, renames it to public, and stores the public folder as a Pages artifact. No additional services are required.",
+  "tags": [
+    "electron",
+    "yarn",
+    "flatpak",
+    "docker",
+    "pages",
+    "cache",
+    "release"
+  ]
+}

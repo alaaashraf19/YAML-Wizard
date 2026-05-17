@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_12494",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 622,
+  "description": "Create a GitLab CI pipeline using the node:9.3.0 Docker image and a before_script that runs apt-get -qq update and apt-get install -y jq. Define a single job called build_and_test_contracts (default stage) that caches the node_modules/ directory, runs npm install, npm run compile, npm run automate-test, then extracts each contract's ABI with `jq '.abi' < \\\"$file\\\" > \\\"${file%.json}.abi\\\"` and bytecode with `jq -r '.bytecode' < \\\"$file\\\" > \\\"${file%.json}.bin\\\"` for all JSON files in build/contracts, and finally flattens all Solidity source files using truffle-flattener into build/flattened/. The job stores the build/ directory as an artifact that expires after one month. No additional stages, services, or conditional rules are defined.",
+  "tags": [
+    "node",
+    "npm",
+    "jq",
+    "truffle",
+    "contracts",
+    "abi",
+    "bytecode",
+    "flatten",
+    "cache"
+  ]
+}

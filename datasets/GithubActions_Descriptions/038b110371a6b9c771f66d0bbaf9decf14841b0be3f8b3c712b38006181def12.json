@@ -1,0 +1,17 @@
+{
+  "sha": "038b110371a6b9c771f66d0bbaf9decf14841b0be3f8b3c712b38006181def12",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1548,
+  "description": "Create a GitHub Actions workflow named PS5 that runs on pushes to the master branch, pull requests to master, and published releases, ignoring changes to markdown files and docs. Use a single ubuntu-24.04 job with concurrency control that checks out the repository, sets up a build environment with various tools, builds the project using a bash script, and uploads the build artifact to GitHub, updating a release if the workflow is triggered by a release event.",
+  "tags": [
+    "ps5",
+    "ubuntu",
+    "c",
+    "cmake",
+    "clang",
+    "release",
+    "artifact",
+    "github"
+  ]
+}

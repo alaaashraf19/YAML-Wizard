@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_10295",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 687,
+  "description": "Create a GitLab CI pipeline using the golang:1.9 Docker image with a mongo service and a REPO_NAME variable set to gitlab.com/i-tre-brutti/beholder. Define two stages: test and build, and a global before_script that runs apt-get update -qq && apt-get install -y -qq mongodb-clients, creates MongoDB collections \"confs\" and \"statuses\" via mongo commands, makes the Go workspace directory, symlinks the project into $GOPATH/src/$REPO_NAME, cd's into it, executes go get -u gitlab.com/i-tre-brutti/common/... and go get -u github.com/golang/dep/cmd/dep, then runs dep ensure. In the test stage add a test job that runs MONGO_HOST=mongo go test ./... -v. In the build stage add a build job that runs go build. No caches, artifacts, or special rules are defined.",
+  "tags": [
+    "golang",
+    "mongo",
+    "go-build",
+    "go-test",
+    "dep",
+    "apt-get",
+    "mongodb-clients"
+  ]
+}

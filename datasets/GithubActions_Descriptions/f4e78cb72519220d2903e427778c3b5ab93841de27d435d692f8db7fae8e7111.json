@@ -1,0 +1,15 @@
+{
+  "sha": "f4e78cb72519220d2903e427778c3b5ab93841de27d435d692f8db7fae8e7111",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1541,
+  "description": "Create a GitHub Actions workflow named Tests that runs on every push to the master branch and on pull requests to master. The workflow uses a matrix strategy to test on multiple platforms (ubuntu-latest, macos-latest, windows-latest), Python versions (3.7 to 3.11 and PyPy 3.7 to 3.9), and optional dependencies (none, scipy). For each job, check out the code, set up the specified Python version, install build tools and optional dependencies as needed, and run tests with tox.",
+  "tags": [
+    "python",
+    "tests",
+    "tox",
+    "matrix",
+    "ci",
+    "pypy"
+  ]
+}

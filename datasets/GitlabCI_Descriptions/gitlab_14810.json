@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_14810",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 249,
+  "description": "Create a GitLab CI pipeline using the node:16.0.0-slim Docker image. Include a before_script that runs apt-get update, installs xvfb and firefox-esr, installs gulp-cli globally via npm, and runs npm install. Define a single stage called test and a job named test that runs in this stage, executes gulp -v, gulp build, and gulp unit, and is limited to runners with the gitlab-org tag. No caches, artifacts, or special triggers are defined.",
+  "tags": [
+    "node",
+    "gulp",
+    "npm",
+    "firefox",
+    "xvfb"
+  ]
+}

@@ -1,0 +1,19 @@
+domains: []
+exclude:
+- test/**/*
+- vendor/**/*
+- .bundle/**/*
+formatter:
+  rubocop:
+    cops: safe
+    except: []
+    extra_args: []
+    only: []
+include:
+- '**/*.rb'
+max_files: 5000
+plugins: []
+reporters:
+- rubocop
+require: []
+require_paths: []

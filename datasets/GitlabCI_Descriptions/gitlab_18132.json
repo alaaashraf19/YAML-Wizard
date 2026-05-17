@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_18132",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1185,
+  "description": "Create a GitLab CI pipeline using the node:latest Docker image globally and a cache of node_modules/. Define stages build, test, deploy, and pages. Add a build job in the build stage that runs `echo \"module.exports = '/$CI_BUILD_REF_NAME';\" > pathPrefix.js`, `yarn install`, `npm run build || true && npm run clean`, and `npm run build`, stores the public/ directory as an artifact, and runs only on develop and master branches. Add a review_build job also in the build stage that runs `echo \"module.exports = '$CI_BUILD_REF_NAME';\" > pathPrefix.js`, `yarn install`, `npm run build || true && npm run clean`, and `npm run review_build`, publishes public/ as an artifact, and runs on all branches except develop and master. Add a deploy job in the deploy stage using the python:latest image that installs awscli and copies ./public to the S3 bucket $S3_BUCKET_NAME recursively, targets the staging environment and runs only on develop. Add a review deploy job in the deploy stage also using python:latest that installs awscli and copies ./public to s3://$S3_BUCKET_NAME/$CI_BUILD_REF_NAME, runs on branches matching ^text/.*, ^feature/.*, ^release/.*, ^hotfix/.*, and targets a review environment. Finally, add a pages job in the pages stage that runs `echo \"publish done.\"`, publishes the public/ directory as a GitLab Pages artifact, runs only on the master branch, and uses the default node image.",
+  "tags": [
+    "node",
+    "python",
+    "aws-cli",
+    "s3-deploy",
+    "gitlab-pages",
+    "yarn",
+    "npm",
+    "cache-node-modules"
+  ]
+}

@@ -1,0 +1,61 @@
+default:
+  before_script:
+  - apt-get update && apt-get install -y libscrypt0 python3-pip zsh
+  - pip3 install --user --upgrade pip setuptools wheel
+  image: docker:stable
+  services:
+  - docker:stable-dind
+pypi_test:
+  dependencies:
+  - source_dist
+  image: debian:buster-slim
+  only:
+  - tags
+  script:
+  - python3 -m pip install --user --upgrade twine
+  - python3 -m twine upload --repository-url "$TEST_PYPI_UPLOAD_URL" -u $TEST_PYPI_USER
+    -p $TEST_PYPI_PASS dist/*
+  - python3 -m pip install --index-url "$TEST_PYPI_INDEX_URL" --extra-index-url "$PYPI_INDEX_URL"
+    $NAME_PIP
+  stage: post
+  variables:
+    PYPI_INDEX_URL: https://pypi.org/simple
+    TEST_PYPI_INDEX_URL: https://test.pypi.org/simple/
+    TEST_PYPI_UPLOAD_URL: https://test.pypi.org/legacy/
+    TWINE_NON_INTERACTIVE: 1
+source_dist:
+  artifacts:
+    paths:
+    - dist/
+  image: debian:buster-slim
+  only:
+  - master
+  - develop
+  - staging
+  - merge_requests
+  script:
+  - python3 setup.py sdist bdist_wheel
+  stage: prepare
+stages:
+- prepare
+- test
+- post
+test:
+  before_script: []
+  only:
+  - master
+  - develop
+  - staging
+  - merge_requests
+  script:
+  - docker build -f docker/Dockerfile -t $DOCK_NS/$NAME:$VERSION .
+  - docker build -f docker/Dockerfile.ci -t $DOCK_NS/$NAME-ci:$VERSION .
+  - docker run --rm -u lighter --entrypoint python3 $DOCK_NS/$NAME-ci setup.py test
+  stage: test
+  variables:
+    VERSION: latest
+variables:
+  DOCK_NS: inbitcoin
+  GIT_DEPTH: '3'
+  NAME: lighter
+  NAME_PIP: lighter-bitcoin

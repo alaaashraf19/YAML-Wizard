@@ -1,0 +1,14 @@
+{
+  "sha": "f51a314fb0f8b86e811435c51e222347a5dea767ce181ea026be72239f2cbe17",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1448,
+  "description": "Create a GitHub Actions workflow named Test that runs on every push to the master branch and on pull requests to master. The workflow should have four ubuntu-latest jobs: lint, py36-core, py37-core, and py38-core. Each job checks out the code, sets up a specific Python version (3.6, 3.6, 3.7, or 3.8), installs Tox, and runs Tox with a specific environment. Additionally, the py36-core job uploads coverage to Codecov using a token from secrets.",
+  "tags": [
+    "python",
+    "tox",
+    "tests",
+    "codecov",
+    "ubuntu"
+  ]
+}

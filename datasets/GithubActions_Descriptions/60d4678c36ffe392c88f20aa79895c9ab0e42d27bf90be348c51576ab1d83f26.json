@@ -1,0 +1,16 @@
+{
+  "sha": "60d4678c36ffe392c88f20aa79895c9ab0e42d27bf90be348c51576ab1d83f26",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2716,
+  "description": "Create a GitHub Actions workflow named Check ASan & UBSan that runs on push to all branches except gh-readonly-queue/** and master, on pull requests, and on merge groups. Use an ubuntu-latest job to check out the repository with submodules, prepare the Linux environment, cache Rust dependencies, build with AddressSanitizer and UndefinedBehaviorSanitizer, run server and headless client tests, unit tests, build mastersrv with Cargo, and run integration tests, all while using Clang and specific sanitizer options.",
+  "tags": [
+    "clang",
+    "asan",
+    "ubsan",
+    "rust",
+    "linux",
+    "tests",
+    "ci"
+  ]
+}

@@ -1,0 +1,103 @@
+Automated Acceptance Test TF:
+  after_script:
+  - source ./ci/release-name.sh
+  - sh ./ci/destroy-env-tf.sh
+  allow_failure: true
+  artifacts:
+    paths:
+    - target/site/serenity/
+    when: always
+  before_script:
+  - source ./ci/release-name.sh
+  - source ./ci/deploy-to-env-tf.sh
+  image: baasie/terraform-serenityjs-rest
+  script:
+  - npm i --silent
+  - npm run aat
+  stage: acceptance test
+  variables:
+    aws_stage: tf-aat
+    tf_state_bucket: baasie.cd-faas.state
+    tf_state_folder: aat
+analyse-mutation:
+  artifacts:
+    paths:
+    - reports/mutation/html
+  image: baasie/node-awscli
+  script:
+  - sh ./ci/mutation-test.sh
+  stage: build
+before_script:
+- source ./ci/release-name.sh
+build:
+  artifacts:
+    paths:
+    - coverage/
+  image: baasie/node-awscli
+  script:
+  - sh ./ci/build.sh
+  stage: build
+deploy-production-cf:
+  environment:
+    name: cf-production
+  image: baasie/node-awscli
+  script:
+  - sh ./ci/deploy-to-env-cf.sh
+  stage: production
+  variables:
+    aws_stage: cf-production
+  when: manual
+deploy-production-tf:
+  environment:
+    name: tf-production
+  image: baasie/terraform-serenityjs-rest
+  script:
+  - sh ./ci/deploy-to-env-tf.sh
+  stage: production
+  variables:
+    aws_stage: tf-production
+    tf_state_bucket: baasie.cd-faas.state
+    tf_state_folder: production
+  when: manual
+deploy-staging-cf:
+  environment:
+    name: cf-staging
+  image: baasie/node-awscli
+  script:
+  - sh ./ci/deploy-to-env-cf.sh
+  stage: staging
+  variables:
+    aws_stage: cf-staging
+deploy-staging-tf:
+  environment:
+    name: tf-staging
+  image: baasie/terraform-serenityjs-rest
+  script:
+  - sh ./ci/deploy-to-env-tf.sh
+  stage: staging
+  variables:
+    aws_stage: tf-staging
+    tf_state_bucket: baasie.cd-faas.state
+    tf_state_folder: staging
+pages:
+  artifacts:
+    expire_in: 30 days
+    paths:
+    - public
+  script:
+  - mkdir .public
+  - mv coverage .public/coverage/
+  - mv reports/mutation/html .public/mutation/
+  - mv target/site/serenity/ .public/bdd/
+  - mv .public/ public/
+  stage: reports
+stages:
+- build
+- acceptance test
+- staging
+- reports
+- production
+variables:
+  AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+  AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+  RELEASE_BUCKET: baasie.cd-faas.releases

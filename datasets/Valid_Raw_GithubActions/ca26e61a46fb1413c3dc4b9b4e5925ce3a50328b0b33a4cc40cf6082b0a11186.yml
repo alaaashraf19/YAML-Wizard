@@ -1,0 +1,82 @@
+name: Python
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["main"]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: ["main"]
+
+jobs:
+  ruff:
+    name: Ruff
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: ./.github/actions/setup-python
+
+      - name: Install Ruff
+        run: pip install ruff
+
+      - name: Ruff check
+        run: ruff check . --ignore E402
+
+      - name: Ruff format
+        run: ruff format . --check --diff
+
+  pyright:
+    name: Pyright
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup C++
+        uses: ./.github/actions/setup-cpp
+
+      - name: Setup Python
+        uses: ./.github/actions/setup-python
+
+      - name: Install Pyright and NumPy
+        run: python -m pip install pyright numpy
+
+      - name: Build Ice for Python
+        run: |
+          make -C cpp srcs
+          make -C python
+
+      - name: Pyright check
+        run: |-
+          pyright python/python
+          pyright python/test/Glacier2
+          pyright python/test/Slice
+
+          pyright python/test/Ice/adapterDeactivation
+          pyright python/test/Ice/admin
+          pyright python/test/Ice/ami
+          pyright python/test/Ice/asyncio
+          pyright python/test/Ice/blobject
+          pyright python/test/Ice/current
+          # pyright python/test/Ice/custom
+          pyright python/test/Ice/exceptions
+          pyright python/test/Ice/executor
+          pyright python/test/Ice/facets
+          pyright python/test/Ice/faultTolerance
+          pyright python/test/Ice/info
+          pyright python/test/Ice/inheritance
+          pyright python/test/Ice/location
+          pyright python/test/Ice/properties
+          pyright python/test/Ice/proxy
+          pyright python/test/Ice/scope
+          pyright python/test/Ice/servantLocator
+          pyright python/test/Ice/thread
+          pyright python/test/Ice/timeout
+          pyright python/test/Ice/objects
+          pyright python/test/Ice/optional
+          pyright python/test/Ice/operations
+
+          pyright python/test/Ice/slicing

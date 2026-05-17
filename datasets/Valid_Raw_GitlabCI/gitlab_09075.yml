@@ -1,0 +1,17 @@
+.common-ci-tokens:
+  extends:
+  - .tokens-for-all-branches
+  - .helm-build-trigger-token
+  - .slack-token
+  - .slack-release-tools-bot-user-token
+  - .slack-release-tools-admin-user-token
+  - .slack-release-tools-non-admin-user-token
+  - .sentry-auth-token
+  - .release_bot_dev_token
+  - .release-bot-ops-token
+  - .release-bot-production-token
+  - .gitlab-observability-namespace-token
+  - .release-bot-com-read-token
+  - .release-bot-version-token
+  - .gitlab-org-gitlab-project-access-token
+  - .release-bot-private-key

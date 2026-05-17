@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_00136",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 98,
+  "description": "Create a GitLab CI pipeline that defines a single job called build which runs in the default test stage. The job should execute the exact shell commands: module switch PrgEnv-pgi PrgEnv-gnu, then module load cudatoolkit, then make all. No specific Docker image, services, caches, artifacts, or rules/only/except triggers are required, and the pipeline does not include any deployment targets.",
+  "tags": [
+    "module",
+    "cudatoolkit",
+    "make",
+    "build"
+  ]
+}

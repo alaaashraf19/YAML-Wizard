@@ -1,0 +1,40 @@
+pages:
+  artifacts:
+    paths:
+    - public
+  image: melkorm/php-docker:5.5-alpha
+  script:
+  - mkdir -p /storage/vendor/${CI_PROJECT_ID}/${CI_BUILD_REF_NAME}
+  - ln -s /storage/vendor/${CI_PROJECT_ID}/${CI_BUILD_REF_NAME} vendor
+  - mkdir -p ./public
+  - composer require 'phpmetrics/phpmetrics'
+  - vendor/bin/phpmetrics --report-html=./public/index.html ./src
+  stage: deploy
+stages:
+- test
+- deploy
+test55:
+  image: melkorm/php-docker:5.5-alpha
+  script:
+  - mkdir -p /storage/vendor/${CI_PROJECT_ID}/${CI_BUILD_REF_NAME}
+  - ln -s /storage/vendor/${CI_PROJECT_ID}/${CI_BUILD_REF_NAME} vendor
+  - make
+  stage: test
+test56:
+  image: melkorm/php-docker:5.6-alpha
+  script:
+  - mkdir -p /storage/vendor/${CI_PROJECT_ID}/${CI_BUILD_REF_NAME}
+  - ln -s /storage/vendor/${CI_PROJECT_ID}/${CI_BUILD_REF_NAME} vendor
+  - make
+  stage: test
+test70:
+  image: melkorm/php-docker:7.0-alpha
+  script:
+  - mkdir -p /storage/vendor/${CI_PROJECT_ID}/${CI_BUILD_REF_NAME}
+  - ln -s /storage/vendor/${CI_PROJECT_ID}/${CI_BUILD_REF_NAME} vendor
+  - make
+  stage: test
+variables:
+  COMPOSER_CACHE_DIR: /storage
+  COMPOSER_DISABLE_XDEBUG_WARN: '1'
+  COMPOSER_VENDOR_DIR: /storage/vendor/${CI_PROJECT_ID}/${CI_BUILD_REF_NAME}

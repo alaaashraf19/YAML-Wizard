@@ -1,0 +1,14 @@
+{
+  "sha": "b8432cfa5a9391ae8b81784ae6eda93fb1c7da9650e8d25c2b0e2149461f2f11",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2847,
+  "description": "Create a GitHub Actions workflow named Build that runs on push to dev and main branches and on pull requests to those branches. The workflow has three jobs: package, cache, and two dependent jobs pip and path. The package job builds the package, the cache job checks for updates to a cache of extra downloads and fails if updates are needed, and the pip and path jobs test pip and PYTHONPATH installations respectively, both dependent on the cache job.",
+  "tags": [
+    "python",
+    "tests",
+    "cache",
+    "pip",
+    "github-actions"
+  ]
+}

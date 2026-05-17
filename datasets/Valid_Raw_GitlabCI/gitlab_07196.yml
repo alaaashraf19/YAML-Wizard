@@ -1,0 +1,23 @@
+linter:
+  image: python:3.6
+  script:
+  - pip install pipenv
+  - pipenv --python 3.6 install --dev
+  - pipenv run flake8 --ignore=E501,E302
+  - touch ~/.pylintrc
+  - find -name '*.py' -print0 | xargs -0 pipenv run pylint --py3k --reports=n
+  - pipenv check -i 39621 -i 38224
+tests_py2:
+  image: python:2.7
+  script:
+  - pip install pipenv
+  - pipenv --python 2.7 install --dev
+  - pipenv run python --version
+  - pipenv run python -m unittest discover test
+tests_py3:
+  image: python:3.6
+  script:
+  - pip install pipenv
+  - pipenv --python 3.6 install --dev
+  - pipenv run python --version
+  - pipenv run python -m unittest discover test

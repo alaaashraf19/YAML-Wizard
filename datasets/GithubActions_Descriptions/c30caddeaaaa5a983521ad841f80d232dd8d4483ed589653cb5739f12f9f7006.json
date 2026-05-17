@@ -1,0 +1,14 @@
+{
+  "sha": "c30caddeaaaa5a983521ad841f80d232dd8d4483ed589653cb5739f12f9f7006",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1181,
+  "description": "Create a GitHub Actions workflow named Submit Clink release to winget-pkgs that runs on workflow dispatch and on published releases. Use a single windows-latest job that submits a package to winget-pkgs by fetching the latest release assets, downloading wingetcreate, and updating the package with the release version and installer URL using a GitHub token from secrets.",
+  "tags": [
+    "winget",
+    "release",
+    "powershell",
+    "github-api",
+    "windows"
+  ]
+}

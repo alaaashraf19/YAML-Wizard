@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_09027",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 576,
+  "description": "Create a GitLab CI pipeline that composes its configuration from multiple local template files. Include the templates .gitlab/ci/coordinated_pipeline/templates.yml, prepare.yml, packaging.yml, gstg-cny-deploy.yml, gstg-ref-deploy.yml, gprd-cny-deploy.yml, promotion.yml, gstg-deploy.yml, gprd-deploy.yml, and finish.yml. The pipeline will inherit stages, jobs, variables, caches, artifacts, and rules defined in those templates, enabling coordinated build, packaging, staging and production deployments as well as promotion and finalization steps. No top‑level jobs are defined here; all behavior is provided by the included files.",
+  "tags": [
+    "includes",
+    "coordinated-pipeline",
+    "templates",
+    "gitlab-ci"
+  ]
+}

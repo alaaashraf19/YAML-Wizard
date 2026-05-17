@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_10842",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 340,
+  "description": "Create a GitLab CI pipeline using the alpine:3.17 Docker image. Define a deploy stage with a pages job that runs only on the master branch, exports PATH to include ~/.cask/bin, installs openssh, make, git, curl, python3, emacs, bash via \"apk update && apk add openssh make git curl python3 emacs openssh bash git\", clones the Cask repository with \"git clone https://github.com/cask/cask ~/.cask\", runs \"cask install\", executes \"make\", and moves the generated html directory to public with \"mv html public\". Publish the public/ directory as a GitLab Pages artifact. No services, caches, or extra variables are required.",
+  "tags": [
+    "alpine",
+    "cask",
+    "make",
+    "gitlab-pages",
+    "deploy",
+    "apk"
+  ]
+}

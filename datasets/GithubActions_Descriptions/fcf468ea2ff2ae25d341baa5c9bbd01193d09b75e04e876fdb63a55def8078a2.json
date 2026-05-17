@@ -1,0 +1,16 @@
+{
+  "sha": "fcf468ea2ff2ae25d341baa5c9bbd01193d09b75e04e876fdb63a55def8078a2",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 6934,
+  "description": "Create a GitHub Actions workflow named FISCO-BCOS GitHub Actions that triggers on push to all branches except those matching **-1.3 or **-1.5, tags except v1.*, and paths except docs/**, Changelog.md, and README.md. Also trigger on pull requests to those paths and on release events. The workflow should have a build job running on a matrix of ubuntu-18.04 and macOS, and several integration test jobs on macOS, ubuntu-16.04, and ubuntu-20.04. Each job should check out the code, install dependencies, configure, compile, and run tests.",
+  "tags": [
+    "FISCO-BCOS",
+    "github-actions",
+    "ci",
+    "cd",
+    "ubuntu",
+    "macos",
+    "integration-tests"
+  ]
+}

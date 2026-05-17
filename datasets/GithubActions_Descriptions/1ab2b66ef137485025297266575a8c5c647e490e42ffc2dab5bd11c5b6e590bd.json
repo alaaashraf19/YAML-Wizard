@@ -1,0 +1,16 @@
+{
+  "sha": "1ab2b66ef137485025297266575a8c5c647e490e42ffc2dab5bd11c5b6e590bd",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3657,
+  "description": "Create a GitHub Actions workflow named Tests and coverage that runs on every push. Use a single ubuntu-latest job with a matrix strategy to test on multiple Python versions (3.8 to 3.13). For each Python version, install uv, test with pytest and coverage, generate a JUnit report, and upload the coverage to Codecov using a token from secrets.",
+  "tags": [
+    "python",
+    "tests",
+    "coverage",
+    "codecov",
+    "junit",
+    "matrix",
+    "ubuntu"
+  ]
+}

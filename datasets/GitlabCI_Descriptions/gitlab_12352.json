@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_12352",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 567,
+  "description": "Create a GitLab CI pipeline using the ruby:2.5.3 Docker image with a postgres:10.1 service, caching the vendor/bundle and node_modules directories. Define variables BUNDLE_PATH, DB_HOST, DB_PASSWORD, and DB_USER. Set up two stages: test and deploy. In the test stage add a test job that runs apt-get update -qy, apt-get install -y nodejs, bundle install --path /cache, bundle exec rake db:create RAILS_ENV=test, and bundle exec rspec. In the deploy stage add a production job that only runs on the master branch, installs the dpl gem with gem install dpl, and deploys to Heroku using dpl --provider=heroku --app=mind-projects with the $HEROKU_PRODUCTION_API_KEY variable.",
+  "tags": [
+    "ruby",
+    "rails",
+    "rspec",
+    "heroku",
+    "postgres",
+    "bundler",
+    "nodejs",
+    "cache"
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "sha": "gitlab_19340",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1526,
+  "description": "Create a GitLab CI pipeline with GIT_SERVER and PROJECT_NAME variables and a global before_script that echoes \"Starting CI Build of $PROJECT_NAME ($CI_BUILD_REPO branch $CI_COMMIT_REF_NAME)\". Define a test stage containing lint, test_linux_64, test_osx_64, and test_win10_64 jobs; lint runs on the host-soft-ci-runner tag and executes echo \"===== Running linters\", python2 -m pycodestyle, and python2 -m pylint zaber. test_linux_64 runs on linux-64 and py3 tags, installs requirements with python2 -m pip install --no-cache-dir -r requirements.txt and python3 -m pip install --no-cache-dir -r requirements.txt, then echoes and runs pytest under both Python 2 and Python 3, while test_osx_64 repeats the same script on osx-64 and py3 tags. test_win10_64 runs on windows-64 and py3 tags, echoes \"===== Running tests with Python 3\", installs requirements with py -3 -m pip install --no-cache-dir -r requirements.txt, and runs py -3 -m pytest. Add a deploy stage with a publish job that runs only on the master branch when $PUBLISH_PYTHON_CORE_VERSION is set, is manual, runs on host-fwee-swci-ubuntu-x64-vm, and executes echo \"===== PUBLISHING RELEASE\", echo \"Fetching publication tools...\", cd .., conditional removal of a build_automation directory, git clone of $GIT_SERVER/software-internal/build_automation.git, cd into its publication folder, and runs python3 ./publish_python_core_library.py $CI_PROJECT_DIR $PUBLISH_PYTHON_CORE_VERSION --live.",
+  "tags": [
+    "python",
+    "pytest",
+    "pycodestyle",
+    "pylint",
+    "pip",
+    "windows",
+    "linux",
+    "osx",
+    "manual",
+    "deploy",
+    "publish",
+    "gitlab-ci",
+    "variables"
+  ]
+}

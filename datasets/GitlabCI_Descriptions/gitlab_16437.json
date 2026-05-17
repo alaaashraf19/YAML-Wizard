@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_16437",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 946,
+  "description": "Create a GitLab CI pipeline using the maven:3.6.0-jdk-8-alpine Docker image and three stages: test, coverage, and release. In the test stage add a test job that runs mvn --batch-mode clean test. In the coverage stage add a coverage job that runs the Jacoco Maven commands mvn --batch-mode clean org.jacoco:jacoco-maven-plugin:prepare-agent test org.jacoco:jacoco-maven-plugin:report -Dmaven.test.failure.ignore=true followed by downloading the Codacy coverage reporter with wget https://github.com/codacy/codacy-coverage-reporter/releases/download/4.0.0/codacy-coverage-reporter-4.0.0-assembly.jar and sending the report using java -jar codacy-coverage-reporter-4.0.0-assembly.jar report -l Java -r target/site/jacoco/jacoco.xml. In the release stage add a manual release job that runs only on the master branch, writes the GPG private key from $GPG_KEY to a .gpgkey.asc file, sets PGP_SECRETKEY and PGP_PASSPHRASE environment variables, executes mvn --batch-mode clean deploy --settings maven-settings.xml, and then removes the temporary key file.",
+  "tags": [
+    "maven",
+    "jacoco",
+    "codacy",
+    "coverage",
+    "release",
+    "manual",
+    "gpg",
+    "java"
+  ]
+}

@@ -1,0 +1,9 @@
+build:
+  only:
+  - master
+  script:
+  - mvn compile -f piggybank/pom.xml -B
+  stage: build
+image: maven:latest
+stages:
+- build

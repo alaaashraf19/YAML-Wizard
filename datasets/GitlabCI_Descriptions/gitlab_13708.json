@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_13708",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 121,
+  "description": "Create a GitLab CI pipeline with a single job named regression that runs in the default test stage using the runner's default Docker image. The job executes the exact shell commands: apt-get update -qy, apt-get install -y python3-pip, pip3 install -U ., and ./tests/all.sh. No additional variables, services, caches, artifacts, or rules are defined, so the job runs on every pipeline execution.",
+  "tags": [
+    "regression",
+    "apt",
+    "pip",
+    "bash",
+    "gitlab-ci"
+  ]
+}

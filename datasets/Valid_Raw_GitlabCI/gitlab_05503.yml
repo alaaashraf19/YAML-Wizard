@@ -1,0 +1,26 @@
+build:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - build/*/app/*.click
+  image: clickable/ci-16.04-arm64
+  rules:
+  - if: $CI_COMMIT_TAG == null
+  script:
+  - clickable build --clean
+  stage: build
+publish:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - build/*/app/*.click
+  image: clickable/ci-16.04-arm64
+  rules:
+  - if: $CI_COMMIT_TAG
+  script:
+  - clickable build --clean
+  - clickable publish "$CI_COMMIT_MESSAGE"
+  stage: publish
+stages:
+- build
+- publish

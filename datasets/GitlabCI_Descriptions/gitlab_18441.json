@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_18441",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 761,
+  "description": "Create a GitLab CI pipeline with two stages, build_image and build, and set the variable DOCKER_DRIVER to overlay2. In the build_image stage add a build-docker-images job that uses the docker:latest image with the docker:dind service, runs only on the master branch, and executes docker build --pull -t registry.gitlab.com/uqa3/firmware_esp32 ., docker tag registry.gitlab.com/uqa3/firmware_esp32 registry.gitlab.com/uqa3/firmware_esp32:latest, docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com, and docker push registry.gitlab.com/uqa3/firmware_esp32. In the build stage add a build app job that uses the custom image registry.gitlab.com/uqa3/firmware_esp32, runs mkdir build && cd build, cmake .., and make, and publishes ./build/bootloader/bootloader.bin, ./build/partition_table/partition-table.bin, and ./build/uQA3.* as artifacts.",
+  "tags": [
+    "esp32",
+    "cmake",
+    "make",
+    "docker",
+    "dind",
+    "firmware",
+    "gitlab-ci"
+  ]
+}

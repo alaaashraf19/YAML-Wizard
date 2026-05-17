@@ -1,0 +1,24 @@
+AAT:
+  artifacts:
+    paths:
+    - target/site/serenity/
+  image: baasie/java-node-terraform:latest
+  script:
+  - npm i --silent
+  - npm run aat
+  stage: AAT
+pages:
+  artifacts:
+    expire_in: 30 days
+    paths:
+    - public
+  environment:
+    name: production
+  only:
+  - master
+  script:
+  - mv target/site/serenity/ public/
+  stage: deploy
+stages:
+- AAT
+- deploy

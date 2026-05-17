@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_15640",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 3553,
+  "description": "Create a GitLab CI pipeline that uses the Docker image $CI_REGISTRY/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME/rawhide:latest for both jobs. Define a job named Fedora-rawhide-prebuilt (default test stage) with a before_script that runs `dnf -y update --refresh`, installs a long list of packages via `dnf install --setopt=install_weak_deps=False --nogpgcheck -y ...` (including openssh-clients, openssh-server, openssl, oqsprovider, git-core, gnutls-utils, nss-tools, sequoia-policy-config, java-devel, bind, krb5-devel, asciidoc, libxslt, libreswan, diffutils, make, ruff, python3-flake8, python3-pytest, python3-coverage, codespell, wget, python3-pip, pluggy, python3-pylint or pip-installed pylint) and clones the krb5check repository while executing several policy‑config checks; its script runs `make build`, `make test`, and `make install && make test-install >test-install.log 2>&1`. This job runs on all refs except tags. Define a second job named Fedora-rawhide-prebuilt-commit-range (also default test stage) with the same before_script plus an additional `wget https://raw.githubusercontent.com/mhagger/git-test/master/bin/git-test`, and a script that configures git (`git config --global user.name 'gitlab runner'`, `git config --global user.email runner@gitlab.com`), adds the upstream remote, fetches it, then uses the git‑test tool: `python3 git-test add 'make build test'`, `python3 git-test run --keep‑going upstream/${CI_MERGE_REQUEST_TARGET_BRANCH_NAME}..HEAD && echo --- && python3 git-test results upstream/${CI_MERGE_REQUEST_TARGET_BRANCH_NAME}..HEAD`. This job runs only on merge requests and also excludes tags. Define variables SEQUOIA_POLICY_CONFIG_CHECK_LOOSE and SEQUOIA_POLICY_CONFIG_CHECK_STRICT with the given values.",
+  "tags": [
+    "fedora-rawhide",
+    "dnf",
+    "make",
+    "git-test",
+    "ci-pipeline",
+    "merge-requests"
+  ]
+}

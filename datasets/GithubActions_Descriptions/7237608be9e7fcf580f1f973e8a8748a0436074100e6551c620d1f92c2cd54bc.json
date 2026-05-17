@@ -1,0 +1,16 @@
+{
+  "sha": "7237608be9e7fcf580f1f973e8a8748a0436074100e6551c620d1f92c2cd54bc",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1241,
+  "description": "Create a GitHub Actions workflow named sw that runs on push and pull request events across three jobs: windows, linux, and macos. For each job, check out the repository, use the egorpugin/sw-action, and upload the build artifact. On windows, run on a windows-2022 environment and build with default settings. On linux, run in a fedora:35 container on ubuntu-20.04, install flex and bison, and build with gcc. On macos, run on a matrix of os, install flex, bison, and gcc with brew, and build with gcc.",
+  "tags": [
+    "cross-platform",
+    "github-actions",
+    "build",
+    "artifact",
+    "windows",
+    "linux",
+    "macos"
+  ]
+}

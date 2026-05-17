@@ -1,0 +1,16 @@
+{
+  "sha": "27116ad6ba7954b420ac102598573159d60ee38d381ff08043de57e8e0f8e2a5",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4023,
+  "description": "Create a GitHub Actions workflow named Dev with concurrency set to build. Trigger it on push to master and release/* branches, and on pull requests to those branches. Use an ubuntu-latest job to checkout code, inject short variables, set up QEMU and Docker Buildx, then build and test a Docker image in multiple steps, including building with specific build arguments, running tests with Docker Compose and dotnet test in various configurations, and finally publishing the image to Docker Hub with calculated version tags if the event is not a pull request.",
+  "tags": [
+    "docker",
+    "dotnet",
+    "github-actions",
+    "ubuntu",
+    "tests",
+    "docker-compose",
+    "docker-hub"
+  ]
+}

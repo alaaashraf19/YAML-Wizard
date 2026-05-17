@@ -1,0 +1,57 @@
+Build and Deploy CI image:
+  image: docker:stable
+  script:
+  - docker build --tag "${CI_REGISTRY_IMAGE}:${CONTAINER_TAG}" --target build .
+  - echo "${CI_DEPLOY_PASSWORD}" | docker login -u "${CI_DEPLOY_USER}" --password-stdin
+    "${CI_REGISTRY}"
+  - docker push "${CI_REGISTRY_IMAGE}:${CONTAINER_TAG}"
+  services:
+  - docker:dind
+  stage: configure
+  variables:
+    CONTAINER_TAG: ci
+Build and Deploy clean image:
+  image: docker:stable
+  only:
+  - develop
+  - master
+  script:
+  - docker build --tag "${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_NAME}" .
+  - echo "${CI_DEPLOY_PASSWORD}" | docker login -u "${CI_DEPLOY_USER}" --password-stdin
+    "${CI_REGISTRY}"
+  - docker push "${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_NAME}"
+  services:
+  - docker:dind
+  stage: deploy
+  variables:
+    SWITCHER_TAG: ${CI_COMMIT_REF_NAME}
+Check Semantic Version:
+  image: node:lts
+  only:
+  - master
+  script:
+  - ./scripts/check_semantic_versioning.sh
+  stage: configure
+  variables:
+    GITLAB_MERGE_REQUEST_API: https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/merge_requests?source_branch=${CI_COMMIT_REF_NAME}
+Publish Package:
+  image: node:lts
+  only:
+  - master
+  script:
+  - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
+  - npm publish
+  stage: deploy
+Test built package:
+  image: registry.gitlab.com/sat-mtl/telepresence/node-switcher:ci
+  script:
+  - cd /opt/node-switcher
+  - npm install
+  - npm run test
+  stage: test
+  variables:
+    NODE_ENV: development
+stages:
+- configure
+- test
+- deploy

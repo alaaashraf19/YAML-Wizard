@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_14076",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1172,
+  "description": "Create a GitLab CI pipeline using the javiersantos/android-ci:latest Docker image, with two stages (build and deploy) and a global before_script that exports ANDROID_SDK_HOME and GRADLE_USER_HOME to the current directory and makes ./gradlew executable. In the build stage add a build:debug job that runs ./gradlew assembleDebug --no-daemon --stacktrace, archives the presentation/build/outputs/ directory as an artifact, and runs on all branches except master. Also in the build stage add a build:release job that runs only on the master branch, first decrypts keystore.jks.enc with openssl aes-256-cbc using $key and $iv, then runs ./gradlew assemble --no-daemon, then executes echo \"export APP_VERSION=$(./gradlew -q pV)\" > variables, and stores both the variables file and presentation/build/outputs/ as artifacts. In the deploy stage add a deploy:artifacts job that runs only on master, disables the global before_script and cache, sources the variables file, copies the release and debug APKs to files named ORIOKS-$APP_VERSION-build-$CI_PIPELINE_IID.apk and ORIOKS-$APP_VERSION-debug-build-$CI_PIPELINE_IID.apk, and publishes any ORIOKS*.apk files as artifacts. Configure a cache keyed by the commit ref name that caches .gradle/caches/, .gradle/wrapper/, and .android/build-cache for the build jobs.",
+  "tags": [
+    "android",
+    "gradle",
+    "openssl",
+    "apk",
+    "gitlab-ci",
+    "cache",
+    "build",
+    "deploy"
+  ]
+}

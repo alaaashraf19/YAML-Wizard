@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_11256",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1195,
+  "description": "Create a GitLab CI pipeline with two stages: test and deploy. In the test stage add a UnitTest job using the python:3.6 image that runs a before_script installing the Google Chrome signing key, adding the Chrome apt source, installing pip requirements, running Django makemigrations and migrate, updating apt and installing unzip, google-chrome-stable, xvfb, downloading and unzipping chromedriver 2.32, collecting static files, and starting the Django server in the background; then its script runs coverage run --include='lab_*/*' manage.py test followed by coverage report -m. In the deploy stage add a Deployment job using the ruby:2.4 image that runs a before_script installing the dpl gem and the Heroku CLI, then its script executes dpl --provider=heroku --app=$HEROKU_APPNAME --api-key=$HEROKU_APIKEY, exports HEROKU_API_KEY=$HEROKU_APIKEY, and runs heroku run --app $HEROKU_APPNAME migrate, deploying to the Heroku production environment.",
+  "tags": [
+    "python-3.6",
+    "ruby-2.4",
+    "heroku",
+    "dpl",
+    "coverage",
+    "chrome",
+    "chromedriver"
+  ]
+}

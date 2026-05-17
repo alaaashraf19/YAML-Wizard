@@ -1,0 +1,15 @@
+{
+  "sha": "2dffd4491a85a44272c964044aec99ac53553efe3871bd2479c3e09d62d6e486",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1187,
+  "description": "Create a GitHub Actions workflow named Run tests that runs on every push and pull request. Use a single ubuntu-latest job that checks out the repository, sets up Python 3.x, installs dependencies from requirements.txt and requirements-dev.txt, lints the code with flake8, installs xvfb and pulseaudio, runs tests under xvfb, and uploads a failed image as an artifact if the test fails.",
+  "tags": [
+    "python",
+    "tests",
+    "ubuntu",
+    "xvfb",
+    "flake8",
+    "ci"
+  ]
+}

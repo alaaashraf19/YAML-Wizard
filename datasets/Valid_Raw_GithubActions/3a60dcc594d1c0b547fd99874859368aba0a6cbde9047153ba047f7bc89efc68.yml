@@ -1,0 +1,13 @@
+name: clang-tidy-check
+on: [pull_request]
+
+jobs:
+  clang-tidy-check:
+    runs-on: ubuntu-latest
+    container: ghcr.io/openloco/openloco:8-noble32
+    steps:
+    - uses: actions/checkout@v4
+    - uses: ZehMatt/clang-tidy-annotations@v1
+      with:
+        build_dir: 'build'
+        cmake_args: '--preset linux -DCMAKE_CXX_COMPILER=clang++'

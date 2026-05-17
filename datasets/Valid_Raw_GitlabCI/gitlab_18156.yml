@@ -1,0 +1,44 @@
+build:
+  artifacts:
+    expire_in: 14 weeks
+    paths:
+    - dist/
+  dependencies:
+  - npm_install
+  script:
+  - npm run build
+  stage: build
+image: node:18
+lint:
+  artifacts:
+    expire_in: 14 weeks
+    paths:
+    - dist/
+  dependencies:
+  - npm_install
+  script:
+  - npm run tslint
+  stage: build
+mocha_tests:
+  artifacts:
+    expire_in: 14 weeks
+    paths:
+    - dist/
+  dependencies:
+  - npm_install
+  - build
+  script:
+  - npm run test
+  stage: test
+npm_install:
+  artifacts:
+    expire_in: 4 weeks
+    paths:
+    - node_modules/
+  script:
+  - npm install
+  stage: fetch
+stages:
+- fetch
+- build
+- test

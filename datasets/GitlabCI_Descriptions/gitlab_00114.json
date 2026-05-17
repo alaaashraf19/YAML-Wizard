@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_00114",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1128,
+  "description": "Create a GitLab CI pipeline that uses the fedora:26 Docker image and defines variables for BUILDTOOLS_PKGS, CI_PKGS, DOCGEN_PKGS, GIR_PKGS, GLIB2_PKGS, GSIGNOND_PKG, LIBS_PKGS, LOCALE_PKGS. Configure a cache named dnf-cache that stores the dnf-cache/ directory and in before_script run dnf --setopt=cachedir=`pwd`/dnf-cache --quiet --refresh --assumeyes install $BUILDTOOLS_PKGS $GLIB2_PKGS $GSIGNOND_PKG $LIBS_PKGS $DOCGEN_PKGS $GIR_PKGS $CI_PKGS $LOCALE_PKGS. Add a build stage with a build_x86-64 job that executes meson build -Db_coverage=true, cd build, ninja and publishes the entire repository as an artifact. Add a test stage with a test_x86-64 job that depends on build_x86-64, runs cd build, ninja test, ninja coverage-html and also publishes the entire repository as an artifact. Add a deploy stage with a pages job that runs only on tags and on the master branch of accounts-sso/gsignond-plugin-sasl, depends on test_x86-64, runs cd build, ninja install, cd .., mkdir public, cp -a build/docs/html/* public and publishes the public/ directory as a pages artifact.",
+  "tags": [
+    "fedora",
+    "meson",
+    "ninja",
+    "dnf",
+    "coverage",
+    "gitlab-pages",
+    "cache",
+    "gsignond-plugin-sasl"
+  ]
+}

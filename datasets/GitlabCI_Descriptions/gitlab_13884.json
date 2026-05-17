@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_13884",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 765,
+  "description": "Create a GitLab CI pipeline using the registry.gitlab.com/open-source-devex/containers/build-terraform:latest Docker image. Define global variables CONTAINER_NAME, CONTAINER_RELEASE_IMAGE and CONTAINER_TEST_IMAGE. Define two stages: build and release. In the build stage add a build job that runs ci/build.sh and is excluded for tag pipelines. In the release stage add a release job that runs only on the master branch, sets the GIT_REMOTE variable, executes before_script steps /opt/toolbox/users/setup-bot.sh and /opt/toolbox/users/install-ssh-key.sh \"${DEVEX_BOT_SSH_KEY}\", then runs ci/release.sh, and runs after_script /opt/toolbox/users/cleanup-bot.sh.",
+  "tags": [
+    "terraform",
+    "docker",
+    "build",
+    "release",
+    "ssh-key",
+    "gitlab-ci"
+  ]
+}

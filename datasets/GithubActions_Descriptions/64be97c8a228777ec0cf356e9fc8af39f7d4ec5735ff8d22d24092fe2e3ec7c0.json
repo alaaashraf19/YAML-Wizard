@@ -1,0 +1,16 @@
+{
+  "sha": "64be97c8a228777ec0cf356e9fc8af39f7d4ec5735ff8d22d24092fe2e3ec7c0",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1834,
+  "description": "Create a GitHub Actions workflow named CI Build that runs on workflow dispatch, push to master, and pull requests to master. Use a matrix job strategy to run on multiple operating systems (ubuntu-latest, ubuntu-24.04-arm, macos-latest, windows-latest) with different presets (clang-sanitize, gcc-release, gcc-11-release, etc.). For each job, check out the repository, install dependencies if necessary, set up the environment (MSVC, Xcode, etc.), configure with cmake, build, and run tests.",
+  "tags": [
+    "ci",
+    "cmake",
+    "ubuntu",
+    "macos",
+    "windows",
+    "matrix",
+    "tests"
+  ]
+}

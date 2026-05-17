@@ -1,0 +1,16 @@
+{
+  "sha": "7a08a5a15fd280c4cb786aa0e60b7837af260a0298cbcf6f3cd79e9c5b6ddf1b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3356,
+  "description": "Create a GitHub Actions workflow named CI Build that runs on push to master and on pull requests to master. The workflow has four jobs: build, linux-coverage, bindings, and conan. The build job uses a matrix strategy to run on multiple operating systems with different presets, and performs steps including checkout, dependency installation, configuration, build, and test. The linux-coverage, bindings, and conan jobs run on specific operating systems and perform similar steps including checkout, dependency installation, configuration, build, and test.",
+  "tags": [
+    "cmake",
+    "ci",
+    "ubuntu",
+    "windows",
+    "macos",
+    "tests",
+    "coverage"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "0b952643ddb57239e7e04b95504287fcae453d8291e3342ede36e18697a94f56",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4789,
+  "description": "Create a GitHub Actions workflow named Build that runs on push to any branch or tag matching [0-9]+.[0-9]+.[0-9]+ and on pull requests to any branch. The workflow has a concurrency group based on the GitHub reference and cancels in-progress jobs. It defines four jobs: build-windows, build-macos, build-linux, and deploy. The build jobs use premake5 to generate project files and build binaries for different architectures and configurations. The deploy job runs on ubuntu-latest, depends on the build jobs, and creates a release with the built binaries when a tag is pushed to the prod or dev branch.",
+  "tags": [
+    "premake",
+    "msbuild",
+    "make",
+    "github-release",
+    "cross-platform",
+    "ci"
+  ]
+}

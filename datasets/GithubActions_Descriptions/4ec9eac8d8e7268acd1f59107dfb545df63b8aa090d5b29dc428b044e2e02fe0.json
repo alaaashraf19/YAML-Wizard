@@ -1,0 +1,16 @@
+{
+  "sha": "4ec9eac8d8e7268acd1f59107dfb545df63b8aa090d5b29dc428b044e2e02fe0",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5436,
+  "description": "Create a GitHub Actions workflow named test-p4c that runs on push to main, pull requests to main, and merge groups for main. The workflow has multiple jobs for testing p4c on different environments: Ubuntu 22.04, Ubuntu 20.04 with and without Unity, Fedora Linux, and MacOS on M1 and x86 architectures. Each job checks out the code, sets up ccache, installs dependencies, builds p4c, and runs tests.",
+  "tags": [
+    "github-actions",
+    "ci",
+    "testing",
+    "p4c",
+    "ubuntu",
+    "fedora",
+    "macos"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_18445",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1034,
+  "description": "Create a GitLab CI pipeline that runs all jobs on Docker runners (tagged docker) using various Python Docker images. Define a test stage with eight jobs: a pages job using python:3.9 that installs make, installs tox, runs TOXENV=docs tox, moves the generated HTML to a public directory and publishes the public/ folder as an artifact; test:3.6, test:3.7, test:3.8, and test:3.9 jobs each using python:3.6, 3.7, 3.8, 3.9 respectively, installing tox and executing TOXENV=py36 tox, TOXENV=py37 tox, TOXENV=py38 tox, TOXENV=py39 tox; a test:pep8 job on python:3.6 that installs tox and runs TOXENV=lint tox; a test:pypy3 job on pypy:3 that installs tox and runs TOXENV=pypy3 tox; and a test_cov job on python:3.9 that installs tox and runs TOXENV=py39-cover tox. All jobs inherit the hidden .test template which sets the stage to test and exports an empty TOXENV before the script. No caches, rules, or additional services are defined.",
+  "tags": [
+    "python",
+    "tox",
+    "docker",
+    "multi-python",
+    "pages",
+    "lint",
+    "coverage",
+    "pypy"
+  ]
+}

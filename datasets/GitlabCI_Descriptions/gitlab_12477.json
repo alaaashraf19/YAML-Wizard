@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_12477",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1799,
+  "description": "Create a GitLab CI pipeline using the ${CI_REGISTRY}/molcas/dockerfiles/doc:latest Docker image and three stages: build, join, deploy. In the build stage add a doxygen job that runs: git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@${SOURCE_URL} OpenMolcas; cd OpenMolcas; git checkout ${SOURCE_COMMIT}; cd doc/doxygen; echo \"PROJECT_NUMBER = $(git describe --always --match 'v*')\" >> Doxyfile; doxygen; find html -type f -name \"*html\" -exec sed -i 's/ async / async=\"async\" /' {} \\;; after_script cats OpenMolcas/doc/doxygen/doxygen.log; it stores OpenMolcas/doc/doxygen/html as an artifact and runs only on the master branch. Also in the build stage add a latexdoc job that runs: apt-get update; apt-get install -y --no-install-recommends ghostscript latexmk texlive-fonts-recommended lmodern texlive-latex-extra; cd latexdoc; ./makepdf; it publishes latexdoc/manual/manual.pdf as an artifact and runs only on master. Add a sphinx job in the build stage that runs: git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@${SOURCE_URL} OpenMolcas; cd OpenMolcas; export RELEASE=$(git describe --always --match 'v*'); export VERSION=$(echo ${RELEASE#v} | awk -F'[.-]' '{print $1\".\"$2}'); cd ..; sed -i -e \"s/version =.*/version = '${VERSION}'/\" source/conf.py; sed -i -e \"s/release =.*/release = '${RELEASE}'/\" source/conf.py; make html latexpdf; it stores build/html and build/latex/Manual.pdf as artifacts and runs only on master. In the join stage add a pages job that runs: mkdir -p public; mv build/html public/sphinx; mv OpenMolcas/doc/doxygen/html public/doxygen; du -sh public/*; it publishes the public/ directory as a pages artifact with 1 day expiration and runs only on master. No caches or services are defined.",
+  "tags": [
+    "doxygen",
+    "latex",
+    "sphinx",
+    "gitlab-pages",
+    "molcas",
+    "documentation"
+  ]
+}

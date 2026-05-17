@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_09077",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2774,
+  "description": "Create a GitLab CI pipeline that runs only when the pipeline source is pipeline, web, or api and the variable SECURITY_RELEASE_PIPELINE equals \"publish\" or \"true\". Define a manual job security_release_publish:start in stage security_release:publish:start that executes `bundle exec rake 'security:publish:start'`. Add a security_release_publish:create_dynamic_pipeline job in stage security_release:publish, dependent on start, that saves `dynamic-gitlab-ci.yml` as an artifact and runs a script setting `-eo pipefail`, invoking `bundle exec rake \"security:publish:generate_dynamic_pipeline\"`, and echoing the generated file with CI section markers. Add a security_release_publish:generate_jobs job in the same stage that triggers a downstream pipeline using the artifact `dynamic-gitlab-ci.yml` from the previous job, forwards all pipeline variables, includes the local file `.gitlab/ci/include/secrets-self-contained.yml`, and uses the `depend` strategy. Define a manual security_release_publish:move_blog_post job that runs after generate_jobs and executes `source scripts/setup_ssh.sh`, `source scripts/setup_git.sh`, and `bundle exec rake 'security:publish:move_blog_post'`. Finally, add a security_release_publish:deploy_blog_post job that runs after move_blog_post and runs `bundle exec rake 'security:publish:deploy_blog_post'`, and a delayed security_release_publish:verify_blog_post job that starts 30 minutes after deploy_blog_post, runs `bundle exec rake 'security:publish:verify_blog_post'`, and is triggered by the same conditional rules.",
+  "tags": [
+    "ruby",
+    "rake",
+    "security-release",
+    "dynamic-pipeline",
+    "manual",
+    "delayed"
+  ]
+}

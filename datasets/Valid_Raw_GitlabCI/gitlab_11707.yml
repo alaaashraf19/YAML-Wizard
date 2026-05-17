@@ -1,0 +1,36 @@
+.qa:
+  before_script:
+  - pip install -e .[all]
+  script:
+  - pytest watchghost/tests/tests
+doc:
+  image: python:3.13
+  script:
+  - pip install Sphinx
+  - sphinx-build -b html docs build/html
+lint:
+  extends: .qa
+  image: python:3.13
+  script:
+  - pytest --ruff --ruff-format -m ruff watchghost
+qa-3.10:
+  extends: .qa
+  image: python:3.10
+qa-3.11:
+  extends: .qa
+  image: python:3.11
+qa-3.12:
+  extends: .qa
+  image: python:3.12
+qa-3.13:
+  extends: .qa
+  image: python:3.13
+qa-3.7:
+  extends: .qa
+  image: python:3.7
+qa-3.8:
+  extends: .qa
+  image: python:3.8
+qa-3.9:
+  extends: .qa
+  image: python:3.9

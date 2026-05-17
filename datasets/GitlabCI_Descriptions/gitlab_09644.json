@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_09644",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1053,
+  "description": "Create a GitLab CI pipeline using the php:7.0-cli Docker image. Include a before_script that ensures ssh-agent, adds the DEPLOY_KEY, configures known_hosts, installs git, zip, unzip, libxml2-dev, runs docker-php-ext-install soap and sockets, and installs Composer via curl. Define stages build and deploy, set GIT_SUBMODULE_STRATEGY variable to normal. In the build stage add a build-latest-tags job that runs git submodule foreach '../package-module.sh $name' and stores artifacts named mirrOS-modules-$CI_COMMIT_SHA containing build/*.zip and failed-modules. In the deploy stage add a deploy-zip-files job that runs rsync -t build/*.zip $USER@api.glancr.de:$ROOT/moduleZips/, runs only on the master branch and excludes commits matching /^\\[meta\\]$/ , and deploys to the update-server environment at https://api.glancr.de.",
+  "tags": [
+    "php",
+    "composer",
+    "ssh",
+    "git-submodule",
+    "zip",
+    "rsync",
+    "deploy",
+    "build"
+  ]
+}

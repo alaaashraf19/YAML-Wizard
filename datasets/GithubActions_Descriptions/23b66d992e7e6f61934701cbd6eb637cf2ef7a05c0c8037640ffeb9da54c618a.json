@@ -1,0 +1,18 @@
+{
+  "sha": "23b66d992e7e6f61934701cbd6eb637cf2ef7a05c0c8037640ffeb9da54c618a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 9699,
+  "description": "Create a GitHub Actions workflow named Build that runs on every push to the build branch and on pull requests to the build branch. The workflow should have three jobs: build-macos, build-linux, and build-windows, each running on a different environment (macos-10.15, ubuntu-18.04, and windows-2019 respectively). Each job should check out the repository, set up the environment, install dependencies, and build and upload Python wheels as artifacts.",
+  "tags": [
+    "macos",
+    "linux",
+    "windows",
+    "python",
+    "mkl",
+    "openfst",
+    "kaldi",
+    "ci",
+    "build"
+  ]
+}

@@ -1,0 +1,123 @@
+.build_template:
+  except: &id001
+  - master
+  image: docker:latest
+  script: &id002
+  - docker build --pull -t $CONTAINER_TEST_IMAGE:$TAG -f Dockerfile.$DISTRO .
+  - docker push $CONTAINER_TEST_IMAGE:$TAG
+  services: &id003
+  - docker:dind
+  stage: build
+  tags: &id004
+  - docker
+.release-image:
+  image: docker:latest
+  only: &id005
+  - master
+  script: &id006
+  - docker pull $CONTAINER_DEV_IMAGE:$TAG
+  - docker tag $CONTAINER_DEV_IMAGE:$TAG $CONTAINER_RELEASE_IMAGE:$RELEASE_TAG
+  - docker push $CONTAINER_RELEASE_IMAGE:$RELEASE_TAG
+  services: &id007
+  - docker:dind
+  stage: release
+  tags: &id008
+  - docker
+.test_template:
+  except: &id009
+  - master
+  image: docker:latest
+  script: &id010
+  - docker pull $CONTAINER_TEST_IMAGE:$TAG
+  - docker run --name $CONTAINER_ID -d --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro
+    $CONTAINER_TEST_IMAGE:$TAG $INIT
+  - docker exec --tty $CONTAINER_ID env TERM=xterm ansible --version
+  services: &id011
+  - docker:dind
+  stage: test
+  tags: &id012
+  - docker
+before_script:
+- docker info
+- echo "$CI_JOB_TOKEN" | docker login -u gitlab-ci-token $CI_REGISTRY --password-stdin
+build_ubuntu1604:
+  except: *id001
+  image: docker:latest
+  script: *id002
+  services: *id003
+  stage: build
+  tags: *id004
+  variables:
+    DISTRO: ubuntu16.04
+    TAG: '16.04'
+build_ubuntu1804:
+  except: *id001
+  image: docker:latest
+  script: *id002
+  services: *id003
+  stage: build
+  tags: *id004
+  variables:
+    DISTRO: ubuntu18.04
+    TAG: '18.04'
+release_image_latest:
+  image: docker:latest
+  only: *id005
+  script: *id006
+  services: *id007
+  stage: release
+  tags: *id008
+  variables:
+    RELEASE_TAG: latest
+    TAG: '18.04'
+release_image_ubuntu1604:
+  image: docker:latest
+  only: *id005
+  script: *id006
+  services: *id007
+  stage: release
+  tags: *id008
+  variables:
+    RELEASE_TAG: '16.04'
+    TAG: '16.04'
+release_image_ubuntu1804:
+  image: docker:latest
+  only: *id005
+  script: *id006
+  services: *id007
+  stage: release
+  tags: *id008
+  variables:
+    RELEASE_TAG: '18.04'
+    TAG: '18.04'
+stages:
+- build
+- test
+- release
+test_ubuntu1604:
+  except: *id009
+  image: docker:latest
+  script: *id010
+  services: *id011
+  stage: test
+  tags: *id012
+  variables:
+    DISTRO: ubuntu16.04
+    INIT: /lib/systemd/systemd
+    TAG: '16.04'
+test_ubuntu1804:
+  except: *id009
+  image: docker:latest
+  script: *id010
+  services: *id011
+  stage: test
+  tags: *id012
+  variables:
+    DISTRO: ubuntu18.04
+    INIT: /lib/systemd/systemd
+    TAG: '18.04'
+variables:
+  CONTAINER_DEV_IMAGE: $CI_REGISTRY_IMAGE/develop
+  CONTAINER_ID: $CI_JOB_NAME-$CI_PROJECT_NAME-Pipeline$CI_PIPELINE_ID-Job$CI_JOB_ID
+  CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE
+  CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME

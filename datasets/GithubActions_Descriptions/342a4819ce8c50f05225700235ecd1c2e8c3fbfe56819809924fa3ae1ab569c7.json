@@ -1,0 +1,16 @@
+{
+  "sha": "342a4819ce8c50f05225700235ecd1c2e8c3fbfe56819809924fa3ae1ab569c7",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2319,
+  "description": "Create a GitHub Actions workflow named Test that runs on every pull request and push to the main branch. Use a matrix strategy to test with Python 3.8, 3.9, 3.10, and 3.11 on an ubuntu-latest environment. The workflow should set up PostgreSQL, MongoDB, and Scylla, install Poetry and dependencies, and run various unit tests with coverage reporting, finally uploading the coverage to Codecov.",
+  "tags": [
+    "python",
+    "tests",
+    "postgresql",
+    "mongodb",
+    "scylla",
+    "poetry",
+    "codecov"
+  ]
+}

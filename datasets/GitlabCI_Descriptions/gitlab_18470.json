@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_18470",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 3036,
+  "description": "Create a GitLab CI pipeline with three stages: build, pack, and publish, using the microsoft/aspnetcore-build Docker image for the build job and mono:onbuild for the publish jobs. The build stage runs a job named build that caches the packages/ directory and executes `dotnet restore --verbosity quiet`, `dotnet build \"src/${fullPackageName}/${fullPackageName}.csproj\" -c debug`, and `dotnet build \"src/${fullPackageName}.Example/${fullPackageName}.Example.csproj\" -c debug`. In the pack stage add two jobs: pack:alpha (runs only on branches matching ^release/[0-9]+\\.[0-9]+\\.[0-9]+$, restores, then `dotnet pack` with version derived from the branch name and stores the resulting .nupkg and .symbols.nupkg as artifacts that expire in one week) and pack:final (runs only on tags, restores and packs twice to produce final versioned packages, also stored as one‑week artifacts). In the publish stage add publish:alpha and publish:final jobs that depend on their respective pack jobs, use the same mono:onbuild image, and run a script that echoes the packages, finds all *.nupkg files in ./pack and pushes each to NuGet with `nuget push \"$fn\" ${nugetPushTags}`; publish:final also defines an environment URL pointing to the NuGet package page. All jobs share a cache of the packages/ directory and the pipeline defines variables `companyName`, `vendorName`, `fullPackageName`, and `nugetPushTags` for constructing package names and NuGet credentials.",
+  "tags": [
+    "dotnet",
+    "nuget",
+    "mono",
+    "aspnetcore-build",
+    "ci",
+    "packaging",
+    "release",
+    "alpha",
+    "final"
+  ]
+}

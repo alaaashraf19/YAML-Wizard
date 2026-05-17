@@ -1,0 +1,12 @@
+cache:
+  paths:
+  - cargo/
+  - target/
+image: rust:latest
+stages:
+- test
+test:
+  script:
+  - rustc --version && cargo --version
+  - cargo test --verbose
+  stage: test

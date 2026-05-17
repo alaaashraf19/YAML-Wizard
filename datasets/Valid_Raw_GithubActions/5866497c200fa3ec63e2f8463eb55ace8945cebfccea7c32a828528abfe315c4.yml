@@ -1,0 +1,11 @@
+name: generate bundles
+
+on: [push]
+
+jobs:
+
+  call-win_base:
+    uses: ./.github/workflows/win_base.yml
+    with:
+      win-architecture: 'x64'
+    secrets: inherit

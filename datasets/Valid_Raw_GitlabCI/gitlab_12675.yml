@@ -1,0 +1,109 @@
+coverage:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - coverage/
+  before_script:
+  - pip install --trusted-host www.coolprop.dreamhosters.com --process-dependency-links
+    --pre -e .
+  - pip install -r cov-requirements.txt
+  coverage: /\d+\%\s*$/
+  image: peer23peer/mtipy_cov:latest
+  script:
+  - py.test --cov=MTIpython --cov-report html:coverage MTIpython/testsuite/
+  - coverage report -m
+  type: test
+pages:
+  artifacts:
+    paths:
+    - public
+    - Documentation/_build/latex
+  before_script:
+  - pip install --trusted-host www.coolprop.dreamhosters.com --process-dependency-links
+    --pre -e .
+  - pip install -r sphinx-requirements.txt
+  dependencies:
+  - coverage
+  - pylint
+  image: peer23peer/mtipy_sphinx:latest
+  only:
+  - develop
+  - master
+  - prof
+  script:
+  - rm -rf Documentation/_build
+  - rm -rf build
+  - rm -rf pylint/_build
+  - rm -rf public
+  - cd Documentation
+  - make html
+  - make latex
+  - cd ..
+  - mv Documentation/_build/html/ public/
+  - cd pylint
+  - make html
+  - cd ..
+  - mv pylint/_build/html/ public/pylint
+  - mv coverage public/
+  type: doc
+pdf:
+  artifacts:
+    paths:
+    - MTIpython.pdf
+  dependencies:
+  - pages
+  image: peer23peer/mtipy_pdf:latest
+  only:
+  - develop
+  - master
+  - prof
+  script:
+  - chmod 755 Tools/scripts/build_pdf.bash
+  - Tools/scripts/build_pdf.bash
+  type: publish
+pylint:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - pylint/
+  before_script:
+  - pip install --trusted-host www.coolprop.dreamhosters.com --process-dependency-links
+    --pre -e .
+  - pip install -r cov-requirements.txt
+  image: peer23peer/mtipy_cov:latest
+  script:
+  - python Tools/scripts/pylint2rst.py --folder=pylint
+  type: test
+release:
+  artifacts:
+    paths:
+    - ./*.whl
+  image: peer23peer/mtipy:latest
+  only:
+  - develop
+  - master
+  - prof
+  script:
+  - python setup.py bdist_wheel
+  - mv dist/*.whl .
+  type: deploy
+stages:
+- test
+- doc
+- publish
+- deploy
+unittest:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - MTIpython/testsuite/*.log
+  before_script:
+  - pip install --trusted-host www.coolprop.dreamhosters.com --process-dependency-links
+    --pre -e .
+  image: peer23peer/mtipy:latest
+  script:
+  - python -m unittest discover -s ./MTIpython/testsuite/ -t ./MTIpython/testsuite/
+  type: test
+variables:
+  GIT_SSL_NO_VERIFY: '1'
+  GIT_SUBMODULE_STRATEGY: recursive

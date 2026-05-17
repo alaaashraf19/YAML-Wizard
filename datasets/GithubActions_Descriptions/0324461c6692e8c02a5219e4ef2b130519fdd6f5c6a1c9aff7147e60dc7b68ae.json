@@ -1,0 +1,14 @@
+{
+  "sha": "0324461c6692e8c02a5219e4ef2b130519fdd6f5c6a1c9aff7147e60dc7b68ae",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2526,
+  "description": "Create a GitHub Actions workflow named test-p4c-debian that runs on every push to main, on pull requests to main, and on merge groups to main. The workflow has two jobs: test-ubuntu22 and test-ubuntu22-tofino, both running on ubuntu-22.04. The test-ubuntu22 job uses a matrix strategy to test with different combinations of Unity and GTest, while the test-ubuntu22-tofino job tests the Tofino backend. Both jobs check out the repository, use ccache, build with GCC, and run tests.",
+  "tags": [
+    "debian",
+    "ubuntu",
+    "gcc",
+    "testing",
+    "p4c"
+  ]
+}

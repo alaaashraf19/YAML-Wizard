@@ -1,0 +1,139 @@
+Centos7:
+  artifacts:
+    expire_in: 2 weeks
+    paths:
+    - tests/*.log
+    - compat_reports/
+    when: on_failure
+  image: $CI_REGISTRY/$BUILD_IMAGES_PROJECT:$CENTOS7_BUILD
+  script:
+  - autoreconf -fi && ./configure --disable-doc && make -j$(nproc) check
+  tags:
+  - shared
+Debian ASAN/UBSAN:
+  artifacts:
+    expire_in: 2 weeks
+    paths:
+    - tests/*.log
+    - ./*.log
+    when: on_failure
+  image: $CI_REGISTRY/$BUILD_IMAGES_PROJECT:$DEBIAN_BUILD
+  script:
+  - autoreconf -fi
+  - export CC=clang
+  - export CFLAGS="-fsanitize=address -g -O0"
+  - ASAN_OPTIONS=detect_leaks=0 ./configure --disable-doc
+  - make -j$(nproc) check
+  - make clean
+  - export CFLAGS="-fsanitize=undefined,integer -fno-sanitize-recover=undefined,integer
+    -g -O0 -Wall -Wextra -Werror"
+  - ./configure --disable-doc
+  - make -j$(nproc) check
+  tags:
+  - shared
+Debian Distcheck:
+  artifacts:
+    expire_in: 2 weeks
+    paths:
+    - tests/*.log
+    - compat_reports/
+    when: on_failure
+  except:
+  - tags
+  image: $CI_REGISTRY/$BUILD_IMAGES_PROJECT:$DEBIAN_BUILD
+  script:
+  - autoreconf -fi
+  - CFLAGS="-g -Og" ./configure --disable-doc
+  - make -j$(nproc)
+  - make clean
+  - CFLAGS="-g -Og" ./configure
+  - make -j$(nproc)
+  - DISTCHECK_CONFIGURE_FLAGS=--disable-gtk-doc make distcheck
+  tags:
+  - shared
+Debian Valgrind:
+  artifacts:
+    expire_in: 2 weeks
+    paths:
+    - tests/*.log
+    when: on_failure
+  image: $CI_REGISTRY/$BUILD_IMAGES_PROJECT:$DEBIAN_BUILD
+  script:
+  - autoreconf -fi
+  - ./configure --disable-doc --enable-valgrind-tests
+  - make -j$(nproc) check
+  tags:
+  - shared
+Fedora Clang-analyzer:
+  artifacts:
+    expire_in: 2 weeks
+    paths:
+    - scan-build-lib/*
+    when: on_failure
+  except:
+  - tags
+  image: $CI_REGISTRY/$BUILD_IMAGES_PROJECT:$FEDORA_BUILD
+  script:
+  - autoreconf -fi
+  - scan-build ./configure --disable-doc
+  - scan-build --status-bugs -o scan-build-lib make -j$(nproc)
+  tags:
+  - shared
+MinGW64:
+  artifacts:
+    expire_in: 2 weeks
+    paths:
+    - ./*.log
+    - tests/*.log
+    when: on_failure
+  before_script:
+  - mount -t binfmt_misc binfmt_misc /proc/sys/fs/binfmt_misc && echo ':DOSWin:M::MZ::/usr/bin/wine64:'
+    > /proc/sys/fs/binfmt_misc/register
+  except:
+  - tags
+  image: $CI_REGISTRY/$BUILD_IMAGES_PROJECT:$FEDORA_BUILD
+  script:
+  - autoreconf -fi
+  - mingw64-configure --disable-valgrind-tests --disable-doc
+  - mingw64-make -j$(nproc)
+  - mingw64-make -j$(nproc) check
+  tags:
+  - shared
+  - docker
+pages:
+  artifacts:
+    paths:
+    - public
+    when: on_success
+  image: $CI_REGISTRY/$BUILD_IMAGES_PROJECT:$DEBIAN_BUILD
+  only:
+  - master
+  script:
+  - autoreconf -fi
+  - CFLAGS="-g -O0" ./configure --disable-doc
+  - make -j$(nproc) check
+  - make check-coverage
+  - mkdir -p public
+  - rm -rf public/coverage
+  - mv lcov public/coverage
+  - rm -rf public/reference
+  - mv docs/html public/reference
+  tags:
+  - shared
+pages-test:
+  except:
+  - master
+  image: $CI_REGISTRY/$BUILD_IMAGES_PROJECT:$DEBIAN_BUILD
+  script:
+  - autoreconf -fi
+  - CFLAGS="-g -O0" ./configure
+  - make -j$(nproc) check
+  - make check-coverage
+  tags:
+  - shared
+variables:
+  BUILD_IMAGES_PROJECT: rockdaboot/build-images
+  CENTOS7_BUILD: buildenv-centos7
+  DEBIAN_BUILD: buildenv-debian-sid
+  FEDORA_BUILD: buildenv-f27
+  GET_SOURCES_ATTEMPTS: '3'

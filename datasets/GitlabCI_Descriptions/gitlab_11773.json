@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_11773",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 204,
+  "description": "Create a GitLab CI pipeline that uses the default Docker image and runs a before_script to install system packages with \"apt-get update -qq && apt-get install -y -qq libreadline-dev zlib1g-dev\" for all jobs. Define a single stage called build. Add a job named build_linux that runs only on tag pipelines (only: tags), is assigned to the build stage, and is limited to runners with the \"build\" tag. In this job execute the exact shell commands \"./autogen.sh\", \"./configure\", and \"make\" in sequence. No artifacts, caches, or services are defined.",
+  "tags": [
+    "linux",
+    "autotools",
+    "make",
+    "build"
+  ]
+}

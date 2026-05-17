@@ -1,0 +1,15 @@
+{
+  "sha": "5368f379129ef8e3cae51f2cb755476703014310fa7bed87853f328c9730523b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3154,
+  "description": "Create a reusable GitHub Actions workflow named github-OSX that runs on a workflow call. The workflow has read-all permissions and runs on a macOS environment with a matrix strategy for different build configurations, including various backends, compilers, and CMake options. For each configuration, it checks out the repository, installs ccache and LLVM, restores the ccache cache, configures CMake, builds the project, and runs tests.",
+  "tags": [
+    "macos",
+    "cmake",
+    "llvm",
+    "cxx",
+    "testing",
+    "reusable-workflow"
+  ]
+}

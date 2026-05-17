@@ -1,0 +1,16 @@
+{
+  "sha": "3ff3786598f3fc88c8a769e7fc8d66128f7410e10b4298778e4e47a631c66ec2",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1613,
+  "description": "Create a GitHub Actions workflow named build that runs on push and pull request events. The workflow has two jobs: build and deploy. The build job runs on an ubuntu-latest environment with a matrix strategy for multiple Python environments, checks out the code, sets up Python, installs tox, and runs tests with tox. The deploy job runs on ubuntu-latest, depends on the build job, and only triggers on push events to tags. It checks out the code, sets up Python 3.7, installs wheel, builds the package, and publishes it to PyPI using a GitHub Actions PyPI publish action.",
+  "tags": [
+    "python",
+    "tox",
+    "pypi",
+    "ubuntu",
+    "tests",
+    "deploy",
+    "tags"
+  ]
+}

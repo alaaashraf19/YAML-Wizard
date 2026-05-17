@@ -1,0 +1,66 @@
+.template_npm: &id007
+  before_script: &id004
+  - yarn config set unsafe-perm true
+  - yarn install
+  script:
+  - yarn run $CI_BUILD_NAME
+  stage: test
+  tags: &id005
+  - docker
+  variables: &id006
+    NPM_CONFIG_LOGLEVEL: warn
+.template_publish-npm:
+  dependencies: &id001
+  - pack
+  script: &id002
+  - echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
+  - npm publish --ignore-scripts --tag $tag ./*.tgz
+  stage: deploy
+  tags: &id003
+  - npm-registry
+cache:
+  paths:
+  - node_modules/
+deploy:npm-dev:
+  dependencies: *id001
+  environment: dev
+  only:
+  - develop@janslow/gitlab-ci-variables
+  script: *id002
+  stage: deploy
+  tags: *id003
+  variables:
+    tag: dev
+deploy:npm-latest:
+  dependencies: *id001
+  environment: latest
+  only:
+  - tags@janslow/gitlab-ci-variables
+  script: *id002
+  stage: deploy
+  tags: *id003
+  variables:
+    tag: latest
+image: node:8
+pack:
+  artifacts:
+    expire_in: 1 day
+    paths:
+    - '*.tgz'
+  before_script: *id004
+  script:
+  - prerelease="-ci.$CI_BUILD_REF"
+  - if [ $CI_BUILD_REF_NAME = "develop" ]; then prerelease="-dev.$CI_PIPELINE_ID";
+    fi
+  - if [ -n "$CI_BUILD_TAG" ]; then prerelease=''; fi
+  - 'sed -i -r "s/\"version\": \"([0-9\.]+)-local\",/\"version\": \"\1$prerelease\",/"
+    package.json'
+  - if grep -q -- "-local" package.json; then echo "Version wasn't changed"; exit
+    1; fi
+  - yarn run compile
+  - npm pack
+  stage: test
+  tags: *id005
+  variables: *id006
+test:mocha: *id007
+test:tslint: *id007

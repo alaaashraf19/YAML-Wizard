@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_10977",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 561,
+  "description": "Create a GitLab CI pipeline with stages build and test, using golang:latest as the default Docker image and including the Security/SAST.gitlab-ci.yml template. In the build stage add a build-main-app job that runs the commands go install gitlab.com/jtaimisto/bluewalker and go install gitlab.com/jtaimisto/bluewalker/listener. In the test stage add a check-min-version job that overrides the image to golang:1.15 and runs go install gitlab.com/jtaimisto/bluewalker followed by go test gitlab.com/jtaimisto/bluewalker/.... Also in the test stage add a run-tests job that runs go test -race -coverprofile=.cov.out gitlab.com/jtaimisto/bluewalker/... and then go tool cover -func .cov.out. The included SAST template provides a sast job that also runs in the test stage.",
+  "tags": [
+    "go",
+    "golang",
+    "sast",
+    "build",
+    "test"
+  ]
+}

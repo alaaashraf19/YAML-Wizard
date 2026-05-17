@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_11881",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 32768,
+  "description": "Create a GitLab CI pipeline that runs a before_script to extend PATH, install manu343726-conan-tools and upgrade conan with pip, verify conan version, add the Manu343726 and bincrafters remotes, create a default Conan profile, and authenticate to the Manu343726 remote using the $manu343726_bintray_key secret. Define two stages: clang and clang_analysis. In the clang stage add jobs named build_clang_6.0.1_clang60_build_type=Release+shared=False, build_clang_6.0.1_clang60_build_type=Release+shared=True, build_clang_6.0.1_clang7_build_type=Release+shared=False, build_clang_6.0.1_clang7_build_type=Release+shared=True, build_clang_6.0.1_gcc5_build_type=Release+shared=False, build_clang_6.0.1_gcc5_build_type=Release+shared=True, build_clang_6.0.1_gcc6_build_type=Release+shared=False, build_clang_6.0.1_gcc6_build_type=Release+shared=True, build_clang_6.0.1_gcc7_build_type=Release+shared=False, build_clang_6.0.1_gcc7_build_type=Release+shared=True, and build_clang_6.0.1_gcc8_build_type=Release+shared=False, build_clang_6.0.1_gcc8_build_type=Release+shared=True, each using the appropriate conanio/clang60, conanio/clang7, conanio/gcc5‑8 Docker image, updating the profile to Release, running CONAN_VERSION_OVERRIDE=6.0.1 conan create with -o llvm:shared, -o compiler-rt:shared and -o clang:shared set to false or true, then removing all local packages and uploading the built clang/6.0.1@Manu343726/testing package to the Manu343726 remote with --all --force --retry 3. In the clang_analysis stage add jobs build_clang_analysis_6.0.1_clang60_build_type=Release+shared=False and build_clang_analysis_6.0.1_clang60_build_type=Release+shared=True using the conanio/clang60 image, updating the profile, running a conan create for clang_analysis/6.0.1@Manu343726/testing with a comprehensive list of component options (llvm_headers, clang_headers, clang_executables, llvm_* etc.) set to false or true, then removing local packages and uploading the analysis package to the Manu343726 remote with --all --force --retry 3. All jobs run on Linux Docker runners with tags \"linux\" and \"docker\".",
+  "tags": [
+    "conan",
+    "clang",
+    "gcc",
+    "docker",
+    "ci",
+    "packages",
+    "clang-analysis"
+  ]
+}

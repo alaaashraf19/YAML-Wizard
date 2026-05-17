@@ -1,0 +1,14 @@
+{
+  "sha": "00c1604ae1c87be7a35e0dea4f08afa479301df13ce336b8f931b8fc9f97adad",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 800,
+  "description": "Create a GitHub Actions workflow named Bump version that triggers on push to the master branch. The workflow checks if the commit message does not start with 'bump:' and then uses commitizen to bump the version and create a changelog. Finally, it uses the release action to create a new release with a tag and changelog body.",
+  "tags": [
+    "github-actions",
+    "version-bump",
+    "changelog",
+    "release",
+    "commitizen"
+  ]
+}

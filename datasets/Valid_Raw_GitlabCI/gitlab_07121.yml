@@ -1,0 +1,37 @@
+.script:
+  script: &id001
+  - cmake -DCMAKE_BUILD_TYPE=Release .. && make && make test
+  - rm -r *
+  - cmake -DCMAKE_BUILD_TYPE=Release -DUSE_STANDALONE_ASIO=ON .. && make && make test
+arch:
+  image: registry.gitlab.com/eidheim/docker-images:arch
+  script: *id001
+before_script:
+- mkdir build && cd build
+- export CXXFLAGS=-Werror
+- export CTEST_OUTPUT_ON_FAILURE=1
+buster:
+  image: registry.gitlab.com/eidheim/docker-images:buster
+  script: *id001
+pages:
+  artifacts:
+    paths:
+    - public
+  image: alpine
+  only:
+  - master
+  script:
+  - apk update && apk add doxygen
+  - cd .. && doxygen docs/Doxyfile
+  - mv doxygen_output/html/ public/
+static-analysis:
+  image: registry.gitlab.com/eidheim/docker-images:arch
+  script:
+  - scan-build cmake .. && scan-build --status-bugs make
+stretch:
+  image: registry.gitlab.com/eidheim/docker-images:stretch
+  script: *id001
+thread-safety-analysis:
+  image: registry.gitlab.com/eidheim/docker-images:arch
+  script:
+  - CXX=clang++ cmake .. && make

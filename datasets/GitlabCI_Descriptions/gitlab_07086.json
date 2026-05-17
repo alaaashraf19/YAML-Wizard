@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_07086",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2062,
+  "description": "Create a GitLab CI pipeline using the python:3.7.16 Docker image and a pip cache keyed by $CI_PROJECT_ID at $CI_PROJECT_DIR/pip-cache (PIP_CACHE_DIR variable set). Add a before_script that runs apt-get update && apt-get install -y pandoc, upgrades pip, installs opencv-python-headless, pillow, torch==1.13.0+cpu and torchvision==0.14.0+cpu from the PyTorch wheel index, and installs development requirements from develop.txt. Define a test stage with three jobs: doctest runs \"make doctest\", unittest runs \"make unittest\", and lint runs \"make lint\"; doctest and unittest are triggered on tags, on the master or develop branches, and on merge‑request events. Define a deploy stage with a pages job that installs IPython, builds the docs with \"cd docs; make clean html; make html; cd ..\", moves the generated HTML to a public/ directory, publishes public/ as an artifact, and runs when CI_SHOULD_DEPLOY==\"1\" with a tag or CI_SHOULD_DEPLOY==\"2\" on master. Also add a pypi job that installs twine, wheel, setuptools and build, runs \"python -m build\", checks the distribution with \"twine check dist/*\", and uploads to PyPI with \"twine upload --skip-existing dist/*\" when CI_SHOULD_DEPLOY==\"1\" with a tag (setting PYPIBUILD=1, PYPITEST=0), and a pypitest job that does the same but uploads to Test PyPI using the repository URL and $TEST_TWINE_PASSWORD when CI_SHOULD_DEPLOY==\"1\" on master (setting PYPIBUILD=1, PYPITEST=1).",
+  "tags": [
+    "python-3.7",
+    "pip-cache",
+    "make",
+    "gitlab-pages",
+    "pypi",
+    "testpypi",
+    "doctest",
+    "unittest",
+    "lint"
+  ]
+}

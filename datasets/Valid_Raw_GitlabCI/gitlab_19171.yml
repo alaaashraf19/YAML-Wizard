@@ -1,0 +1,49 @@
+.package-and-qa-base:
+  dependencies: []
+  extends: .default-only
+  image: ruby:2.6-alpine
+  only:
+    variables:
+    - $CI_SERVER_HOST == "gitlab.com" && $CI_PROJECT_NAMESPACE == "gitlab-org"
+  retry: 0
+  script:
+  - source scripts/utils.sh
+  - install_gitlab_gem
+  - ./scripts/trigger-build omnibus
+  stage: qa
+  variables:
+    GIT_DEPTH: '1'
+package-and-qa:
+  allow_failure: true
+  except:
+    refs:
+    - master
+  extends:
+  - .package-and-qa-base
+  - .only-qa-changes
+  needs:
+  - build-qa-image
+  - gitlab:assets:compile pull-cache
+package-and-qa-manual:
+  except:
+    refs:
+    - master
+  extends:
+  - .package-and-qa-base
+  - .only-code-changes
+  needs:
+  - build-qa-image
+  - gitlab:assets:compile pull-cache
+  when: manual
+package-and-qa-manual:master:
+  extends:
+  - .package-and-qa-base
+  - .only-code-qa-changes
+  needs:
+  - build-qa-image
+  - gitlab:assets:compile
+  only:
+    refs:
+    - master@gitlab-org/gitlab-foss
+    - master@gitlab-org/gitlab
+  when: manual

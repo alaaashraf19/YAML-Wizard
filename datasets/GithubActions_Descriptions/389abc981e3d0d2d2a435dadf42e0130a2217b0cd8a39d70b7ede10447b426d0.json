@@ -1,0 +1,14 @@
+{
+  "sha": "389abc981e3d0d2d2a435dadf42e0130a2217b0cd8a39d70b7ede10447b426d0",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4380,
+  "description": "Create a GitHub Actions workflow named Create Release that triggers on push events with tags. Run a windows-latest job that checks out the repository, sets up .NET 5.0.100, restores dependencies, downloads Dalamud, builds the project, writes the version into a JSON file, archives the build, uploads it as an artifact, creates a release, uploads the archive as a release asset, and updates a repo.json file with the current version.",
+  "tags": [
+    "dotnet",
+    "release",
+    "windows",
+    "github-actions",
+    "ci"
+  ]
+}

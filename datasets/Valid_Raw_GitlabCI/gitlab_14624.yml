@@ -1,0 +1,74 @@
+.only-default:
+  only: &id001
+  - master
+  - wip
+  - merge_requests
+image: alpine:latest
+mr-settings:
+  before_script:
+  - apk -q add python3
+  only:
+  - merge_requests
+  script:
+  - wget -q "https://gitlab.com/postmarketOS/ci-common/-/raw/master/check_mr_settings.py"
+  - python3 ./check_mr_settings.py
+pytest:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - coverage.xml
+    - _html_out/index.html
+    - _temp/local_job/task_*.sh
+    - _temp/local_job_logs/*.txt
+    - pytest.log
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.xml
+    when: on_failure
+  before_script:
+  - wget "https://gitlab.com/postmarketOS/ci-common/-/raw/master/install_pmbootstrap.sh"
+  - PMBOOTSTRAP_TAG=master sh ./install_pmbootstrap.sh
+  - ln -s /tmp/pmbootstrap ../pmbootstrap
+  coverage: /(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/
+  image: alpine:3.18
+  only: *id001
+  script:
+  - .ci/pytest.sh
+pytest-pmb-v2:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - coverage.xml
+    - _html_out/index.html
+    - _temp/local_job/task_*.sh
+    - _temp/local_job_logs/*.txt
+    - pytest.log
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.xml
+    when: on_failure
+  before_script:
+  - wget "https://gitlab.com/postmarketOS/ci-common/-/raw/master/install_pmbootstrap.sh"
+  - PMBOOTSTRAP_TAG=2.3.x sh ./install_pmbootstrap.sh
+  - ln -s /tmp/pmbootstrap ../pmbootstrap_v2
+  coverage: /(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/
+  image: alpine:3.18
+  only: *id001
+  script:
+  - .ci/pytest-pmb-v2.sh
+ruff:
+  before_script:
+  - echo 'https://dl-cdn.alpinelinux.org/alpine/edge/testing' >> /etc/apk/repositories
+  - adduser -D build
+  image: alpine:edge
+  only: *id001
+  script:
+  - .ci/ruff.sh
+vermin:
+  before_script:
+  - adduser -D build
+  only: *id001
+  script:
+  - .ci/vermin.sh

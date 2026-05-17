@@ -1,0 +1,14 @@
+{
+  "sha": "697a8a04cbb93e51e47aeddc0f429006ee6ac5e1ed178a2b7eeb92628b75c7a2",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3015,
+  "description": "Create a GitHub Actions workflow named Publish nuget that runs on every release. Use a single ubuntu-latest job that checks out the repository, gets the next version, installs .NET 6, sets the version number in a specific file, packs multiple .NET projects with the determined version, and pushes the resulting NuGet packages to NuGet.org using the NUGET_API_KEY from secrets.",
+  "tags": [
+    "dotnet",
+    "nuget",
+    "release",
+    "ubuntu",
+    "packaging"
+  ]
+}

@@ -1,0 +1,51 @@
+.build:
+  artifacts: &id002
+    paths:
+    - ./src/Builds/
+  before_script: &id001
+  - chmod +x ./ci/before_script.sh && ./ci/before_script.sh
+  only: &id003
+    variables:
+    - $CI_COMMIT_REF_NAME == "ci"
+    - $CI_COMMIT_REF_NAME == $PAGES_BRANCH
+  script: &id004
+  - chmod +x ./ci/build.sh && ./ci/build.sh
+  stage: build
+.unity_before_script:
+  before_script: *id001
+build-StandaloneWindows64:
+  artifacts: *id002
+  before_script: *id001
+  only: *id003
+  script: *id004
+  stage: build
+  variables:
+    BUILD_TARGET: StandaloneWindows64
+build-WebGL:
+  artifacts: *id002
+  before_script: *id001
+  only: *id003
+  script: *id004
+  stage: build
+  variables:
+    BUILD_TARGET: WebGL
+image: gableroux/unity3d:2018.3.14f1
+pages:
+  artifacts:
+    paths:
+    - public
+  image: alpine:latest
+  only:
+    variables:
+    - $CI_COMMIT_REF_NAME == $PAGES_BRANCH
+  script:
+  - apk update
+  - apk add zip
+  - chmod +x ./ci/pages.sh && ./ci/pages.sh
+  - chmod +x ./ci/pages-apply-runtime-config.sh && ./ci/pages-apply-runtime-config.sh
+  stage: deploy
+stages:
+- build
+- deploy
+variables:
+  BUILD_NAME: RRCS

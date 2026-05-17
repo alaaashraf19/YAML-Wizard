@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_15624",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1781,
+  "description": "Create a GitLab CI pipeline using the docker:latest image with two stages: build and deploy. In the build stage add a build job that runs the global before_script exporting VERSION, IMAGE and STACK, then executes \"docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY\", \"docker build -t ${IMAGE} .\", and \"docker push ${IMAGE}\", and records coverage using the regex '/coverage: \\d+\\.\\d+% of statements/'. Also in the build stage add a codeclimate job that pulls the codeclimate/codeclimate image, runs \"docker run -e CODECLIMATE_CODE=\\\"$(pwd)\\\" -v \\\"$(pwd)\\\":/code -v /var/run/docker.sock:/var/run/docker.sock -v /tmp/cc:/tmp/cc codeclimate/codeclimate engines:install\" and then \"docker run -e CODECLIMATE_CODE=\\\"$(pwd)\\\" -v \\\"$(pwd)\\\":/code -v /var/run/docker.sock:/var/run/docker.sock -v /tmp/cc:/tmp/cc codeclimate/codeclimate analyze -f json > codeclimate.json\", publishing codeclimate.json as an artifact. In the deploy stage add a deploy review job that uses the image registry.gitlab.com/recalbox/ops/rancher-cli:0.6.2, defines environment name \"review/${CI_COMMIT_REF_SLUG}\" with URL https://${CI_ENVIRONMENT_SLUG}-recaleur-prod.recalbox.com, runs \"rancher rm ${STACK}/${CI_ENVIRONMENT_SLUG} || true\", updates files with \"sed \\\"s/RANCHER_SERVICENAME/${CI_ENVIRONMENT_SLUG}/\\\" -i docker-compose.yml rancher-compose.yml\", and brings up the stack with \"FQDN=${CI_ENVIRONMENT_SLUG}-recaleur-prod.recalbox.com rancher up -d --pull -u --force-upgrade -s ${STACK}\", and sets variables RECALEUR_CANARY=256 and RECALEUR_RESPONSE=test. Also add a clean review job that runs manually, uses the same rancher-cli image, stops the environment by echoing \"cleaning ${IMAGE} from ${STACK}/${CI_ENVIRONMENT_SLUG}\" and executing \"rancher rm ${STACK}/${CI_ENVIRONMENT_SLUG}\", and is linked as the on_stop action for the deploy review environment.",
+  "tags": [
+    "docker",
+    "rancher",
+    "codeclimate",
+    "gitlab-ci",
+    "review-environment",
+    "ci-cd"
+  ]
+}

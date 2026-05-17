@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_08607",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1277,
+  "description": "Create a GitLab CI pipeline with a single \"prepare\" stage that runs security scanners. Add a gemnasium-dependency_scanning job that uses the Dependency-Scanning template, has no needs, and runs when go.mod changes in a merge request, on the default branch, on tags, on branches matching /^[\\d-]+-stable(-ee)?$/ or /^security\\//. Add a gitlab-advanced-sast job using the SAST template with the same rules and no needs. Add a secret_detection job using the Secret-Detection template that only runs on merge requests. Add a semgrep-sast job using the SAST template, also with no needs, the same rules, and a variable SAST_EXCLUDED_PATHS set to the default paths plus **/*.py, **/*.go, **/*.java, **/*.js, **/*.jsx, **/*.ts, **/*.tsx, **/*.cjs, **/*.mjs, **/*.cs. Set variables GITLAB_ADVANCED_SAST_ENABLED='true' and SAST_EXCLUDED_ANALYZERS='brakeman,eslint,gosec', and include the Jobs/SAST, Jobs/Dependency-Scanning, and Jobs/Secret-Detection templates.",
+  "tags": [
+    "go",
+    "dependency-scanning",
+    "sast",
+    "secret-detection",
+    "semgrep",
+    "gitlab-ci"
+  ]
+}

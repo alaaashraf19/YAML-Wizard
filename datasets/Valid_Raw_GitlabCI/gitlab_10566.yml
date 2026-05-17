@@ -1,0 +1,52 @@
+before_script:
+- apk add --no-cache gcc musl-dev git curl
+build-linux:
+  artifacts:
+    name: guild_$CI_JOB_ID
+    paths:
+    - guild
+    when: on_success
+  script:
+  - GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build
+  stage: build
+build-macos:
+  artifacts:
+    name: guild_$CI_JOB_ID
+    paths:
+    - guild
+    when: on_success
+  script:
+  - GOOS=darwin GOARCH=amd64 CGO_ENABLED=0 go build
+  stage: build
+image: golang:1.11-alpine
+release-linux:
+  artifacts:
+    name: guild
+    paths:
+    - guild
+    when: on_success
+  only:
+  - tags
+  script:
+  - GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags "-w"
+  stage: release
+release-macos:
+  artifacts:
+    name: guild
+    paths:
+    - guild
+    when: on_success
+  only:
+  - tags
+  script:
+  - GOOS=darwin GOARCH=amd64 CGO_ENABLED=0 go build -ldflags "-w"
+  stage: release
+stages:
+- prepare
+- build
+- release
+test:
+  script:
+  - go test ./... -coverprofile=coverage.out
+  - go tool cover -func=coverage.out
+  stage: prepare

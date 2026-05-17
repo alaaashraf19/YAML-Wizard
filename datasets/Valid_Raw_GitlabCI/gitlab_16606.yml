@@ -1,0 +1,28 @@
+.test_template:
+  script: &id001
+  - bundle install --jobs $(nproc) --without docs --path vendor
+  - bundle exec rake tests
+  - bundle exec rake spec
+  stage: test
+pages:
+  artifacts:
+    paths:
+    - public
+  image: debian:stable
+  only:
+  - master
+  script:
+  - apt-get update && apt-get install -y puppet-strings puppet
+  - puppet strings generate
+  - mv doc public
+  stage: deploy
+test:puppet7.23:
+  image: ruby:3.1
+  script: *id001
+  stage: test
+  variables:
+    FACTER_VERSION: ~> 4.3.0
+    PUPPET_VERSION: ~> 7.23.0
+test:puppetlatest:
+  script: *id001
+  stage: test

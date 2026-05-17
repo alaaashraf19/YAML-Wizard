@@ -1,0 +1,14 @@
+{
+  "sha": "a3275196290cca8a4f13e3bef417a8f3bf7c3e85fb025557deb1124ce3a8bd18",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1445,
+  "description": "Create a GitHub Actions workflow that runs on every push and pull request. Use an ubuntu-latest job in a container to test C++ code, work around permission issues, check out the code, and run a series of scripts to test C++ locally, install dependencies, build and test lammps, and upload coverage to Codecov. Additionally, run a second ubuntu-latest job that depends on the first job and checks if all previous jobs succeeded.",
+  "tags": [
+    "cpp",
+    "ubuntu",
+    "tests",
+    "lammps",
+    "codecov"
+  ]
+}

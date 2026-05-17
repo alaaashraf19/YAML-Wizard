@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_05354",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 284,
+  "description": "Create a GitLab CI pipeline with two stages: test and run, using the chusiang/ansible:alpine-3.6 Docker image for both jobs and tagging them with docker. In the test stage add a syntax_check job that runs make syntax_check and does not allow failure. In the run stage add a run_playbook job that runs ansible-playbook setup.yml. No services, caches, artifacts, or special rules are defined.",
+  "tags": [
+    "ansible",
+    "make",
+    "syntax-check",
+    "playbook",
+    "docker",
+    "alpine"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "sha": "003a8892f2e82a4e7871924343f9814868cada5202fa26090e60e0c95a6f1ae4",
+  "provider": "groq",
+  "model": "llama-3.3-70b-versatile",
+  "yaml_bytes": 1458,
+  "description": "Create a GitHub Actions workflow named Snyk that runs on every push and pull request with read permission to repository contents. In a single ubuntu-latest job, check out the code, set up Python 3.10 and Node.js 18, cache pip packages, upgrade pip, and install requirements from misc/analysis-requirements.txt or misc/coverage-requirements.txt based on the matrix strategy. Then, install Snyk globally with npm and run Snyk test with the provided requirements file and SNYK_TOKEN from secrets.",
+  "tags": [
+    "snyk",
+    "security",
+    "python",
+    "nodejs",
+    "pip",
+    "npm",
+    "github-actions"
+  ]
+}

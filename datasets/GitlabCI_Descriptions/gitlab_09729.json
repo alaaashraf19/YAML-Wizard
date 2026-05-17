@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_09729",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 540,
+  "description": "Create a GitLab CI pipeline with a single build stage named build. Add a job called build_project that runs on macOS runners tagged xcode-10 and macos. In the job script set formulaName=\"url-helper-app\", set packageName to the CI_PROJECT_NAME variable, set signIdentity first to 'Developer ID Installer: Grigorii Entin (465NA5BW7E)' then to 'Mac Developer', and finally execute ./Pods/GEContinuousIntegration/Scripts/build-gitlab-cmd \"$PWD/build\" \"${packageName:?}\" \"${formulaName:?}\" \"${signIdentity:?}\" XC_FABRIC_BUILD_SECRET=\"${XC_FABRIC_BUILD_SECRET:?}\". The job should publish the files matching build/*.pkg, build/*.dmg, and build/Formula/*.rb as artifacts. No Docker image or services are required.",
+  "tags": [
+    "macos",
+    "xcode-10",
+    "homebrew",
+    "code-signing",
+    "gitlab-ci"
+  ]
+}

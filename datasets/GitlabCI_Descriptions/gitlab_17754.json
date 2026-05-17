@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_17754",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 104,
+  "description": "Create a GitLab CI pipeline that uses the python:3.5 Docker image. Add a before_script that runs `pip install -r requirements.txt` for all jobs. Define a job named test in the default test stage that executes `./manage.py test`; the pipeline has no caches, artifacts, or special rules and runs on every commit.",
+  "tags": [
+    "python-3-5",
+    "pip",
+    "django",
+    "test"
+  ]
+}

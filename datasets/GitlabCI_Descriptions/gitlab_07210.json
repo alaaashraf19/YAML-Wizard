@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_07210",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 231,
+  "description": "Create a GitLab CI pipeline that uses the docker:latest Docker image. Add a single job named build that runs in the default stage and executes the following shell commands: docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY, docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA -f Docker/Dockerfile ., and docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA. The job does not define any caches, artifacts, or services. It runs on all branches and pushes the built image to the GitLab Container Registry.",
+  "tags": [
+    "docker",
+    "gitlab-ci",
+    "container-registry",
+    "build"
+  ]
+}

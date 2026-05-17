@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_15820",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1346,
+  "description": "Create a GitLab CI pipeline with three stages: build, compose, and deploy. Use the mcr.microsoft.com/dotnet/sdk:6.0 image for the build job, which runs curl -sL https://deb.nodesource.com/setup_14.x | bash -, apt-get install -y --no-install-recommends nodejs, dotnet restore, and dotnet publish -r linux-musl-x64 --self-contained -o app, and stores the resulting app directory as an artifact. Use the docker:latest image with a docker:dind service for the dockerbuild job in the compose stage, which logs in to the registry with docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY, builds the image with docker build -t $IMAGE_TAG ./app, pushes it with docker push $IMAGE_TAG, and also keeps the app directory as an artifact. Use the debian:latest image for the deploy job in the deploy stage, which runs only on the master branch, sets up ssh-agent, adds $SSH_PRIVATE_KEY, configures SSH to skip host checking, then SSHes to $BUILD_USER@$BUILD_SERVER to stop and remove any existing $CONTAINER_NAME container, pull $IMAGE_TAG, and run a new container named $CONTAINER_NAME, and publishes the app directory as an artifact. Define IMAGE_TAG as $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME and set GIT_STRATEGY=none for the deploy and dockerbuild jobs.",
+  "tags": [
+    "dotnet-build",
+    "docker-build",
+    "ssh-deploy",
+    "compose-stage",
+    "gitlab-ci"
+  ]
+}

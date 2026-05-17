@@ -1,0 +1,16 @@
+{
+  "sha": "34c873fc3c6eb936799d9233bf4704dc1f25ff8f3d7148c43503f719ce6c9f85",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1479,
+  "description": "Create a GitHub Actions workflow named Test that runs on push, pull request, and workflow dispatch events. The workflow uses a matrix strategy to test on multiple Python versions and operating systems, including Windows, macOS, and Ubuntu. It checks out the repository, sets up Python, installs uv, runs Tox tests, tests the CLI on Ubuntu, verifies emojis.json is up-to-date, and uploads coverage to Codecov. A separate job runs if the test job succeeds, printing a success message.",
+  "tags": [
+    "python",
+    "tests",
+    "tox",
+    "uv",
+    "codecov",
+    "multios",
+    "multiversion"
+  ]
+}

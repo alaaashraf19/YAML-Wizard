@@ -1,0 +1,12 @@
+before_script:
+- npm install
+cache:
+  paths:
+  - node_modules/
+image: node:8.14-alpine
+stages:
+- test
+test:
+  script:
+  - npm test
+  stage: test

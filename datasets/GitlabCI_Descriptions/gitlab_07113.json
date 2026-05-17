@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_07113",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1886,
+  "description": "Create a GitLab CI pipeline using the node:21 Docker image with a global before_script that runs apt-get update -qq && apt-get install -y -qq sshpass and caches the node_modules/ directory. Define stages preparation, test, build, and deploy. In the preparation stage add a staging job that runs npm install. In the test stage add a unit tests job that runs npm run test, and an integration tests job that uses the cypress/base:14 image, runs npm rebuild node-sass, npm install cypress, npm run ci, is manual, and uploads the cypress directory as an artifact on failure. In the build stage add a build app job (except on the resepteille-kuvat branch) that runs npm rebuild node-sass, npm run build, removes the public folder, moves the build output to public and stores public as an artifact, and a build nightly job (only on resepteille-kuvat) that runs npm rebuild node-sass, npm run build-nightly, performs the same cleanup and artifacts. In the deploy stage add a deploy to nightly job (only on resepteille-kuvat) that cd's into public, lists files, removes api/utils/environment.php, writes a PHP config file with nightly database variables, verifies sshpass, sets SSHPASS from $SSH_PASSWORD, and copies the files via sshpass scp to the nightly remote server, and a deploy to reseptisovellus job (only on production) that performs the same steps but writes the production database variables and copies to the production remote server.",
+  "tags": [
+    "node",
+    "npm",
+    "cypress",
+    "sshpass",
+    "deployment",
+    "gitlab-ci",
+    "cache",
+    "artifacts",
+    "staging",
+    "production"
+  ]
+}

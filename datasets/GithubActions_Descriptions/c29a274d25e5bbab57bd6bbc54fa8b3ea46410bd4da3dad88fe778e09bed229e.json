@@ -1,0 +1,12 @@
+{
+  "sha": "c29a274d25e5bbab57bd6bbc54fa8b3ea46410bd4da3dad88fe778e09bed229e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 365,
+  "description": "Create a GitHub Actions workflow named CI on main branch that runs on push and pull request events to the master branch. Configure the workflow to have write permission to packages. Use a reusable prepare job that inherits secrets, and then run separate lint and test jobs that depend on the prepare job, using reusable workflows from prepare.yaml, lint.yaml, and test.yaml.",
+  "tags": [
+    "ci",
+    "reusable-workflows",
+    "packages"
+  ]
+}

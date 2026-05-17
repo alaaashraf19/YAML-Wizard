@@ -1,0 +1,14 @@
+build:
+  artifacts:
+    paths:
+    - rsget_cli/target/release/rsget_cli
+  cache:
+    paths:
+    - rsget_cli/target/
+  script:
+  - cd rsget_cli
+  - cargo build --release
+  stage: build
+image: rust:latest
+stages:
+- build

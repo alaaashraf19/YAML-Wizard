@@ -1,0 +1,14 @@
+{
+  "sha": "50adc9168f9b5046bd35ec544145e542ff04961804a0737137f2565c7871c5c5",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 603,
+  "description": "Create a GitHub Actions workflow named CIFuzz that runs on every pull request. Use a single ubuntu-latest job that builds fuzzers for the wabt project using google/oss-fuzz, runs the fuzzers for 300 seconds, and uploads any crash artifacts if the build was successful but the run failed.",
+  "tags": [
+    "fuzzing",
+    "oss-fuzz",
+    "ubuntu",
+    "cifuzz",
+    "crash-testing"
+  ]
+}

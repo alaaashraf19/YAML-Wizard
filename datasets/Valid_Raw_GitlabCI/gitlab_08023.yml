@@ -1,0 +1,251 @@
+.build-java:
+  artifacts: &id007
+    expire_in: 3 weeks
+    paths:
+    - services/$SERVICE_NAME/target/*.jar
+  cache: &id004
+    key: build-java
+    paths:
+    - /root/.m2/repository/
+    - /root/.sonar/cache/
+  coverage: /Total.*?([0-9]{1,3})\s?%/
+  image: maven:alpine
+  script: &id008
+  - $MAVEN_CLI clean install -Drevision=$CI_COMMIT_REF_SLUG -pl services/$SERVICE_NAME
+    -am
+  - $MAVEN_CLI jacoco:report -pl services/$SERVICE_NAME
+  - cat services/$SERVICE_NAME/target/test-results/coverage/jacoco/index.html
+  stage: build
+.config:
+  variables: &id009
+    SERVICE_NAME: config
+.dev-branches:
+  except: &id005
+  - master
+  - preprod
+  - ^[\d\.]+$
+  only: &id006
+  - branches
+.docker-compose:
+  before_script: &id001
+  - apk add --update python py-pip python-dev
+  - pip install docker-compose
+  - export APP_ENV=$( echo $CI_ENVIRONMENT_NAME | sed -e "s|/.*||g" )
+  - if [ -z "$CI_ENVIRONMENT_NAME" ]; then export APP_ENV=review; fi
+  - docker-compose build
+  dependencies: &id002
+  - build config
+  - build eureka
+  - build hystrix-dashboard
+  - build zuul
+  - build flash-message
+  image: docker:latest
+  services: &id003
+  - docker:dind
+.docker-compose-deploy:
+  before_script: *id001
+  dependencies: *id002
+  image: docker:latest
+  script: &id016
+  - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  - docker-compose push
+  services: *id003
+  stage: deploy
+.eureka:
+  variables: &id010
+    SERVICE_NAME: eureka
+.flash-message:
+  variables: &id011
+    SERVICE_NAME: flash-message
+.hystrix-dashboard:
+  variables: &id012
+    SERVICE_NAME: hystrix-dashboard
+.java:
+  cache: *id004
+  image: maven:alpine
+.production:
+  environment: &id014
+    name: production/$CI_BUILD_REF_NAME
+  only: &id015
+  - tags
+.release-branches:
+  only: &id021
+  - schedules
+  - tags
+  - master
+  - preprod
+  - ^[\d\.]+$
+.review:
+  except: *id005
+  only: *id006
+  when: manual
+.script-python:
+  image: python:3-alpine
+  script: &id022
+  - export PY_REQUIRE_FILE="resources/script/$PY_SCRIPT/requirements.txt"
+  - if [ -e "$PY_REQUIRE_FILE" ]; then pip install -r $PY_REQUIRE_FILE; fi
+  - python resources/script/$PY_SCRIPT
+.staging:
+  environment: &id017
+    name: staging/$CI_BUILD_REF_NAME
+  only: &id018
+  - preprod
+  - ^[\d\.]+$
+.testing:
+  environment: &id019
+    name: testing/$CI_BUILD_REF_NAME
+  only: &id020
+  - master
+.zuul:
+  variables: &id013
+    SERVICE_NAME: zuul
+build config:
+  artifacts: *id007
+  cache: *id004
+  coverage: /Total.*?([0-9]{1,3})\s?%/
+  image: maven:alpine
+  script: *id008
+  stage: build
+  variables: *id009
+build eureka:
+  artifacts: *id007
+  cache: *id004
+  coverage: /Total.*?([0-9]{1,3})\s?%/
+  image: maven:alpine
+  script: *id008
+  stage: build
+  variables: *id010
+build flash-message:
+  artifacts: *id007
+  cache: *id004
+  coverage: /Total.*?([0-9]{1,3})\s?%/
+  image: maven:alpine
+  script: *id008
+  stage: build
+  variables: *id011
+build hystrix-dashboard:
+  artifacts: *id007
+  cache: *id004
+  coverage: /Total.*?([0-9]{1,3})\s?%/
+  image: maven:alpine
+  script: *id008
+  stage: build
+  variables: *id012
+build zuul:
+  artifacts: *id007
+  cache: *id004
+  coverage: /Total.*?([0-9]{1,3})\s?%/
+  image: maven:alpine
+  script: *id008
+  stage: build
+  variables: *id013
+deploy production:
+  before_script: *id001
+  dependencies: *id002
+  environment: *id014
+  image: docker:latest
+  only: *id015
+  script: *id016
+  services: *id003
+  stage: deploy
+deploy review:
+  before_script: *id001
+  dependencies: *id002
+  except: *id005
+  image: docker:latest
+  only: *id006
+  script: *id016
+  services: *id003
+  stage: deploy
+  when: manual
+deploy staging:
+  before_script: *id001
+  dependencies: *id002
+  environment: *id017
+  image: docker:latest
+  only: *id018
+  script: *id016
+  services: *id003
+  stage: deploy
+deploy testing:
+  before_script: *id001
+  dependencies: *id002
+  environment: *id019
+  image: docker:latest
+  only: *id020
+  script: *id016
+  services: *id003
+  stage: deploy
+security report dependency-check:
+  artifacts:
+    expire_in: 3 weeks
+    paths:
+    - target/dependency-check-report.html
+  cache: *id004
+  image: maven:alpine
+  only: *id021
+  script:
+  - $MAVEN_CLI -fn clean install -DskipTests dependency-check:aggregate
+  stage: security
+security sonar preview:
+  artifacts:
+    expire_in: 3 weeks
+    paths:
+    - target/sonar
+  cache: *id004
+  except: *id005
+  image: maven:alpine
+  only: *id006
+  script:
+  - "$SONAR_CLI_OPTS \\\n  -Dsonar.analysis.mode=preview \\\n  -Dsonar.issuesReport.console.enable=true\
+    \ \\\n  -Dsonar.report.export.path=$SONAR_REPORT_FILE\n"
+  stage: security
+security sonar report:
+  cache: *id004
+  image: maven:alpine
+  only: *id021
+  script:
+  - $SONAR_CLI_OPTS -Dsonar.branch=$CI_COMMIT_REF_NAME
+  stage: security
+stages:
+- verify
+- build
+- security
+- deploy
+- trigger
+trigger keep-artifacts:
+  image: python:3-alpine
+  only:
+  - tags
+  script: *id022
+  stage: trigger
+  variables:
+    PY_SCRIPT: keep-artifacts
+trigger sonar note:
+  dependencies:
+  - security sonar preview
+  except: *id005
+  image: python:3-alpine
+  only: *id006
+  script: *id022
+  stage: trigger
+  variables:
+    PY_SCRIPT: sonar
+variables:
+  MAVEN_CLI: ./mvnw $MAVEN_OPTS --batch-mode --errors --fail-at-end --show-version
+    -DinstallAtEnd=true -DdeployAtEnd=true
+  MAVEN_OPTS: -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN
+    -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true
+  SONAR_CLI_OPTS: ./mvnw verify sonar:sonar -Dsonar.login=$SONAR_LOGIN -Dsonar.host.url=$SONAR_URL
+    -Dsonar.projectKey=$CI_PROJECT_PATH_SLUG -Dsonar.projectName=$CI_PROJECT_NAME
+    -Dsonar.links.homepage=$CI_PROJECT_URL -Dsonar.links.issues=$CI_PROJECT_URL/issues
+    -Dsonar.links.scm=$CI_REPOSITORY_URL
+  SONAR_REPORT_FILE: report.json
+verify filename:
+  before_script:
+  - apk add --update git file
+  image: python:3-alpine
+  script: *id022
+  stage: verify
+  variables:
+    PY_SCRIPT: check-filename

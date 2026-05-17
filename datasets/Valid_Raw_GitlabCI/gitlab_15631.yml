@@ -1,0 +1,16 @@
+build:
+  script:
+  - echo "Building configgen"
+  - python setup.py install
+  stage: build
+image: python:3.9-slim
+stages:
+- tests
+- build
+tests:
+  script:
+  - echo "Installing dependencies"
+  - pip install -r requirements.txt
+  - echo "Running unittests"
+  - export PYTHONPATH=$PYTHONPATH:$(pwd) && pytest --cov=configgen
+  stage: tests

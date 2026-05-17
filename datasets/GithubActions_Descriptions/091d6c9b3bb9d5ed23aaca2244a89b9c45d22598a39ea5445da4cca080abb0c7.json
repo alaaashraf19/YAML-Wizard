@@ -1,0 +1,15 @@
+{
+  "sha": "091d6c9b3bb9d5ed23aaca2244a89b9c45d22598a39ea5445da4cca080abb0c7",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2904,
+  "description": "Create a GitHub Actions workflow named AMR-Wind Lint that runs on push and pull requests to the development branch, specifically for files in cmake, amr-wind, submods, test, unit_tests, CMakeLists.txt, and .github/workflows/lint.yml. Use a macos-latest job to cancel previous runs, check out the repository with submodules, install cppcheck dependencies, configure the build, perform static analysis with cppcheck, and report warnings.",
+  "tags": [
+    "cppcheck",
+    "cmake",
+    "amr-wind",
+    "static-analysis",
+    "linting",
+    "macos"
+  ]
+}

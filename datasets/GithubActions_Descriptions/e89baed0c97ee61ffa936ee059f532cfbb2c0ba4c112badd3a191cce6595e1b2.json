@@ -1,0 +1,14 @@
+{
+  "sha": "e89baed0c97ee61ffa936ee059f532cfbb2c0ba4c112badd3a191cce6595e1b2",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1498,
+  "description": "Create a GitHub Actions workflow that runs code checks with different build tools on push and pull request events. The workflow should have three jobs: python-build, nix-flake, and generated-docs. The python-build job should run on ubuntu-latest with Python 3.8 and 3.12, install the build module, and build the package. The nix-flake job should install Nix, checkout the code, and build a derivation. The generated-docs job should regenerate and compare generated documentation.",
+  "tags": [
+    "python",
+    "nix",
+    "docs",
+    "build-tools",
+    "github-actions"
+  ]
+}

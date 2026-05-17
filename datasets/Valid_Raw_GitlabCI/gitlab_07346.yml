@@ -1,0 +1,40 @@
+build-client:
+  artifacts:
+    expire_in: 1 day
+    paths:
+    - '*.js'
+  image: java:8-alpine
+  script:
+  - apk add --update wget ca-certificates bash
+  - wget -q -O /usr/bin/lein https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein
+  - chmod +x /usr/bin/lein
+  - lein cljsbuild once dev
+  - lein cljsbuild once test
+  - ([[ -n "${CI_BUILD_TAG}" ]] && lein cljsbuild once prod) || echo "prod skipped"
+  stage: build
+  tags:
+  - docker
+publish-npm:
+  image: kkarczmarczyk/node-yarn:7.2-slim
+  only:
+  - tags
+  script:
+  - echo "${NPM_AUTH}" > ~/.npmrc
+  - npm publish ./ --access public --tag latest
+  stage: publish
+  tags:
+  - docker
+stages:
+- build
+- test
+- publish
+test-client:
+  image: kkarczmarczyk/node-yarn:7.2-slim
+  script:
+  - yarn install
+  - node pipeclient-test.js
+  stage: test
+  tags:
+  - docker
+variables:
+  LEIN_ROOT: 'true'

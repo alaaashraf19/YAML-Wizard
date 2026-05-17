@@ -1,0 +1,15 @@
+{
+  "sha": "808ec28e9332e4425e8d795df32798737fa053bccc804e88404c111adcf3566a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4079,
+  "description": "Create a GitHub Actions workflow named CI that runs on every push and on pull request events. Use a matrix strategy to build multiple packages (managarm-kernel, managarm-system, managarm-kernel-uefi) on multiple architectures (x86_64, aarch64, riscv64) with specific exclusions. For each job, run on an ubuntu-24.04 environment, permit unprivileged user namespaces, install prerequisites, checkout bootstrap-managarm and Managarm repositories, download a rootfs, prepare the build environment, build the package, generate an image, test the package, and run clang-tidy.",
+  "tags": [
+    "managarm",
+    "bootstrap",
+    "xbstrap",
+    "multi-arch",
+    "ci",
+    "clang-tidy"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_11066",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 510,
+  "description": "Create a GitLab CI pipeline with two jobs. The job named job runs in the default test stage using the ubuntu:16.04 image and executes: export TERM=xterm-256color, echo $TERM, echo -e '\\\\033[31mfox', echo -e '\\\\0;31mfox', echo -e '\\\\u001b[31mfox', echo -e \"\\\\e[31mfox\". The job named node-job runs in the default test stage using the bitnami/node:10-prod image and executes the same TERM and color echo commands, then runs npm install, FORCE_COLOR=1 node index.js, node index.js --color=256, and FORCE_COLOR=1 npx snail-runner ls ls. No caches, artifacts, or special rules are defined.",
+  "tags": [
+    "ubuntu-16.04",
+    "node-10",
+    "color-escape",
+    "npm-install",
+    "snail-runner"
+  ]
+}

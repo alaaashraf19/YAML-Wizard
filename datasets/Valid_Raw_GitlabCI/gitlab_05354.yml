@@ -1,0 +1,18 @@
+run_playbook:
+  image: chusiang/ansible:alpine-3.6
+  script:
+  - ansible-playbook setup.yml
+  stage: run
+  tags:
+  - docker
+stages:
+- test
+- run
+syntax_check:
+  allow_failure: false
+  image: chusiang/ansible:alpine-3.6
+  script:
+  - make syntax_check
+  stage: test
+  tags:
+  - docker

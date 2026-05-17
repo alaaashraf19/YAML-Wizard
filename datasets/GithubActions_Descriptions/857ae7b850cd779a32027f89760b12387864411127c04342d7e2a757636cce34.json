@@ -1,0 +1,17 @@
+{
+  "sha": "857ae7b850cd779a32027f89760b12387864411127c04342d7e2a757636cce34",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5785,
+  "description": "Create a GitHub Actions workflow named wasm that runs on every push to the master branch and on pull requests to master. Use a matrix job that runs on ubuntu-latest, windows-latest, and macos-latest. For each OS, check out the code, set up Python 3.11, install UV, compile fastled.js, fastled.wasm, and index.html, scan for wasm/js/html artifacts, check for required artifacts, generate a timestamp and random hex, upload wasm artifacts, install Playwright, and verify FastLED_onFrame.",
+  "tags": [
+    "wasm",
+    "python",
+    "playwright",
+    "github-actions",
+    "matrix",
+    "macos",
+    "ubuntu",
+    "windows"
+  ]
+}

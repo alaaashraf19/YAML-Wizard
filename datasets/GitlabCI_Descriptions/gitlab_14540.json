@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_14540",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 570,
+  "description": "Create a GitLab CI pipeline using the picter/ci-node Docker image with a before_script that writes the NPM auth token to .npmrc, sets Yarn cache folder to /.yarn, and installs dependencies via yarn install --frozen-lockfile --pure-lockfile. Define a cache named frontier that stores node_modules/ and /.yarn across jobs. Define two stages, test and deploy; in the test stage add a test:lint job that runs npm run lint and a test:unit job that runs npm test. In the deploy stage add a pages job that runs yarn run pages:build, publishes the public/ directory as an artifact, and only executes on the master branch. Also in the deploy stage add a deploy job that runs npm publish --access=public and is triggered only for tag pushes.",
+  "tags": [
+    "node",
+    "yarn",
+    "npm",
+    "pages",
+    "lint",
+    "unit-test",
+    "docker",
+    "cache"
+  ]
+}

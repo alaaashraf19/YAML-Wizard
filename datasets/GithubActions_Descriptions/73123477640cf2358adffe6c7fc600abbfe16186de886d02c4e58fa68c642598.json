@@ -1,0 +1,15 @@
+{
+  "sha": "73123477640cf2358adffe6c7fc600abbfe16186de886d02c4e58fa68c642598",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2011,
+  "description": "Create a GitHub Actions workflow that builds and publishes a Docker image when code is pushed to master, feature branches, or tags matching v*, and on pull requests to master. The workflow uses an ubuntu-latest job with specific permissions, checks out the code, extracts metadata, logs in to the GitHub Container registry, builds and pushes the Docker image with metadata and labels, and generates artifact attestations for non-pull request events.",
+  "tags": [
+    "docker",
+    "github-container-registry",
+    "ghcr",
+    "publishing",
+    "images",
+    "attestations"
+  ]
+}

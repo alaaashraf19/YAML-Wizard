@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_16451",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1341,
+  "description": "Create a GitLab CI pipeline using the golang:1.9 Docker image with variables ARTIFACTS_DIR, BIN_NAME and GO_PROJECT and a before_script that creates the GOPATH directories, installs dep and golint, copies the project files and changes into the project directory. Define three stages: lint, test and build. Add a lint job that runs only on the master branch and executes `golint -set_exit_status $(go list ./... | grep -v /vendor/)`. Add a test job that runs only on master, runs `dep ensure -update` then `go test -short $(go list ./... | grep -v /vendor/)`. Add a race job that runs only on master, runs `dep ensure -update` then `go test -race -short $(go list ./... | grep -v /vendor/)`. Add three build jobs (darwin, linux, windows) each running only on master, executing `dep ensure -update` followed by `tools/build.sh <os>` (where <os> is darwin, linux or windows), and each publishing an artifact at `${ARTIFACTS_DIR}/<os>_amd64`.",
+  "tags": [
+    "go",
+    "golang",
+    "dep",
+    "golint",
+    "build",
+    "test",
+    "lint",
+    "gitlab-ci"
+  ]
+}

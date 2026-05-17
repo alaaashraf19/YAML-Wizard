@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_19157",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 192,
+  "description": "Create a GitLab CI pipeline that uses the node:4.2.2 Docker image. Define a single job named pages (default stage) that runs only on the master branch, caches the node_modules/ directory, and publishes the public/ directory as a Pages artifact. The job's script should execute: npm install -g metalsmith, then npm install, then make build. No additional services or variables are needed. Deploy the built site to GitLab Pages.",
+  "tags": [
+    "node",
+    "npm",
+    "metalsmith",
+    "make",
+    "gitlab-pages"
+  ]
+}

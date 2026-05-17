@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_11186",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 173,
+  "description": "Create a GitLab CI pipeline that uses the registry.gitlab.com/pages/hugo:latest Docker image. Define a pages job (default stage) that runs the command hugo, stores the generated public/ directory as an artifact, and is limited to the master branch via an only rule. Also define a test job (default stage) that runs hugo on all branches except master using an except rule. No additional caches, variables, or services are configured.",
+  "tags": [
+    "hugo",
+    "gitlab-pages",
+    "master-only",
+    "except-master"
+  ]
+}

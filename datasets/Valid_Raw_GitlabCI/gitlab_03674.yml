@@ -1,0 +1,15 @@
+before_script:
+- cd website
+- npm install
+image: node:8
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - npm run build
+  - cd ..
+  - mkdir public
+  - mv website/build/test-site/* public

@@ -1,0 +1,85 @@
+before_script:
+- pip install '.[test]'
+build-job:
+  artifacts:
+    paths:
+    - dist/
+  image: python:3-bookworm
+  script:
+  - python -m pip install -U build
+  - python -m build
+  stage: build
+generate-pypi-attestations:
+  artifacts:
+    paths:
+    - dist/
+  id_tokens:
+    SIGSTORE_ID_TOKEN:
+      aud: sigstore
+  image: python:3-bookworm
+  needs:
+  - artifacts: true
+    job: build-job
+  rules:
+  - if: $CI_COMMIT_TAG
+  script:
+  - python -m pip install -U pypi-attestations
+  - python -m pypi_attestations sign dist/*
+  stage: build
+publish-job:
+  dependencies:
+  - build-job
+  - generate-pypi-attestations
+  id_tokens:
+    PYPI_ID_TOKEN:
+      aud: pypi
+  image: python:3-bookworm
+  rules:
+  - if: $CI_COMMIT_TAG
+  script:
+  - python -m pip install -U twine
+  - twine upload --attestations dist/*
+  stage: deploy
+test_job_integration:
+  before_script:
+  - dnf install -y dbus-daemon python3-pip
+  - pip install '.[test,trio]'
+  image: fedora:41
+  script:
+  - dbus-run-session -- pytest
+  stage: test
+test_job_py310:
+  image: python:3.10
+  script:
+  - pytest
+  stage: test
+test_job_py311:
+  image: python:3.11
+  script:
+  - pytest
+  stage: test
+test_job_py312:
+  image: python:3.12
+  script:
+  - pytest
+  stage: test
+test_job_py313:
+  image: python:3.13
+  script:
+  - pytest
+  stage: test
+test_job_py37:
+  image: python:3.7
+  script:
+  - pytest
+  stage: test
+test_job_py38:
+  image: python:3.8
+  script:
+  - pytest
+  stage: test
+test_job_py39:
+  image: python:3.9
+  script:
+  - pytest
+  stage: test

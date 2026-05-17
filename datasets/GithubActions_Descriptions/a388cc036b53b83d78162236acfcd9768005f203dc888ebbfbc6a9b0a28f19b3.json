@@ -1,0 +1,19 @@
+{
+  "sha": "a388cc036b53b83d78162236acfcd9768005f203dc888ebbfbc6a9b0a28f19b3",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 8613,
+  "description": "Create a GitHub Actions workflow named Release with concurrency set to build. Trigger on push to any tag. The workflow consists of multiple jobs: build, test-containers, test-mongo, test-sql, and publish. The build job builds a Docker image. The test jobs run various tests, including TestContainers, Mongo, and SQL tests. The publish job builds and pushes a multi-platform Docker image, creates a release with binaries and changelog, and cleans up.",
+  "tags": [
+    "docker",
+    "dotnet",
+    "github-release",
+    "playwright",
+    "testcontainers",
+    "mongodb",
+    "sql",
+    "mysql",
+    "postgres",
+    "sqlserver"
+  ]
+}

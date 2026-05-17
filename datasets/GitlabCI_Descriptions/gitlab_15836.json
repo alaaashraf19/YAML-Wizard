@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_15836",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 300,
+  "description": "Create a GitLab CI pipeline using the rlesur/weasydoc:latest Docker image. Define a single deploy stage with a pages job that runs only on the master branch. In the pages job run Rscript -e \"devtools::install_github('rstudio/fontawesome')\", then Rscript -e \"bookdown::render_book('index.Rmd', 'all')\", create a public directory with mkdir public, and move pulpdown.pdf into public/pulpdown.pdf. Publish the public/ directory as a GitLab Pages artifact.",
+  "tags": [
+    "r",
+    "bookdown",
+    "gitlab-pages",
+    "weasydoc",
+    "docker"
+  ]
+}

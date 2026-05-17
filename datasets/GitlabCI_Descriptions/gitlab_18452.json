@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_18452",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1371,
+  "description": "Create a GitLab CI pipeline that uses the ghcr.io/astral-sh/uv:python3.12-bookworm-slim Docker image, sets GIT_DEPTH=1, GIT_STRATEGY=clone and UV_LINK_MODE=copy variables, and defines two stages: test and test_install. In the test stage add a build_package job that runs `uv venv --python 3.12`, `uv build`, and `ls -l dist`, then publishes the dist/ directory as an artifact. Also in test add a coverage job that runs `uv venv --python 3.12`, `uv sync --group dev`, `uv run pytest --cov=src/ --color=yes tests`, and `uv run coverage xml`, and uploads coverage.xml as a Cobertura coverage report artifact. Add a style job that runs `uv venv --python 3.12`, `uv sync --group dev`, and `uv run ruff check src/ tests/`; a test_docs job that installs make via `apt update && apt install -y make`, creates a venv, syncs dev dependencies, runs `make docs`, and stores the docs/ and site/ directories as artifacts; and a tests job that runs in parallel for Python 3.9, 3.10, 3.11 and 3.12, each executing `uv venv --python ${PYTHON_VERSION}`, `uv sync --group dev`, `uv run pytest -v tests`, and `uv build`. Finally, in the test_install stage add a test_install job that depends on build_package, runs `uv venv --python 3.12 --no-project -v`, lists the dist folder, installs the built wheel with `uv pip install dist/*.whl`, lists the site‑packages directory, and executes `uv run python -c 'import pytest_regtest; print(pytest_regtest.pytest_regtest)'`.",
+  "tags": [
+    "uv",
+    "python-3.12",
+    "pytest",
+    "coverage",
+    "ruff",
+    "make-docs",
+    "wheel",
+    "gitlab-ci"
+  ]
+}

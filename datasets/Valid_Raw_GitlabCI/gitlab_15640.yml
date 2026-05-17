@@ -1,0 +1,82 @@
+Fedora-rawhide-prebuilt:
+  before_script:
+  - dnf -y update --refresh
+  - 'dnf install --setopt=install_weak_deps=False --nogpgcheck -y openssh-clients
+    openssh-server openssl oqsprovider git-core which gnutls-utils nss-tools sequoia-policy-config
+    java-devel bind krb5-devel asciidoc libxslt libreswan diffutils make ruff python3-flake8
+    python3-pytest python3-coverage codespell wget && dnf install --setopt=install_weak_deps=False
+    --nogpgcheck -y python3-pip && python3 -m pip install --upgrade pluggy && (dnf
+    install --setopt=install_weak_deps=False --nogpgcheck -y python3-pylint || (python3
+    -m pip install pylint && ln -sf /usr/local/bin/pylint /usr/local/bin/pylint-3))
+
+    '
+  - 'git clone --depth 1 https://github.com/frozencemetery/krb5check tests/krb5check
+    --reference-if-able /opt/krb5check
+
+    sequoia-policy-config-check /dev/null  # check it''s present and executes
+
+    sequoia-policy-config-check-0.4.0 /dev/null  # check it''s present and executes
+
+    sequoia-policy-config-check-pqc /dev/null  # check it''s present and executes
+
+    env GNUTLS_SYSTEM_PRIORITY_FILE=/dev/null gnutls-cli -l >/dev/null
+
+    nss-policy-check /etc/crypto-policies/back-ends/nss.config &>/dev/null
+
+    openssl ciphers > /dev/null
+
+    '
+  except:
+  - tags
+  image: $CI_REGISTRY/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME/rawhide:latest
+  script:
+  - make build
+  - make test
+  - make install && make test-install >test-install.log 2>&1
+Fedora-rawhide-prebuilt-commit-range:
+  before_script:
+  - dnf -y update --refresh
+  - 'dnf install --setopt=install_weak_deps=False --nogpgcheck -y openssh-clients
+    openssh-server openssl oqsprovider git-core which gnutls-utils nss-tools sequoia-policy-config
+    java-devel bind krb5-devel asciidoc libxslt libreswan diffutils make ruff python3-flake8
+    python3-pytest python3-coverage codespell wget && dnf install --setopt=install_weak_deps=False
+    --nogpgcheck -y python3-pip && python3 -m pip install --upgrade pluggy && (dnf
+    install --setopt=install_weak_deps=False --nogpgcheck -y python3-pylint || (python3
+    -m pip install pylint && ln -sf /usr/local/bin/pylint /usr/local/bin/pylint-3))
+
+    '
+  - 'git clone --depth 1 https://github.com/frozencemetery/krb5check tests/krb5check
+    --reference-if-able /opt/krb5check
+
+    sequoia-policy-config-check /dev/null  # check it''s present and executes
+
+    sequoia-policy-config-check-0.4.0 /dev/null  # check it''s present and executes
+
+    sequoia-policy-config-check-pqc /dev/null  # check it''s present and executes
+
+    env GNUTLS_SYSTEM_PRIORITY_FILE=/dev/null gnutls-cli -l >/dev/null
+
+    nss-policy-check /etc/crypto-policies/back-ends/nss.config &>/dev/null
+
+    openssl ciphers > /dev/null
+
+    '
+  - wget https://raw.githubusercontent.com/mhagger/git-test/master/bin/git-test
+  except:
+  - tags
+  image: $CI_REGISTRY/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME/rawhide:latest
+  only:
+  - merge_requests
+  script:
+  - git config --global user.name 'gitlab runner'
+  - git config --global user.email runner@gitlab.com
+  - git remote add upstream $CI_MERGE_REQUEST_PROJECT_URL
+  - git fetch upstream
+  - python3 git-test add 'make build test'
+  - python3 git-test run --keep-going upstream/${CI_MERGE_REQUEST_TARGET_BRANCH_NAME}..HEAD
+    && echo --- && python3 git-test results upstream/${CI_MERGE_REQUEST_TARGET_BRANCH_NAME}..HEAD
+variables:
+  SEQUOIA_POLICY_CONFIG_CHECK_LOOSE: 'sequoia-policy-config-check-0.4.0 sequoia-policy-config-check
+
+    '
+  SEQUOIA_POLICY_CONFIG_CHECK_STRICT: sequoia-policy-config-check-pqc

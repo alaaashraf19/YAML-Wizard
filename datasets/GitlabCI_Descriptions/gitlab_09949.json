@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_09949",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 102,
+  "description": "Create a GitLab CI pipeline that uses the node:7.10.0 Docker image. Define a single job named build_checker that runs in the default test stage, executes npm install, and is configured to run only on branch pipelines but not on the master branch (only: branches, except: master). No caches, artifacts, services, or deployment targets are defined.",
+  "tags": [
+    "node",
+    "npm",
+    "build-checker",
+    "gitlab-ci",
+    "branches",
+    "except-master"
+  ]
+}

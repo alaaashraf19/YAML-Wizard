@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_15195",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 963,
+  "description": "Create a GitLab CI pipeline using the denis4inet/graphene-builder Docker image for building and testing, and denis4inet/ansible-playbook for deployment. Define three stages (build, test, deploy) and set variables BUILD_TYPE=release, LINK_STATICALLY='false', VERSION=0.0.${CI_PROJECT_ID}. In the build stage add a build-graphene job that caches all untracked files, runs `git submodule update --init --recursive` then `tools/build/build_posix.sh tests/chain_test`, and publishes the binaries `programs/cli_wallet/cli_wallet`, `programs/witness_node/witness_node` and the test executable `tests/chain_test` as artifacts. In the test stage add a test-graphene job that depends on build-graphene and executes the built test binary `tests/chain_test`. In the deploy stage add a deploy-graphene job that runs only on the master branch, uses the denis4inet/ansible-playbook image, runs a before_script to start ssh-agent, add the $SSH_PRIVATE_KEY, create ~/.ssh with StrictHostKeyChecking disabled, writes $TARGET_HOST to /tmp/hosts, and then runs `ansible-playbook -i /tmp/hosts tools/deploy/main.yml`, also depending on build-graphene.",
+  "tags": [
+    "graphene-builder",
+    "ansible-deploy",
+    "docker",
+    "ci-pipeline",
+    "ssh"
+  ]
+}

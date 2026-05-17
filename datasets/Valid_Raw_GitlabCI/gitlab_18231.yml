@@ -1,0 +1,32 @@
+before_script:
+- apt-get update >/dev/null
+- apt-get install -y locales >/dev/null
+- echo "en_US UTF-8" > /etc/locale.gen
+- locale-gen en_US.UTF-8
+- export LANG=en_US.UTF-8
+- export LANGUAGE=en_US:en
+- export LC_ALL=en_US.UTF-8
+- bundle install
+image: ruby:3.1.2
+pages:
+  artifacts:
+    paths:
+    - public
+  script:
+  - for remote in `git branch -r | grep -v /HEAD`; do git checkout --track $remote
+    ; done
+  - git branch -a
+  - git checkout release
+  - bundle exec jekyll build -d public
+  - "for BRANCH in `git branch --list|sed 's/\\*//g'`;\ndo\n  echo \"Branch name '$BRANCH'\"\
+    \n  if [[ $BRANCH == RF* ]];\n  then\n    echo \"Build $BRANCH version\"\n   \
+    \ git checkout $BRANCH\n    git fetch\n    echo \"baseurl: /$BRANCH\" >> _config.$BRANCH.yml\n\
+    \    echo \"branch_name: $BRANCH\" >> _config.$BRANCH.yml\n    cat _config.$BRANCH.yml\n\
+    \    bundle exec jekyll build -d public/$BRANCH --config _config.yml,_config.$BRANCH.yml\n\
+    \  fi\ndone\n"
+  stage: deploy
+  variables:
+    ARTIFACT_COMPRESSION_LEVEL: fastest
+    FF_USE_FASTZIP: 'true'
+variables:
+  JEKYLL_ENV: production

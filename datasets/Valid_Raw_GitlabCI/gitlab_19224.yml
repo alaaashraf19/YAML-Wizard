@@ -1,0 +1,48 @@
+.build:compiler:
+  before_script: &id001
+  - "if [ ! -x nim-${NIMBRANCH}/bin/nim ]; then\n  git clone -b ${NIMBRANCH} --depth\
+    \ 5 git://github.com/nim-lang/nim nim-${NIMBRANCH}/\n  cd nim-${NIMBRANCH}\n \
+    \ git clone --depth 5 git://github.com/nim-lang/csources csources/\n  cd csources\n\
+    \  sh build.sh\n  cd ..\n  rm -rf csources\n  bin/nim c koch\n  ./koch boot -d:release\n\
+    \  ./koch nimble\nelse\n  cd nim-${NIMBRANCH}\n  git fetch origin\n  if ! git\
+    \ merge FETCH_HEAD | grep \"Already up-to-date\"; then\n    bin/nim c koch\n \
+    \   ./koch boot -d:release\n    ./koch nimble\n  fi\nfi\ncd ..\nexport PATH=\"\
+    nim-${NIMBRANCH}/bin${PATH:+:$PATH}\"\n"
+  cache: &id002
+    key: nim-${NIMBRANCH}
+    paths:
+    - nim-${NIMBRANCH}
+.test:
+  except: &id003
+  - gh-pages
+  script: &id004
+  - nimble -v
+  - nim -v
+  - nimble tests
+  stage: test
+image: nimlang/nim:latest
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - nimble docs
+  - find htmldocs -type f -exec sed -i 's/nesm\.html/index\.html/g' {} \;
+  - mv htmldocs/nesm.html htmldocs/index.html
+  - mv htmldocs public
+  stage: deploy
+test:devel:
+  allow_failure: true
+  before_script: *id001
+  cache: *id002
+  except: *id003
+  script: *id004
+  stage: test
+  variables:
+    NIMBRANCH: devel
+test:master:
+  except: *id003
+  script: *id004
+  stage: test

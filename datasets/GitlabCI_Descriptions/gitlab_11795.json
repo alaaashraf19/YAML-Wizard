@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_11795",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 402,
+  "description": "Create a GitLab CI pipeline with a single stage named info. Define a hidden .info job template that runs the script `docker run mbentley/figlet -tf $font $message` followed by `eval $success`, using variables font: big, message: This is only a base information stage, and success: true. Define a hidden .error job that extends .info, overrides message to `/!\\ This job must fail /!\\` and success to false, causing the script to fail. Define a hidden .warning job that extends .error, sets allow_failure: true, and changes message to This is only a warning !. No Docker image, services, caches, artifacts, or rules are specified.",
+  "tags": [
+    "figlet",
+    "docker",
+    "info-stage",
+    "error-job",
+    "warning-job",
+    "allow-failure"
+  ]
+}

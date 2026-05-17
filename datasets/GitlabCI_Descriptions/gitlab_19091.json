@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_19091",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 187,
+  "description": "Create a GitLab CI pipeline that uses the node:4.2.2 Docker image. Add a pages job that runs in the deploy stage, only on the master branch, caches the node_modules/ directory, executes \"npm install -g brunch\" followed by \"brunch build --production\", and publishes the generated public/ folder as a GitLab Pages artifact. No additional services or variables are required.",
+  "tags": [
+    "node",
+    "npm",
+    "brunch",
+    "gitlab-pages"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_17278",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 623,
+  "description": "Create a GitLab CI pipeline using the docker:git image with a docker:dind service. Include a before_script that installs ssh-agent and rsync via apk if missing, starts ssh-agent, creates ~/.ssh, writes $SSH_PRIVATE_KEY to id_rsa, sets permissions, and adds somatorio.org to known_hosts. Define stages build, test, and deploy. Add a build job in the build stage that runs `docker run --rm -v $(pwd):/src jojomi/hugo:0.57 hugo` to generate the site and stores the public/ directory as an artifact. Add a deploy site job in the deploy stage that depends on the build job and runs `rsync -az public/* $SSH_USERHOST:$RSYNC_DESTINO` to copy the site via SSH, with no caches or conditional rules.",
+  "tags": [
+    "docker",
+    "hugo",
+    "rsync",
+    "ssh",
+    "dind",
+    "gitlab-ci"
+  ]
+}

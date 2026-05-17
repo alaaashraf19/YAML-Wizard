@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_00058",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 3829,
+  "description": "Create a GitLab CI pipeline with three stages (build, test, deploy) using Docker images and Docker-in-Docker services. In the build stage add a job named build that runs on the docker:latest image with a docker:dind service, executes a series of shell commands: apk add curl jq; export DOCKER_BUILDKIT=1; export DOCKER_CLI_EXPERIMENTAL=enabled; mkdir -p ~/.docker/cli-plugins/; download the latest docker-buildx binary from GitHub and place it in ~/.docker/cli-plugins/docker-buildx; chmod a+x the binary; retrieve the latest docker/binfmt tag via the Docker Hub API and start a privileged docker/binfmt container; create and use a buildx builder called multibuilder; docker login with ${DOCKERHUB_USER} and ${DOCKERHUB_PASS}; docker buildx build --platform linux/amd64,linux/s390x,linux/386,linux/arm/v6,linux/arm/v7,linux/arm64/v8,linux/ppc64le -t docker.io/aapjeisbaas/hello-container:${CI_APPLICATION_TAG} . --push; and finally docker buildx imagetools inspect the built image. In the test stage add a job named container_scanning that runs on the docker:stable image with a docker:stable-dind service, runs docker containers for a Clair database and Clair daemon, installs wget and ca‑certificates, pulls the built image, downloads the clair-scanner binary, waits for the Clair API to become reachable with retry loops, then executes ./clair-scanner with appropriate flags to generate a gl-container-scanning-report.json report (allowing the job to succeed even on scanner failure), and publishes this file as a container_scanning artifact. In the deploy stage add a job named push_container that also uses docker:latest with docker:dind, repeats the same setup steps as the build job but tags the image as latest instead of the commit SHA and pushes it, and runs docker buildx imagetools inspect the latest image. All jobs define CI_APPLICATION_TAG as $CI_COMMIT_SHA, and the pipeline has no explicit rules, so it runs on every commit.",
+  "tags": [
+    "docker",
+    "docker-buildx",
+    "multiarch",
+    "container-scanning",
+    "clair",
+    "gitlab-ci"
+  ]
+}

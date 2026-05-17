@@ -1,0 +1,30 @@
+before_script:
+- PATH="/Applications/Qt/5.4/clang_64/bin:$PATH"
+- QTDIR="/Applications/Qt/5.4/clang_64"
+- cd src
+- echo "#define BUILD ""$CI_BUILD_ID" > build_number.h
+- qmake -project
+- qmake QOwnNotes.pro -r -spec macx-clang CONFIG+=x86_64
+- make
+build_job:
+  only:
+  - develop
+  - master
+  script:
+  - echo do some testing...
+  type: build
+deployment_job:
+  only:
+  - master
+  script:
+  - ../gitlab-ci/create-dmg.sh
+  - RELEASE_JSON_FILE="../gitlab-ci/github-release.json"
+  - cat $RELEASE_JSON_FILE
+  - sed -i -e 's/CI_BUILD_ID/'"$CI_BUILD_ID"'/g' $RELEASE_JSON_FILE
+  - API_JSON=$(cat $RELEASE_JSON_FILE)
+  - RELEASE_ID=$(curl --data "$API_JSON" https://api.github.com/repos/pbek/QOwnNotes/releases?access_token=$GITHUB_ACCESS_TOKEN
+    | python -c 'import sys, json; print json.load(sys.stdin)["id"]')
+  - echo $RELEASE_ID
+  - if [[ ! $RELEASE_ID -gt 0 ]]; then exit 1; fi
+  - ../gitlab-ci/deploy-file.sh $RELEASE_ID $GITHUB_ACCESS_TOKEN
+  type: deploy

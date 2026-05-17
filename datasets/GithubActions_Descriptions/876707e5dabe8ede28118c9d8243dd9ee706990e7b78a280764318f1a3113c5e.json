@@ -1,0 +1,16 @@
+{
+  "sha": "876707e5dabe8ede28118c9d8243dd9ee706990e7b78a280764318f1a3113c5e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1730,
+  "description": "Create a GitHub Actions workflow named tests that runs on every push to master and develop branches and on pull requests to these branches. The workflow uses a matrix strategy to test with multiple Python versions (3.7 to 3.11) on an ubuntu-latest environment. For each Python version, it checks out the code, sets up Python, uses caching for dependencies, installs requirements if cache misses, and runs tests with pytest. Additionally, it has a separate job to notify success to a Slack channel using a bot token.",
+  "tags": [
+    "python",
+    "tests",
+    "matrix",
+    "slack",
+    "notifications",
+    "ubuntu",
+    "pytest"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_10903",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 303,
+  "description": "Create a GitLab CI pipeline that uses the node:latest Docker image and caches the node_modules/ directory. Define two jobs, test_cs and test_units, both running in the default stage. In the test_cs job run npm install then node_modules/eslint/bin/eslint.js src. In the test_units job run npm install then node_modules/mocha-webpack/bin/mocha-webpack --webpack-config webpack.tests.config.js --require tests/setup.js tests/*.spec.js. No special rules, artifacts, or services are needed.",
+  "tags": [
+    "node",
+    "npm",
+    "eslint",
+    "mocha-webpack",
+    "cache"
+  ]
+}

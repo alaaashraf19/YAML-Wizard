@@ -1,0 +1,14 @@
+{
+  "sha": "1ac2a09b4d3a7c5e540abc31305b649d2be43ec8254180a4c2f34156c5eaa096",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 589,
+  "description": "Create a GitHub Actions workflow named build-docker that triggers on push events with tags matching v*. Run a single ubuntu-latest job that logs in to Docker, checks out the repository, and then deploys a Docker image. In the deployment step, print the GitHub SHA, environment variables, and a tag derived from Git history, then clone a separate repository, run a build script with the derived tag and other parameters.",
+  "tags": [
+    "docker",
+    "github-actions",
+    "tag",
+    "build",
+    "deployment"
+  ]
+}

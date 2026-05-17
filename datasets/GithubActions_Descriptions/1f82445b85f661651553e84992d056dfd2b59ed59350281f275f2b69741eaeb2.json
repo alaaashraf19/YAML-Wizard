@@ -1,0 +1,16 @@
+{
+  "sha": "1f82445b85f661651553e84992d056dfd2b59ed59350281f275f2b69741eaeb2",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1460,
+  "description": "Create a GitHub Actions workflow named Python CI that runs on every push and on pull requests to the master branch. Use a matrix job that runs on multiple operating systems (ubuntu-latest, macos-latest, windows-latest) and Python versions (3.7-3.11, pypy3), excluding pypy3 on macos-latest and windows-latest. The job checks out the repository, sets up Python, installs dependencies with poetry, runs tests with py.test, performs type checks with pytest-mypy, verifies the dist package format with twine, and uploads coverage results to Coveralls.",
+  "tags": [
+    "python",
+    "ci",
+    "poetry",
+    "py.test",
+    "type-checking",
+    "coverage",
+    "coveralls"
+  ]
+}

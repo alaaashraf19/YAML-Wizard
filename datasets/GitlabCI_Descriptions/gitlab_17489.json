@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_17489",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 403,
+  "description": "Create a GitLab CI pipeline using the python:latest Docker image, with a before_script that runs apt-get update -qq, installs libgl1-mesa-dev, prints the Python version, installs virtualenv, creates a virtual environment in venv and activates it. Cache the pip directory at .cache/pip and the venv folder, and set the variable PIP_CACHE_DIR to $CI_PROJECT_DIR/.cache. Add a test job (default stage) that runs pip install -e ., then pip install pytest pytest-cov, executes pytest --cov=ctexplorer ctexplorer/tests/, and finally cats the .coverage file to show coverage results.",
+  "tags": [
+    "python",
+    "pytest",
+    "coverage",
+    "virtualenv",
+    "apt",
+    "pip-cache"
+  ]
+}

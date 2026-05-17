@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_11320",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 257,
+  "description": "Create a GitLab CI pipeline that uses the fedora Docker image. Define a pages job in the deploy stage that only runs on the master branch. The job should install cmake, doxygen, graphviz, mscgen, make, and gcc-c++ via dnf, create a build directory, run cmake -DCMAKE_BUILD_TYPE=doc .., execute make doc, and move the generated doc/html directory to a public/ folder. Publish the public/ directory as a Pages artifact.",
+  "tags": [
+    "fedora",
+    "gitlab-pages",
+    "cmake",
+    "doxygen",
+    "documentation"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_06902",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 372,
+  "description": "Create a GitLab CI pipeline using the golang:1.8 Docker image. Define a single test job named test that runs in the default test stage and is limited to the master branch and tags. In the job script run apt-get update -y, apt-get install ruby -y, gem install dpl, go get github.com/constabulary/gb/... , go get -u github.com/golang/lint/golint, golint ./src/... , gb vendor restore, gb test -v, and finally deploy to Heroku with dpl --provider=heroku --app=msu-go-2017 --api-key=$HEROKU_PRODUCTION_API_KEY --skip_cleanup. No caches, artifacts, or services are defined.",
+  "tags": [
+    "golang",
+    "heroku",
+    "dpl",
+    "ruby",
+    "golint",
+    "gb",
+    "test"
+  ]
+}

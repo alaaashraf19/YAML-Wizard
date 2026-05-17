@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_18968",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 370,
+  "description": "Create a GitLab CI pipeline with three jobs: environment, test, and deploy. The environment job runs in the default stage and executes the shell commands: echo \"instruksi untuk menginstall module yang dibutuhkan\" and echo \"instruksi untuk set-up environment variable\". The test job runs only on the master branch (using an only rule) and runs: python manage.py test and echo \"instruksi untuk test UI\". The deploy job also runs only on the master branch and runs: echo \"instruksi untuk migrasi data\" and echo \"instruksi untuk menjalankan aplikasi/services\". No specific Docker image, services, caches, artifacts, or variables are defined.",
+  "tags": [
+    "python",
+    "django",
+    "gitlab-ci",
+    "deployment",
+    "environment-setup",
+    "master-branch"
+  ]
+}

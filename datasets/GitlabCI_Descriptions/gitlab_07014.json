@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_07014",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 3614,
+  "description": "Create a GitLab CI pipeline using the debian:stable Docker image with two stages: build and test. In the build stage add a build job that runs apt-get update, installs libguestfs-tools, busybox, linux-image-amd64, gnupg1 and openssh-client, generates an SSH key, caches the downloaded debian-12-nocloud-amd64.qcow2 and the private key, then downloads the Debian cloud image, expands it with virt-resize, customizes it with virt‑customize to set the root password and install wget, ca‑certificates and openssh‑server, and after the script moves the private key back to the workspace. Define a hidden .tests template for the test stage that installs qemu-system-x86, openssh-client and sshpass, creates an SSH config, boots the cached image with QEMU forwarding host port 10022 to the guest, tails the serial output, waits, copies the built vps2arch binary into the VM and makes it executable, caches the image and key, depends on the build job and retries once. Define a .tests_uefi template identical to .tests but also installs ovmf and boots the VM with the OVMF BIOS. Add test_default, test_default_uefi, test_netctl and test_syslinux jobs that extend the appropriate template and run ssh to execute ./vps2arch (optionally with -n netctl or -b syslinux), wait, then use sshpass to verify the presence of /etc/arch-release; all test jobs run in the test stage and inherit the cache pull policy.",
+  "tags": [
+    "debian",
+    "qemu",
+    "arch",
+    "uefi",
+    "ssh",
+    "virt-customize",
+    "gitlab-ci"
+  ]
+}

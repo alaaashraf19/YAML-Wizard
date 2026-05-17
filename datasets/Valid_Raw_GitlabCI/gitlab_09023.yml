@@ -1,0 +1,225 @@
+build-post-deploy-migrations-artifact:
+  artifacts:
+    expire_in: 4d
+    paths:
+    - PENDING_POST_DEPLOY_MIGRATIONS
+  extends: .common-job-setup
+  rules:
+  - if: $BUILD_POST_MIGRATIONS == "true"
+    when: always
+  script:
+  - bundle exec rake 'post_deploy_migrations:build_post_migrations_artifact'
+  stage: automation
+components:update_gitaly:
+  extends: .common-job-setup
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event" ||  $CI_PIPELINE_SOURCE == "push"
+    when: never
+  - if: $UPDATE_COMPONENTS == "true"
+  script:
+  - bundle exec rake 'components:update_gitaly'
+  stage: automation
+components:update_kas:
+  extends: .common-job-setup
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event" ||  $CI_PIPELINE_SOURCE == "push"
+    when: never
+  - if: $UPDATE_COMPONENTS == "true"
+  script:
+  - bundle exec rake 'components:update_kas'
+  stage: automation
+deployment-metrics:
+  allow_failure: true
+  extends: .common-job-setup
+  needs:
+  - track-deployment
+  rules:
+  - if: $TRACK_DEPLOYMENT == "true" && $DEPLOY_VERSION
+  script:
+  - bundle exec rake "metrics:deployment_metrics[$DEPLOY_ENVIRONMENT, $DEPLOY_VERSION]"
+  stage: automation
+join release managers:
+  extends: .common-job-setup
+  resource_group: release_managers
+  rules:
+  - if: $JOIN_RELEASE_MANAGERS
+    when: always
+  - when: never
+  script:
+  - bundle exec rake release_managers:join
+  stage: automation
+leave release managers:
+  extends: .common-job-setup
+  resource_group: release_managers
+  rules:
+  - if: $LEAVE_RELEASE_MANAGERS
+    when: always
+  - when: never
+  script:
+  - bundle exec rake release_managers:leave
+  stage: automation
+metrics:environment-lock-state:deployment_start:
+  extends:
+  - .environment-lock-state-metric
+  - .common-ci-tokens
+  rules:
+  - if: $TRACK_DEPLOYMENT == "true" && $DEPLOY_STATUS == "running" && $DEPLOY_VERSION
+  script:
+  - bundle exec rake "metrics:environment_lock_state[$DEPLOY_ENVIRONMENT, locked_deployment]"
+  stage: automation
+metrics:environment-state:deployment_start:
+  extends:
+  - .environment-state-metric
+  - .common-ci-tokens
+  rules:
+  - if: $TRACK_DEPLOYMENT == "true" && $DEPLOY_STATUS == "running" && $DEPLOY_VERSION
+  script:
+  - bundle exec rake "metrics:environment_state[$DEPLOY_ENVIRONMENT, start]"
+  stage: automation
+metrics:monthly_release:closed:
+  extends: .common-job-setup
+  rules:
+  - if: $MONTHLY_RELEASE_METRIC == "closed"
+    when: always
+  - when: never
+  script:
+  - bundle exec rake metrics:monthly_release:closed
+  stage: automation
+metrics:monthly_release:open:
+  extends: .common-job-setup
+  rules:
+  - if: $MONTHLY_RELEASE_METRIC == "open"
+    when: always
+  - when: never
+  script:
+  - bundle exec rake metrics:monthly_release:open
+  stage: automation
+metrics:patch_release:closed:
+  extends: .common-job-setup
+  rules:
+  - if: $PATCH_RELEASE_METRIC == "closed"
+    when: always
+  - when: never
+  script:
+  - bundle exec rake "metrics:patch_release:closed"
+  stage: automation
+metrics:patch_release:open:
+  extends: .common-job-setup
+  rules:
+  - if: $PATCH_RELEASE_METRIC == "open"
+    when: always
+  - when: never
+  script:
+  - bundle exec rake "metrics:patch_release:open"
+  stage: automation
+metrics:patch_release:warning:
+  extends: .common-job-setup
+  rules:
+  - if: $PATCH_RELEASE_METRIC == "warning"
+    when: always
+  - when: never
+  script:
+  - bundle exec rake "metrics:patch_release:warning"
+  stage: automation
+record-deployment-blockers:
+  extends: .common-job-setup
+  only:
+    refs:
+    - schedules
+    variables:
+    - $DEPLOYMENT_BLOCKERS_REPORT
+  script:
+  - bundle exec rake deployments:blockers_report
+  - bundle exec rake deployments:blockers_annotate
+  - bundle exec rake deployments:blockers_metrics
+  stage: automation
+record_metadata_deployment:
+  extends: .common-job-setup
+  rules:
+  - if: $RECORD_METADATA_DEPLOYMENT == "true"
+  script:
+  - bundle exec rake "release:record_metadata_deployment[$DEPLOY_ENVIRONMENT, $DEPLOY_STATUS,
+    $DEPLOY_VERSION]"
+  stage: automation
+refresh-delivery-slo-apdex-graph:
+  artifacts:
+    expire_in: 2 days
+    paths:
+    - deployment-slo-apdex.png
+  extends:
+  - .common-ci-tokens
+  rules:
+  - changes:
+    - scripts/fetch-deployment-slo-apdex.sh
+    if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    when: always
+  - if: $CI_PIPELINE_SOURCE == "schedule" && $SCHEDULE == "daily"
+    when: always
+  - if: $CI_SERVER_HOST == "gitlab.com" && $CI_PIPELINE_SOURCE != "schedule" && $CI_COMMIT_REF_NAME
+      == $CI_DEFAULT_BRANCH
+    when: always
+  script:
+  - apk add bash curl
+  - scripts/fetch-deployment-slo-apdex.sh
+  stage: automation
+release-managers:
+  cache:
+    policy: pull
+  extends: .common-job-setup
+  only:
+    refs:
+    - schedules
+    variables:
+    - $RELEASE_MANAGERS
+  resource_group: release_managers
+  retry: 2
+  script:
+  - source scripts/setup_ssh.sh
+  - bundle exec rake release_managers:sync
+  stage: automation
+release:backport:processor:
+  extends: .common-job-setup
+  resource_group: release-backport-processor
+  rules:
+  - if: $CI_SERVER_HOST == "ops.gitlab.net" && $BACKPORT_PROCESSOR == "true"
+    when: always
+  script:
+  - bundle exec rake 'release:backport:processor'
+  stage: automation
+security:git:sync_tags:
+  extends: .common-job-setup
+  rules:
+  - if: $SYNC_GIT_TAGS
+    when: always
+  script:
+  - source scripts/setup_ssh.sh
+  - source scripts/setup_git.sh
+  - bundle exec rake "security:sync_git_tags[$GIT_VERSIONS]"
+  stage: automation
+security:merge-train:
+  extends: .common-job-setup
+  rules:
+  - if: $SECURITY_MERGE_TRAIN == '1'
+    when: always
+  script:
+  - bundle exec rake 'security:merge_train'
+  stage: automation
+track-deployment:
+  extends: .common-job-setup
+  rules:
+  - if: $TRACK_DEPLOYMENT == "true"
+  script:
+  - bundle exec rake "release:track_deployment[$DEPLOY_ENVIRONMENT, $DEPLOY_STATUS,
+    $DEPLOY_VERSION]"
+  stage: automation
+  timeout: 1h 30m
+validate-security-merge-requests:
+  extends: .common-job-setup
+  only:
+    refs:
+    - schedules
+    variables:
+    - $VALIDATE_SECURITY_MERGE_REQUESTS
+  script:
+  - bundle exec rake security:validate
+  stage: automation

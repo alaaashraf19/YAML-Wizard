@@ -1,0 +1,162 @@
+build_ap:
+  before_script:
+  - apt-get update --yes
+  - apt-get install --yes libasound2-dev libglu1-mesa-dev freeglut3-dev libglfw3-dev
+    libgles2-mesa-dev
+  script:
+  - cd antarctica_pyramids
+  - cmake .
+  - make all
+  - cmake -DCMAKE_BUILD_TYPE=Debug .
+  - make all
+  - cd ..
+  stage: test
+build_filetest:
+  before_script:
+  - apt-get update --yes
+  - apt-get install --yes libasound2-dev libglu1-mesa-dev freeglut3-dev libglfw3-dev
+    libgles2-mesa-dev
+  script:
+  - cd filetest
+  - cmake .
+  - make all
+  - cmake -DCMAKE_BUILD_TYPE=Debug .
+  - make all
+  - cd ..
+  stage: test
+build_tests:
+  before_script:
+  - apt-get update --yes
+  - apt-get install --yes libasound2-dev libglu1-mesa-dev freeglut3-dev libglfw3-dev
+    libgles2-mesa-dev
+  script:
+  - cd tests
+  - cmake .
+  - make all
+  - cmake -DCMAKE_BUILD_TYPE=Debug .
+  - make all
+  - cd ..
+  stage: test
+build_wizard:
+  before_script:
+  - apt-get update --yes
+  - apt-get install --yes libasound2-dev libglu1-mesa-dev freeglut3-dev libglfw3-dev
+    libgles2-mesa-dev
+  script:
+  - cd wizard
+  - cmake .
+  - make all
+  - cmake -DCMAKE_BUILD_TYPE=Debug .
+  - make all
+  - cd ..
+  stage: test
+create_project:
+  before_script:
+  - apt-get update --yes
+  - apt-get install --yes libasound2-dev libglu1-mesa-dev freeglut3-dev libglfw3-dev
+    libgles2-mesa-dev xvfb
+  script:
+  - cd wizard
+  - cmake .
+  - make all
+  - xvfb-run ./wizard create test_project
+  - cd ../../test_project
+  - cmake .
+  - make all
+  - cd ..
+  stage: test
+fuzz_csv:
+  extends: .fuzz_base
+  image: silkeh/clang
+  script:
+  - apt-get update -qq && apt-get install -y -qq git
+  - apt-get install --yes libasound2-dev libglu1-mesa-dev freeglut3-dev libglfw3-dev
+    libgles2-mesa-dev xvfb
+  - export CC=`which clang`
+  - export CXX=`which clang++`
+  - export VERBOSE=1
+  - mkdir fuzz_tests/csv_corpus && cp wizard/data/*.csv fuzz_tests/csv_corpus
+  - mkdir -p build && cd build
+  - TEST_NAME=fuzz_csv cmake ../fuzz_tests -DCMAKE_CXX_FLAGS='-D_GLIBCXX_USE_CXX11_ABI=0'
+    -DCMAKE_BUILD_TYPE=AddressSanitizer && make all && cd ..
+  - ./gitlab-cov-fuzz run --regression=$REGRESSION -- ./build/fuzz_csv -max_total_time=600
+  variables:
+    COVFUZZ_SEED_CORPUS: ./fuzz_tests/csv_corpus
+fuzz_tga:
+  extends: .fuzz_base
+  image: silkeh/clang
+  script:
+  - apt-get update -qq && apt-get install -y -qq git
+  - apt-get install --yes cmake clang libasound2-dev libglu1-mesa-dev freeglut3-dev
+    libglfw3-dev libgles2-mesa-dev xvfb
+  - export CC=`which clang`
+  - export CXX=`which clang++`
+  - export VERBOSE=1
+  - mkdir fuzz_tests/tga_corpus && cp wizard/data/*.tga fuzz_tests/tga_corpus
+  - mkdir -p build && cd build
+  - TEST_NAME=fuzz_tga cmake ../fuzz_tests -DCMAKE_CXX_FLAGS='-D_GLIBCXX_USE_CXX11_ABI=0'
+    -DCMAKE_BUILD_TYPE=AddressSanitizer && make all && cd ..
+  - ./gitlab-cov-fuzz run --regression=$REGRESSION -- ./build/fuzz_tga -max_total_time=600
+  variables:
+    COVFUZZ_SEED_CORPUS: ./fuzz_tests/tga_corpus
+fuzz_wav:
+  extends: .fuzz_base
+  image: silkeh/clang
+  script:
+  - pwd
+  - apt-get update -qq && apt-get install -y -qq git
+  - apt-get install --yes libasound2-dev libglu1-mesa-dev freeglut3-dev libglfw3-dev
+    libgles2-mesa-dev xvfb
+  - export CC=`which clang`
+  - export CXX=`which clang++`
+  - export VERBOSE=1
+  - mkdir fuzz_tests/wav_corpus && cp wizard/data/*.wav fuzz_tests/wav_corpus
+  - mkdir -p build && cd build
+  - cmake ../fuzz_tests -DCMAKE_CXX_FLAGS='-D_GLIBCXX_USE_CXX11_ABI=0' -DCMAKE_BUILD_TYPE=AddressSanitizer
+    && make all && cd ..
+  - ./gitlab-cov-fuzz run --regression=$REGRESSION -- ./build/fuzz_harness -max_total_time=600
+  variables:
+    COVFUZZ_SEED_CORPUS: ./fuzz_tests/wav_corpus
+image: silkeh/clang
+include:
+- template: Coverage-Fuzzing.gitlab-ci.yml
+- template: Security/SAST.gitlab-ci.yml
+pages:
+  artifacts:
+    paths:
+    - public
+  before_script:
+  - apk update
+  - apk add doxygen ttf-freefont graphviz
+  cache: {}
+  image: php:7-cli-alpine
+  only:
+  - master
+  script:
+  - cd doc
+  - doxygen ./Doxyfile
+  - mv ./html/ ../public/
+  stage: deploy
+run_tests:
+  before_script:
+  - apt-get update --yes
+  - apt-get install --yes libasound2-dev libglu1-mesa-dev freeglut3-dev libglfw3-dev
+    libgles2-mesa-dev xvfb
+  script:
+  - cd tests
+  - cmake .
+  - make all
+  - xvfb-run ./tests
+  - cmake -DCMAKE_BUILD_TYPE=Debug .
+  - make all
+  - xvfb-run ./tests
+  - cd ..
+  stage: test
+sast:
+  stage: test
+stages:
+- test
+- deploy
+- fuzz
+variables:
+  SAST_EXCLUDED_ANALYZERS: semgrep

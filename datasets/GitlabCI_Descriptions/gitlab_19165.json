@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_19165",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 497,
+  "description": "Create a GitLab CI pipeline that uses the hashicorp/packer:latest Docker image with an entrypoint setting PATH. Define four stages: validate, build, test, and deploy. Add a validate job in the validate stage that runs the before_script `packer --version` then executes `find . -maxdepth 1 -name '*.json' -print0 | xargs -t0n1 packer validate`. Add a build job in the deploy stage, set to the production environment, limited to the master branch, triggered manually, that runs the before_script `packer --version` and then `find . -maxdepth 1 -name '*.json' -print0 | xargs -t0n1 packer build`. No caches, artifacts, or services are defined.",
+  "tags": [
+    "packer",
+    "hashicorp",
+    "validation",
+    "deployment",
+    "manual",
+    "gitlab-ci"
+  ]
+}

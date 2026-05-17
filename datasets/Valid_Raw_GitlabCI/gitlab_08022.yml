@@ -1,0 +1,29 @@
+before_script:
+- which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )
+- eval "$(ssh-agent -s)"
+- ssh-add <(echo "$SSH_PRIVATE_KEY")
+- mkdir -p ~/.ssh
+- '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+build:
+  dependencies:
+  - build-lib
+  image: registry.gitlab.com/fruits.confits/qt-builder:5.10.0
+  script: qmake && make
+  stage: build
+build-lib:
+  artifacts:
+    paths:
+    - dependencies/lib/
+    - dependencies/include/
+  image: registry.gitlab.com/fruits.confits/qt-builder:5.10.0
+  script:
+  - git clone git@gitlab.com:fruits.confits/CuteLogger.git dependencies
+  - cd dependencies && qmake && make && make install
+  stage: build-lib
+stages:
+- build-lib
+- build
+- test
+test:
+  script: echo "Build OK"
+  stage: test

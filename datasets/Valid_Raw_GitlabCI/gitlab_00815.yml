@@ -1,0 +1,18 @@
+afterTheFall_epub:
+  artifacts:
+    paths:
+    - afterTheFall.epub
+  image: ntwrkguru/pandoc-gitlab-ci
+  only:
+  - master
+  script:
+  - pandoc -f latex -t epub afterTheFall.tex -o afterTheFall.epub
+afterTheFall_pdf:
+  artifacts:
+    paths:
+    - afterTheFall.pdf
+  image: tianon/latex
+  only:
+  - master
+  script:
+  - pdflatex afterTheFall.tex

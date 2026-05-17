@@ -1,0 +1,21 @@
+build-project:
+  artifacts:
+    expire_in: 1 days
+    paths:
+    - coverage/
+    - doc/
+    - dist/
+  image: node:8
+  only:
+  - master
+  - develop
+  script:
+  - apt-get install git
+  - npm install -g bower grunt-cli
+  - npm install
+  - bower install --allow-root
+  - grunt
+cache:
+  paths:
+  - node_modules
+image: node:latest

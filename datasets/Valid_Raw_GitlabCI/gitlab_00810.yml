@@ -1,0 +1,9 @@
+cache:
+  paths:
+  - node_modules/
+image: node:7-alpine
+test_async:
+  script:
+  - npm install
+  - npm run lint
+  - npm run test

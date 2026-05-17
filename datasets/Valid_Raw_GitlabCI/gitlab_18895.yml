@@ -1,0 +1,30 @@
+cache:
+  paths:
+  - target/
+  - cargo/
+  - xargo/
+image: uelen/archlinux-wayless:latest
+make:
+  script:
+  - rustc --version && cargo --version
+  - export PATH=/bin:/usr/bin:$CARGO_HOME/bin:~/.cargo/bin:$PATH
+  - make
+  stage: build
+run:
+  script:
+  - export PATH=/bin:/usr/bin:$CARGO_HOME/bin:~/.cargo/bin:$PATH
+  - make
+  - timeout 80 make nographic | tee output || true
+  - bash -c '[ $(tail -n 20 output | grep -o "FIN") == "FIN" ] && echo "Successfully
+    ran"'
+stages:
+- build
+- test
+- run
+test:
+  script:
+  - export PATH=/bin:/usr/bin:$CARGO_HOME/bin:~/.cargo/bin:$PATH
+  - make test
+variables:
+  CARGO_HOME: $CI_PROJECT_DIR/cargo
+  XARGO_HOME: $CI_PROJECT_DIR/xargo

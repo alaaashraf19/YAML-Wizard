@@ -1,0 +1,232 @@
+name: bindgen
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  merge_group:
+    branches:
+      - main
+
+jobs:
+  rustfmt-clippy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install nightly
+        uses: dtolnay/rust-toolchain@master
+        with:
+          # TODO: Should ideally be stable, but we use some nightly-only
+          # features.
+          toolchain: nightly
+          components: rustfmt, clippy
+
+      - name: Run rustfmt
+        run: cargo fmt -- --check
+
+      - name: Run clippy
+        run: cargo clippy --all-targets --workspace --exclude bindgen-integration --exclude tests_expectations
+
+  msrv:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read crate metadata
+        id: metadata
+        run: echo "rust-version=$(sed -ne 's/rust-version *= *\"\(.*\)\"/\1/p' Cargo.toml)" >> $GITHUB_OUTPUT
+
+      - name: Install msrv for lib
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ steps.metadata.outputs.rust-version }}
+
+      - name: Test lib with msrv
+        run: cargo +${{ steps.metadata.outputs.rust-version }} test --package bindgen
+
+      - name: Install msrv for cli
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ steps.metadata.outputs.rust-version }}
+
+      - name: Test cli with msrv
+        run: cargo +${{ steps.metadata.outputs.rust-version }} build --package bindgen-cli
+
+  minimal:
+    runs-on: ubuntu-latest
+    env:
+      RUSTFLAGS: -D warnings
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install stable
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: stable
+
+      - name: Check without default features 
+        run: cargo check -p bindgen --no-default-features --features=runtime 
+
+  docs:
+    runs-on: ubuntu-latest
+    env:
+      RUSTDOCFLAGS: -D warnings
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install stable
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: stable
+
+      - name: Generate documentation for `bindgen` 
+        run: cargo doc --document-private-items --no-deps -p bindgen 
+
+      - name: Generate documentation for `bindgen-cli` 
+        run: cargo doc --document-private-items --no-deps -p bindgen-cli
+
+  quickchecking:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install stable
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: stable
+
+      # TODO: Actually run quickchecks once `bindgen` is reliable enough.
+      - name: Build quickcheck tests
+        run: cd bindgen-tests/tests/quickchecking && cargo test
+
+  test-expectations:
+    runs-on: ${{matrix.os}}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install stable
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: stable
+
+      - name: Test expectations
+        run: cd bindgen-tests/tests/expectations && cargo test
+
+  test:
+    runs-on: ${{matrix.os}}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        llvm_version: ["9.0", "16.0"]
+        release_build: [0, 1]
+        no_default_features: [0, 1]
+        # FIXME: There are no pre-built static libclang libraries, so the
+        # `static` feature is not testable atm.
+        feature_runtime: [0, 1]
+        feature_extra_asserts: [0]
+
+        include:
+          # Test with extra asserts + docs just with latest llvm versions to
+          # prevent explosion
+          - os: ubuntu-latest
+            llvm_version: "16.0"
+            release_build: 0
+            no_default_features: 0
+            feature_extra_asserts: 1
+
+          # Ensure stuff works on macos too
+          - os: macos-latest
+            llvm_version: "16.0"
+            release_build: 0
+            no_default_features: 0
+            feature_extra_asserts: 0
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install stable
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: 1.85.1
+      - name: Install libtinfo
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          wget https://mirrors.kernel.org/ubuntu/pool/universe/n/ncurses/libtinfo5_6.3-2ubuntu0.1_amd64.deb
+          sudo dpkg -i libtinfo5_6.3-2ubuntu0.1_amd64.deb
+      - name: Install LLVM and Clang
+        uses: KyleMayes/install-llvm-action@v2.0.5
+        with:
+          version: ${{matrix.llvm_version}}
+      - name: Run all the tests
+        env:
+          GITHUB_ACTIONS_OS: ${{matrix.os}}
+          BINDGEN_RELEASE_BUILD: ${{matrix.release_build}}
+          BINDGEN_FEATURE_RUNTIME: ${{matrix.feature_runtime}}
+          BINDGEN_FEATURE_EXTRA_ASSERTS: ${{matrix.feature_extra_asserts}}
+          BINDGEN_NO_DEFAULT_FEATURES: ${{matrix.no_default_features}}
+          BINDGEN_RUST_FOR_LINUX_TEST: ${{matrix.os == 'ubuntu-latest' && matrix.llvm_version == '16.0' && matrix.feature_extra_asserts == 0 && 1 || 0}}
+        run: ./ci/test.sh
+
+  check-cfg:
+    runs-on: ubuntu-latest
+    env:
+      RUSTFLAGS: -D warnings
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install nightly
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: nightly
+      
+      - name: Check cfg
+        run: cargo check -Z unstable-options -Z check-cfg
+
+  test-book:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # NOTE(emilio): Change deploy-book as well if you change this.
+      - name: Test book
+        run: |
+          curl -L https://github.com/rust-lang/mdBook/releases/download/v0.4.5/mdbook-v0.4.5-x86_64-unknown-linux-gnu.tar.gz | tar xz
+          ./mdbook build book
+          ./mdbook test book
+
+  # FIXME(pvdrz): this should be done inside `bindgen-test` instead
+  test-no-headers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Test `--help`
+        run: cargo run -- --help
+
+      - name: Test `--version`
+        run: cargo run -- --version
+
+      - name: Test `--generate-shell-completions`
+        run: cargo run -- --generate-shell-completions=bash
+
+  # One job that "summarizes" the success state of this pipeline. This can then
+  # be added to branch protection, rather than having to add each job
+  # separately.
+  success:
+    runs-on: ubuntu-latest
+    needs: [rustfmt-clippy, msrv, minimal, docs, quickchecking, test-expectations, test, check-cfg, test-book, test-no-headers]
+    # GitHub branch protection is exceedingly silly and treats "jobs skipped
+    # because a dependency failed" as success. So we have to do some
+    # contortions to ensure the job fails if any of its dependencies fails.
+    if: always() # make sure this is never "skipped"
+    steps:
+      # Manually check the status of all dependencies. `if: failure()` does not work.
+      - name: check if any dependency failed
+        run: jq --exit-status 'all(.result == "success")' <<< '${{ toJson(needs) }}'

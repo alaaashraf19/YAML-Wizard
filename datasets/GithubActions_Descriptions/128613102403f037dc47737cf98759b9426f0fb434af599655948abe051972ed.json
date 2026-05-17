@@ -1,0 +1,20 @@
+{
+  "sha": "128613102403f037dc47737cf98759b9426f0fb434af599655948abe051972ed",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 7939,
+  "description": "Create a GitHub Actions workflow named Builders that runs on every push to the master branch and on pull requests to master. The workflow has three jobs: tester on ubuntu-22.04, macos on macos-13, and linux on ubuntu-22.04. Each job checks out the repository, installs dependencies, sets up the build environment, uses a compiler cache, builds and tests the project, and uploads the results to SourceForge.",
+  "tags": [
+    "github-actions",
+    "builders",
+    "ubuntu",
+    "macos",
+    "linux",
+    "sccache",
+    "cmake",
+    "make",
+    "test",
+    "appimage",
+    "sourceforge"
+  ]
+}

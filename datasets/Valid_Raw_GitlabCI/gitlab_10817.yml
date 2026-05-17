@@ -1,0 +1,11 @@
+pages:
+  artifacts:
+    paths:
+    - public
+  image:
+    entrypoint:
+    - /bin/sh
+    - -c
+    name: svilstrup/xsltproc
+  script: /builds/JeSuisUnDesDeux/jesuisundesdeux/datas/velomag/convert-xml-to-csv.sh
+  stage: deploy

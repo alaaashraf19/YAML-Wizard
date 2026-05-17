@@ -1,0 +1,15 @@
+{
+  "sha": "0b59f9bfb065104788d90ebd972938faeb971770845aaa7a3c33af7dfab10ace",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3283,
+  "description": "Create a GitHub Actions workflow named Build Pull Request that runs on every pull request. The workflow has two jobs: one to check for file changes in specific directories and another to run docker builds based on those changes. The first job checks for changes in csharp, go, java, python, and typescript directories and outputs flags indicating which ones have changes. The second job uses these flags to conditionally run build scripts for each language using a jsii/superchain docker image.",
+  "tags": [
+    "docker",
+    "jsii",
+    "superchain",
+    "multi-language",
+    "build",
+    "pull-request"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_07922",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 749,
+  "description": "Create a GitLab CI pipeline that uses the nixos/nix Docker image and a single build stage. Add eight jobs named \"Darwin GHC 8107\", \"Darwin GHC 865\", \"Darwin GHC 884\", \"Darwin GHC 901\", \"Linux GHC 8107\", \"Linux GHC 865\", \"Linux GHC 884\", and \"Linux GHC 901\", each assigned to the build stage. In each Darwin job run the shell command `nix build -L .#ghc<version> --system x86_64-darwin` (replace <version> with 8107, 865, 884, 901) and in each Linux job run `nix build -L .#ghc<version> --system x86_64-linux`. No caches, artifacts, services, or conditional rules are defined.",
+  "tags": [
+    "nix",
+    "ghc",
+    "darwin",
+    "linux",
+    "build"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "sha": "31733173c944cb1cc03011a08e9f8178459f4afbf8cb6e78e98b4785e098b9c3",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1749,
+  "description": "Create a GitHub Actions workflow named Autorelease that triggers on push to the master branch. Run a windows-latest job that sets up MSYS2 and checks out the repository, then installs required packages with pacman, builds the project with a custom make command, zips the output, creates a new release tag with a detailed description, deletes old release assets, and finally releases the zipped file as a prerelease.",
+  "tags": [
+    "windows",
+    "msys2",
+    "make",
+    "mingw",
+    "release",
+    "github-release",
+    "prerelease"
+  ]
+}

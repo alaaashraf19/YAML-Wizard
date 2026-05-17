@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_19110",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 6125,
+  "description": "Create a GitLab CI pipeline using the registry.gitlab.com/gitlab-org/cluster-integration/auto-deploy-image:v0.1.0 Docker image for all jobs. Define stages production, canary, review, staging, cleanup, and incremental rollout (10%,25%,50%,100%). Add a canary job in the canary stage that runs auto-deploy check_kube_domain, auto-deploy download_chart, auto-deploy ensure_namespace, auto-deploy initialize_tiller, auto-deploy create_secret, and auto-deploy deploy canary, is manual, runs only on master when $CANARY_ENABLED and Kubernetes is active, and publishes environment_url.txt as an artifact for the production environment URL. Add production jobs (production, production_manual, rollout 10%, rollout 25%, rollout 50%, rollout 100%) in the production stage that run the full auto-deploy sequence (check_kube_domain, download_chart, ensure_namespace, initialize_tiller, create_secret, deploy, delete canary, delete rollout, persist_environment_url) with ROLLOUT_PERCENTAGE set to 10,25,50,100 as appropriate, using manual triggers for rollout jobs and delayed triggers (start_in 5 minutes) for timed rollout jobs, all limited to active Kubernetes clusters and publishing environment_url.txt as an artifact. Add a staging job in the staging stage that runs the same auto-deploy sequence, runs only on master when $STAGING_ENABLED, and targets a staging environment URL. Add a review job in the review stage that runs the auto-deploy sequence, creates a review/$CI_COMMIT_REF_NAME environment with on_stop stop_review, publishes environment_url.txt, runs on branches and tags except master when $REVIEW_DISABLED is not set, and is limited to active Kubernetes clusters. Add a stop_review cleanup job that runs auto-deploy initialize_tiller and auto-deploy delete, stops the review environment, runs manually on branches and tags except master when $REVIEW_DISABLED, sets GIT_STRATEGY=none, and allows failure.",
+  "tags": [
+    "kubernetes",
+    "auto-deploy",
+    "rollout",
+    "canary",
+    "staging",
+    "review",
+    "gitlab-ci"
+  ]
+}

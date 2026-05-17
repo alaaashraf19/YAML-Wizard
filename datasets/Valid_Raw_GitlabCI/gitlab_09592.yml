@@ -1,0 +1,11 @@
+build base docker image:
+  image: docker:stable
+  script:
+  - docker build -t btimperman/pipelinecli .
+  - docker login -u btimperman -p $DOCKER_PASSWORD
+  - docker push btimperman/pipelinecli
+  services:
+  - docker:dind
+  stage: docker
+stages:
+- docker

@@ -1,0 +1,16 @@
+{
+  "sha": "a96558b06023fa6ece54165700d4b635efc23d0a3cccd3499fd66e1b523ab20f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5587,
+  "description": "Create a GitHub Actions workflow named Ubuntu System CI that runs daily at 3 am and on pull requests to the master branch. The workflow uses a matrix strategy to test on ubuntu-18.04 and ubuntu-20.04, installing BioDynaMo, running notebooks, building, and performing valgrind and system tests. It also notifies Slack on success, failure, or cancellation.",
+  "tags": [
+    "ubuntu",
+    "biodynamo",
+    "ci",
+    "valgrind",
+    "slack",
+    "schedule",
+    "pull-requests"
+  ]
+}

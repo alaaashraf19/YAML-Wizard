@@ -1,0 +1,91 @@
+.image:
+  before_script:
+  - export RUNNER_ARCH=$(echo $CI_JOB_NAME|sed 's,.*:,,g')
+  - export RUN_AS_PLATFORM="${RUNNER_ARCH}"
+  - apk add --no-cache make bash
+  image: docker:stable
+  script:
+  - make all
+  services:
+  - docker:stable-dind
+  stage: images
+  tags:
+  - docker
+  - arm64
+  variables:
+    DOCKER_DRIVER: overlay2
+.runner:
+  before_script:
+  - export RUNNER_ARCH=$(echo $CI_JOB_NAME|sed 's,.*:,,g')
+  - export TASK=$(echo $CI_JOB_NAME|sed 's,:.*$,,g')
+  - cd ci/aws/$RUNNER_ARCH
+  - terraform init
+  image:
+    entrypoint:
+    - ''
+    name: hashicorp/terraform:0.14.7
+  script:
+  - terraform $TASK -auto-approve
+apply:arm:
+  extends: .runner
+  stage: register
+apply:arm64:
+  extends: .runner
+  stage: register
+arch-tag:
+  image: ulm0/manifest-tool:1.0.0
+  needs:
+  - img:arm
+  - img:arm64
+  only:
+  - master
+  script:
+  - make multi-arch
+  stage: multi-arch
+destroy:arm:
+  extends: .runner
+  stage: unregister
+  when: always
+destroy:arm64:
+  extends: .runner
+  stage: unregister
+  when: always
+img:arm:
+  environment:
+    name: arm/docker_images
+    url: https://hub.docker.com/r/klud/gitlab-runner/tags/
+  extends: .image
+  needs:
+  - apply:arm
+  only:
+  - master
+img:arm64:
+  environment:
+    name: arm/docker_images
+    url: https://hub.docker.com/r/klud/gitlab-runner/tags/
+  extends: .image
+  needs:
+  - apply:arm64
+  only:
+  - master
+stages:
+- register
+- images
+- unregister
+- multi-arch
+test:arm:
+  except:
+  - master
+  extends: .image
+  needs:
+  - apply:arm
+  script:
+  - make build
+test:arm64:
+  except:
+  - master
+  extends: .image
+  needs:
+  - apply:arm64
+  script:
+  - make build

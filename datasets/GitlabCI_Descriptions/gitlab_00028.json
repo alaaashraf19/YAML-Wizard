@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_00028",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 4236,
+  "description": "Create a GitLab CI pipeline with stages test, release, build, and deploy, using the custom Docker images registry.gitlab.com/4geit/docker/lerna for Node/Yarn builds, registry.gitlab.com/4geit/docker/aws for S3 deployment, and registry.gitlab.com/4geit/docker/semantic-release-gitlab for releasing. In the test stage add a test job that runs `yarn` then `yarn lint && yarn test --ci` on the lerna image, runs on all branch pipelines except master and production, and has no artifacts. In the build stage define production:build, review:build, and staging:build jobs each running `yarn` then `yarn build && rm -rf public && mv build public` on the lerna image, publishing the public directory as an artifact, with production limited to the production branch, review to any branch except master and production, and staging to tag pipelines, each setting an API_URL variable appropriate to the environment. In the deploy stage add production:deploy, review:deploy, staging:deploy, and stop_review jobs using the aws image; each runs `${S3CMD} rb -rf s3://$AWS_BUCKET_NAME`, `${S3CMD} mb s3://$AWS_BUCKET_NAME`, sets the bucket policy via `echo $AWS_POLICY | envsubst > /tmp/policy.txt && ${S3CMD} setpolicy /tmp/policy.txt s3://$AWS_BUCKET_NAME`, creates a website with `${S3CMD} ws-create --ws-index=index.html --ws-error=index.html s3://$AWS_BUCKET_NAME`, and finally `${S3CMD} put -r public/ s3://$AWS_BUCKET_NAME`; production and staging define static environment URLs, review creates a dynamic environment named review/$CI_COMMIT_REF_SLUG with an on_stop stop_review, and stop_review manually removes the bucket. In the release stage add a release job that runs `DEBUG=* semantic-release-gitlab` on the semantic-release-gitlab image, only on the master branch, while global variables AWS_POLICY and S3CMD provide the S3 command template and bucket policy JSON.",
+  "tags": [
+    "lerna",
+    "aws-s3",
+    "semantic-release",
+    "production",
+    "review",
+    "staging",
+    "docker",
+    "ci"
+  ]
+}

@@ -1,0 +1,35 @@
+cache:
+  paths:
+  - $PIPENV_CACHE_DIR
+image: python:slim
+sast:
+  allow_failure: true
+  artifacts:
+    paths:
+    - gl-sast-report.json
+  image: docker:stable
+  script:
+  - export SP_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
+  - docker run --env SAST_CONFIDENCE_LEVEL="${SAST_CONFIDENCE_LEVEL:-3}" --volume
+    "$PWD:/code" --volume /var/run/docker.sock:/var/run/docker.sock "registry.gitlab.com/gitlab-org/security-products/sast:$SP_VERSION"
+    /app/bin/run /code
+  services:
+  - docker:stable-dind
+  variables:
+    DOCKER_DRIVER: overlay2
+tests:
+  script:
+  - python -V
+  - pip install pipenv
+  - pipenv install
+  - pipenv sync --dev
+  - pipenv run pytest
+type-check:
+  script:
+  - python -V
+  - pip install pipenv
+  - pipenv install
+  - pipenv sync --dev
+  - pipenv run mypy .
+variables:
+  PIPENV_CACHE_DIR: $CI_PROJECT_DIR/.cache

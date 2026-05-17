@@ -1,0 +1,16 @@
+{
+  "sha": "10c3af1f432912653e7555b8a993be2141b3fe884f08f94e70d3b4456d42e1cd",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2073,
+  "description": "Create a GitHub Actions workflow named Build that runs on push to the master branch and on pull requests to master. The workflow has two jobs: build and typecheck. The build job runs on a matrix of ubuntu-latest, windows-latest, and macOS-latest with Python 3.9, checking out the repository with submodules, setting up Python, installing dependencies with pip and poetry, building the project, running tests, reporting coverage to Codecov, and packaging the project with pyinstaller. The typecheck job runs on ubuntu-latest with Python 3.9, checking out the repository with submodules, setting up Python, installing dependencies, and running type checks.",
+  "tags": [
+    "python",
+    "poetry",
+    "pyinstaller",
+    "codecov",
+    "tests",
+    "typechecks",
+    "ci"
+  ]
+}

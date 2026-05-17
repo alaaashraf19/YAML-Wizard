@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_10789",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 538,
+  "description": "Create a GitLab CI pipeline that logs into the GitLab Container Registry before each job, uses the docker:stable image with a docker:dind service, and defines two stages: build and deploy. In the build stage add a build job that runs only on the master branch, executes docker build -t \"$CI_REGISTRY_IMAGE:latest\" . then docker push \"$CI_REGISTRY_IMAGE:latest\". In the deploy stage add a deploy job that runs manually, executes docker run --rm -v $(pwd)/docker-compose.yml:/stack.yml -e NAME=portfolio registry.gitlab.com/jebster/devops/deploy:1.1. Both jobs share the same before_script for docker login.",
+  "tags": [
+    "docker",
+    "docker-dind",
+    "container-registry",
+    "manual-deploy",
+    "gitlab-ci",
+    "build"
+  ]
+}

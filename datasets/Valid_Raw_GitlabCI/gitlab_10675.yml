@@ -1,0 +1,15 @@
+cache:
+  paths:
+  - node_modules/
+image: node:latest
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - mkdir .public
+  - cp -r * .public
+  - mv .public public
+  stage: deploy

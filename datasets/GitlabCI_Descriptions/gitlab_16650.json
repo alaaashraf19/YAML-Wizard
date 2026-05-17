@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_16650",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 471,
+  "description": "Create a GitLab CI pipeline with two jobs in the deploy stage. The first job, deploy to production, uses the ruby:latest Docker image, runs only on the master branch, sets the Production environment with URL http://shaunbur.ch, and runs gem install dpl then dpl --provider=s3 --acl=public_read --bucket=$S3_BUCKET_NAME --region=$S3_REGION to publish to an S3 bucket defined by variables. The second job, pages, runs in the deploy stage, creates a .public directory, copies all files into it, renames it to public, defines the Test environment, and stores the public directory as an artifact. Define variables S3_BUCKET_NAME=shaunbur.ch and S3_REGION=us-east-1.",
+  "tags": [
+    "ruby",
+    "s3",
+    "dpl",
+    "gitlab-pages",
+    "production",
+    "deploy",
+    "master-branch"
+  ]
+}

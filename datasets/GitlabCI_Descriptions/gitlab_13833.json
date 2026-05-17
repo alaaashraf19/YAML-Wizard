@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_13833",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 795,
+  "description": "Create a GitLab CI pipeline that includes docker-compose-common.yml and defines three Docker services: celery-worker, django-server, and nginx-with-static. For each service, use the Dockerfile at docker/Dockerfile with build targets celery-worker, django-server, and nginx-with-static respectively, with context .. . Attach env files env/secret_locations.env, env/common.env, and env/b-dev.env to the celery-worker and django-server services, set the environment variable UWSGI_HOST=django-server for nginx-with-static, expose ports 8000:80, 80:80, and 443:443, and mount the secrets volume at /run/secrets:ro. No explicit jobs, stages, caches, artifacts, or deployment targets are defined in this pipeline.",
+  "tags": [
+    "docker-compose",
+    "celery",
+    "django",
+    "nginx",
+    "services"
+  ]
+}

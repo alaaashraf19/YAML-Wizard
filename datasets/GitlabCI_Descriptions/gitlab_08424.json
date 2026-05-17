@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_08424",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 486,
+  "description": "Create a GitLab CI pipeline that runs a common before_script for all jobs: execute ./script/prepare_build.sh, display the Ruby version with ruby -v, install Bundler via gem install bundler, copy config/application.yml.example to config/application.yml and config/secrets.yml.example to config/secrets.yml, install gems with bundle --without postgres, and set up the test database with RAILS_ENV=test bundle exec rake db:setup. Define three jobs in the default test stage: a brakeman job that runs bundle exec brakeman, a rubocop job that runs bundle exec rubocop, and a specs job that runs SIMPLECOV=true RAILS_ENV=test bundle exec rake spec. No specific Docker image, services, caches, artifacts, or rules are required; each job inherits the global before_script.",
+  "tags": [
+    "ruby",
+    "mysql",
+    "bundler",
+    "brakeman",
+    "rubocop",
+    "rspec"
+  ]
+}

@@ -1,0 +1,7 @@
+image: ruby:2.2.0
+job_build:
+  script:
+  - ./build_all.sh
+  stage: build
+stages:
+- build

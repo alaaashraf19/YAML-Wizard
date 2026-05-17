@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_12049",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 735,
+  "description": "Create a GitLab CI pipeline with stages test and build using the Docker image registry.gitlab.com/mbarkhau/lib3to6/base for the lint and unit jobs. In the test stage add a lint job that runs `make lint` then `make mypy`, stores the reports/mypycov/ directory as an artifact and publishes reports/flake8.xml as a JUnit report. Also in the test stage add a unit job that runs `make test`, captures reports/testcov/ as an artifact, publishes reports/pytest.xml as a JUnit report, and extracts coverage using the regex /^(TOTAL|src).*?(\\d+\\%)$/. In the build stage add a pages job that runs only on the master branch, creates public/cov and public/mypycov directories, copies the test and mypy coverage reports into them, and publishes the public/ directory as a GitLab Pages artifact.",
+  "tags": [
+    "lint",
+    "unit-test",
+    "pages",
+    "make",
+    "docker-image",
+    "gitlab-pages"
+  ]
+}

@@ -1,0 +1,22 @@
+before_script:
+- npm install
+cache:
+  paths:
+  - node_modules/
+image: node:8
+stages:
+- test
+test:node:8:
+  only:
+  - master
+  script:
+  - npm install
+  - npm test
+  stage: test
+test:node:latest:
+  image: node:latest
+  only:
+  - master
+  script:
+  - npm install
+  - npm test

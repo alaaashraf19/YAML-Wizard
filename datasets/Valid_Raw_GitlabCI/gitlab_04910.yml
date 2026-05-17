@@ -1,0 +1,60 @@
+coverage:chrome:
+  dependencies:
+  - install
+  - tests:chrome
+  image: node:6
+  script:
+  - npm run coverage
+  stage: coverage
+coverage:firefox:
+  dependencies:
+  - install
+  - tests:firefox
+  image: node:6
+  script:
+  - npm run coverage
+  stage: coverage
+install:
+  artifacts:
+    paths:
+    - node_modules/
+  image: node:6
+  script:
+  - npm install
+  stage: install
+lint:
+  dependencies:
+  - install
+  image: node:6
+  script:
+  - npm run lint
+  stage: lint
+stages:
+- install
+- lint
+- test
+- coverage
+tests:chrome:
+  artifacts:
+    paths:
+    - coverage/
+  before_script:
+  - service selenium start
+  dependencies:
+  - install
+  image: webcastudiohub/selenium-karma
+  script:
+  - npm run test:ci:chrome
+  stage: test
+tests:firefox:
+  artifacts:
+    paths:
+    - coverage/
+  before_script:
+  - service selenium start
+  dependencies:
+  - install
+  image: webcastudiohub/selenium-karma
+  script:
+  - npm run test:ci:firefox
+  stage: test

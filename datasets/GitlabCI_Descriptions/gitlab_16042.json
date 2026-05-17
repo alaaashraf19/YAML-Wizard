@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_16042",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 362,
+  "description": "Create a GitLab CI pipeline that runs a before_script installing make and PHP tools via apt and pear (apt-get update -qy, apt-get install -y make, make install-tools-from-apt, make install-pear-from-apt, make install-phpcs-from-pear). Define a single stage called tests and a build job in that stage that executes the exact commands: make all, make clean, make doc, make archives, make dist, make tar-xz, make tar-bz2, make tar-gz, make zip, make 7z, and make clean again. Use the default runner image with no additional services, caches, artifacts, or rules. The pipeline only contains the tests stage and the build job.",
+  "tags": [
+    "php",
+    "make",
+    "apt",
+    "pear",
+    "phpcs",
+    "build"
+  ]
+}

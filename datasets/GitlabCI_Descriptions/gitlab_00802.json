@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_00802",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 805,
+  "description": "Create a GitLab CI pipeline that uses the maven:3.3.9-jdk-8 Docker image, caches the Maven repository at .m2/repository, and defines MAVEN_CLI_OPTS and MAVEN_OPTS variables. Define a single stage named test and a job called deploy:jdk8 that runs only on the master branch. In the test stage the deploy:jdk8 job should execute \"mvn $MAVEN_CLI_OPTS test jacoco:report\" followed by an awk command that reads target/site/jacoco/jacoco.csv and prints coverage statistics, and it should store the target/staging directory as an artifact.",
+  "tags": [
+    "maven",
+    "java",
+    "jacoco",
+    "cache",
+    "artifact",
+    "gitlab-ci"
+  ]
+}

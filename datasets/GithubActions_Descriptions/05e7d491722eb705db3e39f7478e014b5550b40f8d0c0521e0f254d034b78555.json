@@ -1,0 +1,15 @@
+{
+  "sha": "05e7d491722eb705db3e39f7478e014b5550b40f8d0c0521e0f254d034b78555",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4152,
+  "description": "Create a GitHub Actions workflow named Coverity Scan that runs on push to the master branch. The workflow should have read-all permissions and use environment variables for build concurrency and Coverity project. It should have two jobs, one for Linux and one for Windows, both running on the latest available runners. Each job should harden the runner, checkout the code, download the Coverity tool, build with cov-build, archive the results, and submit them for analysis.",
+  "tags": [
+    "coverity",
+    "scan",
+    "linux",
+    "windows",
+    "github-actions",
+    "security"
+  ]
+}

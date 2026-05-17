@@ -1,0 +1,23 @@
+before_script:
+- yarn install --frozen-lockfile
+deploy-test:
+  only:
+  - master
+  script:
+  - yarn global add serverless
+  - yarn deploy --no-confirm
+  stage: Deploy
+  variables:
+    STAGE: test
+image: node:8
+stages:
+- Test
+- Deploy
+static:
+  script:
+  - yarn static-ci
+  stage: Test
+test:
+  script:
+  - yarn test-ci
+  stage: Test

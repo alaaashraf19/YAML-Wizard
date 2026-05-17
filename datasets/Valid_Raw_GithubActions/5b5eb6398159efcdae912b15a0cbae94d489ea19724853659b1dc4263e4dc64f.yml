@@ -1,0 +1,56 @@
+# Copyright (c) 2020-2021 Morwenn
+# SPDX-License-Identifier: MIT
+
+name: Coverage Upload to Codecov
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+      - 2.0.0-develop
+    paths:
+      - '.github/workflows/code-coverage.yml'
+      - '.github/.codecov.yml'
+      - 'CMakeLists.txt'
+      - 'cmake/**'
+      - 'include/**'
+      - 'testsuite/**'
+
+jobs:
+  upload-coverage:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v2
+
+      - name: Configure CMake
+        shell: bash
+        working-directory: ${{runner.workspace}}
+        run: >
+          cmake -H${{github.event.repository.name}} -Bbuild
+          -DCMAKE_BUILD_TYPE=Debug
+          -DCPPSORT_ENABLE_COVERAGE=ON
+          -G"Unix Makefiles"
+
+      - name: Build with coverage
+        shell: bash
+        working-directory: ${{runner.workspace}}/build
+        run: cmake --build . --config Debug -j 2
+
+      - name: Run the test suite
+        shell: bash
+        working-directory: ${{runner.workspace}}/build
+        run: ctest -C Debug --output-on-failure
+
+      - name: Create coverage info
+        shell: bash
+        working-directory: ${{runner.workspace}}/build
+        run: cmake --build . --target gcov
+
+      - name: Upload coverage info
+        uses: codecov/codecov-action@v2
+        with:
+          directory: ${{runner.workspace}}/build/testsuite
+          fail_ci_if_error: true

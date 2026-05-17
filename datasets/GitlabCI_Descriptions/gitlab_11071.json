@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_11071",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1386,
+  "description": "Create a GitLab CI pipeline using the default docker:latest image and a docker:dind service, defining variables CONTAINER_STAGING_IMAGE and CONTAINER_RELEASE_IMAGE. Add an analyse job in the analyse stage that runs on the sdldevelopers/sonar-scanner:latest image, is limited to the master branch, uses the docker tag, and executes the single command `sonar-scanner`. Add a build job in the build stage that runs on microsoft/dotnet:1.0.4-sdk, is limited to master, executes `cd ./src`, `/bin/bash ./build.sh`, `mkdir ./doc`, and `mv $(find . | grep -E /doc/.*\\.xml | xargs) -t ./doc`, and publishes the directories src/publish, src/test and src/doc as artifacts retained for 3 days. Add a prerelease job in the pre-release stage that runs the shared before_script `docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com`, is limited to master, and runs `docker build -t $CONTAINER_STAGING_IMAGE -f ./Dockerfile.publish .` followed by `docker push $CONTAINER_STAGING_IMAGE`. Finally, add a manual release job in the release stage that also runs the shared before_script, is limited to master, and runs `docker pull $CONTAINER_STAGING_IMAGE`, `docker tag $CONTAINER_STAGING_IMAGE $CONTAINER_RELEASE_IMAGE`, and `docker push $CONTAINER_RELEASE_IMAGE` to publish the final image to the GitLab Container Registry.",
+  "tags": [
+    "sonar",
+    "dotnet",
+    "docker",
+    "registry",
+    "pre-release",
+    "release",
+    "ci"
+  ]
+}

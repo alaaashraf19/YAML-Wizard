@@ -1,0 +1,16 @@
+{
+  "sha": "82bf4804363fff5acddc18c9326cfdab0acd3ce7586e681ca16dec14b77fef33",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1251,
+  "description": "Create a GitHub Actions workflow named tests that runs on every push to any branch and on pull requests to any branch. Use a matrix strategy to test with multiple Python versions (3.9 to 3.13) on an ubuntu-latest environment. For each Python version, check out the repository with submodules, install Python, set up Graphviz, install project dependencies from requirements.txt, run tests with nose2 and coverage, and upload coverage to Coveralls.",
+  "tags": [
+    "python",
+    "tests",
+    "coverage",
+    "graphviz",
+    "ubuntu",
+    "nose2",
+    "coveralls"
+  ]
+}

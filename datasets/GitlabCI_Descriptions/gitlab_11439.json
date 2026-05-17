@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_11439",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 952,
+  "description": "Create a GitLab CI pipeline that uses the node:latest Docker image and caches the node_modules/ directory. Define three stages: build, test, and deploy. In the build stage add a documents job that runs `npm install --save-dev` then `node node_modules/.bin/jsdoc -c ./.jsdoc.conf.json` and stores the generated docs/ folder as an artifact named plugin-documentation. In the test stage add a coverage job that runs `npm install --save-dev` then `node node_modules/.bin/istanbul cover ./tests/perform-tests.js coverage`, uploads the coverage/ folder as an artifact named plugin-coverage, extracts coverage with the regex '^Statements *: (\\d+\\.\\d+%)', and runs only on the master and development branches; also add a test job that runs `npm install --save-dev` then `node ./tests/perform-tests.js` and runs on all branches except master. In the deploy stage add a pages job that moves the docs to public/, moves coverage/lcov-report/ to public/coverage, publishes the public/ directory as a GitLab Pages artifact (expires in 30 days), depends on the documents and coverage jobs, and runs only on the master branch.",
+  "tags": [
+    "node",
+    "npm",
+    "istanbul",
+    "jsdoc",
+    "coverage",
+    "gitlab-pages",
+    "cache",
+    "build",
+    "test",
+    "deploy"
+  ]
+}

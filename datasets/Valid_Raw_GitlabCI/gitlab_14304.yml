@@ -1,0 +1,10 @@
+image: busybox
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - echo "Copying public dic..."
+  stage: deploy

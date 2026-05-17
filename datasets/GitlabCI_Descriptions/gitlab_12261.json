@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_12261",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 567,
+  "description": "Create a GitLab CI pipeline that uses the python:3.5 Docker image and defines global before_script steps to run apt-get update, install ruby-dev and ruby, install bundler via gem, install tox==2.3 via pip, execute bundle install with --path vendor --binstubs vendor/bin, and run make bootstrap. Set the variables AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, TWINE_USERNAME and TWINE_PASSWORD. Define two stages: test and publish. In the test stage add a feature job that runs make feature. In the publish stage add publish_binary and publish_pypi jobs, both restricted to the master branch, running make publish-binary and make publish-pypi respectively.",
+  "tags": [
+    "python-3.5",
+    "ruby",
+    "bundler",
+    "tox",
+    "make",
+    "publish",
+    "pypi",
+    "aws",
+    "gitlab-ci"
+  ]
+}

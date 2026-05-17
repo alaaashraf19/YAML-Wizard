@@ -1,0 +1,38 @@
+build:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - document.pdf
+    - document.log
+    - document.synctex.gz
+  except:
+  - tags
+  script:
+  - latexmk -synctex=1 -interaction=batchmode -halt-on-error -file-line-error -pdf
+    document
+  stage: build
+build_chapter:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - sections/*.pdf
+  except:
+  - tags
+  script:
+  - cd sections
+  - find . -name '*.tex' -exec latexmk -interaction=nonstopmode -file-line-error -pdf
+    {} \;
+  stage: build
+build_release:
+  artifacts:
+    paths:
+    - document.pdf
+    - document.log
+    - document.synctex.gz
+  only:
+  - tags
+  script:
+  - latexmk -synctex=1 -interaction=batchmode -halt-on-error -file-line-error -pdf
+    document
+  stage: build
+image: registry.gitlab.com/latex-template/docker

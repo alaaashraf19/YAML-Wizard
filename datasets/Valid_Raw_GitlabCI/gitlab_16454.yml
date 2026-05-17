@@ -1,0 +1,29 @@
+testing-26.1:
+  image: flycheck/emacs-cask:26.1
+  script:
+  - emacs --version
+  - cask version
+  - cask install --dev
+  - cask update
+  - ./orgversion.sh
+  - cask build
+  - cask clean-elc
+  - cask exec ert-runner --debug
+  stage: test
+testing-26.1-rc1:
+  after_script:
+  - apt-get update && apt-get -y install curl
+  - ./coverage.sh
+  image: flycheck/emacs-cask:26.1-rc1
+  script:
+  - emacs --version
+  - cask version
+  - cask install --dev
+  - cask update
+  - ./orgversion.sh
+  - cask build
+  - cask clean-elc
+  - cask exec ert-runner --debug
+  stage: test
+  variables:
+    UNDERCOVER_FORCE: 'true'

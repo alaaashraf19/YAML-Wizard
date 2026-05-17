@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_13822",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 457,
+  "description": "Create a GitLab CI pipeline using the node:16.13 Docker image and a global before_script that runs apt-get update -qq && apt-get install. Define stages test and build, and include the Security/Dependency-Scanning.gitlab-ci.yml template. Add a build job in the build stage that executes yarn and then yarn build, caches node_modules/ and .yarn with a key based on $CI_COMMIT_REF_SLUG-$CI_PROJECT_DIR and policy pull, also defines a top‑level cache with key $CI_BUILD_REF_NAME for node_modules/ and build/, marked untracked, and stores the build/ directory as an artifact. The pipeline has no explicit rules, so jobs run on all branches.",
+  "tags": [
+    "node",
+    "yarn",
+    "dependency-scanning",
+    "cache",
+    "artifact",
+    "build"
+  ]
+}

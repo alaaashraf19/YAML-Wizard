@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_14326",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 153,
+  "description": "Create a GitLab CI pipeline that uses the pank/docker-ox Docker image. Define a pages job (default stage) that runs the command emacs --batch --no-init-file --load publish.el --funcall org-publish-all. The job collects the public/ directory as an artifact and deploys it to GitLab Pages. No additional services, caches, or conditional rules are required.",
+  "tags": [
+    "emacs",
+    "org-mode",
+    "gitlab-pages",
+    "docker-ox"
+  ]
+}

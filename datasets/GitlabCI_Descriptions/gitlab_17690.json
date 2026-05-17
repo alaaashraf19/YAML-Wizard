@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_17690",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 350,
+  "description": "Create a GitLab CI pipeline with a single stage called build and a job named build_project. In the build stage run the script commands: `xcodebuild clean -workspace Neuralyzer.xcworkspace -scheme Neuralyzer | xcpretty` and `xcodebuild test -workspace Neuralyzer.xcworkspace -scheme Neuralyzer -destination 'platform=iOS Simulator,name=iPhone 7' | tee xcodebuild.log | xcpretty -s`. Capture the generated xcodebuild.log as an artifact. Use the default runner image.",
+  "tags": [
+    "xcodebuild",
+    "ios",
+    "xcpretty",
+    "build"
+  ]
+}
