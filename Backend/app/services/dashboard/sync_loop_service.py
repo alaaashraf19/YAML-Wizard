@@ -24,30 +24,38 @@ async def background_sync_loop():
 
     while True:
         await asyncio.sleep(interval)
+
         try:
             async with async_session() as db:
                 print("here")
 
                 repos = (await db.execute(select(Repository))).scalars().all()
+
                 for repo in repos:
                     try:
-                        result = await sync_repository(repo, db)
-                        if result.runs_synced > 0:
+                        sync_result = await sync_repository(repo.id, db)
+
+                        if sync_result.runs_synced > 0:
                             print(
                                 f"[auto-sync] {repo.full_name}: "
-                                f"{result.runs_synced} runs, {result.jobs_synced} jobs, "
-                                f"{result.tests_parsed} tests", flush=True
+                                f"{sync_result.runs_synced} runs, "
+                                f"{sync_result.jobs_synced} jobs, "
+                                f"{sync_result.tests_parsed} tests",
+                                flush=True
                             )
+
                             await ws_manager.broadcast(repo.id, {
                                 "type": "sync_complete",
                                 "repo_id": repo.id,
-                                "runs_synced": result.runs_synced,
-                                "jobs_synced": result.jobs_synced,
-                                "tests_parsed": result.tests_parsed,
+                                "runs_synced": sync_result.runs_synced,
+                                "jobs_synced": sync_result.jobs_synced,
+                                "tests_parsed": sync_result.tests_parsed,
                             })
                         else:
                             print(f"[auto-sync] {repo.full_name}: up to date", flush=True)
+
                     except Exception as e:
-                        print(f"[auto-sync] ERROR {repo.full_name}: {e}", flush=True)
+                        print(f"[auto-sync] ERROR repo_id={repo.id}: {e}", flush=True)
+
         except Exception as e:
             print(f"[auto-sync] LOOP ERROR: {e}", flush=True)

@@ -7,7 +7,10 @@ from routers.dashboard import repos_router, runs_router, tests_router, insights_
 from realtime import websocket_router
 import asyncio
 from services.dashboard.sync_loop_service import background_sync_loop
+from services.dashboard.test_parsers.loader import load_parsers
+
 _sync_task: asyncio.Task | None = None
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -16,6 +19,7 @@ async def lifespan(app: FastAPI):
     
     global _sync_task
     await create_tables()
+    load_parsers()
     _sync_task = asyncio.create_task(background_sync_loop())
     yield
     if _sync_task:
@@ -30,6 +34,7 @@ app = FastAPI(lifespan=lifespan)
 setup_middleware(app)
 
 
+    
 app.include_router(auth_router.router, prefix="/auth", tags=["auth"])
 app.include_router(github_app_router.router, prefix="/github", tags=["github_app"])
 app.include_router(platfroms_connect_router.router, prefix="/platform", tags=["platform_connect"])

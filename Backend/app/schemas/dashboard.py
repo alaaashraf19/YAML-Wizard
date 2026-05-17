@@ -104,13 +104,13 @@ class TestStatus(str, Enum):
     SKIP = "skip"
     ERROR = "error"
 
-class TestResult(BaseModel):
-        test_name : str
-        status : TestStatus
-        duration_ms : Optional[int] = None
-        error : Optional[str] = None
-        source : str = "unknown"
-        framework : str = "unknown"
+# class TestResult(BaseModel):
+#         test_name : str
+#         status : str
+#         duration_ms : Optional[int] = None
+#         error : Optional[str] = None
+#         source : str = "unknown"
+#         framework : str = "unknown"
 
 class Insight(BaseModel):
     level: str  # "warning", "info", "success", "error"
@@ -130,3 +130,26 @@ class TrendPoint(BaseModel):
     test_count: int = 0
     test_pass_count: int = 0
     test_fail_count: int = 0
+
+
+class TestResult(BaseModel):
+    test_name: str
+    status: str
+
+    duration_ms: Optional[int] = None
+    error: Optional[str] = None
+
+    source: str = "unknown"
+    framework: str = "unknown"
+
+    #hierarchy
+    file: Optional[str] = None
+    parent_test: Optional[str] = None
+    is_subtest: Optional[bool] = None
+
+    #aggregated/summaries
+    is_aggregated: Optional[bool] = None
+    passed_count: Optional[int] = None
+    failed_count: Optional[int] = None
+    skipped_count: Optional[int] = None
+    total_count: Optional[int] = None

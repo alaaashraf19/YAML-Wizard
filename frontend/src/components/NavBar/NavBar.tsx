@@ -52,7 +52,7 @@ function NavBar(){
                 <Link className={`${styles.username} ${gStyles.clickable}`} to="/profile">
                     <GoPerson/>{username}
                 </Link>
-                <Link className={`${styles.Link} ${gStyles.clickable}`} to="/dashboard">
+                <Link className={`${styles.username} ${gStyles.clickable}`} to="/dashboard">
                 Dashboard
                 </Link>
                 <div className={styles.optionsContainer}>

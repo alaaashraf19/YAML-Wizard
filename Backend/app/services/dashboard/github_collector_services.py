@@ -1,4 +1,3 @@
-from datetime import datetime
 import os
 from dotenv import load_dotenv
 import httpx
@@ -33,7 +32,7 @@ class GitHubCollector:
     async def close(self) -> None:
         await self._client.aclose()
 
-    
+    #if branch is not specified github api returns runs from all branches
     async def get_workflow_runs(self, owner: str, repo: str, per_page: int = 30, page: int = 1, branch: str | None = None,) -> list[dict]:
         
         """Fetch workflow runs for a repository"""
@@ -61,7 +60,9 @@ class GitHubCollector:
         return resp.json().get("jobs", [])
 
     async def get_job_logs(self, owner: str, repo: str, job_id: int) -> str:
+        
         """Fetch raw job logs from GitHub API"""
+        
         resp = await self._client.get(
             f"{self.BASE_URL}/repos/{owner}/{repo}/actions/jobs/{job_id}/logs",
             follow_redirects=True,
@@ -70,7 +71,9 @@ class GitHubCollector:
         return resp.text
 
     async def get_job_artifacts(self, owner: str, repo: str, run_id: int) -> list[dict]:
+        
         """Fetch artifact metadata for a run"""
+        
         resp = await self._client.get(
             f"{self.BASE_URL}/repos/{owner}/{repo}/actions/runs/{run_id}/artifacts"
         )
@@ -79,8 +82,10 @@ class GitHubCollector:
 
 
     async def download_artifact(self, artifact_url: str) -> bytes:
+        
         """Download artifact zip file"""
-        resp = await self._client.get(artifact_url, follow_redirects=True)
+        
+        resp = await self._client.get(artifact_url, follow_redirects=True)#downloads the file into memory as an HTTP response.
         resp.raise_for_status()
         return resp.content
     
@@ -106,20 +111,3 @@ class GitHubCollector:
             logger.warning(f"Failed to extract artifacts: {e}")
         
         return reports
-    
-
-    @staticmethod
-    def parse_duration(started_at: str | None, completed_at: str | None) -> int | None:
-        
-        """Calculate duration in seconds from ISO timestamps"""
-        #github timings are like: "2026-05-10T12:00:00Z"
-        # we convert to "2026-05-10T12:00:00+00:00"
-        if not started_at or not completed_at:
-            return None
-        try:
-            #this creates an object like: datetime(2026, 5, 10, 12, 0, tzinfo=UTC)
-            start = datetime.fromisoformat(started_at.replace("Z", "+00:00"))
-            end = datetime.fromisoformat(completed_at.replace("Z", "+00:00"))
-            return max(0, int((end - start).total_seconds()))
-        except (ValueError, TypeError):
-            return None
