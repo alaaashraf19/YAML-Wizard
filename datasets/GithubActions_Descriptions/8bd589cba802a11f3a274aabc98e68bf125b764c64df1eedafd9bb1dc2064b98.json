@@ -1,0 +1,15 @@
+{
+  "sha": "8bd589cba802a11f3a274aabc98e68bf125b764c64df1eedafd9bb1dc2064b98",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1231,
+  "description": "Create a GitHub Actions workflow named Windows_x86 that runs on push to the master branch and on opened or synchronized pull requests. Use an ubuntu-20.04 job that checks out the repository with full history, sets up a build environment with required tools, caches the CMake build folder, configures CMake for a nightly build with a mingw toolchain, builds the project, and uploads the package as an artifact if not in an Actions test environment.",
+  "tags": [
+    "windows",
+    "x86",
+    "mingw",
+    "cmake",
+    "build",
+    "artifact"
+  ]
+}

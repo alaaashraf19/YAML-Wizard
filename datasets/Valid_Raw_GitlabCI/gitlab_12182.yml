@@ -1,0 +1,11 @@
+.docker_build:
+  before_script:
+  - source .gitlab/ci/scripts/docker_build_before_script.sh
+  image: docker:latest
+  script:
+  - source .gitlab/ci/scripts/docker_build_script.sh
+  services:
+  - docker:dind
+  variables:
+    DOCKERFILE: .
+    DOCKER_DRIVER: overlay2

@@ -1,0 +1,15 @@
+{
+  "sha": "6f946ce0a8e20c025fec59a5074ae737394a7114939b7ebb677144670ac28135",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1650,
+  "description": "Create a GitHub Actions workflow named tapp-win64 that runs on every push to the vcv branch and on pull requests to that branch. Use a single ubuntu-latest job that checks out the repository and its submodules, installs OpenGL development libraries, sets up a tmate session, builds binaries using the tapp-mingw64-action, archives the binaries into a zip file, creates a draft pre-release with a generated name and description, and uploads the zip file as a release asset.",
+  "tags": [
+    "mingw",
+    "win64",
+    "github-release",
+    "tmate",
+    "ubuntu",
+    "opengl"
+  ]
+}

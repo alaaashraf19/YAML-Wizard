@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_13658",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 3677,
+  "description": "Create a GitLab CI pipeline using the Docker image registry.gitlab.com/nobodyinperson/simbuto/ubuntu_16.04 with a global before_script that runs apt-get update -qq and installs thunar python3 python3-lxml make imagemagick zenity ghostscript gnupg2 bc xdg-utils perl findutils coreutils pinentry-gtk2 gnupg-agent debhelper pandoc m4 apt-transport-https, and an untracked cache keyed by $CI_JOB_NAME-$CI_COMMIT_REF_NAME. Define stages build, build-test, install-test, app-test, deploy, and deploy-test, and set variables AUTOCONF_INSTALL_DIR=install-dir and DEBIAN_PACKAGE_DIR=debian-package. In the build stage add an autoconf-build job that runs './configure' then 'make', and a debian-package-build job that runs 'dpkg-buildpackage -us -uc', creates $DEBIAN_PACKAGE_DIR, copies the resulting .deb, .dsc and .changes files there, and publishes them as artifacts named ${CI_JOB_STAGE}_${CI_COMMIT_REF_NAME} containing $DEBIAN_PACKAGE_DIR/*. In the build-test stage add an autoconf-clean-test job that runs 'git clean -fdx' and 'tests/autoconf/build-clean-test.sh', and a debian-package-test job that runs 'apt-get -qq update' and 'apt-get -qq -y install lintian' before exporting DEBFILE, listing its contents with 'dpkg -c $DEBFILE', and linting it with 'lintian --allow-root --fail-on-warnings $DEBFILE'. In the install-test stage add an autoconf-install-uninstall job that runs './configure --prefix=$(pwd)/$AUTOCONF_INSTALL_DIR', 'make', 'make install', verifies files exist, then 'make uninstall' and verifies removal, and a debian-package-install-uninstall job that runs 'apt-get update -qq', exports DEBFILE, touches /etc/passwd, installs the package with 'dpkg -i $DEBFILE || apt-get install -qq -y -f', and removes it with 'dpkg -r $(dpkg -I $DEBFILE | perl -ne '''if(s/^\\s*package:\\s*(\\S+)$/$1/ig){print;exit}''')'. In the deploy stage add an apt-deploy job that runs only on tags, sets GIT_STRATEGY=none, starts ssh-agent, adds the private key, writes known hosts, and copies all .deb files from $DEBIAN_PACKAGE_DIR to the remote host via scp. In the deploy-test stage add an apt-install-test job that runs only on tags, sets GIT_STRATEGY=none, updates apt, installs wget and apt-transport-https, determines the built package name and version, adds the remote apt repository key and source list, downloads the package from the repository, verifies the repository version matches the built version, and installs the package with 'apt-get install -y -qq $PACKAGE_NAME'.",
+  "tags": [
+    "ubuntu-16.04",
+    "autoconf",
+    "debian",
+    "apt",
+    "deploy",
+    "ci",
+    "cache",
+    "dpkg",
+    "ssh"
+  ]
+}

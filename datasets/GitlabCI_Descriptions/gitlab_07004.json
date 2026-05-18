@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_07004",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 726,
+  "description": "Create a GitLab CI pipeline that uses the rust:latest Docker image and defines two stages: test and deploy_docs. In the test stage add three jobs named test:beta, test:nightly and test:stable; each runs the before_script commands `apt-get update -yqq`, `apt-get install -yqq libluajit-5.1-dev`, and `rustup toolchain add <beta|nightly|stable>` respectively, then executes `cargo +beta test`, `cargo +nightly test` or `cargo +stable test` as its script. In the deploy_docs stage add a pages job that runs `cargo doc`, `mkdir public`, and `mv target/doc/* public`, publishes the public/ directory as a GitLab Pages artifact, and only runs on the master branch.",
+  "tags": [
+    "rust",
+    "cargo",
+    "gitlab-pages",
+    "test",
+    "beta",
+    "nightly",
+    "stable",
+    "apt",
+    "libluajit",
+    "documentation"
+  ]
+}

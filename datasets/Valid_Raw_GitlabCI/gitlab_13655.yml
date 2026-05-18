@@ -1,0 +1,77 @@
+before_script:
+- pip3 install --only-binary=numpy numpy
+cache:
+  key: $CI_JOB_NAME-$CI_COMMIT_REF_NAME
+coverage:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - $COVERAGE_STATIC_DIR
+  coverage: /TOTAL.*\s+(\d+\%)/
+  script:
+  - pip3 install coveralls
+  - coverage run --source=meteorology setup.py test
+  - coverage html
+  - coverage report
+  - mv htmlcov/ $COVERAGE_STATIC_DIR
+  stage: test
+dist:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - dist/*
+  dependencies: []
+  script:
+  - ./setup.py sdist
+  stage: package
+image: python:3.5
+include:
+- https://gitlab.com/nobodyinperson/ci-templates/raw/master/pypi-upload.yml
+pages:
+  artifacts:
+    paths:
+    - $PAGES_DIR/
+  before_script: []
+  dependencies:
+  - sphinx
+  - coverage
+  only:
+  - tags
+  script:
+  - rm -rf $PAGES_DIR/
+  - mv $SPHINX_DOC_DIR $PAGES_DIR/
+  - mv $COVERAGE_STATIC_DIR $PAGES_DIR/
+  stage: deploy
+pip-install-local:
+  script:
+  - pip3 install --prefix=~/.local .
+  stage: test
+pypi-upload:
+  dependencies:
+  - dist
+  environment:
+    name: production
+    url: https://pypi.python.org
+  only:
+  - tags
+  stage: deploy
+sphinx:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - $SPHINX_DOC_DIR
+  dependencies: []
+  script:
+  - pip3 install sphinx sphinx_rtd_theme
+  - make docs
+  - mv docs/_build/html $SPHINX_DOC_DIR
+  stage: package
+stages:
+- test
+- package
+- deploy
+variables:
+  COVERAGE_STATIC_DIR: coverage-report
+  PACKAGE_NAME: meteorology
+  PAGES_DIR: public
+  SPHINX_DOC_DIR: sphinx-doc

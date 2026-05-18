@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_12708",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1680,
+  "description": "Create a GitLab CI pipeline with two stages: test and build. In the test stage add a test job that uses the registry.gitlab.com/musit-norway/docker-scala-sbt image, runs a postgres:latest service and an elasticsearch service (aliased as elasticsearch), sets ELASTICSEARCH_HOST, ELASTICSEARCH_PORT, MUSIT_FUTURE_INTERVAL, MUSIT_FUTURE_TIMEOUT, POSTGRES_DB, POSTGRES_USER, POSTGRES_PASSWORD and SYMBIOTIC_POSTGRES_HOST variables, and executes the script steps: echo \"Building and running tests...\", sbt clean scalastyle scalafmt, git status, git diff --exit-code || (echo \"ERROR Scala formatting check failed, see differences above.\"; false), and a conditional block that runs sbt coverage allTests:test coverageReport; sbt coverageAggregate; sbt codacyCoverage when CODACY_PROJECT_TOKEN is set, otherwise runs sbt allTests:test. In the build stage add a build job that runs only on the master branch of MUSIT-Norway/musit, uses the $MUSIT_DOCKER_REGISTRY/musit/docker-scala-sbt image with a $MUSIT_DOCKER_REGISTRY/library/docker:dind service, sets DOCKER_DRIVER=overlay, runs before_script commands: echo \"Running build $CI_JOB_ID for commit $CI_COMMIT_SHA with commit ref name $CI_COMMIT_REF_NAME\", mkdir $HOME/.docker, echo $DOCKER_AUTH_CONFIG > $HOME/.docker/config.json, docker info, and then runs sbt docker:publish. Configure a cache for the path \"cache\" with untracked files, and define global variables COURSIER_CACHE=/root/cache/coursier and DOCKER_DRIVER=overlay.",
+  "tags": [
+    "scala",
+    "sbt",
+    "docker",
+    "postgres",
+    "elasticsearch",
+    "coverage",
+    "gitlab-ci"
+  ]
+}

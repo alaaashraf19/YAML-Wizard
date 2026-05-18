@@ -1,0 +1,12 @@
+lint-ci-gitlab:
+  dependencies: []
+  extends:
+  - .default-tags
+  - .default-retry
+  - .default-only
+  image: sdesbure/yamllint:latest
+  only:
+    changes:
+    - '**/*.yml'
+  script:
+  - yamllint .gitlab-ci.yml .gitlab/ci lib/gitlab/ci/templates changelogs

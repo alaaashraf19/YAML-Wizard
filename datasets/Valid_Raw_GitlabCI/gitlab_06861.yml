@@ -1,0 +1,43 @@
+apply:
+  dependencies:
+  - plan
+  environment:
+    name: production
+  only:
+  - master
+  script:
+  - terraform apply $PLAN
+  stage: deploy
+  when: manual
+before_script:
+- terraform --version
+- terraform init
+- cp terraform.tfvars.dist terraform.tfvars
+cache:
+  paths:
+  - .terraform
+image:
+  entrypoint:
+  - /usr/bin/env
+  - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+  name: hashicorp/terraform:light
+plan:
+  artifacts:
+    name: plan
+    paths:
+    - $PLAN
+  script:
+  - terraform plan -var "do_token=$do_token" -var "do_ssh_keys=$do_ssh_keys" -var
+    "warrior_username=$warrior_username" -var "warrior_password=$warrior_password"
+    -var "warrior_downloader=$warrior_downloader" -out=$PLAN
+  stage: build
+stages:
+- validate
+- build
+- deploy
+validate:
+  script:
+  - terraform validate
+  stage: validate
+variables:
+  PLAN: plan.tfplan

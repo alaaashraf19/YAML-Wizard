@@ -1,0 +1,65 @@
+build:
+  artifacts:
+    expire_in: 1 day
+    paths:
+    - .packages
+    - '*/*/bin'
+    - '*/*/obj'
+  cache:
+    paths:
+    - .packages
+  image: microsoft/dotnet:2-sdk
+  script:
+  - dotnet restore --packages .packages
+  - dotnet build --no-restore /p:TreatWarningsAsErrors=true
+  stage: build
+publish:
+  dependencies:
+  - build
+  image: microsoft/dotnet:2-sdk
+  only:
+  - tags
+  script:
+  - dotnet msbuild /t:Pack /p:NoBuild=true /p:GitTag=$CI_COMMIT_TAG
+  - find src -name *.nupkg | xargs dotnet nuget push -s https://www.nuget.org/api/v2/package
+    -k $NUGET_API_KEY
+  stage: publish
+stages:
+- build
+- test
+- publish
+test:mono:
+  artifacts:
+    paths:
+    - test/*/*.report
+    when: always
+  dependencies:
+  - build
+  image: mono:5
+  script:
+  - msbuild /t:VSTest /p:VSTestNoBuild=true /p:TargetFramework=net451
+  stage: test
+test:netcore1:
+  artifacts:
+    paths:
+    - test/*/*.report
+    when: always
+  dependencies:
+  - build
+  image: microsoft/dotnet:1-sdk
+  script:
+  - dotnet msbuild /t:VSTest /p:VSTestNoBuild=true /p:TargetFramework=netcoreapp1.1
+  stage: test
+test:netcore2:
+  artifacts:
+    paths:
+    - test/*/*.report
+    when: always
+  dependencies:
+  - build
+  image: microsoft/dotnet:2-sdk
+  script:
+  - dotnet msbuild /t:VSTest /p:VSTestNoBuild=true /p:TargetFramework=netcoreapp2.0
+  stage: test
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive

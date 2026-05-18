@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_18775",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 300,
+  "description": "Create a GitLab CI pipeline that uses the node:18.16.0 Docker image. Define a single stage named test and a job called test that runs in this stage. In the before_script it executes `git submodule sync --recursive`, `git submodule update --init --recursive`, `npm i`, and `cd demo && npm i && cd ..`. In the script it runs `cd demo`, then `npm run lint` and `npm run production`. The job stores the `public` directory as an artifact that expires after 1337 minutes.",
+  "tags": [
+    "node",
+    "npm",
+    "submodule",
+    "lint",
+    "production",
+    "test"
+  ]
+}

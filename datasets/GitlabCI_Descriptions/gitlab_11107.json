@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_11107",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 196,
+  "description": "Create a GitLab CI pipeline that uses the maven:3-jdk-10-slim Docker image. Define a single build job named build that runs in the default stage, executes java -version, mvn -v, mvn -B clean package, removes any original-*.jar files in target with rm target/original-*.jar && true, and copies the resulting *.jar files from target to the project root with cp target/*.jar ./. The job archives all generated *.jar files as artifacts and has no caches, services, variables, or conditional rules.",
+  "tags": [
+    "maven",
+    "java",
+    "jar",
+    "gitlab-ci"
+  ]
+}

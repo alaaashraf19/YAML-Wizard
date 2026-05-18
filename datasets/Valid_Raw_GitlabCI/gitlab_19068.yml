@@ -1,0 +1,20 @@
+build:
+  artifacts:
+    name: edil
+    paths:
+    - bin/edil
+  script:
+  - make all -B DEBUG=no
+  stage: build
+build-dbg:
+  artifacts:
+    name: edil-dbg
+    paths:
+    - bin/edil
+  script:
+  - make all -B DEBUG=yes
+  stage: build-dbg
+image: gcc
+stages:
+- build-dbg
+- build

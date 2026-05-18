@@ -1,0 +1,8 @@
+before_script:
+- pip install -U platformio
+build:
+  cache:
+    paths:
+    - ~/.platformio
+  script: platformio run
+image: python:2

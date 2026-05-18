@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_06747",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2191,
+  "description": "Create a GitLab CI pipeline that uses the docker:git Docker image with a docker:dind service, defines the stages test, build:hugo, release, and deploy, and sets CONTAINER_TEST_IMAGE and CONTAINER_RELEASE_IMAGE variables. In the test stage add a test contentbuild job that runs the before_script \"hugo version\" on the registry.gitlab.com/osinfs/containerize:base-hugo-0.17 image and then executes \"hugo --verbose --config config.toml\", and a test contentbuild::FD job (allow_failure) that runs the same before_script and executes \"hugo -FD\". In the build:hugo stage add a build to realease job (environment production, only on tags) that first runs a global before_script sequence: sed -e \"s/#version = \\\"v-VERSION\\\"/version = \\\"v-$CI_BUILD_REF_NAME\\\"/\" -i config.toml, docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com, apk add --update --no-cache curl, curl -LO https://releases.rancher.com/cli2/v$RANCHER_CLI_VERSION/rancher-linux-amd64-v$RANCHER_CLI_VERSION.tar.gz, tar zxvf rancher-linux-amd64-v$RANCHER_CLI_VERSION.tar.gz, mv rancher-v$RANCHER_CLI_VERSION/rancher /usr/local/bin/, curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl, mv kubectl /usr/local/bin, chmod +x /usr/local/bin/kubectl /usr/local/bin/rancher, rancher login --context $RANCHER_CONTEXT --token $RANCHER_TOKEN $RANCHER_URL, then runs \"sed -e \\\"s/#Ganalytics/Ganalytics/\\\" -i config.toml\", \"docker build -f Dockerfile -t $CONTAINER_TEST_IMAGE .\", and \"docker push $CONTAINER_TEST_IMAGE\". In the deploy stage add a deploy to production job (environment production, only on tags) that runs the same global before_script and then runs \"rancher kubectl --namespace devopsdaysbsb set image deployment/devopsdaysbsb devopsdaysbsb=${CONTAINER_TEST_IMAGE}\". In the release stage add a release-image-tag-latest job (environment production, only on tags) that runs the global before_script and then runs \"docker pull $CONTAINER_TEST_IMAGE\", \"docker tag $CONTAINER_TEST_IMAGE $CONTAINER_RELEASE_IMAGE\", and \"docker push $CONTAINER_RELEASE_IMAGE\".",
+  "tags": [
+    "hugo",
+    "docker",
+    "dind",
+    "rancher",
+    "kubectl",
+    "gitlab-ci",
+    "deployment",
+    "release",
+    "test"
+  ]
+}

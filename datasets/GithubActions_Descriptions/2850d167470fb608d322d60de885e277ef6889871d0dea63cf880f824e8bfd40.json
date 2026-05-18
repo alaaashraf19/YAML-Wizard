@@ -1,0 +1,16 @@
+{
+  "sha": "2850d167470fb608d322d60de885e277ef6889871d0dea63cf880f824e8bfd40",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2308,
+  "description": "Create a GitHub Actions workflow named Run the test suite that runs on push to master and on pull requests. The workflow should have three jobs: pyright, test, and coveralls. The pyright job runs on ubuntu-latest, sets up Python 3.x, installs dependencies, and runs pyright. The test job runs on a matrix of ubuntu-latest, macos-latest, and windows-latest with various Python versions, installs dependencies, and runs tests with pytest and coverage. The coveralls job runs on ubuntu-latest, finishes the Coveralls report, and uploads the results.",
+  "tags": [
+    "python",
+    "tests",
+    "pyright",
+    "pytest",
+    "coverage",
+    "coveralls",
+    "github-actions"
+  ]
+}

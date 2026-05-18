@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_06172",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 821,
+  "description": "Create a GitLab CI pipeline using the image registry.gitlab.com/davidhsianturi/laravel-test-deploy:latest with a mysql:5.7 service and define the variables DB_HOST, DB_USERNAME, MYSQL_DATABASE and MYSQL_ROOT_PASSWORD. Define two stages: test and deploy. In the test stage add a unit_test job that runs composer install, cp .env.example .env, php artisan key:generate, php artisan migrate, and vendor/bin/phpunit. In the deploy stage add a deploy_production job that runs only on the master branch, is manual, sets up ssh-agent (installing openssh-client if missing), adds the $SPK_GCL secret, creates ~/.ssh/config to disable StrictHostKeyChecking when inside Docker, and executes ~/.composer/vendor/bin/envoy run deploy, while declaring the production environment with URL http://35.198.233.156.",
+  "tags": [
+    "laravel",
+    "php",
+    "composer",
+    "mysql",
+    "ssh",
+    "envoy",
+    "gitlab-ci",
+    "deployment"
+  ]
+}

@@ -1,0 +1,15 @@
+cache:
+  paths:
+  - node_modules/
+image: node:9.9.0
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - yarn
+  - PUBLIC_URL='/bytebeat-sequencer' yarn build
+  - mv public _public
+  - mv build public

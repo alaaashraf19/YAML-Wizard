@@ -1,0 +1,14 @@
+{
+  "sha": "c355e9a5a918b64f30ee0c6a466774e6816f8a186c9a10519130afd1961c09ce",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1874,
+  "description": "Create a GitHub Actions workflow named Installer: Windows that runs on manual dispatch, on publishing of releases, and on pushes to main, release, and version/* branches, excluding certain paths. The workflow uses a Windows job matrix with a single entry for Wix, checks out two repositories, installs vswhere with choco, bootstraps and builds the project with b2, and uploads and publishes the resulting installer MSI files as a release artifact.",
+  "tags": [
+    "windows",
+    "wix",
+    "installer",
+    "release",
+    "github-actions"
+  ]
+}

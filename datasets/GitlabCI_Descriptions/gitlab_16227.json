@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_16227",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 466,
+  "description": "Create a GitLab CI pipeline with a single job named build_image that uses the docker:git Docker image and the docker:dind service. Define a variable FLUTTER_VERSION (default empty) and set the job to run manually. In the job script, echo the FLUTTER_VERSION, log in to registry.gitlab.com with the CI_BUILD_TOKEN, build a Docker image using --build-arg FLUTTER_VERSION=$FLUTTER_VERSION and tag it as registry.gitlab.com/germansaprykin/flutter-docker:$FLUTTER_VERSION, then push the image to the GitLab Container Registry. The job runs in the default stage (test) and has no additional caches or artifacts.",
+  "tags": [
+    "docker",
+    "dind",
+    "flutter",
+    "manual",
+    "gitlab-registry"
+  ]
+}

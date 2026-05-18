@@ -1,0 +1,20 @@
+{
+  "sha": "gitlab_19271",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1773,
+  "description": "Create a GitLab CI pipeline using Ruby Docker images and the SAST, Dependency-Scanning, and Secret-Detection templates which add security jobs in the security stage. Define stages security, build, test, codequality, and release. Add a build job (ruby:3.3) that runs gem install bundler --no-document, then bundle update, and publishes Gemfile.lock as an artifact. Add a release job (only on tags, ruby:3.3) that runs gem install bundler --no-document, bundle update, and rake release. Add four rspec jobs (rspec-ruby3.2-rails7.2, rspec-ruby3.3-rails7.2, rspec-ruby3.3-rails8.0, rspec-ruby3.3-rails8.1) in the test stage, each using its specified ruby image, with a before_script that runs ruby -v, echoes RSPEC_RAILS_VERSION, installs bundler ~>2.4, sets BUNDLE_GEMFILE, runs bundle install --jobs=$(nproc) --path=\"../cache/bundle\" and bundle list, caches the cache/ directory keyed by job name, and a script that runs bundle exec rake spec. Add a rubocop job (ruby:3.0) in the codequality stage that installs rubocop rubocop-performance rubocop-rails rubocop-rspec and then runs rubocop.",
+  "tags": [
+    "ruby",
+    "rspec",
+    "rubocop",
+    "security",
+    "dependency-scanning",
+    "sast",
+    "secret-detection",
+    "build",
+    "test",
+    "codequality",
+    "release"
+  ]
+}

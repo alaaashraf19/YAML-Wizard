@@ -1,0 +1,50 @@
+name: "Update Snap"
+
+on:
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - ".github/**"
+      - "!.github/workflows/push_snap.yml"
+      - "**.md"
+      - ".all-contributorsrc"
+      - ".gitignore"
+
+jobs:
+  snap:
+    name: "Update Snap"
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'cpeditor'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+          submodules: recursive
+          fetch-depth: 0
+
+      - uses: actions/checkout@v4
+        with:
+          repository: KDE/extra-cmake-modules
+          path: third_party/extra-cmake-modules
+          ref: kf5
+
+      - uses: actions/checkout@v4
+        with:
+          repository: KDE/syntax-highlighting
+          path: third_party/syntax-highlighting
+          ref: kf5
+
+      - name: Update Snapcraft
+        run: |
+          cp dist/snap/snapcraft.yaml snapcraft.yaml
+
+      - uses: snapcore/action-build@v1
+        id: build
+
+      - uses: snapcore/action-publish@v1
+        env:
+          SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.STORE_LOGIN }}
+        with:
+          snap: ${{ steps.build.outputs.snap }}
+          release: edge

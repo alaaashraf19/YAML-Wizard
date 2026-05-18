@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_14361",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2718,
+  "description": "Create a GitLab CI pipeline that uses the docker:stable image with a docker:27-dind service, defines the stages test, deploy, and trigger, and sets global variables such as IMAGE_NAME, UV_VERSION, PYTHON_VERSION, and BASE_LAYER. In the test stage add a build job that runs only on master, staging, dev, and tags, executes \"docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com\", builds the image \"${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_NAME//\\//-}\" with the build argument IGNORE_DEV_DEPS=true, and pushes it. Also in the test stage add a test job that uses the image \"ghcr.io/astral-sh/uv:$UV_VERSION-python$PYTHON_VERSION-$BASE_LAYER\", caches the directory defined by $UV_CACHE_DIR keyed by uv.lock, installs gcc and related libs, runs \"uv sync --frozen --no-install-project --all-extras\", then \"uv run ./manage.py test\" and finally \"uv cache prune --ci\", while providing a postgres:17 service and relevant DATABASE_URL and other Django variables. In the deploy stage add tag_dev, tag_staging, and tag_prod jobs that each log in to the registry, pull the built image, retag it to \"${IMAGE_NAME}:dev\", \"${IMAGE_NAME}:staging\", or \"${IMAGE_NAME}:latest\" respectively, push the retagged image, and run only on the dev, staging, or master branches with the corresponding environment. Finally, in the trigger stage add a trigger job that runs only on master, installs curl with \"apk add --no-cache curl\", and posts a pipeline trigger request to the GitLab API using the $TRIGGER_TOKEN.",
+  "tags": [
+    "docker",
+    "dind",
+    "uv",
+    "python",
+    "postgres",
+    "ci",
+    "trigger",
+    "dev",
+    "staging",
+    "prod"
+  ]
+}

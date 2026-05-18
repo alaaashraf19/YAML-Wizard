@@ -1,0 +1,19 @@
+before_script:
+- apk update
+- apk add curl
+- apk add doxygen
+image: alpine
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - doxygen doxygen/Doxyfile
+  - mv doxygen/output/html/ public/
+  - VAR1="curl -# -H 'Accept:application/json' -H 'Content-type:application/json'
+    -X POST -d '{\"content\":\""
+  - "VAR2=\"\u306E\u30C7\u30D7\u30ED\u30A4\u304C\u5B8C\u4E86\u3057\u307E\u3057\u305F\
+    \u3002\\\"}' 'https://discordapp.com/api/webhooks/490435280973725697/zqhEWJfpxirgOe0A9E4DsU-xRfpc29hxDHsoAia5yFWEr2HwRFP03kKQMUOKdxgOtE1u'\""
+  - eval ${VAR1}${CI_PROJECT_NAME}${VAR2}

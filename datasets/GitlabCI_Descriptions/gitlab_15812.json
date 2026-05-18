@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_15812",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2204,
+  "description": "Create a GitLab CI pipeline using the image registry.gitlab.com/rilis/docker-ci:ci-latest with three stages: test, stats, and docs. In the test stage add a test job that runs: hell --install -r \"=\" -r \"RILI_STREAM_TESTS=ON\" -i \"CMAKE_BUILD_TYPE=Release\" -i \"CMAKE_CXX_STANDARD=11\" -G \"Ninja\", then creates a build directory, runs cmake ../ -G\"Ninja\" -DRILI_STREAM_TESTS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../.hell/install -DCMAKE_CXX_STANDARD=11, builds with ninja install, and executes ./rili-stream_tests. In the stats stage add a clang-format job that runs find * -iname '*.hpp' -o -iname '*.cpp' | xargs clang-format -i -style=file, records git status > ../status.log, shows git diff, and fails if the status log is non‑empty; a coverage job that runs hell --install -r \"=\" -r \"RILI_STREAM_TESTS=ON\" -r \"RILI_STREAM_COVERAGE=ON\" -i \"CMAKE_BUILD_TYPE=Release\" -i \"CMAKE_CXX_STANDARD=11\" -G \"Ninja\", creates and enters a build directory, runs cmake with coverage flags, builds with ninja install, runs ./rili-stream_tests, captures coverage with lcov, removes system and test files, generates HTML with genhtml, lists coverage, and always stores the coverage/ directory as an artifact named after the job expiring in 1 day; a cpplint job that runs find * -iname '*.cpp' -o -iname '*.hpp' | xargs cpplint.py --linelength=120 --extensions=hpp,cpp --filter=-legal/copyright,-build/include_order,-build/c++11,+build/c++14,-runtime/references; and a valgrind job that runs hell --install -r \"=\" -r \"RILI_STREAM_TESTS=ON\" -i \"CMAKE_BUILD_TYPE=Debug\" -i \"CMAKE_CXX_STANDARD=11\" -G \"Ninja\", builds similarly in Debug mode, and runs the test binary under valgrind --leak-check=full --show-leak-kinds=all --error-exitcode=123. In the docs stage add a doxygen job that runs doxygen Doxyfile and stores the generated doxygen/html directory as an artifact expiring in 1 week.",
+  "tags": [
+    "c++",
+    "clang-format",
+    "cpplint",
+    "doxygen",
+    "coverage",
+    "valgrind",
+    "ninja",
+    "cmake",
+    "gitlab-ci"
+  ]
+}

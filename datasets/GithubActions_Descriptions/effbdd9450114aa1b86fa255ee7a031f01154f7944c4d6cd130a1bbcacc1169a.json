@@ -1,0 +1,18 @@
+{
+  "sha": "effbdd9450114aa1b86fa255ee7a031f01154f7944c4d6cd130a1bbcacc1169a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 21760,
+  "description": "Create a complex GitHub Actions workflow named CI that runs on every push to master and tags matching v*, every pull request, and on a scheduled cron job. The workflow uses a matrix strategy to test on multiple operating systems (ubuntu and macos), with various boost versions, geos configurations, and compilers. For each matrix combination, it checks out the repository, sets up the environment, installs dependencies, builds and tests the project, and uploads build and coverage artifacts.",
+  "tags": [
+    "ci",
+    "ubuntu",
+    "macos",
+    "boost",
+    "geos",
+    "gcc",
+    "clang",
+    "coverage",
+    "testing"
+  ]
+}

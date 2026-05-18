@@ -1,0 +1,45 @@
+before_script:
+- docker login -u gitlab-ci-token -p ${CI_JOB_TOKEN} ${CI_REGISTRY}
+build_arm_none_eabi_gcc:
+  parallel:
+    matrix:
+    - VERSION:
+      - 14
+  script:
+  - docker build -t arm-none-eabi-gcc:${VERSION} --build-arg VERSION=${VERSION}.3.rel1
+    -f arm-none-eabi-gcc/Dockerfile .
+  - build/publish_image.sh arm-none-eabi-gcc:${VERSION}
+build_clang:
+  parallel:
+    matrix:
+    - VERSION:
+      - 21
+      - 20
+      - 19
+      - 18
+      - 17
+      - 16
+      - 14
+  script:
+  - docker build -t clang:${VERSION} --build-arg VERSION=${VERSION} -f clang/Dockerfile
+    .
+  - build/publish_image.sh clang:${VERSION}
+build_gcc:
+  parallel:
+    matrix:
+    - VERSION:
+      - 15
+      - 14
+      - 13
+      - 12
+      - 11
+  script:
+  - docker build -t gcc:${VERSION} --build-arg VERSION=${VERSION} -f gcc/Dockerfile
+    .
+  - build/publish_image.sh gcc:${VERSION}
+image: docker:latest
+services:
+- docker:dind
+variables:
+  DEPLOY_REGISTRY: ${CI_REGISTRY_IMAGE}
+  DOCKER_DRIVER: overlay2

@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_05728",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 281,
+  "description": "Create a GitLab CI pipeline that uses the python:3.6-alpine Docker image and defines a single deploy stage job named pages. In the before_script of pages run \"apk update && apk upgrade && apk add make\" then \"pip install -r requirements.txt\". In the script step execute \"make html\", then \"cd pdfs; make; cd ..;\" and finally move the generated site with \"mv _build/html public\". Publish the public/ directory as a GitLab Pages artifact and configure the job to run only on the master branch.",
+  "tags": [
+    "python",
+    "alpine",
+    "make",
+    "pip",
+    "gitlab-pages",
+    "master",
+    "deploy"
+  ]
+}

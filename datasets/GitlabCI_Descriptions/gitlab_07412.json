@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_07412",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 3050,
+  "description": "Create a GitLab CI pipeline with three stages (default, testpages, pages) using the node16-no-python image for regular jobs and docker:19.03.5 with docker:19.03.5-dind service for Docker‑based jobs. In the default stage define audit (allow_failure, retries 2, runs npm audit --production), benchmark (runs npm run benchmark, npm run benchmark:save, npm run benchmark:compare), docs (runs npm run docs and publishes build/docs/ as a 3‑month artifact), build:testpages-extension (builds and runs an extension Docker image with docker build -t extensionforcore -f test/dockerfiles/extension.Dockerfile ., docker run extensionforcore, copies /extension out and stores the extension folder as a 1‑month artifact), and tests (caches browser-snapshots/*/cache/ globally, runs npm test and npm run test:dist). In the testpages stage add testpages:v2:chrome:beta, testpages:v2:chrome:latest, testpages:v2:chrome:oldest, testpages:v2:firefox:beta, testpages:v2:firefox:latest, testpages:v2:firefox:oldest (all allow_failure) and testpages:v3:chrome:beta, testpages:v3:chrome:latest (both inherit MANIFEST mv3 and a SKIP pattern), each extending the .testpages template that installs git, clones the testpages repo, copies extension$MANIFEST.zip, builds a Docker image named testpages with --build-arg EXTENSION_FILE, runs it with --shm-size=512m and environment variables SKIP_EXTENSION_DOWNLOAD=true and GREP using the BROWSER variable, and after_script extracts screenshots/ as a 1‑month artifact while needing the build:testpages-extension artifact. All testpages jobs run in the testpages stage, use the docker:19.03.5 image, set MANIFEST to mv2 (or mv3 for v3 jobs), set BROWSER according to the job name, are interruptible, and have allow_failure enabled. The pipeline also defines a hidden .pages template that depends on the docs job for the pages stage. Variables include npm_config_audit=false and DOCKER_DRIVER=overlay2.",
+  "tags": [
+    "node",
+    "npm",
+    "docker",
+    "dind",
+    "testpages",
+    "benchmark",
+    "audit",
+    "docs",
+    "ci"
+  ]
+}

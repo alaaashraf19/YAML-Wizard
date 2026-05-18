@@ -1,0 +1,15 @@
+{
+  "sha": "c4e596d3f47e9dd6ecd7cb03c547ca6c4209dcc7c62d11c34c384a113565b39a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2033,
+  "description": "Create a GitHub Actions workflow named Upload Python Package that triggers on release creation. The workflow should have three jobs: deploy-sdist, deploy-bdist-manylinux, and deploy-bdist-windows. Each job should run on ubuntu-latest, check out the code, set up Python 3.x, install dependencies, build the package, and upload it to PyPI using twine with PYPI_USERNAME and PYPI_PASSWORD from secrets.",
+  "tags": [
+    "python",
+    "release",
+    "pypi",
+    "twine",
+    "package",
+    "upload"
+  ]
+}

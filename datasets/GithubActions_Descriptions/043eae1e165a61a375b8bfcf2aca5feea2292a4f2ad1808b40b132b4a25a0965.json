@@ -1,0 +1,14 @@
+{
+  "sha": "043eae1e165a61a375b8bfcf2aca5feea2292a4f2ad1808b40b132b4a25a0965",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1458,
+  "description": "Create a scheduled GitHub Actions workflow named Coverity Scan that runs weekly on the main branch of the squid-cache/squid repository. The workflow should also allow manual triggering from the Actions tab. In an ubuntu-22.04 job, use a container with the buildfarm-coverity image to check out the sources, prepare and upload them to Coverity Scan using cov-build, tar, and curl, relying on Coverity service credentials stored in repository secrets.",
+  "tags": [
+    "coverity",
+    "scan",
+    "scheduled",
+    "ubuntu",
+    "container"
+  ]
+}

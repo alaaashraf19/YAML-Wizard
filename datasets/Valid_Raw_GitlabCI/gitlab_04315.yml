@@ -1,0 +1,27 @@
+build:
+  script:
+  - apt-get update && apt-get install -y flit python3-pip
+  - PIP_BREAK_SYSTEM_PACKAGES=1 FLIT_ROOT_INSTALL=1 flit install
+  - rename-flac --help
+  stage: build
+image: debian:sid
+lint:
+  script:
+  - apt-get update && apt-get install -y pylint
+  - find . -iname "*.py" | xargs pylint
+  stage: lint
+stages:
+- lint
+- build
+- test
+test:integration:
+  script:
+  - apt-get update && apt-get install -y python3 flac
+  - python3 rename_flac.py "%a - %b - %c - %d - %g - %n - %t" tests
+  - test -e "tests/Artist - Album - Composer - Date - Genre - Tracknumber - Title.flac"
+  stage: test
+test:unit:
+  script:
+  - apt-get update && apt-get install -y flac python3-pytest
+  - pytest tests
+  stage: test

@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_14513",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2208,
+  "description": "Create a GitLab CI pipeline with build and test stages and six jobs. In the build stage, the check-build-units job uses the $CI_REGISTRY_IMAGE/qemu/debian:$QEMU_CI_CONTAINER_TAG image, runs a before_script that sources scripts/ci/gitlab-ci-section, installs jq via apt, then creates a build directory, runs ../configure, and executes .gitlab-ci.d/check-units.py on build/compile_commands.json, and it needs the amd64-debian-container job. Also in the build stage, the check-dco job uses python:3.10-alpine, installs git via apk, runs .gitlab-ci.d/check-dco.py with GIT_DEPTH=1000; the check-patch job (allow_failure) also uses python:3.10-alpine, installs git and perl via apk, runs .gitlab-ci.d/check-patch.py, and sets GIT_DEPTH=1000 and QEMU_JOB_ONLY_FORKS=1. In the test stage, the check-python-minreqs and check-python-tox jobs both use $CI_REGISTRY_IMAGE/qemu/python:$QEMU_CI_CONTAINER_TAG, depend on python-container, run make -C python check-minreqs and make -C python check-tox respectively, set GIT_DEPTH=1, and the tox job also sets QEMU_JOB_OPTIONAL=1 and QEMU_TOX_EXTRA_ARGS='--skip-missing-interpreters=false'. Finally, the check-rust-tools-nightly job (allow_failure) uses $CI_REGISTRY_IMAGE/qemu/fedora-rust-nightly:$QEMU_CI_CONTAINER_TAG, needs the build-system-fedora-rust-nightly job with artifacts, runs a before_script to source scripts/ci/gitlab-ci-section, starts a test section, runs pyvenv/bin/meson devenv -w ../rust ${CARGO-cargo} fmt --check, then make clippy and make rustdoc, ends the section, and archives rust/target/doc for 2 days with GIT_DEPTH=1.",
+  "tags": [
+    "build",
+    "test",
+    "qemu-debian",
+    "python-alpine",
+    "fedora-rust",
+    "make",
+    "meson",
+    "check-dco",
+    "check-patch"
+  ]
+}

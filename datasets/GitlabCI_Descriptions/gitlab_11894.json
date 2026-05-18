@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_11894",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 148,
+  "description": "Create a GitLab CI pipeline that uses the maratkalibek/robotframework Docker image and defines a single stage named test. Add a job called test that runs in the test stage, executes the exact shell command ./robotframework gitlab.robot, and collects the generated report/ directory as an artifact. No services, caches, variables, or special rules are required, and the pipeline does not deploy to any external target.",
+  "tags": [
+    "robotframework",
+    "test",
+    "docker-image",
+    "gitlab-ci"
+  ]
+}

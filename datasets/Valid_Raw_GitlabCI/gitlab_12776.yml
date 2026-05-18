@@ -1,0 +1,4 @@
+image: scorpil/rust:nightly
+test:cargo:
+  script:
+  - rustc --version && cargo --version

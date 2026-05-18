@@ -1,0 +1,14 @@
+{
+  "sha": "9be9c34aa748ed136773b106bfac0a2c4e97fac29ca65bb29bbc40b0a63765e5",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1195,
+  "description": "Create a GitHub Actions workflow named test that runs on workflow dispatch, push to any branch except markdown files, and pull requests except markdown files. The workflow has read permissions for repository contents and pull requests. It uses a matrix strategy to test with Python 3.10 and 3.11 on an ubuntu-latest environment, installing dependencies, running tests, and optionally uploading test artifacts to GitHub Pages if on the master branch with Python 3.11. A separate deploy job with write permissions for GitHub Pages deploys the workflow output to GitHub Pages if on the master branch, dependent on the test job.",
+  "tags": [
+    "python",
+    "github-pages",
+    "tests",
+    "deployment",
+    "matrix"
+  ]
+}

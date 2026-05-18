@@ -1,0 +1,47 @@
+build:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - ./site.tgz
+    when: on_success
+  script:
+  - ./scripts/build
+  stage: build
+dev:
+  script:
+  - ./scripts/deploy $CI_JOB_NAME
+  - ./scripts/test $CI_JOB_NAME
+  stage: test
+  when: manual
+my:
+  script:
+  - ./scripts/deploy $GITLAB_USER_LOGIN
+  - ./scripts/test $GITLAB_USER_LOGIN
+  stage: test
+pages:
+  artifacts:
+    paths:
+    - public/
+  script:
+  - ./pages
+prod:
+  only:
+  - master
+  script:
+  - ./scripts/deploy $CI_JOB_NAME
+  - ./scripts/test $CI_JOB_NAME
+  stage: deploy
+  when: manual
+qa:
+  script:
+  - ./scripts/deploy $CI_JOB_NAME
+  - ./scripts/test $CI_JOB_NAME
+  stage: test
+  when: manual
+uat:
+  only:
+  - master
+  script:
+  - ./scripts/deploy $CI_JOB_NAME
+  - ./scripts/test $CI_JOB_NAME
+  stage: test

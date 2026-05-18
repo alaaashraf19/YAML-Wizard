@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_19225",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 3269,
+  "description": "Create a GitLab CI pipeline using the debian:sid Docker image. Define a global before_script that adds i386 architecture, runs apt-get update, installs binutils-dev gcc-multilib wget git, downloads and installs the appropriate wine .deb packages for the stable branch (${WBRANCH}) version ${WVERSION}, creates symlinks, then clones and builds Nim from the branch given by NIMBRANCH and adds its bin directory to PATH. Cache the nim-${NIMBRANCH} directory (key nim-${NIMBRANCH}) and the wine directory (key wine). Add three jobs: test:devel (stage test, runs the before_script then executes nim-${NIMBRANCH}/bin/nim -v, winegcc -v, wine64 --version, sets LIBRARY_PATH and LD_LIBRARY_PATH via a find command, runs winegcc -print-search-dirs and make ARCH=64 DESTDIR=redist PREFIX= install; allows failure, runs on all branches except tags, sets NIMBRANCH=devel); test:master (stage test, same script, runs on all branches except tags, sets NIMBRANCH=master, uploads redist/ as an artifact named SteamForwarder-devel-$CI_COMMIT_SHA that expires in one week); deploy (stage deploy, runs only on tag pipelines, same before_script and script, uploads redist/ as an artifact named SteamForwarder-$CI_COMMIT_TAG).",
+  "tags": [
+    "debian",
+    "wine",
+    "nim",
+    "make",
+    "artifact",
+    "test",
+    "deploy"
+  ]
+}

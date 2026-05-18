@@ -1,0 +1,33 @@
+build:
+  artifacts:
+    paths:
+    - build/
+    - .gradle/
+    - src/generated/
+  before_script:
+  - sudo apk add --no-cache protobuf
+  - mkdir -p .gradle
+  script:
+  - GRADLE_USER_HOME=.gradle gradle assemble
+  stage: build
+image: msrd0/gradle
+test_psql:
+  before_script:
+  - 'echo -e ''db:\n  type: postgres\n  host: postgres\n  name: matrix_appservice_signal\n  user:
+    postgres\n  password: postgres'' | sudo tee /etc/matrix-appservice-signal.yml'
+  script:
+  - GRADLE_USER_HOME=.gradle gradle test
+  services:
+  - postgres:alpine
+  stage: test
+  variables:
+    POSTGRES_DB: matrix_appservice_signal
+    POSTGRES_INITDB_ARGS: -E UTF-8
+    POSTGRES_PASSWORD: postgres
+    POSTGRES_USER: postgres
+test_sqlite:
+  before_script:
+  - 'echo -e ''db:\n  type: sqlite3\n  file: /tmp/test.db'' | sudo tee /etc/matrix-appservice-signal.yml'
+  script:
+  - GRADLE_USER_HOME=.gradle gradle test
+  stage: test

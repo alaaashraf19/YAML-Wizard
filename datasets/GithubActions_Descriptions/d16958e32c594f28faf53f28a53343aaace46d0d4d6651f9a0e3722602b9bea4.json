@@ -1,0 +1,15 @@
+{
+  "sha": "d16958e32c594f28faf53f28a53343aaace46d0d4d6651f9a0e3722602b9bea4",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3088,
+  "description": "Create a GitHub Actions workflow that triggers on push, pull request, and published release events, ignoring changes to README.md, LICENSE, and BUILD.md. The workflow checks the commit message for a disable flag and then builds and packages a project for openSUSE Tumbleweed using a matrix strategy for different distributions. It installs dependencies, checks out the code, builds the project with CMake and Ninja, and uploads the resulting RPM package as an artifact.",
+  "tags": [
+    "opensuse",
+    "rpm",
+    "cpack",
+    "cmake",
+    "ninja",
+    "github-actions"
+  ]
+}

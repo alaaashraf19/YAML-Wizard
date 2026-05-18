@@ -1,0 +1,15 @@
+{
+  "sha": "cd2e21d7b1713c991a97c9a1b85115b9efef2f5d92df0ac5df47c7369aa78763",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 978,
+  "description": "Create a GitHub Actions workflow named Build and Test that runs on every push and pull request. Use a matrix strategy to build and test on multiple environments with different compilers and build types. For each job, run on an ubuntu-latest container with a specific compiler image, check out the repository, create a build directory, configure the build with CMake, build the project, and run tests with CTest.",
+  "tags": [
+    "cmake",
+    "ctest",
+    "docker",
+    "matrix",
+    "ubuntu",
+    "tests"
+  ]
+}

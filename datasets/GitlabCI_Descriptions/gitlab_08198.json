@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_08198",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2033,
+  "description": "Create a GitLab CI pipeline with stages build, test, review, staging, production, cleanup using the alpine image for a simple build job and the ayufan/openshift-cli image for OpenShift deployment jobs. In the build stage add a build job that runs `echo build` on alpine. In the test stage add test1 and test2 jobs that each run `echo run tests`. In the review stage add a review job that runs the OpenShift login (`oc login \"$OPENSHIFT_SERVER\" --token=\"$OPENSHIFT_TOKEN\" --insecure-skip-tls-verify`), ensures the project exists (`oc project \"$CI_PROJECT_NAME\" || oc new-project \"$CI_PROJECT_NAME\"`), creates the app if missing (`oc get services $APP || oc new-app . --name=$APP --strategy=docker`), exposes a route if missing (`oc get routes $APP || oc expose service $APP --hostname=$APP_HOST`), and starts a build (`oc start-build $APP --from-dir=. --wait`); it uses the ayufan/openshift-cli image, runs on all branches except master, defines environment review/$CI_BUILD_REF_NAME with on_stop stop-review and URL http://$CI_PROJECT_NAME-$CI_BUILD_REF_NAME.review.$OPENSHIFT_DOMAIN, and sets variables APP=review-$CI_BUILD_REF_NAME and APP_HOST=$CI_PROJECT_NAME-$CI_BUILD_REF_NAME.review.$OPENSHIFT_DOMAIN. Add staging and production jobs that use the same OpenShift script, run only on the master branch, are manual, set environment names staging and production with URLs http://$CI_PROJECT_NAME-staging.$OPENSHIFT_DOMAIN and http://$CI_PROJECT_NAME.$OPENSHIFT_DOMAIN respectively, and define APP and APP_HOST variables accordingly. Also add a stop-review cleanup job that runs `oc delete all -l \"app=$APP\"` on manual trigger, stops the review environment, and sets GIT_STRATEGY=none.",
+  "tags": [
+    "openshift",
+    "oc",
+    "deployment",
+    "review",
+    "staging",
+    "production",
+    "gitlab-ci"
+  ]
+}

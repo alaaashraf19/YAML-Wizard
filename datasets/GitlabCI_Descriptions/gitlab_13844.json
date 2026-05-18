@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_13844",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2258,
+  "description": "Create a GitLab CI pipeline with stages test and build. In the test stage add a job named test that uses the freetechsolutions/python-flake8:250213.01 image, runs before_script commands to create /opt/omnileads/ominicontacto/, /opt/omnileads/static, /opt/omnileads/media_root and remove ${CI_PROJECT_DIR}/omnileads_ui/.eslintrc.js, then executes bash check-js.sh, flake8, python manage.py test --failfast, and python manage.py compilemessages; it runs with a plpython service (freetechsolutions/omlpgsql:develop) and a redis service, sets DATABASE_URL, DJANGO_SETTINGS_MODULE, POSTGRES_DB, POSTGRES_PASSWORD, and POSTGRES_USER variables, and is triggered only when the merge request target branch is develop or when RUN_TEST is \"true\". In the build stage add a job named container-image that uses docker:24.0.7-alpine3.19, installs docker-cli-buildx via apk, runs docker buildx build --file=Dockerfile --tag=dev --target=dev . and docker buildx build --file=Dockerfile --tag=run --target=run ., then checks that DOCKER_USERNAME, DOCKER_SECRET, DOCKER_USER and DOCKER_PASSWORD are defined and that .omnileads_version exists, computes IMAGE_VERSION if empty, and if CI_COMMIT_BRANCH is master logs in with DOCKER_USERNAME/DOCKER_SECRET, tags the run image as omnileads/omlapp:$IMAGE_VERSION and pushes to docker.io/omnileads/omlapp:$IMAGE_VERSION, otherwise logs in with DOCKER_USER/DOCKER_PASSWORD, tags as freetechsolutions/omlapp:$IMAGE_VERSION and pushes to docker.io/freetechsolutions/omlapp:$IMAGE_VERSION; the job runs only on the web ref and uses the docker:24.0.7-dind-alpine3.19 service.",
+  "tags": [
+    "docker",
+    "buildx",
+    "python-flake8",
+    "django",
+    "postgres",
+    "redis",
+    "ci-variables",
+    "multi-stage-build"
+  ]
+}

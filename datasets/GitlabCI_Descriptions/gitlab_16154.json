@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_16154",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2117,
+  "description": "Create a GitLab CI pipeline with three stages: test, package, and deploy. In the test stage add a test:archlinux job that runs on an Arch Linux runner and executes `pacman -Sy python-pip --noconfirm`, `pip install -r requirements.txt`, and `python setup.py test`. Also add a test:debian job that runs on a Debian runner and executes `apt-get update -qy`, `apt-get install -y python3-pip`, `pip3 install -r requirements.txt`, and `python3 setup.py test`. In the package stage add a package:archlinux job on an Arch Linux runner that runs `pacman -Sy sudo git python-gitpython python-yaml python-docopt fakeroot systemd binutils python-setuptools --noconfirm`, `useradd -m -G users -s /bin/bash package`, `chown -R package:users archlinux`, `cd archlinux`, and `sudo -H -u package makepkg -f`, then publishes the generated `archlinux/version*` files as artifacts that expire in one day. Also add a package:debian job on a Debian runner that runs `apt-get update -qy`, `apt-get install -y python3-git python-all python3-stdeb git python3-docopt python3-yaml dh-python`, `rm -rf \"./deb_dist\"`, and `python3 setup.py --command-packages=stdeb.command bdist_deb`, publishing the resulting `deb_dist/*.deb` artifacts with a one‑day expiration. Finally, add a repoupdate job in the deploy stage on a Docker runner that runs a before_script to install and start ssh-agent, add the `$SSH_PRIVATE_KEY`, configure SSH to skip host checking, depends on both package jobs, runs only for git tags, and then uses ssh and scp to delete old package files and upload the new `archlinux/version*.pkg.tar.zst` and `deb_dist/*.deb` files to a remote repository before invoking remote update scripts.",
+  "tags": [
+    "archlinux",
+    "debian",
+    "test",
+    "package",
+    "deploy",
+    "ssh",
+    "makepkg",
+    "stdeb",
+    "docker-runner"
+  ]
+}

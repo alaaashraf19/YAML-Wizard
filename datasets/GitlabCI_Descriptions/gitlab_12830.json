@@ -1,0 +1,12 @@
+{
+  "sha": "gitlab_12830",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 95,
+  "description": "Create a GitLab CI pipeline that uses the pbui/cse-30341-fa18-assignments Docker image. Define a single job named test that runs in the default test stage and executes the exact shell command `make BRANCH=$CI_BUILD_REF_NAME test`. The pipeline does not define any caches, artifacts, services, or special rules/triggers.",
+  "tags": [
+    "make",
+    "cse-30341",
+    "docker-image"
+  ]
+}

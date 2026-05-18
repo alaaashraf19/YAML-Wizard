@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_13817",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 168,
+  "description": "Create a GitLab CI pipeline with two jobs: dmd and ldc. Both run in the default test stage. The dmd job uses the antonmeep/dmd Docker image, executes \"./test/run.sh && tail -n1 test/.coverage/silly.lst\", and defines a coverage regex \"/\\d+% covered/\". The ldc job uses the antonmeep/ldc Docker image and runs \"./test/run.sh\". No additional stages, caches, artifacts, or rules are defined.",
+  "tags": [
+    "dmd",
+    "ldc",
+    "docker",
+    "coverage",
+    "gitlab-ci"
+  ]
+}

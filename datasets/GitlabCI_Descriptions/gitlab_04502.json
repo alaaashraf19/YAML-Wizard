@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_04502",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 458,
+  "description": "Create a GitLab CI pipeline using the node:latest Docker image and three stages: build, test, and deploy. In the build stage add a build job that caches the node_modules/ directory, runs npm install then npm run build. In the test stage add a deploy-test job that runs npm install, npm run build, and then node_modules/.bin/surge build qa-react-16-presentation.surge.sh, and is triggered manually. In the deploy stage add a deploy-prod job that runs npm install, npm run build, and then node_modules/.bin/surge build react-16-presentation.surge.sh, also manual. Ensure the cache is shared across jobs and no artifacts are defined.",
+  "tags": [
+    "node",
+    "npm",
+    "surge",
+    "ci",
+    "deployment"
+  ]
+}

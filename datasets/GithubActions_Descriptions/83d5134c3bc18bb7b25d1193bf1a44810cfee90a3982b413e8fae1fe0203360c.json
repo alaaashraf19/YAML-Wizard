@@ -1,0 +1,17 @@
+{
+  "sha": "83d5134c3bc18bb7b25d1193bf1a44810cfee90a3982b413e8fae1fe0203360c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4670,
+  "description": "Create a GitHub Actions workflow named Build that runs on push to all branches except staging.tmp, trying.tmp, and staging-squash-merge.tmp, and on pull requests. Use a matrix job that builds on multiple OS environments (ubuntu-latest, macOS-latest, windows-latest, ubuntu-16.04) with different configurations, checks out the repository, syncs submodules, prepares the environment, builds in debug and release modes, tests, and packages the build artifacts for upload.",
+  "tags": [
+    "cmake",
+    "multi-os",
+    "ubuntu",
+    "macos",
+    "windows",
+    "build",
+    "test",
+    "package"
+  ]
+}

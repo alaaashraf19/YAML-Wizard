@@ -1,0 +1,14 @@
+{
+  "sha": "fee335cee60b0330411d0f451802d3bbfdeabe4a6aa8c7a90e154d321403bce9",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 832,
+  "description": "Create a GitHub Actions workflow named Server (C#) that runs on push and pull request events, excluding changes to WebAssets. Use a single windows-latest job that checks out the repository, sets up .NET 2.1.x and 3.1.x, builds, tests, and packs the project in Release configuration. If the push is to the master branch, push the NuGet package to nuget.org using a token from secrets and upload the package as an artifact.",
+  "tags": [
+    "csharp",
+    "dotnet",
+    "nuget",
+    "tests",
+    "windows"
+  ]
+}

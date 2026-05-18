@@ -1,0 +1,14 @@
+{
+  "sha": "ae65ecaaaa1a6d4500c05917d5cdfb071fb23c0c00caa2f46d3495f29a274b2a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1849,
+  "description": "Create a GitHub Actions workflow named CMake that runs on every push to any branch. The workflow has two jobs: Build and Coverage. The Build job runs on a matrix of ubuntu-22.04 and ubuntu-latest OS, with g++ and clang++ compilers, and Debug and Release build types. It checks out the code, installs dependencies, configures CMake, builds, and tests. The Coverage job runs on ubuntu-latest, only on the master branch, and performs similar steps but with a focus on code coverage, uploading the results to Codecov.",
+  "tags": [
+    "cmake",
+    "ubuntu",
+    "tests",
+    "coverage",
+    "codecov"
+  ]
+}

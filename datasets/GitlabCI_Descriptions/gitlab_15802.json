@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_15802",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 953,
+  "description": "Create a GitLab CI pipeline using the image registry.gitlab.com/rilis/docker-ci:ci-latest with two stages: stats and docs. Add a clang-format job in the stats stage that runs `find * -iname '*.hpp' -o -iname '*.cpp' | xargs clang-format -i -style=file`, then `git status --porcelain > ../status.log`, `git diff`, and `test ! -s ../status.log`. Add a cppcheck job in the stats stage that runs `find * -iname '*.cpp' -o -iname '*.hpp' | cppcheck --quiet --std=c++11 --enable=warning --enable=style --enable=performance --enable=portability --enable=information --suppress=missingIncludeSystem --file-list=- &> cppcheck.log`, then `cat cppcheck.log`, and `test ! -s cppcheck.log`. Add a cpplint job in the stats stage that runs `find * -iname '*.cpp' -o -iname '*.hpp' | xargs cpplint.py --linelength=120 --extensions=hpp,cpp --filter=-legal/copyright,-build/include_order,-build/c++11,+build/c++14,-runtime/references`. Add a doxygen job in the docs stage that runs `doxygen Doxyfile` and publishes the generated `doxygen/html` directory as an artifact that expires in 1 week.",
+  "tags": [
+    "clang-format",
+    "cppcheck",
+    "cpplint",
+    "doxygen",
+    "docker-ci",
+    "stats",
+    "docs"
+  ]
+}

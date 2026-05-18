@@ -1,0 +1,32 @@
+before_script:
+- docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+build:
+  script:
+  - apk add --no-cache git
+  - git bundle create tools/ci/docker/assets/tessia-baselib.git HEAD
+  - docker build --pull --force-rm -f tools/ci/docker/Dockerfile -t $IMAGE_NAME tools/ci/docker
+  - docker run --env TESSIA_BASELIB_INTERACTIVE=no --rm $IMAGE_NAME
+  - docker push $IMAGE_NAME
+  stage: build
+image: docker:latest
+lint:
+  script:
+  - docker pull $IMAGE_NAME
+  - docker run -t --rm --entrypoint /assets/tessia-baselib/tools/run_pylint.py $IMAGE_NAME
+  stage: lint
+services:
+- docker:dind
+stages:
+- build
+- lint
+- unittest
+unittest:
+  coverage: /^TOTAL.*\s+(\d+\%)$/
+  script:
+  - docker pull $IMAGE_NAME
+  - docker run -t --rm --entrypoint /assets/tessia-baselib/tools/run_tests.py $IMAGE_NAME
+  - docker run -t --rm --entrypoint /assets/tessia-baselib/tools/run_pytest_tests.py
+    $IMAGE_NAME
+  stage: unittest
+variables:
+  IMAGE_NAME: ${CI_REGISTRY_IMAGE}/tessia-baselib:${CI_COMMIT_REF_SLUG}

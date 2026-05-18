@@ -1,0 +1,16 @@
+{
+  "sha": "f5d789d9db52f28793f4d3cba5f1e5bfb5aa699cf384b3bcaa90fe4ad7305f8f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1300,
+  "description": "Create a GitHub Actions workflow named CodeQL Security Scan that runs on push and pull request events to branches master and devel. Use an ubuntu-latest job with read permissions for actions, contents, and write for security events. Perform a matrix analysis for cpp and python languages, checking out the repository, initializing CodeQL tools, and analyzing the code with CodeQL. For cpp, create a venv, install dependencies, and build the project before analysis.",
+  "tags": [
+    "codeql",
+    "security",
+    "scan",
+    "cpp",
+    "python",
+    "github",
+    "actions"
+  ]
+}

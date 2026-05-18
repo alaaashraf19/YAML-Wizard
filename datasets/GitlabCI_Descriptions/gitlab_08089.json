@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_08089",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1736,
+  "description": "Create a GitLab CI pipeline with stages build, review, staging, and production and set global variables CI_PROJECT_PATH_SLUG, DEPLOY_CONFIG_HTTPS, DEPLOY_DOMAIN, DEPLOY_DOMAIN_APP, DEPLOY_PUBLISH_PATH, GIT_STRATEGY=none, and ODAGRUN_POD_SIZE=micro. In the build stage add a build job that uses the gioxa/odagrun-jekyll-build-image:20190901 image, runs on the odagrun tag, sets GIT_CACHE_STRATEGY=push-pull, GIT_STRATEGY=push-pull, ODAGRUN_POD_SIZE=large, executes ./build.sh, and publishes the _site directory as an artifact. In the review stage add a review job that runs on the deployctl-gioxapp.com tag, executes deployctl static, creates a review environment named review/$CI_BUILD_REF_NAME with URL http://$CI_ENVIRONMENT_SLUG.$CI_PROJECT_PATH_SLUG.$DEPLOY_DOMAIN_APP, runs for all branches except master, and can be stopped by a manual stop_review job that runs deployctl delete. In the staging stage add a staging job that runs on the deployctl-gioxapp.com tag, executes deployctl static, creates a staging environment with URL http://staging.$CI_PROJECT_PATH_SLUG.$DEPLOY_DOMAIN_APP, runs only on the master branch, and has a manual stop_staging job (with GIT_STRATEGY=none) that runs deployctl delete. In the production stage add a production job that runs on the deployctl-gioxapp.com tag, executes deployctl static, creates a production environment with URL https://$DEPLOY_DOMAIN, runs only on master, and is triggered manually.",
+  "tags": [
+    "jekyll",
+    "deployctl",
+    "odagrun",
+    "static-site",
+    "gitlab-ci",
+    "production",
+    "staging",
+    "review"
+  ]
+}

@@ -1,0 +1,175 @@
+build:
+  artifacts:
+    expire_in: 4 days
+    public: false
+    untracked: true
+  image: jojoboulix/amc-build
+  script:
+  - make version_files
+  - make
+  stage: build
+pack-debian:
+  allow_failure: true
+  artifacts:
+    exclude:
+    - debian-package/auto-multiple-choice-build-deps*
+    paths:
+    - debian-package/auto-multiple-choice*_*
+  before_script:
+  - perl ./local/deb822toplain.pl >> /etc/apt/sources.list
+  - apt-get update
+  - apt-get install -y git git-buildpackage
+  image: debian:testing-slim
+  needs:
+  - artifacts: true
+    job: pack-sources
+  script:
+  - mkdir debian-package
+  - cd debian-package
+  - gbp clone https://salsa.debian.org/georgesk/auto-multiple-choice.git
+  - mk-build-deps -i -t "apt-get -o Debug::pkgProblemResolver=yes --no-install-recommends
+    -y" auto-multiple-choice/debian/control
+  - cd auto-multiple-choice
+  - git config user.name AMC
+  - git config user.email "paamc@passoire.fr"
+  - export GBP_V=`grep auto-multiple-choice debian/changelog | head -n 1 | sed 's:.*(::;
+    s:-[0-9]\+).*$::'`
+  - export GBP_DATE=`echo "$CI_COMMIT_TIMESTAMP" | head -c 16 | sed "s/[^0-9]//g"`
+  - export GBP_UPSTREAM="$GBP_V+git$GBP_DATE"
+  - gbp import-orig --upstream-version=$GBP_UPSTREAM --import-msg "New upstream version
+    from git @$CI_COMMIT_SHORT_SHA" ../../artifacts/*_sources.tar.gz
+  - perl -i -ne 'print if(/conf/)' debian/patches/series
+  - git diff --quiet -- debian/patches || git commit debian/patches/series -m "Skip
+    patches, except for Makefile.conf"
+  - gbp dch -N "$GBP_UPSTREAM-1" --git-author --commit
+  - gbp buildpackage
+  stage: package
+pack-portable:
+  artifacts:
+    paths:
+    - artifacts/
+  image: jojoboulix/amc-build
+  script:
+  - make portable
+  - mkdir artifacts
+  - mv tarballs/auto-multiple-choice_*_portable.tar.gz artifacts
+  stage: build
+pack-ppa:
+  artifacts:
+    exclude:
+    - auto-multiple-choice-build-deps*
+    paths:
+    - auto-multiple-choice*_*
+  before_script:
+  - perl ./local/deb822toplain.pl >> /etc/apt/sources.list
+  - apt-get update
+  - apt-get install -y git git-buildpackage
+  image: debian:testing-slim
+  needs:
+  - artifacts: true
+    job: pack-sources
+  script:
+  - mk-build-deps -i -t "apt-get -o Debug::pkgProblemResolver=yes --no-install-recommends
+    -y" ppa/control
+  - export GBP_V=`git describe --tags --abbrev=0`
+  - export GBP_DATE=`echo "$CI_COMMIT_TIMESTAMP" | head -c 16 | sed "s/[^0-9]//g"`
+  - export GBP_UPSTREAM="$GBP_V+git$GBP_DATE"
+  - git init --initial-branch="$(gbp config DEFAULT.debian-branch)" amc-ppa
+  - cd amc-ppa
+  - git config user.name AMC
+  - git config user.email "paamc@passoire.fr"
+  - export DEBEMAIL=paamc@passoire.fr
+  - gbp import-orig --upstream-version=$GBP_UPSTREAM --no-interactive --import-msg
+    "New upstream version from git @$CI_COMMIT_SHORT_SHA" ../artifacts/*_sources.tar.gz
+  - cp -a ppa debian
+  - git add debian
+  - git commit -m "Use PPA as debian source"
+  - gbp dch -N "$GBP_UPSTREAM-1" --git-author --commit
+  - gbp buildpackage
+  stage: package
+pack-sources:
+  artifacts:
+    paths:
+    - artifacts/
+  image: jojoboulix/amc-build
+  script:
+  - make sources
+  - mkdir artifacts
+  - mv tarballs/auto-multiple-choice_*_dist.tar.gz artifacts
+  - mv tarballs/auto-multiple-choice_*_sources.tar.gz artifacts
+  stage: build
+stages:
+- build
+- test
+- package
+- packagetest
+test-portable:
+  allow_failure: true
+  image: jojoboulix/amc-build
+  needs:
+  - artifacts: true
+    job: pack-portable
+  script:
+  - pwd
+  - mkdir portable
+  - cd portable
+  - tar xvzf ../artifacts/auto-multiple-choice_*_portable.tar.gz
+  - cd ../tests/gui/dogtail
+  - AMC_PATH=$CI_PROJECT_DIR/portable/AMC/bin/auto-multiple-choice ./blind-tests.sh
+    simple
+  stage: test
+test-ppa:
+  before_script:
+  - apt update
+  - apt install -y xvfb xauth at-spi2-core gir1.2-notify-0.7 python3-dogtail libglib2.0-bin
+  image: debian:testing-slim
+  needs:
+  - artifacts: true
+    job: pack-ppa
+  script:
+  - apt install -y ./auto-multiple-choice_*.deb ./auto-multiple-choice-common_*.deb
+  - cd tests/gui/dogtail
+  - ./blind-tests.sh simple postcorrect utf8
+  - apt install -y texlive-lang-french
+  - ./blind-tests.sh template template-2
+  - apt install -y sqlite3
+  - ./blind-tests.sh manual
+  - apt install -y gedit
+  - ./blind-tests.sh pdfform
+  stage: packagetest
+test-uninstall:
+  artifacts:
+    paths:
+    - files/
+  image: jojoboulix/amc-build
+  needs:
+  - artifacts: true
+    job: pack-sources
+  script:
+  - mkdir files
+  - touch files/f-before files/d-before files/f-after files/d-after
+  - mkdir u
+  - cd u
+  - tar xvzf ../artifacts/auto-multiple-choice_*_dist.tar.gz
+  - cd auto-multiple-choice-*
+  - make
+  - find / -path /proc -prune -o -type f | sort > ../../files/f-before ; find / -path
+    /proc -prune -o -type d | sort > ../../files/d-before
+  - make install
+  - make uninstall
+  - cd ../..
+  - find / -path /proc -prune -o -type f | sort > files/f-after ; find / -path /proc
+    -prune -o -type d | sort > files/d-after
+  - cd files
+  - diff d-before d-after || true
+  - diff f-before f-after
+  stage: test
+tests:
+  image: jojoboulix/amc-build
+  needs:
+  - artifacts: true
+    job: build
+  script:
+  - make install && texhash
+  - make -C tests blind-test
+  stage: test

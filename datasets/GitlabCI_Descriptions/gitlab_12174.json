@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_12174",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 612,
+  "description": "Create a GitLab CI pipeline using the ruby:2.3 Docker image and a before_script that runs 'bundle install' and 'npm install'. Define two stages: test and deploy. In the test stage add a test job that runs 'bundle exec jekyll build -d test' then 'bundle exec jekyll build && bundle exec htmlproofer --log-level :debug ./_site/ --assume_extension --http_status_ignore 503 --url-ignore \"/www.linkedin.com/,/localhost/\"', stores the 'test' directory as an artifact, and runs on all branches except master. In the deploy stage add a pages job that runs 'bundle exec jekyll build -d public' and 'bundle exec jekyll algolia', publishes the 'public' directory as a pages artifact, and only runs on the master branch. Set variables ALGOLIA_API_KEY, JEKYLL_ENV=production, and LC_ALL=C.UTF-8.",
+  "tags": [
+    "ruby",
+    "jekyll",
+    "bundler",
+    "npm",
+    "algolia",
+    "htmlproofer",
+    "gitlab-pages",
+    "deploy",
+    "test"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_13123",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 202,
+  "description": "Create a GitLab CI pipeline that uses the abhvious/anonize2 Docker image. Define a single stage called build. Add a job named job1 in the build stage that runs the commands make anonize2.js, mkdir js, and mv anonize2.*js js/. Configure job1 to run only on the master branch, publish the js/ directory as an artifact, and assign it the docker tag.",
+  "tags": [
+    "anonize2",
+    "build",
+    "docker",
+    "make",
+    "artifact"
+  ]
+}

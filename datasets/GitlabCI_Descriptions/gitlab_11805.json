@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_11805",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2057,
+  "description": "Create a GitLab CI pipeline that defines a single job named yaml-lint in the lint stage, extending the .base_tpl template and using the Docker image vpgrp/linter:yaml, with allow_failure set to true. The job executes a series of echo commands that print red-colored warning symbols and a deprecation notice about moving the linting to ${tpl_directory}/job/yaml/lint.yml. It then runs `find . -name \"*.yml\" | xargs -r yaml-lint` followed by a loop `for file in $files_to_lint; do yaml-lint $file; done` and finally executes `false` to force a failure. No caches, artifacts, or specific rules are defined for this job.",
+  "tags": [
+    "yaml",
+    "lint",
+    "docker-image",
+    "deprecated",
+    "gitlab-ci"
+  ]
+}

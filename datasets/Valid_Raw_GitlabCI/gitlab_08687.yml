@@ -1,0 +1,83 @@
+.deploy_job:
+  before_script: &id001
+  - eval $(ssh-agent -s)
+  - ssh-add <(echo "$DEPLOY_KEY_ANSIBLE_REPO")
+  - ssh-add <(echo "$INTERNAL_GITTER_NETWORK_SSH_KEY")
+  - mkdir -p ~/.ssh
+  - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+  - git clone git@gitlab.com:gitlab-com/gl-infra/gitter-infrastructure.git
+  - ANSIBLE_DIR=$(cd gitter-infrastructure/ansible && pwd) && echo $ANSIBLE_DIR
+  - mkdir -p /root && echo "$ANSIBLE_VAULT_PASS" > /root/.vault_pass
+  image: registry.gitlab.com/gitterhq/webapp/deploy-build-image:latest
+  stage: deploy
+  tags: &id002
+  - internal
+  variables: &id003
+    GIT_STRATEGY: none
+check_version:
+  allow_failure: true
+  image: busybox:latest
+  only:
+  - /^release/.*$/
+  script:
+  - PACKAGE_VERSION=$(grep -m1 version package.json | sed "s/[\", ]//g" | cut -d ":"
+    -f2)
+  - BRANCH_VERSION=$(echo $CI_COMMIT_REF_NAME | sed -n -e 's/release\/\(.*\)/\1/p')
+  - "if [ \"$PACKAGE_VERSION\" == \"$BRANCH_VERSION\" ]; then echo \"Version in package.json\
+    \ up to date ($PACKAGE_VERSION) \u2705\"; exit 0; else echo \"Version in package.json\
+    \ not up to date (branch $BRANCH_VERSION !== package.json $PACKAGE_VERSION) \u274C\
+    \"; exit 1; fi"
+  stage: test
+deploy_beta:
+  before_script: *id001
+  environment: &id004
+    name: beta
+    url: https://irc-beta.gitter.im
+  image: registry.gitlab.com/gitterhq/webapp/deploy-build-image:latest
+  only: &id005
+  - master
+  script: &id006
+  - cd $ANSIBLE_DIR && ansible-playbook -i beta --vault-password-file "/root/.vault_pass"
+    playbooks/gitter/irc-servers.yml
+  stage: deploy
+  tags: *id002
+  variables: *id003
+deploy_beta_manual:
+  before_script: *id001
+  environment: *id004
+  image: registry.gitlab.com/gitterhq/webapp/deploy-build-image:latest
+  only: *id005
+  script: *id006
+  stage: deploy
+  tags: *id002
+  variables: *id003
+  when: manual
+deploy_prod_manual:
+  before_script: *id001
+  environment:
+    name: prod
+    url: https://irc.gitter.im
+  image: registry.gitlab.com/gitterhq/webapp/deploy-build-image:latest
+  only:
+  - tags
+  script:
+  - cd $ANSIBLE_DIR && ansible-playbook -i prod --vault-password-file "/root/.vault_pass"
+    playbooks/gitter/irc-servers.yml
+  stage: deploy
+  tags: *id002
+  variables: *id003
+  when: manual
+stages:
+- test
+- deploy
+test:
+  image: node:14
+  script:
+  - node --version
+  - npm --version
+  - npm install
+  - npm test
+  stage: test
+  tags:
+  - docker
+  - shared

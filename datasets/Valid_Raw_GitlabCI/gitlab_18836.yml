@@ -1,0 +1,77 @@
+code quality:
+  script:
+  - yarn install
+  - yarn run lint
+  stage: tests
+dependencies outdated:
+  allow_failure: true
+  script:
+  - yarn install
+  - yarn outdated
+  stage: tests
+image: node:lts-alpine
+package:
+  artifacts:
+    paths:
+    - ./*.tgz
+  needs:
+  - security audit
+  script:
+  - yarn install
+  - yarn build
+  - yarn pack
+  stage: publish
+pages:
+  artifacts:
+    expire_in: 30 days
+    paths:
+    - public
+  dependencies:
+  - tests & coverage
+  environment:
+    name: coverage report
+    url: https://vuedoc.gitlab.io/parser
+  needs:
+  - tests & coverage
+  - security audit
+  only:
+  - main
+  script:
+  - mv coverage/ public/
+  stage: publish
+publish:
+  environment:
+    name: npm
+    url: https://www.npmjs.com/package/@vuedoc/parser
+  needs:
+  - security audit
+  only:
+  - tags
+  - triggers
+  script:
+  - echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}' > .npmrc
+  - yarn install
+  - yarn build
+  - yarn publish
+  stage: publish
+security audit:
+  needs:
+  - code quality
+  - dependencies outdated
+  - tests & coverage
+  script:
+  - yarn audit --level high --groups dependencies
+  stage: security
+stages:
+- tests
+- security
+- publish
+tests & coverage:
+  artifacts:
+    paths:
+    - coverage/
+  coverage: /All files[^|]*\|[^|]*\s+([\d\.]+)/
+  script:
+  - yarn install
+  - yarn coverage
+  stage: tests

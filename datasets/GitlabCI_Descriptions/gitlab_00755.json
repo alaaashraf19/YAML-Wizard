@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_00755",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1591,
+  "description": "Create a GitLab CI pipeline with stages test and deploy, using the python:latest Docker image for the unit test job and python:3.6.4-stretch for all deploy jobs. In the test stage add a unit test job that runs apt-get update -qy, apt-get install -y python-dev python-pip, make setup-dev, make test, make code-convention, uses the postgres:latest service, sets DATABASE_URL to postgres://postgres@postgres/myproject, runs on any branch except tags, pre-production and production, and uses the python-361 tag. In the deploy stage add four jobs—deploy to dev, deploy to qa, deploy to tst, and deploy do prd—each executing the same script: apt-get update -qy, apt-get install -y rubygems, wget -qO- https://cli-assets.heroku.com/install-ubuntu.sh | sh, gem install dpl, dpl --provider=heroku --app=$APP_NAME --api-key=$HEROKU_API_KEY, heroku run python manage.py migrate -a $APP_NAME, and heroku run python manage.py compilemessages -a $APP_NAME; each job runs only on its designated branch (master for dev, pre-production for qa and tst, production for prd), sets APP_NAME (myproject-dev, myproject-qa, myproject-tst, myproject-prd) and HEROKU_API_KEY (corresponding secret variables), and uses the python-361 tag.",
+  "tags": [
+    "python-3-6",
+    "heroku",
+    "deploy",
+    "unit-test",
+    "postgres",
+    "make",
+    "dpl",
+    "pre-production",
+    "production",
+    "master"
+  ]
+}

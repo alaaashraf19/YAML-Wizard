@@ -1,0 +1,41 @@
+lint:
+  allow_failure: false
+  artifacts:
+    paths:
+    - reports/mypycov/
+    reports:
+      junit:
+      - reports/flake8.xml
+  image: registry.gitlab.com/mbarkhau/straitjacket/base
+  script:
+  - make lint
+  - make mypy
+  stage: test
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - mkdir -p public/cov
+  - mkdir -p public/mypycov
+  - cp -r reports/testcov/* public/cov/
+  - cp -r reports/mypycov/* public/mypycov/
+  stage: build
+stages:
+- test
+- build
+unit:
+  allow_failure: false
+  artifacts:
+    paths:
+    - reports/testcov/
+    reports:
+      junit:
+      - reports/pytest.xml
+  coverage: /^(TOTAL|src).*?(\d+\%)$/
+  image: registry.gitlab.com/mbarkhau/straitjacket/base
+  script:
+  - make test
+  stage: test

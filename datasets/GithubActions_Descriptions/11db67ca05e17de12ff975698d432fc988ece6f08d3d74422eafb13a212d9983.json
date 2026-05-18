@@ -1,0 +1,16 @@
+{
+  "sha": "11db67ca05e17de12ff975698d432fc988ece6f08d3d74422eafb13a212d9983",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4301,
+  "description": "Create a GitHub Actions workflow named Kazoo Awesome Testing that runs on push to master and release/* branches and on pull requests to those branches. The workflow has two jobs: validate and test. The validate job checks out the code, sets up Python 3.10, handles pip cache, installs dependencies, and runs code checks with tox. The test job depends on validate, runs on ubuntu-latest with a matrix of Python and ZK versions, and tests with tox. There's also a test_windows job that runs on windows-latest, sets up Python and Java, and runs a sanity test with tox.",
+  "tags": [
+    "python",
+    "testing",
+    "tox",
+    "zookeeper",
+    "github-actions",
+    "ci",
+    "cd"
+  ]
+}

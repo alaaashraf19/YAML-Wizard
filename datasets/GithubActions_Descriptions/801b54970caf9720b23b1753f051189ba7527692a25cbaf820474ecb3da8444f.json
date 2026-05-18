@@ -1,0 +1,17 @@
+{
+  "sha": "801b54970caf9720b23b1753f051189ba7527692a25cbaf820474ecb3da8444f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2777,
+  "description": "Create a GitHub Actions workflow named Tests that runs on every push. Use multiple jobs with different configurations: AppleClang on MacOS 10.15 and 11 for C++17 and C++20, GCC 9, 10, 11 on ubuntu-20.04 for C++17 and C++20, and Clang 9-13 on ubuntu-20.04 for C++17 and C++20 with libc++ and libstdc++. For each job, check out the code, verify the C++ compiler, and run make with specific flags.",
+  "tags": [
+    "c++",
+    "tests",
+    "macos",
+    "ubuntu",
+    "appleclang",
+    "gcc",
+    "clang",
+    "matrix"
+  ]
+}

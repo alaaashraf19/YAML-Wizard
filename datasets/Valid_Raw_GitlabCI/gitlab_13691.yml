@@ -1,0 +1,53 @@
+before_script:
+- Xvfb -ac -screen scrn 1280x2000x24 :9.0 &
+- export DISPLAY=:9.0
+- npm install gulp electron-prebuilt -g --no-progress --quiet --depth 0
+- npm install --no-progress --quiet --depth 0
+cache:
+  paths:
+  - node_modules/
+  - app/node_modules/
+code_coverage:
+  artifacts:
+    name: coverage_report
+    paths:
+    - coverage/
+  script:
+  - npm run coverage
+  stage: test
+e2e_test:
+  script:
+  - npm run e2e
+  stage: test
+image: aheuermann/electron:latest
+pages:
+  artifacts:
+    name: plato_report
+    paths:
+    - public
+  cache:
+    paths:
+    - public/
+  only:
+  - master
+  script:
+  - npm install -g plato --no-progress --quiet --depth 0
+  - plato -r -d public src
+  stage: bundle
+release:
+  artifacts:
+    name: package
+    paths:
+    - dist/*.deb
+  only:
+  - master
+  script:
+  - npm run release
+  stage: bundle
+stages:
+- test
+- bundle
+unit_test:
+  script:
+  - npm test
+  stage: test

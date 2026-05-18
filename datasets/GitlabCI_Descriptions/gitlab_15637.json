@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_15637",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 383,
+  "description": "Create a GitLab CI pipeline that uses the docker:stable image with the docker:dind service and defines a CONTAINER_IMAGE variable set to registry.gitlab.com/$CI_PROJECT_PATH. Include a before_script that installs curl via apk and logs into the GitLab Container Registry using the CI job token. Add a build job in the build stage that runs \"docker pull $CONTAINER_IMAGE:latest || true\" then \"docker build --cache-from $CONTAINER_IMAGE:latest --tag $CONTAINER_IMAGE:latest .\". The pipeline has no additional stages, caches, artifacts, or rules.",
+  "tags": [
+    "docker",
+    "dind",
+    "docker-build",
+    "registry",
+    "ci"
+  ]
+}

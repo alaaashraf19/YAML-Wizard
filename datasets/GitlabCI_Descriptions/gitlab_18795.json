@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_18795",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 723,
+  "description": "Create a GitLab CI pipeline using the php Docker image with a global before_script that runs apt-get update, installs git and unzip, downloads Composer to /usr/local/bin/composer, makes it executable, and runs composer install --prefer-dist -n -q. Define a phpcs job (allow_failure true) in the default test stage that downloads phpcs.phar via curl and executes php phpcs.phar --standard=psr2 src/. Define a phpmd job in the test stage that updates apt, installs libbz2-dev, builds the bz2 extension with docker-php-ext-install, downloads phpmd.phar, and runs php phpmd.phar src/ text cleancode,codesize,controversial,design,naming. Define a test job in the test stage that runs ./vendor/bin/phpunit. Define a test:5 job that overrides the image to php:5 and runs ./vendor/bin/phpunit. No caches, artifacts, or special rules are configured.",
+  "tags": [
+    "php",
+    "composer",
+    "phpcs",
+    "phpmd",
+    "phpunit",
+    "php5"
+  ]
+}

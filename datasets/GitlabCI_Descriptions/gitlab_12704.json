@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_12704",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 463,
+  "description": "Create a GitLab CI pipeline that uses the ruby:2.4.1 Docker image and runs a before_script on every job to update apt, install locales, generate the en_US.UTF-8 locale, set LANG, LANGUAGE and LC_ALL, install bundler without documentation, and run bundle install -j $(nproc) --path vendor, caching the vendor/ruby directory. Define two jobs that run in the default test stage: a rubocop job that executes `bundle exec rake rubocop`, and a tests job that executes `bundle exec rake test`. No additional stages, artifacts, or rules are defined.",
+  "tags": [
+    "ruby",
+    "rubocop",
+    "bundler",
+    "cache",
+    "locale"
+  ]
+}

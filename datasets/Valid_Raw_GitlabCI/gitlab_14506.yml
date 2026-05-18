@@ -1,0 +1,72 @@
+.opensbi_job_rules:
+  rules:
+  - if: $QEMU_CI != "1" && $QEMU_CI != "2" && $CI_PROJECT_NAMESPACE != "qemu-project"
+    when: never
+  - changes:
+    - .gitlab-ci.d/opensbi.yml
+    - .gitlab-ci.d/opensbi/Dockerfile
+    - roms/opensbi/*
+    if: $QEMU_CI == "1" && $CI_PROJECT_NAMESPACE != "qemu-project"
+    when: manual
+  - if: $QEMU_CI == "1" && $CI_PROJECT_NAMESPACE != "qemu-project" && $CI_COMMIT_REF_NAME
+      =~ /^opensbi/
+    when: manual
+  - if: $QEMU_CI == "1" && $CI_PROJECT_NAMESPACE != "qemu-project" && $CI_COMMIT_MESSAGE
+      =~ /opensbi/i
+    when: manual
+  - if: $CI_PROJECT_NAMESPACE == $QEMU_CI_UPSTREAM && $CI_PIPELINE_SOURCE == "schedule"
+    when: never
+  - changes:
+    - .gitlab-ci.d/opensbi.yml
+    - .gitlab-ci.d/opensbi/Dockerfile
+    - roms/opensbi/*
+    when: on_success
+  - if: $CI_COMMIT_REF_NAME =~ /^opensbi/
+    when: on_success
+  - if: $CI_COMMIT_MESSAGE =~ /opensbi/i
+    when: on_success
+build-opensbi:
+  artifacts:
+    paths:
+    - pc-bios/opensbi-riscv32-generic-fw_dynamic.bin
+    - pc-bios/opensbi-riscv64-generic-fw_dynamic.bin
+    - opensbi32-generic-stdout.log
+    - opensbi32-generic-stderr.log
+    - opensbi64-generic-stdout.log
+    - opensbi64-generic-stderr.log
+    when: on_success
+  extends: .opensbi_job_rules
+  image: $CI_REGISTRY_IMAGE:opensbi-cross-build
+  needs:
+  - docker-opensbi
+  script:
+  - git submodule update --init roms/opensbi
+  - export JOBS=$(($(getconf _NPROCESSORS_ONLN) + 1))
+  - echo "=== Using ${JOBS} simultaneous jobs ==="
+  - make -j${JOBS} -C roms/opensbi clean
+  - make -j${JOBS} -C roms opensbi32-generic 2>&1 1>opensbi32-generic-stdout.log |
+    tee -a opensbi32-generic-stderr.log >&2
+  - make -j${JOBS} -C roms/opensbi clean
+  - make -j${JOBS} -C roms opensbi64-generic 2>&1 1>opensbi64-generic-stdout.log |
+    tee -a opensbi64-generic-stderr.log >&2
+  stage: build
+  variables:
+    GIT_DEPTH: 3
+docker-opensbi:
+  before_script:
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  - until docker info; do sleep 1; done
+  extends: .opensbi_job_rules
+  image: docker:latest
+  script:
+  - docker pull $IMAGE_TAG || true
+  - docker build --cache-from $IMAGE_TAG --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA --tag
+    $IMAGE_TAG .gitlab-ci.d/opensbi
+  - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+  - docker push $IMAGE_TAG
+  services:
+  - docker:dind
+  stage: containers
+  variables:
+    GIT_DEPTH: 3
+    IMAGE_TAG: $CI_REGISTRY_IMAGE:opensbi-cross-build

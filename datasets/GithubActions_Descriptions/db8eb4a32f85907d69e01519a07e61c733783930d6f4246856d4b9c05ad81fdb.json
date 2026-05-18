@@ -1,0 +1,16 @@
+{
+  "sha": "db8eb4a32f85907d69e01519a07e61c733783930d6f4246856d4b9c05ad81fdb",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5209,
+  "description": "Create a GitHub Actions workflow named Build and test that runs on push to master and on pull requests to master. The workflow has four jobs: build-wheel, test-nixos, test, and build-sdist-validate-dists. The build-wheel job builds a wheel distribution of the project using uv and uploads it as an artifact. The test-nixos job runs tests in a Nix shell on ubuntu-latest and macos-latest. The test job runs tests on multiple OS and Python versions, including ubuntu-latest, windows-latest, and macos-latest, with different Python versions and constraints. The build-sdist-validate-dists job builds a source distribution and validates it using uvx twine check.",
+  "tags": [
+    "python",
+    "github-actions",
+    "ci",
+    "cd",
+    "testing",
+    "nix",
+    "uv"
+  ]
+}

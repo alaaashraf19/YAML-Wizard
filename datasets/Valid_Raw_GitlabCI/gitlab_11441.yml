@@ -1,0 +1,14 @@
+build:
+  artifacts:
+    name: $CI_JOB_NAME
+    paths:
+    - target/
+  script:
+  - rm -f ./target
+  - ./create-tar.sh
+  - mkdir -p ./target
+  - mv *.tar.gz ./target/
+  stage: build
+image: busybox:latest
+stages:
+- build

@@ -1,0 +1,15 @@
+{
+  "sha": "54ccf424bfb4538ce99a9800c6897ee5ae6b5c1eec82a7e9a9fe1c88224d780e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5471,
+  "description": "Create a GitHub Actions workflow named CI that runs on every push and on pull request events. Use a matrix strategy to build multiple packages (managarm-kernel and managarm-system) on an ubuntu-24.04 environment. For each package, install prerequisites, checkout the Managarm repository and its dependencies, download a rootfs, prepare the build environment, build the package using xbstrap, generate an image, and test the package.",
+  "tags": [
+    "managarm",
+    "xbstrap",
+    "github-actions",
+    "ubuntu",
+    "ci",
+    "package-build"
+  ]
+}

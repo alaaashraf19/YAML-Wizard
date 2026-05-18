@@ -1,0 +1,122 @@
+name: Build Project
+on:
+  workflow_call:
+
+jobs:
+  Tarball:
+    name: Generate tarball
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install dependencies
+        run: |
+          sudo pip install git-archive-all
+      - name: Checking out the code
+        uses: actions/checkout@v4
+        with:
+          submodules: 'true'
+          fetch-depth: 0
+      - name: Create Tarball
+        run: |
+          git-archive-all --prefix=gitqlient-`git describe --always` gitqlient-`git describe --always`.tar.gz
+      - name: Upload tarball
+        uses: actions/upload-artifact@v4
+        with:
+          name: tarball
+          path: gitqlient-*.tar.gz
+
+  BuildDeb:
+    needs: [Tarball]
+    uses: ./.github/workflows/build_deb.yaml
+    secrets: inherit
+    permissions:
+      actions: write
+      contents: read
+
+  BuildRpm:
+    needs: [Tarball]
+    uses: ./.github/workflows/build_rpm.yaml
+    secrets: inherit
+    permissions:
+      actions: write
+      contents: read
+
+  BuildWin:
+    needs: [Tarball]
+    uses: ./.github/workflows/build_win.yaml
+    secrets: inherit
+    permissions:
+      actions: write
+      contents: read
+
+  BuildMac:
+    needs: [Tarball]
+    uses: ./.github/workflows/build_mac.yaml
+    secrets: inherit
+    permissions:
+      actions: write
+      contents: read
+
+  BuildAppImage:
+    needs: [Tarball]
+    uses: ./.github/workflows/build_appimg.yaml
+    secrets: inherit
+    permissions:
+      actions: write
+      contents: read
+
+  UpdateAssets:
+    name: Release new binaries
+    if: github.repository_owner == 'francescmm'
+    needs: [BuildDeb, BuildRpm, BuildWin, BuildMac, BuildAppImage]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checking out the code
+        uses: actions/checkout@v4
+        with:
+          submodules: 'true'
+          fetch-depth: 0
+
+      - name: Delete previous dev-latest release
+        continue-on-error: true
+        if: github.ref == 'refs/heads/master'
+        run: |
+          gh release delete "dev-latest" -y
+          git push origin --delete dev-latest
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Fetch artifacts
+        uses: actions/download-artifact@main
+
+      - name: Release dev binaries
+        uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        if: github.ref == 'refs/heads/master'
+        with:
+          name: "Continuous Build: latest development"
+          tag_name: "dev-latest"
+          body: "Build with the latest changes in master."
+          draft: false
+          prerelease: true
+          files: |
+            appimage/GitQlient*.AppImage
+            linux_deb*/gitqlient*.deb
+            tarball/gitqlient*.tar.gz
+            macos/GitQlient*.dmg
+            win/GitQlient*.exe
+            fedora-*/*.rpm
+
+      - name: Release version binaries
+        uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            appimage/GitQlient*.AppImage
+            linux_deb*/gitqlient*.deb
+            tarball/gitqlient*.tar.gz
+            macos/GitQlient*.dmg
+            win/GitQlient*.exe
+            fedora-*/*.rpm

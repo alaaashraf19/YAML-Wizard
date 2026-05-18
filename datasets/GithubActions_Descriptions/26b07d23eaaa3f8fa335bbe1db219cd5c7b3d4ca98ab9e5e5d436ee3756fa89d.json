@@ -1,0 +1,16 @@
+{
+  "sha": "26b07d23eaaa3f8fa335bbe1db219cd5c7b3d4ca98ab9e5e5d436ee3756fa89d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1718,
+  "description": "Create a GitHub Actions workflow named tbd4vcv-win that runs on push to the vcv branch and on pull requests to vcv. Use a single windows-latest job with MSYS2 shell, checking out the repository with submodules, setting up MSYS2 with MINGW64, and installing required packages. Then, run a custom CI build script, archive binaries, create a draft pre-release with a generated tag and name, and upload the archived binaries as a release asset.",
+  "tags": [
+    "windows",
+    "msys2",
+    "mingw",
+    "cmake",
+    "boost",
+    "release",
+    "github-actions"
+  ]
+}

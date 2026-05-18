@@ -1,0 +1,56 @@
+bundle-dev:
+  artifacts:
+    expire_in: 1 day
+    paths:
+    - build/ui-bundle.zip
+  cache: &id001
+    paths:
+    - .cache/npm
+    policy: pull
+  except:
+  - master
+  script:
+  - npm install --quiet --no-progress --cache=.cache/npm
+  - node_modules/.bin/gulp bundle
+  stage: deploy
+bundle-stable:
+  artifacts:
+    paths:
+    - build/ui-bundle.zip
+  cache: *id001
+  only:
+  - master@antora/antora-ui-default
+  script:
+  - npm install --quiet --no-progress --cache=.cache/npm
+  - node_modules/.bin/gulp bundle
+  stage: deploy
+image: node:10.14.2-stretch
+install:
+  cache:
+    paths:
+    - .cache/npm
+  script:
+  - npm install --quiet --no-progress --cache=.cache/npm
+  stage: setup
+lint:
+  cache: *id001
+  script:
+  - npm install --quiet --no-progress --cache=.cache/npm
+  - node_modules/.bin/gulp lint
+  stage: verify
+pages:
+  artifacts:
+    paths:
+    - public
+  cache: *id001
+  only:
+  - master@antora/antora-ui-default
+  script:
+  - npm install --quiet --no-progress --cache=.cache/npm
+  - node_modules/.bin/gulp preview:build
+  - rm -rf public/_/{helpers,layouts,partials}
+  stage: deploy
+stages:
+- setup
+- verify
+- deploy

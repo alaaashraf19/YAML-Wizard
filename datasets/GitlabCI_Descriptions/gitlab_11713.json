@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_11713",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 179,
+  "description": "Create a GitLab CI pipeline that uses the alpine Docker image and runs a global before_script that updates apk and installs doxygen, ttf-freefont, and graphviz. Define a test job (implicitly in the test stage) that executes the command doxygen documentation/doxygen/config.doxyfile. Configure the test job to run on all branches except master using an except rule. No services, caches, artifacts, or deployment targets are defined.",
+  "tags": [
+    "alpine",
+    "doxygen",
+    "apk",
+    "graphviz",
+    "gitlab-ci"
+  ]
+}

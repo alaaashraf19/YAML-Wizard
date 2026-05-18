@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_04588",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 354,
+  "description": "Create a GitLab CI pipeline using the microsoft/dotnet:2.1-sdk Docker image and a global before_script that runs `dotnet --version` and `dotnet restore` for every job. Define variables `project` set to Vulcan and `testProject` set to VulcanTest. Add a build stage with a `build` job that sets its `build_path` variable to `$project` and executes `dotnet build Vulcan`. Add a test stage with a `test` job that sets its `build_path` variable to `$testProject` and runs `dotnet test VulcanTest`. No caches, artifacts, or conditional rules are required.",
+  "tags": [
+    "dotnet",
+    "microsoft-docker",
+    "build",
+    "test",
+    "gitlab-ci"
+  ]
+}

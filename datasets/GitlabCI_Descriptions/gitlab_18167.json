@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_18167",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 265,
+  "description": "Create a GitLab CI pipeline that uses the node Docker image and runs a before_script executing `node --version`, `npm --version`, and `npm ci || npm install` to set up the environment. Add a `pages` job (in the default stage) that runs `npm run make`, publishes the `public/` directory as a pages artifact, sets the deployment environment to Production with URL https://example-react-bootstrap.tripetto.com/, and is limited to the master branch. No caches, services, or additional variables are needed.",
+  "tags": [
+    "node",
+    "npm",
+    "gitlab-pages",
+    "production",
+    "master"
+  ]
+}

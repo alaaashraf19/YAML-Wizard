@@ -1,0 +1,33 @@
+.if-security-release-verify:
+  if: ($CI_PIPELINE_SOURCE =~ /^(pipeline|web|api)$/) && ($SECURITY_RELEASE_PIPELINE
+    =~ /^(verify|true)$/)
+.security-release-verify-base:
+  extends: .common-job-setup
+  needs:
+  - security_release_verify:start
+  rules:
+  - if: ($CI_PIPELINE_SOURCE =~ /^(pipeline|web|api)$/) && ($SECURITY_RELEASE_PIPELINE
+      =~ /^(verify|true)$/)
+  stage: security_release:verify
+security_release_verify:check_docker_tags:
+  extends:
+  - .security-release-verify-base
+  - .common-ci-tokens
+  script:
+  - bundle exec rake 'security:verify:check_docker_tags'
+security_release_verify:check_omnibus_packages_publishing:
+  extends:
+  - .security-release-verify-base
+  - .common-ci-tokens
+  script:
+  - bundle exec rake 'security:verify:check_omnibus_packages_publishing'
+security_release_verify:start:
+  extends: .common-job-setup
+  needs: []
+  rules:
+  - if: ($CI_PIPELINE_SOURCE =~ /^(pipeline|web|api)$/) && ($SECURITY_RELEASE_PIPELINE
+      =~ /^(verify|true)$/)
+  script:
+  - bundle exec rake 'security:verify:start'
+  stage: security_release:verify:start
+  when: manual

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_08006",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2211,
+  "description": "Create a GitLab CI pipeline using the openjdk:17-ea-17-jdk-buster Docker image, with a Gradle cache at tmp/.gradle/wrapper and tmp/.gradle/caches, and a global before_script that prints OS release, updates apt, sets GRADLE_USER_HOME to the workspace tmp/.gradle, and makes gradlew executable. Define three stages: sanitychecks, build, and scheduled. In the sanitychecks stage add a licensecheck job that runs only when $CI_PIPELINE_SOURCE != \"schedule\" and simply executes `echo skipped`. In the build stage add two jobs, build_debug and build_release, both running only when $CI_PIPELINE_SOURCE != \"schedule\", each sourcing ./scripts/setup-android-sdk.sh then invoking `./gradlew assembleDebug` or `./gradlew assembleRelease` respectively, and publishing the android/build/outputs/ directory as an artifact. In the scheduled stage add a merge_trans job that runs only when $CI_PIPELINE_SOURCE == \"schedule\" and executes a series of shell commands to checkout master, add a GitHub remote, fetch, rewrite origin URL with $CI_PUSH_TOKEN, configure git user, merge the weblate branch, push, increment the Android app versionCode by 1000 and minor version by 1 by editing app/build.gradle, commit, tag, and push the changes and tags.",
+  "tags": [
+    "android",
+    "gradle",
+    "openjdk",
+    "schedule",
+    "gitlab-ci",
+    "ci-pipeline"
+  ]
+}

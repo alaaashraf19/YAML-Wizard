@@ -1,0 +1,58 @@
+.setup:
+  before_script: &id001
+  - mkdir -p /home/gpbuilder/.gnupg  /home/gpbuilder/.m2
+  - chmod og-xrw /home/gpbuilder/.gnupg
+  - cp -a ./tools/settings.xml /home/gpbuilder/.m2/
+  - echo $ENCRYPTION_PASSWORD | gpg --passphrase-fd 0 --batch --yes -o - ./tools/wattazoum.asc.gpg
+    | gpg --batch --import
+  - echo $ENCRYPTION_PASSWORD | gpg --passphrase-fd 0 --batch --yes -o - ./tools/wattazoum-pub.asc.gpg
+    | gpg --batch --import
+  image: zoomonit/greenpepper-builder
+create_builder:
+  before_script:
+  - docker info
+  image: docker:latest
+  script:
+  - docker build -t zoomonit/greenpepper-builder tools/builder/
+  services:
+  - docker:dind
+  stage: prepare
+  variables:
+    DOCKER_DRIVER: overlay2
+  when: manual
+mvn_deploy:
+  before_script: *id001
+  image: zoomonit/greenpepper-builder
+  only:
+  - master
+  - tags
+  script:
+  - mvn $MAVEN_CLI_OPTS deploy -Prelease
+  stage: build
+mvn_install:
+  before_script: *id001
+  except:
+  - master
+  - tags
+  image: zoomonit/greenpepper-builder
+  script:
+  - mvn $MAVEN_CLI_OPTS install
+  stage: build
+mvn_release:
+  before_script: *id001
+  image: zoomonit/greenpepper-builder
+  only:
+  - master
+  script:
+  - mvn $MAVEN_CLI_OPTS release:prepare
+  stage: build
+  when: manual
+stages:
+- prepare
+- build
+- test
+- deploy
+variables:
+  MAVEN_CLI_OPTS: --batch-mode --errors --fail-at-end --show-version -DdeployAtEnd=true
+  MAVEN_OPTS: -Xmx1g -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN
+    -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true

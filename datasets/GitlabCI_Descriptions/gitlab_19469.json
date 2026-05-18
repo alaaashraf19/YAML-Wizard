@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_19469",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 269,
+  "description": "Create a GitLab CI pipeline with a single deploy stage containing a pages job. The pages job runs on the default Docker image, executes the script commands: mkdir .public, cp -r * .public, mv .public public, and then finds all files in public matching extensions htm, html, txt, text, js, css, svg, scss, png and compresses them with gzip -9 -f -kvr. It publishes the public directory as an artifact and is limited to the master branch. No services, caches, or extra variables are defined.",
+  "tags": [
+    "pages",
+    "deploy",
+    "gzip",
+    "static-site",
+    "gitlab-pages"
+  ]
+}

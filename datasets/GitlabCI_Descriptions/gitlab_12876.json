@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_12876",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 552,
+  "description": "Create a GitLab CI pipeline using the golang:latest Docker image for all jobs, with two stages: lint and test. Add a lint job in the lint stage that runs the following commands: wget -O- -nv https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.23.8, apt-get update, apt-get -y install python3-pip, pip3 install codespell, go get -d ./..., ./bin/golangci-lint run -c .golangci.yml ./..., make markdown-spellcheck, and make test. Add a tests job in the test stage that runs: go get -d ./..., and make test-long pkgs=\"./\" run=., with the same golang:latest image and no caches, artifacts, services, or conditional rules.",
+  "tags": [
+    "golang",
+    "lint",
+    "golangci-lint",
+    "make",
+    "tests"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_03655",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 305,
+  "description": "Create a GitLab CI pipeline that uses the public.ecr.aws/docker/library/node:22-trixie Docker image with the tag saas-linux-small-arm64 and caches the directories src/node_modules/ and src/kakugen.json. Define a single stage named test. In the test stage add a test_skill job that runs the shell commands scripts/kakugen.sh, then cd src, then npm install, then npm test. The job has no additional artifacts or rules and runs on every pipeline.",
+  "tags": [
+    "node",
+    "npm",
+    "test",
+    "cache",
+    "gitlab-ci"
+  ]
+}

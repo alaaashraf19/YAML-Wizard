@@ -1,0 +1,16 @@
+{
+  "sha": "12ab1f4ac13c25f5ef094bb05c02c2fb59223735ca76028a0ccb4b925a47b78b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2208,
+  "description": "Create a GitHub Actions workflow named CI build that runs on push, pull request, and release creation events. Use a matrix job strategy to build on multiple platforms including Windows (MSVC 64-bit, MSVC 32-bit, MinGW), Ubuntu (18.04, 20.04), and Mac OS (Latest x86_64, Latest arm64). For each platform, check out the repository, perform a shallow fetch, and then build using CMake with varying generators and architectures.",
+  "tags": [
+    "cmake",
+    "cross-platform",
+    "windows",
+    "ubuntu",
+    "macos",
+    "mingw",
+    "msvc"
+  ]
+}

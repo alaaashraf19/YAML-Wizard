@@ -1,0 +1,89 @@
+test:cypress-ibo-data:
+  after_script:
+  - mkdir $CI_PROJECT_DIR/screenshots
+  - mkdir $CI_PROJECT_DIR/pdfs
+  - cp -r $CI_PROJECT_DIR/e2e/cypress/pdfs/* $CI_PROJECT_DIR/pdfs
+  - cp -r $CI_PROJECT_DIR/e2e/cypress/screenshots/* $CI_PROJECT_DIR/screenshots
+  artifacts:
+    paths:
+    - $CI_PROJECT_DIR/screenshots
+    - $CI_PROJECT_DIR/pdfs
+    reports:
+      junit: $CI_PROJECT_DIR/e2e/cypress/reports/*.xml
+    when: always
+  before_script: 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY
+
+    '
+  image: docker
+  interruptible: true
+  needs: []
+  script: 'COMPOSE_BAKE=true docker compose -f docker/docker-compose-cypress.yml up
+    --build --abort-on-container-exit
+
+    docker compose -f docker/docker-compose-cypress.yml down --volumes
+
+    '
+  stage: test
+  variables:
+    CYPRESS_SPEC_SCRIPT: cypress/e2e/ibo_data/*.cy.js
+    DJANGO_SERVER_SCRIPT: ./e2e/server_with_testdata_postgres_ibo.sh
+    ENV_FILENAME: cypress-ibo-data
+    REGISTRY: registry.gitlab.com/oly-exams/exam_tools
+test:django-server:
+  before_script: 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY
+
+    '
+  image: docker
+  interruptible: true
+  needs:
+  - build:docker-images
+  script: 'docker run ${REGISTRY}/django-server-test:${CI_COMMIT_SHA}-untested
+
+    '
+  stage: test
+  variables:
+    REGISTRY: registry.gitlab.com/oly-exams/exam_tools
+test:docker-compose-a-dev:
+  before_script: 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY
+
+    '
+  image: docker
+  interruptible: true
+  needs: []
+  script: 'COMPOSE_BAKE=true docker compose -f docker/docker-compose-a-dev.yml up
+    --build --wait
+
+    docker compose -f docker/docker-compose-a-dev.yml down --volumes
+
+    '
+  stage: test
+  variables:
+    REGISTRY: registry.gitlab.com/oly-exams/exam_tools
+test:pre-commit:
+  before_script: 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY
+
+    '
+  image: docker
+  interruptible: true
+  needs:
+  - build:docker-images
+  script: 'docker run ${REGISTRY}/pre-commit:${CI_COMMIT_SHA}-untested
+
+    '
+  stage: test
+  variables:
+    REGISTRY: registry.gitlab.com/oly-exams/exam_tools
+test:pytest:
+  before_script: 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY
+
+    '
+  image: docker
+  interruptible: true
+  needs:
+  - build:docker-images
+  script: 'docker run ${REGISTRY}/pytest:${CI_COMMIT_SHA}-untested
+
+    '
+  stage: test
+  variables:
+    REGISTRY: registry.gitlab.com/oly-exams/exam_tools

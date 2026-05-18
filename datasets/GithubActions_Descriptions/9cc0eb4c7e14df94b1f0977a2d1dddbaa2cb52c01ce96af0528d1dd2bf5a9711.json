@@ -1,0 +1,14 @@
+{
+  "sha": "9cc0eb4c7e14df94b1f0977a2d1dddbaa2cb52c01ce96af0528d1dd2bf5a9711",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1982,
+  "description": "Create a GitHub Actions workflow named Turbinia Test Run that triggers on push and pull request events. The workflow should install Turbinia dependencies and run tests in a matrix of ubuntu-latest jobs with different Docker base images and gift PPA tracks. The workflow checks out the code, pulls and builds a Turbinia worker Docker image, runs a test container, configures Python 3, installs test dependencies, and runs tests using tox.",
+  "tags": [
+    "turbinia",
+    "docker",
+    "tests",
+    "ubuntu",
+    "python"
+  ]
+}

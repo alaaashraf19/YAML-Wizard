@@ -1,0 +1,35 @@
+binaries:
+  artifacts:
+    paths:
+    - config.example.yaml
+    - x86_64-unknown-linux-gnu/matrix-logger
+    - x86_64-pc-windows-gnu/matrix-logger.exe
+  dependencies:
+  - build
+  only:
+  - tags
+  script:
+  - mv target/x86_64-unknown-linux-gnu/ .      && mv x86_64-unknown-linux-gnu/{release/matrix-logger,}
+  - mv target/x86_64-pc-windows-gnu/ .         && mv x86_64-pc-windows-gnu/{release/matrix-logger.exe,}
+  stage: deploy
+build:
+  before_script:
+  - rustup target add x86_64-pc-windows-gnu
+  - apt update && apt install -y gcc-mingw-w64
+  - 'cat >> ~/.cargo/config <<EOF
+
+    [target.x86_64-pc-windows-gnu]
+
+    linker = "x86_64-w64-mingw32-gcc"
+
+    EOF
+
+    '
+  script:
+  - cargo build --release --target x86_64-unknown-linux-gnu
+  - cargo build --release --target x86_64-pc-windows-gnu
+  stage: build
+cache:
+  paths:
+  - target/
+image: liuchong/rustup:nightly

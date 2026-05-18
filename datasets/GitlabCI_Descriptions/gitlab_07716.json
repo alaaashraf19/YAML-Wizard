@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_07716",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 4503,
+  "description": "Create a GitLab CI pipeline using the mono Docker image with a NUGET_PACKAGE_VERSION variable set to 2.0.1 and four stages: build, test, publish, and clean. In the build stage add a Build job that runs only on the master branch and executes: nuget restore Aspects.sln; MONO_IOMAP=case msbuild /t:Build /p:Configuration=\"Release\" /p:Platform=\"Any CPU\" Aspects.sln; nuget pack Aspects.nuspec -IncludeReferencedProjects -Build -Properties Configuration=Release -Version $NUGET_PACKAGE_VERSION-Alpha; nuget pack Aspects.Counters.nuspec -IncludeReferencedProjects -Build -Properties Configuration=Release -Version $NUGET_PACKAGE_VERSION-Alpha; nuget pack Aspects.Logging.nuspec -IncludeReferencedProjects -Build -Properties Configuration=Release -Version $NUGET_PACKAGE_VERSION-Alpha; nuget push /builds/FodyWeaving/Aspects/Weaving.Aspects.$NUGET_PACKAGE_VERSION-Alpha.nupkg $MYGET_API_KEY -Source $MYGET_SOURCE; nuget push /builds/FodyWeaving/Aspects/Weaving.Aspects.Logging.$NUGET_PACKAGE_VERSION-Alpha.nupkg $MYGET_API_KEY -Source $MYGET_SOURCE; nuget push /builds/FodyWeaving/Aspects/Weaving.Aspects.Counters.$NUGET_PACKAGE_VERSION-Alpha.nupkg $MYGET_API_KEY -Source $MYGET_SOURCE. In the clean stage add a Clean job that runs only on master and runs: nuget delete Weaving.Aspects $NUGET_PACKAGE_VERSION-Alpha -Source $MYGET_SOURCE -ApiKey $MYGET_API_KEY -NonInteractive; nuget delete Weaving.Aspects.Counters $NUGET_PACKAGE_VERSION-Alpha -Source $MYGET_SOURCE -ApiKey $MYGET_API_KEY -NonInteractive; nuget delete Weaving.Aspects.Logging $NUGET_PACKAGE_VERSION-Alpha -Source $MYGET_SOURCE -ApiKey $MYGET_API_KEY -NonInteractive. In the publish stage add a Publish job that runs only on master, restores the solution, builds Release, packs the three nuspecs with version $NUGET_PACKAGE_VERSION, pushes each package to MyGet with $MYGET_API_KEY and $MYGET_SOURCE, then pushes the same packages to NuGet using $NUGET_API_KEY and $NUGET_SOURCE. Also in the publish stage add a Publish-Pre job that runs on all branches except master, restores, builds Debug, packs the nuspecs with version $NUGET_PACKAGE_VERSION-Pre$CI_JOB_ID, and pushes those pre‑release packages to MyGet. Finally, in the test stage add a Tests job that runs only on master, restores the test solution from $MYGET_V1_SOURCE, builds Debug, and runs the NUnit console runner on the built test DLL.",
+  "tags": [
+    "mono",
+    "nuget",
+    "msbuild",
+    "myget",
+    "nuget-push",
+    "gitlab-ci"
+  ]
+}

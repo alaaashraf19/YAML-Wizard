@@ -1,0 +1,11 @@
+image: strages/pandoc-docker
+pages:
+  artifacts:
+    paths:
+    - public
+  script:
+  - cp fonts/* /usr/share/fonts/
+  - fc-cache -f -v
+  - echo "fonts are installed"
+  - make
+  - echo "pdf generated, well done machine!"

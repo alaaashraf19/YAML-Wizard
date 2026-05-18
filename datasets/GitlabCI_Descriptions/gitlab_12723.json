@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_12723",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2422,
+  "description": "Create a GitLab CI pipeline with stages tests, build, deploy and release using the mxklb/docker-qt5-deb Docker image and a global before_script that makes gitlab.sh executable and runs it. Define a .build_appimage template that runs on the xenial image, executes \"qmake cuteproject.pro -r CONFIG+=release\" then \"make\", then in after_script makes pkgs/version.sh and pkgs/appimage.sh executable, runs pkgs/appimage.sh and moves the generated cuteproject-* files, publishing them as an artifact named cuteproject-x86_64; define a .build_debian_pkg template that runs \"chmod +x pkgs/version.sh\", \"chmod +x pkgs/debian.sh && pkgs/debian.sh\" and moves pkgs/deb/cuteproject-*.deb, storing the .deb files as artifacts. Add a .debug_build_with_tests template that runs only when $CI_COMMIT_TAG is null, executes \"qmake cuteproject.pro -r CONFIG+=debug\" and \"make\"; create jobs appimage_latest (extends .build_appimage), appimage_stable (extends .build_appimage, runs only on tag commits, stage release), debian_trusty_latest (extends .build_debian_pkg, uses mxklb/docker-qt5-deb:trusty, sets USER=$GITLAB_USER_LOGIN, artifact name cuteproject-trusty_amd64), debian_trusty_stable (extends previous, runs on tag commits, stage release), debian_xenial_latest (extends .build_debian_pkg, uses mxklb/docker-qt5-deb:xenial, artifact name cuteproject-xenial_amd64), debian_xenial_stable (extends previous, runs on tag commits, stage release), debug_tests_coverage (extends .debug_build_with_tests, after_script runs gcovr and lcov.sh, moves coverage PDFs and tarballs, and publishes them as test_coverage artifacts), debug_tests_devel (extends .debug_build_with_tests, allow_failure, uses mxklb/docker-qt5-deb:devel), debug_tests_rolling (extends .debug_build_with_tests, allow_failure, uses mxklb/docker-qt5-deb:rolling), release_build (stage build, before_script runs gitlab.sh and writes \"catchTests=false\" to globals.pri, then runs the release qmake and make commands), and release_tests (stage tests, runs the same release qmake and make script).",
+  "tags": [
+    "qt5",
+    "docker",
+    "qmake",
+    "make",
+    "appimage",
+    "debian",
+    "coverage",
+    "gitlab-ci"
+  ]
+}

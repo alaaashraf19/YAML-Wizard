@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_12149",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 3152,
+  "description": "Create a GitLab CI pipeline that runs all jobs in a single \"🚢 Extract\" stage and uses the analytics runner tag. Define a .job_template with a before_script that exports the project’s orchestration directory to PATH, echoes $BRANCH_NAME, sets SNOWFLAKE_LOAD_DATABASE, SNOWFLAKE_PREP_DATABASE and SNOWFLAKE_PROD_DATABASE to RAW/PREP/PROD for master or to upper‑cased branch name with suffixes, echoes those variables, and decodes $ENCODED_GCP into GCP_SERVICE_CREDS. Add a qualtrics_sheetload job using the registry.gitlab.com/gitlab-data/sheetload:v0.1.5 image, runs only on merge_requests, is manual, and executes \"python3 /sheetload/src/sheetload.py qualtrics --load_type test\". Add boneyard_sheetload, driveload, and sheetload jobs (named \"🪀boneyard_sheetload\", \"🗎driveload\", \"🗎sheetload\") that also use the sheetload image, run on merge_requests, manual, and run their respective python3 commands for boneyard sheets, drive file, and generic sheets as shown in the YAML. Add gitlab_ops_pgp_test and gitlab_saas_pgp_test jobs using the registry.gitlab.com/gitlab-data/data-image/data-image:v2.0.12 image, trigger on merge_requests and when $MANIFEST_NAME is present, are manual, and run a series of echo, cd, and python commands that invoke ci_helpers.py use_proxy or postgres_pipeline/main.py with the appropriate manifest and load_type test arguments.",
+  "tags": [
+    "extract",
+    "sheetload",
+    "postgres",
+    "snowflake",
+    "gcp",
+    "manual",
+    "analytics"
+  ]
+}

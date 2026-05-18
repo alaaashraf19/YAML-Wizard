@@ -1,0 +1,95 @@
+deploy-data-preprod:
+  only:
+    refs:
+    - master
+  script:
+  - cd /root/transparence-sante
+  - git fetch
+  - git reset --hard origin/master
+  - ./deploy.sh
+  stage: deploy-preprod
+  tags:
+  - preprod
+  - shell
+deploy-data-prod:
+  only:
+  - schedules
+  script:
+  - cd /root/transparence-sante
+  - git fetch
+  - git reset --hard origin/master
+  - ./deploy.sh
+  stage: deploy-prod
+  tags:
+  - prod
+  - shell
+deploy-website-preprod:
+  only:
+    changes:
+    - frontend/**/*
+  script:
+  - cd /root/transparence-sante
+  - git fetch
+  - git reset --hard origin/$CI_COMMIT_REF_NAME
+  - docker-compose build frontend
+  - docker-compose up -d frontend nginx
+  stage: deploy-preprod
+  tags:
+  - preprod
+  - shell
+deploy-website-prod:
+  only:
+    changes:
+    - frontend/**/*
+    refs:
+    - master
+  script:
+  - cd /root/transparence-sante
+  - git fetch
+  - git reset --hard origin/master
+  - docker-compose build frontend
+  - docker-compose up -d frontend nginx
+  stage: deploy-prod
+  tags:
+  - prod
+  - shell
+restart-metabase-prod:
+  rules:
+  - when: manual
+  script:
+  - cd /root/transparence-sante
+  - docker-compose pull metabase
+  - docker-compose stop metabase
+  - docker-compose rm -f metabase
+  - docker-compose up -d metabase
+  - docker-compose restart nginx
+  stage: deploy-prod
+  tags:
+  - prod
+  - shell
+stages:
+- test
+- deploy-preprod
+- deploy-prod
+stop-metabase-prod:
+  rules:
+  - when: manual
+  script:
+  - cd /root/transparence-sante
+  - docker-compose stop metabase
+  stage: deploy-prod
+  tags:
+  - prod
+  - shell
+test:3.6:
+  before_script:
+  - pip install -r requirements.txt
+  image: python:3.6-stretch
+  script:
+  - pytest --ignore=tests/docker/metabase
+  services:
+  - postgres:14-alpine
+  stage: test
+  variables:
+    POSTGRES_HOST_AUTH_METHOD: trust
+    POSTGRES_PORT: 5432

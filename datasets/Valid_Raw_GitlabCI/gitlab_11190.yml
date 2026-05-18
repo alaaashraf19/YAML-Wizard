@@ -1,0 +1,61 @@
+check:
+  cache:
+    paths:
+    - .cargo
+  image: rust:latest
+  script:
+  - cargo check
+  stage: check
+clippy:
+  before_script:
+  - rustup component add clippy-preview
+  cache:
+    paths:
+    - .cargo
+  image: rust:latest
+  script:
+  - cargo clippy -- -D clippy::all
+  stage: test
+pages:
+  artifacts:
+    paths:
+    - public
+  image: rust:latest
+  only:
+  - master
+  script:
+  - cargo doc --all --no-deps
+  - mkdir -p public
+  - cp -av target/doc/* public/
+  - echo '<meta http-equiv="refresh" content="0; url=//kinnison.gitlab.io/cassava/cassava_storage/">'
+    > public/index.html
+  stage: doc
+smoke-docs:
+  artifacts:
+    paths:
+    - public
+  except:
+  - master
+  image: rust:latest
+  script:
+  - cargo doc --all --no-deps
+  - mkdir -p public
+  - cp -av target/doc/* public/
+  - echo '<meta http-equiv="refresh" content="0; url=//kinnison.gitlab.io/cassava/cassava_storage/">'
+    > public/index.html
+  stage: doc
+stages:
+- check
+- test
+- doc
+test:
+  cache:
+    paths:
+    - .cargo
+  image: rust:latest
+  script:
+  - env GO_SLOW=2000000 cargo test
+  stage: test
+variables:
+  CARGO_HOME: $CI_PROJECT_DIR/.cargo
+  DEBIAN_FRONTEND: noninteractive

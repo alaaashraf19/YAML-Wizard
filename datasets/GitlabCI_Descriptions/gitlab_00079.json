@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_00079",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 319,
+  "description": "Create a GitLab CI pipeline that uses the elixir:1.7 Docker image and a postgres:latest service, and defines a DB_URL variable set to postgres://postgres:postgres@postgres/mana. Add a single job named build that runs in the default test stage. The build job executes the following shell commands in order: echo $DB_URL, mix local.hex --force, mix local.rebar --force, mix deps.get, mix deps.compile, mix compile --warnings-as-errors, mix test, and mix format --check-formatted. No caches, artifacts, or special rules are configured.",
+  "tags": [
+    "elixir",
+    "postgres",
+    "mix",
+    "ci-pipeline"
+  ]
+}

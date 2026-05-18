@@ -1,0 +1,15 @@
+{
+  "sha": "b68cfbf406a8d7e0bbcd977a9ed6a177d95782d4d56b5d5d7a6b2566d7822ac1",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1175,
+  "description": "Create a GitHub Actions workflow named Security scan that runs on pull requests to staging, gamma, and main branches. Use two ubuntu-22.04 jobs: sast-scan to perform a ShiftLeft security scan and upload reports, and trivy-scan to run a Trivy vulnerability scan in repository mode, ignoring unfixed vulnerabilities with HIGH or CRITICAL severity.",
+  "tags": [
+    "security",
+    "sast",
+    "trivy",
+    "ubuntu",
+    "scanning",
+    "vulnerabilities"
+  ]
+}

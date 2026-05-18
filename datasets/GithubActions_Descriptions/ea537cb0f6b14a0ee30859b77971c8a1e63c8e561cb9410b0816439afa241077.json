@@ -1,0 +1,14 @@
+{
+  "sha": "ea537cb0f6b14a0ee30859b77971c8a1e63c8e561cb9410b0816439afa241077",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3235,
+  "description": "Create a GitHub Actions workflow named Deploy to Test-Pypi and Pypi that triggers on push events with any tag. The workflow should have three jobs: build, publish-to-testpypi, and publish-to-pypi. The build job should run on ubuntu-latest, check out the code, install Python 3.12, install dependencies, install the package, generate documentation, build a binary wheel and source tarball, and store the distribution packages as an artifact. The publish-to-testpypi and publish-to-pypi jobs should download the artifact, publish the distribution to TestPyPI and PyPI respectively using pypa/gh-action-pypi-publish, and for the PyPI job, push the documentation to a stable branch if the upload is successful.",
+  "tags": [
+    "python",
+    "pypi",
+    "testpypi",
+    "deployment",
+    "documentation"
+  ]
+}

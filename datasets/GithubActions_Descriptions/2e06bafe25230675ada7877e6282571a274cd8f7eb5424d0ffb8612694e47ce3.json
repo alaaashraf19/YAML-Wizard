@@ -1,0 +1,15 @@
+{
+  "sha": "2e06bafe25230675ada7877e6282571a274cd8f7eb5424d0ffb8612694e47ce3",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2233,
+  "description": "Create a GitHub Actions workflow named Tests that runs on push to the master branch, on pull requests, and on workflow dispatch. Use a matrix job on ubuntu-20.04 to test multiple Python versions, checking out the code, setting up Python, installing dependencies, running mypy tests for specific Python versions, executing tests with coverage, and uploading coverage data to Coveralls. A second job waits for the test job to finish and finalizes the Coveralls report.",
+  "tags": [
+    "python",
+    "tests",
+    "coveralls",
+    "mypy",
+    "pytest",
+    "ubuntu"
+  ]
+}

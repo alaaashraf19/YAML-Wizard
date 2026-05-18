@@ -1,0 +1,14 @@
+{
+  "sha": "0c0f02ec5165cc9af2e419f3fc1926215e6306f223984b0306f2839bc58039ec",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 578,
+  "description": "Create a GitHub Actions workflow named bins that runs on push to the master branch, on push of any tag, but ignores changes to the docs directory. Use an ubuntu-latest job running in a tstack/lnav-build:1 container that checks out the repository, runs the /entrypoint.sh script, and uploads a build artifact named lnav-linux-musl-64bit.zip from src/lnav.",
+  "tags": [
+    "ubuntu",
+    "container",
+    "build",
+    "artifact",
+    "upload"
+  ]
+}

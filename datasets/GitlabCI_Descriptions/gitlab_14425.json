@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_14425",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 603,
+  "description": "Create a GitLab CI pipeline that uses the node:latest Docker image and defines three stages: build, test, and deploy. In the build stage add a build job that runs `npm install` then `npm run build` and publishes the node and umd directories as artifacts that expire after one day. In the test stage add a test job that depends on the build job and runs `npm install` followed by `npm run test:nodejs`. In the deploy stage add a pages job that runs only on tag pipelines, depends on build, executes `npm install`, `npm run doc`, creates a public folder and moves the generated documentation (doc/*) into it, and stores the public directory as a pages artifact. Also in the deploy stage add a publish job that runs only on tags, depends on build, runs `npm install`, writes an .npmrc containing the ${NPM_TOKEN} authentication token, and publishes the package with `npm publish`.",
+  "tags": [
+    "node",
+    "npm",
+    "build",
+    "test",
+    "pages",
+    "publish",
+    "gitlab-ci"
+  ]
+}

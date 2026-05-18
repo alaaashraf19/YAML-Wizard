@@ -1,0 +1,548 @@
+add-legal-disclaimer-to-direction-epics:
+  extends: .run
+  rules:
+  - if: $TRIAGE_ADD_LEGAL_DISCLAIMER_TO_DIRECTION_EPICS
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/stages/hygiene/add-legal-disclaimer-to-direction-epics.yml
+add-milestone-to-merged-merge-requests:
+  extends: .run
+  rules:
+  - if: $TRIAGE_ADD_MILESTONE_TO_COMMUNITY_MERGE_REQUESTS
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/stages/hygiene/add-milestone-to-merged-merge-requests.yml
+analytics-instrumentation-label:
+  extends: .run
+  rules:
+  - if: $APPLY_ANALYTICS_INSTRUMENTATION_LABEL
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/apply-analytics-instrumentation-label.yml
+ask-severity-for-bug-ux-issues:
+  extends: .run
+  rules:
+  - if: $TRIAGE_ASK_SEVERITY_FOR_BUG_UX_ISSUES
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/stages/hygiene/ask-severity-for-bug-ux-issues.yml
+ask-severity-for-customer-bug-issues:
+  extends: .run
+  rules:
+  - if: $TRIAGE_ASK_SEVERITY_FOR_CUSTOMER_BUG_ISSUES
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/stages/hygiene/ask-severity-for-customer-bug-issues.yml
+ask-severity-priority-for-infradev-issues:
+  extends: .run
+  rules:
+  - if: $TRIAGE_ASK_SEVERITY_PRIORITY_FOR_INFRADEV_ISSUES
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/stages/hygiene/ask-severity-priority-for-infradev-issues.yml
+assign-default-workflow-label:
+  extends: .run
+  rules:
+  - if: $ASSIGN_DEFAULT_WORKFLOW_LABEL
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/assign-default-workflow-label.yml
+close-old-issues:
+  extends: .run
+  rules:
+  - if: $TRIAGE_CLOSE_OLD_ISSUES
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/stages/hygiene/close-old-issues.yml
+close-stale-bugs:
+  extends: .run
+  rules:
+  - if: $TRIAGE_CLOSE_STALE_BUGS
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/stages/hygiene/close-stale-bugs.yml
+close-stale-unhealthy-test-issues:
+  extends: .run
+  rules:
+  - if: $TRIAGE_CLOSE_STALE_UNHEALTHY_TEST_ISSUES
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/stages/hygiene/close-stale-unhealthy-test-issues.yml
+community-ping-incorrect-review-label:
+  extends: .run
+  rules:
+  - if: $TRIAGE_COMMUNITY_PING_INCORRECT_REVIEW_LABEL
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/community/hygiene/ping-incorrect-review-label.yml
+    TRIAGE_SOURCE_PATH: 9970
+    TRIAGE_SOURCE_TYPE: groups
+community:ping-inactive-author:
+  extends: .run
+  rules:
+  - if: $TRIAGE_COMMUNITY_PING_INACTIVE_AUTHOR
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/community/hygiene/ping-inactive-author.yml
+community:ping-inactive-reviewers:
+  extends: .run
+  rules:
+  - if: $TRIAGE_COMMUNITY_PING_INACTIVE_REVIEWERS
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/community/hygiene/ping-inactive-reviewers.yml
+discover:
+  allow_failure: true
+  extends: .run
+  rules:
+  - if: $TRIAGE_DISCOVER
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/stages/hygiene/discover.yml
+git:add-active-issues-to-current-milestone:
+  extends: .run
+  rules:
+  - if: $TRIAGE_ADD_ACTIVE_ISSUES_TO_CURRENT_MILESTONE
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/groups/gitlab-org/gitaly/add-active-issues-to-current-milestone.yml
+    TRIAGE_SOURCE_PATH: 13284652
+    TRIAGE_SOURCE_TYPE: projects
+git:bump-planning-issues-to-next-milestone:
+  extends: .run
+  rules:
+  - if: $TRIAGE_BUMP_PLANNING_ISSUES_TO_NEXT_MILESTONE
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/groups/gitlab-org/gitaly/bump-planning-issues-to-next-milestone.yml
+    TRIAGE_SOURCE_PATH: 13284652
+    TRIAGE_SOURCE_TYPE: projects
+git:ensure-issues-have-milestone:
+  extends: .run
+  rules:
+  - if: $TRIAGE_ENSURE_ISSUES_HAVE_MILESTONE
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/groups/gitlab-org/gitaly/ensure-issues-have-milestone.yml
+    TRIAGE_SOURCE_PATH: 13284652
+    TRIAGE_SOURCE_TYPE: projects
+git:future-issues-start-in-planning-breakdown:
+  extends: .run
+  rules:
+  - if: $TRIAGE_FUTURE_ISSUES_START_IN_PLANNING_BREAKDOWN
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/groups/gitlab-org/gitaly/future-issues-start-in-planning-breakdown.yml
+    TRIAGE_SOURCE_PATH: 13284652
+    TRIAGE_SOURCE_TYPE: projects
+gitaly:add-active-issues-to-current-milestone:
+  extends: .run
+  rules:
+  - if: $TRIAGE_ADD_ACTIVE_ISSUES_TO_CURRENT_MILESTONE
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/groups/gitlab-org/gitaly/add-active-issues-to-current-milestone.yml
+    TRIAGE_SOURCE_PATH: 2009901
+    TRIAGE_SOURCE_TYPE: projects
+gitaly:bump-planning-issues-to-next-milestone:
+  extends: .run
+  rules:
+  - if: $TRIAGE_BUMP_PLANNING_ISSUES_TO_NEXT_MILESTONE
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/groups/gitlab-org/gitaly/bump-planning-issues-to-next-milestone.yml
+    TRIAGE_SOURCE_PATH: 2009901
+    TRIAGE_SOURCE_TYPE: projects
+gitaly:ensure-issues-have-milestone:
+  extends: .run
+  rules:
+  - if: $TRIAGE_ENSURE_ISSUES_HAVE_MILESTONE
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/groups/gitlab-org/gitaly/ensure-issues-have-milestone.yml
+    TRIAGE_SOURCE_PATH: 2009901
+    TRIAGE_SOURCE_TYPE: projects
+gitaly:future-issues-start-in-planning-breakdown:
+  extends: .run
+  rules:
+  - if: $TRIAGE_FUTURE_ISSUES_START_IN_PLANNING_BREAKDOWN
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/groups/gitlab-org/gitaly/future-issues-start-in-planning-breakdown.yml
+    TRIAGE_SOURCE_PATH: 2009901
+    TRIAGE_SOURCE_TYPE: projects
+gitlab-com-appsec-triage-appsec-pings:
+  extends: .run
+  rules:
+  - if: $TRIAGE_APPSEC_PINGS
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/groups/gitlab-org/appsec/triage-appsec-pings.yml
+    TRIAGE_SOURCE_PATH: 6543
+    TRIAGE_SOURCE_TYPE: groups
+gitlab-com:untriaged-issues:
+  extends: .run
+  rules:
+  - if: $TRIAGE_UNTRIAGED_ISSUES
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/stages/report/untriaged-issues.yml
+    TRIAGE_SOURCE_PATH: 6543
+    TRIAGE_SOURCE_TYPE: groups
+gitlab-org-appsec-triage-appsec-pings:
+  extends: .run
+  rules:
+  - if: $TRIAGE_APPSEC_PINGS
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/groups/gitlab-org/appsec/triage-appsec-pings.yml
+    TRIAGE_SOURCE_PATH: 9970
+    TRIAGE_SOURCE_TYPE: groups
+gitlab-org:dast:refinement:
+  extends: .run
+  rules:
+  - if: $TRIAGE_DAST_REFINEMENT_HYGIENE
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/groups/gitlab-org/dast/assign-refinement.yml
+    TRIAGE_SOURCE_PATH: 9970
+    TRIAGE_SOURCE_TYPE: groups
+gitlab-org:global-search:add-active-items-to-current-milestone:
+  extends: .run
+  rules:
+  - if: $TRIAGE_GLOBAL_SEARCH_ACTIVE_ITEMS_HYGIENE
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/groups/gitlab-org/global-search/add-active-items-to-current-milestone.yml
+    TRIAGE_SOURCE_PATH: 9970
+    TRIAGE_SOURCE_TYPE: groups
+gitlab-org:global-search:code-search-label:
+  extends: .run
+  rules:
+  - if: $TRIAGE_GLOBAL_SEARCH_CODE_SEARCH_LABEL_HYGIENE
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/groups/gitlab-org/global-search/label-code-search-for-zoekt.yml
+    TRIAGE_SOURCE_PATH: 9970
+    TRIAGE_SOURCE_TYPE: groups
+gitlab-org:global-search:code-search-validation-backlog:
+  extends: .run
+  rules:
+  - if: $TRIAGE_GLOBAL_SEARCH_CODE_SEARCH_VALIDATION_BACKLOG_HYGIENE
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/groups/gitlab-org/global-search/assign-workflow-validation-backlog.yml
+    TRIAGE_SOURCE_PATH: 9970
+    TRIAGE_SOURCE_TYPE: groups
+gitlab-org:global-search:weights:
+  extends: .run
+  rules:
+  - if: $TRIAGE_GLOBAL_SEARCH_WEIGHT_HYGIENE
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/groups/gitlab-org/global-search/issue-weights.yml
+    TRIAGE_SOURCE_PATH: 278964
+    TRIAGE_SOURCE_TYPE: projects
+gitlab-org:manage-authentication_and_authorization:feature-flag-check:
+  extends: .run
+  rules:
+  - if: $MANAGE_ACCESS_FEATURE_FLAG_CHECK
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/groups/gitlab-org/manage-authentication_and_authorization/feature-flag-check.yml
+gitlab-org:operate:auto-close-old-issues:
+  extends: .run
+  rules:
+  - if: $AUTO_CLOSE_OLD_SELF_MANAGED_ISSUES
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/groups/gitlab-org/operate/auto-close-old-issues.yml
+gitlab-org:remote-development:workflow-02:
+  extends: .run
+  rules:
+  - if: $TRIAGE_REMOTE_DEVELOPMENT_WORKFLOW
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/groups/gitlab-org/remote-development/workflow-02.yml
+    TRIAGE_SOURCE_PATH: 9970
+    TRIAGE_SOURCE_TYPE: groups
+gitlab-org:remote-development:workflow-03:
+  extends: .run
+  rules:
+  - if: $TRIAGE_REMOTE_DEVELOPMENT_WORKFLOW
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/groups/gitlab-org/remote-development/workflow-03.yml
+    TRIAGE_SOURCE_PATH: 9970
+    TRIAGE_SOURCE_TYPE: groups
+gitlab-org:remote-development:workflow-04:
+  extends: .run
+  rules:
+  - if: $TRIAGE_REMOTE_DEVELOPMENT_WORKFLOW
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/groups/gitlab-org/remote-development/workflow-04.yml
+    TRIAGE_SOURCE_PATH: 9970
+    TRIAGE_SOURCE_TYPE: groups
+gitlab-org:remote-development:workflow-05:
+  extends: .run
+  rules:
+  - if: $TRIAGE_REMOTE_DEVELOPMENT_WORKFLOW_WEEKLY
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/groups/gitlab-org/remote-development/workflow-05.yml
+    TRIAGE_SOURCE_PATH: 9970
+    TRIAGE_SOURCE_TYPE: groups
+gitlab-org:secret-detection:refinement:
+  extends: .run
+  rules:
+  - if: $TRIAGE_SECRET_DETECTION_REFINEMENT
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/groups/gitlab-org/secret-detection/assign-refinement.yml
+    TRIAGE_SOURCE_PATH: 9970
+    TRIAGE_SOURCE_TYPE: groups
+gitlab-org:security-insights:internal-bug-triage:
+  extends: gitlab-org:security-insights:weights
+  rules:
+  - if: $TRIAGE_SECURITY_INSIGHTS_INTERNAL_BUG_TRIAGE
+  variables:
+    TRIAGE_POLICY_FILE: policies/groups/gitlab-org/security-insights/internal-bug-triage.yml
+gitlab-org:security-insights:refinement:
+  extends: gitlab-org:security-insights:weights
+  rules:
+  - if: $TRIAGE_SECURITY_INSIGHTS_REFINEMENT_HYGIENE
+  variables:
+    TRIAGE_POLICY_FILE: policies/groups/gitlab-org/security-insights/assign-refinement.yml
+gitlab-org:security-insights:remove-assignee:
+  extends: gitlab-org:security-insights:weights
+  rules:
+  - if: $TRIAGE_SECURITY_INSIGHTS_REMOVE_ASSIGNEE
+  variables:
+    TRIAGE_POLICY_FILE: policies/groups/gitlab-org/security-insights/remove-assignee.yml
+gitlab-org:security-insights:tech-stack-label:
+  extends: gitlab-org:security-insights:weights
+  rules:
+  - if: $TRIAGE_SECURITY_INSIGHTS_TECH_STACK_LABEL
+  variables:
+    TRIAGE_POLICY_FILE: policies/groups/gitlab-org/security-insights/tech-stack-label.yml
+gitlab-org:security-insights:weights:
+  extends: .run
+  rules:
+  - if: $TRIAGE_SECURITY_INSIGHTS_WEIGHT_HYGIENE
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/groups/gitlab-org/security-insights/issue-weights.yml
+    TRIAGE_SOURCE_PATH: 9970
+    TRIAGE_SOURCE_TYPE: groups
+gitlab-org:stage-and-group-labels-hygiene:
+  extends: .run
+  rules:
+  - if: $TRIAGE_STAGE_AND_GROUP_LABELS_HYGIENE
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/stages/hygiene/stage-and-group-labels-hygiene.yml
+    TRIAGE_SOURCE_PATH: 9970
+    TRIAGE_SOURCE_TYPE: groups
+gitlab-org:untriaged-issues:
+  extends: .run
+  rules:
+  - if: $TRIAGE_UNTRIAGED_ISSUES
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/stages/report/untriaged-issues.yml
+    TRIAGE_SOURCE_PATH: 9970
+    TRIAGE_SOURCE_TYPE: groups
+growth-add-fo-label:
+  extends: .run
+  rules:
+  - if: $TRIAGE_GROWTH_ADD_FO_LABEL
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/groups/gitlab-org/growth/add-fo-labels-to-issues-with-fo-epic.yml
+growth-driving-first-orders-nudge:
+  extends: .run
+  rules:
+  - if: $TRIAGE_GROWTH_DRIVING_FIRST_ORDERS_NUDGE
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/groups/gitlab-org/growth/driving-first-orders-weekly-nudge.yml
+growth-team-refine-automation:
+  extends: .run
+  rules:
+  - if: $TRIAGE_GROWTH_REFINE_AUTOMATION
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/groups/gitlab-org/growth/refine-automations.yml
+growth-team-time-in-dev:
+  extends: .run
+  rules:
+  - if: $TRIAGE_GROWTH_TIME_IN_DEV
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/groups/gitlab-org/growth/time-in-dev.yml
+growth-update-unblocked-issue:
+  extends: .run
+  rules:
+  - if: $TRIAGE_GROWTH_UPDATE_UNBLOCKED_ISSUE
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/groups/gitlab-org/growth/update-unblocked-issue.yml
+label-availability-issues:
+  extends: .run
+  rules:
+  - if: $TRIAGE_LABEL_AVAILABILITY_ISSUES
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/stages/hygiene/label-availability-issues.yml
+label-bot-authored-mrs:
+  extends: .run
+  rules:
+  - if: $TRIAGE_LABEL_BOT_MRS
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/stages/hygiene/label-bot-authored-merge-requests.yml
+label-community-contributions:
+  extends: .run
+  rules:
+  - if: $TRIAGE_LABEL_COMMUNITY_CONTRIBUTIONS
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/stages/hygiene/label-community-contributions.yml
+    TRIAGE_SOURCE_PATH: 9970
+    TRIAGE_SOURCE_TYPE: groups
+label-contractor-contributions:
+  extends: .run
+  rules:
+  - if: $TRIAGE_LABEL_CONTRACTOR_CONTRIBUTIONS
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/groups/gitlab-org/hygiene/label-contractor-contribution.yml
+label-estimation-completed:
+  extends: .run
+  rules:
+  - if: $TRIAGE_LABEL_ESTIMATION_COMPLETED
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/stages/hygiene/label-estimation-completed.yml
+label-gitaly-customer-bugs:
+  extends: .run
+  rules:
+  - if: $LABEL_GITALY_CUSTOMER_BUGS
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/groups/gitlab-org/gitaly/gitaly-customer-issues-bugs.yml
+    TRIAGE_SOURCE_PATH: 9970
+    TRIAGE_SOURCE_TYPE: groups
+label-idle-community-mrs:
+  extends: .run
+  rules:
+  - if: $TRIAGE_LABEL_IDLE_COMMUNITY_MRS
+  stage: pre-hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/stages/hygiene/label-idle-community-mrs.yml
+label-jihu-contributions:
+  extends: .run
+  rules:
+  - if: $TRIAGE_LABEL_JIHU_CONTRIBUTIONS
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/stages/hygiene/label-jihu-contribution.yml
+label-missed-slo:
+  extends: .run
+  rules:
+  - if: $TRIAGE_LABEL_MISSED_SLO
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/stages/hygiene/label-missed-slo.yml
+label-reminders:
+  extends: .run
+  rules:
+  - if: $TRIAGE_LABEL_REMINDERS
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/stages/hygiene/label-reminders.yml
+label-seeking-community-contributions:
+  extends: .run
+  rules:
+  - if: $TRIAGE_LABEL_SEEKING_COMMUNITY_CONTRIBUTIONS
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/stages/hygiene/label-seeking-community-contributions.yml
+label-ux-community-contribution-issues:
+  extends: .run
+  rules:
+  - if: $TRIAGE_LABEL_UX_COMMUNITY_CONTRIBUTION_ISSUES
+  stage: pre-hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/stages/hygiene/label-ux-community-contribution-issues.yml
+label-vulnerability:
+  extends: .run
+  rules:
+  - if: $TRIAGE_LABEL_VULNERABILITY
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/stages/hygiene/label-vulnerability.yml
+nudge-stale-community-contributions:
+  extends: .run
+  rules:
+  - if: $TRIAGE_NUDGE_STALE_COMMUNITY_CONTRIBUTIONS
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/stages/hygiene/nudge-stale-community-contributions.yml
+prompt-for-documentation-label:
+  extends: .run
+  rules:
+  - if: $PROMPT_FOR_DOCUMENTATION_LABEL
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/stages/hygiene/prompt-for-documentation-label.yml
+prompt-for-tier-labels:
+  extends: .run
+  rules:
+  - if: $TRIAGE_PROMPT_FOR_TIER_LABELS
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/stages/hygiene/prompt-for-tier-labels.yml
+prompt-for-vulnerability-label:
+  extends: .run
+  rules:
+  - if: $PROMPT_FOR_VULNERABILITY_LABEL
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/stages/hygiene/prompt-for-vulnerability-label.yml
+quick-win-hygiene:
+  extends: .run
+  rules:
+  - if: $TRIAGE_QUICK_WIN_HYGIENE
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/community/quick-win-label.yml
+remind-vulnerability-slo:
+  extends: .run
+  rules:
+  - if: $TRIAGE_REMIND_VULNERABILITY_SLO
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/groups/gitlab-org/hygiene/comment-vulnerability-issue-slo.yml
+schedule-s1-bugs:
+  extends: .run
+  rules:
+  - if: $TRIAGE_S1_BUGS_HYGIENE
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/groups/gitlab-org/hygiene/schedule-s1-bugs.yml
+set-priority-from-severity:
+  extends: .run
+  rules:
+  - if: $TRIAGE_SET_PRIORITY_FROM_SEVERITY
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/stages/hygiene/set-priority-from-severity.yml
+warn-impending-slo-breach:
+  extends: .run
+  rules:
+  - if: $TRIAGE_WARN_IMPENDING_SLO_BREACH
+  stage: hygiene
+  variables:
+    TRIAGE_POLICY_FILE: policies/stages/hygiene/comment-slo-breaching-bugs.yml

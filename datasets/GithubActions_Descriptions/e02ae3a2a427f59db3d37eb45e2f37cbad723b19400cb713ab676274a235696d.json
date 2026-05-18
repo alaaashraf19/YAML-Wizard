@@ -1,0 +1,13 @@
+{
+  "sha": "e02ae3a2a427f59db3d37eb45e2f37cbad723b19400cb713ab676274a235696d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1146,
+  "description": "Create a GitHub Actions workflow named Publish Python distribution to PyPI that triggers on published releases. The workflow should have two jobs: one to build a Python distribution and another to publish it to PyPI. The build job should run on ubuntu-latest, check out the code, set up Python 3.x, install build, and create a source tarball. The publish job should depend on the build job, download the distribution, and publish it to PyPI using a GitHub Action.",
+  "tags": [
+    "python",
+    "pypi",
+    "release",
+    "github-actions"
+  ]
+}

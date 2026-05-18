@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_07337",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1790,
+  "description": "Create a GitLab CI pipeline with three stages: test, deploy-preprod, and deploy-prod. In the test stage add a job named test:3.6 that uses the python:3.6-stretch image with a postgres:14-alpine service, runs pip install -r requirements.txt in before_script, sets POSTGRES_HOST_AUTH_METHOD=trust and POSTGRES_PORT=5432, and then executes pytest --ignore=tests/docker/metabase. In the deploy-preprod stage add deploy-data-preprod that runs only on the master branch and executes cd /root/transparence-sante, git fetch, git reset --hard origin/master, ./deploy.sh; also add deploy-website-preprod that runs when any file under frontend/ changes and executes cd /root/transparence-sante, git fetch, git reset --hard origin/$CI_COMMIT_REF_NAME, docker-compose build frontend, docker-compose up -d frontend nginx. In the deploy-prod stage add deploy-data-prod that runs on scheduled pipelines and runs the same four commands as deploy-data-preprod, add deploy-website-prod that runs on master when frontend/ changes and runs the same commands as deploy-website-preprod but resets to origin/master, and add two manual jobs: restart-metabase-prod which runs docker-compose pull metabase, docker-compose stop metabase, docker-compose rm -f metabase, docker-compose up -d metabase, docker-compose restart nginx, and stop-metabase-prod which runs docker-compose stop metabase.",
+  "tags": [
+    "python-3.6",
+    "postgres",
+    "docker-compose",
+    "metabase",
+    "deploy-preprod",
+    "deploy-prod",
+    "manual",
+    "test"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "d9be39e2308b6e3eec4b18cdb263cd42e2886e0eca4f18b6f930db5ec8727ea1",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1659,
+  "description": "Create a GitHub Actions workflow named Tests that runs on workflow dispatch, push to master (excluding tags starting with v), and pull requests to master. The workflow has two jobs: e2e-tests and rust-tests, both running on ubuntu-latest with a defi/ain-builder:latest container. e2e-tests checks out code, populates environment, installs dependencies, builds, and runs end-to-end tests. rust-tests checks out code, populates environment, sets up dependencies, builds, and runs Rust tests.",
+  "tags": [
+    "ubuntu",
+    "tests",
+    "rust",
+    "e2e",
+    "container",
+    "dispatch"
+  ]
+}

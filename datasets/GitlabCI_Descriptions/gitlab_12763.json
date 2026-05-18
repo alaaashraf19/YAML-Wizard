@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_12763",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 769,
+  "description": "Create a GitLab CI pipeline that uses a MySQL service (mysql:latest) and defines the variables COMPOSER_HOME, MYSQL_DATABASE, MYSQL_PASSWORD, MYSQL_ROOT_PASSWORD, MYSQL_USER, and WITH_XDEBUG. Include a global before_script that runs bash ci/docker_install.sh > /dev/null, pings the mysql service, updates Composer, installs dependencies with composer install --no-progress --no-interaction, copies .env.gitlab to .env, generates a Laravel application key, refreshes migrations, and seeds the database. Define a test stage with two jobs: php-5.6 using the php:5.6 image and php-7.0 using the php:7.0 image, each executing php -v, echo a message indicating the PHP version, and running php vendor/bin/phpunit --colors --coverage-text. Both jobs inherit the before_script, belong to the test stage, and have no additional artifacts, caches, or rules.",
+  "tags": [
+    "php",
+    "phpunit",
+    "mysql",
+    "composer",
+    "laravel"
+  ]
+}

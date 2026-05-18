@@ -1,0 +1,46 @@
+before_script:
+- curl https://getcomposer.org/installer --output installer
+- php ./installer --install-dir=/usr/local/bin --filename=composer && rm ./installer
+- curl https://phpdoc.org/phpDocumentor.phar --output /usr/local/bin/phpdoc
+- chmod 755 /usr/local/bin/phpdoc
+- apt-get update && apt-get install -y zlib1g-dev libzip-dev graphviz
+- docker-php-ext-install zip
+- composer install
+packagist:
+  before_script:
+  - echo "do nothing"
+  image: php:7.2
+  script:
+  - "curl -s -XPOST \\\n  -H'content-type:application/json' \\\n  \"https://packagist.org/api/update-package?username=$PACKAGIST_USER&apiToken=$PACKAGIST_TOKEN\"\
+    \ \\\n  -d'{\"repository\":{\"url\":\"https://packagist.org/packages/phata/hook\"\
+    }}' | \\\n  php -r '$s = fopen(\"php://stdin\", \"r\"); $j = json_decode(stream_get_contents($s));\
+    \ if ($j->status === \"success\") exit(\"success\"); echo $s; exit(1);'\n"
+  stage: deploy
+pages:
+  artifacts:
+    paths:
+    - public
+  image: php:7.2
+  only:
+  - v1.x
+  script:
+  - composer run phpdoc
+  stage: deploy
+stages:
+- test
+- deploy
+test:php-7.1:
+  image: php:7.1
+  script:
+  - composer run test
+  stage: test
+test:php-7.2:
+  image: php:7.2
+  script:
+  - composer run test
+  stage: test
+test:php-rc:
+  image: php:rc
+  script:
+  - composer run test
+  stage: test

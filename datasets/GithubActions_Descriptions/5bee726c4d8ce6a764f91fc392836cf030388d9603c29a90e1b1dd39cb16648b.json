@@ -1,0 +1,16 @@
+{
+  "sha": "5bee726c4d8ce6a764f91fc392836cf030388d9603c29a90e1b1dd39cb16648b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2875,
+  "description": "Create a GitHub Actions workflow named Ubuntu Builds that triggers on push and pull request events to specific files and directories. Run a matrix build job on an ubuntu-16.04 environment with multiple configurations of C++ compilers, build types, sanitizers, and Valgrind usage. For each matrix entry, check out the repository, install Valgrind if required, configure CMake, build the test suite, and run tests with or without Valgrind.",
+  "tags": [
+    "ubuntu",
+    "cmake",
+    "gcc",
+    "clang",
+    "valgrind",
+    "tests",
+    "matrix-build"
+  ]
+}

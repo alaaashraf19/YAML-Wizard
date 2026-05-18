@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_05938",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 631,
+  "description": "Create a GitLab CI pipeline with a single job named pages that runs in the default test stage using the ruby:3.1.3 Docker image. The job should only execute on the master branch, cache the vendor/ruby directory with a key based on ${CI_COMMIT_REF_SLUG}, and have a 10‑minute timeout. In its script it must download staff.yml, bans_recent.yml, bans_users.yml, and bans_history.yml via wget into the _data directory, run `bundle install -j $(nproc) --path vendor/ruby`, then `bundle exec jekyll build --trace`, and finally move the generated _site folder to public. The job should publish the public directory as a GitLab Pages artifact.",
+  "tags": [
+    "ruby",
+    "jekyll",
+    "bundle",
+    "gitlab-pages",
+    "wget",
+    "cache"
+  ]
+}

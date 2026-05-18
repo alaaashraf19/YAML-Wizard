@@ -1,0 +1,15 @@
+{
+  "sha": "d1342d5cce153d9929dadf2555d87809ed3d5ac88af1eeadca6b6d7c3ecf05ea",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 8882,
+  "description": "Create a GitHub Actions workflow named VCMI that runs on push to features/*, beta, and master branches, on pull requests, on a schedule, and on workflow dispatch. The workflow checks if a successful build of the current commit exists, and if so, skips the build. Otherwise, it builds the project on multiple platforms with various configurations, tests, packs, and uploads artifacts to GitHub.",
+  "tags": [
+    "github-actions",
+    "cmake",
+    "conan",
+    "multi-platform",
+    "ci",
+    "cd"
+  ]
+}

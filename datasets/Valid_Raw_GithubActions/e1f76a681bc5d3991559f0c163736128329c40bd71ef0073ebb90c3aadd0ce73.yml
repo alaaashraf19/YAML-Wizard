@@ -1,0 +1,30 @@
+name: Windows
+
+on:
+  pull_request:
+  push:
+  release:
+    types: published
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 1
+        submodules: recursive
+
+    - name: Build OSP-Magnum
+      run: |
+        cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_SYSTEM_VERSION="10.0.19041.0"
+        cmake --build build --parallel --config Release --target osp-magnum
+    
+    - name: Prepare Artifact
+      run: |
+        move build\bin\OSPData build\bin\Release\OSPData
+  
+    - uses: actions/upload-artifact@v2
+      with: 
+        name: release
+        path: build\bin\Release

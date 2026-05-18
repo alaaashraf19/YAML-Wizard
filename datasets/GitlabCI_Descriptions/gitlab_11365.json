@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_11365",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1759,
+  "description": "Create a GitLab CI pipeline using the python:2.7-alpine Docker image, defining LOVEJS_DIR and LOVE_VERSION variables and two stages: build and deploy. In the build stage add a build-html job that runs before_script commands `apk update`, `apk add git`, clones the love.js repo into $LOVEJS_DIR, clones the emscripten repo into $LOVEJS_DIR/emscripten, copies .emscripten to the home directory, then executes script commands `cd $LOVEJS_DIR/release-compatibility`, `python ../emscripten/tools/file_packager.py game.data --preload \"$CI_PROJECT_DIR@/\" --js-output=game.js`, `mv $LOVEJS_DIR/release-compatibility $CI_PROJECT_DIR/html`, and `sed \"s|Game Title|$CI_PROJECT_NAME|\" --in-place $CI_PROJECT_DIR/html/index.html`, publishing the html folder as an artifact. Also in the build stage add a build-love job with before_script `apk update`, `apk add curl`, `apk add zip`, `apk add unzip`, and script commands `zip -9 -r $CI_PROJECT_PATH_SLUG.love . -x *.git*`, `curl --location https://bitbucket.org/rude/love/downloads/love-$LOVE_VERSION-win32.zip --output love-win32.zip`, `unzip love-win32.zip`, `mkdir win32`, `cp love-$LOVE_VERSION.0-win32/*.dll love-$LOVE_VERSION.0-win32/license.txt win32`, `cat love-$LOVE_VERSION.0-win32/love.exe $CI_PROJECT_PATH_SLUG.love > win32/$CI_PROJECT_PATH_SLUG.exe`, `cd win32`, `zip -9 -r \"../$CI_PROJECT_PATH_SLUG-win32.zip\" .`, publishing `*.love` and `*-win32.zip` as artifacts. In the deploy stage add a pages job that runs only on the master branch, moves the generated html directory to public, creates a public/downloads folder, moves the .love and win32 zip files there, iterates over the files to append list items to an index.html, and publishes the public folder as a GitLab Pages artifact.",
+  "tags": [
+    "python-2.7-alpine",
+    "lovejs",
+    "emscripten",
+    "gitlab-pages",
+    "apk",
+    "zip",
+    "curl"
+  ]
+}

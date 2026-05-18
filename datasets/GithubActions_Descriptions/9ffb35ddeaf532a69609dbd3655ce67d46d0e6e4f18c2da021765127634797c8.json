@@ -1,0 +1,14 @@
+{
+  "sha": "9ffb35ddeaf532a69609dbd3655ce67d46d0e6e4f18c2da021765127634797c8",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1725,
+  "description": "Create a GitHub Actions workflow named build that runs on push to the master branch and on pull requests to master. The workflow has two jobs: test-nixos and build. The test-nixos job runs on ubuntu-latest and macos-latest, checks out the repository, installs Nix, and runs tests in a nix-shell. The build job runs on ubuntu-latest, macos-latest, and potentially windows-latest, with multiple Python versions, checks out the repository, sets up Python, installs dependencies, and runs pytest.",
+  "tags": [
+    "python",
+    "nix",
+    "tests",
+    "matrix",
+    "multios"
+  ]
+}

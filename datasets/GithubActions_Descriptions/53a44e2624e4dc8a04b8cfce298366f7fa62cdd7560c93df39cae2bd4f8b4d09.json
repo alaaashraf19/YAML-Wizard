@@ -1,0 +1,15 @@
+{
+  "sha": "53a44e2624e4dc8a04b8cfce298366f7fa62cdd7560c93df39cae2bd4f8b4d09",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1592,
+  "description": "Create a GitHub Actions workflow named Test that runs on pull requests and pushes to the master branch. The workflow has two jobs: test and lint. The test job runs on ubuntu-latest with a matrix of Python versions 2.7, 3.6, 3.7, 3.8, and 3.9. It checks out the code, sets up Python, caches the virtual environment, installs dependencies with pip and poetry, runs pytest, and uploads coverage to Codecov. The lint job runs on ubuntu-latest with Python 3.7, checks out the code, caches the virtual environment, installs flake8, and runs flake8 tests.",
+  "tags": [
+    "python",
+    "pytest",
+    "codecov",
+    "flake8",
+    "tests",
+    "ubuntu"
+  ]
+}

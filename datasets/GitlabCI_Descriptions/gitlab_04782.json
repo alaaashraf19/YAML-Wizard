@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_04782",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2384,
+  "description": "Create a GitLab CI pipeline using the fedora:29 Docker image and two stages: build and deploy. In the build stage add a job named build that runs a before_script installing gcc, git, mingw32-gcc, mingw64-gcc, unzip, xz, zip via dnf, sets CHOOSENIM_NO_ANALYTICS=1 and CHOOSENIM_CHOOSE_VERSION=\\\"stable\\\", downloads and runs choosenim init.sh, then in script exports PATH to $HOME/.nimble/bin, creates dist/, builds the $PACKAGE_NAME binary with nimble build -d:release --passc:\\\"-flto\\\" -y, strips it, packages the Linux x86_64 binary into a tar.xz, cross‑compiles for Windows x86_64 and i386 using nimble with -d:crosswin and appropriate --cpu flags, strips the .exe files, zips the Windows packages, adjusts the mingw gcc symlink, and finally stores all archives under dist/. The job publishes the dist/ directory as an artifact that expires in 30 days. In the deploy stage add a job named deploy that runs only on tags, depends on the build job, uses a before_script to download gothub 0.7.1, extract it and move the binary to /usr/local/bin, then creates a GitHub release with gothub release --tag \\\"$CI_COMMIT_TAG\\\" and uploads the three artifacts (linux tar.xz, windows x86_64 zip, windows x86 zip) using gothub upload with appropriate --name and --file arguments. Use the variable PACKAGE_NAME set to gits for naming.",
+  "tags": [
+    "nim",
+    "fedora",
+    "cross-compilation",
+    "gothub",
+    "github-release",
+    "artifact",
+    "docker"
+  ]
+}

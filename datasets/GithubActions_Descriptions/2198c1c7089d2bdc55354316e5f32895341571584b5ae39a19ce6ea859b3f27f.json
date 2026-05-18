@@ -1,0 +1,14 @@
+{
+  "sha": "2198c1c7089d2bdc55354316e5f32895341571584b5ae39a19ce6ea859b3f27f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1110,
+  "description": "Create a GitHub Actions workflow named Standard Build and Test that runs on manual dispatch, pull requests to any branch except when paths .github/workflows/docker_publish.yml, .github/workflows/changelog_test.yml, docker/**, or CHANGELOG.rst are changed, and on push to the develop branch with similar path exclusions. The workflow uses an ubuntu-latest job with a matrix strategy to run a composite BuildTest action across different stages (base_python, moab, dagmc, openmc) and HDF5 configurations, using a container image from ghcr.io/pyne.",
+  "tags": [
+    "github-actions",
+    "ubuntu",
+    "matrix",
+    "composite-action",
+    "container"
+  ]
+}

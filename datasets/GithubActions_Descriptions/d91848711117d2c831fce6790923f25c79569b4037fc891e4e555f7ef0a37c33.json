@@ -1,0 +1,17 @@
+{
+  "sha": "d91848711117d2c831fce6790923f25c79569b4037fc891e4e555f7ef0a37c33",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1759,
+  "description": "Create a GitHub Actions workflow named ci-push that triggers on push to calamares and 3.2.x-stable branches, on pull request opened, reopened, and synchronize events, and on workflow dispatch. The workflow should set up environment variables for building, then run a job on an ubuntu-latest container using the kdeneon/plasma:user image. The job should prepare the source, install dependencies using a bash script, build using a generic build action, and send notifications on success or failure to a Matrix room.",
+  "tags": [
+    "ci",
+    "push",
+    "calamares",
+    "kde",
+    "plasma",
+    "ubuntu",
+    "docker",
+    "matrix"
+  ]
+}

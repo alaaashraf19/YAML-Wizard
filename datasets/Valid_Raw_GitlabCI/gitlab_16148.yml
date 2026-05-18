@@ -1,0 +1,15 @@
+before_script:
+- source mido.env
+image: coderus/sailfishos-platform-sdk-base:latest
+run-build:
+  artifacts:
+    paths:
+    - sfe-*/*.zip
+  only:
+  - web
+  - tags
+  script:
+  - ./run-mic.sh
+  stage: build
+stages:
+- build

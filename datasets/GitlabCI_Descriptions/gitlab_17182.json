@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_17182",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 969,
+  "description": "Create a GitLab CI pipeline with a deploy stage containing two jobs: deploy_production and pages. The deploy_production job runs on the phusion/baseimage Docker image, runs only on the master branch and must be triggered manually; its before_script installs openssh-client and rsync, creates ~/.ssh, starts ssh-agent, disables strict host checking when inside Docker, adds the $PRODUCTION_PRIVATE_KEY to the agent and writes it to ~/.ssh/id_rsa. Its script executes rsync -avuz -e 'ssh -i ~/.ssh/id_rsa' /builds/skofgar/jomis-neuralnetwork/* $PRODUCTION_SERVER, then creates a .public directory, copies all files into it, lists its contents, and moves it to a public folder, and it publishes the public folder as an artifact that expires in three weeks and sets the environment name to production with URL https://mlp.skofgar.ch. The pages job runs in the same deploy stage (using the default runner image), runs on every branch, executes mkdir .public, cp -r * .public, ls -la .public/*, and mv .public public, and publishes the public folder as an artifact that expires in 30 minutes. Both jobs have no cache configuration.",
+  "tags": [
+    "phusion-baseimage",
+    "ssh",
+    "rsync",
+    "manual-deploy",
+    "gitlab-pages",
+    "production-environment"
+  ]
+}

@@ -1,0 +1,23 @@
+before_script:
+- python -V
+- pip install -r requirements/testing.txt
+image: python:3.6.4-stretch
+services:
+- postgres:latest
+staging:
+  only:
+  - master
+  script:
+  - apt-get update -qy
+  - apt-get install -y ruby-full rubygems-integration
+  - gem install dpl
+  - dpl --provider=heroku --app=projectchirp --api-key=$HEROKU_STAGING_API_KEY
+  type: deploy
+test:
+  script:
+  - coverage run --source='apps' manage.py test --settings=config.settings.testing
+  - coverage report
+  variables:
+    DATABASE_URL: postgresql://postgres:postgres@postgres:5432/$POSTGRES_DB
+variables:
+  POSTGRES_DB: database_name

@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_09952",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 248,
+  "description": "Create a GitLab CI pipeline that uses the rust:latest Docker image and defines a single stage called test. Add a test job in the test stage that first sets the environment variable RUST_BACKTRACE=1, then runs apt-get update and installs protobuf-compiler, libseccomp-dev, llvm-dev, libclang-dev, clang, cmake, gcc, and g++ via apt-get, and finally executes cargo test -- --test-threads=1. The job runs on all branches, has no services, caches, artifacts, or conditional rules.",
+  "tags": [
+    "rust",
+    "cargo",
+    "test",
+    "apt",
+    "protobuf",
+    "llvm",
+    "clang"
+  ]
+}

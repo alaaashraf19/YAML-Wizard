@@ -1,0 +1,81 @@
+# Copyright (c) 2021 Morwenn
+# SPDX-License-Identifier: MIT
+
+name: MacOS Builds
+
+on:
+  push:
+    paths:
+      - '.github/workflows/build-macos.yml'
+      - 'CMakeLists.txt'
+      - 'cmake/**'
+      - 'examples/**'
+      - 'include/**'
+      - 'testsuite/**'
+  pull_request:
+    paths:
+      - '.github/workflows/build-macos.yml'
+      - 'CMakeLists.txt'
+      - 'cmake/**'
+      - 'examples/**'
+      - 'include/**'
+      - 'testsuite/**'
+
+jobs:
+  build:
+    runs-on: macos-10.15
+
+    strategy:
+      fail-fast: false
+      matrix:
+        # Default configuration corresponds to a release
+        # build without additional tooling, also provides
+        # default options for other builds
+        cxx:
+          - g++-9
+          - $(brew --prefix llvm)/bin/clang++  # Clang 11
+        build_type: [Release]
+        sanitize: ['']
+
+        # Below are debug builds with tooling
+        include:
+          # GCC builds
+          - cxx: g++-9
+            build_type: Debug
+            sanitize: address
+          - cxx: g++-9
+            build_type: Debug
+            sanitize: undefined
+          # Clang builds
+          - cxx: $(brew --prefix llvm)/bin/clang++
+            build_type: Debug
+            sanitize: address
+          - cxx: $(brew --prefix llvm)/bin/clang++
+            build_type: Debug
+            sanitize: undefined
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: seanmiddleditch/gha-setup-ninja@master
+
+      - name: Configure CMake
+        working-directory: ${{runner.workspace}}
+        run: |
+          export CXX=${{matrix.cxx}}
+          cmake -H${{github.event.repository.name}} -Bbuild \
+                -DCMAKE_CONFIGURATION_TYPES=${{matrix.build_type}} \
+                -DCMAKE_BUILD_TYPE=${{matrix.build_type}} \
+                -DSANITIZE=${{matrix.sanitize}} \
+                -GNinja \
+                -DBUILD_EXAMPLES=ON
+
+      - name: Build the test suite
+        shell: bash
+        working-directory: ${{runner.workspace}}/build
+        run: cmake --build . --config ${{matrix.build_type}} -j 2
+
+      - name: Run the test suite
+        env:
+          CTEST_OUTPUT_ON_FAILURE: 1
+        working-directory: ${{runner.workspace}}/build
+        run: ctest -C ${{matrix.build_type}}

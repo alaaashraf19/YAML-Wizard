@@ -1,0 +1,16 @@
+{
+  "sha": "4964f39e993983539d09bb897a0e7ef16843246b97924b627974dd0fbe6dbfb2",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5607,
+  "description": "Create a GitHub Actions workflow named Builders that runs on every push to the master branch and on pull requests to master and subviews branches. The workflow has two jobs: one for macOS and one for Linux. The macOS job checks out the repository, sets up Homebrew, installs dependencies, configures the build, uses a compiler cache, builds the project, and uploads the result to SourceForge. The Linux job does a similar setup but for Linux, installs dependencies, configures the build for an AppImage, uses a compiler cache, builds the project, and uploads the AppImage to SourceForge.",
+  "tags": [
+    "github-actions",
+    "builders",
+    "macos",
+    "linux",
+    "appimage",
+    "sourceforge",
+    "sccache"
+  ]
+}

@@ -1,0 +1,370 @@
+.auto_devops: "# Auto DevOps variables and functions\n[[ \"$TRACE\" ]] && set -x\n\
+  auto_database_url=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${CI_ENVIRONMENT_SLUG}-postgres:5432/${POSTGRES_DB}\n\
+  export DATABASE_URL=${DATABASE_URL-$auto_database_url}\nexport CI_APPLICATION_REPOSITORY=$CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG\n\
+  export CI_APPLICATION_TAG=$CI_COMMIT_SHA\nexport CI_CONTAINER_NAME=ci_job_build_${CI_JOB_ID}\n\
+  export TILLER_NAMESPACE=$KUBE_NAMESPACE\n\nfunction codeclimate() {\n  cc_opts=\"\
+  --env CODECLIMATE_CODE=\"$PWD\" \\\n           --volume \"$PWD\":/code \\\n    \
+  \       --volume /var/run/docker.sock:/var/run/docker.sock \\\n           --volume\
+  \ /tmp/cc:/tmp/cc\"\n\n  docker run ${cc_opts} codeclimate/codeclimate:0.69.0 init\n\
+  \  docker run ${cc_opts} codeclimate/codeclimate:0.69.0 analyze -f json > codeclimate.json\n\
+  }\n\nfunction deploy() {\n  track=\"${1-stable}\"\n  name=\"$CI_ENVIRONMENT_SLUG\"\
+  \n\n  if [[ \"$track\" != \"stable\" ]]; then\n    name=\"$name-$track\"\n  fi\n\
+  \n  replicas=\"1\"\n  service_enabled=\"false\"\n  postgres_enabled=\"$POSTGRES_ENABLED\"\
+  \n  # canary uses stable db\n  [[ \"$track\" == \"canary\" ]] && postgres_enabled=\"\
+  false\"\n\n  env_track=$( echo $track | tr -s  '[:lower:]'  '[:upper:]' )\n  env_slug=$(\
+  \ echo ${CI_ENVIRONMENT_SLUG//-/_} | tr -s  '[:lower:]'  '[:upper:]' )\n\n  if [[\
+  \ \"$track\" == \"stable\" ]]; then\n    # for stable track get number of replicas\
+  \ from `PRODUCTION_REPLICAS`\n    eval new_replicas=\\$${env_slug}_REPLICAS\n  \
+  \  service_enabled=\"true\"\n  else\n    # for all tracks get number of replicas\
+  \ from `CANARY_PRODUCTION_REPLICAS`\n    eval new_replicas=\\$${env_track}_${env_slug}_REPLICAS\n\
+  \  fi\n  if [[ -n \"$new_replicas\" ]]; then\n    replicas=\"$new_replicas\"\n \
+  \ fi\n\n  helm upgrade --install \\\n    --wait \\\n    --set service.enabled=\"\
+  $service_enabled\" \\\n    --set releaseOverride=\"$CI_ENVIRONMENT_SLUG\" \\\n \
+  \   --set image.repository=\"$CI_APPLICATION_REPOSITORY\" \\\n    --set image.tag=\"\
+  $CI_APPLICATION_TAG\" \\\n    --set image.pullPolicy=IfNotPresent \\\n    --set\
+  \ application.track=\"$track\" \\\n    --set application.database_url=\"$DATABASE_URL\"\
+  \ \\\n    --set service.url=\"$CI_ENVIRONMENT_URL\" \\\n    --set replicaCount=\"\
+  $replicas\" \\\n    --set postgresql.enabled=\"$postgres_enabled\" \\\n    --set\
+  \ postgresql.nameOverride=\"postgres\" \\\n    --set postgresql.postgresUser=\"\
+  $POSTGRES_USER\" \\\n    --set postgresql.postgresPassword=\"$POSTGRES_PASSWORD\"\
+  \ \\\n    --set postgresql.postgresDatabase=\"$POSTGRES_DB\" \\\n    --namespace=\"\
+  $KUBE_NAMESPACE\" \\\n    --version=\"$CI_PIPELINE_ID-$CI_JOB_ID\" \\\n    \"$name\"\
+  \ \\\n    chart/\n}\n\nfunction install_dependencies() {\n  apk add -U openssl curl\
+  \ tar gzip bash ca-certificates git\n  wget -q -O /etc/apk/keys/sgerrand.rsa.pub\
+  \ https://raw.githubusercontent.com/sgerrand/alpine-pkg-glibc/master/sgerrand.rsa.pub\n\
+  \  wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.23-r3/glibc-2.23-r3.apk\n\
+  \  apk add glibc-2.23-r3.apk\n  rm glibc-2.23-r3.apk\n\n  curl https://kubernetes-helm.storage.googleapis.com/helm-v2.6.1-linux-amd64.tar.gz\
+  \ | tar zx\n  mv linux-amd64/helm /usr/bin/\n  helm version --client\n\n  curl -L\
+  \ -o /usr/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/$(curl\
+  \ -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl\n\
+  \  chmod +x /usr/bin/kubectl\n  kubectl version --client\n}\n\nfunction setup_docker()\
+  \ {\n  if ! docker info &>/dev/null; then\n    if [ -z \"$DOCKER_HOST\" -a \"$KUBERNETES_PORT\"\
+  \ ]; then\n      export DOCKER_HOST='tcp://localhost:2375'\n    fi\n  fi\n}\n\n\
+  function setup_test_db() {\n  if [ -z ${KUBERNETES_PORT+x} ]; then\n    DB_HOST=postgres\n\
+  \  else\n    DB_HOST=localhost\n  fi\n  export DATABASE_URL=\"postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${DB_HOST}:5432/${POSTGRES_DB}\"\
+  \n}\n\nfunction download_chart() {\n  if [[ ! -d chart ]]; then\n    auto_chart=${AUTO_DEVOPS_CHART:-gitlab/auto-deploy-app}\n\
+  \    auto_chart_name=$(basename $auto_chart)\n    auto_chart_name=${auto_chart_name%.tgz}\n\
+  \  else\n    auto_chart=\"chart\"\n    auto_chart_name=\"chart\"\n  fi\n\n  helm\
+  \ init --client-only\n  helm repo add gitlab https://charts.gitlab.io\n  if [[ !\
+  \ -d \"$auto_chart\" ]]; then\n    helm fetch ${auto_chart} --untar\n  fi\n  if\
+  \ [ \"$auto_chart_name\" != \"chart\" ]; then\n    mv ${auto_chart_name} chart\n\
+  \  fi\n\n  helm dependency update chart/\n  helm dependency build chart/\n}\n\n\
+  function ensure_namespace() {\n  kubectl describe namespace \"$KUBE_NAMESPACE\"\
+  \ || kubectl create namespace \"$KUBE_NAMESPACE\"\n}\n\nfunction check_kube_domain()\
+  \ {\n  if [ -z ${AUTO_DEVOPS_DOMAIN+x} ]; then\n    echo \"In order to deploy or\
+  \ use Review Apps, AUTO_DEVOPS_DOMAIN variable must be set\"\n    echo \"You can\
+  \ do it in Auto DevOps project settings or defining a secret variable at group or\
+  \ project level\"\n    echo \"You can also manually add it in .gitlab-ci.yml\"\n\
+  \    false\n  else\n    true\n  fi\n}\n\nfunction build() {\n\n  if [[ -n \"$CI_REGISTRY_USER\"\
+  \ ]]; then\n    echo \"Logging to GitLab Container Registry with CI credentials...\"\
+  \n    docker login -u \"$CI_REGISTRY_USER\" -p \"$CI_REGISTRY_PASSWORD\" \"$CI_REGISTRY\"\
+  \n    echo \"\"\n  fi\n\n  if [[ -f Dockerfile ]]; then\n    echo \"Building Dockerfile-based\
+  \ application...\"\n    docker build -t \"$CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG\"\
+  \ .\n  else\n    echo \"Building Heroku-based application using gliderlabs/herokuish\
+  \ docker image...\"\n    docker run -i --name=\"$CI_CONTAINER_NAME\" -v \"$(pwd):/tmp/app:ro\"\
+  \ gliderlabs/herokuish /bin/herokuish buildpack build\n    docker commit \"$CI_CONTAINER_NAME\"\
+  \ \"$CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG\"\n    docker rm \"$CI_CONTAINER_NAME\"\
+  \ >/dev/null\n    echo \"\"\n\n    echo \"Configuring $CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG\
+  \ docker image...\"\n    docker create --expose 5000 --env PORT=5000 --name=\"$CI_CONTAINER_NAME\"\
+  \ \"$CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG\" /bin/herokuish procfile start\
+  \ web\n    docker commit \"$CI_CONTAINER_NAME\" \"$CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG\"\
+  \n    docker rm \"$CI_CONTAINER_NAME\" >/dev/null\n    echo \"\"\n  fi\n\n  echo\
+  \ \"Pushing to GitLab Container Registry...\"\n  docker push \"$CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG\"\
+  \n  echo \"\"\n}\n\nfunction install_tiller() {\n  echo \"Checking Tiller...\"\n\
+  \  helm init --upgrade\n  kubectl rollout status -n \"$TILLER_NAMESPACE\" -w \"\
+  deployment/tiller-deploy\"\n  if ! helm version --debug; then\n    echo \"Failed\
+  \ to init Tiller.\"\n    return 1\n  fi\n  echo \"\"\n}\n\nfunction create_secret()\
+  \ {\n  kubectl create secret -n \"$KUBE_NAMESPACE\" \\\n    docker-registry gitlab-registry\
+  \ \\\n    --docker-server=\"$CI_REGISTRY\" \\\n    --docker-username=\"$CI_REGISTRY_USER\"\
+  \ \\\n    --docker-password=\"$CI_REGISTRY_PASSWORD\" \\\n    --docker-email=\"\
+  $GITLAB_USER_EMAIL\" \\\n    -o yaml --dry-run | kubectl replace -n \"$KUBE_NAMESPACE\"\
+  \ --force -f -\n}\n\nfunction performance() {\n  export CI_ENVIRONMENT_URL=$(cat\
+  \ environment_url.txt)\n  \n  mkdir gitlab-exporter\n  wget -O gitlab-exporter/index.js\
+  \ https://gitlab.com/gitlab-org/gl-performance/raw/10-3/index.js\n  \n  mkdir sitespeed-results\n\
+  \  \n  if [ -f .gitlab-urls.txt ]\n  then\n    sed -i -e 's@^@'\"$CI_ENVIRONMENT_URL\"\
+  '@' .gitlab-urls.txt\n    docker run --shm-size=1g --rm -v \"$(pwd)\":/sitespeed.io\
+  \ sitespeedio/sitespeed.io:6.0.3 --plugins.add ./gitlab-exporter --outputFolder\
+  \ sitespeed-results .gitlab-urls-processed.txt\n  else\n    docker run --shm-size=1g\
+  \ --rm -v \"$(pwd)\":/sitespeed.io sitespeedio/sitespeed.io:6.0.3 --plugins.add\
+  \ ./gitlab-exporter --outputFolder sitespeed-results http://$CI_ENVIRONMENT_URL/\n\
+  \  fi\n  \n  mv sitespeed-results/data/performance.json performance.json\n}\n\n\n\
+  function persist_environment_url() {\n    echo $CI_ENVIRONMENT_URL > environment_url.txt\n\
+  }\n\nfunction delete() {\n  track=\"${1-stable}\"\n  name=\"$CI_ENVIRONMENT_SLUG\"\
+  \n\n  if [[ \"$track\" != \"stable\" ]]; then\n    name=\"$name-$track\"\n  fi\n\
+  \n  if [[ -n \"$(helm ls -q \"^$name$\")\" ]]; then\n    helm delete \"$name\"\n\
+  \  fi\n}\n"
+.canary:
+  environment:
+    name: production
+    url: http://$CI_PROJECT_PATH_SLUG.$AUTO_DEVOPS_DOMAIN
+  only:
+    kubernetes: active
+    refs:
+    - master
+  script:
+  - check_kube_domain
+  - install_dependencies
+  - download_chart
+  - ensure_namespace
+  - install_tiller
+  - create_secret
+  - deploy canary
+  stage: canary
+  when: manual
+.staging:
+  environment:
+    name: staging
+    url: http://$CI_PROJECT_PATH_SLUG-staging.$AUTO_DEVOPS_DOMAIN
+  only:
+    kubernetes: active
+    refs:
+    - master
+  script:
+  - check_kube_domain
+  - install_dependencies
+  - download_chart
+  - ensure_namespace
+  - install_tiller
+  - create_secret
+  - deploy
+  stage: staging
+before_script:
+- "# Auto DevOps variables and functions\n[[ \"$TRACE\" ]] && set -x\nauto_database_url=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${CI_ENVIRONMENT_SLUG}-postgres:5432/${POSTGRES_DB}\n\
+  export DATABASE_URL=${DATABASE_URL-$auto_database_url}\nexport CI_APPLICATION_REPOSITORY=$CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG\n\
+  export CI_APPLICATION_TAG=$CI_COMMIT_SHA\nexport CI_CONTAINER_NAME=ci_job_build_${CI_JOB_ID}\n\
+  export TILLER_NAMESPACE=$KUBE_NAMESPACE\n\nfunction codeclimate() {\n  cc_opts=\"\
+  --env CODECLIMATE_CODE=\"$PWD\" \\\n           --volume \"$PWD\":/code \\\n    \
+  \       --volume /var/run/docker.sock:/var/run/docker.sock \\\n           --volume\
+  \ /tmp/cc:/tmp/cc\"\n\n  docker run ${cc_opts} codeclimate/codeclimate:0.69.0 init\n\
+  \  docker run ${cc_opts} codeclimate/codeclimate:0.69.0 analyze -f json > codeclimate.json\n\
+  }\n\nfunction deploy() {\n  track=\"${1-stable}\"\n  name=\"$CI_ENVIRONMENT_SLUG\"\
+  \n\n  if [[ \"$track\" != \"stable\" ]]; then\n    name=\"$name-$track\"\n  fi\n\
+  \n  replicas=\"1\"\n  service_enabled=\"false\"\n  postgres_enabled=\"$POSTGRES_ENABLED\"\
+  \n  # canary uses stable db\n  [[ \"$track\" == \"canary\" ]] && postgres_enabled=\"\
+  false\"\n\n  env_track=$( echo $track | tr -s  '[:lower:]'  '[:upper:]' )\n  env_slug=$(\
+  \ echo ${CI_ENVIRONMENT_SLUG//-/_} | tr -s  '[:lower:]'  '[:upper:]' )\n\n  if [[\
+  \ \"$track\" == \"stable\" ]]; then\n    # for stable track get number of replicas\
+  \ from `PRODUCTION_REPLICAS`\n    eval new_replicas=\\$${env_slug}_REPLICAS\n  \
+  \  service_enabled=\"true\"\n  else\n    # for all tracks get number of replicas\
+  \ from `CANARY_PRODUCTION_REPLICAS`\n    eval new_replicas=\\$${env_track}_${env_slug}_REPLICAS\n\
+  \  fi\n  if [[ -n \"$new_replicas\" ]]; then\n    replicas=\"$new_replicas\"\n \
+  \ fi\n\n  helm upgrade --install \\\n    --wait \\\n    --set service.enabled=\"\
+  $service_enabled\" \\\n    --set releaseOverride=\"$CI_ENVIRONMENT_SLUG\" \\\n \
+  \   --set image.repository=\"$CI_APPLICATION_REPOSITORY\" \\\n    --set image.tag=\"\
+  $CI_APPLICATION_TAG\" \\\n    --set image.pullPolicy=IfNotPresent \\\n    --set\
+  \ application.track=\"$track\" \\\n    --set application.database_url=\"$DATABASE_URL\"\
+  \ \\\n    --set service.url=\"$CI_ENVIRONMENT_URL\" \\\n    --set replicaCount=\"\
+  $replicas\" \\\n    --set postgresql.enabled=\"$postgres_enabled\" \\\n    --set\
+  \ postgresql.nameOverride=\"postgres\" \\\n    --set postgresql.postgresUser=\"\
+  $POSTGRES_USER\" \\\n    --set postgresql.postgresPassword=\"$POSTGRES_PASSWORD\"\
+  \ \\\n    --set postgresql.postgresDatabase=\"$POSTGRES_DB\" \\\n    --namespace=\"\
+  $KUBE_NAMESPACE\" \\\n    --version=\"$CI_PIPELINE_ID-$CI_JOB_ID\" \\\n    \"$name\"\
+  \ \\\n    chart/\n}\n\nfunction install_dependencies() {\n  apk add -U openssl curl\
+  \ tar gzip bash ca-certificates git\n  wget -q -O /etc/apk/keys/sgerrand.rsa.pub\
+  \ https://raw.githubusercontent.com/sgerrand/alpine-pkg-glibc/master/sgerrand.rsa.pub\n\
+  \  wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.23-r3/glibc-2.23-r3.apk\n\
+  \  apk add glibc-2.23-r3.apk\n  rm glibc-2.23-r3.apk\n\n  curl https://kubernetes-helm.storage.googleapis.com/helm-v2.6.1-linux-amd64.tar.gz\
+  \ | tar zx\n  mv linux-amd64/helm /usr/bin/\n  helm version --client\n\n  curl -L\
+  \ -o /usr/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/$(curl\
+  \ -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl\n\
+  \  chmod +x /usr/bin/kubectl\n  kubectl version --client\n}\n\nfunction setup_docker()\
+  \ {\n  if ! docker info &>/dev/null; then\n    if [ -z \"$DOCKER_HOST\" -a \"$KUBERNETES_PORT\"\
+  \ ]; then\n      export DOCKER_HOST='tcp://localhost:2375'\n    fi\n  fi\n}\n\n\
+  function setup_test_db() {\n  if [ -z ${KUBERNETES_PORT+x} ]; then\n    DB_HOST=postgres\n\
+  \  else\n    DB_HOST=localhost\n  fi\n  export DATABASE_URL=\"postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${DB_HOST}:5432/${POSTGRES_DB}\"\
+  \n}\n\nfunction download_chart() {\n  if [[ ! -d chart ]]; then\n    auto_chart=${AUTO_DEVOPS_CHART:-gitlab/auto-deploy-app}\n\
+  \    auto_chart_name=$(basename $auto_chart)\n    auto_chart_name=${auto_chart_name%.tgz}\n\
+  \  else\n    auto_chart=\"chart\"\n    auto_chart_name=\"chart\"\n  fi\n\n  helm\
+  \ init --client-only\n  helm repo add gitlab https://charts.gitlab.io\n  if [[ !\
+  \ -d \"$auto_chart\" ]]; then\n    helm fetch ${auto_chart} --untar\n  fi\n  if\
+  \ [ \"$auto_chart_name\" != \"chart\" ]; then\n    mv ${auto_chart_name} chart\n\
+  \  fi\n\n  helm dependency update chart/\n  helm dependency build chart/\n}\n\n\
+  function ensure_namespace() {\n  kubectl describe namespace \"$KUBE_NAMESPACE\"\
+  \ || kubectl create namespace \"$KUBE_NAMESPACE\"\n}\n\nfunction check_kube_domain()\
+  \ {\n  if [ -z ${AUTO_DEVOPS_DOMAIN+x} ]; then\n    echo \"In order to deploy or\
+  \ use Review Apps, AUTO_DEVOPS_DOMAIN variable must be set\"\n    echo \"You can\
+  \ do it in Auto DevOps project settings or defining a secret variable at group or\
+  \ project level\"\n    echo \"You can also manually add it in .gitlab-ci.yml\"\n\
+  \    false\n  else\n    true\n  fi\n}\n\nfunction build() {\n\n  if [[ -n \"$CI_REGISTRY_USER\"\
+  \ ]]; then\n    echo \"Logging to GitLab Container Registry with CI credentials...\"\
+  \n    docker login -u \"$CI_REGISTRY_USER\" -p \"$CI_REGISTRY_PASSWORD\" \"$CI_REGISTRY\"\
+  \n    echo \"\"\n  fi\n\n  if [[ -f Dockerfile ]]; then\n    echo \"Building Dockerfile-based\
+  \ application...\"\n    docker build -t \"$CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG\"\
+  \ .\n  else\n    echo \"Building Heroku-based application using gliderlabs/herokuish\
+  \ docker image...\"\n    docker run -i --name=\"$CI_CONTAINER_NAME\" -v \"$(pwd):/tmp/app:ro\"\
+  \ gliderlabs/herokuish /bin/herokuish buildpack build\n    docker commit \"$CI_CONTAINER_NAME\"\
+  \ \"$CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG\"\n    docker rm \"$CI_CONTAINER_NAME\"\
+  \ >/dev/null\n    echo \"\"\n\n    echo \"Configuring $CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG\
+  \ docker image...\"\n    docker create --expose 5000 --env PORT=5000 --name=\"$CI_CONTAINER_NAME\"\
+  \ \"$CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG\" /bin/herokuish procfile start\
+  \ web\n    docker commit \"$CI_CONTAINER_NAME\" \"$CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG\"\
+  \n    docker rm \"$CI_CONTAINER_NAME\" >/dev/null\n    echo \"\"\n  fi\n\n  echo\
+  \ \"Pushing to GitLab Container Registry...\"\n  docker push \"$CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG\"\
+  \n  echo \"\"\n}\n\nfunction install_tiller() {\n  echo \"Checking Tiller...\"\n\
+  \  helm init --upgrade\n  kubectl rollout status -n \"$TILLER_NAMESPACE\" -w \"\
+  deployment/tiller-deploy\"\n  if ! helm version --debug; then\n    echo \"Failed\
+  \ to init Tiller.\"\n    return 1\n  fi\n  echo \"\"\n}\n\nfunction create_secret()\
+  \ {\n  kubectl create secret -n \"$KUBE_NAMESPACE\" \\\n    docker-registry gitlab-registry\
+  \ \\\n    --docker-server=\"$CI_REGISTRY\" \\\n    --docker-username=\"$CI_REGISTRY_USER\"\
+  \ \\\n    --docker-password=\"$CI_REGISTRY_PASSWORD\" \\\n    --docker-email=\"\
+  $GITLAB_USER_EMAIL\" \\\n    -o yaml --dry-run | kubectl replace -n \"$KUBE_NAMESPACE\"\
+  \ --force -f -\n}\n\nfunction performance() {\n  export CI_ENVIRONMENT_URL=$(cat\
+  \ environment_url.txt)\n  \n  mkdir gitlab-exporter\n  wget -O gitlab-exporter/index.js\
+  \ https://gitlab.com/gitlab-org/gl-performance/raw/10-3/index.js\n  \n  mkdir sitespeed-results\n\
+  \  \n  if [ -f .gitlab-urls.txt ]\n  then\n    sed -i -e 's@^@'\"$CI_ENVIRONMENT_URL\"\
+  '@' .gitlab-urls.txt\n    docker run --shm-size=1g --rm -v \"$(pwd)\":/sitespeed.io\
+  \ sitespeedio/sitespeed.io:6.0.3 --plugins.add ./gitlab-exporter --outputFolder\
+  \ sitespeed-results .gitlab-urls-processed.txt\n  else\n    docker run --shm-size=1g\
+  \ --rm -v \"$(pwd)\":/sitespeed.io sitespeedio/sitespeed.io:6.0.3 --plugins.add\
+  \ ./gitlab-exporter --outputFolder sitespeed-results http://$CI_ENVIRONMENT_URL/\n\
+  \  fi\n  \n  mv sitespeed-results/data/performance.json performance.json\n}\n\n\n\
+  function persist_environment_url() {\n    echo $CI_ENVIRONMENT_URL > environment_url.txt\n\
+  }\n\nfunction delete() {\n  track=\"${1-stable}\"\n  name=\"$CI_ENVIRONMENT_SLUG\"\
+  \n\n  if [[ \"$track\" != \"stable\" ]]; then\n    name=\"$name-$track\"\n  fi\n\
+  \n  if [[ -n \"$(helm ls -q \"^$name$\")\" ]]; then\n    helm delete \"$name\"\n\
+  \  fi\n}\n"
+build:
+  image: docker:git
+  only:
+  - branches
+  script:
+  - setup_docker
+  - build
+  services:
+  - docker:dind
+  stage: build
+  variables:
+    DOCKER_DRIVER: overlay2
+codequality:
+  allow_failure: true
+  artifacts:
+    paths:
+    - codeclimate.json
+  image: docker:latest
+  script:
+  - setup_docker
+  - codeclimate
+  services:
+  - docker:dind
+  variables:
+    DOCKER_DRIVER: overlay2
+image: alpine:latest
+performance:
+  artifacts:
+    paths:
+    - performance.json
+  image: docker:latest
+  only:
+    kubernetes: active
+    refs:
+    - branches
+  script:
+  - setup_docker
+  - performance
+  services:
+  - docker:dind
+  stage: performance
+  variables:
+    DOCKER_DRIVER: overlay2
+production:
+  artifacts:
+    paths:
+    - environment_url.txt
+  environment:
+    name: production
+    url: http://$CI_PROJECT_PATH_SLUG.$AUTO_DEVOPS_DOMAIN
+  only:
+    kubernetes: active
+    refs:
+    - master
+  script:
+  - check_kube_domain
+  - install_dependencies
+  - download_chart
+  - ensure_namespace
+  - install_tiller
+  - create_secret
+  - deploy
+  - delete canary
+  - persist_environment_url
+  stage: production
+review:
+  artifacts:
+    paths:
+    - environment_url.txt
+  environment:
+    name: review/$CI_COMMIT_REF_NAME
+    on_stop: stop_review
+    url: http://$CI_PROJECT_PATH_SLUG-$CI_ENVIRONMENT_SLUG.$AUTO_DEVOPS_DOMAIN
+  except:
+  - master
+  only:
+    kubernetes: active
+    refs:
+    - branches
+  script:
+  - check_kube_domain
+  - install_dependencies
+  - download_chart
+  - ensure_namespace
+  - install_tiller
+  - create_secret
+  - deploy
+  - persist_environment_url
+  stage: review
+sast:
+  allow_failure: true
+  artifacts:
+    paths:
+    - gl-sast-report.json
+  image: registry.gitlab.com/gitlab-org/gl-sast:latest
+  script:
+  - /app/bin/run .
+  variables:
+    POSTGRES_DB: 'false'
+stages:
+- build
+- test
+- review
+- staging
+- canary
+- production
+- performance
+- cleanup
+stop_review:
+  allow_failure: true
+  environment:
+    action: stop
+    name: review/$CI_COMMIT_REF_NAME
+  except:
+  - master
+  only:
+    kubernetes: active
+    refs:
+    - branches
+  script:
+  - install_dependencies
+  - delete
+  stage: cleanup
+  variables:
+    GIT_STRATEGY: none
+  when: manual
+test:
+  image: gliderlabs/herokuish:latest
+  only:
+  - branches
+  script:
+  - setup_test_db
+  - cp -R . /tmp/app
+  - /bin/herokuish buildpack test
+  services:
+  - postgres:latest
+  stage: test
+  variables:
+    POSTGRES_DB: test
+variables:
+  AUTO_DEVOPS_DOMAIN: gitlab-ci.com
+  POSTGRES_DB: $CI_ENVIRONMENT_SLUG
+  POSTGRES_ENABLED: 'true'
+  POSTGRES_PASSWORD: testing-password
+  POSTGRES_USER: user

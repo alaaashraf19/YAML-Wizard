@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_00044",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 180,
+  "description": "Create a GitLab CI pipeline that uses the ruby:2.5.7-alpine Docker image and runs a before_script that executes `apk update`, `apk add ruby-dev alpine-sdk`, and `gem install rubocop -v \"0.93.1\" -N`. Define a single stage named test and add a job called rubocop in that stage that runs the `rubocop` command. No services, caches, artifacts, or special rules are required.",
+  "tags": [
+    "ruby",
+    "rubocop",
+    "alpine",
+    "lint",
+    "gitlab-ci"
+  ]
+}

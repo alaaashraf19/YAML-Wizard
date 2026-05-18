@@ -1,0 +1,54 @@
+.eqc_template:
+  script: &id001
+  - mkdir libs
+  - cd libs
+  - curl -Ol http://www.quviq.com/wp-content/uploads/2015/09/eqcmini-2.01.0.zip
+  - unzip eqcmini-2.01.0.zip
+  - cd ..
+  - epmd &
+  - ./rebar3 as eqc eqc
+  stage: eqc
+dialyzer:
+  script:
+  - ./rebar3 dialyzer
+  stage: dialyzer
+  tags:
+  - erlang-19
+eqc-bsd:
+  script: *id001
+  stage: eqc
+  tags:
+  - bsd
+eqc-linux:
+  before_script:
+  - apt-get update
+  - apt-get install -y --no-install-recommends unzip
+  image: erlang:20
+  script: *id001
+  stage: eqc
+  tags:
+  - linux
+eqc-smartos:
+  script: *id001
+  stage: eqc
+  tags:
+  - smartos
+eunit:
+  script:
+  - ./rebar3 eunit
+  stage: eunit
+  tags:
+  - erlang-19
+lint:
+  script:
+  - ./rebar3 as lint lint
+  stage: lint
+  tags:
+  - erlang-19
+stages:
+- lint
+- dialyzer
+- eunit
+- eqc
+variables:
+  ERL_LIBS: ./libs

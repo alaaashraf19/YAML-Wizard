@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_12338",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 847,
+  "description": "Create a GitLab CI pipeline that runs a global before_script executing `bash ci/docker_install.sh > /dev/null`. Define three stages: validate, test, and package. In the validate stage add six jobs named `validate:5.4`, `validate:5.5`, `validate:5.6`, `validate:7.0`, `validate:7.1`, and `validate:7.2`, each using the corresponding `php:<version>` Docker image and running `bash ci/php_lint.sh ./`. In the package stage add a manual `package` job using the `tetraweb/php` image, running `apt-get update`, `apt-get install zip unzip`, `cd api`, `composer install --no-dev`, `cd ../ci`, and `bash build_zip.sh`, and configure it to upload `release.zip` as an artifact. No caches, services, or deployment targets are defined.",
+  "tags": [
+    "php",
+    "composer",
+    "lint",
+    "package",
+    "zip",
+    "docker-install"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_00122",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 540,
+  "description": "Create a GitLab CI pipeline that uses the default runner image and prepares a Lua 5.2 development environment in a global before_script by updating apt, installing unzip, lua5.2 and lua5.2-dev, downloading luarocks‑2.2.2, extracting it, running ./configure; make bootstrap, and then installing the busted and luacov rocks. Define a single job named test in the default test stage. The test job runs the script commands: busted, then captures the last line of luacov.report.out into a variable, and echoes the coverage report. It uploads luacov.report.out as an artifact so the coverage file is retained after the job.",
+  "tags": [
+    "lua",
+    "luarocks",
+    "busted",
+    "luacov",
+    "coverage",
+    "gitlab-ci"
+  ]
+}

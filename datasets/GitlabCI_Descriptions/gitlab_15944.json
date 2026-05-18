@@ -1,0 +1,21 @@
+{
+  "sha": "gitlab_15944",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 3284,
+  "description": "Create a GitLab CI pipeline that defines the variables BUILD_IMAGES_PROJECT, CENTOS7_BUILD, DEBIAN_BUILD, FEDORA_BUILD and GET_SOURCES_ATTEMPTS. In the default stage add a Centos7 job using the image $CI_REGISTRY/$BUILD_IMAGES_PROJECT:$CENTOS7_BUILD that runs `autoreconf -fi && ./configure --disable-doc && make -j$(nproc) check`, uploads any tests/*.log and compat_reports/ as artifacts on failure (expire in 2 weeks), and runs on shared runners. Add a Debian ASAN/UBSAN job using $CI_REGISTRY/$BUILD_IMAGES_PROJECT:$DEBIAN_BUILD that runs `autoreconf -fi`, `export CC=clang`, `export CFLAGS=\"-fsanitize=address -g -O0\"`, `ASAN_OPTIONS=detect_leaks=0 ./configure --disable-doc`, `make -j$(nproc) check`, `make clean`, then sets `CFLAGS=\"-fsanitize=undefined,integer -fno-sanitize-recover=undefined,integer -g -O0 -Wall -Wextra -Werror\"`, re‑runs `./configure --disable-doc` and `make -j$(nproc) check`, and stores logs on failure. Also create Debian Distcheck, Debian Valgrind, Fedora Clang-analyzer, and MinGW64 jobs each using their respective images ($DEBIAN_BUILD or $FEDORA_BUILD), executing their listed autoreconf, configure, make, scan-build or mingw64 commands, publishing logs on failure, with Distcheck and Clang-analyzer excluded on tag pipelines and MinGW64 performing a before_script to register binfmt_misc; all run on shared runners (MinGW64 also requires a docker tag). Finally, add a pages job that runs only on the master branch using the Debian image, runs `autoreconf -fi`, `CFLAGS=\"-g -O0\" ./configure --disable-doc`, `make -j$(nproc) check`, `make check-coverage`, moves coverage data to public/coverage and documentation to public/reference, and publishes the public directory as a successful artifact, and a pages-test job that runs on all branches except master with similar build steps but without publishing artifacts.",
+  "tags": [
+    "centos7",
+    "debian-asan-ubsan",
+    "debian-distcheck",
+    "debian-valgrind",
+    "fedora-clang-analyzer",
+    "mingw64",
+    "pages",
+    "pages-test",
+    "autotools",
+    "scan-build",
+    "wine",
+    "gitlab-ci"
+  ]
+}

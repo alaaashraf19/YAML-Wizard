@@ -1,0 +1,156 @@
+name: Lantern
+
+on:
+  push:
+    branches:
+      - master
+      - main
+      - "cran/**"
+      - "libtorch-v1.11.0"
+
+jobs:
+  build:
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {os: macOS-latest, artifact: "build/liblantern.dylib", upload: "macOS", fixlib: 'install_name_tool -add_rpath @loader_path/. liblantern.dylib'}
+          - {os: windows-2019, artifact: "build/Release/lantern.dll", upload: "Linux", fixlib: "chrpath -r '$ORIGIN/.' liblantern.so"}
+          - {os: ubuntu-18.04, artifact: "build/liblantern.so", upload: "Windows"}
+          - {os: ubuntu-18.04, artifact: "build/liblantern.so", upload: "Linux-Cuda-113",cuda: '11.3', cuda_patch: "1", cudnn: 'https://storage.googleapis.com/torch-lantern-builds/cudnn/cudnn-11.3-linux-x64-v8.2.1.32.tgz', fixlib: "chrpath -r '$ORIGIN/.' liblantern.so"}
+          - {os: ubuntu-18.04, artifact: "build/liblantern.so", upload: "Linux-Cuda-102", cuda: '10.2', cuda_patch: "89", cudnn: 'https://storage.googleapis.com/torch-lantern-builds/cudnn/cudnn-10.2-linux-x64-v7.6.5.32.tgz', fixlib: "chrpath -r '$ORIGIN/.' liblantern.so"}
+          - {os: windows-2019, artifact: "build/Release/lantern.dll", upload: "Windows-Cuda-113", cuda: '11.3', cuda_patch: "1", cudnn: 'https://storage.googleapis.com/torch-lantern-builds/cudnn/cudnn-11.3-windows-x64-v8.2.1.32.zip'}
+    env:
+      CUDA: ${{matrix.config.cuda}}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup cmake
+        uses: jwlawson/actions-setup-cmake@v1
+        with:
+          cmake-version: 'latest'
+
+      - name: Create environment
+        run: cmake -E make_directory ${{runner.workspace}}/torch/lantern/build
+
+      - name: Install CUDA
+        if: ${{matrix.config.cuda != ''}}
+        uses: Jimver/cuda-toolkit@v0.2.7
+        id: cuda-toolkit
+        with:
+          cuda: '${{matrix.config.cuda}}.${{matrix.config.cuda_patch}}'
+
+      - name: Install cuDNN (Linux)
+        if: ${{ matrix.config.cuda != '' && contains(matrix.config.os, 'ubuntu') }}
+        run: |
+          wget --quiet ${{matrix.config.cudnn}} -O cudnn.tgz
+          tar -xzvf cudnn.tgz
+          sudo cp cuda/include/cudnn*.h $CUDA_PATH/include
+          sudo cp cuda/lib64/libcudnn* $CUDA_PATH/lib64
+          sudo chmod a+r $CUDA_PATH/include/cudnn*.h $CUDA_PATH/lib64/libcudnn*
+          rm cudnn.tgz
+
+      - name: Install cuDNN (Windows)
+        if: ${{ matrix.config.cuda != '' && contains(matrix.config.os, 'windows') }}
+        run: |
+          curl ${{ matrix.config.cudnn }} --output cudnn.zip --silent --location
+          Expand-Archive -Path cudnn.zip -DestinationPath "C:\cudnn"
+          Get-ChildItem -Path "C:\cudnn"
+          Get-ChildItem -Path "${env:CUDA_PATH}"
+          Move-Item -Path "C:\cudnn\cuda\bin\cudnn*.dll" -Destination "${env:CUDA_PATH}\bin"
+          Move-Item -Path "C:\cudnn\cuda\include\cudnn*.h" -Destination "${env:CUDA_PATH}\include"
+          Move-Item -Path "C:\cudnn\cuda\lib\x64\cudnn*.lib" -Destination "${env:CUDA_PATH}\lib\x64"
+          echo "CUDNN_INCLUDE_PATH=""${CUDA_PATH}\include""" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          echo "CUDNN_LIBRARY_PATH=""${CUDA_PATH}\lib\x64""" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
+      - name: Run cmake
+        working-directory: ${{runner.workspace}}/torch/lantern/build
+        run: |
+          cmake ..
+
+      - name: Build libs
+        working-directory: ${{runner.workspace}}/torch/lantern/build
+        run: |
+          cmake --build . --config Release --parallel 4
+          ${{matrix.config.fixlib}}
+
+      - name: Install libs
+        working-directory: ${{runner.workspace}}
+        run: |
+          mkdir artifacts
+          cp -R torch/lantern/${{matrix.config.artifact}} artifacts
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: ${{matrix.config.upload}}
+          path: ${{runner.workspace}}/artifacts
+
+  upload:
+    needs: build
+    runs-on: ubuntu-18.04
+    strategy:
+      matrix:
+        name:
+          [
+            macOS,
+            Linux,
+            Windows,
+            Cuda102,
+            Cuda113,
+            WindowsCuda113,
+          ]
+        include:
+          - name: macOS
+            artifact: macOS
+            upload: macOS
+            hw: cpu
+          - name: Linux
+            artifact: Linux
+            upload: Linux
+            hw: cpu
+          - name: Windows
+            artifact: Windows
+            upload: Windows
+            hw: cpu
+          - name: Cuda102
+            artifact: Linux-Cuda-102
+            upload: Linux
+            hw: gpu
+            version: -102
+          - name: Cuda113
+            artifact: Linux-Cuda-113
+            upload: Linux
+            hw: gpu
+            version: -113
+          - name: WindowsCuda113
+            artifact: Windows-Cuda-113
+            upload: Windows
+            hw: gpu
+            version: -113
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v1
+        with:
+          name: ${{ matrix.artifact }}
+      - uses: montudor/action-zip@v0.1.0
+        with:
+          args: zip -j -qq -r ./${{ matrix.artifact }}.zip ./${{ matrix.artifact }}
+      - name: Upload to lantern builds
+        uses: actions-hub/gcloud@master
+        env:
+          PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+          APPLICATION_CREDENTIALS: ${{ secrets.GCP_APPLICATION_CREDENTIALS }}
+          CLI: gsutil
+        with:
+          args: cp ${{ matrix.artifact }}.zip gs://torch-lantern-builds/${{ github.ref }}/${{ github.sha }}/${{ matrix.upload }}-${{ matrix.hw }}${{ matrix.version }}.zip
+      - name: Upload to latest
+        uses: actions-hub/gcloud@master
+        env:
+          PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+          APPLICATION_CREDENTIALS: ${{ secrets.GCP_APPLICATION_CREDENTIALS }}
+          CLI: gsutil
+        with:
+          args: cp ${{ matrix.artifact }}.zip gs://torch-lantern-builds/${{ github.ref }}/latest/${{ matrix.upload }}-${{ matrix.hw }}${{ matrix.version }}.zip

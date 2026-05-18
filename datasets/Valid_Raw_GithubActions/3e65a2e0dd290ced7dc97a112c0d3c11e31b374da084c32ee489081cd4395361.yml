@@ -1,0 +1,21 @@
+name: digix
+
+on:
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - 'README.md'
+      - '**/README.md'
+  pull_request_target:
+    branches:
+      - master
+    paths-ignore:
+      - 'README.md'
+      - '**/README.md'
+
+jobs:
+  build:
+    uses: ./.github/workflows/build_template.yml
+    with:
+      args: digix

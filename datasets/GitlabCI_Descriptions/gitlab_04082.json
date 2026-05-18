@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_04082",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 644,
+  "description": "Create a GitLab CI pipeline using the busybox:latest Docker image. Define a global before_script that echoes \"Before script section\", \"For example you might run an update here or install a build dependency\", and \"Or perhaps you might print out some debugging details\", and a global after_script that echoes \"After script section\" and \"For example you might do some cleanup here\". Add a build stage with a build1 job that runs echo \"Do your build here\". Add a test stage with two parallel jobs: test1 runs echo \"Do a test here\" and echo \"For example run a test suite\", and test2 runs echo \"Do another parallel test here\" and echo \"For example run a lint test\". Add a deploy stage with a deploy1 job that runs echo \"Do your deploy here\".",
+  "tags": [
+    "busybox",
+    "build",
+    "test",
+    "deploy",
+    "gitlab-ci"
+  ]
+}

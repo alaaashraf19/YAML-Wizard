@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_04322",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 582,
+  "description": "Create a GitLab CI pipeline with a single job named build_image that uses the docker:git Docker image and the docker:dind service. The job should only run on the master branch. In the script, first log in to registry.gitlab.com with the gitlab-ci-token and $CI_BUILD_TOKEN, then send a webhook to http://barker.ninja:3000/webhook containing ${DISCORD_CHANNEL_ID} and a message with the commit URL ${CI_BUILD_REF}, then build the Docker image tagging it as registry.gitlab.com/barkerja/hal, push it to the registry, and finally send another webhook indicating the build is complete.",
+  "tags": [
+    "docker",
+    "dind",
+    "gitlab-ci",
+    "webhook",
+    "discord",
+    "build"
+  ]
+}

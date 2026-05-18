@@ -1,0 +1,16 @@
+image: abhvious/anonize2
+job1:
+  artifacts:
+    paths:
+    - js/
+  only:
+  - master
+  script:
+  - make anonize2.js
+  - mkdir js
+  - mv anonize2.*js js/
+  stage: build
+  tags:
+  - docker
+stages:
+- build

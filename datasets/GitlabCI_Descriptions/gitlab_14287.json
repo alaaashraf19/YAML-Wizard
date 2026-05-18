@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_14287",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 451,
+  "description": "Create a GitLab CI pipeline that uses the elecnix/ikiwiki Docker image and a global before_script installing git with apt-get and updating submodules (apt-get install -y git, git submodule init, git submodule update). Define two stages: test and deploy. Add a test job named \"test\" in the test stage that runs the command \"ikiwiki --setup ikiwiki.setup --libdir themes/ikistrap/lib\" and is triggered on any commit where $CI_COMMIT_REF_NAME is not the default branch (rule: $CI_COMMIT_REF_NAME != $CI_DEFAULT_BRANCH). Add a pages job named \"pages\" in the deploy stage that runs the same ikiwiki command, publishes the generated \"public/\" directory as a pages artifact, and only runs when $CI_COMMIT_REF_NAME equals the default branch (rule: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH).",
+  "tags": [
+    "ikiwiki",
+    "git-submodule",
+    "pages",
+    "gitlab-ci",
+    "docker-image"
+  ]
+}

@@ -1,0 +1,21 @@
+build:
+  script:
+  - go build
+  stage: build
+fmt:
+  script:
+  - gofmt -l -s -e .
+  - exit $(gofmt -l -s -e . | wc -l)
+  stage: validate
+image: golang:latest
+stages:
+- validate
+- build
+test:
+  script:
+  - go test -race -v ./...
+  stage: validate
+vet:
+  script:
+  - go vet -composites=false ./...
+  stage: validate

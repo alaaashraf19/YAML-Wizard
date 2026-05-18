@@ -1,0 +1,15 @@
+{
+  "sha": "c9627fd12cf270bd55bbac39aa67824ca397693a136ea9bf6069d58fadc035bc",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2542,
+  "description": "Create a GitHub Actions workflow named CI and CD that runs on push to the master branch and on workflow dispatch. The workflow should have three jobs: build, tests, and deploy. The build job builds and pushes two Docker images to ghcr.io. The tests job runs tests after the build job completes. The deploy job deploys to a DigitalOcean Kubernetes cluster after the tests job completes, and creates a New Relic deployment marker.",
+  "tags": [
+    "docker",
+    "kubernetes",
+    "digitalocean",
+    "new-relic",
+    "ci",
+    "cd"
+  ]
+}

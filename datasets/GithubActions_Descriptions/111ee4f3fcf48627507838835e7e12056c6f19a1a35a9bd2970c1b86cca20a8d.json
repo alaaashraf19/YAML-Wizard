@@ -1,0 +1,14 @@
+{
+  "sha": "111ee4f3fcf48627507838835e7e12056c6f19a1a35a9bd2970c1b86cca20a8d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 924,
+  "description": "Create a GitHub Actions workflow named Lint that runs on push to master branch (excluding tags starting with 'v'), on pull requests to master, and on workflow dispatch. The workflow should run lints in parallel on ubuntu-latest environments with two different jobs: one for generic lints and another for Rust-specific lints using a defi/ain-builder:latest container. Each job checks out the code and runs specific linting scripts.",
+  "tags": [
+    "linting",
+    "ubuntu",
+    "rust",
+    "workflow-dispatch",
+    "ci"
+  ]
+}

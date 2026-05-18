@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_09859",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 178,
+  "description": "Create a GitLab CI pipeline that uses the node:alpine Docker image. Define a deploy stage with a job named pages that runs the exact shell commands: `npm install`, `npm run build -- -bh /travgen/`, and `mv dist public`. Configure the pages job to publish the `public/` directory as a GitLab Pages artifact and restrict its execution to the `master` branch only. Ensure the job is assigned to the deploy stage and no additional services or caches are required.",
+  "tags": [
+    "node",
+    "npm",
+    "gitlab-pages",
+    "alpine"
+  ]
+}

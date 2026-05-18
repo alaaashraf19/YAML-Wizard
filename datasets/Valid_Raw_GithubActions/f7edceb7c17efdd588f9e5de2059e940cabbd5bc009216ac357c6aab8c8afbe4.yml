@@ -1,0 +1,36 @@
+name: Build ShellyForHass
+on:
+  create:
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        cache-dependency-path: custom_components/shelly/frontend/package-lock.json
+    - run: node --version
+      working-directory: custom_components/shelly/frontend
+    - run: npm ci
+      working-directory: custom_components/shelly/frontend
+    - run: npm install --global rollup
+    - run: rollup -c
+      working-directory: custom_components/shelly/frontend
+    - name: Archive Release
+      uses: thedoctor0/zip-release@master
+      with:
+        directory: custom_components/shelly
+        type: 'zip'
+        filename: '../../shelly4hass.zip'
+        exclusions: '*.git* /frontend/*'
+    - name: Upload Release
+      uses: ncipollo/release-action@v1
+      with:
+        name: "Release ${{ github.REF }}"
+        draft: true
+        tag: ${{ github.REF }}
+        artifacts: "shelly4hass.zip"
+        token: ${{ secrets.GITHUB_TOKEN }}

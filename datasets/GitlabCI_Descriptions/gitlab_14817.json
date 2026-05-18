@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_14817",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 377,
+  "description": "Create a GitLab CI pipeline that uses the default Docker image and defines a single stage called build. Add a MakeCheck job in the build stage that runs a global before_script to update apt and install autopoint, autoconf, automake, libtool-bin, gettext, libncursesw5-dev, dejagnu, libnuma-dev, and libsystemd-dev, then executes ./autogen.sh, ./configure, make, and make check as its script, and runs make clean in an after_script. Configure the job to publish the files test-suite.log, testsuite/*.log, and testsuite/*.sum as artifacts. No caches, services, variables, or conditional rules are required.",
+  "tags": [
+    "make",
+    "autotools",
+    "build",
+    "gitlab-ci"
+  ]
+}

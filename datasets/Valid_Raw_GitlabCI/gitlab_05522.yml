@@ -1,0 +1,15 @@
+build:
+  artifacts:
+    name: oscilloscope
+    paths:
+    - qmloscilloscope
+    - libqmqtt.so.1
+    - oscilloscope.ini
+  image: registry.gitlab.com/cloud-oscilloscope/qtloscope
+  script:
+  - make
+  - cp .build/qmloscilloscope .build/libqmqtt.so.1 ./
+  - cp src/oscilloscope.ini ./
+  stage: build
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive

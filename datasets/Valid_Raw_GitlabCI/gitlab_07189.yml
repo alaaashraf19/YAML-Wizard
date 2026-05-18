@@ -1,0 +1,44 @@
+build-docker-image:
+  artifacts:
+    paths:
+    - README-$CI_COMMIT_SHA.md
+  script:
+  - echo "Build $CI_COMMIT_SHA in branch $CI_COMMIT_REF_SLUG with tag $CI_COMMIT_TAG"
+  - cat README.md > README-$CI_COMMIT_SHA.md
+  - echo "Version $CI_COMMIT_SHA" >> README-$CI_COMMIT_SHA.md
+  stage: package
+compile-test:
+  script:
+  - echo "Build $CI_COMMIT_SHA in branch $CI_COMMIT_REF_SLUG with tag $CI_COMMIT_TAG"
+  stage: build
+deploy-to-development:
+  only:
+  - /-M\./
+  script:
+  - echo "Deploy build" +$CI_COMMIT_SHA+ " to development server"
+  - cat README-$CI_COMMIT_SHA.md
+  stage: deploy
+deploy-to-production:
+  only:
+  - /-RELEASE$/
+  script:
+  - echo "Deploy build" +$CI_COMMIT_SHA+ " to production server"
+  - cat README-$CI_COMMIT_SHA.md
+  stage: deploy
+  when: manual
+deploy-to-testing:
+  only:
+  - /-RC\./
+  script:
+  - echo "Deploy build" +$CI_COMMIT_SHA+ " to testing server"
+  - cat README-$CI_COMMIT_SHA.md
+  stage: deploy
+image: alpine:latest
+stages:
+- build
+- package
+- deploy
+static-analysis:
+  script:
+  - echo "Static Code Analysis, parallel run with compiling"
+  stage: build

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_00969",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 451,
+  "description": "Create a GitLab CI pipeline using the mhart/alpine-node:latest Docker image with two stages named lint and pages. In the lint stage add a lint job that caches the node_modules directory, runs `npm install --only-dev --ignore-scripts` then `npm run lint`. In the pages stage add a pages job that pulls the node_modules cache (policy: pull), runs only on the master branch, and executes `echo -n \"$GQL_BACKEND\" | base64 -d > secret.json`, `npm run build`, and `gzip -k public/*.css public/*.html public/*.js`. The pages job publishes the `public` directory as a GitLab Pages artifact. No additional services or variables are defined.",
+  "tags": [
+    "node",
+    "npm",
+    "lint",
+    "pages",
+    "gitlab-pages",
+    "alpine"
+  ]
+}

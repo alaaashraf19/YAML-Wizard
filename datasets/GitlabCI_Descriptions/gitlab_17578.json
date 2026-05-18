@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_17578",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 720,
+  "description": "Create a GitLab CI pipeline with default stages build, test, and deploy and global before_script and after_script sections that echo several informational messages before and after each job. In the build stage add a build job that runs echo \"Do your build here\". In the deploy stage add a deploy job that runs echo \"Do your deploy here\". In the test stage add a test job that runs echo \"Do a test here\" then echo \"For example run a test suite\", and a test_parallel job that runs echo \"Do another parallel test here\" then echo \"For example run a lint test\". Also in the test stage add a test_python job that uses the python:3.5 Docker image and runs pip install -r requirements.txt.",
+  "tags": [
+    "before-after",
+    "echo",
+    "python-3-5",
+    "build",
+    "deploy",
+    "test",
+    "parallel-test"
+  ]
+}

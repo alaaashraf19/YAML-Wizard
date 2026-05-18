@@ -1,0 +1,33 @@
+name: OS X
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    name: GPXSee
+    runs-on: macos-10.15
+    steps:
+      - name: Set environment variables
+        run: echo "PATH=/usr/local/opt/qt@5/bin:$PATH" >> $GITHUB_ENV
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        run: brew install qt5
+      - name: Create localization
+        run: lrelease gpxsee.pro
+      - name: Configure build
+        run: qmake gpxsee.pro
+      - name: Build project
+        run: make -j3
+      - name: Create DMG
+        run: |
+          mkdir GPXSee-master
+          mv GPXSee.app GPXSee-master
+          hdiutil create -srcfolder GPXSee-master GPXSee-master.dmg
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          path: GPXSee-master.dmg

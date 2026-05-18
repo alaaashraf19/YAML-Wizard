@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_17095",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 3873,
+  "description": "Create a GitLab CI pipeline with three stages: build, test, and deploy, using the erlang Docker images (erlang:18, erlang:20, erlang:21) and a shared before_script that adds the Yarn APT repository, adds the NodeSource LTS setup script, runs apt-get update, installs nodejs and yarn, and updates the PATH. In the build stage define three jobs (build:otp-18, build:otp-20, build:otp-21) each using its respective erlang image, executing the before_script then a script that exports ERL_LIBS and ERLANG_INSTALL_LIB_DIR, runs aclocal, autoheader, autoconf, libtoolize --automake, automake --add-missing, removes any existing .build/otp-${OTP_VERSION}, creates .build/otp-${OTP_VERSION}/{lib,ocs}, clones https://github.com/mochi/mochiweb.git, builds it with make all, extracts MOCHIWEB_VERSION, moves the built library, clones https://gitlab.com/sigscale/radierl.git and builds it with autotools, make, make install, clones https://gitlab.com/sigscale/sigscale_mibs.git and builds it similarly, then configures and makes the ocs component; each job stores the .build/otp-XX.* directory as an untracked artifact. In the test stage add three jobs (check:otp-18, check:otp-20, check:otp-21) that depend on their matching build job, use the same erlang image, export ERL_LIBS and DIALYZER_PLT, create a Dialyzer PLT if missing with dialyzer --no_native --build_plt --apps erts kernel stdlib crypto compiler public_key diameter inets mnesia ssl mochiweb radius syntax_tools, change to the ocs directory and run make check, and always publish the .build/otp-XX.* artifact. In the deploy stage add three pages jobs (pages:otp-18, pages:otp-20, pages:otp-21) that depend on the corresponding check job, create a .public directory with doc and tests subfolders, copy test logs from .build/otp-XX.*/ocs/test/log/* into .public/tests, copy documentation from .build/otp-XX.*/ocs/doc/* into .public/doc, rename .public to public, and publish the public directory as a GitLab Pages artifact, always. No special caches, variables, or branch/tag rules are defined, so the pipeline runs on any branch.",
+  "tags": [
+    "erlang",
+    "otp",
+    "dialyzer",
+    "gitlab-pages",
+    "build",
+    "test",
+    "deploy"
+  ]
+}

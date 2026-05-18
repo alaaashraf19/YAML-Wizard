@@ -1,0 +1,12 @@
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - echo 'Deplying ranking...'
+  - mkdir .public
+  - cp -r * .public
+  - mv .public public
+  stage: deploy

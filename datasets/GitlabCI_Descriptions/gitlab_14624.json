@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_14624",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1870,
+  "description": "Create a GitLab CI pipeline that uses alpine:latest as the default image and applies a default only rule for master, wip, and merge_requests. Add a mr-settings job that runs on merge_requests, uses alpine:latest, installs python3 via apk, downloads https://gitlab.com/postmarketOS/ci-common/-/raw/master/check_mr_settings.py and executes it with python3. Add a pytest job (test stage) that uses alpine:3.18, downloads and runs the pmbootstrap installer with PMBOOTSTRAP_TAG=master, creates a symlink to /tmp/pmbootstrap, then runs .ci/pytest.sh, and on failure uploads coverage.xml, _html_out/index.html, _temp/local_job/task_*.sh, _temp/local_job_logs/*.txt and pytest.log as artifacts with a Cobertura coverage report. Add a pytest-pmb-v2 job similar to pytest but sets PMBOOTSTRAP_TAG=2.3.x, symlinks to ../pmbootstrap_v2 and runs .ci/pytest-pmb-v2.sh, with the same artifacts and failure handling. Add a ruff job that uses alpine:edge, appends the edge testing repository to /etc/apk/repositories, creates a build user, and runs .ci/ruff.sh. Add a vermin job that creates a build user and runs .ci/vermin.sh, and all jobs except mr-settings inherit the default only rule.",
+  "tags": [
+    "alpine",
+    "pytest",
+    "pmbootstrap",
+    "ruff",
+    "vermin",
+    "coverage",
+    "merge-requests"
+  ]
+}

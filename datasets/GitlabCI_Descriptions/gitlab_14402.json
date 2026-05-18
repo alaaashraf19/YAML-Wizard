@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_14402",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 127,
+  "description": "Create a GitLab CI pipeline that uses the pcapriotti/agda Docker image. Define a pages job (default stage) that runs the shell command ./gitlab-build-website.sh, collects the generated public directory as an artifact, and is excluded from runs on the built‑in pages pipeline via an except rule. The job does not specify any additional services, caches, variables, or deployment targets. Ensure the pipeline only publishes the public artifact for GitLab Pages when the job is executed.",
+  "tags": [
+    "agda",
+    "gitlab-pages",
+    "website",
+    "docker"
+  ]
+}

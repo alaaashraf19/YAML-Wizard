@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_09984",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 669,
+  "description": "Create a GitLab CI pipeline that runs a before_script on all jobs to set up the Android build environment: update apt cache, install wget, tar, unzip, openjdk-7-jdk and 32‑bit libraries, download and extract the Android SDK (android-sdk.tgz), silently update all SDK components (platform-tools, tools, build‑tools‑23.0.3, android‑23, extra‑android‑m2repository), download and unzip Gradle 3.1, and export ANDROID_HOME to the extracted SDK directory. Define a single job named test that runs in the default stage and executes gradle-3.1/bin/gradle build. No caches, artifacts, or conditional rules are defined.",
+  "tags": [
+    "android",
+    "gradle",
+    "java",
+    "apt",
+    "sdk"
+  ]
+}

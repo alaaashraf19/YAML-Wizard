@@ -1,0 +1,29 @@
+before_script:
+- nuget restore -NonInteractive
+debug:
+  script:
+  - msbuild /m Altar.NET.sln /p:Configuration=Debug
+  stage: test
+image: mono:latest
+release:
+  artifacts:
+    paths:
+    - altar.exe
+    - decompile-data.bat
+    - decompile-data.ps1
+    - decompile-data.sh
+    - README.md
+    - LICENSE.md
+    - LICENSE-libaltar
+  only:
+  - master
+  script:
+  - msbuild /m Altar.NET.sln /p:Configuration=Release
+  - cp -v bin/Release/altar.exe ./altar.exe
+  - cp -vf Altar.NET/bin/Release/altar.pdb ./altar.pdb
+  - cp -v utils/decompile-data.bat utils/decompile-data.ps1 utils/decompile-data.sh
+    ./
+  stage: deploy
+stages:
+- test
+- deploy

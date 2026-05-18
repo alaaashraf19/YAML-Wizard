@@ -1,0 +1,7 @@
+debug:
+  script:
+  - /usr/bin/env bash run_tests.sh
+  stage: test
+image: microsoft/dotnet:latest
+stages:
+- test

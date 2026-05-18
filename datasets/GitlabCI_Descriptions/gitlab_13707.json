@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_13707",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 367,
+  "description": "Create a GitLab CI pipeline that uses the rocker/verse:3.4.4 Docker image and defines a single deploy stage job named article. In the article job run the following Rscript commands in order: Rscript -e \"remove.packages('rticles')\", Rscript -e \"devtools::install_github('nuest/rticles', ref = 'copernicus')\", Rscript -e \"rmarkdown::render('MyArticle/MyArticle.Rmd')\", and Rscript -e \"rmarkdown::render('MyArticle/MyArticle.Rmd')\" again. Publish the MyArticle directory as an artifact that is always uploaded, with no caches, services, or special rules.",
+  "tags": [
+    "r",
+    "rmarkdown",
+    "rocker-verse",
+    "article",
+    "rticles"
+  ]
+}

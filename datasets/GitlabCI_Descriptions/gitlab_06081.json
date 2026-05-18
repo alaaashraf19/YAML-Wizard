@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_06081",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 168,
+  "description": "Create a GitLab CI pipeline that uses the node:alpine Docker image and caches the node_modules/ directory. Define a single job named all_tests (which runs in the default test stage) that executes the commands npm i, npm audit, npm run lint, and npm test. Configure the job to capture code coverage using the regular expression /All\\sfiles.*?\\s+(\\d+.\\d+)/. No additional stages, artifacts, or rules are required.",
+  "tags": [
+    "node",
+    "npm",
+    "lint",
+    "test",
+    "coverage",
+    "cache"
+  ]
+}

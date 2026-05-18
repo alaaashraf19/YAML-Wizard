@@ -1,0 +1,14 @@
+cache:
+  paths:
+  - node_modules/
+image: node:8.10
+stages:
+- test
+test:supersite:
+  script:
+  - npm install yarn
+  - npx yarn install
+  - npm test
+  stage: test
+  tags:
+  - docker

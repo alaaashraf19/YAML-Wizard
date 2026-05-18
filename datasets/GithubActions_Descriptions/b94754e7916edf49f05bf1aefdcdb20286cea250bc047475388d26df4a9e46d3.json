@@ -1,0 +1,17 @@
+{
+  "sha": "b94754e7916edf49f05bf1aefdcdb20286cea250bc047475388d26df4a9e46d3",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3624,
+  "description": "Create a GitHub Actions workflow named ci that runs on workflow dispatch and on push to specific paths. The workflow has four jobs: ci-v8, ci-quickjs, ci-nodejs, and test-workflow-download, all running on windows-2019. Each job checks out the code, adds msbuild to PATH, downloads an artifact from a different workflow, and performs build and unit test steps specific to V8, QuickJS, or Node.js.",
+  "tags": [
+    "windows",
+    "ci",
+    "github-actions",
+    "v8",
+    "quickjs",
+    "nodejs",
+    "msbuild",
+    "nunit"
+  ]
+}

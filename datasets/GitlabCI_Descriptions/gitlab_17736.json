@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_17736",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1601,
+  "description": "Create a GitLab CI pipeline with a global pip cache keyed by $CI_PROJECT_NAME at $HOME/.cache/pip and two stages: test and release. In the test stage add a test job that runs in a parallel matrix across python:3.7, python:3.8, python:3.9, and pypy:3 images, sets TOX_ENVS accordingly, installs tox via pip and runs tox -e $TOX_ENVS. Also in the test stage add a precommit job using the python:3 image, caches ${PRE_COMMIT_HOME} (set to ${CI_PROJECT_DIR}/.cache/pre-commit), installs pre-commit with pip3 and executes pre-commit run --all-files. In the release stage add a publish_gitlab_release job using the registry.gitlab.com/gitlab-org/release-cli:latest image that creates a GitLab release named and described with $CI_COMMIT_TAG, runs only when $CI_COMMIT_TAG and $CI_COMMIT_REF_PROTECTED are true, and echoes 'release job'. Finally, add a publish_pkg job using python:3.9 that, on protected tags, runs pip install twine, builds the package with python setup.py sdist bdist_wheel, uploads to PyPI via twine using $PYPI_TOKEN, then uploads the same distribution to the GitLab Package Registry using the CI job token.",
+  "tags": [
+    "python",
+    "pre-commit",
+    "tox",
+    "release-cli",
+    "gitlab-release",
+    "pypi",
+    "twine",
+    "parallel-matrix",
+    "docker-image",
+    "pip-cache"
+  ]
+}

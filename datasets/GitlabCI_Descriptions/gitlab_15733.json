@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_15733",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 637,
+  "description": "Create a GitLab CI pipeline using the node:latest Docker image, caching the node_modules directory, and installing the Vercel CLI globally via yarn global add now in a before_script. Define a single deploy stage with a deploy job that only runs on the master branch. In the deploy job execute the following commands in order: NOW_URL=$(now --token $NOW_TOKEN --team $NOW_TEAM --name $APP_NAME -e VUE_APP_INTERCOM_ID -e VUE_APP_ANALYTICS_ID -e VUE_APP_FACEBOOK_ID -e VUE_APP_PIXEL_ID -e APP_URL -e VUE_APP_GOOGLE_SITE_VERIFICATION -e REVAS_PUBLIC_API_URL -e REVAS_ORGANIZATION_ID --force); now scale --token $NOW_TOKEN --team $NOW_TEAM $NOW_URL 1; now alias --token $NOW_TOKEN --team $NOW_TEAM $NOW_URL $APP_URL; now rm --token $NOW_TOKEN --team $NOW_TEAM --safe --yes $APP_NAME. No artifacts are defined.",
+  "tags": [
+    "node",
+    "yarn",
+    "now",
+    "vercel",
+    "deploy",
+    "gitlab-ci"
+  ]
+}

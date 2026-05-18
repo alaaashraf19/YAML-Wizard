@@ -1,0 +1,15 @@
+{
+  "sha": "01c174dcc88ff8c93af17996cb6b57eb775f383e250de22c519622ea8e2a7386",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1263,
+  "description": "Create a GitHub Actions workflow named Validate Waste Collection Schedule that runs on push to the master branch and on pull requests. Use an ubuntu-latest job with read permission to repository contents. The job should check out the code, set up Python 3.10, install dependencies with pip, lint the code with flake8, run tests with pytest, execute the update_docu_links script, and verify that no files have changed.",
+  "tags": [
+    "python",
+    "linting",
+    "testing",
+    "validation",
+    "flake8",
+    "pytest"
+  ]
+}

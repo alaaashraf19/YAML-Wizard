@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_14636",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1404,
+  "description": "Create a GitLab CI pipeline that uses the php:5.6 Docker image with a postgres:latest service and defines HEROKU_API_KEY, POSTGRES_DB, POSTGRES_PASSWORD, POSTGRES_USER variables. Add a vendor/ cache and a before_script that runs apt-get update, installs git libicu-dev libpq-dev libzip-dev zlib1g-dev wget lib32stdc++6 lib32z1, runs docker-php-ext-install pdo_pgsql pgsql sockets intl zip, installs Composer, updates it, runs composer install, downloads phpunit-5.7.phar, makes it executable, moves it to /usr/local/bin/phpunit, installs and enables xdebug, copies .env.gitlab-ci to .env, generates an artisan key, clears config and routes, and refreshes migrations with seed. Define a test job that runs phpunit --coverage-text --colors=never --configuration phpunit.xml, stores the coverage/ directory as an artifact, and runs in the default test stage. Define a develop job of type deploy that runs only on the dev branch, installs rubygems, gem installs dpl, and executes dpl --provider=heroku --app=absen-in --api-key=$HEROKU_API_KEY to deploy to Heroku. Define a staging job of type deploy that runs only on the master branch and performs the same Heroku deployment steps.",
+  "tags": [
+    "php",
+    "phpunit",
+    "composer",
+    "heroku",
+    "postgres",
+    "deploy",
+    "cache",
+    "artisan",
+    "xdebug"
+  ]
+}

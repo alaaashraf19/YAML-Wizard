@@ -1,0 +1,16 @@
+{
+  "sha": "01d23ca5c5ad4841d820be2dbd1ed8a00acd176c88add6e8b9e4211cfead73f2",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1180,
+  "description": "Create a GitHub Actions workflow named CI that runs on push to master and on pull requests to master. The workflow should have three jobs: build on multiple OS environments (ubuntu-18.04 and ubuntu-20.04), build-clang-9-Linux on ubuntu-18.04 with clang-9, and build-clang-10-osx on macos-10.15 with clang. Each job checks out the repository, sets up cmake, compiles, runs tests, and saves test artifacts.",
+  "tags": [
+    "cmake",
+    "clang",
+    "ubuntu",
+    "macos",
+    "tests",
+    "ci",
+    "artifacts"
+  ]
+}

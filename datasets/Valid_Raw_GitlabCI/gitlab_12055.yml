@@ -1,0 +1,46 @@
+test1:
+  parallel:
+    matrix:
+    - PROVIDER: aws
+      STACK:
+      - monitoring
+      - app1
+      - app2
+    - PROVIDER: ovh
+      STACK:
+      - monitoring
+      - backup
+      - app
+    - PROVIDER:
+      - gcp
+      - vultr
+      STACK:
+      - data
+      - processing
+  script:
+  - bin/deploy
+  stage: deploy
+test2:
+  parallel:
+    matrix:
+    - PROVIDER: aws
+      STACK:
+      - monitoring
+      - app1
+      - app2
+    - PROVIDER: ovh
+      STACK:
+      - monitoring
+      - backup
+      - app
+    - PROVIDER:
+      - gcp
+      - vultr
+      STACK:
+      - data
+      - processing
+  script:
+  - bin/deploy
+  stage: deploy
+  variables:
+    RESULT: $PROVIDER/$STACK

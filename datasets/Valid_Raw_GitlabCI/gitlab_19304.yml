@@ -1,0 +1,11 @@
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - cp -a dumb public
+  stage: deploy
+stages:
+- deploy

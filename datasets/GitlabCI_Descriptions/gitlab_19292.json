@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_19292",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 519,
+  "description": "Create a GitLab CI pipeline using the node:6.11.2 Docker image. Define three stages: lint-css, lint-js, unit-test. Add a lint css job in the lint-css stage that runs npm install as a before_script, then executes ./node_modules/gulp/bin/gulp.js lint-css, caches all untracked files, and runs only on the master branch. Add a lint js job in the lint-js stage that caches untracked files with pull policy, runs only on master, and executes ./node_modules/gulp/bin/gulp.js lint-js. Add a run unit test job in the unit-test stage that also caches untracked files with pull policy, runs only on master, and executes ./node_modules/gulp/bin/gulp.js test.",
+  "tags": [
+    "node",
+    "gulp",
+    "npm",
+    "lint-css",
+    "lint-js",
+    "unit-test"
+  ]
+}

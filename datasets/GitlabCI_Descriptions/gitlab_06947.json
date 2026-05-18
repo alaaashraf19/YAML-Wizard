@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_06947",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 802,
+  "description": "Create a GitLab CI pipeline using the python:3.4 Docker image with a global before_script that runs `pip install -r requirements.txt`, downloads jq 1.5 via `curl -SsL https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 > /usr/local/bin/jq && chmod 755 /usr/local/bin/jq`, and creates a `public` directory. Define two stages: test and deploy. In the test stage add a test job that runs `python validate.py schema.json < interview-questions.yml > questions.json` and then `./filter.sh | python render.py > questions.html`. In the deploy stage add a pages job that runs `python validate.py schema.json < interview-questions.yml > public/interview-questions.json`, `python render.py < public/interview-questions.json > public/index.html`, `(echo -n 'var interview_questions = {qs: '; jq -c . public/interview-questions.json ; echo '};' ) > public/interview-questions.js`, and `cp style.css public/`. The pages job publishes the `public` directory as an artifact and runs only on the master branch.",
+  "tags": [
+    "python",
+    "jq",
+    "gitlab-pages",
+    "validation",
+    "render",
+    "test",
+    "deploy"
+  ]
+}

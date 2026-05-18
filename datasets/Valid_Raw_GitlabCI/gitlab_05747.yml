@@ -1,0 +1,93 @@
+build-image:
+  script:
+  - docker build -t enxebre/catalog:$CI_BUILD_REF .
+  - docker push enxebre/catalog:$CI_BUILD_REF
+  stage: build
+  tags:
+  - catalog
+cache:
+  paths:
+  - vendor/
+consumer-driven-contracts:
+  before_script:
+  - bundle install --path=vendor
+  script:
+  - bundle exec rake consumer_driven_contracts
+  - bundle exec rake pact:publish
+  stage: test
+  tags:
+  - catalog
+deploy-service-prod:
+  environment:
+    name: prod
+    url: http://catalog.prod.178.62.64.127.nip.io
+  only:
+  - master
+  script:
+  - helm upgrade catalog-pr charts/catalog/ --set ImageTag=$CI_BUILD_REF,IngressDomain=prod.178.62.64.127.nip.io
+    --install --namespace prod
+  stage: deploy-prod
+  tags:
+  - catalog
+  when: manual
+deploy-service-staging:
+  environment:
+    name: staging
+    url: http://catalog.staging.178.62.64.127.nip.io
+  script:
+  - helm upgrade catalog-st charts/catalog/ --set ImageTag=$CI_BUILD_REF,IngressDomain=staging.178.62.64.127.nip.io
+    --install --namespace staging
+  stage: deploy-staging
+  tags:
+  - catalog
+integration-smoke-tests-prod:
+  only:
+  - master
+  script:
+  - echo true
+  stage: test-prod
+  tags:
+  - catalog
+  when: manual
+integration-smoke-tests-staging:
+  script:
+  - echo true
+  stage: test-staging
+  tags:
+  - catalog
+linting:
+  script:
+  - echo true
+  stage: test
+  tags:
+  - catalog
+performance-smoke-tests-prod:
+  only:
+  - master
+  script:
+  - echo true
+  stage: test-prod
+  tags:
+  - catalog
+  when: manual
+performance-smoke-tests-staging:
+  script:
+  - echo true
+  stage: test-staging
+  tags:
+  - catalog
+stages:
+- test
+- build
+- deploy-staging
+- test-staging
+- deploy-prod
+- test-prod
+unit-test:
+  before_script:
+  - bundle install --path=vendor
+  script:
+  - bundle exec rake unit
+  stage: test
+  tags:
+  - catalog

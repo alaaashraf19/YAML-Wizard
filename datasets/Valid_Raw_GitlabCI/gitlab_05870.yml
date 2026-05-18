@@ -1,0 +1,132 @@
+Beta Release:
+  cache:
+    key: $CI_COMMIT_REF_SLUG
+    paths: &id001
+    - node_modules/
+    - .npm/
+    policy: pull
+  only:
+  - /^release\/[0-9]+(?:.[0-9]+)+$/
+  script:
+  - VERSION=`jq --raw-output '.version' package.json`
+  - curl -X POST 'https://code.crearecomputing.com/api/v4/projects/676/trigger/pipeline'
+    --form 'token="glptt-5fc6dce5838d6cb86b5992dfea03c53e1089461d"' --form 'ref="master"'
+    --form 'variables[BETA]="true"' --form "variables[RELEASE_BRANCH]=release/$VERSION"
+  stage: package
+  tags:
+  - always-pull
+Build:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - dist/
+    untracked: false
+  cache:
+    key: $CI_COMMIT_REF_SLUG
+    paths: *id001
+    policy: pull
+  dependencies:
+  - Install Dependencies
+  except:
+  - master
+  - /^release\/[0-9]+(?:.[0-9]+)+$/
+  needs:
+  - Install Dependencies
+  - Test
+  script:
+  - echo "$TABSINT_GITLAB_CREDENTIALS" >> ~/.git-credentials
+  - git config --global credential.helper 'store --file ~/.git-credentials'
+  - export CORDOVA_PLUGIN_CREARE_CHA_CREDENTIALS=${CORDOVA_PLUGIN_CREARE_CHA_CREDENTIALS}
+  - echo $CORDOVA_PLUGIN_CREARE_CHA_CREDENTIALS
+  - npm run build.android --tabverbose
+  - npm run dist.android.dev
+  stage: build
+  tags:
+  - always-pull
+Full Release:
+  cache:
+    key: $CI_COMMIT_REF_SLUG
+    paths: *id001
+    policy: pull
+  only:
+  - tags
+  script:
+  - curl -X POST 'https://code.crearecomputing.com/api/v4/projects/676/trigger/pipeline'
+    --form 'token="glptt-5fc6dce5838d6cb86b5992dfea03c53e1089461d"' --form 'ref="master"'
+    --form 'variables[RELEASE]="true"'
+  stage: package
+  tags:
+  - always-pull
+  when: manual
+Install Dependencies:
+  artifacts:
+    expire_in: 1 hours
+    name: admin
+    paths:
+    - src/tabsintConfig.json
+    - src/version.json
+    untracked: true
+  except:
+  - master
+  - /^release\/[0-9]+(?:.[0-9]+)+$/
+  script:
+  - npm i
+  - npm run set-config tabsint.json
+  stage: install_deps
+  tags:
+  - always-pull
+Pull Config:
+  artifacts:
+    expire_in: 1 hours
+    name: admin
+    paths:
+    - $ADMIN_DIR/
+    - .git-credentials
+    - config/
+    untracked: true
+  cache: {}
+  except:
+  - master
+  - /^release\/[0-9]+(?:.[0-9]+)+$/
+  script:
+  - ADMIN_REPO="https://code.crearecomputing.com/hearingproducts/tabsint/tabsint-admin.git"
+  - echo $EXTERNAL_GITLAB_CREDS >> .git-credentials
+  - echo $INTERNAL_GITLAB_CREDS >> .git-credentials
+  - git config --global credential.helper 'store --file $CI_PROJECT_DIR/.git-credentials'
+  - git clone $ADMIN_REPO $ADMIN_DIR
+  - echo "Build " `git describe --always`
+  - VERSION=`jq --raw-output '.version' package.json`
+  - echo "Version " $VERSION
+  - cp admin/config/v$VERSION/tabsint.json config/tabsint.json
+  stage: .pre
+  tags:
+  - always-pull
+Test:
+  cache:
+    key: $CI_COMMIT_REF_SLUG
+    paths: *id001
+    policy: pull
+  except:
+  - master
+  - /^release\/[0-9]+(?:.[0-9]+)+$/
+  needs:
+  - Install Dependencies
+  script:
+  - npm run test
+  stage: test
+  tags:
+  - always-pull
+cache:
+  key: $CI_COMMIT_REF_SLUG
+  paths: *id001
+  policy: pull-push
+image:
+  name: code.crearecomputing.com:5050/hearingproducts/tabsint/tabsint-admin/tabsint-ci:v3.3
+  pull_policy: always
+stages:
+- install_deps
+- test
+- build
+- package
+variables:
+  ADMIN_DIR: admin

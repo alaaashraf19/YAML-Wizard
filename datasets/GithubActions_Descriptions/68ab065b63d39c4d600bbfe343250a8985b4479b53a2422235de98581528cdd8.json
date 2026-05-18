@@ -1,0 +1,15 @@
+{
+  "sha": "68ab065b63d39c4d600bbfe343250a8985b4479b53a2422235de98581528cdd8",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1307,
+  "description": "Create a daily GitHub Actions workflow named test-p4c-ubuntu-20.04-sanitizers that runs on a schedule, on push to main, and on pull requests to main with the run-sanitizer label. Use an ubuntu-20.04 job that checks out the repository with submodules, sets up ccache, builds with clang and sanitizers using a custom script, and runs specific tests with sudo using ctest.",
+  "tags": [
+    "ubuntu",
+    "clang",
+    "sanitizers",
+    "ctest",
+    "schedule",
+    "ccache"
+  ]
+}

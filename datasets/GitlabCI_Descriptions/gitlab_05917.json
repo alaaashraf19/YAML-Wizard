@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_05917",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1282,
+  "description": "Create a GitLab CI pipeline using the ubuntu Docker image with a cache directory at cache/. Add a before_script that updates apt, installs zip wget sudo rsync squashfs-tools xorriso openssh-client, starts ssh-agent, adds the $SSH_PRIVATE_KEY, and configures SSH to skip host key checking. Define two jobs that only run on the \"estable\" branch: job_mate and job_ubuntu. In each job, create cache/apt/, download the appropriate Ubuntu ISO if not already cached (job_mate downloads ubuntu-mate-18.04-desktop-amd64.iso from http://cdimage.ubuntu.com/ubuntu-mate/releases/18.04/release/, job_ubuntu downloads ubuntu-18.04.3-desktop-amd64.iso from http://espejos.ucr.ac.cr/ubuntu-cd/18.04/), then execute bash ./ubuntu-iso-customization.sh -d -c cache/apt/ <iso>. Add an after_script that starts ssh-agent, adds the $SSH_PRIVATE_KEY, checks for a generated *ucr*.iso file, copies it via scp to $SSH_USER@$SSH_SERVER:$SSH_RPATH, and removes the ubuntu-iso-customization/ directory.",
+  "tags": [
+    "ubuntu",
+    "iso-customization",
+    "ssh",
+    "cache",
+    "wget",
+    "bash"
+  ]
+}

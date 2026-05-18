@@ -1,0 +1,16 @@
+{
+  "sha": "006f2d92d6e27329dcd5d6de59671f626e4509f4c4aee72ce6a246bfe428d68e",
+  "provider": "groq",
+  "model": "llama-3.3-70b-versatile",
+  "yaml_bytes": 1343,
+  "description": "Create a GitHub Actions workflow named Ubuntu build that triggers on every push. The workflow has two jobs, Ubuntu (Jammy, Qt6, GCC) and Ubuntu (Jammy, Qt6 Clang), both running in an ubuntu:jammy container on ubuntu-latest. Each job checks out the code with submodules, installs git and dependencies using a custom script, builds the project with either GCC or Clang, deploys it, and uploads the resulting .deb artifacts.",
+  "tags": [
+    "ubuntu",
+    "qt6",
+    "gcc",
+    "clang",
+    "build",
+    "deploy",
+    "ci"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "46d13a16a67938a5f172b68b855a85facbca1ce1f08e4d8cd5c0261ec43bc7a6",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2163,
+  "description": "Create a GitHub Actions workflow named Build Release that triggers on release creation. Run a build job on multiple OS environments (ubuntu-20.04, macOS 12, macOS 14, and Windows) with Python 3.x, installing ninja, creating a build directory, configuring and building with CMake, and stripping binaries. Also, run a separate build-wasi job on ubuntu-latest to build with WASI SDK using Docker.",
+  "tags": [
+    "cmake",
+    "release",
+    "multi-os",
+    "wasi",
+    "docker",
+    "github-actions"
+  ]
+}

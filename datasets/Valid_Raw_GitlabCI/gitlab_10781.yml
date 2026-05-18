@@ -1,0 +1,23 @@
+before_install:
+- docker pull rqlite/rqlite
+- docker run -d -p 127.0.0.1:4001:4001 -p 127.0.0.1:4002:4002 rqlite/rqlite
+- docker ps -a
+env:
+- TRAVIS_HOST=127.0.0.1 TRAVIS_PORT=4001
+image: node:latest
+install_dependencies:
+  artifacts:
+    paths:
+    - node_modules/
+  script:
+  - npm install
+  stage: build
+services:
+- docker
+stages:
+- build
+- test
+sudo: required
+test_with_lab:
+  script: npm test
+  stage: test

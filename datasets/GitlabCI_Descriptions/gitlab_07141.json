@@ -1,0 +1,12 @@
+{
+  "sha": "gitlab_07141",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 108,
+  "description": "Create a GitLab CI pipeline that uses the python:latest Docker image and defines the variable PIP_CACHE_DIR as $CI_PROJECT_DIR/.cache. Add a single job named test that runs in the default test stage and executes the exact shell command python hello.py. No services, caches, artifacts, or special rules are required.",
+  "tags": [
+    "python",
+    "test",
+    "hello"
+  ]
+}

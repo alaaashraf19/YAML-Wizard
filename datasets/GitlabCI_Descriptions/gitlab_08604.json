@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_08604",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 956,
+  "description": "Create a GitLab CI pipeline using the golang:1.24 Docker image and the gitlab-org runner tag. Set GOPATH to $CI_PROJECT_DIR/.GOPATH and define a common cache of .GOPATH/pkg/mod/ with pull policy. Add a job named download deps in the prepare stage that extends the common configuration, uses a cache keyed on go.mod and go.sum, runs the shell command `make deps-download`, and pushes the cache after execution. Include the external CI files .gitlab/ci/prepare.yml and .gitlab/ci/test.yml and add the danger-review component with rules limiting it to specific GitLab.com projects. Define workflow rules so the pipeline runs on merge requests, the default branch, tags, stable branches matching /^[\\d-]+-stable(-ee)?$/ and any branch under security/.",
+  "tags": [
+    "golang",
+    "make",
+    "cache",
+    "ci-include",
+    "workflow-rules",
+    "danger-review"
+  ]
+}

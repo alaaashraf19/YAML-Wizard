@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_00878",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1083,
+  "description": "Create a GitLab CI pipeline using the golang:latest Docker image and define a REPO_NAME variable set to gitlab.com/andreynech/dsched. Include a global before_script that updates apt, installs make and protobuf-compiler, creates the Go workspace directory, symlinks the project, changes into the workspace, prints the Go version, and fetches required Go packages with go get. Define two stages: test and build. In the test stage add a format job that runs go fmt, go vet, and go test -race on all non‑vendor packages. In the build stage add a compile job that builds the dscheduler and gateway binaries with go build -race -ldflags \"-extldflags '-static'\" -o dscheduler/dscheduler and -o gateway/gateway respectively, and publishes the resulting binaries as artifacts.",
+  "tags": [
+    "golang",
+    "go-build",
+    "go-test",
+    "docker-image",
+    "ci-pipeline"
+  ]
+}

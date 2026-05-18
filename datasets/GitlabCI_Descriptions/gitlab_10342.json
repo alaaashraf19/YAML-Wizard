@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_10342",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 147,
+  "description": "Create a GitLab CI pipeline that uses the microsoft/dotnet:latest Docker image and defines a single stage named build. Include a global before_script that runs `dotnet restore` before every job. Add a job called build that runs in the build stage, executes `dotnet build`, and is restricted to the master branch via an only rule. No services, caches, artifacts, or deployment targets are configured.",
+  "tags": [
+    "dotnet",
+    "build",
+    "master-only",
+    "gitlab-ci"
+  ]
+}

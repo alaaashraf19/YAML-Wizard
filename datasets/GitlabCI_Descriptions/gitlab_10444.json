@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_10444",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 345,
+  "description": "Create a GitLab CI pipeline using the alpine Docker image with a default interruptible timeout of 15 minutes. Define a test job that runs in the default test stage, executes a before_script that checks /etc/modules for an existing ipv6 entry and appends \"ipv6\" if missing, runs apk update, installs bash and gettext via apk, and then runs the script bash test_compile_po.sh. Configure the workflow to always run the pipeline. No services, caches, artifacts, or deployment targets are specified.",
+  "tags": [
+    "alpine",
+    "bash",
+    "apk",
+    "ipv6",
+    "gitlab-ci"
+  ]
+}

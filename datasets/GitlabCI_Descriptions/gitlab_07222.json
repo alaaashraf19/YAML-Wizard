@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_07222",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 137,
+  "description": "Create a GitLab CI pipeline that uses the node:8.9.4 Docker image. Define a single stage called test and a job named test that runs on that stage. The job should execute the shell commands `npm install yarn -g`, `yarn install`, and `yarn test`, and be tagged with the Docker runner tag. No services, caches, artifacts, or conditional rules are required.",
+  "tags": [
+    "node",
+    "yarn",
+    "npm",
+    "test"
+  ]
+}

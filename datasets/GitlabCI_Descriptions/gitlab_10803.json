@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_10803",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1044,
+  "description": "Create a GitLab CI pipeline with lint and test stages. Use a global before_script to run bundle --path=vendor/bundle and cache the vendor/bundle directory per job using a key of ${CI_JOB_NAME}. In the lint stage add a doc_coverage job using the ruby:2.5 image that runs bundle exec rake lint:doc_coverage and stores the doc/ directory as an artifact that expires in one week, and a rubocop job using ruby:2.5 that runs bundle exec rake lint:rubocop. In the test stage add rspec-rack-1 using ruby:2.3 that runs bundle exec rake test:rspec, sets the RACK_VERSION variable to <2, and uploads the coverage/ directory as a one‑week artifact; also add rspec-ruby-2.3, rspec-ruby-2.4 and rspec-ruby-2.5 jobs using ruby:2.3, ruby:2.4 and ruby:2.5 respectively, each running bundle exec rake test:rspec, setting CHECK_COVERAGE=true, and publishing the coverage/ artifact for one week.",
+  "tags": [
+    "ruby",
+    "rspec",
+    "rubocop",
+    "lint",
+    "test",
+    "coverage",
+    "bundler",
+    "gitlab-ci"
+  ]
+}

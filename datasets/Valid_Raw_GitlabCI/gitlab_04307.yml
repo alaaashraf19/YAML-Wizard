@@ -1,0 +1,67 @@
+.job_template:
+  script: &id001
+  - cypress ci --spec "cypress/integration/$CI_BUILD_NAME.js"
+actions_spec:
+  script: *id001
+aliasing_spec:
+  script: *id001
+assertions_spec:
+  script: *id001
+basic_spec:
+  script: *id001
+before_script:
+- cypress verify
+build-specs:
+  artifacts:
+    paths:
+    - cypress/integration
+  script:
+  - npm install
+  - npm test
+  - npm run build
+  stage: build
+cache:
+  paths:
+  - node_modules/
+config_spec:
+  script: *id001
+connectors_spec:
+  script: *id001
+cookies2_spec:
+  script: *id001
+cookies_spec:
+  script: *id001
+dom_spec:
+  script: *id001
+env_spec:
+  script: *id001
+fixtures_spec:
+  script: *id001
+image: bahmutov/cypress-image
+local-storage_spec:
+  script: *id001
+location_spec:
+  script: *id001
+misc_spec:
+  script: *id001
+navigation_spec:
+  script: *id001
+network_spec:
+  script: *id001
+querying_spec:
+  script: *id001
+server_spec:
+  script: *id001
+stages:
+- build
+- test
+traversal_spec:
+  script: *id001
+utilities_spec:
+  script: *id001
+viewport_spec:
+  script: *id001
+waiting_spec:
+  script: *id001
+window_spec:
+  script: *id001

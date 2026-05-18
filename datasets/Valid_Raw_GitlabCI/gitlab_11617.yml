@@ -1,0 +1,16 @@
+image: registry.gitlab.com/pages/hugo:0.92.2
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - hugo
+test:
+  except:
+  - master
+  script:
+  - hugo
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive

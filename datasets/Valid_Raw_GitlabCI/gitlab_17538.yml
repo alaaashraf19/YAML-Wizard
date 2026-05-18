@@ -1,0 +1,111 @@
+build_fe:
+  before_script:
+  - npm install
+  script:
+  - npm run postinstall
+  - npm run build:css
+  - npm run build:js
+  stage: build
+build_vendors:
+  before_script:
+  - npm install gulp
+  script:
+  - npm run build:vendors
+  stage: build
+deploy_next_release:
+  environment:
+    name: development
+    url: https://$HEROKU_DEVELOPMENT_NAME.herokuapp.com/
+  image: ruby:latest
+  only:
+  - master
+  script:
+  - apt-get update -qy
+  - apt-get install -y ruby-dev
+  - gem install dpl
+  - dpl --provider=heroku --app=$HEROKU_DEVELOPMENT_NAME --api-key=$HEROKU_PRODUCTION_API_KEY
+  stage: deploy
+deploy_production:
+  environment:
+    name: production
+    url: https://$HEROKU_PRODUCTION_NAME.herokuapp.com/
+  image: ruby:latest
+  only:
+  - master
+  script:
+  - apt-get update -qy
+  - apt-get install -y ruby-dev
+  - gem install dpl
+  - dpl --provider=heroku --app=$HEROKU_PRODUCTION_NAME --api-key=$HEROKU_PRODUCTION_API_KEY
+  stage: deploy
+  when: manual
+deploy_staging:
+  environment:
+    name: staging
+    url: https://$HEROKU_STAGING_NAME.herokuapp.com/
+  image: ruby:latest
+  only:
+  - master
+  script:
+  - apt-get update -qy
+  - apt-get install -y ruby-dev
+  - gem install dpl
+  - dpl --provider=heroku --app=$HEROKU_STAGING_NAME --api-key=$HEROKU_PRODUCTION_API_KEY
+  stage: deploy
+image: node:14.15.4
+release:eos-ds-npm:
+  needs:
+  - version_release
+  only:
+  - master
+  stage: publish_external
+  trigger:
+    project: SUSE-UIUX/eos-ds-npm
+    strategy: depend
+stages:
+- test
+- build
+- deploy
+- release
+- publish_external
+test_lints_js:
+  before_script:
+  - npm install
+  script:
+  - npm run test:js
+  stage: test
+test_lints_pug:
+  before_script:
+  - npm install
+  script:
+  - npm run test:pug
+  stage: test
+test_lints_sass:
+  before_script:
+  - npm install
+  script:
+  - npm run test:sass
+  stage: test
+test_units:
+  before_script:
+  - npm install
+  - npm run build:vendors
+  - npx gulp generateZip
+  script:
+  - apt-get update
+  - apt-get install -y gconf-service libasound2 libatk1.0-0 libc6 libcairo2 libcups2
+    libdbus-1-3 libexpat1 libfontconfig1 libgcc1 libgconf-2-4 libgdk-pixbuf2.0-0 libglib2.0-0
+    libgtk-3-0 libnspr4 libpango-1.0-0 libpangocairo-1.0-0 libstdc++6 libx11-6 libx11-xcb1
+    libxcb1 libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2
+    libxrender1 libxss1 libxtst6 ca-certificates fonts-liberation libappindicator1
+    libnss3 lsb-release xdg-utils wget xvfb xauth libnotify-dev libgbm-dev libgtk2.0-0
+  - npm run test:e2eCI
+  stage: test
+version_release:
+  only:
+  - master
+  script:
+  - npm install
+  - npx semantic-release
+  stage: release
+  when: manual

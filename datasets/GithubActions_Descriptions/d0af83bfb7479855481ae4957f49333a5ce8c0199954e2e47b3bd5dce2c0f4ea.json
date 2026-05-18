@@ -1,0 +1,14 @@
+{
+  "sha": "d0af83bfb7479855481ae4957f49333a5ce8c0199954e2e47b3bd5dce2c0f4ea",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1127,
+  "description": "Create a GitHub Actions workflow named OSX that runs on workflow dispatch, pull requests, and push to the master branch. Use a macOS job matrix with os versions 13, 14, and 15. For each job, check out the code, set up a Micromamba environment from environment-dev.yml, configure with CMake, install, build the test_xtensor_lib target in parallel, and run tests with ctest.",
+  "tags": [
+    "macos",
+    "cmake",
+    "conda",
+    "micromamba",
+    "tests"
+  ]
+}

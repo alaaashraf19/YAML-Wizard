@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_07326",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2097,
+  "description": "Create a GitLab CI pipeline with stages install, test, build, review, and deploy, using node:alpine as the global image and python:latest for the AWS jobs, and cache the node_modules directory. Add an installit job in the install stage that runs \"npm install\". Add a testtime job in the test stage that runs \"set CI=true&&npm test\". Add a buildit job in the build stage that runs \"npm run build\", stores the build/ directory as an artifact named \"${CI_JOB_NAME}_${CI_COMMIT_REF_NAME}\" that expires in one week, uploads it on success, and excludes the branch \"branchess\". Add a start_review job in the review stage for all branches except master that installs awscli, copies the build/ folder to the S3 bucket $S3_BUCKET_NAME_FEATURE_BRANCH under $CI_COMMIT_REF_SLUG, and creates a review environment with a URL and an on_stop link to stop_review; add a stop_review manual job that installs awscli, removes the same S3 folder, stops the review environment, sets GIT_STRATEGY to none, and runs only on branches except master. Finally, add deploytoaws_staging and deploytoaws_production jobs in the deploy stage that run only on the master branch, are manual, install awscli, copy the build/ folder to their respective S3 buckets ($S3_BUCKET_NAME_STAGING and $S3_BUCKET_NAME_PRODUCTION), and define production and staging environments with URLs based on the bucket names, using the AWS credentials and region variables defined at the pipeline level.",
+  "tags": [
+    "node-alpine",
+    "npm",
+    "awscli",
+    "s3-deploy",
+    "review-environment",
+    "manual-deploy",
+    "gitlab-ci"
+  ]
+}

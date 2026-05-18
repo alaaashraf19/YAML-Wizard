@@ -1,0 +1,15 @@
+{
+  "sha": "0b135584a32b5b20853a01eb100680bd174734e67c3e9ed99862800181396d0a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4505,
+  "description": "Create a GitHub Actions workflow named Robotoff code quality checks and unit tests that runs on push to robotoff/ and on pull requests affecting robotoff/, .pot, or .po files. Use an ubuntu-latest job matrix with Python 3.7 and 3.8, checking out the repository, setting up Python, installing and configuring Poetry, loading cached virtual environments, installing dependencies, running linters and tests, compiling translations, downloading model weights, and uploading test coverage and documentation to Codecov and GitHub Pages.",
+  "tags": [
+    "python",
+    "poetry",
+    "tests",
+    "code-quality",
+    "i18n",
+    "documentation"
+  ]
+}

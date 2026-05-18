@@ -1,0 +1,59 @@
+before_script:
+- yarn global add lerna
+- ls /usr/local/share/.config/yarn/global/node_modules
+- npm run bootstrap
+build:
+  artifacts:
+    paths:
+    - dist/
+    - src/*/dist
+  only:
+  - tags
+  - master
+  - v3
+  script:
+  - lerna run build
+  stage: build
+cache:
+  paths:
+  - /usr/local/share/.config/yarn/global/node_modules
+  - node_modules/
+  - src/*/node_modules
+image: griest/karma-full-test-env:latest
+lint:
+  script:
+  - npm run lint
+  stage: test
+pages:
+  artifacts:
+    paths:
+    - public/
+  dependencies:
+  - test
+  only:
+  - master
+  script:
+  - cp -r test/reports public
+  - sed -i -e 's/<head>/<head><script type="application\/javascript" src="https:\/\/unpkg.com\/iframe-resizer@3.5.14\/js\/iframeResizer.contentWindow.min.js"><\/script>/g'
+    public/reports/{unit,coverage/lcov-report}/index.html
+  stage: deploy
+publish:
+  dependencies:
+  - build
+  only:
+  - tags
+  script:
+  - echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}' > ~/.npmrc
+  - lerna run publish
+  stage: deploy
+stages:
+- test
+- build
+- deploy
+test:
+  artifacts:
+    paths:
+    - test/reports/
+  script:
+  - npm run test
+  stage: test

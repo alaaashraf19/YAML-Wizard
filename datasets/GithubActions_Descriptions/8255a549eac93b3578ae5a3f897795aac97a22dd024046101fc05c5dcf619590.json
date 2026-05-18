@@ -1,0 +1,14 @@
+{
+  "sha": "8255a549eac93b3578ae5a3f897795aac97a22dd024046101fc05c5dcf619590",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5535,
+  "description": "Create a GitHub Actions workflow named build XPTools that triggers on push to branches matching 'xpt_*_release'. The workflow has read permissions to repository contents and consists of four jobs: build-windows, build-mac, build-linux, and make-zips. The build jobs checkout the repository, set up the environment, and build the project for their respective platforms. The make-zips job depends on the build jobs, downloads the build artifacts, creates zip files for each platform, and archives them.",
+  "tags": [
+    "xptools",
+    "multi-platform",
+    "build",
+    "release",
+    "github-actions"
+  ]
+}

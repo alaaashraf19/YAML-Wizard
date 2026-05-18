@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_10928",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 139,
+  "description": "Create a GitLab CI pipeline that uses the Docker image registry.gitlab.com/joolean/gzochi/gzochi-build:latest. Define a single job called debian in the default test stage. The debian job should execute the shell commands ./autogen.sh, ./configure, make, and make check in that order. No services, caches, artifacts, or special rules are required, and the job runs on all branches.",
+  "tags": [
+    "debian",
+    "autotools",
+    "make",
+    "gzochi",
+    "gitlab-ci"
+  ]
+}

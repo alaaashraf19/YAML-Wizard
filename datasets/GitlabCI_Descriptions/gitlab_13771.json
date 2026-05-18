@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_13771",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 367,
+  "description": "Create a GitLab CI pipeline that uses the docker:latest Docker image with a docker:dind service. Add a before_script that logs in to registry.gitlab.com using the gitlab-ci-token and $CI_BUILD_TOKEN. Define a build job in the build stage that runs the exact commands: docker build --tag=$CI_REGISTRY_IMAGE:latest ., docker build --tag=$CI_REGISTRY_IMAGE:$(cat VERSION) ., docker push $CI_REGISTRY_IMAGE:$(cat VERSION) and docker push $CI_REGISTRY_IMAGE:latest. The pipeline does not define any caches, artifacts, or conditional rules and pushes the built images to the GitLab Container Registry.",
+  "tags": [
+    "docker",
+    "dind",
+    "container-registry",
+    "build",
+    "ci-build-token"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_11832",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1175,
+  "description": "Create a GitLab CI pipeline using the macta/pharo:61_32 Docker image with two stages: build and deploy. Include a global before_script that echoes a start message, project information, and lists files. Add a build job in the build stage that runs ls -al ./src, source ./scripts/build.sh, ls -al $CI_PROJECT_DIR, ls -al $PHARO_CACHE_DIR; caches $PHARO_CACHE_DIR with key ${CI_COMMIT_REF_SLUG}_2018-05-30; archives the build and deploy directories as artifacts always; and after_script echoes a verification message and, if build/PharoDebug.log exists, prints error messages and the contents of build/PharoDebug.log and build/LoadLocal.log. Add a deploy job that runs only on the master branch, sets GIT_STRATEGY to none, and executes source ./build/setup_ssh.sh, ssh $DOMAIN_LOGIN \"ls -al\", and source ./build/deploy.sh. Use the variables CI_CACHE_PHARO, DOMAIN_LOGIN, PHARO_CACHE_DIR, PHARO_DIR, PRIVATE_KEY, PROJECT_NAME and STRIP_IMAGE.",
+  "tags": [
+    "pharo",
+    "docker",
+    "build",
+    "deploy",
+    "ssh",
+    "cache",
+    "artifacts"
+  ]
+}

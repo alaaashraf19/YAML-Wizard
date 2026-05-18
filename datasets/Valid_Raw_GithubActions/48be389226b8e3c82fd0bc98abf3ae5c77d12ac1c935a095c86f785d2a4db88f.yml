@@ -1,0 +1,93 @@
+# Copyright (C) 2005 - 2021 Settlers Freaks <sf-team at siedler25.org>
+#
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+name: Create Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+concurrency:
+  group: ${{format('release-{0}:{1}', github.repository, github.ref)}}
+  cancel-in-progress: true
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Extract tag name
+        id: get_tag
+        run: echo "::set-output name=tag::${GITHUB_REF#refs/tags/}"
+      - name: Set filenames
+        id: filenames
+        run: |
+          echo "::set-output name=src::s25client_src_${{steps.get_tag.outputs.tag}}.tar.gz"
+          echo "::set-output name=devTools::s25client_dev-tools_${{steps.get_tag.outputs.tag}}.tar.gz"
+      - name: Create source distribution
+        run: |
+            set -x
+            git submodule update --init
+            git rev-parse HEAD > revision.txt
+            NAME="s25client_${{steps.get_tag.outputs.tag}}"
+            mkdir "/tmp/$NAME"
+            cp -r * .clang-format .clang-tidy "/tmp/$NAME"
+            mv "/tmp/$NAME" .
+            # Cleanup
+            rm -r "$NAME"/{appveyor.yml,codecov.yml,Jenkinsfile,tools/ci}
+            find "$NAME" -name '.git*' -exec rm -rv {} \; || true
+
+            tar -czf ${{steps.filenames.outputs.devTools}} "$NAME/external/dev-tools"
+            rm -r "$NAME/external/dev-tools"/*
+            tar -czf ${{steps.filenames.outputs.src}} "$NAME"
+      - name: Get tag message
+        run: |
+          tagName=${{steps.get_tag.outputs.tag}}
+          tagType=$(git cat-file -t $tagName)
+          if [[ "$tagType" == "tag" ]]; then
+            tagMsg="$(git tag -l --format='%(contents)' $tagName)"
+            # Make sure to keep newlines and add an empty line before and after the message for better formatting
+            echo "TAG_MSG<<EOF" >> $GITHUB_ENV
+            echo "" >> $GITHUB_ENV
+            echo "$tagMsg" >> $GITHUB_ENV
+            echo "" >> $GITHUB_ENV
+            echo "EOF" >> $GITHUB_ENV
+          else
+            echo "TAG_MSG=" >> $GITHUB_ENV
+          fi
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: |
+            Return To The Roots (Settlers II(R) Clone)
+            ${{ env.TAG_MSG }}
+            - ${{steps.filenames.outputs.src}} contains all source files including the submodules
+            - ${{steps.filenames.outputs.devTools}} contains optional binaries for development. Extract over the source folder if required
+          draft: false
+          prerelease: false
+      - name: Upload source distribution
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./${{steps.filenames.outputs.src}}
+          asset_name: ${{steps.filenames.outputs.src}}
+          asset_content_type: application/tar.gz
+      - name: Upload Dev Tools
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./${{steps.filenames.outputs.devTools}}
+          asset_name: ${{steps.filenames.outputs.devTools}}
+          asset_content_type: application/tar.gz

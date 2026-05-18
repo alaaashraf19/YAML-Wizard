@@ -1,0 +1,15 @@
+{
+  "sha": "6cfaef68fb1f042eaeb2bdead0049658052ac71970fc7b10b68a32620773cde7",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1373,
+  "description": "Create a nightly GitHub Actions workflow named Nightly CEA builds that runs every weekday at 2am UTC and can be manually triggered. The workflow should have a single job that runs on a self-hosted cuda environment, checks out the repository, then for each of Release and Debug build types and a specific cuda backend, configures a cmake build with specific flags, builds in parallel with 40 jobs, and runs tests with ctest.",
+  "tags": [
+    "cuda",
+    "cmake",
+    "nightly",
+    "cea",
+    "tests",
+    "self-hosted"
+  ]
+}

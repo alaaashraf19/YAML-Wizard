@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_07476",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1100,
+  "description": "Create a GitLab CI pipeline that uses the docker:git image with a docker:dind service and defines SERVER_TEST_IMAGE and SERVER_RELEASE_IMAGE variables, and three stages: tests, docker_build, and docker_release. Add a pip-check-requirements job in the tests stage that runs on alpine:3.14, installs bash, ca-certificates, python3, git and openssh via apk, runs python -m ensurepip and pip-upgrader, then executes pip-upgrade requirements.txt --skip-package-installation -p all and checks that requirements.txt is unchanged with a git status test; the job is allowed to fail. Add a build job in the docker_build stage that runs the global before_script to log in to registry.gitlab.com using CI_JOB_TOKEN, then builds the Docker image with docker build -t $SERVER_TEST_IMAGE . and pushes it with docker push $SERVER_TEST_IMAGE. Add a release job in the docker_release stage that runs only on the production branch, also logs in via the global before_script, pulls the test image, retags it to $SERVER_RELEASE_IMAGE and pushes the release image.",
+  "tags": [
+    "docker",
+    "dind",
+    "alpine",
+    "pip-upgrader",
+    "gitlab-ci",
+    "release",
+    "tests",
+    "build"
+  ]
+}

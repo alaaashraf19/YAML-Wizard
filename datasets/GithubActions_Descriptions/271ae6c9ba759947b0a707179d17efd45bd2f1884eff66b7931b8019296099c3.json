@@ -1,0 +1,20 @@
+{
+  "sha": "271ae6c9ba759947b0a707179d17efd45bd2f1884eff66b7931b8019296099c3",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 7072,
+  "description": "Create a comprehensive GitHub Actions CI workflow that runs on pushes to master and tags, and on pull requests to master. The workflow uses a matrix strategy to test on multiple operating systems (ubuntu-latest, windows-latest, macos-12), Python versions (3.8-3.12), and architectures (x64, x86 on Windows). For each job, check out the code, set up Python, install dependencies, build Cython extensions, create a source distribution or wheel, and run tests with coverage on Ubuntu with Python 3.11. Additionally, build platform-specific installers (DMG on macOS, .exe on Windows), upload artifacts, and release to PyPI on tagged commits.",
+  "tags": [
+    "python",
+    "ci",
+    "cython",
+    "pyinstaller",
+    "pypi",
+    "macos",
+    "windows",
+    "ubuntu",
+    "testing",
+    "coverage",
+    "release"
+  ]
+}

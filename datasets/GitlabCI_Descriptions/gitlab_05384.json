@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_05384",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 145,
+  "description": "Create a GitLab CI pipeline that uses the rakudo-star:2018.01 Docker image and runs a before_script that executes 'zef update' then 'zef --depsonly install .' to install Perl 6 dependencies. Add a test stage job named test that only runs on the master branch and runs the command prove -ve 'perl6 -Ilib'. No caches, artifacts, services, or additional variables are defined.",
+  "tags": [
+    "perl6",
+    "zef",
+    "rakudo",
+    "prove",
+    "gitlab-ci"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_10442",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 457,
+  "description": "Create a GitLab CI pipeline that uses the docker:latest image with a docker:dind service and defines an IMAGE_TAG variable as ${CI_REGISTRY}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}/${CI_COMMIT_REF_SLUG}:latest. Add a single job named build in the build stage that lowercases IMAGE_TAG with `IMAGE_TAG_LOWERCASE=$(echo \"${IMAGE_TAG}\" | tr '[:upper:]' '[:lower:]')`, logs in to the GitLab Container Registry using $CI_REGISTRY_USER and $CI_REGISTRY_PASSWORD, builds the Docker image using `docker build --build-arg=CI --pull -t ${IMAGE_TAG_LOWERCASE} .`, and pushes it with `docker push ${IMAGE_TAG_LOWERCASE}`. The job runs on every pipeline without additional rules or artifacts.",
+  "tags": [
+    "docker",
+    "dind",
+    "build",
+    "ci-registry",
+    "lowercase-tag"
+  ]
+}

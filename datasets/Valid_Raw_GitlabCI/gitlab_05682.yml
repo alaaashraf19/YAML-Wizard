@@ -1,0 +1,31 @@
+deploy to production:
+  environment: production
+  image: ilyasemenov/gitlab-ci-git-push
+  only:
+  - master
+  script:
+  - git-push ssh://dokku@projects.stavros.io:16022/codeshelter
+  stage: deploy
+image: python:3.7
+stages:
+- test
+- deploy
+test:
+  before_script:
+  - pip install virtualenv poetry pre-commit
+  - virtualenv venv
+  - source venv/bin/activate
+  - poetry config virtualenvs.create false
+  - poetry install --no-dev --no-interaction --no-root
+  - python manage.py migrate
+  - python manage.py collectstatic --noinput
+  cache:
+    paths:
+    - .cache/pip
+    - venv/
+  script:
+  - pre-commit run -a
+  - python manage.py test
+  stage: test
+variables:
+  PIP_CACHE_DIR: $CI_PROJECT_DIR/.cache/pip

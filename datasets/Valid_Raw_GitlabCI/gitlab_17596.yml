@@ -1,0 +1,120 @@
+.test_template:
+  after_script: &id001
+  - mv /root/.dub vendor/dub || true
+  artifacts: &id002
+    paths:
+    - .trial
+  before_script: &id003
+  - mkdir -p vendor/apt
+  - mv vendor/dub /root/.dub || true
+  - apt-get update || true
+  - apt-get -o dir::cache::archives="vendor/apt" install -y build-essential libssl-dev
+    libevent-dev libcurl4 gcc wget libc6-dev git libmagickwand-dev rsync xz-utils
+    libz-dev libsqlite3-dev
+  cache: &id004
+    key: $CI_JOB_NAME
+    paths:
+    - vendor/apt
+    - vendor/dub
+  image: ubuntu:22.04
+  script:
+  - dub test
+  stage: test
+  tags: &id005
+  - docker-trial
+  variables: &id006
+    DEBIAN_FRONTEND: noninteractive
+    TZ: Europe/Moscow
+examples:
+  after_script: *id001
+  artifacts: *id002
+  before_script: *id003
+  cache: *id004
+  image: ubuntu:22.04
+  script:
+  - wget http://downloads.dlang.org/releases/2.x/2.100.0/dmd_2.100.0-0_amd64.deb
+  - dpkg -i dmd_2.100.0-0_amd64.deb
+  - dub test
+  - cd examples/spec
+  - dub test
+  - cd ../unittest
+  - dub test
+  - cd ../test-class
+  - dub test
+  - cd ../..
+  stage: test
+  tags: *id005
+  variables: *id006
+pages:
+  artifacts:
+    paths:
+    - public
+  before_script:
+  - dnf update -y
+  - dnf install -y npm wget gcc glibc-devel libcurl libgcc
+  - npm install -g allure-commandline@1.4.23
+  - wget http://downloads.dlang.org/releases/2.x/2.100.0/dmd-2.100.0-0.fedora.x86_64.rpm
+  - dnf install -y rsync openssl-devel dmd-2.100.0-0.fedora.x86_64.rpm java-1.8.0-openjdk.x86_64
+  dependencies:
+  - trial-dmd-2.100.0
+  image:
+    name: fedora:36
+  only:
+  - tags
+  script:
+  - dub build -b ddox
+  - cd website
+  - npm install
+  - node app.js
+  - node docs.js
+  - mv web ../public
+  - cd ..
+  - mkdir public/files
+  - cp tmp/*.deb public/files
+  - cp tmp/*.rpm public/files
+  - mv docs public/api
+  - rm public/api/styles/ddox.css
+  - mv website/ddox.css public/api/styles/ddox.css
+  - mv .trial public/artifacts
+  - mv public/artifacts/allure public/artifacts/allure-raw
+  - allure -v generate --output public/artifacts/allure public/artifacts/allure-raw
+  stage: web
+  tags:
+  - docker-trial
+stages:
+- test
+- web
+trial-dmd-2.100.0:
+  after_script: *id001
+  artifacts: *id002
+  before_script: *id003
+  cache: *id004
+  image: ubuntu:22.04
+  script:
+  - wget http://downloads.dlang.org/releases/2.x/2.100.0/dmd_2.100.0-0_amd64.deb
+  - dpkg -i dmd_2.100.0-0_amd64.deb
+  - dub test
+  stage: test
+  tags: *id005
+  variables: *id006
+trial-ldc-1.30.0:
+  after_script: *id001
+  artifacts:
+    paths:
+    - .trial
+    reports:
+      junit: .trial/xunit/*.xml
+  before_script: *id003
+  cache: *id004
+  image: ubuntu:22.04
+  script:
+  - mkdir -p vendor/ldc
+  - cd vendor/ldc
+  - wget https://github.com/ldc-developers/ldc/releases/download/v1.30.0/ldc2-1.30.0-linux-x86_64.tar.xz
+  - tar -xf ldc2-1.30.0-linux-x86_64.tar.xz
+  - rsync -vau ldc2-1.30.0-linux-x86_64/ /usr/local/
+  - cd ../../
+  - dub test
+  stage: test
+  tags: *id005
+  variables: *id006

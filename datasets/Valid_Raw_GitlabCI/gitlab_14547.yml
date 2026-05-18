@@ -1,0 +1,12 @@
+image: golang:1.13-stretch
+stages:
+- test
+unit_tests:
+  after_script:
+  - rm -f keys_stub.go
+  before_script:
+  - echo -e "package gobitmex\nfunc getMyKeys() (string,string,int) { \nreturn \"\",\"\",0
+    \n}" > keys_stub.go
+  script:
+  - go test -race
+  stage: test

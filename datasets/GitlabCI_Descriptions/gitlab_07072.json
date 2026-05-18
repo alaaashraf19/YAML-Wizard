@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_07072",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 470,
+  "description": "Create a GitLab CI pipeline that uses the clojure:lein-2.7.0 Docker image for most jobs and the maven:3.3.9-jdk-8 image for the deploy job, with stages test, package, and deploy. In the test stage define three jobs: ancient runs `lein ancient`, kibit runs `lein kibit`, and test runs `lein test`. In the package stage add a package job that runs `lein pom`, publishes all untracked files as artifacts, and is limited to the master branch. In the deploy stage add a deploy job that depends on the package job, uses the Maven image, copies `ci/settings.xml` to `/root/.m2/settings.xml` and then executes `mvn deploy`, also only on the master branch.",
+  "tags": [
+    "clojure",
+    "lein",
+    "maven",
+    "java",
+    "gitlab-ci"
+  ]
+}

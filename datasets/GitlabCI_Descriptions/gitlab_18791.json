@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_18791",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 483,
+  "description": "Create a GitLab CI pipeline using the php Docker image with a global before_script that updates apt, installs git and unzip, downloads Composer, makes it executable, and runs composer install --prefer-dist -n -q. Define three jobs in the default test stage: a phpcs job that allows failure and runs curl -OL https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar then php phpcs.phar --standard=psr2 src/; a test:5 job that uses the php:5 image and runs ./vendor/bin/phpunit; and a test:latest job that uses the default php image and runs ./vendor/bin/phpunit. No caches, artifacts, or special rules are defined.",
+  "tags": [
+    "php",
+    "composer",
+    "phpcs",
+    "phpunit",
+    "psr2"
+  ]
+}

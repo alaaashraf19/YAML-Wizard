@@ -1,0 +1,42 @@
+analyse:
+  only:
+  - master
+  script:
+  - gradle sonarqube
+  stage: test
+before_script:
+- export GRADLE_USER_HOME=`pwd`/.gradle
+build:
+  artifacts:
+    expire_in: 1 day
+    paths:
+    - plugin/build
+  script:
+  - gradle clean --build-cache pluginPackaging
+  stage: build
+cache:
+  key: $CI_COMMIT_REF_NAME
+  paths:
+  - .gradle
+  - build
+  - plugin/build
+  policy: push
+deploy:
+  only:
+  - tags
+  script:
+  - gradle bintrayUpload
+  stage: deploy
+image: gradle:4.9-jdk8
+stages:
+- build
+- test
+- deploy
+test:
+  except:
+  - master
+  script:
+  - gradle test
+  stage: test
+variables:
+  GRADLE_OPTS: -Dorg.gradle.daemon=false

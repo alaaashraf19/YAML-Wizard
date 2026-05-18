@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_08617",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 119,
+  "description": "Create a GitLab CI pipeline that uses the golang:1.4 Docker image. Add a job named test in the default test stage that runs the commands: go-wrapper download, go-wrapper download gopkg.in/check.v1, and go -cover test. The pipeline has no additional services, caches, artifacts, or rules.",
+  "tags": [
+    "golang",
+    "go-wrapper",
+    "go-test",
+    "coverage"
+  ]
+}

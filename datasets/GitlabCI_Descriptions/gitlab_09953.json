@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_09953",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 382,
+  "description": "Create a GitLab CI pipeline that uses the python:3.6-stretch Docker image. Add a test stage containing a run_tests job that runs the before_script commands: apt-get update && apt-get --yes install graphviz, cd $CI_PROJECT_DIR, pip3 install pipenv, pipenv sync, then runs pipenv run pytest -vv ./tests. Set the DEBIAN_FRONTEND=noninteractive variable for the job and configure it to always run (when: always).",
+  "tags": [
+    "python-3.6",
+    "pytest",
+    "pipenv",
+    "graphviz",
+    "gitlab-ci"
+  ]
+}

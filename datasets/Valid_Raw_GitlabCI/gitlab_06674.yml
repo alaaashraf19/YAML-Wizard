@@ -1,0 +1,10 @@
+image: rust:1.26
+manuk:
+  artifacts:
+    paths:
+    - target/
+  script:
+  - cargo build --release --target=x86_64-unknown-linux-gnu
+  stage: build
+stages:
+- build

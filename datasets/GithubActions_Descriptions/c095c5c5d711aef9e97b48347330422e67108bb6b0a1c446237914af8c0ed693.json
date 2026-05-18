@@ -1,0 +1,17 @@
+{
+  "sha": "c095c5c5d711aef9e97b48347330422e67108bb6b0a1c446237914af8c0ed693",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 10781,
+  "description": "Create a GitHub Actions workflow named Lantern that triggers on push to specific branches and tags. The workflow has two jobs: build and upload. The build job runs on multiple OS configurations, sets up cmake, installs dependencies, builds libraries, and uploads artifacts. The upload job downloads artifacts, zips them, and uploads to Google Cloud Storage.",
+  "tags": [
+    "github-actions",
+    "lantern",
+    "cmake",
+    "cuda",
+    "gcp",
+    "ubuntu",
+    "windows",
+    "macos"
+  ]
+}

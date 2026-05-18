@@ -1,0 +1,32 @@
+before_script:
+- apt-get -qq update --yes
+- apt-get -qq install --yes wget tar unzip lib32stdc++6 lib32z1 build-essential file
+- wget --quiet ${CMD_LINE_TOOLS_URL} -O tools.zip
+- unzip -qq tools.zip -d sdk-tools-linux
+- mkdir sdk-tools-linux/cmdline-tools/latest
+- mv sdk-tools-linux/cmdline-tools/* sdk-tools-linux/cmdline-tools/latest/  || true
+- yes | ${SDK_MANAGER} --licenses > /dev/null || true
+- ${SDK_MANAGER} --install ndk-bundle > /dev/null
+- yes | ${SDK_MANAGER} --licenses  > /dev/null || true
+- export ANDROID_HOME=$PWD/sdk-tools-linux
+- export PATH=$PATH:$PWD/sdk-tools-linux/platform-tools/
+- chmod +x ./gradlew
+build:
+  artifacts:
+    paths:
+    - app/build/outputs/apk/debug/app-debug.apk
+  script:
+  - ./gradlew assembleDebug
+  stage: build
+image: openjdk:11-jdk
+stages:
+- build
+- test
+unitTests:
+  script:
+  - ./gradlew test
+  stage: test
+variables:
+  CMD_LINE_TOOLS_URL: https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip
+  GIT_SUBMODULE_STRATEGY: recursive
+  SDK_MANAGER: sdk-tools-linux/cmdline-tools/latest/bin/sdkmanager

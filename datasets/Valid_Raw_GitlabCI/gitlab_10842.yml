@@ -1,0 +1,16 @@
+image: alpine:3.17
+pages:
+  artifacts:
+    paths:
+    - public
+  before_script:
+  - export PATH="/root/.cask/bin:$PATH"
+  only:
+  - master
+  script:
+  - apk update && apk add openssh make git curl python3 emacs openssh bash git
+  - git clone https://github.com/cask/cask ~/.cask
+  - cask install
+  - make
+  - mv html public
+  stage: deploy

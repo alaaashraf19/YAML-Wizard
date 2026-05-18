@@ -1,0 +1,16 @@
+{
+  "sha": "faec067172662b897cec7b501d50f705b10588a962c4dacfcf5d340799094acd",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1890,
+  "description": "Create a GitHub Actions workflow named Pre-checks that runs on push and pull request events. The workflow should have three jobs: run-win10, run-linux, and run-macos, each running on a different environment (windows-latest, ubuntu-latest, and macos-latest respectively). Each job clones two repositories (DiligentTools and DiligentCore), and performs format validation using a different script for each environment.",
+  "tags": [
+    "github-actions",
+    "pre-checks",
+    "format-validation",
+    "multi-os",
+    "windows",
+    "linux",
+    "macos"
+  ]
+}

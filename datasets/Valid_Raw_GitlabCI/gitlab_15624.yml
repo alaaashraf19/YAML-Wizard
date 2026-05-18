@@ -1,0 +1,52 @@
+before_script:
+- export VERSION="${CI_COMMIT_TAG:-$CI_COMMIT_REF_SLUG}"
+- export IMAGE="${CI_REGISTRY_IMAGE}:${VERSION}"
+- export STACK="recaleur"
+build:
+  coverage: '/coverage: \d+\.\d+% of statements/'
+  script:
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+  - docker build -t ${IMAGE} .
+  - docker push ${IMAGE}
+  stage: build
+clean review:
+  dependencies: []
+  environment:
+    action: stop
+    name: review/${CI_COMMIT_REF_SLUG}
+  image: registry.gitlab.com/recalbox/ops/rancher-cli:0.6.2
+  script:
+  - echo "cleaning ${IMAGE} from ${STACK}/${CI_ENVIRONMENT_SLUG}"
+  - rancher rm ${STACK}/${CI_ENVIRONMENT_SLUG}
+  stage: deploy
+  when: manual
+codeclimate:
+  artifacts:
+    paths:
+    - codeclimate.json
+  script:
+  - docker pull codeclimate/codeclimate
+  - docker run -e CODECLIMATE_CODE="$(pwd)" -v "$(pwd)":/code -v /var/run/docker.sock:/var/run/docker.sock
+    -v /tmp/cc:/tmp/cc codeclimate/codeclimate engines:install
+  - docker run -e CODECLIMATE_CODE="$(pwd)" -v "$(pwd)":/code -v /var/run/docker.sock:/var/run/docker.sock
+    -v /tmp/cc:/tmp/cc codeclimate/codeclimate analyze -f json > codeclimate.json
+  stage: build
+deploy review:
+  environment:
+    name: review/${CI_COMMIT_REF_SLUG}
+    on_stop: clean review
+    url: https://${CI_ENVIRONMENT_SLUG}-recaleur-prod.recalbox.com
+  image: registry.gitlab.com/recalbox/ops/rancher-cli:0.6.2
+  script:
+  - rancher rm ${STACK}/${CI_ENVIRONMENT_SLUG} || true
+  - sed "s/RANCHER_SERVICENAME/${CI_ENVIRONMENT_SLUG}/" -i docker-compose.yml rancher-compose.yml
+  - FQDN=${CI_ENVIRONMENT_SLUG}-recaleur-prod.recalbox.com rancher up -d --pull -u
+    --force-upgrade -s ${STACK}
+  stage: deploy
+  variables:
+    RECALEUR_CANARY: 256
+    RECALEUR_RESPONSE: test
+image: docker:latest
+stages:
+- build
+- deploy

@@ -1,0 +1,14 @@
+image: quay.io/jangorecki/r-pkg
+pages:
+  artifacts:
+    paths:
+    - Rcheck
+    - public
+  only:
+  - master
+  script:
+  - R CMD build .
+  - R CMD check $(ls -1t *.tar.gz | head -n 1) --no-manual --as-cran
+  - mkdir public Rcheck
+  - Rscript -e 'drat::insertArtifacts(repodir = "public", repo.url = "https://jangorecki.github.io/r.pkg.gitlab.ci")'
+  - mv $(find . -maxdepth 1 -name "*.Rcheck" -type d) Rcheck

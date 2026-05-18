@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_15168",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 693,
+  "description": "Create a GitLab CI pipeline with stages build-7.2, build-latest, publish, and deploy. In the build-7.2 stage add a job named build:vendor:php-7.2 that uses the Docker image registry.gitlab.com/pyrex-fwi/sapar-id3:php-7.2, runs on all branches except master, caches the vendor/ directory using a cache key $CI_JOB_NAME, and executes the commands cat composer.json, composer install, and vendor/bin/phpunit --verbose --debug. In the publish stage add a pages job that uses the Docker image registry.gitlab.com/pyrex-fwi/sapar-id3:php-7.4, runs only on the master branch, and runs composer install, vendor/bin/phpunit --verbose --debug --coverage-html coverage/ --coverage-text --colors=never, mv coverage/ public/, and vendor/bin/phpmetrics --report-html=public/report ./src. The pages job should publish the public/ directory as an artifact that expires after 30 days.",
+  "tags": [
+    "php-7.2",
+    "php-7.4",
+    "composer",
+    "phpunit",
+    "phpmetrics",
+    "gitlab-pages",
+    "cache"
+  ]
+}

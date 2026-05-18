@@ -1,0 +1,11 @@
+image: python:3.5
+unittest:
+  script:
+  - apt-get update -qy;
+  - apt-get install -y python-dev python-pip unzip
+  - pip install --upgrade pip
+  - pip install -r requirements.txt
+  - bash ./run_test.sh
+variables:
+  TERM: linux
+  TERMINFO: /etc/terminfo

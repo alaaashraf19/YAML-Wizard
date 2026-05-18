@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_10736",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 282,
+  "description": "Create a GitLab CI pipeline using the custom Docker image ${CI_REGISTRY_IMAGE}/ci:latest and set the variable FF_NETWORK_PER_BUILD to 1. Define a single stage named test. Add a lint job in the test stage that runs yamllint --strict *.yaml and is configured to run only when the commit branch is not \"master\" (as specified by its rule). Configure the workflow to trigger the pipeline for merge requests or when the commit branch is \"master\".",
+  "tags": [
+    "yaml",
+    "yamllint",
+    "lint",
+    "gitlab-ci",
+    "custom-image"
+  ]
+}

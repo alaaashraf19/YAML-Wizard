@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_08279",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 6927,
+  "description": "Create a GitLab CI pipeline that adds a series of container‑scanning jobs using the dev.gitlab.org/gitlab/cloud-native/container-dependencies-finder/rpm-verify-fips-dev component. For each job set allow_failure: true, authenticate_registry: true, and stage: container-scanning. Define jobs with the following prefixes and images: certificates (${CI_REGISTRY_IMAGE}/certificates:${CI_COMMIT_REF_SLUG}-fips), cfssl-self-sign (${CI_REGISTRY_IMAGE}/cfssl-self-sign:${CI_COMMIT_REF_SLUG}-fips), gitaly (${CI_REGISTRY_IMAGE}/gitaly:${CI_COMMIT_REF_SLUG}-fips), gitlab-base (${CI_REGISTRY_IMAGE}/gitlab-base:${CI_COMMIT_REF_SLUG}-fips), gitlab-container-registry (${CI_REGISTRY_IMAGE}/gitlab-container-registry:${CI_COMMIT_REF_SLUG}-fips), gitlab-openbao (${CI_REGISTRY_IMAGE}/gitlab-openbao:${CI_COMMIT_REF_SLUG}-fips), gitlab-exporter (${CI_REGISTRY_IMAGE}/gitlab-exporter:${CI_COMMIT_REF_SLUG}-fips), gitlab-geo-logcursor (${CI_REGISTRY_IMAGE}/gitlab-geo-logcursor:${CI_COMMIT_REF_SLUG}-fips), gitlab-kas (${CI_REGISTRY_IMAGE}/gitlab-kas:${CI_COMMIT_REF_SLUG}-fips), gitlab-agentk (${CI_REGISTRY_IMAGE}/gitlab-agentk:${CI_COMMIT_REF_SLUG}-fips), gitlab-mailroom (${CI_REGISTRY_IMAGE}/gitlab-mailroom:${CI_COMMIT_REF_SLUG}-fips), gitlab-pages (${CI_REGISTRY_IMAGE}/gitlab-pages:${CI_COMMIT_REF_SLUG}-fips), gitlab-rails-ee (${CI_REGISTRY_IMAGE}/gitlab-rails-ee:${CI_COMMIT_REF_SLUG}-fips), gitlab-ruby (${CI_REGISTRY_IMAGE}/gitlab-ruby:${CI_COMMIT_REF_SLUG}-fips), gitlab-shell (${CI_REGISTRY_IMAGE}/gitlab-shell:${CI_COMMIT_REF_SLUG}-fips), gitlab-sidekiq-ee (${CI_REGISTRY_IMAGE}/gitlab-sidekiq-ee:${CI_COMMIT_REF_SLUG}-fips), gitlab-toolbox-ee (${CI_REGISTRY_IMAGE}/gitlab-toolbox-ee:${CI_COMMIT_REF_SLUG}-fips), gitlab-webservice-ee (${CI_REGISTRY_IMAGE}/gitlab-webservice-ee:${CI_COMMIT_REF_SLUG}-fips), gitlab-workhorse-ee (${CI_REGISTRY_IMAGE}/gitlab-workhorse-ee:${CI_COMMIT_REF_SLUG}-fips), kubectl (${CI_REGISTRY_IMAGE}/kubectl:${CI_COMMIT_REF_SLUG}-fips), and gitlab-zoekt (${CI_REGISTRY_IMAGE}/gitlab-zoekt:${CI_COMMIT_REF_SLUG}-fips). Each included component runs the RPM FIPS verification script against its container_image and reports results, but failures do not block the pipeline.",
+  "tags": [
+    "container-scanning",
+    "fips",
+    "rpm-verify",
+    "gitlab-ci",
+    "component-include"
+  ]
+}

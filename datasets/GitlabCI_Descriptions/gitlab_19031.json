@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_19031",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 844,
+  "description": "Create a GitLab CI pipeline using the opensuse/tumbleweed Docker image with a before_script that runs 'zypper -q install -y git'. Define a single stage called build and add two jobs, Linux_x64 and Win64, both in this stage. In the Linux_x64 job execute 'zypper -q install -y find libgit2-devel make gcc gcc-c++ qt6-concurrent-devel qt6-core-devel qt6-gui-devel qt6-quickcontrols2-devel qt6-base-devel qt6-qml-devel qt6-quick-devel qt6-quick-private-devel quazip-qt6-devel ninja', then 'make -f CI.mk linuxdeploy' and 'make -f CI.mk finalize', and publish an artifact named GitAddonsManager_Linux_x64-$CI_COMMIT_SHA containing the GitAddonsManager directory. In the Win64 job execute 'zypper -q install -y find wine-staging wine-staging-32bit wget make p7zip tar gzip git || true', then 'make -f CI.mk windeploy' and 'make -f CI.mk finalize', cache the Qt/, wine, and libgit2-0.27.2 paths, and publish an artifact named GitAddonsManager_Win64-$CI_COMMIT_SHA containing the GitAddonsManager directory.",
+  "tags": [
+    "opensuse",
+    "zypper",
+    "make",
+    "qt6",
+    "wine",
+    "gitaddonsmanager",
+    "build"
+  ]
+}

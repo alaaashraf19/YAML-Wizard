@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_17175",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 390,
+  "description": "Create a GitLab CI pipeline using the python:3 Docker image with two stages: test and deploy. In the test stage define a test job that runs `pip install pytest`, `pip3 install .`, and `python3 -m pytest tests/*.py`. In the deploy stage define a deploy job that runs only on the release branch, writes a ~/.pypirc file containing the PyPI repository URL, username sj1k and the secret $PIP_PASSWORD, then executes `python3 setup.py sdist upload -r pypi` to publish the package to PyPI.",
+  "tags": [
+    "python",
+    "pytest",
+    "pypi",
+    "release",
+    "gitlab-ci"
+  ]
+}

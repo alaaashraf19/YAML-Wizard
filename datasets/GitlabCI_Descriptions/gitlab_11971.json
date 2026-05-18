@@ -1,0 +1,20 @@
+{
+  "sha": "gitlab_11971",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 6038,
+  "description": "Create a GitLab CI pipeline with three stages (build, test, deploy) that uses a custom Docker image ($CUSTOM_IMAGE) for most jobs and caches pip packages in .pip-cache/ keyed by pyproject.toml. In the build stage define build:wheel (image $CUSTOM_IMAGE, runs \"python -m pip install -U pip build\" then \"python -m build --wheel --sdist\", archives the dist/ directory as an artifact named dist-$CI_COMMIT_SHORT_SHA, always runs), build:macos (macos-15-xcode-16 runner, executes \"set -euo pipefail\", \"python3 -V\", \"python3 -m pip install --upgrade pip\", then \"pip install \\\".[test,optional]\\\"\", may be allowed to fail on schedule or manual), and build:windows (Windows runner, PowerShell before_script installs Python via choco, upgrades pip, creates $env:INSTDIR, then runs \"pip install \\\".[test,optional]\\\"\", also allowed to fail on schedule or manual). In the test stage add style_check (image $CUSTOM_IMAGE, installs pip and flake8, runs flake8 across the repository, runs on every non‑schedule pipeline), documentation (needs build:wheel, installs documentation extras, builds Sphinx docs into public/ with two builds, publishes public/ as an artifact), a test matrix test:py39‑py313 (each extends .test_template with python:$PYTHON_VERSION, installs test dependencies, runs \"xdoctest icet\" and \"coverage run -m pytest --verbose --junitxml=report.xml tests/\", generates coverage.xml, htmlcov and JUnit report, stores them as artifacts, allowed to fail on schedule and manual except test:py313 which must pass), and pages_verification (extends .pages_template, needs build:wheel, runs the full documentation and coverage workflow and is manual with allowed failure). In the deploy stage include pages (extends .pages_template, publishes the public/ directory as GitLab Pages, triggers on the master branch or any tag, never on schedule) and pypi (image $CUSTOM_IMAGE, before_script installs pip, build and twine, fetches tags, builds a source distribution and uploads it to PyPI using $PYPI_TOKEN, runs manually on a tag). The pipeline respects the defined cache, artifact expiration times, and the specified rules for each job.",
+  "tags": [
+    "python",
+    "sphinx",
+    "coverage",
+    "pytest",
+    "flake8",
+    "docker",
+    "macos",
+    "windows",
+    "pypi",
+    "gitlab-pages",
+    "custom-image"
+  ]
+}

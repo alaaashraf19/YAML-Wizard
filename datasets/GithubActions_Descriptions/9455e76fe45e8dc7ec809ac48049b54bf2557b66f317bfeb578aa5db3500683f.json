@@ -1,0 +1,14 @@
+{
+  "sha": "9455e76fe45e8dc7ec809ac48049b54bf2557b66f317bfeb578aa5db3500683f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2104,
+  "description": "Create a GitHub Actions workflow named tests that runs on push to the master branch, on pull requests to the master branch, and on a scheduled cron job. The workflow has three jobs: tests, pre-commit, and check-package. The tests job runs on multiple Python versions, checks out the code, installs dependencies, runs tests with coverage, and uploads coverage to Codecov. The pre-commit job runs pre-commit hooks. The check-package job builds and inspects the package.",
+  "tags": [
+    "python",
+    "tests",
+    "coverage",
+    "pre-commit",
+    "package"
+  ]
+}

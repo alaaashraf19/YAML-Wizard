@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_14237",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 944,
+  "description": "Create a GitLab CI pipeline with a single stage named build and a job called install-go. The job runs the following script commands in order: export CURRENT_BUILD_PATH=$(pwd); echo $PATH; rm -rf $HOME/golang; rm -rf $HOME/gopath; mkdir -p $HOME/golang; mkdir -p $HOME/gopath; curl http://storage.googleapis.com/golang/go1.5.2.linux-amd64.tar.gz 2>/dev/null > go1.5.2.linux-amd64.tar.gz; tar -C $HOME/golang -xzf go1.5.2.linux-amd64.tar.gz; export GOROOT=$HOME/golang/go; export GOPATH=$HOME/gopath; export PATH=$PATH:$GOROOT/bin; export PATH=$PATH:$GOPATH/bin; (if [[ \"$(go version)\" == *\"go version go1.5\"* ]]; then echo \"✓ Go binary installed!\"; else echo \"Go binary not installed\"; exit -1; fi); go version; echo $PATH; go env; which go; cd $CURRENT_BUILD_PATH; go get github.com/go-martini/martini; go get github.com/Workiva/go-datastructures/queue; go get github.com/op/go-logging; go get gopkg.in/dancannon/gorethink.v2; go build. No image, services, caches, artifacts, or rules are defined.",
+  "tags": [
+    "go",
+    "golang",
+    "build",
+    "go-get",
+    "go-build",
+    "install-go"
+  ]
+}

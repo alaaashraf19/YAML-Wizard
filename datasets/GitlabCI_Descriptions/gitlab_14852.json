@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_14852",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 573,
+  "description": "Create a GitLab CI pipeline using the docker image with a docker:stable-dind service, and define CI, COMPOSE_FILE, GENERATE_REPORT, and RAILS_ENV variables. Add a before_script that copies config/database.yml.example to config/database.yml, copies db/schema.rb.example to db/schema.rb, installs py-pip via apk and then installs docker-compose with pip, runs docker-compose build and docker-compose up -d, and executes docker-compose exec -T web rake db:setup followed by docker-compose exec -T web rake db:migrate. Define a single job named job (default stage) that runs docker-compose exec -T web rake test:all and docker-compose exec -T web rails test -d. No caches, artifacts, or conditional rules are specified.",
+  "tags": [
+    "docker",
+    "docker-compose",
+    "rails",
+    "rake",
+    "dind",
+    "testing"
+  ]
+}

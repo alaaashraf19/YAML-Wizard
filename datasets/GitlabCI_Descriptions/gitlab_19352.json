@@ -1,0 +1,12 @@
+{
+  "sha": "gitlab_19352",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 123,
+  "description": "Create a GitLab CI pipeline that uses the crystallang/crystal:latest Docker image. Add a pages job (default stage) that runs the commands `crystal docs` and `mv doc public` to generate documentation and move it into the public directory. Configure the job to publish the public/ folder as a GitLab Pages artifact, with no additional caches, services, or trigger rules.",
+  "tags": [
+    "crystal",
+    "gitlab-pages",
+    "documentation"
+  ]
+}

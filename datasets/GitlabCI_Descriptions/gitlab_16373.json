@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_16373",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1363,
+  "description": "Create a GitLab CI pipeline with a single test stage and four jobs: test_php56, test_php70, test_php71, and test_php72. Each job runs in its own Docker image (php:5.6, php:7.0, php:7.1, php:7.2). In the before_script of every job execute: apt-get update, apt-get install zip unzip, php -r \"copy('https://getcomposer.org/installer', 'composer-setup.php');\", php composer-setup.php, php -r \"unlink('composer-setup.php');\", and php composer.phar install. Then the script runs ./vendor/bin/phpunit -c phpunit.xml. All jobs belong to the test stage and have no caches, artifacts, or special rules.",
+  "tags": [
+    "php",
+    "phpunit",
+    "composer",
+    "php-5.6",
+    "php-7.0",
+    "php-7.1",
+    "php-7.2",
+    "gitlab-ci"
+  ]
+}

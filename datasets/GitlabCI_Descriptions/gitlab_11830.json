@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_11830",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 482,
+  "description": "Create a GitLab CI pipeline that uses the maalni/maalni.gitlab.io:latest Docker image and caches the node_modules/ directory. Define a single stage named tag and a job called tag that runs in this stage. The tag job should only run when the commit message matches the regex /(release v\\S+\\.\\S+\\.\\S+)/ and its script executes a curl --request POST --header \"PRIVATE-TOKEN:$apikey\" --data \"tag_name=v$(cat src/manifest.json | jq -r '.version')&ref=master&release_description=$(cat releasenotes.txt)\" \"https://gitlab.com/api/v4/projects/maalni%2Fcrunchysync/repository/tags\". Set the CI variable DOCKER_DRIVER to overlay2.",
+  "tags": [
+    "node",
+    "cache",
+    "gitlab-api",
+    "tagging",
+    "release",
+    "curl"
+  ]
+}

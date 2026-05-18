@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_17228",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1006,
+  "description": "Create a GitLab CI pipeline that uses the registry.gitlab.com/smc/dockerfiles:font-builder Docker image for most jobs and ruby:3.2-alpine for the create-gitlab-release job, and defines the stages build, test, and release. In the build stage add a build-branch job that runs apt-get update -y, apt-get install -y make python3-pip, pip3 install -r requirements.txt, then make otf ttf webfonts, stores the build/ directory as an artifact, and runs on all branches except tags. Also add a build-tag job that runs apt-get update -y, apt-get install -y make python3-pip zip, pip3 install -r requirements.txt, then make ttf otf webfonts and sh tools/artifacts.sh, stores build/ as an artifact that expires in 1000 years, and runs only on tags. In the test stage add a test job that runs apt-get update -y, apt-get install -y make libharfbuzz-bin python3-pip, pip3 install -r requirements.txt, then make test. In the release stage add a create-gitlab-release job that uses ruby:3.2-alpine, runs gem install --no-document gitlab and ruby release.rb, and runs only on tags, and a release job that triggers the downstream pipeline smc/smc.org.in on tags.",
+  "tags": [
+    "font-builder",
+    "ruby",
+    "make",
+    "docker",
+    "gitlab-release",
+    "downstream-pipeline"
+  ]
+}

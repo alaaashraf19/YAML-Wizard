@@ -1,0 +1,14 @@
+{
+  "sha": "2c2d96d8efea1bcb7e6de2b155272c0a3c15f26420cef6e1f4bf612e4e40b429",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5038,
+  "description": "Create a nightly GitHub Actions release workflow that runs daily and on workflow dispatch. The workflow should have four jobs: build-linux-x64, build-linux-arm, build-windows, and build-darwin. Each job should checkout the repository, perform architecture-specific builds, and upload artifacts. The update-nightly-release job should wait for all build jobs to complete, download artifacts, create a release zip, generate release notes, and update the nightly GitHub release.",
+  "tags": [
+    "github-actions",
+    "release-workflow",
+    "nightly-build",
+    "multi-platform",
+    "cross-platform"
+  ]
+}

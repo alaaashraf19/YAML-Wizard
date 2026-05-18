@@ -1,0 +1,19 @@
+before_script:
+- export CONTAINER_IP="$(cat /etc/hosts | grep -Eo "^([0-9\.]*)\s+runner-[0-9a-f]*-project-[0-9a-f]+-concurrent-[0-9]+"
+  | cut -f1)"
+- mix local.rebar --force
+- mix local.hex --force
+- mix deps.get
+cache:
+  key: ${CI_BUILD_REF_NAME}
+  paths:
+  - deps/
+  - _build/
+image: elixir:latest
+mix:
+  script:
+  - echo $CONTAINER_IP
+  - mix test
+services:
+- alias: selenium
+  name: selenium/standalone-chrome:latest

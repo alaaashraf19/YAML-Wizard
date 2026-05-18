@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_06019",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 448,
+  "description": "Create a GitLab CI pipeline using the ubuntu:latest Docker image. Define a global before_script that runs apt-get -qq update, apt-get -qq install -y curl python3 python3-venv python3-pip npm nodejs, installs uv via curl, sources $HOME/.local/bin/env, installs pebble-tool with uv tool install pebble-tool, and installs Pebble SDK 4.5 with pebble sdk install 4.5. Add a single build stage containing a build job that runs pebble build, caches the sdk directory keyed by the commit ref slug, and stores the resulting build/*.pbw files as artifacts that expire after one week.",
+  "tags": [
+    "ubuntu",
+    "pebble-sdk",
+    "build",
+    "cache",
+    "artifact"
+  ]
+}

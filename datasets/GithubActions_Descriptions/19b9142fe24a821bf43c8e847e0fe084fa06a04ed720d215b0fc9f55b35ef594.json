@@ -1,0 +1,14 @@
+{
+  "sha": "19b9142fe24a821bf43c8e847e0fe084fa06a04ed720d215b0fc9f55b35ef594",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1180,
+  "description": "Create a daily GitHub Actions workflow named Bump cacert.pem that can be manually triggered. The workflow checks if the repository owner is 'certifi', then updates the cacert.pem file using a make update command. If the file has changed, it updates the version date in certifi/__init__.py and creates a pull request with the new version date as the title and commit message.",
+  "tags": [
+    "github-actions",
+    "cacert",
+    "certifi",
+    "pull-request",
+    "scheduled"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_14290",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 855,
+  "description": "Create a GitLab CI pipeline that uses the php:7.4 Docker image and runs a before_script consisting of: `curl -fsSL https://deb.nodesource.com/setup_16.x | bash -`, `apt-get update -yqq`, `apt-get install libzip-dev git nodejs unzip -yqq`, `docker-php-ext-install zip`, `curl -sS https://getcomposer.org/installer | php`, `mv composer.phar /usr/local/bin/composer`, and `composer install`. Cache the `vendor/` directory, define stages `test` and `deploy`, and a workflow that triggers on merge request events or pushes. Add a `test-build` job in the `test` stage that runs `composer require tightenco/jigsaw` and `./vendor/bin/jigsaw build`, and only runs when `$CI_COMMIT_REF_NAME != $CI_DEFAULT_BRANCH`. Add a `pages` job in the `deploy` stage that runs `composer require tightenco/jigsaw`, `./vendor/bin/jigsaw build`, and `mv build_local/ public/`, publishes the `public/` directory as a pages artifact, and only runs when `$CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH`.",
+  "tags": [
+    "php",
+    "composer",
+    "jigsaw",
+    "pages",
+    "cache",
+    "gitlab-ci"
+  ]
+}

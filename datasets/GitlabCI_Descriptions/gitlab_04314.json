@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_04314",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 349,
+  "description": "Create a GitLab CI pipeline using the ruby:2.3 Docker image. Define a hidden .test_template job that runs the script bundle install --jobs $(nproc) --without docs --path vendor and bundle exec rake tests in the test stage. Add a test:puppet48 job that inherits this script, runs in the test stage, and sets the variables FACTER_VERSION: ~> 2.4.6, HIERA_VERSION: ~> 3.2.0, PUPPET_VERSION: ~> 4.8.2. Also add a test:puppetlatest job that inherits the same script and runs in the test stage without extra variables.",
+  "tags": [
+    "ruby",
+    "bundler",
+    "puppet",
+    "test",
+    "template"
+  ]
+}

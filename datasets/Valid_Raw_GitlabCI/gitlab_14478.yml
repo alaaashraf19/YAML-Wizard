@@ -1,0 +1,18 @@
+.test_template:
+  script: &id001
+  - make lint
+  - npm t
+cache:
+  key: $CI_JOB_NAME
+  paths:
+  - node_modules/
+  untracked: true
+test:node18:
+  image: node:18
+  script: *id001
+test:node20:
+  image: node:20
+  script: *id001
+test:node22:
+  image: node:22
+  script: *id001

@@ -1,0 +1,52 @@
+before_script:
+- export DEBIAN_FRONTEND=noninteractive
+- export APT_CACHE_DIR=`pwd`/apt-cache && mkdir -pv $APT_CACHE_DIR
+- PACKAGES="build-essential pkg-config doxygen git"
+- PACKAGES+=" qt5-qmake qtbase5-dev qtdeclarative5-dev qtchooser"
+- PACKAGES+=" libqt5quicktest5 qml-module-qtquick2 qml-module-qttest"
+- PACKAGES+=" lcov gcovr"
+- apt-get update -yq && apt-get -o dir::cache::archives="$APT_CACHE_DIR" install -yq
+  $PACKAGES
+- git submodule init
+- git submodule update
+build_amd64:
+  artifacts:
+    paths:
+    - build/
+  script:
+  - export QT_SELECT=qt5
+  - mkdir build
+  - cd build
+  - qmake CONFIG+=debug CONFIG+=coverage CONFIG+=nomake_examples ..
+  - make -j 4
+  stage: build
+cache:
+  key: apt-cache
+  paths:
+  - apt-cache/
+image: ubuntu:focal
+pages:
+  artifacts:
+    paths:
+    - public
+  dependencies:
+  - test_amd64
+  only:
+  - master
+  script:
+  - mkdir public
+  - cp -a build/coverage-html public/coverage
+  stage: deploy
+test_amd64:
+  artifacts:
+    paths:
+    - ./
+  coverage: /^ *lines\.*:\s+(\d+.\d+\%)/
+  dependencies:
+  - build_amd64
+  script:
+  - find build | xargs touch
+  - cd build
+  - export QT_QPA_PLATFORM="minimal"
+  - make coverage-html
+  stage: test

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_17924",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 329,
+  "description": "Create a GitLab CI pipeline with a deploy stage containing a pages job that runs only on the master branch. The pages job uses the default Docker image, runs before_script commands 'apt update -q' and 'apt install pandoc -yqq', then executes a script that loops over directories matching pres*/ to build each presentation with make, creates a temporary .public directory, copies all pres* directories into it, and renames it to public. It publishes the public/ directory as a pages artifact. No caches, variables, or services are defined.",
+  "tags": [
+    "pages",
+    "pandoc",
+    "make",
+    "presentations",
+    "gitlab-pages"
+  ]
+}

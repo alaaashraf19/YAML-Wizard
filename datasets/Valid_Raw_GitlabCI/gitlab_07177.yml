@@ -1,0 +1,174 @@
+author:
+  archiveorg: https://archive.org/details/@terremotocentroita
+  facebook: groups/1758670357733881/
+  github: emergenzeHack/terremotocentro
+  instagram: terremotocentro
+  linkedin: null
+  medium: https://medium.com/@terremotocentroitalia
+  messenger: messenger
+  name: TerremotoCentroItalia
+  rss: https://emergenzehack.github.io/terremotocentro/feed.xml
+  stackoverflow: null
+  telegram: https://telegram.me/terremotocentroitalia
+  twitter: terremotocentro
+  xing: null
+  youtube: yourlink
+avatar: /images/noun_8681.png
+collections:
+  storie:
+    output: true
+defaults:
+- scope:
+    path: ''
+    type: posts
+  values:
+    comments: true
+    layout: post
+    social-share: true
+- scope:
+    path: ''
+  values:
+    layout: page
+    show-avatar: true
+description: Un progetto per informare sugli eventi sismici che hanno colpito il Centro
+  Italia nel 2016.
+disqus: terremotocentroitalia
+exclude:
+- Gemfile
+- Gemfile.lock
+- LICENSE
+- README.md
+- CNAME
+- Vagrantfile
+- vendor
+- .gitlab-ci.yml
+footer-links-active:
+  androidapp: true
+  archiveorg: true
+  email: false
+  facebook: true
+  github: true
+  instagram: true
+  linkedin: false
+  medium: true
+  messenger: true
+  rss: true
+  stackoverflow: false
+  telegram: true
+  twitter: true
+  xing: false
+  youtube: false
+gems:
+- jekyll-paginate
+- jekyll-sitemap
+- jekyll-feed
+- jekyll-tidy
+highlighter: rouge
+include:
+- _data
+jekyll-crosseverything_to_medium:
+  enabled: false
+  useraccount: https://medium.com/terremotocentroitalia
+jekyll-mentions:
+  base_url: https://twitter.com
+jekyll_tidy:
+  compress_html: true
+  exclude: []
+kramdown:
+  input: GFM
+link-tags: false
+markdown: kramdown
+navbar-links:
+  Aggiornamenti:
+  - News: news/
+  - Eventi: eventi/
+  - Blog: post/
+  - Storie: storie/
+  - Vittime: vittime/
+  - Bufale: bufale/
+  Il Progetto:
+  - About: about/
+  - Contribuisci: https://github.com/emergenzeHack/terremotocentro/wiki" target="_blank
+  - Press: press/
+  - Canali di Comunicazione: canali/
+  Offerte:
+  - Risorse: risorse-disponibili/
+  - Alloggi: alloggi/
+  - Offro Lavoro: offro_lavoro/
+  - "Ospitalit\xE0 animali": ospitalita_animali/
+  Raccolte:
+  - Raccolte Fondi: fondi/
+  - Acquisti Solidali: acquistisolidali/
+  Richieste:
+  - Fabbisogni: fabbisogni/
+  - Cerco Lavoro: cerco_lavoro/
+  Segnala:
+  - Segnalazioni terremoto: segnala/
+  - Segnala dati: dataset/
+  "Utilit\xE0":
+  - Mappe: mappe/
+  - Dashboard: dashboard/
+  - Opendata: opendata/
+  - Link e contatti utili: link_utili/
+page_gen:
+- data: issuesjson
+  dir: issues
+  name: number
+  template: issue
+page_gen-dirs: true
+paginate: 5
+permalink: /:year-:month-:day-:title/
+prose:
+  ignore:
+  - 404.html
+  - LICENSE
+  - feed.xml
+  - _config.yml
+  - /_layouts
+  - /_includes
+  - /css
+  - /img
+  - /js
+  - /scripts
+  - /external
+  media: img
+  metadata:
+    _posts:
+    - field:
+        element: hidden
+        value: post
+      name: layout
+    - field:
+        alterable: true
+        element: text
+        label: Post title
+        placeholder: Title
+      name: title
+    - field:
+        alterable: true
+        element: textarea
+        label: Subtitle
+        placeholder: A description of your post.
+      name: subtitle
+    - field:
+        alterable: true
+        element: text
+        help: Enter date of post.
+        label: Date
+        placeholder: yyyy-mm-dd
+      name: date
+    - field:
+        element: checkbox
+        help: Check to publish post, uncheck to hide.
+        label: Publish
+      name: published
+  rooturl: _posts
+share-links-active:
+  facebook: true
+  google: false
+  linkedin: false
+  twitter: true
+tile_map: https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png
+timezone: Europe/Rome
+title: Terremoto Centro Italia
+url: http://terremotocentroitalia.info

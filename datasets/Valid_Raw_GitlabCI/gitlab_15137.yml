@@ -1,0 +1,30 @@
+cache:
+  paths:
+  - apt/
+  - cargo/
+  - target/
+image: rust:latest
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - cargo doc --no-deps
+  - mv target/doc public
+  - echo '<meta http-equiv="refresh" content="0; url=soup/index.html">' > public/index.html
+  stage: doc
+stages:
+- test
+- doc
+- build
+test:
+  script:
+  - rustc --version
+  - cargo --version
+  - cargo test --verbose
+  stage: test
+variables:
+  APT_CACHE_DIR: $CI_PROJECT_DIR/apt
+  CARGO_HOME: $CI_PROJECT_DIR/cargo

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_06820",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 336,
+  "description": "Create a GitLab CI pipeline that uses the docker:latest image with a docker:dind service and defines a single build stage. Add a build job that runs: export IMAGE_TAG=$(echo -en $CI_COMMIT_REF_NAME | tr -c '[:alnum:]_.-' '-'), docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY, docker build --pull -t $CI_REGISTRY_IMAGE:$IMAGE_TAG ., and docker push $CI_REGISTRY_IMAGE:$IMAGE_TAG. The job runs in the build stage and has no additional rules, caches, or artifacts.",
+  "tags": [
+    "docker",
+    "dind",
+    "ci-registry",
+    "image-build",
+    "docker-login"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_13737",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1197,
+  "description": "Create a GitLab CI pipeline using the ubuntu:20.04 Docker image. Set a before_script that checks for python3 and, if missing, installs python3.9, python3.9-dev, python3.9-venv and pip, then installs ansible, libffi-dev, libssl-dev, pkg-config and the libav* development packages, libudev-dev, and finally installs homeassistant==2021.3.2 via pip. Define a single stage called test and a job named hass_check_config that runs in this stage and executes the following commands: ansible --version; ansible-vault decrypt secrets.yaml --vault-password-file .gitlab-ci/ansible-vault-pass.sh; sed -i '/^home_assistant_directory/chome_assistant_directory: .gitlab-ci' ./secrets.yaml; sed -i '/^homeassistant_db_file/chomeassistant_db_file: .gitlab-ci/blankfile' ./secrets.yaml; sed -i '/^ssl_cert/cssl_cert: .gitlab-ci/blankfile' ./secrets.yaml; sed -i '/^ssl_key/cssl_key: .gitlab-ci/blankfile' ./secrets.yaml; sed -i '/^  service_account/c\\  service_account: !include .gitlab-ci/service_account.json' ./configuration.yaml; hass -c . --script check_config. The job has no artifacts, caches, or special rules.",
+  "tags": [
+    "ubuntu",
+    "ansible",
+    "homeassistant",
+    "python3.9",
+    "ci"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_07991",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 764,
+  "description": "Create a GitLab CI pipeline with stages build and deploy. In the build stage add a build_page job using the image registry.gitlab.com/gbraad/gitbook-server:3.2.0 that runs `gitbook build` then `mv _book public` and stores the resulting public directory as an artifact. In the deploy stage add a pages job that publishes the public directory as a GitLab Pages artifact and runs only on the master branch. Also in the deploy stage add a publish job using the image registry.gitlab.com/gbraad/docker:git that executes `cd public`, `git init`, `git remote add github https://gbraad:$GITHUB_TOKEN@github.com/gbraad/blog-content.git`, `git add .`, `git config --global user.email \"me@gbraad.nl\"`, `git config --global user.name \"Gerard Braad\"`, `git commit -m 'Deployed by GitLab: https://gitlab.com/gbraad/blog-content'`, `git branch -m gh-pages`, `git push github :gh-pages || echo 1`, and `git push github gh-pages`, pushing the built site to the gh-pages branch on GitHub. Ensure the pages job is limited to master and both build_page and pages jobs archive the public folder as artifacts.",
+  "tags": [
+    "gitbook",
+    "gitlab-pages",
+    "github-deploy",
+    "docker",
+    "build",
+    "deploy"
+  ]
+}

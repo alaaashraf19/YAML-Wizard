@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_17990",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 432,
+  "description": "Create a GitLab CI pipeline that uses the python:3.7 Docker image and defines a single stage called pages. Add a pages job that runs in the pages stage, first executing a before_script to install dependencies with `pip install -r requirements.txt Jinja2 markdown`. In the script it runs `python get-commands.py toaster | python build-command-reference.py command-ref`, then moves the generated `command-ref` into `public/docs/` with `mv command-ref public/docs/` and copies the favicon assets using `cp -r command-ref-templates/favicons public/favicons/`. Publish the `public` directory as a pages artifact and configure the job to run only on the `master` and `beta` branches.",
+  "tags": [
+    "python",
+    "pages",
+    "gitlab-pages",
+    "pip",
+    "markdown",
+    "jinja2"
+  ]
+}

@@ -1,0 +1,33 @@
+before_script:
+- docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+- NAME="$CI_REGISTRY_IMAGE:$(echo $CI_COMMIT_SHA|cut -c1-8)"
+- NAME_BUILDER="${CI_REGISTRY_IMAGE}:builder-$(cat npm-shrinkwrap.json package.json|sha1sum|cut
+  -c1-8)"
+build:
+  script:
+  - set -euo pipefail
+  - docker pull "${NAME_BUILDER}" || docker build -t "${NAME_BUILDER}" . && docker
+    push "${NAME_BUILDER}"
+  - echo -e "FROM ${NAME_BUILDER}\n$(cat Dockerfile.build)" > Dockerfile.tmp
+  - docker build -t "${NAME}" -f Dockerfile.tmp .
+  - docker push "${NAME}"
+  stage: build
+deploy_prod:
+  only:
+  - prod
+  script:
+  - docker run -e "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID" -e "AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY"
+    --entrypoint ./deploy.sh "$NAME" dist/ latency.at
+  stage: deploy
+deploy_stage:
+  only:
+  - master
+  script:
+  - docker run -e "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID" -e "AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY"
+    --entrypoint ./deploy.sh "$NAME" dist/ dev.latency.at
+  stage: deploy
+image: docker:latest
+services:
+- docker:dind
+variables:
+  DOCKER_DRIVER: overlay

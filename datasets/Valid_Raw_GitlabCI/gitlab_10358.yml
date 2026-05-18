@@ -1,0 +1,107 @@
+.badger:
+  script:
+  - for webhook in $WEBHOOKS; do curl -X POST $webhook; done
+  stage: badger
+.build:on-commit:
+  except:
+  - schedules
+  script:
+  - pwd
+  - ls -l
+  - which sh
+  - sh ./refresh.sh
+  stage: build
+.build:on-schedule:
+  only:
+  - schedules
+  script:
+  - sh ./refresh.sh
+  stage: build
+.image:rust:template:
+  script: &id001
+  - BUILD_DATE=$(date -u +"%Y%m%d")
+  - docker build --pull --build-arg CHANNEL=$RUST_VERSION --build-arg BUILD_DATE=$BUILD_DATE
+    --build-arg RUST_VERSION=$RUST_VERSION -t $RUST:$RUST_VERSION rust
+  - docker tag $RUST:$RUST_VERSION $RUSTFMT:$RUST_VERSION
+  - docker tag $RUST:$RUST_VERSION $RUSTFMT_CLIPPY:$RUST_VERSION
+  - docker push $RUST:$RUST_VERSION
+  - docker push $RUSTFMT:$RUST_VERSION
+  - docker push $RUSTFMT_CLIPPY:$RUST_VERSION
+before_script:
+- apk add --update curl
+- docker login -u rustdocker -p $DOCKER_KEY
+image: docker
+image:rust:beta:
+  only:
+  - master
+  script: *id001
+  stage: rust
+  variables:
+    RUST_VERSION: beta
+image:rust:nightly:
+  only:
+  - master
+  script: *id001
+  stage: rust
+  variables:
+    RUST_VERSION: nightly
+image:rust:stable:
+  after_script:
+  - docker tag $RUST:$STABLE $RUST:stable
+  - docker tag $RUSTFMT:$STABLE $RUSTFMT:stable
+  - docker tag $RUSTFMT_CLIPPY:$STABLE $RUSTFMT_CLIPPY:stable
+  - docker push $RUST:$STABLE
+  - docker push $RUST:stable
+  - docker push $RUSTFMT:$STABLE
+  - docker push $RUSTFMT:stable
+  - docker push $RUSTFMT_CLIPPY:$STABLE
+  - docker push $RUSTFMT_CLIPPY:stable
+  only:
+  - master
+  script: *id001
+  stage: rust
+  variables:
+    RUST_VERSION: $STABLE
+image:rustup:
+  only:
+  - master
+  script:
+  - BUILD_DATE=$(date -u +"%Y%m%d")
+  - docker build --pull --build-arg BUILD_DATE=$BUILD_DATE -t $RUSTUP:$BUILD_DATE
+    rustup
+  - docker tag $RUSTUP:$BUILD_DATE $RUSTUP:latest
+  - docker push $RUSTUP:$BUILD_DATE
+  - docker push $RUSTUP:latest
+  stage: rustup
+image:ubuntu:
+  only:
+  - master
+  script:
+  - BUILD_DATE=$(date -u +"%Y%m%d")
+  - docker build --pull --build-arg BUILD_DATE=$BUILD_DATE -t $UBUNTU:$BUILD_DATE
+    ubuntu-dev
+  - docker tag $UBUNTU:$BUILD_DATE $UBUNTU:latest
+  - docker push $UBUNTU:$BUILD_DATE
+  - docker push $UBUNTU:latest
+  stage: ubuntu
+services:
+- docker:dind
+stages:
+- ubuntu
+- rustup
+- rust
+- badger
+- build
+variables:
+  CLIPPY_WEBHOOK: https://hooks.microbadger.com/images/rustdocker/rustfmt_clippy/kMOKGoR4-jxvwBL5Nwzcqq-48UA=
+  RUST: rustdocker/rust
+  RUSTFMT: rustdocker/rustfmt
+  RUSTFMT_CLIPPY: rustdocker/rustfmt_clippy
+  RUSTFMT_WEBHOOK: https://hooks.microbadger.com/images/rustdocker/rustfmt/QngrBtgcUQ4ysgbjkxekwDxctY0=
+  RUSTUP: rustdocker/rustup
+  RUSTUP_WEBHOOK: https://hooks.microbadger.com/images/rustdocker/rustup/DS5WmL_71NAyEK_vzYrPv1EeM7Q=
+  RUST_WEBHOOK: https://hooks.microbadger.com/images/rustdocker/rust/z35rD0wve1kbFEXQgRXAvf99pW0=
+  STABLE: 1.87.0
+  UBUNTU: rustdocker/ubuntu
+  UBUNTU_WEBHOOK: https://hooks.microbadger.com/images/rustdocker/ubuntu/xeiqcYeoRQ24sWAXByp6jELp5lo=
+  WEBHOOKS: $UBUNTU_WEBHOOK $RUSTUP_WEBHOOK $RUST_WEBHOOK $RUSTFMT_WEBHOOK $CLIPPY_WEBHOOK

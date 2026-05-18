@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_15117",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 173,
+  "description": "Create a GitLab CI pipeline that uses the node:14 Docker image, defines a single test stage, and caches the node_modules directory per commit reference using the key ${CI_COMMIT_REF_SLUG}. Add a Test job in the test stage that runs npm install in before_script and then npm run test in script. No special rules, only/except conditions, or deployment targets are required.",
+  "tags": [
+    "node",
+    "npm",
+    "test",
+    "cache"
+  ]
+}

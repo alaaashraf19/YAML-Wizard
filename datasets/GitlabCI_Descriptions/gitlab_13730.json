@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_13730",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 848,
+  "description": "Create a GitLab CI pipeline using the docker:stable image with the docker:stable-dind service and a global before_script that logs in to the Docker registry with $REGISTRY_USER and $REGISTRY_TOKEN. Define variables OS as $CI_BUILD_REF_NAME and REPOSITORY as $CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME, and two stages: caffe and trigger. In the trigger stage add a digits job that installs curl via apk add --no-cache curl and then triggers the Digits pipeline by POSTing to $DIGITS_TRIGGER_URL with token $DIGITS_TRIGGER_TOKEN and ref master. In the caffe stage add two jobs, v0.14 and v0.15, both running the same script: set VERSION to the CI_BUILD_NAME without its leading character, build a Docker image with docker build --pull -t \"$REPOSITORY:$VERSION\" --build-arg \"repository=nvidia/cuda\" \"$VERSION\", optionally tag it as latest when the LATEST variable is true (set only for v0.15), and push the image to $REPOSITORY. The v0.15 job sets LATEST='true' to create the latest tag.",
+  "tags": [
+    "docker",
+    "dind",
+    "caffe",
+    "trigger",
+    "apk",
+    "curl",
+    "docker-build",
+    "docker-push"
+  ]
+}

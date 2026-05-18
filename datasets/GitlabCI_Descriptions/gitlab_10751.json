@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_10751",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1032,
+  "description": "Create a GitLab CI pipeline that uses the php:7.1.1 Docker image with redis:3.0 and postgres:latest services, defines DB_HOST, DB_PORT, POSTGRES_DB, POSTGRES_PASSWORD and POSTGRES_USER variables, and caches the vendor/ directory. In the global before_script run the exact commands: apt-get update -yqq; apt-get install -yqq git libmcrypt-dev libpq-dev libcurl4-gnutls-dev libicu-dev libvpx-dev libjpeg-dev libpng-dev libxpm-dev zlib1g-dev libfreetype6-dev libxml2-dev libexpat1-dev libbz2-dev libgmp3-dev libldap2-dev unixodbc-dev libsqlite3-dev libaspell-dev libsnmp-dev libpcre3-dev libtidy-dev; docker-php-ext-install mbstring mcrypt pdo_pgsql curl json intl gd xml zip bz2 opcache; pecl install xdebug; docker-php-ext-enable xdebug; curl -sS http://getcomposer.org/installer | php; mv composer.phar composer; chmod a+x ./composer; COMPOSER=./composer make production. Add a test job in the default test stage that runs php artisan migrate, then ./vendor/bin/phpcs -s, then ./vendor/bin/php-cs-fixer fix --diff --dry-run, and finally vendor/bin/phpunit --configuration phpunit.xml --coverage-text --colors=never. The pipeline runs on all branches with no special rules or artifacts.",
+  "tags": [
+    "php",
+    "composer",
+    "redis",
+    "postgres",
+    "phpunit",
+    "phpcs",
+    "php-cs-fixer",
+    "make"
+  ]
+}

@@ -1,0 +1,27 @@
+name: Unit tests
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get latest CMake
+        # Using 'latest' branch, the latest CMake is installed.
+        uses: lukka/get-cmake@latest
+
+      - name: Run vcpkg
+        uses: lukka/run-vcpkg@v11
+
+      - name: Build with CMake
+        uses: lukka/run-cmake@v10
+        with:
+          buildPreset: vcpkg
+          buildPresetAdditionalArgs: "['--config', 'Debug']"
+          configurePreset: vcpkg
+          configurePresetAdditionalArgs: "['-DBUILD_TESTING=ON']"
+          testPreset: vcpkg
+          testPresetAdditionalArgs: "['--build-config', 'Debug']"

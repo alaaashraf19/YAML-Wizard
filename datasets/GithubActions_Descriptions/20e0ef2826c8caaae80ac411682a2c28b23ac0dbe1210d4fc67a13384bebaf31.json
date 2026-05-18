@@ -1,0 +1,14 @@
+{
+  "sha": "20e0ef2826c8caaae80ac411682a2c28b23ac0dbe1210d4fc67a13384bebaf31",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1532,
+  "description": "Create a GitHub Actions workflow named Build: Linux that runs on push to master branch in src/ directory and on pull requests to master in src/ directory. The workflow also allows manual dispatch. Use an ubuntu-latest job with a matrix strategy for debug and release modes. For each mode, check out omnetpp/omnetpp repository into omnetpp directory at omnetpp-6.x ref and inet into root directory, set up ccache, and run a script to install packages and build binaries using build-omnetpp.sh and build-inet.sh.",
+  "tags": [
+    "linux",
+    "ubuntu",
+    "matrix",
+    "ccache",
+    "build"
+  ]
+}

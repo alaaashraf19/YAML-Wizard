@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_00706",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 730,
+  "description": "Create a GitLab CI pipeline using the rust:alpine Docker image. Define two jobs named linux and mingw-w64 that run in the default stage. The linux job caches the cargo directory with key cargo, installs build-base and curl via apk, sets CARGO_HOME to a local cargo folder, runs cargo test --release then cargo build --release, executes ./deploy.sh, and always uploads target/release/dispatch-ng as an artifact retained for two weeks. The mingw-w64 job caches cargo with key cargo-mingw-w64, installs build-base, mingw-w64-gcc and curl, adds the x86_64-pc-windows-gnu target via rustup, sets CARGO_HOME similarly, builds the Windows binary with cargo build --release --target=\"x86_64-pc-windows-gnu\", runs ./deploy.sh, and always uploads target/x86_64-pc-windows-gnu/release/dispatch-ng.exe as an artifact retained for two weeks.",
+  "tags": [
+    "rust",
+    "cargo",
+    "alpine",
+    "mingw-w64",
+    "cross-compile",
+    "artifacts"
+  ]
+}

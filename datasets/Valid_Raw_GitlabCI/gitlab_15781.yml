@@ -1,0 +1,19 @@
+before_script:
+- mkdir -p _ccache
+- export CCACHE_BASEDIR=${PWD}
+- export CCACHE_DIR=${PWD}/_ccache
+build-main:
+  image: alpine:edge
+  script:
+  - apk add --update cmake make musl-dev gcc gettext-dev libintl
+  - mkdir build && cd build && cmake .. -DCMAKE_INSTALL_PREFIX=/usr
+  - make
+  - make install
+  - export MUSL_LOCPATH=/usr/share/i18n/locales/musl
+  - locale -a
+  stage: build
+cache:
+  paths:
+  - _ccache/
+stages:
+- build

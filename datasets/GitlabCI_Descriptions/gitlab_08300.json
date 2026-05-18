@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_08300",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 609,
+  "description": "Create a GitLab CI pipeline that defines a hidden .build_base job in the build stage, extending the .common:docker-in-docker template (Docker-in-Docker) and the .rules:merge-requests rule. The before_script installs make and bash via apk, exports TARGET_OS and TARGET_ARCH by parsing the job name, and the script runs `make build-x`. It collects the `bin/` directory as an artifact that expires after one week, runs an after_script that verifies a docker-machine binary exists, and declares a need on the `prepare done` job. Six concrete jobs (darwin amd64, linux amd64, linux arm, linux arm64, openbsd amd64, windows amd64) inherit this configuration and therefore build the respective targets only for merge-request pipelines.",
+  "tags": [
+    "docker-in-docker",
+    "make",
+    "multi-arch",
+    "merge-requests",
+    "artifacts"
+  ]
+}

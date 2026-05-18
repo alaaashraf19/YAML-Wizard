@@ -1,0 +1,15 @@
+{
+  "sha": "0547827265790e4cf72663b77a408a7ddf2506dc71a4516d6393ff3ad3005034",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5589,
+  "description": "Create a GitHub Actions workflow named Test Suite that runs on push, pull request, and workflow dispatch events. The workflow has four jobs: tests, coverage, docs, and quality. The tests job runs on a matrix of ubuntu, macos, and windows environments, checking out the repository, setting up Python with multiple versions, restoring cache, installing dependencies, and running tox. The coverage job depends on tests, downloads coverage data, combines and reports coverage, and creates a badge. The docs and quality jobs build docs and run linters, respectively.",
+  "tags": [
+    "python",
+    "tox",
+    "coverage",
+    "docs",
+    "linters",
+    "github-actions"
+  ]
+}

@@ -1,0 +1,111 @@
+build-deb:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - ../*.deb
+  image: clickable/build-deb:focal
+  rules:
+  - if: $CI_COMMIT_BRANCH == 'dev'
+  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  script:
+  - dpkg-buildpackage
+  stage: publish
+include:
+- template: Security/SAST.gitlab-ci.yml
+integration-test:
+  image: clickable/clickable-ci
+  rules:
+  - if: $CI_MERGE_REQUEST_IID
+  - if: $CI_COMMIT_TAG
+  - if: $CI_COMMIT_BRANCH == 'dev'
+  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  script:
+  - export HOME=`pwd`/home
+  - mkdir -p $HOME
+  - pytest ./tests/integration
+  stage: test
+  variables:
+    CLICKABLE_SKIP_DOCKER_CHECKS: 1
+lint:
+  image: clickable/clickable-ci
+  rules:
+  - if: $CI_MERGE_REQUEST_IID
+  - if: $CI_COMMIT_TAG
+  - if: $CI_COMMIT_BRANCH
+  script:
+  - flake8
+  - pylint clickable
+  stage: test
+publish-focal:
+  image: clickable/build-deb:focal
+  rules:
+  - if: $CI_COMMIT_TAG
+  script:
+  - ./scripts/setup_gpg_keys.sh
+  - sed -i "s/) unstable/~focal) focal/g" debian/changelog
+  - debuild -S
+  - dput ppa:bhdouglass/clickable ../clickable_*_source.changes
+  stage: publish
+publish-jammy:
+  image: clickable/build-deb:focal
+  rules:
+  - if: $CI_COMMIT_TAG
+  script:
+  - ./scripts/setup_gpg_keys.sh
+  - sed -i "s/) unstable/~jammy) jammy/g" debian/changelog
+  - debuild -S
+  - dput ppa:bhdouglass/clickable ../clickable_*_source.changes
+  stage: publish
+publish-noble:
+  image: clickable/build-deb:focal
+  rules:
+  - if: $CI_COMMIT_TAG
+  script:
+  - ./scripts/setup_gpg_keys.sh
+  - sed -i "s/) unstable/~noble) noble/g" debian/changelog
+  - debuild -S
+  - dput ppa:bhdouglass/clickable ../clickable_*_source.changes
+  stage: publish
+publish-plucky:
+  image: clickable/build-deb:focal
+  rules:
+  - if: $CI_COMMIT_TAG
+  script:
+  - ./scripts/setup_gpg_keys.sh
+  - sed -i "s/) unstable/~plucky) plucky/g" debian/changelog
+  - debuild -S
+  - dput ppa:bhdouglass/clickable ../clickable_*_source.changes
+  stage: publish
+publish-pypi:
+  image: clickable/clickable-ci
+  rules:
+  - if: $CI_COMMIT_TAG
+  script:
+  - python3 setup.py sdist bdist_wheel
+  - python3 -m twine upload dist/*
+  stage: publish
+sast:
+  stage: test
+  variables:
+    SAST_EXCLUDED_ANALYZERS: brakeman, eslint, flawfinder, gosec, kubesec, nodejs-scan,
+      phpcs-security-audit, pmd-apex, security-code-scan, semgrep, sobelow, spotbugs
+services:
+- docker:dind
+stages:
+- test
+- publish
+unit-test:
+  image: clickable/clickable-ci
+  rules:
+  - if: $CI_MERGE_REQUEST_IID
+  - if: $CI_COMMIT_TAG
+  - if: $CI_COMMIT_BRANCH == 'dev'
+  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  script:
+  - pytest --cov=clickable ./tests/unit
+  stage: test
+variables:
+  DOCKER_CERT_PATH: /certs/client
+  DOCKER_HOST: tcp://docker:2376
+  DOCKER_TLS_CERTDIR: /certs
+  DOCKER_TLS_VERIFY: 1

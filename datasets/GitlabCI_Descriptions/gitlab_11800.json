@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_11800",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 292,
+  "description": "Create a GitLab CI pipeline that defines a test stage and adds a job named molecule which extends the .base_ansible template. In the test stage the molecule job runs the exact shell command: docker run --rm -v \"$(pwd)\":/tmp/$(basename \"${PWD}\"):ro -v /var/run/docker.sock:/var/run/docker.sock -w /tmp/$(basename \"${PWD}\") quay.io/ansible/molecule:2.19 sudo molecule test. The command launches a quay.io/ansible/molecule:2.19 container, mounts the repository read‑only and the Docker socket, sets the working directory, and executes sudo molecule test inside the container. No additional caches, artifacts, or rules are defined.",
+  "tags": [
+    "ansible",
+    "molecule",
+    "docker",
+    "test-stage",
+    "gitlab-ci"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_08691",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1000,
+  "description": "Create a GitLab CI pipeline using the node:14 Docker image and three stages: build, test, and deploy. In the build stage add a build job that runs `node --version`, `npm --version`, `npm ci --cache .npm --prefer-offline`, and `npm run build`, caches the .npm, node_modules, and dist directories with a key based on the commit ref slug, and stores the dist/ directory as an artifact that expires in one week. In the test stage add a test job that runs `npm test` using the same node:14 image, connects to a selenium/standalone-chrome:3.14.0 service aliased as selenium-server, and sets SELENIUM_REMOTE_URL to http://selenium-server:4444/wd/hub. In the deploy stage add two manual jobs: deploy_prod_microsite_manual runs only on the master branch, uses node:14, and executes `npm run deploy-microsite` to deploy to the microsite-prod environment at https://sidecar.gitter.im/; deploy_prod_script_manual runs only on tags, uses node:14, and executes `npm run deploy-sidecar` to deploy to the script-prod environment at https://sidecar.gitter.im/dist/sidecar.v1.js.",
+  "tags": [
+    "node",
+    "npm",
+    "selenium",
+    "manual-deploy",
+    "ci"
+  ]
+}

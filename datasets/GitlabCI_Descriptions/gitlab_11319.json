@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_11319",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2210,
+  "description": "Create a GitLab CI pipeline with build and deploy stages and variables CONTAINER_IMAGE, CONTAINER_PREFIX, and DOCKER_TLS_CERTDIR. In the build stage add a build-image job that uses the docker:git image with a docker:dind service, runs only on dev/2025 and conf/2025, and executes apk update && apk add git; docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY; docker build --pull -f docker/Dockerfile -t $CONTAINER_IMAGE .; docker push $CONTAINER_IMAGE. Also in the build stage add a build-sphinx job that uses alpine, runs on all branches except master, conf/2025, and dev/2025, and runs apk --no-cache add py3-pip python3-dev make; pip install sphinx; cd docs; make html; cd ..; mv docs/_build/html public, publishing the public directory as an artifact. Add a pages job in the build stage using alpine, runs only on master and conf/2025, runs the same Sphinx build script, and publishes the public artifact to the docs environment at https://laconfdev.gitlab.io/symposion_app/. In the deploy stage add manual k8s-deploy-prod and k8s-deploy-staging jobs using google/cloud-sdk, each running only on conf/2025 or dev/2025 respectively, writing ${CA_CERT} to cert.crt, configuring kubectl with ${KUBE_SERVER} and ${KUBE_TOKEN}, setting the namespace to eo2025-prod or eo2025-staging, and updating the symposion-app deployment image to $CONTAINER_IMAGE.",
+  "tags": [
+    "docker",
+    "dind",
+    "alpine",
+    "sphinx",
+    "pages",
+    "kubernetes",
+    "google-cloud-sdk"
+  ]
+}

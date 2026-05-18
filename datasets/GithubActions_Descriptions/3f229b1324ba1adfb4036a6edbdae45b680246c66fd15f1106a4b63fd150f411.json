@@ -1,0 +1,14 @@
+{
+  "sha": "3f229b1324ba1adfb4036a6edbdae45b680246c66fd15f1106a4b63fd150f411",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1162,
+  "description": "Create a GitHub Actions workflow named CI on ubuntu that runs on push and pull request events to the master branch, excluding changes to docs/. Use a matrix strategy to build and test on ubuntu-22.04 with different compilers (gcc and clang) and build types (Debug and RelWithDebInfo). The workflow should check out the code, install required packages, compile, run tests, and execute a testsuite.",
+  "tags": [
+    "ubuntu",
+    "gcc",
+    "clang",
+    "cmake",
+    "tests"
+  ]
+}

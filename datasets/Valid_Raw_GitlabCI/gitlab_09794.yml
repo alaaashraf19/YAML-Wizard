@@ -1,0 +1,7 @@
+compile_pdf:
+  artifacts:
+    paths:
+    - document.pdf
+  image: aergus/latex
+  script:
+  - latexmk -pdf document.tex

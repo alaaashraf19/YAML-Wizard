@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_06073",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 285,
+  "description": "Create a GitLab CI pipeline using the rust:latest Docker image and a variable CARGO_HOME set to $CI_PROJECT_DIR/.cargo. Define a single build stage and a run-build job that runs in the build stage, uses the rust:latest image, caches the $CARGO_HOME and target/ directories, and is limited to the master branch. The job script should first execute 'rustc --version && cargo --version' then run 'cargo build --release --jobs 1'.",
+  "tags": [
+    "rust",
+    "cargo",
+    "build",
+    "cache",
+    "gitlab-ci"
+  ]
+}

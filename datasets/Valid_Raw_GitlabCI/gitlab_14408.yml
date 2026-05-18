@@ -1,0 +1,18 @@
+before_script:
+- pip install tox
+linters:
+  image: python:3.13-slim
+  script:
+  - tox -e readme
+test:
+  image: python:${PYTHON_VERSION}-slim
+  parallel:
+    matrix:
+    - PYTHON_VERSION:
+      - '3.8'
+      - '3.9'
+      - '3.10'
+      - '3.11'
+      - '3.12'
+      - '3.13'
+  script: tox -e "py"

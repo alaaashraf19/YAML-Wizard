@@ -1,0 +1,14 @@
+{
+  "sha": "db251a6975d1335b5462ec5ce8688fa408fc0188250d7b728e93af7760de25a7",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3380,
+  "description": "Create a GitHub Actions workflow named Test - python client that runs on pull requests to specific branches and paths, and on workflow dispatch. The workflow consists of two jobs: build_server and test. The build_server job builds a server in an ubuntu-latest environment with a custom container image, and the test job runs Python client tests in a separate ubuntu-latest environment, depending on the build_server job. The test job sets up Python 3.11, installs thrift-compiler 0.13.0 manually, downloads an artifact, starts a Pegasus cluster, and runs Python client tests.",
+  "tags": [
+    "python",
+    "github-actions",
+    "apache-pegasus",
+    "thrift",
+    "tests"
+  ]
+}

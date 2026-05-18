@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_05874",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2637,
+  "description": "Create a GitLab CI pipeline with stages static, build, test, integration, build_report_application, and deploy, using the python:3.9 image (via ${GITLAB_CI_IMAGE_PYTHON}) and node images defined by variables, and setting GITLAB_CI_PYPI_TOX to tox==3.14.5 and GITLAB_CI_PYPI_TWINE to twine==3.1.1. In the static stage add flake8, isort, pylint, and yapf jobs each running \"apt-get update && apt-get install git-lfs\", then \"pip install \\\"$GITLAB_CI_PYPI_TOX\\\"\", and finally \"tox -e \\\"flake8\\\"\" (or \"isort\", \"pylint\", \"yapf\" respectively), plus a static_js_css job using node:12.13.1 that runs \"npm install -g prettier\" and \"prettier --check \\\"./polaris/**/*.html\\\"\". In the build stage add a build job that runs the same before_script, then \"rm -rf dist\" and \"tox -e \\\"build\\\"\", publishing the dist directory as an always artifact that expires in one week. In the test stage add a test job with the same before_script and \"tox -e \\\"pytest\\\"\" and a coverage regex, and in the integration stage add an integration job with the same before_script and \"tox -e \\\"robot\\\"\", storing robot/output and robot/gl.log as week‑long artifacts. In the build_report_application stage add a tag‑only job using node:latest that cd's into polaris/reports/application, runs \"yarn install\", \"unset CI\", \"yarn build\", and saves the resulting build directory as an artifact, and in the deploy stage add a tag‑only job that requires PYPI_USERNAME and PYPI_PASSWORD, uses python:3.9, installs twine==3.1.1, then runs \"rm -rf dist\", \"python setup.py bdist_wheel\", and \"twine upload -u \\\"$PYPI_USERNAME\\\" -p \\\"$PYPI_PASSWORD\\\" dist/*\" to publish the package to PyPI.",
+  "tags": [
+    "python",
+    "node",
+    "tox",
+    "twine",
+    "pypi",
+    "yarn",
+    "prettier",
+    "gitlab-ci",
+    "static-analysis",
+    "integration-tests"
+  ]
+}

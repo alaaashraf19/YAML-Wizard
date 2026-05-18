@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_06717",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2110,
+  "description": "Create a GitLab CI pipeline with stages build, package, and deploy and define variables DEPLOY_REPO_PATH, DEPLOY_REPO_URL, description, license, package (CI_PROJECT_NAME), rpm_arch, source_arch, url, and version. In the build stage add a prepare job that removes and recreates the bin/ directory, conditionally downloads ${package}-${version}.linux-${source_arch}.tar.gz from ${url}/releases/download/v${version}/${package}-${version}.linux-${source_arch}.tar.gz, extracts it, moves the package binary into bin/, updates scripts and service files with sed, caches the tar.gz file, and stores init.d.service, systemd.service, config/, bin/, and scripts/ as artifacts. In the package stage add an rpm job using the image registry.gitlab.com/gitlab-org/gitlab-ci-multi-runner:ci-1.8, lists project files, creates an rpm directory, then runs fpm -s dir -t rpm -n ${package} -v ${version} -p rpm/${package}-${version}-1.${rpm_arch}.rpm --rpm-compression bzip2 --rpm-os linux --force --url ${url} --description \"${description}\" --license \"${license}\" --provides ${package} --replaces ${package} --before-install scripts/preinst.sh --after-install scripts/postinst.sh --before-remove scripts/prerm.sh -a ${rpm_arch} bin/=/usr/bin/ init.d.service=/etc/${package}/service/ systemd.service=/etc/${package}/service/ config/=/etc/${package}/, and publishes the rpm/ directory as an artifact; it runs on runners tagged docker and disables git checkout. In the deploy stage add a deploy job that depends on the rpm job, runs in the production environment, executes deployctl repo_add, runs on runners tagged deployctl-gioxapp.com, and also disables git checkout.",
+  "tags": [
+    "build",
+    "package",
+    "deploy",
+    "rpm",
+    "fpm",
+    "deployctl",
+    "docker"
+  ]
+}

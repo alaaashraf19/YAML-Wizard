@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_13847",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1083,
+  "description": "Create a GitLab CI pipeline with two stages: mirror and test. Add a github job in the mirror stage using the alpine:latest image that installs bash, git, and openssh, starts ssh-agent, adds the SSH key from $SSH_GITHUB_GITLAB, and runs git push --mirror git@github.com:ThePixelDeveloper/SitemapBundle.git. Add three test jobs named php 7.0, php 7.1, and php 7.2, each using the php:7.0-alpine, php:7.1-alpine, and php:7.2-rc-alpine images respectively, sharing a before_script that curls the Composer installer and runs php composer.phar install --prefer-dist --classmap-authoritative --no-interaction --no-progress, using a cache of the vendor/ directory, and each executing php composer.phar test. No artifacts, caches beyond vendor/, or conditional rules are defined.",
+  "tags": [
+    "php",
+    "composer",
+    "alpine",
+    "github-mirror",
+    "ci"
+  ]
+}

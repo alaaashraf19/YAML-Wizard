@@ -1,0 +1,20 @@
+{
+  "sha": "d10431efaee42b50dd9c09c5ff35b72b67883fe5788bfe71726ae58b44536c0e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 19457,
+  "description": "Create a complex GitHub Actions CI workflow that runs on pull requests, pushes to master and tags matching v*, and on a weekly schedule. The workflow uses a matrix strategy to test on multiple OS (ubuntu, macos, windows), boost versions, compilers, and geos configurations. For each matrix combination, it sets up the environment, installs dependencies, builds and tests the pcb2gcode project, and caches the local install path.",
+  "tags": [
+    "pcb2gcode",
+    "ci",
+    "ubuntu",
+    "macos",
+    "windows",
+    "boost",
+    "geos",
+    "gcc",
+    "clang",
+    "matrix",
+    "cache"
+  ]
+}

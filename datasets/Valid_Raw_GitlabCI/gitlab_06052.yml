@@ -1,0 +1,145 @@
+.build_job_template:
+  script: "# https://stackoverflow.com/questions/37544423\necho 0 > /proc/sys/kernel/randomize_va_space\n\
+    \ndocker build --pull \\\n  --build-arg BASE=$CONTAINER_TEST_IMAGE-prepare \\\n\
+    \  --build-arg EMACS_VERSION=$EMACS_VERSION \\\n  --build-arg EMACS_URL=$EMACS_URL\
+    \ \\\n  -t $CONTAINER_TEST_IMAGE-$EMACS_VERSION .\n\ndocker push $CONTAINER_TEST_IMAGE-$EMACS_VERSION\n"
+  stage: build
+.release_job_template:
+  only: &id001
+  - master
+  script: &id002
+  - docker pull $CONTAINER_TEST_IMAGE-$EMACS_VERSION
+  - docker tag $CONTAINER_TEST_IMAGE-$EMACS_VERSION $CONTAINER_RELEASE_IMAGE:$EMACS_VERSION
+  - docker push $CONTAINER_RELEASE_IMAGE:$EMACS_VERSION
+  stage: release
+before_script:
+- docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+build:24.2:
+  script: "# https://stackoverflow.com/questions/37544423\necho 0 > /proc/sys/kernel/randomize_va_space\n\
+    \ndocker build --pull \\\n  --build-arg BASE=$CONTAINER_TEST_IMAGE-prepare \\\n\
+    \  --build-arg EMACS_VERSION=$EMACS_VERSION \\\n  --build-arg EMACS_URL=$EMACS_URL\
+    \ \\\n  -t $CONTAINER_TEST_IMAGE-$EMACS_VERSION .\n\ndocker push $CONTAINER_TEST_IMAGE-$EMACS_VERSION\n"
+  stage: build
+  variables:
+    EMACS_VERSION: '24.2'
+build:24.3:
+  script: "# https://stackoverflow.com/questions/37544423\necho 0 > /proc/sys/kernel/randomize_va_space\n\
+    \ndocker build --pull \\\n  --build-arg BASE=$CONTAINER_TEST_IMAGE-prepare \\\n\
+    \  --build-arg EMACS_VERSION=$EMACS_VERSION \\\n  --build-arg EMACS_URL=$EMACS_URL\
+    \ \\\n  -t $CONTAINER_TEST_IMAGE-$EMACS_VERSION .\n\ndocker push $CONTAINER_TEST_IMAGE-$EMACS_VERSION\n"
+  stage: build
+  variables:
+    EMACS_VERSION: '24.3'
+build:24.4:
+  script: "# https://stackoverflow.com/questions/37544423\necho 0 > /proc/sys/kernel/randomize_va_space\n\
+    \ndocker build --pull \\\n  --build-arg BASE=$CONTAINER_TEST_IMAGE-prepare \\\n\
+    \  --build-arg EMACS_VERSION=$EMACS_VERSION \\\n  --build-arg EMACS_URL=$EMACS_URL\
+    \ \\\n  -t $CONTAINER_TEST_IMAGE-$EMACS_VERSION .\n\ndocker push $CONTAINER_TEST_IMAGE-$EMACS_VERSION\n"
+  stage: build
+  variables:
+    EMACS_VERSION: '24.4'
+build:24.5:
+  script: "# https://stackoverflow.com/questions/37544423\necho 0 > /proc/sys/kernel/randomize_va_space\n\
+    \ndocker build --pull \\\n  --build-arg BASE=$CONTAINER_TEST_IMAGE-prepare \\\n\
+    \  --build-arg EMACS_VERSION=$EMACS_VERSION \\\n  --build-arg EMACS_URL=$EMACS_URL\
+    \ \\\n  -t $CONTAINER_TEST_IMAGE-$EMACS_VERSION .\n\ndocker push $CONTAINER_TEST_IMAGE-$EMACS_VERSION\n"
+  stage: build
+  variables:
+    EMACS_VERSION: '24.5'
+build:25.1:
+  script: "# https://stackoverflow.com/questions/37544423\necho 0 > /proc/sys/kernel/randomize_va_space\n\
+    \ndocker build --pull \\\n  --build-arg BASE=$CONTAINER_TEST_IMAGE-prepare \\\n\
+    \  --build-arg EMACS_VERSION=$EMACS_VERSION \\\n  --build-arg EMACS_URL=$EMACS_URL\
+    \ \\\n  -t $CONTAINER_TEST_IMAGE-$EMACS_VERSION .\n\ndocker push $CONTAINER_TEST_IMAGE-$EMACS_VERSION\n"
+  stage: build
+  variables:
+    EMACS_VERSION: '25.1'
+build:25.2:
+  script: "# https://stackoverflow.com/questions/37544423\necho 0 > /proc/sys/kernel/randomize_va_space\n\
+    \ndocker build --pull \\\n  --build-arg BASE=$CONTAINER_TEST_IMAGE-prepare \\\n\
+    \  --build-arg EMACS_VERSION=$EMACS_VERSION \\\n  --build-arg EMACS_URL=$EMACS_URL\
+    \ \\\n  -t $CONTAINER_TEST_IMAGE-$EMACS_VERSION .\n\ndocker push $CONTAINER_TEST_IMAGE-$EMACS_VERSION\n"
+  stage: build
+  variables:
+    EMACS_VERSION: '25.2'
+build:25.3:
+  script: "# https://stackoverflow.com/questions/37544423\necho 0 > /proc/sys/kernel/randomize_va_space\n\
+    \ndocker build --pull \\\n  --build-arg BASE=$CONTAINER_TEST_IMAGE-prepare \\\n\
+    \  --build-arg EMACS_VERSION=$EMACS_VERSION \\\n  --build-arg EMACS_URL=$EMACS_URL\
+    \ \\\n  -t $CONTAINER_TEST_IMAGE-$EMACS_VERSION .\n\ndocker push $CONTAINER_TEST_IMAGE-$EMACS_VERSION\n"
+  stage: build
+  variables:
+    EMACS_VERSION: '25.3'
+build:26.0:
+  script: "# https://stackoverflow.com/questions/37544423\necho 0 > /proc/sys/kernel/randomize_va_space\n\
+    \ndocker build --pull \\\n  --build-arg BASE=$CONTAINER_TEST_IMAGE-prepare \\\n\
+    \  --build-arg EMACS_VERSION=$EMACS_VERSION \\\n  --build-arg EMACS_URL=$EMACS_URL\
+    \ \\\n  -t $CONTAINER_TEST_IMAGE-$EMACS_VERSION .\n\ndocker push $CONTAINER_TEST_IMAGE-$EMACS_VERSION\n"
+  stage: build
+  variables:
+    EMACS_URL: https://alpha.gnu.org/gnu/emacs/pretest/
+    EMACS_VERSION: 26.0.91
+image: docker:latest
+prepare:
+  script:
+  - docker build -t $CONTAINER_TEST_IMAGE-prepare -f Dockerfile.prepare .
+  - docker push $CONTAINER_TEST_IMAGE-prepare
+  stage: prepare
+release-image:24.2:
+  only: *id001
+  script: *id002
+  stage: release
+  variables:
+    EMACS_VERSION: '24.2'
+release-image:24.3:
+  only: *id001
+  script: *id002
+  stage: release
+  variables:
+    EMACS_VERSION: '24.3'
+release-image:24.4:
+  only: *id001
+  script: *id002
+  stage: release
+  variables:
+    EMACS_VERSION: '24.4'
+release-image:24.5:
+  only: *id001
+  script: *id002
+  stage: release
+  variables:
+    EMACS_VERSION: '24.5'
+release-image:25.1:
+  only: *id001
+  script: *id002
+  stage: release
+  variables:
+    EMACS_VERSION: '25.1'
+release-image:25.2:
+  only: *id001
+  script: *id002
+  stage: release
+  variables:
+    EMACS_VERSION: '25.2'
+release-image:25.3:
+  only: *id001
+  script: *id002
+  stage: release
+  variables:
+    EMACS_VERSION: '25.3'
+release-image:26.0:
+  only: *id001
+  script: *id002
+  stage: release
+  variables:
+    EMACS_VERSION: 26.0.91
+services:
+- docker:dind
+stages:
+- prepare
+- build
+- release
+variables:
+  CONTAINER_RELEASE_IMAGE: $CI_REGISTRY/damiencassou/emacs-ci-docker
+  CONTAINER_TEST_IMAGE: $CI_REGISTRY/damiencassou/emacs-ci-docker:$CI_COMMIT_REF_NAME
+  EMACS_URL: https://ftp.gnu.org/gnu/emacs

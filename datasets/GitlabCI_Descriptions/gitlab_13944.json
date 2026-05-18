@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_13944",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1942,
+  "description": "Create a GitLab CI pipeline that uses the docker:stable-git image with a docker:dind service, defines MAVEN_CLI_OPTS and MAVEN_OPTS variables, sets up stages manual, build, push, and deploy, and caches the .m2/repository directory. In the build stage add a build-artifacts job that runs on the registry.gitlab.com/opentracing-workshop/build-mvn-jdk11:latest image, executes \"mvn clean\", then \"mvn install -Dnet.bytebuddy.experimental=true\", then \"chmod a+x ./scripts/prepare.sh && ./scripts/prepare.sh\", stores the target folder as an artifact, and runs on all branches except tags. In the deploy stage add deploy-dependencies and deploy-services jobs that both use the registry.gitlab.com/opentracing-workshop/build-tools:latest image, run \"chmod a+x ./scripts/deploy_backend.sh && ./scripts/deploy_backend.sh\" or \"chmod a+x ./scripts/deploy_services.sh && ./scripts/deploy_services.sh\" respectively, are manual, allowed to fail, run only on the master branch (excluding tags), and target the prod environment. In the push stage add a push-images job on the docker:stable-git image that installs bash with \"apk add --no-cache bash\", logs into the registry using \"echo ${CI_BUILD_TOKEN} | docker login -u gitlab-ci-token --password-stdin ${CI_REGISTRY}\", then runs \"chmod a+x ./scripts/image_build.sh && ./scripts/image_build.sh\", runs only on master (excluding tags), and has an empty cache. Finally, in the manual stage add a validate-k8s job using the registry.gitlab.com/opentracing-workshop/build-tools:latest image that runs \"kubectl get pods\" followed by \"chmod a+x scripts/check_vars.sh && ./scripts/check_vars.sh\", is manual, allowed to fail, runs on all branches except tags, and also targets the prod environment.",
+  "tags": [
+    "docker",
+    "docker-dind",
+    "maven",
+    "kubernetes",
+    "manual-jobs",
+    "deploy",
+    "push-images",
+    "opentracing-workshop"
+  ]
+}

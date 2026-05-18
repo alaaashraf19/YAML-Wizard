@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_12743",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1355,
+  "description": "Create a GitLab CI pipeline that uses the docker:latest image with a docker:dind service and sets the variables DOCKER_DRIVER=overlay and GIT_DEPTH='3'. Define a single stage called build and add two manual jobs. The docker-build prod job runs only on tags and executes: docker build --pull -t $CI_COMMIT_REF_NAME:rootfs ., mkdir -p ./plugin/rootfs, docker create --name tmp $CI_COMMIT_REF_NAME:rootfs, docker export tmp | tar -x -C ./plugin/rootfs, cp config.json ./plugin/, docker rm -vf tmp, docker plugin create n0r1skcom/$CI_PROJECT_NAME:$CI_COMMIT_REF_NAME ./plugin, docker plugin create n0r1skcom/$CI_PROJECT_NAME:latest ./plugin, docker login -u $DOCKER_USER -p $DOCKER_PASSWD, docker plugin push n0r1skcom/$CI_PROJECT_NAME:$CI_COMMIT_REF_NAME, and docker plugin push n0r1skcom/$CI_PROJECT_NAME:latest. The docker-build test job runs only on branches and runs the same steps except it creates and pushes only the tag‑specific plugin: docker build --pull -t $CI_COMMIT_REF_NAME:rootfs ., mkdir -p ./plugin/rootfs, docker create --name tmp $CI_COMMIT_REF_NAME:rootfs, docker export tmp | tar -x -C ./plugin/rootfs, cp config.json ./plugin/, docker rm -vf tmp, docker plugin create n0r1skcom/$CI_PROJECT_NAME:$CI_COMMIT_REF_NAME ./plugin, docker login -u $DOCKER_USER -p $DOCKER_PASSWD, docker plugin push n0r1skcom/$CI_PROJECT_NAME:$CI_COMMIT_REF_NAME.",
+  "tags": [
+    "docker",
+    "docker-plugin",
+    "dind",
+    "ci-cd",
+    "manual",
+    "tags",
+    "branches"
+  ]
+}

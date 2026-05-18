@@ -1,0 +1,284 @@
+.deploy:
+  before_script:
+  - cd kubespray && git apply ../kubespray-v2.6.0.patch && cd ..
+  - chmod o-w . *
+  - mkdir -p ~/.ssh && chmod 700 ~/.ssh
+  - echo "$SSH_PUBLIC_KEY" > ~/.ssh/id_rsa.pub
+  - eval $(ssh-agent -s)
+  - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+  - pip install -r gitlab/requirements.txt
+  - export OS_PASSWORD=$(eval echo \$OS_PASSWORD_$CI_ENVIRONMENT_NAME)
+  - if [ -z "$OS_PASSWORD" ]; then echo "Error, OS_PASSWORD is undefined or empty"
+    && exit 1; fi
+  only:
+  - master
+  script:
+  - ./up.sh $CI_ENVIRONMENT_NAME
+  stage: up
+  when: manual
+.stop:
+  before_script:
+  - mkdir -p ~/.ssh && echo "$ID_RSA_PUB" > ~/.ssh/id_rsa.pub
+  - export OS_PASSWORD=$(eval echo \$OS_PASSWORD_$CI_ENVIRONMENT_NAME)
+  - if [ -z "$OS_PASSWORD" ]; then echo "Error, OS_PASSWORD is undefined or empty"
+    && exit 1; fi
+  only:
+  - master
+  script:
+  - ./down.sh $CI_ENVIRONMENT_NAME
+  stage: down
+  when: manual
+deploy_amsterdam:
+  environment:
+    name: amsterdam
+    on_stop: stop_amsterdam
+  extends: .deploy
+deploy_amsterdam2:
+  environment:
+    name: amsterdam2
+    on_stop: stop_amsterdam2
+  extends: .deploy
+deploy_berlin:
+  environment:
+    name: berlin
+    on_stop: stop_berlin
+  extends: .deploy
+deploy_buffalo:
+  environment:
+    name: buffalo
+    on_stop: stop_buffalo
+  extends: .deploy
+deploy_dubai:
+  environment:
+    name: dubai
+    on_stop: stop_dubai
+  extends: .deploy
+deploy_frankfurt2:
+  environment:
+    name: frankfurt2
+    on_stop: stop_frankfurt2
+  extends: .deploy
+deploy_frankfurt3:
+  environment:
+    name: frankfurt3
+    on_stop: stop_frankfurt3
+  extends: .deploy
+deploy_frankfurt4:
+  environment:
+    name: frankfurt4
+    on_stop: stop_frankfurt4
+  extends: .deploy
+deploy_gravelines:
+  environment:
+    name: gravelines
+    on_stop: stop_gravelines
+  extends: .deploy
+deploy_karlskrona:
+  environment:
+    name: karlskrona
+    on_stop: stop_karlskrona
+  extends: .deploy
+deploy_london:
+  environment:
+    name: london
+    on_stop: stop_london
+  extends: .deploy
+deploy_london2:
+  environment:
+    name: london2
+    on_stop: stop_london2
+  extends: .deploy
+deploy_milano:
+  environment:
+    name: milano
+    on_stop: stop_milano
+  extends: .deploy
+deploy_montreal:
+  environment:
+    name: montreal
+    on_stop: stop_montreal
+  extends: .deploy
+deploy_montreal2:
+  environment:
+    name: montreal2
+    on_stop: stop_montreal2
+  extends: .deploy
+deploy_oslo:
+  environment:
+    name: oslo
+    on_stop: stop_oslo
+  extends: .deploy
+deploy_paris:
+  environment:
+    name: paris
+    on_stop: stop_paris
+  extends: .deploy
+deploy_prague:
+  environment:
+    name: prague
+    on_stop: stop_prague
+  extends: .deploy
+deploy_stockholm:
+  environment:
+    name: stockholm
+    on_stop: stop_stockholm
+  extends: .deploy
+deploy_stockholm2:
+  environment:
+    name: stockholm2
+    on_stop: stop_stockholm2
+  extends: .deploy
+deploy_strasburg:
+  environment:
+    name: strasburg
+    on_stop: stop_strasburg
+  extends: .deploy
+deploy_tokyo:
+  environment:
+    name: tokyo
+    on_stop: stop_tokyo
+  extends: .deploy
+deploy_warsaw:
+  environment:
+    name: warsaw
+    on_stop: stop_warsaw
+  extends: .deploy
+image: registry.gitlab.com/multicloud-openstack-k8s/docker-kubespray-ansible
+pages:
+  artifacts:
+    paths:
+    - public
+  image: python
+  only:
+  - master
+  script:
+  - pip install pyaml jinja2-cli
+  - python map/clouds.py > map/clouds.json
+  - cp -r map public
+  - jinja2 app.gitlab-ci.yml.j2 clouds.yaml > public/app.gitlab-ci.yml
+  stage: pages
+stages:
+- up
+- down
+- pages
+- deploy
+stop_amsterdam:
+  environment:
+    action: stop
+    name: amsterdam
+  extends: .stop
+stop_amsterdam2:
+  environment:
+    action: stop
+    name: amsterdam2
+  extends: .stop
+stop_berlin:
+  environment:
+    action: stop
+    name: berlin
+  extends: .stop
+stop_buffalo:
+  environment:
+    action: stop
+    name: buffalo
+  extends: .stop
+stop_dubai:
+  environment:
+    action: stop
+    name: dubai
+  extends: .stop
+stop_frankfurt2:
+  environment:
+    action: stop
+    name: frankfurt2
+  extends: .stop
+stop_frankfurt3:
+  environment:
+    action: stop
+    name: frankfurt3
+  extends: .stop
+stop_frankfurt4:
+  environment:
+    action: stop
+    name: frankfurt4
+  extends: .stop
+stop_gravelines:
+  environment:
+    action: stop
+    name: gravelines
+  extends: .stop
+stop_karlskrona:
+  environment:
+    action: stop
+    name: karlskrona
+  extends: .stop
+stop_london:
+  environment:
+    action: stop
+    name: london
+  extends: .stop
+stop_london2:
+  environment:
+    action: stop
+    name: london2
+  extends: .stop
+stop_milano:
+  environment:
+    action: stop
+    name: milano
+  extends: .stop
+stop_montreal:
+  environment:
+    action: stop
+    name: montreal
+  extends: .stop
+stop_montreal2:
+  environment:
+    action: stop
+    name: montreal2
+  extends: .stop
+stop_oslo:
+  environment:
+    action: stop
+    name: oslo
+  extends: .stop
+stop_paris:
+  environment:
+    action: stop
+    name: paris
+  extends: .stop
+stop_prague:
+  environment:
+    action: stop
+    name: prague
+  extends: .stop
+stop_stockholm:
+  environment:
+    action: stop
+    name: stockholm
+  extends: .stop
+stop_stockholm2:
+  environment:
+    action: stop
+    name: stockholm2
+  extends: .stop
+stop_strasburg:
+  environment:
+    action: stop
+    name: strasburg
+  extends: .stop
+stop_tokyo:
+  environment:
+    action: stop
+    name: tokyo
+  extends: .stop
+stop_warsaw:
+  environment:
+    action: stop
+    name: warsaw
+  extends: .stop
+variables:
+  ANSIBLE_TIMEOUT: 300
+  GIT_SUBMODULE_STRATEGY: normal
+  TF_CLI_ARGS_apply: -auto-approve
+  TF_CLI_ARGS_destroy: -auto-approve

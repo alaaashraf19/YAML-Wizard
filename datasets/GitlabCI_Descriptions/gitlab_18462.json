@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_18462",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1068,
+  "description": "Create a GitLab CI pipeline that uses the alpine:edge Docker image for all jobs and sets up a ccache directory in a global before_script (mkdir -p _ccache, export CCACHE_BASEDIR=${PWD}, export CCACHE_DIR=${PWD}/_ccache). Define two stages: build and release, and cache the _ccache/ directory keyed by ${CI_COMMIT_REF_SLUG}. In the build stage add a build-alpine-meson job that runs: apk add --no-cache python3 gtk+3.0-dev vala meson ninja libwnck3-dev gobject-introspection-dev build-base git gtk-layer-shell-dev; git clone https://gitlab.com/vala-panel-project/vala-panel-appmenu.git; meson --prefix=/usr vp-build vala-panel-appmenu/subprojects/appmenu-glib-translator && meson install -C vp-build && rm -rf vala-panel-appmenu && rm -rf vp-build; meson bld --prefix=/usr && cd bld; ninja dist; and publishes the resulting vala-panel*.tar.xz files from bld/meson-dist/ as artifacts that expire in one week. In the release stage add a release-main job that runs only on tags, uses alpine:edge, executes: apk add --no-cache python3 py3-pip; pip3 install --break-system-packages gitlab-release; gitlab-release --link-in-desc --link-artifact *.tar.xz; and stores the same tar.xz files as artifacts.",
+  "tags": [
+    "alpine",
+    "meson",
+    "ninja",
+    "ccache",
+    "gitlab-release",
+    "build",
+    "release"
+  ]
+}

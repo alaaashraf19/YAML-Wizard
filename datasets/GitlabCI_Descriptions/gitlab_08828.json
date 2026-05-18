@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_08828",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 490,
+  "description": "Create a GitLab CI pipeline with a single stage named report. Add a job called create-bug-release-post-triage that extends the .run template, runs in the report stage, and is triggered when the $BUG_RELEASE_POST_TRIAGE variable is set or when $BUG_RELEASE_POST_TRIAGE_CREATE is set; it defines the variable TRIAGE_POLICY_FILE as policies/generated/bug-release-post-triage.yml.erb/create.yml. Add another job named verify-bug-release-post-triage that also extends .run, runs in the report stage, and is triggered when $BUG_RELEASE_POST_TRIAGE is set or when $BUG_RELEASE_POST_TRIAGE_VERIFY is set; it sets TRIAGE_POLICY_FILE to policies/generated/bug-release-post-triage.yml.erb/verify.yml. No custom Docker image, services, caches, or artifacts are specified.",
+  "tags": [
+    "bug-release",
+    "triage",
+    "report",
+    "gitlab-ci"
+  ]
+}

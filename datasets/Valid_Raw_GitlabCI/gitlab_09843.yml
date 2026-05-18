@@ -1,0 +1,12 @@
+build_job:
+  script:
+  - make build
+  stage: build
+image: golang:1.11
+stages:
+- test
+- build
+test_job:
+  script:
+  - make test
+  stage: test

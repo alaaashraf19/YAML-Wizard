@@ -1,0 +1,29 @@
+image: docker:latest
+image-build:
+  script:
+  - docker build --build-arg BUILD_DATE=${BUILD_DATE} --build-arg VCS_REF=${VCS_REF}
+    --build-arg VERSION=${VERSION} --build-arg "EXTRA_BAZEL_ARGS=${EXTRA_BAZEL_ARGS}"
+    --rm -t smizy/keras:${TAG} .
+  - docker images | grep keras
+  - docker login -u $DOCKER_USER -p $DOCKER_PASS
+  - docker tag smizy/keras:${TAG} smizy/keras
+  - docker tag smizy/keras:${TAG} smizy/keras:${TAG_MINOR}
+  - docker push smizy/keras:${TAG}
+  - docker push smizy/keras:${TAG_MINOR}
+  - docker push smizy/keras:latest
+  - docker logout
+  - apk --no-cache add curl
+  - curl -X POST 'https://hooks.microbadger.com/images/smizy/keras/pyM26dwHzHStGaBNdc2xQpQI-EI='
+  stage: build
+services:
+- docker:dind
+stages:
+- build
+variables:
+  DOCKER_DRIVER: overlay
+  EXTRA_BAZEL_ARGS: --local_resources 3072,1.0,1.0
+  TAG: ${VERSION}-cpu-alpine
+  TAG_MAJOR: 2-cpu-alpine
+  TAG_MINOR: 2.1-cpu-alpine
+  VCS_REF: ${CI_BUILD_REF}
+  VERSION: 2.1.5

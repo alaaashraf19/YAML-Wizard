@@ -1,0 +1,83 @@
+.build_template:
+  before_script: &id001
+  - cat /etc/os-release
+  - uname -a
+  script: &id002
+  - make $MAKE_OPTIONS
+  - ldd ./array_hash_map_example
+  - ./array_hash_map_example
+  - ./array_hash_map_tests
+clang_arm64_build:
+  before_script: *id001
+  script: *id002
+  tags:
+  - arm64
+  variables:
+    CXX: /usr/bin/clang++
+clang_debian_jessie_build:
+  before_script: *id001
+  script: *id002
+  tags:
+  - jessie
+  variables:
+    CXX: /usr/bin/clang++
+    MAKE_OPTIONS: USE_ADDRESS_SANITIZER=1
+clang_debian_sid_build:
+  before_script: *id001
+  script: *id002
+  tags:
+  - sid
+  variables:
+    CXX: /usr/bin/clang++
+    MAKE_OPTIONS: USE_ADDRESS_SANITIZER=1
+clang_ubuntu_artful_build:
+  before_script: *id001
+  script: *id002
+  tags:
+  - artful
+  variables:
+    CXX: /usr/bin/clang++
+    MAKE_OPTIONS: USE_ADDRESS_SANITIZER=1
+clang_ubuntu_zesty_build:
+  before_script: *id001
+  script: *id002
+  tags:
+  - zesty
+  variables:
+    CXX: /usr/bin/clang++
+    MAKE_OPTIONS: USE_ADDRESS_SANITIZER=1
+gcc_arm64_build:
+  before_script: *id001
+  script: *id002
+  tags:
+  - arm64
+gcc_debian_jessie_build:
+  before_script: *id001
+  script: *id002
+  tags:
+  - jessie
+  variables:
+    MAKE_OPTIONS: USE_ADDRESS_SANITIZER=1
+gcc_debian_sid_build:
+  before_script: *id001
+  script: *id002
+  tags:
+  - sid
+  variables:
+    MAKE_OPTIONS: USE_ADDRESS_SANITIZER=1
+gcc_ubuntu_artful_build:
+  before_script: *id001
+  script: *id002
+  tags:
+  - artful
+  variables:
+    MAKE_OPTIONS: USE_ADDRESS_SANITIZER=1
+gcc_ubuntu_zesty_build:
+  before_script: *id001
+  script: *id002
+  tags:
+  - zesty
+  variables:
+    MAKE_OPTIONS: USE_ADDRESS_SANITIZER=1
+variables:
+  SILENT: ''

@@ -1,0 +1,10 @@
+before_script:
+- cd validator
+- yarn
+image: node:latest
+stages:
+- validate
+validate:
+  script:
+  - yarn start
+  stage: validate

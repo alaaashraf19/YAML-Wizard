@@ -1,0 +1,14 @@
+{
+  "sha": "091b872a5f0aea84dc3ba57f166004c84d0c031bc4922953f65085423ab2dfa0",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1381,
+  "description": "Create a GitHub Actions workflow named RPM Build that runs on push to the master branch, ignoring changes to docs, README.md, and NEWS.md, and only for tags. Use an ubuntu-latest job to check out the code, extract the release version from the tag, generate an RPM spec file, build the RPM package using tstack/rpmbuild, upload the artifact, and push it to packagecloud.io if the push is a tag.",
+  "tags": [
+    "rpm",
+    "packagecloud",
+    "github-actions",
+    "ubuntu",
+    "tags"
+  ]
+}

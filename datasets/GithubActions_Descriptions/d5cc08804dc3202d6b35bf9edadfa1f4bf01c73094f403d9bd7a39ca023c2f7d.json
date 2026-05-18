@@ -1,0 +1,16 @@
+{
+  "sha": "d5cc08804dc3202d6b35bf9edadfa1f4bf01c73094f403d9bd7a39ca023c2f7d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1496,
+  "description": "Create a GitHub Actions workflow named Cross-Platform CI that runs on every push to the master branch and on pull requests to the master branch. Use a matrix strategy to build on macos-latest, windows-latest, and ubuntu-latest. For each OS, check out the repository, prepare the environment (installing OpenSSL on Windows, fixing pkgconfig on macOS), create a build directory, configure with CMake, build, and then run tests with different commands based on the OS. Additionally, on push events, generate a badge for each OS.",
+  "tags": [
+    "cross-platform",
+    "ci",
+    "cmake",
+    "tests",
+    "badge",
+    "matrix",
+    "github-actions"
+  ]
+}

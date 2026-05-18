@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_12676",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 472,
+  "description": "Create a GitLab CI pipeline using the python:3.7.0-alpine Docker image, defining variables DOCKER_DRIVER and DOCKER_HOST, and a cache keyed by ${CI_COMMIT_REF_SLUG} that stores /root/nltk_data/. Include a before_script that runs pwd, pip install -r requirements.txt, and python -m nltk.downloader all. Define two stages: qa and deploy. In the qa stage add a linting job that runs pycodestyle -v --benchmark sentiment.py. In the deploy stage add a smoketest job that runs python sentiment.py and a dummydeploy job that runs echo \"dummy deploy\". No special rules, artifacts, or external services are required.",
+  "tags": [
+    "python",
+    "alpine",
+    "pycodestyle",
+    "nltk",
+    "qa",
+    "deploy",
+    "cache"
+  ]
+}

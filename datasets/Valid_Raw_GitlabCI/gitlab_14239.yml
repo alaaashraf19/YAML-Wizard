@@ -1,0 +1,16 @@
+before_script:
+- yum install -y wget tar
+- wget https://github.com/Keats/gutenberg/releases/download/v0.3.1/gutenberg-v0.3.1-x86_64-unknown-linux-gnu.tar.gz
+- tar -xf gutenberg-v0.3.1-x86_64-unknown-linux-gnu.tar.gz
+image: centos:latest
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - echo 'Build...'
+  - ls
+  - ./gutenberg build
+  stage: deploy

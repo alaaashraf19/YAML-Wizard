@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_17497",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 811,
+  "description": "Create a GitLab CI pipeline that uses python:3.6-alpine as the default image and defines three stages: quality, test, and coverage. Include a global before_script that runs `pip install tox` and `pip freeze`. Add a coverage job in the coverage stage with its own before_script running `pip install coverage` and `pip freeze`, then execute `coverage report --include=*/tests/* --fail-under=100` followed by `coverage report --omit=*/tests/*`, and publish the `.coverage` file as an artifact that expires after 1 hour. Add python2.7, python3.4, python3.5, python3.6, and python3.7 jobs in the test stage, each using the specified Alpine images (python:2.7-alpine, python:3.4-alpine, python:3.5-alpine, python:3.6-alpine, python:3.7-rc-alpine) and running the corresponding tox environments (`tox -e py27-django111`, `tox -e py34-django111,py34-django20`, `tox -e py35-django111,py35-django20`, `tox -e py36-django111,py36-django20`, `tox -e py37-django111,py37-django20`), with the python3.6 job also storing the `.coverage` artifact for 1 hour. Finally, add a quality job in the quality stage that runs `tox -e quality`.",
+  "tags": [
+    "python",
+    "tox",
+    "coverage",
+    "alpine",
+    "gitlab-ci",
+    "quality",
+    "test"
+  ]
+}

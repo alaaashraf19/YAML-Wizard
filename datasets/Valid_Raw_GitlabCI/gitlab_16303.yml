@@ -1,0 +1,18 @@
+cache:
+  paths:
+  - node_modules/
+image: node
+pages:
+  artifacts:
+    paths:
+    - public
+  script:
+  - echo "USING PRE-BUILT DOCS"
+  - mv docs/ public/
+stages:
+- test
+test:
+  script:
+  - yarn install
+  - yarn test:no-report
+  stage: test

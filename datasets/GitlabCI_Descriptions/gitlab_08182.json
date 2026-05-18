@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_08182",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 537,
+  "description": "Create a GitLab CI pipeline using the jnijhof/kitchen-docker Docker image and two stages: test and publish. In the test stage add an \"openvpn ubuntu 16.04\" job that runs the exact command \"kitchen test default-ubuntu-1604\", and an \"rspec\" job that runs \"rspec -f d\". In the publish stage add a \"push-cookbook\" job that only runs on the master branch when the variables OPS_CLONE_USERNAME and OPS_CLONE_PASSWORD are defined; it clones the repository https://$OPS_CLONE_USERNAME:$OPS_CLONE_PASSWORD@ops.gitlab.net/gitlab-cookbooks/cookbook-publisher.git into /tmp/cookbook-publisher, copies /tmp/cookbook-publisher/publisher.rb to the current directory, and executes it with \"ruby publisher.rb\". No caches, artifacts, services, or deployment targets are configured.",
+  "tags": [
+    "kitchen-docker",
+    "ruby",
+    "rspec",
+    "cookbook",
+    "gitlab-ci"
+  ]
+}

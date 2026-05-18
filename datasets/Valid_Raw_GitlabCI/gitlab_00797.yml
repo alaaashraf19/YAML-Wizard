@@ -1,0 +1,39 @@
+build-jar:
+  script:
+  - mvn package
+  stage: "\U0001F4E6 build"
+cache:
+  paths:
+  - .m2/repository
+deploy-artifact:
+  artifacts:
+    paths:
+    - target/*
+  script:
+  - mvn package
+  stage: "\U0001F680 deploy"
+deploy-maven:
+  only:
+  - master
+  script:
+  - cp ci_settings.xml /root/.m2/settings.xml
+  - sed -i "s/CI_JOB_TOKEN/${CI_JOB_TOKEN}/g" /root/.m2/settings.xml
+  - sed -i "s/PROJECT_ID/${CI_PROJECT_ID}/g" pom.xml
+  - mvn deploy
+  stage: "\U0001F680 deploy"
+image: maven:3.5-jdk-8-slim
+include: https://gitlab.com/allthethings/include/raw/master/.stages.yml
+int-tests:
+  script:
+  - mvn integration-test
+  stage: "\U0001F4BB integration-test"
+run-mvn-test:
+  script:
+  - mvn test
+  stage: "\u2705 unit-test"
+variables:
+  MAVEN_CLI_OPTS: --batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true
+    -DdeployAtEnd=true
+  MAVEN_OPTS: -Dhttps.protocols=TLSv1.2 -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository
+    -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN
+    -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true

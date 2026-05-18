@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_09796",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 455,
+  "description": "Create a GitLab CI pipeline that uses the python:latest Docker image with a postgres:latest service, sets the POSTGRES_DB variable to ci and defines a DATABASE_URL variable for the test job. Cache pip files in ~/.cache/pip/. Include a before_script that runs python -V, installs pipenv, runs pipenv lock, pipenv install, and prints the virtual‑env python version with $(pipenv --venv)/bin/python -V. Define a single stage named test and a test job that runs only on branches, executes $(pipenv --venv)/bin/python manage.py test --settings organ.settings_ci, and belongs to the test stage.",
+  "tags": [
+    "python",
+    "pipenv",
+    "postgres",
+    "django",
+    "gitlab-ci",
+    "test"
+  ]
+}

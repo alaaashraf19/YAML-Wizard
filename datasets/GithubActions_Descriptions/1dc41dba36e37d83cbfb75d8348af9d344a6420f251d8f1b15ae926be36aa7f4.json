@@ -1,0 +1,17 @@
+{
+  "sha": "1dc41dba36e37d83cbfb75d8348af9d344a6420f251d8f1b15ae926be36aa7f4",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3062,
+  "description": "Create a weekly GitHub Actions workflow named ptf-ebpf-kernels-weekly that runs every Sunday at 1:17 am UTC. The workflow should only trigger for the main branch of the p4lang/p4c repository. It should use a ubuntu-latest environment and run a matrix of jobs for different kernel versions (5.8, 5.11, 5.13, 5.15) on ubuntu-20.04. For each job, check out the repository, set up ccache, cache a VM image, prepare the runner, build the VM if necessary, build the project with Docker, install the VM, and run PTF tests for the eBPF backend.",
+  "tags": [
+    "linux",
+    "kernel",
+    "ebpf",
+    "ptf",
+    "weekly",
+    "ubuntu",
+    "docker",
+    "ccache"
+  ]
+}

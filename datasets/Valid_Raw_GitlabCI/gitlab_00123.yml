@@ -1,0 +1,28 @@
+before_script:
+- apk add --no-cache py-pip
+- pip install docker-compose
+- docker-compose --version
+- export IMG_TAG=`if [ "$CI_BUILD_REF_NAME" == "master" ]; then echo "latest"; else
+  echo $CI_BUILD_REF_NAME | sed -e 's/[\/]/-/g' | sed -e 's/[\#]//g'; fi`
+- export DOCKER_IMAGE_PROD=$CI_REGISTRY_IMAGE:$IMG_TAG
+- docker login -u "gitlab-ci-token" -p "$CI_BUILD_TOKEN" $CI_REGISTRY
+- export CI_BUILD_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+- export CI_BUILDER=gitlab-ci
+- cp .env.example .env
+build-verify:
+  script:
+  - docker-compose run --rm dev yarn
+  - docker-compose run --rm dev yarn run lint
+  - docker-compose run --rm dev ng test --browsers Chrome_no_sandbox -w false
+  - docker-compose run --rm dev yarn run e2e
+  - docker-compose run --rm dev ng build --prod
+  - docker-compose -f docker-compose.prod.yml build prod
+  - docker push $DOCKER_IMAGE_PROD
+  stage: build
+image: docker:latest
+services:
+- docker:dind
+stages:
+- build
+variables:
+  DOCKER_DRIVER: overlay

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_00741",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 486,
+  "description": "Create a GitLab CI pipeline that uses the python:3 Docker image and defines two stages: test and deploy. Include a before_script that runs `pip install nose yanc requests PyWebDAV3` and `pip install --editable .`. In the test stage add a test job that allows failure, sets the variable PYTHONASYNCIODEBUG='1', and executes `nosetests -v --with-yanc --nologcapture --nocapture -w tests`. In the deploy stage add a deploy job that runs only on tags, runs `pip install -U twine setuptools wheel`, builds the package with `python setup.py sdist` and `python setup.py bdist_wheel`, and uploads the artifacts to PyPI using `twine upload -u $PYPI_USER -p $PYPI_PASS dist/*`.",
+  "tags": [
+    "python",
+    "nose",
+    "yanc",
+    "twine",
+    "pypi",
+    "deploy"
+  ]
+}

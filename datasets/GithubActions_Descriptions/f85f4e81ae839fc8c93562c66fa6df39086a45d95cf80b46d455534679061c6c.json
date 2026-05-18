@@ -1,0 +1,15 @@
+{
+  "sha": "f85f4e81ae839fc8c93562c66fa6df39086a45d95cf80b46d455534679061c6c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4759,
+  "description": "Create a GitHub Actions workflow named Build that triggers on push and pull request events. The workflow has two jobs, build-cmake and build-bam, each running on a matrix of ubuntu-latest, macOS-latest, windows-latest, and ubuntu-18.04. The build-cmake job checks out the repository, prepares the environment, builds and tests the project in debug and release modes using CMake, and packages the release artifacts. The build-bam job checks out the repository and a specific bam repository, prepares the environment, builds and tests the project in debug and release modes using bam.",
+  "tags": [
+    "cmake",
+    "bam",
+    "multi-os",
+    "build",
+    "test",
+    "package"
+  ]
+}

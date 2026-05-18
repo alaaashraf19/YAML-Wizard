@@ -1,0 +1,14 @@
+{
+  "sha": "154afd27a924549371b73225ba24b003872fdf17a6ca87b6abbde7e303348d91",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 610,
+  "description": "Create a GitHub Actions workflow named Test ml-metadata that runs on push to the master branch, on pull requests to the master branch, and on workflow dispatch. Use a single ubuntu-latest job with a matrix strategy for Python versions 3.9, 3.10, and 3.11. For each Python version, check out the repository, build ml-metadata using a reusable build action, and then run tests with pytest after cleanup.",
+  "tags": [
+    "python",
+    "tests",
+    "matrix",
+    "workflow-dispatch",
+    "ml-metadata"
+  ]
+}

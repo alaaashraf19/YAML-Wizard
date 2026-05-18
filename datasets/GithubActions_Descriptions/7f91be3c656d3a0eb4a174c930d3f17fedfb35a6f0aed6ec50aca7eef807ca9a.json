@@ -1,0 +1,16 @@
+{
+  "sha": "7f91be3c656d3a0eb4a174c930d3f17fedfb35a6f0aed6ec50aca7eef807ca9a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2169,
+  "description": "Create a GitHub Actions workflow named macOS that runs on every push to the master branch and on pull requests to master. The workflow has three jobs: build, test, and release. The build job runs on macOS, checks out the code, sets up build variables, installs Qt, and configures and builds the project using cmake and make. The test job depends on build, downloads the build artifacts, and runs tests. The release job depends on test and creates an automatic release with a prerelease tag.",
+  "tags": [
+    "macos",
+    "cmake",
+    "qt",
+    "make",
+    "tests",
+    "release",
+    "github-actions"
+  ]
+}

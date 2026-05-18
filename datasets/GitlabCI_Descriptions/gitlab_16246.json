@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_16246",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 476,
+  "description": "Create a GitLab CI pipeline using the node:6.11.3 Docker image as the default and three stages: build, test, and deploy. In the build stage add a build_job that runs `yarn install && yarn build`, stores the resulting `build` directory as an artifact that expires in one week. In the test stage add a test_job that runs `echo \"blablabla\"` and also produces an artifact expiring in one week. In the deploy stage add a deploy_job that depends on build_job, uses the ruby:2.2 image, runs only on the master branch, and executes `gem install dpl` followed by `dpl --provider=heroku --app=saycle-web-live --api-key=$HEROKU_PRODUCTION_API_KEY` to deploy to Heroku.",
+  "tags": [
+    "node",
+    "yarn",
+    "ruby",
+    "heroku",
+    "dpl",
+    "gitlab-ci"
+  ]
+}

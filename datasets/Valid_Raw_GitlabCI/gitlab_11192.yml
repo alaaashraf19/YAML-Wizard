@@ -1,0 +1,78 @@
+.general:
+  image: node:8.11
+  tags: &id001
+  - gitlab-org
+  variables: &id002
+    GIT_STRATEGY: fetch
+.release:
+  image: node:8.11
+  only: &id003
+  - release
+  tags: *id001
+  variables: *id002
+build:
+  artifacts:
+    expire_in: 1 day
+    paths:
+    - dist
+  dependencies:
+  - install
+  image: node:8.11
+  only: *id003
+  script:
+  - yarn build
+  stage: build
+  tags: *id001
+  variables: *id002
+install:
+  artifacts:
+    expire_in: 1 day
+    paths:
+    - node_modules
+  image: node:8.11
+  script:
+  - yarn install
+  stage: install
+  tags: *id001
+  variables: *id002
+lint:
+  dependencies:
+  - install
+  image: node:8.11
+  script:
+  - yarn lint
+  stage: test
+  tags: *id001
+  variables: *id002
+publish to npm:
+  allow_failure: false
+  dependencies:
+  - build
+  image: node:8.11
+  only: *id003
+  script:
+  - echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}' > .npmrc
+  - export PACKAGE_VERSION=$(node -p -e "require('./package.json').version")
+  - echo "Publish & Tag version v${PACKAGE_VERSION}"
+  - npm publish && git tag v${PACKAGE_VERSION} && git push --tags
+  stage: publish
+  tags: *id001
+  variables: *id002
+stages:
+- install
+- test
+- build
+- publish
+test:
+  artifacts:
+    expire_in: 1 month
+    paths:
+    - coverage
+  dependencies:
+  - install
+  image: node:8.11
+  script:
+  - yarn test --ci --color --coverage
+  stage: test
+  tags: *id001
+  variables: *id002

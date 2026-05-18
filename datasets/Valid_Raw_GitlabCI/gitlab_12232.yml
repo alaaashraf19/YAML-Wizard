@@ -1,0 +1,7 @@
+stages:
+- test
+test:
+  image: nixos/nix
+  script:
+  - nix --experimental-features "nix-command flakes" flake check
+  stage: test

@@ -1,0 +1,16 @@
+caligram:react:
+  script:
+  - npm install --silent --depth 0
+  - npm run test
+image: node:latest
+pages:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - public
+  only:
+  - enable-gitlab-pages
+  script:
+  - npm install --silent
+  - npm run build-storybook
+  stage: deploy

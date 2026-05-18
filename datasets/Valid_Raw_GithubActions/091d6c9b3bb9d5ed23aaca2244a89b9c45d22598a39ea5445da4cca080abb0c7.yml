@@ -1,0 +1,75 @@
+name: AMR-Wind Lint
+
+on:
+  push:
+    branches: [development]
+    paths:
+      - 'cmake/**'
+      - 'amr-wind/**'
+      - 'submods/**'
+      - 'test/**'
+      - 'unit_tests/**'
+      - 'CMakeLists.txt'
+      - '.github/workflows/lint.yml'
+  pull_request:
+    branches: [development]
+    paths:
+      - 'cmake/**'
+      - 'amr-wind/**'
+      - 'submods/**'
+      - 'test/**'
+      - 'unit_tests/**'
+      - 'CMakeLists.txt'
+      - '.github/workflows/lint.yml'
+
+jobs:
+  Lint:
+    runs-on: macos-latest
+    steps:
+      - name: Cancel previous runs
+        uses: styfle/cancel-workflow-action@0.6.0
+        with:
+          access_token: ${{github.token}}
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+      - name: Dependencies
+        run: brew install cppcheck
+      - name: Configure
+        run: |
+          echo "NPROCS=$(sysctl -n hw.ncpu)" >> $GITHUB_ENV
+          cmake \
+          -Bbuild-lint \
+          -DAMR_WIND_ENABLE_MPI:BOOL=OFF \
+          -DAMR_WIND_ENABLE_TESTS:BOOL=ON \
+          -DAMR_WIND_TEST_WITH_FCOMPARE:BOOL=OFF \
+          -DAMR_WIND_ENABLE_MASA:BOOL=OFF \
+          -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON \
+          ${{github.workspace}}
+      - name: Check
+        working-directory: build-lint
+        run: |
+          # Using a working directory for cppcheck makes analysis faster
+          mkdir cppcheck-wd
+          # Cppcheck ignores -isystem directories, so we change them to regular -I include directories (with no spaces either)
+          sed -i '' -e 's/isystem /I/g' compile_commands.json
+          cppcheck --inline-suppr \
+            --suppress=unmatchedSuppression --suppress=syntaxError --suppress=internalAstError \
+            --suppress=unusedFunction --std=c++14 --language=c++ --enable=all --project=compile_commands.json \
+            -j ${{env.NPROCS}} --cppcheck-build-dir=cppcheck-wd -i ${{github.workspace}}/submods/amrex/Src \
+            -i ${{github.workspace}}/submods/googletest --output-file=cppcheck.txt
+          # Warnings in header files are unavoidable, so we filter out submodule headers after analysis
+          # Might be wrong to assume cppcheck always reports issues using 3 lines
+           awk -v nlines=2 '/submods\/amrex/ || /submods\/googletest/ {for (i=0; i<nlines; i++) {getline}; next} 1' \
+            < cppcheck.txt > amr-wind-static-analysis.txt
+      - name: Report
+        working-directory: build-lint
+        run: |
+          echo "::add-matcher::.github/problem-matchers/gcc.json"
+          # Might be wrong to assume cppcheck always reports issues using 3 lines
+          WARNINGS_TMP=$(wc -l < amr-wind-static-analysis.txt | xargs echo -n)
+          WARNINGS=$(bc <<< "$WARNINGS_TMP/3")
+          printf "%s warnings\n" "${WARNINGS}" >> amr-wind-static-analysis.txt
+          cat amr-wind-static-analysis.txt
+          # Just report for now and don't fail
+          #exit ${WARNINGS}

@@ -1,0 +1,31 @@
+before_script:
+- python3 --version
+- python3 -m venv venv
+- source venv/bin/activate
+- pip install -r requirements/ci.txt -i https://pypi.kbsoftware.co.uk/kb/dev/+simple/
+services:
+- postgres:14.8
+test:
+  script:
+  - export DATABASE_HOST=postgres
+  - export DATABASE_PASS=
+  - export DATABASE_PORT=
+  - export DATABASE_USER=postgres
+  - export DOMAIN=dev
+  - export KB_TEST_EMAIL_FOR_OIDC="patrick@kbsoftware.co.uk"
+  - export KB_TEST_EMAIL_USERNAME="patrick.kimber"
+  - export LOG_FOLDER=
+  - export LOG_SUFFIX=dev
+  - export OIDC_CREATE_USER=False
+  - export OIDC_OP_AUTHORIZATION_ENDPOINT="http://localhost:1235/"
+  - export OIDC_OP_JWKS_ENDPOINT="http://localhost:1236/"
+  - export OIDC_OP_TOKEN_ENDPOINT="http://localhost:1237/"
+  - export OIDC_OP_USER_ENDPOINT="http://localhost:1238/"
+  - export OIDC_RP_CLIENT_ID="my-oidc-client-id"
+  - export OIDC_RP_CLIENT_SECRET="my-oidc-client-secret"
+  - export OIDC_RP_SIGN_ALGO="RS256"
+  - export OIDC_USE_NONCE=False
+  - export USE_OPENID_CONNECT=True
+  - pytest --create-db --cov-report term --cov=login -m "not elasticsearch"
+variables:
+  POSTGRES_HOST_AUTH_METHOD: trust

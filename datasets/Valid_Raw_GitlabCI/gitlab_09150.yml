@@ -1,0 +1,35 @@
+before_script:
+- docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+build:
+  except:
+  - master
+  script:
+  - docker build --pull -t "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG" .
+  - docker push "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG"
+  stage: build
+build-master:
+  only:
+  - master
+  script:
+  - docker build --pull -t "$CI_REGISTRY_IMAGE" .
+  - docker push "$CI_REGISTRY_IMAGE"
+  stage: build
+image: docker:latest
+services:
+- docker:dind
+test:
+  before_script:
+  - apk --no-cache add git
+  - export OLDPATH=$(readlink -f ..)
+  - export SOURCE=/go/src/gitlab.com/gitlab-micro/listen
+  - mkdir -p $SOURCE && cd $SOURCE
+  - mv $OLDPATH/listen .
+  - cd $SOURCE/listen
+  except:
+  - master
+  image: golang:alpine
+  script:
+  - go get -v ./...
+  - go test -v -cover -tags test ./...
+  - mv ../listen $OLDPATH
+  stage: build

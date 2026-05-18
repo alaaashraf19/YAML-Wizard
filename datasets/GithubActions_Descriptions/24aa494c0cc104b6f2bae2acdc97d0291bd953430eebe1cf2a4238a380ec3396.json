@@ -1,0 +1,14 @@
+{
+  "sha": "24aa494c0cc104b6f2bae2acdc97d0291bd953430eebe1cf2a4238a380ec3396",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1340,
+  "description": "Create a GitHub Actions workflow to publish a Docker image when pushing to the master branch or tags matching v*.*.*. The workflow uses an ubuntu-latest job with write permission to packages and read permission to repository contents. It checks out the code, sets up QEMU, Docker Buildx, and logs in to DockerHub using GITHUB_TOKEN from secrets. Then it extracts metadata, builds a multi-platform container image from the src context, and pushes it to the GitHub Packages registry.",
+  "tags": [
+    "docker",
+    "github-packages",
+    "multi-platform",
+    "qemu",
+    "buildx"
+  ]
+}

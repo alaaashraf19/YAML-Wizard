@@ -1,0 +1,14 @@
+image: dettmering/hugo-build
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - hugo
+test:
+  except:
+  - master
+  script:
+  - hugo

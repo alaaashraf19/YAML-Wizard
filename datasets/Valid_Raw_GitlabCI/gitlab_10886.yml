@@ -1,0 +1,69 @@
+bundle:
+  artifacts:
+    expire_in: 30 days
+    paths:
+    - bin/any/*
+    - bin/linux-amd64/*
+  dependencies:
+  - compile
+  - graal
+  image: alpine:3.8
+  script:
+  - export MOSC_VERSION=`cat mosc_version.txt`
+  - echo Detected MotorScript Compiler version $MOSC_VERSION
+  - mkdir -p bin/any
+  - mkdir -p bin/linux-amd64
+  - cp target/original-motorscript-compiler-$MOSC_VERSION.jar bin/any/
+  - cp target/motorscript-compiler-$MOSC_VERSION.jar bin/any/
+  - cp motorscript-compiler-$MOSC_VERSION bin/linux-amd64/
+  stage: bundle
+compile:
+  artifacts:
+    expire_in: 30 days
+    paths:
+    - mosc_version.txt
+    - target/original-motorscript-compiler-*.jar
+    - target/motorscript-compiler-*.jar
+  image: maven:3-jdk-8
+  script:
+  - mvn help:evaluate -Dexpression=project.version
+  - export MOSC_VERSION=`mvn help:evaluate -Dexpression=project.version | grep "^[^\[]"`
+  - echo $MOSC_VERSION > mosc_version.txt
+  - echo Detected MotorScript Compiler version $MOSC_VERSION
+  - mvn compile
+  - mvn package
+  stage: build
+graal:
+  artifacts:
+    expire_in: 30 days
+    paths:
+    - motorscript-compiler-*
+  before_script:
+  - yum install -y upx
+  dependencies:
+  - compile
+  image: oracle/graalvm-ce:1.0.0-rc13
+  script:
+  - export MOSC_VERSION=`cat mosc_version.txt`
+  - echo Detected MotorScript Compiler version $MOSC_VERSION
+  - native-image --static -H:IncludeResources="reports/.*\.json$" -H:ReflectionConfigurationFiles=src/main/resources/graal_reflection_config.json
+    -jar target/motorscript-compiler-$MOSC_VERSION.jar
+  - strip motorscript-compiler-$MOSC_VERSION
+  - upx -9 motorscript-compiler-$MOSC_VERSION
+  stage: graal
+pages:
+  artifacts:
+    paths:
+    - public
+  before_script:
+  - pip install mkdocs
+  image: python:3.7
+  script:
+  - mkdocs build --site-dir public
+  - find public -type f -iregex '.*\.\(htm\|html\|txt\|text\|js\|css\)$' -execdir
+    gzip -f --keep {} \;
+  stage: build
+stages:
+- build
+- graal
+- bundle

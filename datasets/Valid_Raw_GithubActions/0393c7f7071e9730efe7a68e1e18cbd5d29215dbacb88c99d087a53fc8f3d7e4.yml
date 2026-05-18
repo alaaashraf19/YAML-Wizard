@@ -1,0 +1,102 @@
+---
+name: CI
+
+on:
+  push:
+  pull_request:
+    branches: [ ng ]
+
+jobs:
+  ci:
+    name: Tests
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        db-engine: ["ci-psql", "ci-mysql"]
+    env:
+        MISE_ENV: ${{ matrix.db-engine }}
+        DATABASE_USER: ralph_ng
+        DATABASE_PASSWORD: ralph_ng
+    services:
+      postgres:
+        image: postgres:14.17
+        env:
+          POSTGRES_USER: ralph_ng
+          POSTGRES_PASSWORD: ralph_ng
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_USER: ralph_ng
+          MYSQL_PASSWORD: ralph_ng
+          MYSQL_DATABASE: ralph_ng
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd "mysqladmin ping --silent"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+
+    steps:
+      - name: Grant test database permissions for MySQL
+        if: matrix.db-engine == 'ci-mysql'
+        run: |
+          mysql -h127.0.0.1 -uroot -proot -e "GRANT ALL PRIVILEGES ON *.* TO 'ralph_ng'@'%' WITH GRANT OPTION;"
+          mysql -h127.0.0.1 -uroot -proot -e "FLUSH PRIVILEGES;"
+
+      - name: Checkout source code
+        uses: actions/checkout@v2
+
+      - name: Unshallow local copy
+        run: git fetch --prune --unshallow
+
+      - name: Install system packages
+        run: |
+          sudo apt-get update
+          sudo apt-get -y --no-install-recommends install libldap2-dev libsasl2-dev libssl-dev
+
+      - name: Install and configure Mise
+        run: |
+          curl https://mise.run | sh
+          echo "$HOME/.local/share/mise/bin" >> $GITHUB_PATH
+          echo "$HOME/.local/share/mise/shims" >> $GITHUB_PATH
+
+      - name: Mise install tools
+        run: |
+          mise install uv ruff
+
+      - name: Check formatting
+        run: mise run checks
+
+      - name: Check missing migrations
+        run: mise run check-missing-migrations
+
+      - name: Test Ralph's test settings
+        run: mise run manage >/dev/null
+        env:
+          DJANGO_SETTINGS_MODULE: ralph.settings.test
+
+      - name: Test Ralph's prod settings
+        run: mise run manage >/dev/null
+        env:
+          DJANGO_SETTINGS_MODULE: ralph.settings.prod
+
+      - name: Test Ralph with coverage
+        run: mise run coverage

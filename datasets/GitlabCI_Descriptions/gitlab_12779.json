@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_12779",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 364,
+  "description": "Create a GitLab CI pipeline using the mwallasch/docker-ruby-node Docker image and caching the node_modules/ directory. Define two stages: test and deploy. In the test stage add a test job that runs npm install, then npm run test:unit, and npm run test:app. In the deploy stage add a production job that only runs on the master branch, runs npm -v, npm install -qs, gem install dpl, and then uses dpl --skip_cleanup --provider=heroku --app=snake-pipeline with the $HEROKU_PRODUCTION_API_KEY to deploy to Heroku.",
+  "tags": [
+    "ruby-node",
+    "npm",
+    "heroku",
+    "dpl",
+    "node-modules-cache",
+    "gitlab-ci"
+  ]
+}

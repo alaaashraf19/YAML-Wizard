@@ -1,0 +1,27 @@
+image: node:8.12.0
+installation_api:
+  script:
+  - cd api
+  - npm install
+  stage: install_api
+installation_app:
+  script:
+  - cd app
+  - npm install
+  stage: install_app
+stages:
+- install_app
+- start_testing_app
+- install_api
+- start_testing_api
+starttest_api:
+  script:
+  - cd api
+  - npm install
+  stage: start_testing_api
+starttest_app:
+  script:
+  - cd app
+  - npm install
+  - npm run build
+  stage: start_testing_app

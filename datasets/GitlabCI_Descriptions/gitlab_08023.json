@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_08023",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 5929,
+  "description": "Create a GitLab CI pipeline with stages verify, build, security, deploy, and trigger, using python:3-alpine for verify and trigger jobs, maven:alpine for build and security jobs, and docker:latest with docker:dind for deploy jobs. In the verify stage add a verify filename job that installs git and file via apk, then runs a Python script defined by PY_SCRIPT=check-filename (export PY_REQUIRE_FILE, pip install if present, python resources/script/$PY_SCRIPT). In the build stage add build config, build eureka, build flash-message, build hystrix-dashboard, and build zuul jobs, each setting SERVICE_NAME accordingly, using the Maven CLI variable to run \"clean install -Drevision=$CI_COMMIT_REF_SLUG -pl services/$SERVICE_NAME -am\", then \"jacoco:report -pl services/$SERVICE_NAME\", then \"cat services/$SERVICE_NAME/target/test-results/coverage/jacoco/index.html\", caching the Maven repository, storing JAR artifacts from services/$SERVICE_NAME/target/*.jar, and extracting coverage with the regex /Total.*?([0-9]{1,3})\\s?%/. In the security stage add a dependency-check job that runs \"$MAVEN_CLI -fn clean install -DskipTests dependency-check:aggregate\" and publishes target/dependency-check-report.html, a sonar preview job that runs the SONAR_CLI_OPTS preview command and publishes the sonar directory, and a sonar report job that runs \"$SONAR_CLI_OPTS -Dsonar.branch=$CI_COMMIT_REF_NAME\", with the first and third jobs triggered only on tags, schedules, master, preprod or version branches, and the preview job on all other branches. In the deploy stage add deploy production (environment production, only on tags), deploy staging (environment staging, only on preprod or version branches), deploy testing (environment testing, only on master), and deploy review (environment review, manual, only on other branches) jobs that run a before_script installing python, pip installing docker-compose, setting APP_ENV, building docker-compose, then logging into the registry and executing \"docker-compose push\", depending on all build jobs. Finally, in the trigger stage add a keep-artifacts job that runs the Python script keep-artifacts on tags and a sonar note job that runs the Python script sonar after the sonar preview job on branch pipelines, both using the same script template.",
+  "tags": [
+    "maven",
+    "docker",
+    "sonar",
+    "dependency-check",
+    "python",
+    "docker-compose",
+    "ci",
+    "java",
+    "gitlab-ci"
+  ]
+}

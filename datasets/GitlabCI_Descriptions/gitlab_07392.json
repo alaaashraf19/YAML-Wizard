@@ -1,0 +1,26 @@
+{
+  "sha": "gitlab_07392",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2212,
+  "description": "Create a GitLab CI pipeline using the starefossen/ruby-node:2-8 Docker image with a postgres:latest service and set POSTGRES_DB, POSTGRES_USER, and POSTGRES_PASSWORD variables. Apply a global before_script that runs \"yarn install\", \"bundle install --path=vendor\", copies the CI database config, runs \"yarn install\" inside spec/dummy, and returns to the project root. Define stages prepare, code-lint, test, and dependencies-check and configure a top‑level cache (key ${CI_COMMIT_REF_SLUG}) that pulls vendor/, node_modules/, and spec/dummy/node_modules/. In the prepare stage add a bundle job that pushes the same cache and simply echoes a message, then in the code-lint stage add es_lint (yarn run lint:js), factory_bot_lint (bundle exec rails db:test:prepare && bundle exec rake app:factory_bot:lint), haml_lint (bundle exec haml-lint app/views), rubocop (bundle exec rubocop) and sass_lint (yarn run lint:sass), all depending on the bundle cache. In the test stage add brakeman (bundle exec brakeman), cucumber (RAILS_ENV=test bundle exec rails db:migrate && bundle exec cucumber), i18n_attributes (bundle exec rails db:test:prepare && bundle exec rails runner lib/runners/generate_i18n_model_attributes.rb && git diff && git diff-index --quiet HEAD) and rspec (bundle exec rails db:test:prepare && bundle exec rspec), each depending on the bundle job, and in the dependencies-check stage add bundle_outdated (rm -rf .bundle && bundle install && bundle outdated --strict), dummy/yarn_outdated (cd spec/dummy && yarn outdated) and yarn_outdated (yarn outdated), all allowed to fail and running their respective commands.",
+  "tags": [
+    "ruby",
+    "node",
+    "rails",
+    "postgres",
+    "rspec",
+    "cucumber",
+    "brakeman",
+    "rubocop",
+    "haml-lint",
+    "factory-bot",
+    "i18n",
+    "yarn",
+    "bundler",
+    "code-lint",
+    "test",
+    "dependencies-check",
+    "ci"
+  ]
+}

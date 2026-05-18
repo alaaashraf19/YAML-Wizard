@@ -1,0 +1,16 @@
+docker-build:
+  after_script:
+  - docker logout $CI_REGISTRY
+  before_script:
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+  image: docker:latest
+  script:
+  - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG .
+  - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+  services:
+  - docker:dind
+  stage: docker-build
+  variables:
+    DOCKER_DRIVER: overlay
+stages:
+- docker-build

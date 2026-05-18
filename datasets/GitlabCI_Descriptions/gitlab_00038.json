@@ -1,0 +1,20 @@
+{
+  "sha": "gitlab_00038",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2901,
+  "description": "Create a GitLab CI pipeline using the ubuntu:bionic Docker image and including the Code-Quality, Dependency-Scanning and License-Scanning templates. Define stages test, promotion, version, backmerge. In the test stage add a test job that runs the npm setup commands (apt-get update -yqq, apt-get install -yqq build-essential curl default-jdk, curl -sL https://deb.nodesource.com/setup_10.x | bash -, apt-get install -yqq nodejs, npm --version, npm install --unsafe-perm=true) then executes \"npm run lint:pkg\" and \"npm run unit\", and stores npm-debug.log as an artifact for 1 month. In the backmerge stage add a backmerge job that runs the git setup commands (apt-get update -yqq, apt-get install -yqq git openssh-client, git --version, git config --global user.email \"${GITLAB_USER_EMAIL}\", git config --global user.name \"${GITLAB_USER_NAME}\", git remote set-url origin --push \"git@${CI_SERVER_HOST}:${CI_PROJECT_PATH}\", git remote -v, eval $(ssh-agent -s), chmod 700 \"${CI_DEPLOY_KEY}\", ssh-add \"${CI_DEPLOY_KEY}\", mkdir -p ~/.ssh, echo -e \"Host ${CI_SERVER_HOST}\\n\\tStrictHostKeyChecking no\" >> ~/.ssh/config, chmod 700 ~/.ssh) then checks out develop, pulls it, merges the current branch without fast‑forward using \"git merge origin/${CI_COMMIT_BRANCH} --no-ff -m \\\"[ci] Backmerge ${CI_COMMIT_BRANCH} -> develop\\\"\", and pushes to develop; it runs only on the master branch when the commit message matches /\\[ci\\]/. In the version stage add a patch job that runs the npm setup then the git setup, then runs \"npm version patch --unsafe-perm=true -m \\\"[ci] Patch version %s\\\"\", pushes the commit with \"git push origin HEAD:${CI_COMMIT_BRANCH}\", pushes tags with \"git push --tags\", sets the npm auth token with \"npm config set //registry.npmjs.org/:_authToken ${NPM_TOKEN}\" and publishes with \"npm publish\"; it runs only on master when the commit message does not contain [ci] and is allowed to fail. In the promotion stage add three manual jobs (promote_major, promote_minor, promote_patch) that each run the npm and git setup, checkout the branch (\"git checkout ${CI_COMMIT_BRANCH}\" and \"git reset --hard ${CI_COMMIT_SHA}\"), bump the version with \"npm version major --unsafe-perm=true -m \\\"Major version %s\\\"\" or \"npm version minor --unsafe-perm=true -m \\\"Minor version %s\\\"\" for the respective jobs, merge master with \"git merge origin/master\", push HEAD to master and push tags, and for major and minor also publish to npm as above; they run only on develop when the commit message does not contain [ci] and must be triggered manually.",
+  "tags": [
+    "ubuntu",
+    "npm",
+    "git",
+    "backmerge",
+    "version",
+    "promotion",
+    "test",
+    "ci",
+    "code-quality",
+    "dependency-scanning",
+    "license-scanning"
+  ]
+}

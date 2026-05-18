@@ -1,0 +1,24 @@
+{
+  "sha": "gitlab_15948",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2083,
+  "description": "Create a GitLab CI pipeline with stages lint, tests, dist, and deploy and define a PASS_VERSION variable set to 1.7.3. In the lint stage add a bash job using the koalaman/shellcheck-alpine image that runs shellcheck --shell=bash audit.bash, a prospector job using python:latest that installs prospector[with_everything] requests zxcvbn via pip and runs make lint (allow_failure true), and include the SAST job from the Security/SAST template. In the tests stage add python 3.10, 3.9, 3.8, 3.7, and 3.6 jobs each using the matching python:<version> image, with before_script apt-get update -q && apt-get install -y make pass python3-pip grep (python 3.10 also installs wget), then script pip3 install green coverage requests zxcvbn, make tests, make, make install, cd ~, and pass audit --help; the python 3.10 job also stores htmlcov/ as an artifact for 2 days and reports coverage with the regex \"\\d+%\\s*$\". In the dist stage add archlinux, debian, fedora, and ubuntu jobs using their respective images, each with before_script installing make, pass, python pip and related tools (debian also downloads and extracts password-store-$PASS_VERSION.tar.xz and runs make --directory=password-store-$PASS_VERSION install); all distribution jobs run the shared script that installs green coverage requests zxcvbn, runs make tests, make, make install, cd ~, and pass audit --help, and they are limited to pipelines triggered by tags or the web. In the deploy stage add a pages job that moves htmlcov/ to public/, publishes the public/ directory as a pages artifact with a 1‑day expiry, and runs only on the master branch.",
+  "tags": [
+    "python",
+    "lint",
+    "shellcheck",
+    "prospector",
+    "sast",
+    "tests",
+    "distribution",
+    "archlinux",
+    "debian",
+    "fedora",
+    "ubuntu",
+    "pages",
+    "coverage",
+    "password-store",
+    "make"
+  ]
+}

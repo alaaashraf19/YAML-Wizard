@@ -1,0 +1,15 @@
+{
+  "sha": "5f64a914c7a449b9c1a8e64f4cbaf84aafeb1a561e694f977b0a72eb67eae46a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2799,
+  "description": "Create a GitHub Actions workflow named Custom compiler build that allows dispatching a build with custom inputs for the Docker image, version, and build command. The workflow uses a self-hosted Linux job to clean the directory, check out the code, and then build the specified image and version using the provided command. It then translates the Docker output into GitHub variables and copies the output to S3 if the build is successful.",
+  "tags": [
+    "docker",
+    "custom",
+    "compiler",
+    "build",
+    "s3",
+    "github-actions"
+  ]
+}

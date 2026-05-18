@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_16028",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 636,
+  "description": "Create a GitLab CI pipeline that sets the CARGO_HOME variable to $CI_PROJECT_DIR/cargo and defines three jobs named test:beta, test:stable, and test:unstable, all running in the default test stage. The test:beta job uses the scorpil/rust:beta Docker image, caches the target/ and cargo/ directories, allows failure, and executes `rustc --version && cargo --version` followed by `cargo test --verbose --jobs 1 --release`. The test:stable job uses scorpil/rust:stable, caches the same paths, does not allow failure, and runs the identical two commands. The test:unstable job uses scorpil/rust:nightly, caches the same paths, allows failure, and runs the same two commands. Ensure the cache paths are shared across jobs and no artifacts are produced.",
+  "tags": [
+    "rust",
+    "cargo",
+    "test",
+    "beta",
+    "stable",
+    "nightly",
+    "cache"
+  ]
+}

@@ -1,0 +1,95 @@
+build:
+  artifacts:
+    paths:
+    - app/build/outputs/
+  before_script:
+  - chmod +x CI/android_sdk.sh
+  - ./CI/android_sdk.sh
+  - export ANDROID_HOME=$PWD/android-sdk-linux
+  - chmod +x ./gradlew
+  image: openjdk:8-jdk
+  script:
+  - ./gradlew assembleDebug
+  stage: deploy
+  tags:
+  - linux
+  - docker
+deploy_coba:
+  before_script:
+  - cd API
+  only:
+  - coba_coba
+  script:
+  - gem install dpl
+  - dpl --provider=heroku --app=exhibisi-cobacoba --api-key=68b12c2b-cfbc-4478-b943-f26552fb907e
+  stage: deploy
+pages:
+  artifacts:
+    expire_in: 30 days
+    paths:
+    - public
+  script:
+  - mv coverage/ public/
+  stage: deploy
+production:
+  before_script:
+  - cd API
+  only:
+  - master
+  script:
+  - gem install dpl
+  - dpl --provider=heroku --app=exhibisi-prod --api-key=68b12c2b-cfbc-4478-b943-f26552fb907e
+  stage: deploy
+stages:
+- test
+- deploy
+staging:
+  before_script:
+  - cd API
+  only:
+  - sit_uat
+  script:
+  - gem install dpl
+  - dpl --provider=heroku --app=exhibisi-staging --api-key=68b12c2b-cfbc-4478-b943-f26552fb907e
+  stage: deploy
+unitTest:API:
+  artifacts:
+    paths:
+    - coverage/
+  before_script:
+  - ruby -v
+  - apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
+  - echo "deb http://repo.mongodb.org/apt/debian wheezy/mongodb-org/3.0 main" | tee
+    /etc/apt/sources.list.d/mongodb-org-3.0.list
+  - apt-get update -qq && apt-get install -y mongodb-org
+  - service mongod start
+  - gem install bundler --no-ri --no-rdoc
+  - bundle install --gemfile=API/Gemfile --path vendor
+  cache:
+    paths:
+    - API/vendor/
+  image: ruby:2.3.0
+  script:
+  - RAILS_ENV=test rspec API/spec
+  - RAILS_ENV=test rubocop API
+  stage: test
+unitTest:app:
+  artifacts:
+    paths:
+    - app/build/reports/
+  before_script:
+  - chmod +x CI/android_sdk.sh
+  - ./CI/android_sdk.sh
+  - export ANDROID_HOME=$PWD/android-sdk-linux
+  - chmod +x ./gradlew
+  coverage: /Total.*?([0-9]{1,3})%/
+  image: openjdk:8-jdk
+  script:
+  - ./gradlew jacocoTestReport
+  - cat app/build/reports/jacoco/jacocoTestDebugUnitTestReport/html/index.html
+  - ./gradlew lint
+  stage: test
+variables:
+  ANDROID_BUILD_TOOLS: 27.0.3
+  ANDROID_SDK_TOOLS: 24.4.1
+  ANDROID_TARGET_SDK: '26'

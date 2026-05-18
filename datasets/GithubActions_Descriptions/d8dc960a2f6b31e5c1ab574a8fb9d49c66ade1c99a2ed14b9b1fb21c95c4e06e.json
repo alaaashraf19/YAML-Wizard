@@ -1,0 +1,14 @@
+{
+  "sha": "d8dc960a2f6b31e5c1ab574a8fb9d49c66ade1c99a2ed14b9b1fb21c95c4e06e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1702,
+  "description": "Create a GitHub Actions workflow named Test against downstream projects that can be triggered manually. The workflow should have two jobs, starlette and httpcore, each running on ubuntu-latest with a matrix strategy across Python 3.8 to 3.12. For each job, check out a specific repository, set up the corresponding Python version, install dependencies, run tests, and enforce coverage.",
+  "tags": [
+    "python",
+    "tests",
+    "coverage",
+    "downstream-projects",
+    "github-actions"
+  ]
+}

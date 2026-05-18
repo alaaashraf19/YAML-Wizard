@@ -1,0 +1,73 @@
+.if-monthly-release-final-rc:
+  if: ($CI_PIPELINE_SOURCE =~ /^(pipeline|web|api)$/) && ($MONTHLY_RELEASE_PIPELINE
+    =~ /^(final_rc|true)$/)
+.monthly-release-final-rc-base:
+  extends: .common-job-setup
+  rules:
+  - if: ($CI_PIPELINE_SOURCE =~ /^(pipeline|web|api)$/) && ($MONTHLY_RELEASE_PIPELINE
+      =~ /^(final_rc|true)$/)
+  stage: monthly_release:final_rc
+monthly_release_final_rc:start:
+  extends: .common-job-setup
+  rules:
+  - if: ($CI_PIPELINE_SOURCE =~ /^(pipeline|web|api)$/) && ($MONTHLY_RELEASE_PIPELINE
+      =~ /^(final_rc|true)$/)
+  script:
+  - bundle exec rake monthly:final_rc:start
+  stage: monthly_release:final_rc:start
+  when: manual
+monthly_release_final_rc:tag:
+  artifacts:
+    reports:
+      dotenv: release_candidate.env
+  extends: .monthly-release-final-rc-base
+  needs:
+  - monthly_release_final_rc:verify_stable_branch
+  - monthly_release_final_rc:update_branch_permission
+  script:
+  - source scripts/setup_ssh.sh
+  - source scripts/setup_git.sh
+  - bundle exec rake 'monthly:final_rc:tag'
+monthly_release_final_rc:update_branch_permission:
+  extends: .monthly-release-final-rc-base
+  needs:
+  - monthly_release_final_rc:start
+  script:
+  - bundle exec rake 'monthly:final_rc:update_branch_permissions'
+monthly_release_final_rc:verify_ce:
+  extends: .monthly-release-final-rc-base
+  needs:
+  - monthly_release_final_rc:tag
+  script:
+  - bundle exec rake 'monthly:final_rc:verify_ce'
+monthly_release_final_rc:verify_pre_deploy:
+  extends: .monthly-release-final-rc-base
+  needs:
+  - monthly_release_final_rc:tag
+  rules:
+  - if: ($CI_PIPELINE_SOURCE =~ /^(pipeline|web|api)$/) && ($MONTHLY_RELEASE_PIPELINE
+      =~ /^(final_rc|true)$/)
+    start_in: 120 minutes
+    when: delayed
+  script:
+  - echo "Verifying pre deploy for RC - $RC_NUMBER"
+  - bundle exec rake 'monthly:final_rc:verify_pre_deployment'
+  timeout: 2h
+monthly_release_final_rc:verify_rc_pipeline:
+  extends: .monthly-release-final-rc-base
+  needs:
+  - monthly_release_final_rc:tag
+  rules:
+  - if: ($CI_PIPELINE_SOURCE =~ /^(pipeline|web|api)$/) && ($MONTHLY_RELEASE_PIPELINE
+      =~ /^(final_rc|true)$/)
+    start_in: 120 minutes
+    when: delayed
+  script:
+  - echo "Verifying pipeline for RC - $RC_NUMBER"
+  - bundle exec rake "monthly:final_rc:verify_rc_pipeline"
+monthly_release_final_rc:verify_stable_branch:
+  extends: .monthly-release-final-rc-base
+  needs:
+  - monthly_release_final_rc:start
+  script:
+  - bundle exec rake monthly:final_rc:verify_stable_branch

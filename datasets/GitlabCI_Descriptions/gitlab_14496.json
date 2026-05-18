@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_14496",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 235,
+  "description": "Create a GitLab CI pipeline that includes the local file /.gitlab-ci.d/container-template.yml which defines a .container_job_template. Add two jobs, amd64-centos9-container and amd64-fedora-container, both extending .container_job_template. Set the variable NAME to centos9 for the first job and to fedora for the second. Both jobs inherit the stage, Docker image, script, caches, artifacts and any rules defined in the template, and run according to those defaults.",
+  "tags": [
+    "container",
+    "centos9",
+    "fedora",
+    "template",
+    "extends"
+  ]
+}

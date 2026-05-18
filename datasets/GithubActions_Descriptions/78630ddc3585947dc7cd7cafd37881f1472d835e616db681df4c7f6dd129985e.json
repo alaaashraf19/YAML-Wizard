@@ -1,0 +1,13 @@
+{
+  "sha": "78630ddc3585947dc7cd7cafd37881f1472d835e616db681df4c7f6dd129985e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2721,
+  "description": "Create a GitHub Actions workflow named bazel that runs on push to main, pull requests to main, and merge groups to main. The workflow has two ubuntu-latest jobs, build_direct and build_indirect, which check out the repository with submodules, mount a bazel cache, install bazelisk, and then run various bazel commands to build and test the project. The workflow also installs Flex and Bison and uses a concurrency group to cancel in-progress runs on non-main branches.",
+  "tags": [
+    "bazel",
+    "ubuntu",
+    "cache",
+    "tests"
+  ]
+}

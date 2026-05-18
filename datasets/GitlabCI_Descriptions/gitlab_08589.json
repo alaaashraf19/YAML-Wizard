@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_08589",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1250,
+  "description": "Create a GitLab CI pipeline that runs a ruby-docutils-spec job using the ruby:$RUBY_VERSION Docker image with a parallel matrix over DOCUTILS_VERSION (0.21.2) and RUBY_VERSION (3.0, 3.1, 3.2, 3.3, 3.4). The job inherits a before_script that updates apt, installs python3, pip, venv, git, build-essential, removes the system python, creates and activates a temporary virtual environment, installs docutils==$DOCUTILS_VERSION, and runs bundle install with parallel jobs equal to the CPU count. It caches the vendor/ruby directory per job, then executes a script that echoes a test message, copies Gemfile, removes any posix-spawn lines via sed, runs bundle install and bundle exec rake test, restores the original Gemfile, runs bundle install again, and runs bundle exec rake test a second time. The job is triggered only for merge requests, pushes to the default branch, or tag pushes, and runs on runners tagged gitlab-org. The pipeline also includes the standard SAST, Dependency Scanning, and Secret Detection templates.",
+  "tags": [
+    "ruby",
+    "docutils",
+    "bundler",
+    "parallel-matrix",
+    "dependency-scanning",
+    "secret-detection",
+    "sast",
+    "gitlab-ci"
+  ]
+}

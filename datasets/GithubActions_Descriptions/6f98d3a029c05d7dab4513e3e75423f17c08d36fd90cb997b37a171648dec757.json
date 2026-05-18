@@ -1,0 +1,14 @@
+{
+  "sha": "6f98d3a029c05d7dab4513e3e75423f17c08d36fd90cb997b37a171648dec757",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2756,
+  "description": "Create a GitHub Actions workflow for integration tests with Home Assistant. The workflow should trigger on pull requests to main and dev branches, on push to these branches, and on a daily schedule at 2 AM UTC. It should initialize test versions, then for each version and with/without integration, set up .NET 5, build the code, download and set up Home Assistant, and run integration tests. If tests fail, it should collect Home Assistant logs and send a Discord notification on scheduled runs.",
+  "tags": [
+    "home-assistant",
+    "integration-tests",
+    "dotnet",
+    "schedule",
+    "discord"
+  ]
+}

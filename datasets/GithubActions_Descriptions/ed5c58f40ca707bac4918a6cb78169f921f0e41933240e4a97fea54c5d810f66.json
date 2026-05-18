@@ -1,0 +1,15 @@
+{
+  "sha": "ed5c58f40ca707bac4918a6cb78169f921f0e41933240e4a97fea54c5d810f66",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2246,
+  "description": "Create a GitHub Actions workflow named AMR-Wind-Docs that runs on every push to main and on pull requests to main. Use a single ubuntu-24.04 job that clones the repository with submodules, sets up Python 3.12, installs dependencies including graphviz and sphinx, installs Doxygen, configures and builds documentation with cmake, reports warnings and errors, and deploys to gh-pages on push to main.",
+  "tags": [
+    "python",
+    "docs",
+    "sphinx",
+    "doxygen",
+    "ubuntu",
+    "github-pages"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_09156",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 765,
+  "description": "Create a GitLab CI pipeline using the docker:1.10.3 image with a docker:dind service and set DOCKER_DRIVER to overlay. Define two stages: test and release, and add a before_script that exports TEST_IMAGE_NAME=registry.gitlab.com/$CI_PROJECT_PATH:${CI_COMMIT_REF_NAME/\\//-}-$CI_COMMIT_SHA and IMAGE_NAME=registry.gitlab.com/$CI_PROJECT_PATH:latest. In the test stage add a build_image job that runs docker build -t $TEST_IMAGE_NAME ., docker login -e gitlab-ci@gitlab.com -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com, and docker push $TEST_IMAGE_NAME. In the release stage add a release_image job that only runs on the master branch, runs docker login -e gitlab-ci@gitlab.com -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com, docker pull $TEST_IMAGE_NAME, docker tag $TEST_IMAGE_NAME $IMAGE_NAME, and docker push $IMAGE_NAME.",
+  "tags": [
+    "docker",
+    "dind",
+    "ci-cd",
+    "docker-build",
+    "release",
+    "gitlab-ci"
+  ]
+}

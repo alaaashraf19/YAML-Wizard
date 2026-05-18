@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_19228",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 570,
+  "description": "Create a GitLab CI pipeline using the golang:1.12.5 Docker image. Define two stages: build and test, and a before_script that creates the GOPATH src directory, creates an artifacts directory, installs dep via go get, copies the project files into the GOPATH path, and changes to that directory. In the build stage add a build job that runs dep ensure then go build -o ${CI_PROJECT_DIR}/artifacts/gerish and publishes the artifacts directory as a job artifact. In the test stage add a test job that runs dep ensure, then go test ./... -coverprofile cover.out, and finally go tool cover -func cover.out to generate a coverage report.",
+  "tags": [
+    "golang",
+    "dep",
+    "go-build",
+    "go-test",
+    "coverage",
+    "gitlab-ci"
+  ]
+}

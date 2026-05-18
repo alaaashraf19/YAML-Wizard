@@ -1,0 +1,17 @@
+{
+  "sha": "ca2cdf6777f3a57341ffb5e3f67c41413ba83bb93e83864466619b2d841fc3fa",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2526,
+  "description": "Create a comprehensive GitHub Actions workflow named CI that runs on pushes to specific branches and tags, on pull requests, manually, and on a daily schedule. The workflow has multiple jobs with dependencies: core, tests, extras, and conda. The core and tests jobs use a reusable workflow with tox, while extras also uses tox but with different settings. The conda job runs on ubuntu-latest, sets up miniconda, installs ablog, and runs tests with pytest and make.",
+  "tags": [
+    "python",
+    "tox",
+    "codecov",
+    "conda",
+    "ubuntu",
+    "tests",
+    "ci",
+    "schedule"
+  ]
+}

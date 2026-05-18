@@ -1,0 +1,14 @@
+{
+  "sha": "924eb7a52de69eabee135a0da0ba06d3dab6d98178e8538002474dd6aba3449d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1701,
+  "description": "Create a GitHub Actions workflow named Tests on Linux that runs on push, pull request, and workflow dispatch events. Use an ubuntu-latest job with a matrix strategy to test multiple Python versions (3.6, 3.7, 3.8, 3.9). The job should check out the repository, set up Python, upgrade pip, install dependencies, and then install various packages (Z3, Capstone, Unicorn, LIEF) and compile Triton. Finally, run unittests with make check.",
+  "tags": [
+    "linux",
+    "python",
+    "tests",
+    "ubuntu",
+    "ci"
+  ]
+}

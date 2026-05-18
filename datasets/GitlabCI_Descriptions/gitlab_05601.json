@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_05601",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2169,
+  "description": "Create a GitLab CI pipeline with stages build, test, and docs, and define variables and artifacts as needed. In the build stage add a build-conda-cmake job using the mambaorg/micromamba image that runs micromamba install -y gcc gxx sysroot_linux-64 make pkg-config -c conda-forge, micromamba install -y -n base -f environment-minimal.yml, cmake -S . -B build -DCMAKE_CXX_FLAGS=\\\" -fprofile-arcs -ftest-coverage\\\" -DCMAKE_INSTALL_PREFIX=INSTALL, cmake --build build -- -j8, cmake --install build, and publishes the INSTALL/ directory as an artifact. Also in build stage add a build-conda-pip job with the same image that runs micromamba install -y gcc gxx sysroot_linux-64 make pkg-config scikit-build -c conda-forge, micromamba install -y -n base -f environment-minimal.yml, and pip install .; and a build-minimal job using ubuntu:22.04 with DEBIAN_FRONTEND=noninteractive that runs apt-get update && apt-get install --yes gcc g++ cmake libcfitsio-dev libhealpix-cxx-dev libgsl-dev pkg-config, then the same cmake commands as above and publishes INSTALL/ as an artifact. In the docs stage add a pages job using mambaorg/micromamba that runs only on the master branch, installs git gcc gxx sysroot_linux-64 make pkg-config scikit-build via micromamba, installs the conda environment from environment.yml, configures git safe.directory, pip installs ., sets CLUMPY_DATA, installs documentation tools (doxygen, tectonic, graphviz, git, easydev, sphinx, sphinx_rtd_theme, sphinx-multiversion) via micromamba, builds the docs with make clean, make html, make latex, runs tectonic on clumpy_doc.tex, moves the generated html to public/, copies dummy_redirection.html to public/index.html, and stores the public/ directory as an artifact. Finally, in the test stage add a test-minimal job that depends on build-minimal, uses ubuntu:22.04, runs apt-get update && apt-get install --yes gcc g++ cmake libcfitsio-dev libhealpix-cxx-dev libgsl-dev pkg-config, sets PATH to include INSTALL/bin, sets CLUMPY_DATA, and executes clumpy_tests -ALL.",
+  "tags": [
+    "conda",
+    "micromamba",
+    "cmake",
+    "ubuntu",
+    "pages",
+    "docs",
+    "test",
+    "build"
+  ]
+}

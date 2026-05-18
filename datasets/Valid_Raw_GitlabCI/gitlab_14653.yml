@@ -1,0 +1,58 @@
+before_script:
+- ruby -v
+- apt-get update -qq
+- apt-get install curl
+- curl -sL https://deb.nodesource.com/setup_7.x | bash -
+- apt-get install -qq nodejs
+- npm set progress=false
+- npm install --silent
+- gem install bundler  --no-ri --no-rdoc
+- bundle install -j $(nproc) --path vendor
+- rails db:migrate
+- rails db:seed
+cache:
+  paths:
+  - vendor/ruby
+deploy_to_sit:
+  environment: development
+  only:
+  - develop
+  script:
+  - gem install dpl
+  - dpl --provider=heroku --app=jadvalee-sit --api-key=$HEROKU_API_KEY
+  - 'curl -n -X POST https://api.heroku.com/apps/jadvalee-sit/ps -H "Accept: application/json"
+    -H "Authorization: Bearer ${HEROKU_API_KEY}" -d "command=bundle exec rails db:migrate"'
+  type: deploy
+deploy_to_staging:
+  environment: development
+  only:
+  - develop
+  script:
+  - gem install dpl
+  - dpl --provider=heroku --app=jadvalee-staging --api-key=$HEROKU_API_KEY
+  - 'curl -n -X POST https://api.heroku.com/apps/jadvalee-staging/ps -H "Accept: application/json"
+    -H "Authorization: Bearer ${HEROKU_API_KEY}" -d "command=bundle exec rails db:migrate"'
+  type: deploy
+image: ruby:2.3.1
+production:
+  environment: production
+  only:
+  - tags
+  script:
+  - gem install dpl
+  - dpl --provider=heroku --app=jadvalee --api-key=$HEROKU_API_KEY
+  - 'curl -n -X POST https://api.heroku.com/apps/jadvalee/ps -H "Accept: application/json"
+    -H "Authorization: Bearer ${HEROKU_API_KEY}" -d "command=bundle exec rails db:migrate"'
+  type: deploy
+services:
+- postgres:latest
+test:
+  script:
+  - apt-get install -y lcov
+  - npm run coverage:test
+  stage: test
+variables:
+  DATABASE_URL: postgresql://postgres:postgres@postgres:5432/$POSTGRES_DB
+  POSTGRES_DB: nice_marmot
+  POSTGRES_PASSWORD: ''
+  POSTGRES_USER: runner

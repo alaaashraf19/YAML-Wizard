@@ -1,0 +1,13 @@
+before_script:
+- npm install
+image: node:latest
+run_tests:
+  script:
+  - npm test
+  stage: test
+services:
+- mongo:latest
+stages:
+- test
+variables:
+  MONGO_HOST: mongo

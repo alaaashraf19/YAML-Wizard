@@ -1,0 +1,14 @@
+{
+  "sha": "93741de3e32f616a417e43ef7e7bfd0d1df5b019b9bcf7eefcda3cca9266b7dc",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1339,
+  "description": "Create a GitHub Actions workflow named Check Requirements that can be called by other workflows with a required python-version input. The workflow checks if the requirements.txt file in the ansible_collections/paloaltonetworks/panos directory needs to be updated. It uses an ubuntu-latest job to check out the repository, install Python with the specified version, install Poetry, and then use Poetry to install dependencies and generate the requirements.txt file. Finally, it checks for changes in the requirements.txt file and exits with a non-zero status if it's outdated.",
+  "tags": [
+    "python",
+    "poetry",
+    "requirements",
+    "ansible",
+    "github-actions"
+  ]
+}

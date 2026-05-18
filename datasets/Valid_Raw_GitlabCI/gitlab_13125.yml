@@ -1,0 +1,34 @@
+deploy_production:
+  environment:
+    name: production
+    url: http://192.168.56.101
+  only:
+  - master
+  script:
+  - which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )
+  - eval $(ssh-agent -s)
+  - ssh-add <(echo "$SSH_PRIVATE_KEY")
+  - mkdir -p ~/.ssh
+  - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+  - ~/.composer/vendor/bin/envoy run deploy
+  stage: deploy
+  when: manual
+image: registry.gitlab.com/newroseji/laravel:latest
+services:
+- mysql:5.7
+stages:
+- test
+- deploy
+unit_test:
+  script:
+  - cp .env.example .env
+  - composer install
+  - php artisan key:generate
+  - php artisan migrate
+  - vendor/bin/phpunit
+  stage: test
+variables:
+  DB_HOST: mysql
+  DB_USERNAME: root
+  MYSQL_DATABASE: homestead
+  MYSQL_ROOT_PASSWORD: secret

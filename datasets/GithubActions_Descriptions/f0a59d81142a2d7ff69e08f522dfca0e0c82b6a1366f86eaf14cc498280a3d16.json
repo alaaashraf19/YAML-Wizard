@@ -1,0 +1,14 @@
+{
+  "sha": "f0a59d81142a2d7ff69e08f522dfca0e0c82b6a1366f86eaf14cc498280a3d16",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 598,
+  "description": "Create a GitHub Actions workflow named macOS-ssl that runs on every push to the master branch and on pull requests to the master branch. Use a job that inherits from a macOS build workflow, but with extra CMake flags to enable OpenSSL support, install OpenSSL via Homebrew, and disable certain tests that try to connect to a local ClickHouse server.",
+  "tags": [
+    "macos",
+    "openssl",
+    "cmake",
+    "gtest",
+    "clickhouse"
+  ]
+}

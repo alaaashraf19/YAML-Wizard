@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_18860",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2121,
+  "description": "Create a GitLab CI pipeline with stages install, build, test, and deploy using the node:10-alpine Docker image globally and the atlassianlabs/docker-node-jdk-chrome-firefox image for Chrome/Firefox tests, with a global before_script that prints CPU and memory info, Node and npm versions, and lists directory contents, and an after_script that prints the working directory and lists directories. In the install stage add an install job that runs `yarn install` and `yarn e2e:install`, stores the node_modules/ directory as a 2‑hour artifact, retries twice, and is excluded for tag pipelines. In the build stage add a build job that depends on install, runs `yarn build`, `yarn build:demo:gitlab`, and `yarn copy:stats`, archives lib/ and public/ as 2‑hour artifacts, retries twice, and skips tags. In the test stage add a unit job that depends on build and install and runs `yarn unit:ci` and `yarn copy:coverage`, and a chrome job that uses the Chrome/Firefox Docker image, creates a symlink for google‑chrome, prints its version, and runs `npm run e2e:chrome:gitlab`, both with retry 2 and tag exclusion. In the deploy stage add a pages job that runs only on the master branch of wallzero/jsplumb-react, depends on chrome, install, and unit, echoes a deployment message, publishes lib/ and public/ as artifacts, and a publish job that also runs only on that branch, depends on the same jobs, and executes `yarn release:gitlab` and `yarn release:npm`, both with retry 2 and tag exclusion.",
+  "tags": [
+    "node",
+    "yarn",
+    "chrome-firefox",
+    "gitlab-pages",
+    "e2e",
+    "ci"
+  ]
+}

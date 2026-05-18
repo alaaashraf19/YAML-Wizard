@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_11200",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 4578,
+  "description": "Create a GitLab CI pipeline using the docker:latest image with a docker:dind service and set DOCKER_DRIVER=overlay2, DOCKER_HOST=tcp://docker:2375, DOCKER_IMAGE=$CI_REGISTRY_IMAGE/commit:$CI_COMMIT_SHA, defining the stages lint, build, check, and deploy. Add a lint job called hadolint that runs on the hadolint/hadolint:latest-debian image and executes the single script command `hadolint Dockerfile`, triggering only when Dockerfile or .hadolint.yaml change. Add a build job that first runs a before_script to fetch a JWT token, checks if an image for the current commit already exists, logs into the GitLab registry with `echo \"$CI_REGISTRY_PASSWORD\" | docker login -u \"$CI_REGISTRY_USER\" --password-stdin \"$CI_REGISTRY\"`, then builds and pushes the image with `docker build --pull -t \"$DOCKER_IMAGE\" .` and `docker push \"$DOCKER_IMAGE\"`, running only on Dockerfile changes. Add a check job named container_scanning that logs into the registry, pulls the built image, starts Clair DB and scanner containers, installs wget, downloads and makes executable the clair-scanner binary, waits for the scanner service to become reachable, and finally runs `./clair-scanner -c http://docker:6060 --ip $(hostname -i) -r gl-container-scanning-report.json -l clair.log ${DOCKER_IMAGE} || true`, storing the generated gl-container-scanning-report.json as a container_scanning artifact, and runs on Dockerfile changes except tag refs. Add four deploy jobs: hub-latest and hub-tag inherit a before_script that logs into the registry and Docker Hub, pulls the image, and an after_script that logs out; hub-latest tags the image as `$CI_PROJECT_PATH:latest` and pushes it to Docker Hub on the master branch, while hub-tag tags it as `$CI_PROJECT_PATH:$CI_COMMIT_TAG` and pushes on tag refs. Similarly, registry-latest and registry-tag inherit a before_script that logs into the registry and pulls the image; registry-latest tags and pushes the image as `$CI_REGISTRY_IMAGE:latest` on master, and registry-tag tags and pushes as `$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG` on tags. All deploy jobs depend on the build job and run in the deploy stage.",
+  "tags": [
+    "docker",
+    "dind",
+    "hadolint",
+    "lint",
+    "build",
+    "container-scanning",
+    "clair",
+    "docker-hub",
+    "gitlab-registry",
+    "deploy"
+  ]
+}

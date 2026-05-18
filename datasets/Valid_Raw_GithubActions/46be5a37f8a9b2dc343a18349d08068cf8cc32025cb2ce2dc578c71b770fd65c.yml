@@ -1,0 +1,32 @@
+# SPDX-License-Identifier: MIT-0
+
+---
+name: ci
+on:
+  workflow_call:
+
+jobs:
+  ubuntu_noble_bazel_download:
+    name: ubuntu 24.04 noble
+    runs-on: ubuntu-latest
+    container: ubuntu:noble
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: setup
+        working-directory: drake_bazel_download
+        run: |
+          args=()
+          if [[ '${{ github.event.inputs.linux_noble_package_tar }}' != '' ]]; then
+            args+=(--package-url ${{ github.event.inputs.linux_noble_package_tar }})
+          fi
+          .github/ubuntu_setup "${args[@]}"
+        shell: bash
+      - name: install_bazelisk
+        working-directory: drake_bazel_download
+        run: setup/install_bazelisk
+        shell: bash
+      - name: bazel_download build and test
+        working-directory: drake_bazel_download
+        run: .github/ci_build_test
+        shell: bash

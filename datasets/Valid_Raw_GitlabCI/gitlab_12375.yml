@@ -1,0 +1,10 @@
+pages:
+  artifacts:
+    paths:
+    - public
+  image: python:3.8
+  only:
+  - master
+  script:
+  - ./misc/make_redirects.sh
+  stage: deploy

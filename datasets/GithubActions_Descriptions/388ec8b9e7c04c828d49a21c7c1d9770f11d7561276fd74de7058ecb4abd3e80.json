@@ -1,0 +1,15 @@
+{
+  "sha": "388ec8b9e7c04c828d49a21c7c1d9770f11d7561276fd74de7058ecb4abd3e80",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1199,
+  "description": "Create a GitHub Actions workflow named Universal test that can be triggered manually. The workflow should run on a matrix of operating systems, currently only macos-14. It checks out the repository, runs vcpkg with a specific Git commit and JSON configuration, prints the vcpkg output, runs cmake with a specified CMakeLists.txt, and then runs tests with ctest in the Debug configuration.",
+  "tags": [
+    "universal",
+    "test",
+    "vcpkg",
+    "cmake",
+    "ctest",
+    "macos"
+  ]
+}

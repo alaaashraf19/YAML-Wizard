@@ -1,0 +1,17 @@
+{
+  "sha": "4cd8a221705fd1408abc69e835f2dd0a3ce3cf4d52139d13109b362084b6b12b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3360,
+  "description": "Create a GitHub Actions workflow named Build & Test that runs on push to the master branch and on a scheduled cron job. Use a matrix strategy to run a job on macos-11, ubuntu-20.04, and windows-2022 environments. For each environment, install necessary tools, configure the build system, checkout the repository, build and test the project with Meson and Ninja, and upload the release artifacts and coverage reports.",
+  "tags": [
+    "meson",
+    "ninja",
+    "python",
+    "xcode",
+    "msvc",
+    "coverage",
+    "release",
+    "multi-os"
+  ]
+}

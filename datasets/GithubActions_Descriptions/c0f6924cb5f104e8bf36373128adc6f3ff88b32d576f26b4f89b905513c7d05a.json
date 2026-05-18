@@ -1,0 +1,17 @@
+{
+  "sha": "c0f6924cb5f104e8bf36373128adc6f3ff88b32d576f26b4f89b905513c7d05a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 6489,
+  "description": "Create a GitHub Actions workflow named Build game that runs on every push and pull request. Use three jobs: build-msvc on windows-latest, build-gcc on ubuntu-latest, and build-appleclang on macos-latest. Each job checks out the repository, sets up sccache and cache, installs dependencies, builds the project with CMake and Ninja, runs tests with CTest, and uploads the build to itch.io if a BUTLER_API_KEY secret is available.",
+  "tags": [
+    "cmake",
+    "ninja",
+    "sccache",
+    "conan",
+    "itchio",
+    "multi-os",
+    "ci",
+    "tests"
+  ]
+}

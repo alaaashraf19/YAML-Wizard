@@ -1,0 +1,19 @@
+cache:
+  paths:
+  - node_modules
+image: node:10
+install:
+  script:
+  - yarn install
+  stage: setup
+stages:
+- setup
+- test
+test_build:
+  script:
+  - yarn build
+  stage: test
+tslint:
+  script:
+  - yarn lint --no-fix
+  stage: test

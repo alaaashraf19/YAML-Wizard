@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_03650",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 687,
+  "description": "Create a GitLab CI pipeline using the registry.gitlab.com/archbuild/docker:latest Docker image. Include a before_script that defines an array of country codes (US CA SE FR GR DE CZ DK), selects one at random, echoes it, downloads the Arch Linux mirrorlist for that country via curl, uncomments the lines, and runs pacman -Syy to refresh package databases. Define a single stage named package and a job called package that runs in that stage, changes ownership of the workspace to the builder user, imports the GPG key 14F26682D0916CDD81E37B6D61B7B526D98F0353 as builder, builds the package with makepkg -s --noconfirm as builder, and lists the resulting files. The job should retry up to two times and publish any *.xz files as artifacts named after the project, expiring after two days.",
+  "tags": [
+    "archlinux",
+    "makepkg",
+    "pacman",
+    "gpg",
+    "docker",
+    "archbuild"
+  ]
+}

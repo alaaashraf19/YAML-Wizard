@@ -1,0 +1,14 @@
+{
+  "sha": "90ab1ad6211665fa1c61dc012ca3e8b585509b5b609fb0f131b0e66581588130",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3580,
+  "description": "Create a GitHub Actions workflow named Code Style that runs on push and pull requests to the master branch, excluding certain paths. The workflow consists of multiple jobs: isort, flake8, black, docformatter, and packaging, each running on ubuntu-latest with Python 3.10. Each job checks out the code, sets up Python, installs dependencies, and runs a specific style check or packaging command.",
+  "tags": [
+    "python",
+    "style",
+    "linting",
+    "packaging",
+    "tests"
+  ]
+}

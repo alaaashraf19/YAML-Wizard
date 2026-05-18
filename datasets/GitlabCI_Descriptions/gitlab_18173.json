@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_18173",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 10253,
+  "description": "Create a GitLab CI pipeline using the buildstream/buildstream-fedora:latest Docker image with three stages: build, deploy, and policy. In the build stage add a bst-build-minimal-system job that runs a before_script cloning BuildStream and bst-external at $BST_SHA and $BST_EXTERNAL_SHA, installs them with pip3, optionally writes artifact cache config, then executes: export BUILD_ENVRT_CONSTR_ID=\"${CI_PIPELINE_ID}_build\"; construct JSON evidence and POST it via curl; scripts/bst-build-or-show systems/minimal-system-content.bst; construct artefact evidence with another curl call; the job uses a cache key bst for ${XDG_CACHE_HOME}/buildstream/sources/, has no dependencies, and is excluded from master and tag pipelines. In the deploy stage add a bst-minimal-system-deploy job that depends on the build job, reuses the same before_script and cache, then runs: export TEST_MINIMAL_HOST_ENVRT_CONSTR_ID=\"${CI_PIPELINE_ID}_test_minimal_distro_host\"; export TEST_MINIMAL_QEMU_ENVRT_CONSTR_ID=\"${CI_PIPELINE_ID}_test_minimal_distro_qemu\"; post environment‑construction evidence via curl; scripts/bst-build-or-show systems/minimal-system-image-x86_64.bst; bst checkout systems/minimal-system-image-x86_64.bst ./minimal-system; dnf install -y qemu-system-x86 bc; capture qemu version and post a second environment evidence; run an ABI check block, execute scripts/test-minimal-system, compute latency variance and overall result, post artefact‑deployment and change‑validation evidence with curl, store validation IDs in $CHANGE_VALIDATIONS_PATH, and publish ./minimal-system/sda.img and the validation files as artifacts for one week, also excluding master and tags. Finally, add a policy job in the policy stage that iterates over files in $CHANGE_VALIDATIONS_PATH, sources each, sends a policy‑compliance request via curl to the GITECT endpoint, fails if the response is not true, installs pyyaml, fetches git notes for environment‑construction, artefact‑construction, artefact‑deployment and change‑validation, and converts the collected YAML notes to JSON; it runs on all branches except master and tags and uses the shared variables and cache.",
+  "tags": [
+    "buildstream",
+    "bst",
+    "minimal-system",
+    "policy",
+    "evidence",
+    "gitect",
+    "qemu",
+    "abi-check",
+    "cache"
+  ]
+}

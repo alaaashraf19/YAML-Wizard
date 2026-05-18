@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_16250",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 796,
+  "description": "Create a GitLab CI pipeline using the fedora:latest Docker image and set GIT_SUBMODULE_STRATEGY to recursive. Define a single deploy stage with a pages job that runs on the master branch only. The pages job executes the following shell commands in order: dnf --quiet --assumeyes install flatpak flatpak-builder cmake make automake gcc gcc-c++; flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo; flatpak install -y flathub org.kde.Sdk//5.15 org.kde.Platform//5.15; curl https://raw.githubusercontent.com/flathub/eu.scarpetta.PDFMixTool/master/eu.scarpetta.PDFMixTool.yaml > tmp.yaml; head -n -3 tmp.yaml > eu.scarpetta.PDFMixTool.yaml; echo \"      - {type: dir, path: .}\" >> eu.scarpetta.PDFMixTool.yaml; flatpak-builder --repo=public --force-clean build-dir eu.scarpetta.PDFMixTool.yaml; flatpak build-update-repo public. It then publishes the public/ directory as a GitLab Pages artifact.",
+  "tags": [
+    "fedora",
+    "flatpak",
+    "gitlab-pages",
+    "pdfmixtool",
+    "dnf"
+  ]
+}

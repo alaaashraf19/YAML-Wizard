@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_19507",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 404,
+  "description": "Create a GitLab CI pipeline that uses the gcc Docker image and defines a single stage called build. Add a job named build in the build stage that runs a before_script installing libseccomp2, libseccomp-dev and wget via apt, prints the kernel version with uname -r, downloads libseccomp‑2.3.3.tar.gz from GitHub, extracts it, configures and installs it with ./configure and make && make install, then returns to the previous directory. In the main script, change into the src directory and compile the project with cd src && make. Configure the job to store the generated bin_waf file as a build artifact. No caches, services, or conditional rules are defined.",
+  "tags": [
+    "gcc",
+    "make",
+    "libseccomp",
+    "artifact",
+    "build"
+  ]
+}

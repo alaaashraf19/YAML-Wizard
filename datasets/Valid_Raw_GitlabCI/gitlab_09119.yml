@@ -1,0 +1,13 @@
+include:
+- template: SAST.gitlab-ci.yml
+- https://gitlab.com/gitlab-org/security-products/ci-templates/raw/master/includes-dev/qa-sast.yml
+sast:
+  artifacts:
+    paths:
+    - gl-sast-report.json
+stages:
+- test
+- qa
+variables:
+  DS_DISABLE_DIND: 'false'
+  SAST_DISABLE_DIND: 'false'

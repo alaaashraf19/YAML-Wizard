@@ -1,0 +1,15 @@
+prepare:
+  image: registry.gitlab.com/bennyp/polymer-test:latest
+  script:
+  - yarn install
+  - bower install --allow-root
+  - xvfb-run polymer test
+  - polymer build
+  - cd functions
+  - yarn install
+  - cd ..
+  - firebase deploy -m "Pipeline $CI_PIPELINE_ID, build $CI_BUILD_ID" -p "build/production"
+    --non-interactive
+  stage: doitall
+stages:
+- doitall

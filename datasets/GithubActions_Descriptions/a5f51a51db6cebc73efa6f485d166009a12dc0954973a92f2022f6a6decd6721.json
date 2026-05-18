@@ -1,0 +1,17 @@
+{
+  "sha": "a5f51a51db6cebc73efa6f485d166009a12dc0954973a92f2022f6a6decd6721",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1896,
+  "description": "Create a GitHub Actions workflow named Run tests that runs on every push to master and on pull requests to master. Use a single ubuntu-latest job with a matrix strategy to test multiple Python versions (2.7, 3.6, 3.7, 3.8, 3.9) and PyPy versions. For each version, check out the code, set up Python, install dependencies with pip, run tests with tox, and perform linting and code coverage tasks.",
+  "tags": [
+    "python",
+    "tests",
+    "tox",
+    "codecov",
+    "pypy",
+    "ubuntu",
+    "linting",
+    "coverage"
+  ]
+}

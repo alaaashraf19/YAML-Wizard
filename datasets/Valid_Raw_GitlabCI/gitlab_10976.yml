@@ -1,0 +1,10 @@
+image: scorpil/rust:nightly
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - cargo doc --no-deps
+  - mv target/doc public

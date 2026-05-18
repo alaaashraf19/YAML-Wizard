@@ -1,0 +1,121 @@
+name: Build and Push
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+  workflow_dispatch:
+
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    name: Build Marauder Binaries
+    
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+      
+      - name: Install TFT_eSPI
+        uses: actions/checkout@v2
+        with:
+          repository: justcallmekoko/TFT_eSPI
+          ref: master
+          path: CustomTFT_eSPI
+          
+      - name: Install LinkedList
+        uses: actions/checkout@v2
+        with:
+          repository: ivanseidel/LinkedList
+          ref: master
+          path: CustomLinkedList
+          
+      - name: Install lv_arduino
+        uses: actions/checkout@v2
+        with:
+          repository: lvgl/lv_arduino
+          ref: master
+          path: Customlv_arduino
+          
+      - name: Install JPEGDecoder
+        uses: actions/checkout@v2
+        with:
+          repository: Bodmer/JPEGDecoder
+          ref: master
+          path: CustomJPEGDecoder
+          
+      - name: Install NimBLE-Arduino
+        uses: actions/checkout@v2
+        with:
+          repository: h2zero/NimBLE-Arduino
+          ref: master
+          path: CustomNimBLE-Arduino
+          
+      - name: Install Adafruit_NeoPixel
+        uses: actions/checkout@v2
+        with:
+          repository: adafruit/Adafruit_NeoPixel
+          ref: master
+          path: CustomAdafruit_NeoPixel
+          
+      - name: Install ArduinoJson
+        uses: actions/checkout@v2
+        with:
+          repository: bblanchon/ArduinoJson
+          ref: v6.18.2
+          path: CustomArduinoJson
+          
+      - name: Install SwitchLib
+        uses: actions/checkout@v2
+        with:
+          repository: justcallmekoko/SwitchLib
+          ref: main
+          path: CustomSwitchLib
+          
+      - name: Configure TFT_eSPI
+        run: |
+          rm -f CustomTFT_eSPI/User_Setup_Select.h
+          cp User_Setup_Select.h CustomTFT_eSPI/
+          cp User_Setup_marauder_mini.h CustomTFT_eSPI/
+          cp User_Setup_og_marauder.h CustomTFT_eSPI/
+          
+      - name: Install ESP32 Boards and Compile MarauderOTA
+        uses: ArminJo/arduino-test-compile@v3.2.0
+        with:
+          sketch-names: MarauderOTA.ino
+          arduino-board-fqbn: esp32:esp32:esp32s2
+          platform-url: https://github.com/espressif/arduino-esp32/releases/download/2.0.0-rc1/package_esp32_dev_index.json
+          
+      - name: Modify platform.txt
+        run: |
+          echo "Chicken"
+          for i in $(find /home/runner/.arduino15/packages/esp32/hardware/esp32/ -name "platform.txt"); do
+            sed -i 's/compiler.c.elf.libs.esp32s2=/compiler.c.elf.libs.esp32s2=-zmuldefs /' "$i"
+            sed -i 's/compiler.c.elf.libs.esp32=/compiler.c.elf.libs.esp32=-zmuldefs /' "$i"
+            cat "$i" | grep compiler.c.elf.libs.esp32s2
+            cat "$i" | grep compiler.c.elf.libs.esp32
+          done
+                    
+      # Setup Test compile for Arduino
+      - name: Build Marauder for Flipper Zero WiFi Dev Board
+        uses: ArminJo/arduino-test-compile@v3.2.0
+        with:
+          sketch-names: esp32_marauder.ino
+          arduino-board-fqbn: esp32:esp32:esp32s2:PartitionScheme=min_spiffs,FlashSize=16M,PSRAM=enabled
+          #platform-url: https://github.com/espressif/arduino-esp32/releases/download/2.0.0-rc1/package_esp32_dev_index.json
+          extra-arduino-cli-args: "--warnings none"
+          #extra-arduino-lib-install-args: "-zmuldefs"
+
+      - name: Display finished bins
+        run: |
+          find . -name "*.bin"
+          
+      - name: 'Upload Artifact'
+        uses: actions/upload-artifact@v3
+        with:
+          name: esp32_marauder.ino.bin
+          path: ./esp32_marauder/build/esp32.esp32.esp32s2/esp32_marauder.ino.bin
+          retention-days: 5

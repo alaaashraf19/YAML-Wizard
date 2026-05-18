@@ -1,0 +1,15 @@
+{
+  "sha": "00048b5df8a02ce25ef7f8b43f6f460c70c0e031b545d097a398e4d9426e3bd9",
+  "provider": "groq",
+  "model": "llama-3.3-70b-versatile",
+  "yaml_bytes": 1877,
+  "description": "Create a GitHub Actions workflow named Ubuntu 16.04 that triggers on push and pull requests to the master branch. Use a single job that runs on ubuntu-16.04, checks out the code, installs build dependencies including Qt 5.14, builds Laigter using qmake and make, and creates an AppImage using linuxdeployqt. If the push is a tag, release the AppImage using ghr with xz compression and the GITHUB_TOKEN from secrets.",
+  "tags": [
+    "ubuntu",
+    "qt",
+    "appimage",
+    "ghr",
+    "c++",
+    "linux"
+  ]
+}

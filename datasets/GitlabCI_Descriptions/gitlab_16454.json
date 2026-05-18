@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_16454",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 600,
+  "description": "Create a GitLab CI pipeline with two test jobs using the flycheck/emacs-cask Docker images. In the testing-26.1 job (stage test) run emacs --version, cask version, cask install --dev, cask update, ./orgversion.sh, cask build, cask clean-elc, and cask exec ert-runner --debug. In the testing-26.1-rc1 job (stage test) set variable UNDERCOVER_FORCE='true', run after_script apt-get update && apt-get -y install curl and ./coverage.sh, then execute the same script steps as the first job using the flycheck/emacs-cask:26.1-rc1 image, with no caches, artifacts, or rules defined.",
+  "tags": [
+    "emacs",
+    "cask",
+    "ert",
+    "flycheck",
+    "testing"
+  ]
+}

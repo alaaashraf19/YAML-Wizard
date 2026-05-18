@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_04735",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 778,
+  "description": "Create a GitLab CI pipeline that uses the python:3.8-slim Docker image as the default and defines the variables PIP_DISABLE_PIP_VERSION_CHECK='on' and POETRY_VIRTUALENVS_CREATE='false'. Add a test_coverage job in the default test stage that runs `pip install coverage poetry`, `poetry install`, `coverage run --source='.' manage.py test --noinput -v 3` and `coverage report --skip-covered | grep TOTAL`. Add a test_js job in the test stage that uses the image registry.gitlab.com/dasch8/angular-ci:latest and executes `cd js`, `yarn --frozen-lockfile`, `yarn lint` and `yarn test --progress false --watch=false --browsers=ChromiumCI`. Add three Python version matrix jobs—test_py310, test_py38, and test_py39—each in the test stage with images python:3.10-slim, python:3.8-slim, and python:3.9-slim respectively, both running `pip install tox poetry` followed by `tox -c tox.py310.ini`, `tox -c tox.py38.ini` or `tox -c tox.py39.ini` as appropriate. No caches, artifacts, or special rules are defined, so all jobs run on every pipeline execution.",
+  "tags": [
+    "python",
+    "coverage",
+    "poetry",
+    "angular-ci",
+    "yarn",
+    "tox",
+    "python-3.8",
+    "python-3.9",
+    "python-3.10",
+    "gitlab-ci"
+  ]
+}

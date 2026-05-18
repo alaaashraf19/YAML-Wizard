@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_00677",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 136,
+  "description": "Create a GitLab CI pipeline that uses the maven:3-jdk-8 Docker image and defines a single stage called package. Add a job named job1 in the package stage that executes the exact command mvn clean package -pl common,engine,endpoint and runs only on_success. No caches, artifacts, services, or special deployment targets are required.",
+  "tags": [
+    "maven",
+    "java",
+    "package",
+    "gitlab-ci"
+  ]
+}

@@ -1,0 +1,14 @@
+image: node:16
+pages:
+  artifacts:
+    paths:
+    - public
+  cache:
+    paths:
+    - node_modules/
+  rules:
+  - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+  script:
+  - npm update
+  - npm install -g brunch
+  - brunch build --production

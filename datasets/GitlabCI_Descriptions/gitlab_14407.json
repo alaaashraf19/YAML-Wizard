@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_14407",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 3615,
+  "description": "Create a GitLab CI pipeline with stages test, deploy and .post using openjdk:11 for Ant jobs, gradle:jdk11 for Gradle jobs, and ghcr.io/graalvm/graalvm-ce:ol7-java11-21.0.0 for native‑image jobs. Define a hidden .ant-job template that runs apt‑get update and installs ant and ivy, runs on the test stage except when $WEB_JOB is set and not \"test\", and is extended by the php-pdftk, test, and php‑related jobs which install PHP tools, clone the php‑pdftk repo, run composer install, execute pdftk --version and phpunit. Define a .gradle-job template that runs only on tags, executes \"gradle wrapper --gradle-version=$GRADLE_VERSION\", \"./gradlew shadowJar\", and \"java -jar build/libs/pdftk-all.jar --version\" on the deploy stage; the gradle job extends it, uploads the jar to the package registry and stores it as an artifact, while gradle-7.3 overrides GRADLE_VERSION to 7.3, gradle-web runs the same script on the test stage only for web pipelines with $WEB_JOB=\"gradle\" and keeps the jar for one month, and spotless runs \"gradle spotlessCheck\" on test unless $WEB_JOB is set. Add nativeimage jobs using the GraalVM image: nativeimage runs only on tags, installs native‑image, downloads the specified Gradle version, builds the native binary with \"./gradle-$GRADLE_VERSION/bin/gradle nativeImage\", verifies it, uploads it, and saves it as an artifact; nativeimage-web runs the same on the test stage for web pipelines with $WEB_JOB=\"nativeimage\" and retains the binary for one month. Finally, add a pages job that depends on test, moves the coverage directory into public/, publishes public/ as a Pages artifact only on the master branch, and a release job using the release‑cli image that creates a GitLab release on tag pushes and attaches the jar and native binary assets.",
+  "tags": [
+    "ant",
+    "gradle",
+    "graalvm",
+    "native-image",
+    "php",
+    "release-cli",
+    "pages",
+    "coverage",
+    "spotless"
+  ]
+}

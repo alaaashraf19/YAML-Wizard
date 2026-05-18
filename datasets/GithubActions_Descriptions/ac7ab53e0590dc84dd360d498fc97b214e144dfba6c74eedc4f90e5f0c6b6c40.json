@@ -1,0 +1,12 @@
+{
+  "sha": "ac7ab53e0590dc84dd360d498fc97b214e144dfba6c74eedc4f90e5f0c6b6c40",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 319,
+  "description": "Create a GitHub Actions workflow named Mainline that runs on every pull request to the master branch. Configure the workflow to have write permission to packages. The workflow should consist of three jobs: prepare, lint, and test. The prepare job should be run first, and then lint and test jobs should run in parallel, both depending on the prepare job.",
+  "tags": [
+    "reusable-workflows",
+    "packages",
+    "pull-requests"
+  ]
+}

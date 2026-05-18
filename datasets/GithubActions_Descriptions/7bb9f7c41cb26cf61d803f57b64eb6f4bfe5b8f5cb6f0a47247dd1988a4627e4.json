@@ -1,0 +1,20 @@
+{
+  "sha": "7bb9f7c41cb26cf61d803f57b64eb6f4bfe5b8f5cb6f0a47247dd1988a4627e4",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 12840,
+  "description": "Create a GitHub Actions workflow named Indigo CI that builds and tests Indigo on multiple platforms. The workflow triggers on push to master and tags starting with 'indigo-', on pull requests, and on workflow dispatch. It builds native libraries and Python, Java, and .NET wrappers on Linux, Windows, and macOS, and then tests them on each platform. The workflow also runs additional tests on bingo-elastic and publishes the results to PyPI if the workflow is triggered by a tag.",
+  "tags": [
+    "indigo",
+    "ci",
+    "cd",
+    "python",
+    "java",
+    "dotnet",
+    "linux",
+    "windows",
+    "macos",
+    "testing",
+    "pypi"
+  ]
+}

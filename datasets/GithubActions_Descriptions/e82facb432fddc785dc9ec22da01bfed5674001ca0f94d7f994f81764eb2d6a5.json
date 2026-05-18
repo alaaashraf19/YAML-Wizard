@@ -1,0 +1,15 @@
+{
+  "sha": "e82facb432fddc785dc9ec22da01bfed5674001ca0f94d7f994f81764eb2d6a5",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1510,
+  "description": "Create a scheduled GitHub Actions workflow to build a container image for behave testing every Monday at 2am UTC, with an option for manual execution. The workflow checks out the repository, logs in to ghcr.io, allows binding to privileged ports, builds the obs-server:latest image using a container-build.sh script, displays information about the built image, and pushes it to ghcr.io if the repository is openSUSE/osc.",
+  "tags": [
+    "container",
+    "image",
+    "behave",
+    "testing",
+    "scheduled",
+    "ghcr"
+  ]
+}

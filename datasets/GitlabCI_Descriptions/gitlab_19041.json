@@ -1,0 +1,22 @@
+{
+  "sha": "gitlab_19041",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 9596,
+  "description": "Create a GitLab CI pipeline with stages tools, tests, pre-deploy, and deploy, using the provided variables and Docker images. In the tests stage add an acceptance test job (node image) that runs composer update, optional prepare script, extracts MYSQL_IP and WOOTESTS_IP from /etc/hosts, calls a wpdesk_init.php endpoint, clones a test repo, runs npm install, installs grunt‑cli, updates webdriver‑manager, creates a screenshot directory, and executes grunt chrome-${CI_PROJECT_NAME}; add unit test lastest (phpunit‑woocommerce:0-0) that runs composer update and phpunit --configuration phpunit-unit.xml --no-coverage, and unit test lastest coverage (same image) that runs phpunit with --coverage-text; add multiple integration test jobs (current woocommerce, lastest, lastest coverage, php‑7 wc‑3, php5‑5, php5‑6, php7 wc‑2, php7‑1 wc‑1) all using various wpdesknet/phpunit-woocommerce images, sharing the same script that updates composer, runs optional prepare, and executes phpunit with appropriate configuration and coverage flags, each with mysql:5.6 (and selenium/standalone‑chrome where needed), some marked allow_failure and manual. In the pre‑deploy stage add a build to deploy job (phpunit‑woocommerce:4-0) that echoes version, sets version script, prepares a release directory, copies project files, runs composer install --no-dev, removes development files, zips the release, and stores it as an artifact; also add an apigen docs job (apigen image) that echoes version, lists files, runs /app/vendor/bin/apigen generate and a PHP hook script, publishing the docs/ folder as an artifact. In the deploy stage add deploy to demo, deploy to repository, and deploy to shop jobs (amazon‑svn‑deploy image) that run only on tags, retry twice, execute respective deploy scripts, and post a Slack webhook message; also add a pages job that moves generated docs to public, publishes the public/ folder, and sends a Slack notification. Finally, in the tools stage add churn metrics (phpunit‑woocommerce:0-0) and phpmetric metrics (same image) jobs that install the respective Composer packages, run the analysis tools, and publish their outputs as artifacts, both allowed to fail and triggered manually.",
+  "tags": [
+    "phpunit",
+    "wordpress",
+    "docker",
+    "selenium",
+    "grunt",
+    "apigen",
+    "slack",
+    "deployment",
+    "acceptance-test",
+    "integration-test",
+    "unit-test",
+    "metrics",
+    "pages"
+  ]
+}

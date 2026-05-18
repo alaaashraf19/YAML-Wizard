@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_05819",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 3162,
+  "description": "Create a GitLab CI pipeline with three stages: test, deploy, and docs, using the continuumio/miniconda:latest image for conda jobs, docker:git with docker:dind for Docker publishing, and costrouc/lammps:patch_11May2018-debian-mpi-none for Python testing, PyPI upload, and documentation. Define variables DOCKER_USERNAME, DOCKER_PASSWORD, ANACONDA_USERNAME, ANACONDA_TOKEN, TWINE_USERNAME, TWINE_PASSWORD, and TWINE_REPOSITORY_URL for credential handling. In the test stage add a test job that runs `apt update; apt install python3.5 python3-pip -y`, `pip3 install cython numpy mpi4py`, `pip3 install .[all]`, and `python3.5 setup.py test --addopts \"--cov=lammps\"`. In the deploy stage add a hidden template job .deploy_lammps-cython_conda_template that runs `apt update; apt install build-essential -y`, `conda create -n venv python=$PYTHON_VERSION conda-build anaconda-client -y`, `source activate venv`, and `conda build -c costrouc -c conda-forge --user $ANACONDA_USERNAME --token $ANACONDA_TOKEN .conda/lammps-cython`, triggered only on version tags, and create deploy_lammps-cython_conda_py35 and deploy_lammps-cython_conda_py36 jobs that inherit this template with PYTHON_VERSION set to 3.5 and 3.6; also add deploy_lammps_conda that builds the lammps conda package with python 3.6, deploy_pypi that installs Python 3.5, pip3, upgrades cython numpy mpi4py twine setuptools, installs the package, builds extensions, creates a source distribution and uploads it with twine, and deploy_docker that logs into Docker Hub and the GitLab registry, builds the image costrouc/lammps-cython with tag $CI_COMMIT_TAG, tags it as latest and also tags the GitLab registry image, then pushes all tags. Finally, in the docs stage add a pages job that runs `apt update; apt install python3.5 python3-pip -y`, `pip3 install cython numpy mpi4py sphinx sphinx_rtd_theme`, `pip3 install -e .`, creates a public directory, builds the Sphinx documentation with `make apidocs` and `make html`, copies the generated HTML to public, and publishes the public artifact only on the master branch.",
+  "tags": [
+    "conda",
+    "docker",
+    "dind",
+    "pypi",
+    "sphinx",
+    "gitlab-pages",
+    "test",
+    "deploy",
+    "docs",
+    "lammps"
+  ]
+}

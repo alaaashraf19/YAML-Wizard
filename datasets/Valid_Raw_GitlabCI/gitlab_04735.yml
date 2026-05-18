@@ -1,0 +1,32 @@
+image: python:3.8-slim
+test_coverage:
+  script:
+  - pip install coverage poetry
+  - poetry install
+  - coverage run --source='.' manage.py test --noinput -v 3
+  - coverage report --skip-covered | grep TOTAL
+test_js:
+  image: registry.gitlab.com/dasch8/angular-ci:latest
+  script:
+  - cd js
+  - yarn --frozen-lockfile
+  - yarn lint
+  - yarn test --progress false --watch=false --browsers=ChromiumCI
+test_py310:
+  image: python:3.10-slim
+  script:
+  - pip install tox poetry
+  - tox -c tox.py310.ini
+test_py38:
+  image: python:3.8-slim
+  script:
+  - pip install tox poetry
+  - tox -c tox.py38.ini
+test_py39:
+  image: python:3.9-slim
+  script:
+  - pip install tox poetry
+  - tox -c tox.py39.ini
+variables:
+  PIP_DISABLE_PIP_VERSION_CHECK: 'on'
+  POETRY_VIRTUALENVS_CREATE: 'false'

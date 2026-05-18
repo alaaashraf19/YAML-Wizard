@@ -1,0 +1,83 @@
+.run_tox:
+  script: &id001
+  - apt-get update -qq
+  - apt-get install -y -qq tree
+  - pip install tox
+  - pip install -r requirements/setup.txt
+  - tox
+docs:
+  artifacts:
+    paths:
+    - docs/_build/html
+  image: python:latest
+  script: *id001
+  stage: test
+  tags:
+  - docker
+  variables:
+    TOXENV: docs
+lint:
+  allow_failure: true
+  image: python:latest
+  script: *id001
+  stage: test
+  tags:
+  - docker
+  variables:
+    TOXENV: lint
+pages:
+  artifacts:
+    paths:
+    - public
+  dependencies:
+  - docs
+  only:
+  - /v([0-9]+)\.([0-9]+)\.([0-9]+)/
+  script:
+  - mv docs/_build/html public
+  stage: deploy
+py34:
+  image: python:3.4
+  script: *id001
+  stage: test
+  tags:
+  - docker
+  variables:
+    TOXENV: py34
+py35:
+  image: python:3.5
+  script: *id001
+  stage: test
+  tags:
+  - docker
+  variables:
+    TOXENV: py35
+py36:
+  image: python:3.6
+  script: *id001
+  stage: test
+  tags:
+  - docker
+  variables:
+    TOXENV: py36
+pypi:
+  image: python:latest
+  only:
+  - /v([0-9]+)\.([0-9]+)\.([0-9]+)/
+  script:
+  - pip install -r requirements/dev.txt
+  - make release
+  stage: deploy
+  tags:
+  - docker
+pypy3:
+  image: pypy:3
+  script: *id001
+  stage: test
+  tags:
+  - docker
+  variables:
+    TOXENV: pypy3
+stages:
+- test
+- deploy

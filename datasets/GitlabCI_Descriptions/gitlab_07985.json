@@ -1,0 +1,23 @@
+{
+  "sha": "gitlab_07985",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2293,
+  "description": "Create a GitLab CI pipeline with build and deploy stages. In the build stage define two jobs, webapp and webapp:ga, both using the node:6 image, running a before_script that silently installs npm packages and copies config files, and producing a dist artifact; webapp runs `npm run build`, while webapp:ga first inserts the GA_TRACKING variable into src/App.vue with `sed -i \"s#^\\(.*mounted.*function.*$\\)#\\1\\n${GA_TRACKING}#\" ./src/App.vue` then runs `npm run build`. In the deploy stage add an AWS Stack job that uses alpine:3.7, runs only on master, installs python and awscli, sets THE_ENVIRONMENT and THE_STACK_NAME variables, deploys a CloudFormation stack with `aws cloudformation deploy --stack-name ${THE_STACK_NAME} --template-file devops/deploy/AWS/CloudFormation/stack.yaml --no-fail-on-empty-changeset --tags billing-project=live-dot-ganttlab-dot-org`, enables termination protection, syncs the dist folder to an S3 bucket with `aws s3 sync dist/ \"s3://${THE_S3_BUCKET}\" --delete`, and invalidates the CloudFront distribution with `aws cloudfront create-invalidation --distribution-id ${CLOUDFRONT_DISTRIBUTION_ID} --paths /index.html`. Also add a Docker Hub Image job that uses the docker:git image with the docker:dind service, runs only on master, logs in to Docker Hub using DOCKER_HUB_USER and DOCKER_HUB_PASSWORD, builds the Docker image with `docker build -f devops/deploy/DockerHub/Dockerfile -t \"ganttlab/ganttlab-live:latest\" .` and pushes it to Docker Hub. The AWS Stack job depends on webapp:ga, the Docker Hub Image job depends on webapp, and all jobs are restricted to the master branch.",
+  "tags": [
+    "node",
+    "npm",
+    "build",
+    "aws",
+    "cloudformation",
+    "s3",
+    "cloudfront",
+    "docker",
+    "dockerhub",
+    "dind",
+    "alpine",
+    "deployment",
+    "ga-tracking",
+    "master-branch"
+  ]
+}

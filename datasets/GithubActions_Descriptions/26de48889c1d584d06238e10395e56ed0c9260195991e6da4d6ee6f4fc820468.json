@@ -1,0 +1,14 @@
+{
+  "sha": "26de48889c1d584d06238e10395e56ed0c9260195991e6da4d6ee6f4fc820468",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1750,
+  "description": "Create a GitHub Actions workflow named container-image that runs on push to main, on pull requests to main, on merge groups to main, and on a scheduled cron job every 4 hours. The workflow should cancel any in-progress runs for the same pull request or branch. For the p4lang/p4c repository, use an ubuntu-latest job to recursively check out the code, determine a Docker image tag based on the branch or tag, set up Docker Buildx, login to DockerHub if not a pull request, and build and push the Docker image to the registry with the determined tag.",
+  "tags": [
+    "docker",
+    "container",
+    "github-actions",
+    "cron",
+    "p4lang"
+  ]
+}

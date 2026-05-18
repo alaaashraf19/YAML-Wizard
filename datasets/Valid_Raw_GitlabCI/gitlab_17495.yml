@@ -1,0 +1,15 @@
+before_script:
+- bundle install --path vendor
+cache:
+  paths:
+  - vendor/
+image: ruby:3.1
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - bundle exec jekyll build -d public/
+  stage: deploy

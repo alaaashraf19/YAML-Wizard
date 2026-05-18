@@ -1,0 +1,14 @@
+{
+  "sha": "1933dc86446dbbd380d3fa4d6574ff682750d5bf4b2eb018493816d7d8ca6bf6",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1333,
+  "description": "Create a GitHub Actions workflow named Marketplace - GCP that runs on release events. The workflow has two jobs: validate and publish. The validate job checks out the repository and uses Packer to validate a GCP template. The publish job depends on validate, checks out the repository, injects slug variables, extracts a service account, initializes and builds a GCP image with Packer.",
+  "tags": [
+    "gcp",
+    "packer",
+    "marketplace",
+    "release",
+    "ubuntu"
+  ]
+}

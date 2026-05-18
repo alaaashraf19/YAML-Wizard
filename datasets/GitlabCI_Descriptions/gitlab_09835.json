@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_09835",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 608,
+  "description": "Create a GitLab CI pipeline using the unitedclassifiedsapps/gitlab-ci-android-fastlane Docker image, set the variables ANDROID_BUILD_TOOLS=25.0.2, ANDROID_COMPILE_SDK=26, ANDROID_SDK_TOOLS=27.0.1, and add a before_script that exports GRADLE_USER_HOME=$(pwd)/.gradle and makes ./gradlew executable. Define the stages build, test, deploy, and prod and cache the .m2/ and .gradle/ directories. In the build stage add a build job that runs ./gradlew assembleDebug and publishes the app/build/outputs/ directory as an artifact. In the test stage add a unitTests job that runs ./gradlew test. In the deploy stage add a fabricBeta job that runs fastlane beta to upload the app to Firebase App Distribution. In the prod stage add a manual playstoreBeta job that runs fastlane playstore_beta to publish the app to the Google Play Store.",
+  "tags": [
+    "android",
+    "gradle",
+    "fastlane",
+    "firebase",
+    "playstore",
+    "docker-image"
+  ]
+}

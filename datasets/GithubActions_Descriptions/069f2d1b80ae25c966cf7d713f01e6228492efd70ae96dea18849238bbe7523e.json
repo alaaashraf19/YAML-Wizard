@@ -1,0 +1,19 @@
+{
+  "sha": "069f2d1b80ae25c966cf7d713f01e6228492efd70ae96dea18849238bbe7523e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5827,
+  "description": "Create a GitHub Actions workflow named compile and test that runs on push, pull request, and workflow dispatch events. The workflow checks if a job should be skipped using fkirc/skip-duplicate-actions and then runs multiple jobs on different environments (ubuntu-2004, ubuntu-2204, archlinux-gcc, archlinux-clang-clazy, archlinux-clang-tidy, archlinux-without-optional, fedora34, opensuse-tumbleweed, neon-qt6) with various steps including checking out code, configuring, building, and testing.",
+  "tags": [
+    "cmake",
+    "ctest",
+    "ubuntu",
+    "archlinux",
+    "fedora",
+    "opensuse",
+    "clang",
+    "gcc",
+    "qt6",
+    "workflow-dispatch"
+  ]
+}

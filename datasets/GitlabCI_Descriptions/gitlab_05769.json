@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_05769",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2186,
+  "description": "Create a GitLab CI pipeline using the debian:stable Docker image and define a single build stage with three jobs: clang++, clang++-latest libc++, and g++. The clang++ job (excluded for the gitlab-org project) runs apt-get update and installs clang, cmake, make, libboost-timer-dev, libboost-serialization-dev, libblas-dev, libfftw3-dev, liblapack-dev and pkg-config, then creates a build directory, prints clang++ --version, configures CMake with -DCMAKE_BUILD_TYPE=Debug and -D_GLIBCXX_DEBUG=1, builds with \"cmake --build . --parallel 2\" falling back to \"--parallel 1 --verbose\" if needed, and finally runs \"ctest -j 2 --output-on-failure\". The clang++-latest libc++ job (also excluded for gitlab-org, marked interruptible and dependent on clang++) installs ca-certificates, clang, cmake, make, libboost-timer-dev, libboost-serialization-dev, libblas-dev, libc++-dev, libc++abi-dev, libfftw3-dev, liblapack-dev, pkg-config, tar and wget, then creates a build directory, prints clang++ --version, configures CMake with -DCMAKE_BUILD_TYPE=Debug, -stdlib=libc++, -DBOOST_NO_CXX98_FUNCTION_BASE, -D_LIBCPP_ENABLE_CXX17_REMOVED_AUTO_PTR, and -D_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_DEBUG, builds with the same parallel fallback logic, and runs ctest as above. The g++ job (non‑interruptible) installs ca-certificates, cmake, g++, make, the same Boost, BLAS, LAPACK, FFTW and pkg-config packages, prints g++ --version, creates a build directory, configures CMake with -DCMAKE_BUILD_TYPE=Debug and -D_GLIBCXX_DEBUG=1, builds with the same parallel fallback, and runs ctest. Set global variables CODECOV_TOKEN, GIT_DEPTH, GIT_SUBMODULE_STRATEGY, NVIDIA_DISABLE_REQUIRE, RT_VERSION and SONAR_USER_HOME, and configure workflow rules to trigger on tags, the default branch, and merge‑request events with auto‑cancel interruptible on new commits.",
+  "tags": [
+    "c++",
+    "clang",
+    "gcc",
+    "cmake",
+    "debian",
+    "build"
+  ]
+}

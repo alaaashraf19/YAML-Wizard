@@ -1,0 +1,9 @@
+image: dockerscripts/bookdown
+pages:
+  artifacts:
+    paths:
+    - public
+  rules:
+  - if: $CI_COMMIT_BRANCH == "master"
+  script:
+  - bookdown/build.sh

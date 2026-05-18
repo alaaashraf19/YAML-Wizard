@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_16017",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1393,
+  "description": "Create a GitLab CI pipeline using the pandoc/extra Docker image (with empty entrypoint) and a before_script that updates tlmgr, installs latexmk and related TeX packages, copies Tex Gyre and Roboto OTF fonts, refreshes the font cache, and installs make, curl, tar, py3-pygments, git and zip via apk. Define three stages: build, test, and deploy. In the build stage add a template-zips job that runs `make templates` and publishes the resulting `templates/*.zip` files as artifacts, and an installable-zip job that runs `make texlive-vub.zip` and stores `texlive-vub.zip` as an artifact. In the test stage add four jobs—compile_article_pdflatex (`latexmk -pdf tests/test.tex`), compile_article_xetex (`latexmk -pdf -xelatex tests/test.tex`), compile_beamer_pdflatex (`latexmk -shell-escape -pdf tests/test_beamer.tex`), and compile_beamer_xetex (`latexmk -shell-escape -pdf -xelatex tests/test_beamer.tex`)—each executing the specified latexmk command. In the deploy stage add a push-to-overleaf job that depends on template-zips, runs only on the master branch, configures git user name and email from the $OVERLEAF_USERNAME variable, and executes `make publish` to push the generated templates to Overleaf.",
+  "tags": [
+    "pandoc",
+    "latex",
+    "make",
+    "overleaf",
+    "gitlab-ci",
+    "docker"
+  ]
+}

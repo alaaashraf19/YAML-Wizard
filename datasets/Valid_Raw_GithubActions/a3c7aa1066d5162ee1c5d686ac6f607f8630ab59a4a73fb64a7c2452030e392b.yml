@@ -1,0 +1,99 @@
+name: cov-build
+
+on:
+  schedule:
+    - cron: '0 18 * * 4'
+
+  push:
+    tags:
+      - v*.*.*
+      - coverity*
+
+  pull_request:
+    branches:
+      - master
+    paths:
+      - '!README.md'
+      - '!CONTRIBUTING.md'
+      - '!docs/**'
+      - 'src/**'
+      - '.github/**'
+      - 'tests/**'
+      - 'tools/**'
+
+env:
+  TOKEN: ${{secrets.COVERITY_TOKEN}}
+  EMAIL: ${{secrets.COVERITY_EMAIL}}
+
+jobs:
+  x64:
+    runs-on: windows-2019
+
+    defaults:
+      run:
+        shell: powershell
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: x64
+
+    - name: Install tools
+      run: |
+        choco install -y unzip
+        choco install -y wget
+
+    - name: Cache libraries
+      uses: actions/cache@v2
+      with:
+        path: ${{github.workspace}}/libs
+        key: x64-libs-cache-coverity-220126
+
+    - name: Install libraries
+      run: "tools/install_wxWidgets.bat -msvc 64"
+
+    - name: Cache Coverity scan tools
+      uses: actions/cache@v2
+      with:
+        path: ${{github.workspace}}/cov_tools
+        key: x64-coverity-cache-221023
+
+    - name: Install Coverity scan tools
+      run: "tools/install_coverity_tools.bat ${{env.TOKEN}}"
+
+    - name: Configure CMake
+      run: |
+        cov_tools/bin/cov-configure --config build/covtest/cov.xml --msvc --template --xml-option=skip_file:".*/libs.*"
+        cmake -B build -DCMAKE_BUILD_TYPE=Debug -G "Visual Studio 16 2019" -A x64 -DBIT_TYPE=64 .
+
+    - name: Build with Coverity
+      run: |
+        cov_tools/bin/cov-build --config build/covtest/cov.xml --dir build/cov-int cmake --build build
+        cd build
+        tail cov-int/build-log.txt
+        tar -czvf cov-int.tgz cov-int
+        cd ..
+
+    - name: Get short SHA
+      id: vars
+      run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+
+    - name: Setup MSYS2
+      uses: msys2/setup-msys2@v2
+      with:
+        msystem: MINGW64
+        install: >-
+          base-devel
+          mingw-w64-x86_64-curl
+
+    - name: Submit tarball to Coverity
+      shell: msys2 {0}
+      run: |
+        curl --form token="${{env.TOKEN}}" \
+             --form email="${{env.EMAIL}}" \
+             --form file=@build/cov-int.tgz \
+             --form version="${{steps.vars.outputs.sha_short}}" \
+             --form description="Automatic submission with GitHub Actions" \
+             https://scan.coverity.com/builds?project=pit-ray%2Fwin-vind

@@ -1,0 +1,14 @@
+image: registry.gitlab.com/paddy-hack/nikola
+pages:
+  artifacts:
+    paths:
+    - public
+  rules:
+  - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+  script:
+  - nikola build
+test:
+  rules:
+  - if: $CI_COMMIT_REF_NAME != $CI_DEFAULT_BRANCH
+  script:
+  - nikola build

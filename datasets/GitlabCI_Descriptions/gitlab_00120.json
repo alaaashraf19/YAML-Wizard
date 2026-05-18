@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_00120",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 918,
+  "description": "Create a GitLab CI pipeline that uses the ubuntu:bionic Docker image and caches the APT package archives in an apt-cache directory keyed by \"apt-cache\". Define three stages—build, test, and deploy—and include a before_script that sets APT_CACHE_DIR, runs apt-get update, and installs qt5-qmake, qtbase5-dev, qtchooser, pkg-config, libqt5xmlpatterns5-dev, libsignon-qt5-dev, signon-plugins-dev, dbus-test-runner, lcov and gcovr using the cache directory. In the build_amd64 job (stage build) run export QT_SELECT=qt5, create a build folder, cd into it, execute qmake CONFIG+=debug CONFIG+=coverage .. and then make -j 4, and publish the whole repository as an artifact. In the test_amd64 job (stage test) which depends on build_amd64, cd into the build directory and run make coverage-html, also publishing all files as an artifact. Finally, add a pages job (stage deploy) depending on test_amd64 that creates a public folder, copies the generated coverage-html into public/coverage, and publishes the public directory as a GitLab Pages artifact.",
+  "tags": [
+    "ubuntu",
+    "qt",
+    "qmake",
+    "make",
+    "coverage",
+    "gitlab-pages",
+    "apt-cache"
+  ]
+}

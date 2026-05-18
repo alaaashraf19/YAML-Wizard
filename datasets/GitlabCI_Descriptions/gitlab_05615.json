@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_05615",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 436,
+  "description": "Create a GitLab CI pipeline with three jobs: check_code, moban, and run_tests. Use the coala/base Docker image for the check_code job and run the command coala-ci. For the moban job, use the python:3.5 image, run a before_script that installs moban via pip and clones the setupmobans and coala-mobans repositories, then execute moban followed by git diff --exit-code. For the run_tests job, also use python:3.5, install dependencies with pip3 install -r requirements.txt and pip3 install -r test-requirements.txt, and finally run py.test --cov. All jobs run in the default test stage with no caches, artifacts, or special rules.",
+  "tags": [
+    "coala",
+    "moban",
+    "python-3.5",
+    "pytest",
+    "coverage"
+  ]
+}

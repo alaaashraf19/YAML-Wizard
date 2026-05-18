@@ -1,0 +1,46 @@
+before_script:
+- apt update && apt -y install $DEPENDENCIES
+build:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - _build/meson-logs/testlog.txt
+    when: on_failure
+  script:
+  - git clone https://gitlab.gnome.org/GNOME/gxml.git
+  - cd gxml
+  - git reset --hard 0.20.3
+  - meson --prefix=/usr build
+  - cd build
+  - ninja
+  - ninja install
+  - cd ../..
+  - meson _build
+  - cd _build
+  - ninja
+  - meson test
+  - ninja install
+  - cd ..
+  stage: build
+image: ubuntu:devel
+pages:
+  artifacts:
+    paths:
+    - public
+  script:
+  - meson _build
+  - cd _build
+  - ninja
+  - mv docs/GSvg-* ../public
+  - cd ..
+  - cp public/index.htm public/index.html
+  stage: deploy
+stages:
+- build
+- deploy
+variables:
+  DEPENDENCIES: gcc gettext gtk-doc-tools meson ninja-build make autoconf valac valadoc
+    libgee-0.8-dev flex bison graphviz graphviz-dev libxml2-dev gnome-common gobject-introspection
+    gir1.2-glib-2.0 libgirepository1.0-dev libisocodes-dev libgraphene-1.0-dev yelp-tools
+    git
+  GIT_SUBMODULE_STRATEGY: normal

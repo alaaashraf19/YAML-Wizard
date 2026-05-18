@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_12508",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1062,
+  "description": "Create a GitLab CI pipeline using the continuumio/miniconda3:latest Docker image with a global before_script that runs apt-get update -q -y, installs libgl1-mesa-glx and build-essential, configures conda (always_yes, adds conda-forge channel, strict priority), updates conda, installs mamba, creates three environments with mamba env create -f conda/skijumpdesign-lib.yml, conda/skijumpdesign-lib-dev.yml and conda/skijumpdesign-lib-opt-dev.yml, and finally runs mamba info. Define stages install, test, docs, test_dev and test_dev_optional. In the install stage add an install job that activates the skijumpdesign-lib environment, runs python setup.py install and prints the location of the skijumpdesign executable. In the test stage add a test job that activates skijumpdesign-lib, lists packages with mamba list, and verifies the library by executing python -c \"import skijumpdesign\". In the docs stage add a docs job that activates skijumpdesign-lib-dev, changes to the docs/ directory and runs make html. In the test_dev stage add a test_dev job that activates skijumpdesign-lib-dev, lists packages, and runs py.test --cov=skijumpdesign, and in the test_dev_optional stage add a test_dev_optional job that activates skijumpdesign-lib-opt-dev, lists packages, and runs py.test --cov=skijumpdesign.",
+  "tags": [
+    "conda",
+    "mamba",
+    "miniconda",
+    "docs",
+    "pytest",
+    "make",
+    "skijumpdesign"
+  ]
+}

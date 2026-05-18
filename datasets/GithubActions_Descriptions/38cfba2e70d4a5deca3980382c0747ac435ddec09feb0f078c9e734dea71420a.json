@@ -1,0 +1,16 @@
+{
+  "sha": "38cfba2e70d4a5deca3980382c0747ac435ddec09feb0f078c9e734dea71420a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3117,
+  "description": "Create a GitHub Actions workflow named CI that runs on push, pull request, and workflow dispatch events. The workflow should have multiple jobs: check-code-formatting, windows, ubuntu, and fedora. The check-code-formatting job checks code formatting in a container. The windows job builds on Windows, the ubuntu job builds on Ubuntu with a matrix of distros and compilers, and the fedora job builds on Fedora with a matrix of shared library configurations.",
+  "tags": [
+    "ci",
+    "ubuntu",
+    "windows",
+    "fedora",
+    "mingw",
+    "cmake",
+    "ctest"
+  ]
+}

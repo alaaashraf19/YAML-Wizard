@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_07358",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 119,
+  "description": "Create a GitLab CI pipeline that runs a before_script installing GTK+3.0 and gtksourceview-3.0 with `apt-get update -qq && apt-get install -y -qq gtk+3.0 gtksourceview-3.0`. Define a single job named saedit that executes `make all` in the default stage on any branch, using the default Docker image. No additional stages, caches, artifacts, or rules are specified.",
+  "tags": [
+    "apt",
+    "gtk",
+    "gtksourceview",
+    "make",
+    "gitlab-ci"
+  ]
+}

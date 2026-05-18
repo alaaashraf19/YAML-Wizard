@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_17580",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 514,
+  "description": "Create a GitLab CI pipeline that uses the sypingauto/gta5view-build:1.8-static Docker image, defines a single build stage, and includes a job named Windows Portable that runs in the build stage. The job sets GIT_SUBMODULE_STRATEGY to recursive and QT_SELECT to qt5-x86_64-w64-mingw32, then executes the exact shell commands: cd gta5view, rm -f main.cpp, cd .., mkdir -p build, cd build, qmake-static ../gta5view-cmd.pro, make -j4, cp -Rf release/gta5view-cmd.exe ../, cd .., upx --best gta5view-cmd.exe. It archives the resulting gta5view-cmd.exe as an artifact named gta5view-cmd-$CI_COMMIT_REF_NAME-${CI_COMMIT_SHA:0:8} with the path gta5view-cmd.exe. The pipeline has no additional services, caches, or conditional rules.",
+  "tags": [
+    "windows",
+    "qt",
+    "make",
+    "upx",
+    "gta5view",
+    "docker"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_07199",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 192,
+  "description": "Create a GitLab CI pipeline that defines a single stage called deploy. Add a job named pages that runs in the deploy stage. The pages job should execute the exact shell commands: make -C vendor, mkdir public, cp -a vendor modules *.css public, and cp -a angulator-demo.html public/index.html. It must publish the public/ directory as an artifact (paths: public) and no specific Docker image, services, caches, or triggers are required.",
+  "tags": [
+    "pages",
+    "make",
+    "artifact",
+    "deploy"
+  ]
+}

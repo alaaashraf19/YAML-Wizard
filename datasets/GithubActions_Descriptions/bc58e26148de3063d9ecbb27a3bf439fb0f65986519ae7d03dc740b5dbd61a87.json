@@ -1,0 +1,14 @@
+{
+  "sha": "bc58e26148de3063d9ecbb27a3bf439fb0f65986519ae7d03dc740b5dbd61a87",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4103,
+  "description": "Create a GitHub Actions workflow named StyleCheck that runs on push events to all branches except dependabot/*, on pull requests, and on workflow dispatch. The workflow has three ubuntu-latest jobs: spacing, encoding, and clang-format. The spacing job checks and fixes mixed tabs and spaces, trailing white spaces, and ensures files end with a new line. The encoding job checks and fixes file encoding to UTF-8 and line endings to LF. The clang-format job checks and fixes C++ code formatting using clang-format.",
+  "tags": [
+    "style-check",
+    "clang-format",
+    "encoding",
+    "ubuntu",
+    "formatting"
+  ]
+}

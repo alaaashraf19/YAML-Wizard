@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_16015",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1335,
+  "description": "Create a GitLab CI pipeline with four stages (test, test-package, build-docs, deploy) and a global before_script that runs `pip install -r requirements.txt` and `pip install -r requirements_dev.txt` before every job except the pages job which clears the before_script. In the test stage add a `test-python2` job using the `python:2` image that runs `python setup.py develop` then `pytest --doctest-modules -m \\\"not btrfs\\\"`, and a `test-python3` job using `python:3` that runs `python setup.py develop` followed by `pytest --doctest-modules -m \\\"not btrfs\\\" --cov-report term --cov-report html:public/coverage/ --cov` and stores the `public/coverage` directory as an artifact. In the test-package stage add `test-python2-package` (python:2) and `test-python3-package` (python:3) jobs that each execute `python setup.py sdist` and then install the generated wheel with `(cd dist; pip install reflink-*.tar.gz)`. In the build-docs stage add a `docs` job (python:3) that runs `python setup.py develop`, `sphinx-apidoc -o docs/ reflink`, `(cd docs; make html)`, `mkdir -p public/docs/`, and `cp docs/_build/html/* public/docs -r`, and publishes the `public` directory as an artifact. In the deploy stage add a `pages` job that depends on `docs` and `test-python3`, runs only on the `master` branch, executes `echo packing stuff`, and publishes the `public` directory as a GitLab Pages artifact, and a `pypi-3` job (python:3) that runs only on tags, depends on `test-python3-package`, and runs `bash deploy.sh` to release the package to PyPI.",
+  "tags": [
+    "python-2",
+    "python-3",
+    "pytest",
+    "sphinx",
+    "docs",
+    "coverage",
+    "pypi",
+    "gitlab-pages",
+    "deploy",
+    "test-package"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "33e705350454f5e2cfdc5655f90a901866446de32816467c7b6f9b5c72851a7a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2929,
+  "description": "Create a GitHub Actions workflow named Publish Docs with AOT that runs on push to master and feature branches in the ant-design-blazor repository. The workflow checks out the code, sets up .NET Core 3.1, 5.0, and 6.0, and Node.js 10.x, then gets the last release tag and calculates the next semantic version. It prepares the AOT workload, publishes the docs with the calculated version, and deploys the preview to surge.sh.",
+  "tags": [
+    "dotnet",
+    "aot",
+    "docs",
+    "surge",
+    "github-actions",
+    "ant-design-blazor"
+  ]
+}

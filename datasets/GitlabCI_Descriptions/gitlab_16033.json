@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_16033",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 601,
+  "description": "Create a GitLab CI pipeline that defines three test-stage jobs named beta, nightly, and stable, each using the scorpil/rust:<variant> Docker image (beta uses scorpil/rust:beta, nightly uses scorpil/rust:nightly, stable uses scorpil/rust:stable) and runs the commands 'cargo build', 'cargo build --release', and 'cargo test'. Add a deploy-stage pages job that uses scorpil/rust:stable, runs 'cargo doc', copies the generated documentation with 'cp -R target/doc public', creates a redirect index with 'echo \"<meta http-equiv=refresh content=0;url=binder/index.html>\" > public/index.html', and publishes the public/ directory as an artifact. Configure the pages job to run only on the master branch. No caches or additional services are required.",
+  "tags": [
+    "rust",
+    "cargo",
+    "pages",
+    "test",
+    "deploy",
+    "beta",
+    "nightly",
+    "stable"
+  ]
+}

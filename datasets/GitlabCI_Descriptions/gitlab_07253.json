@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_07253",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 243,
+  "description": "Create a GitLab CI pipeline that uses the ubuntu:16.04 Docker image and defines a single build stage named build. Add a job called build-deb-linux-amd64 in the build stage that runs the following shell commands in order: apt-get update, apt-get install -y pbuilder, pbuilder create, pbuilder build *.dsc, and cp -r /var/cache/pbuilder/result ./ . The job should publish the resulting files in the result directory as an artifact. No services, caches, or special rules are required.",
+  "tags": [
+    "ubuntu",
+    "pbuilder",
+    "deb",
+    "build",
+    "artifact"
+  ]
+}

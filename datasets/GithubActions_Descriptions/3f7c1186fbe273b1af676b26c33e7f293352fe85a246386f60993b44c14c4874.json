@@ -1,0 +1,15 @@
+{
+  "sha": "3f7c1186fbe273b1af676b26c33e7f293352fe85a246386f60993b44c14c4874",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1751,
+  "description": "Create a GitHub Actions workflow named CI that runs on push to master and try-import branches and on pull requests. The workflow has three jobs: cpu-test and gpu-test running on a self-hosted environment with a custom container, and auto-merge running on ubuntu-latest if the reference is try-import. The cpu-test and gpu-test jobs check out the repository, prepare submodules, build MegEngine, and run Python and C++ tests. The auto-merge job checks out the repository, merges try-import with master, and pushes the result.",
+  "tags": [
+    "megengine",
+    "ci",
+    "self-hosted",
+    "gpu",
+    "cuda",
+    "auto-merge"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_04593",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 202,
+  "description": "Create a GitLab CI pipeline with a single deploy stage using the beardedio/git-tools Docker image. Define a deploy job that runs in the deploy stage, only on the master branch, sets the SSH_PRIVATE_KEY variable from a secret, and executes the command git-push git@github.com:bskrtich/dotfiles.git. No caches, artifacts, or services are required.",
+  "tags": [
+    "git-tools",
+    "deploy",
+    "ssh",
+    "git-push",
+    "gitlab-ci"
+  ]
+}

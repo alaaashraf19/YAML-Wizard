@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_07242",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 322,
+  "description": "Create a GitLab CI pipeline with a single job named build that runs in the build stage, uses the Docker image registry.gitlab.com/ercom/docker:18.03.1-ce-git and a docker:18.03.1-ce-dind service aliased as docker, sets the variables DOCKER_DRIVER=overlay and DOCKER_HOST=tcp://docker:2375, and executes the script ci-scripts/run-job-script.sh. The job should only run for tag pipelines (only tags) and be assigned the runner tag docker. No caches or artifacts are defined.",
+  "tags": [
+    "docker",
+    "dind",
+    "docker-build",
+    "gitlab-ci"
+  ]
+}

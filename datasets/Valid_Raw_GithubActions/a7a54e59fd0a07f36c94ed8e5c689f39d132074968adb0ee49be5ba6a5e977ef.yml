@@ -1,0 +1,23 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-python@v1
+      with:
+        python-version: 3.7
+    - uses: dschep/install-pipenv-action@v1
+    - name: Install dependencies
+      run: |
+        sudo apt install protobuf-compiler
+        pipenv install --dev
+    - name: Run tests
+      run: |
+        pipenv run generate
+        pipenv run test

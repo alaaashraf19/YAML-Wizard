@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_16041",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2344,
+  "description": "Create a GitLab CI pipeline with build and deploy stages and global variables BUSTER_PKGS, STRETCH_PKGS, STRETCH_BPO_PKGS, and EXTRA_OPTS. In the build stage add a build:clang:3.9 job that runs on the debian:stretch-backports image, executes apt-get update and installs $STRETCH_PKGS and clang-3.9 plus backport packages, sets EXTRA_OPTS to use clang‑3.9 compilers, then runs cmake -H. -B$CI_JOB_NAME -DCMAKE_BUILD_TYPE=RelWithDebInfo -DBUILD_LIGHTER_TESTS=OFF $EXTRA_OPTS, make -C $CI_JOB_NAME, and $CI_JOB_NAME/bin/graph-tests -r xml -o $CI_JOB_NAME/testresults.xml, publishing the generated testresults.xml as a JUnit report artifact. Also add a build:clang:buster job that runs on debian:buster, installs $BUSTER_PKGS and gcovr, runs cmake with Debug mode and clang compilers, then make -C $CI_JOB_NAME coverage-tests doc, runs gcovr to generate coverage, and stores both the JUnit testresults.xml and the paths $CI_JOB_NAME/tests/coverage-tests/ and $CI_JOB_NAME/docs/html/ as artifacts. Add build:gcc:7 and build:gcc:8 jobs that extend a .gccbuild template, use gcc:7 and gcc:8 images respectively, prepend stretch‑backports repository, install $STRETCH_PKGS and backport packages in before_script, then execute the same cmake, make and graph‑tests commands as .buildbase and publish the JUnit testresults artifact. Finally, in the deploy stage add a pages job that runs only on the master branch, depends on build:clang:buster, moves its docs/html to public and its tests/coverage-tests to public/coverage, and publishes the public directory as a GitLab Pages artifact.",
+  "tags": [
+    "cmake",
+    "gcc",
+    "clang",
+    "debian",
+    "gitlab-pages",
+    "coverage",
+    "junit",
+    "docker"
+  ]
+}

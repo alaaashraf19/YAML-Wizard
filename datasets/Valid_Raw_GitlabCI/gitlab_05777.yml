@@ -1,0 +1,26 @@
+before_script:
+- mkdir -p /go/src/gitlab.com/cosban /go/src/_/builds
+- cp -r $CI_PROJECT_DIR /go/src/gitlab.com/cosban/persistence
+- ln -s /go/src/gitlab.com/cosban /go/src/_/builds/cosban
+build:
+  script:
+  - make
+  stage: build
+cache:
+  paths:
+  - /go/src/github.com
+  - /go/src/golang.org
+  - /go/src/google.golang.org
+  - /go/src/gopkg.in
+image: golang:latest
+race_detector:
+  script:
+  - make race
+  stage: test
+stages:
+- test
+- build
+unit_tests:
+  script:
+  - make test
+  stage: test

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_15768",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 311,
+  "description": "Create a GitLab CI pipeline with a single stage called build-and-test and a global before_script that runs apt-get update. Add a run-build-clang job that uses the silkeh/clang Docker image, executes clang --version, then builds the project with CC=clang make, and finally runs the test suite via cd tests && ./RunTests. Add a run-build-gcc job that uses the gcc Docker image, runs gcc --version, builds with make, and runs the same test suite with cd tests && ./RunTests. Both jobs belong to the build-and-test stage and have no additional caches, artifacts, or trigger rules.",
+  "tags": [
+    "clang",
+    "gcc",
+    "make",
+    "c",
+    "build-and-test"
+  ]
+}

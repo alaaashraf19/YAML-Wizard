@@ -1,0 +1,21 @@
+{
+  "sha": "gitlab_08584",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 7351,
+  "description": "Create a GitLab CI pipeline with stages test, build, deploy, and populate, using the ruby:2.6 Docker image for auxiliary jobs, a custom Docker image for building and deploying, and a postgres:9.6.17 service for the rspec job, with a cache of vendor/ruby keyed by Gemfile.lock. In the test stage add an rspec job that runs `bundle install --clean --without=production --jobs=$(nproc) --path=vendor --retry=3`, `bin/rake db:test:prepare`, and `bundle exec rspec --color --format documentation --format RspecJunitFormatter --out junit_rspec.xml`, stores the junit_rspec.xml report as a JUnit artifact for 31 days, and runs on all branches. In the build stage add `build_production_image` and `build_review_image` jobs that each execute `docker build -t $CI_REGISTRY_IMAGE/gitlab-insights-production:$CI_COMMIT_REF_NAME -t $CI_REGISTRY_IMAGE/gitlab-insights-production:latest .` (or the review equivalent) and run only on the master branch or on non‑master branches respectively, both tagged with gitlab-insights-docker. In the deploy stage add a `deploy` job that stops and removes any existing production container then runs `docker run -d -P` with environment variables (VIRTUAL_HOST, LETSENCRYPT_HOST, LETSENCRYPT_EMAIL, RAILS_ENV=production, SECRET_KEY_BASE, SECRET_TOKEN, DATABASE_USERNAME, DATABASE_PASSWORD) using the production image, defines a production environment at https://quality-dashboard.gitlap.com, and runs only on master, plus a `review` job that creates a review environment per branch with similar docker run parameters (RAILS_ENV=review and dynamic VIRTUAL_HOST) and a manual `review_stop` job that stops, removes, and deletes the review container image, both limited to non‑master branches. Finally, add scheduled jobs `community_mrs`, `failed_flaky_checks`, `maintainers-gitlab`, and `pipelines_duration` that each create a ./data directory, install httparty, run their specific Ruby scripts with $API_TOKEN and related tokens, keep ./data as an artifact for 31 days, and trigger only on schedules when their respective variable is set, and add `populate_prod_db` and `populate_review_db` jobs that run Docker containers to execute a rake task for populating production or review databases, retry twice, and are triggered on schedules or branches (the review populate is manual).",
+  "tags": [
+    "ruby",
+    "docker",
+    "postgres",
+    "rspec",
+    "review",
+    "production",
+    "populate",
+    "community-mrs",
+    "failed-flaky-checks",
+    "maintainers",
+    "pipelines-duration",
+    "gitlab-ci"
+  ]
+}

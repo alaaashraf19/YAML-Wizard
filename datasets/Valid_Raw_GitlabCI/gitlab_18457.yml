@@ -1,0 +1,9 @@
+image: python:3.5
+pages:
+  artifacts:
+    paths:
+    - public/
+  script:
+  - pip install -r requirements.txt
+  - python kalendar.py
+  - pelican -s publishconf.py --relative-urls

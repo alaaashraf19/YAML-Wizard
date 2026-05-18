@@ -1,0 +1,14 @@
+{
+  "sha": "8da86dde24b4e207624e529f8d5ec2fcf74e3f77f21155745e31574eb3de51cd",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 6863,
+  "description": "Create a GitHub Actions workflow named Build Universal-Updater that builds and publishes the Universal-Updater project. The workflow triggers on push to all branches except translation, on pull requests to any branch, and on release creation. It uses an ubuntu-latest environment with a devKitARM container to build the project, and then publishes the build artifacts to a GitHub release and to the Universal-Team/extras repository. Additionally, it sends a Discord webhook notification on success or failure.",
+  "tags": [
+    "github-actions",
+    "universal-updater",
+    "devkitarm",
+    "discord-webhook",
+    "release-workflow"
+  ]
+}

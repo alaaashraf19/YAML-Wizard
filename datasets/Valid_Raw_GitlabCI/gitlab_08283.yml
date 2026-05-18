@@ -1,0 +1,7 @@
+include:
+- local: .gitlab/ci/fips-verify/com.gitlab-ci.yml
+  rules:
+  - if: $CI_SERVER_FQDN != "dev.gitlab.org"
+- local: .gitlab/ci/fips-verify/dev.gitlab-ci.yml
+  rules:
+  - if: $CI_SERVER_FQDN == "dev.gitlab.org"

@@ -1,0 +1,20 @@
+{
+  "sha": "c0214713dce136c86a15beae707023db42e397daf5e49412a54b6640f57b62d3",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4006,
+  "description": "Create a GitHub Actions workflow named CI Build that runs on push to master and pull requests to master. The workflow has three jobs: build_msvc on windows-latest, build_linux on ubuntu-20.04 with a matrix of compilers, and publish on ubuntu-latest that depends on the first two jobs. Each job checks out the code, configures and builds the project, runs tests, and uploads artifacts.",
+  "tags": [
+    "ci",
+    "windows",
+    "linux",
+    "cmake",
+    "msbuild",
+    "ctest",
+    "clang",
+    "gcc",
+    "code-coverage",
+    "release",
+    "artifacts"
+  ]
+}

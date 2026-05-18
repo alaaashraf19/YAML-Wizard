@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_18943",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 140,
+  "description": "Create a GitLab CI pipeline with a single build stage containing a job named build. The build job runs a before_script that executes \"apt update && apt -y install make clang\", then runs \"make\" in its script, and finally archives the \"otrasys\" directory as an artifact. No custom Docker image, services, caches, or rules are defined.",
+  "tags": [
+    "make",
+    "clang",
+    "apt",
+    "artifact",
+    "build-stage"
+  ]
+}

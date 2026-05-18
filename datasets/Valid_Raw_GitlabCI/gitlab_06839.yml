@@ -1,0 +1,28 @@
+Deployment:
+  before_script:
+  - gem install dpl
+  - wget -qO- https://cli-assets.heroku.com/install-ubuntu.sh | sh
+  environment:
+    name: production
+    url: $HEROKU_APP_HOST
+  image: ruby:2.4
+  script:
+  - dpl --provider=heroku --app=$HEROKU_APPNAME --api-key=$HEROKU_APIKEY
+  - export HEROKU_API_KEY=$HEROKU_APIKEY
+  - heroku run --app $HEROKU_APPNAME migrate
+  stage: deploy
+UnitTest:
+  before_script:
+  - pip install -r requirements.txt
+  - python manage.py makemigrations
+  - python manage.py migrate
+  - python manage.py collectstatic --no-input
+  image: python:3.6
+  script:
+  - coverage run --include='fitur_*/*' manage.py test
+  - coverage report -m
+  stage: test
+  when: on_success
+stages:
+- test
+- deploy

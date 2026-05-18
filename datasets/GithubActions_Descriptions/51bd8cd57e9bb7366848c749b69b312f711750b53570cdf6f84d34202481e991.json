@@ -1,0 +1,15 @@
+{
+  "sha": "51bd8cd57e9bb7366848c749b69b312f711750b53570cdf6f84d34202481e991",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 648,
+  "description": "Create a GitHub Actions workflow named Basic CI that runs on push to master and on pull requests to master. Use a matrix job that builds on multiple operating systems (ubuntu-18.04, ubuntu-20.04), compilers (gcc, clang), and build types (Debug, Release). For each matrix combination, check out the repository, install eigen dependencies, configure the build with cmake, build the project, and run tests with ctest.",
+  "tags": [
+    "ci",
+    "cmake",
+    "ubuntu",
+    "gcc",
+    "clang",
+    "tests"
+  ]
+}

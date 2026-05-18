@@ -1,0 +1,16 @@
+{
+  "sha": "f6272045238d4f2a3db1aba24d3ac68efae3de6c95ff2cfd05c42d4e90a70f6e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4904,
+  "description": "Create a GitHub Actions workflow named build sakura that runs on push and pull request events for master, feature/*, and release/* branches, excluding certain paths. The workflow uses a windows-latest job with a matrix strategy for Debug and Release configurations across Win32 and x64 platforms. It checks out the code, sets up MSBuild, and defines environment variables. The workflow then runs a series of build and packaging steps, including building with MSBuild, installing Locale Emulator, building HTML Help, and creating installers with Inno Setup. Finally, it uploads various artifacts to GitHub Actions, but only for Release configurations.",
+  "tags": [
+    "msbuild",
+    "windows",
+    "installer",
+    "github-actions",
+    "ci",
+    "build",
+    "packaging"
+  ]
+}

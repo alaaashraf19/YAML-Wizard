@@ -1,0 +1,29 @@
+name: GitHub Pages
+on:
+  push:
+jobs:
+  doxygen:
+    runs-on: ubuntu-latest
+    container:
+      image: ubuntu:22.10
+    steps:
+      - name: Install dependencies
+        run: |
+         apt update
+         apt install -y graphviz doxygen cmake git
+      - uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+      - name: Build
+        run: |
+          cmake .
+          make
+          doxygen
+        working-directory: doc
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@releases/v4
+        if: github.ref == 'refs/heads/master'
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: gh-pages
+          FOLDER: doc/html

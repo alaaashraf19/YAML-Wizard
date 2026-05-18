@@ -1,0 +1,205 @@
+.bst_before_script:
+  before_script: &id001
+  - 'git clone https://gitlab.com/BuildStream/buildstream.git
+
+    # Use specific version of BuildStream
+
+    cd buildstream && git checkout $BST_SHA
+
+    pip3 install .
+
+    cd -
+
+    git clone https://gitlab.com/BuildStream/bst-external.git
+
+    # Use specific version of bst-external plugins
+
+    cd bst-external && git checkout $BST_EXTERNAL_SHA
+
+    pip3 install .
+
+    cd -
+
+    '
+  - "if [ -z \"$artifact_cache_key\" ]; then\n    echo >&2 \"Private key for cache.trustable.io\
+    \ is not available.\"\nelse\n    echo \"$artifact_cache_key\" > certificates/client.key\n\
+    \    mkdir -p ~/.config\n    cat <<EOF >> ~/.config/buildstream.conf\nprojects:\n\
+    \  minimal-distro:\n    artifacts:\n      url: https://cache.trustable.io:11002\n\
+    \      server-cert: certificates/server.crt\n      client-key: certificates/client.key\n\
+    \      client-cert: certificates/client.crt\n      push: true\nEOF\nfi\n\nif [\
+    \ -f ~/.config/buildstream.conf ]; then\n    cat ~/.config/buildstream.conf\n\
+    fi\n"
+  variables: &id003
+    BST_EXTERNAL_SHA: 13da037801c27b028114cc63fdb93eab243e6851
+    BST_SHA: 10abe77fe8d77385d86f225b503d9185f4ef7f3a
+.bst_cache:
+  cache: &id002
+    key: bst
+    paths:
+    - ${XDG_CACHE_HOME}/buildstream/sources/
+bst-build-minimal-system:
+  before_script: *id001
+  cache: *id002
+  dependencies: []
+  except:
+  - master
+  - tags
+  script:
+  - export BUILD_ENVRT_CONSTR_ID="${CI_PIPELINE_ID}_build"
+  - json_data="$(echo "${GITECT_ENVRT_CONSTR_EVIDENCE}" | sed "s/!!ENVRT_ID!!/${BUILD_ENVRT_CONSTR_ID}/;
+    s/!!ORCHESTRATOR_ID!!/gitlab-ci:${CI_RUNNER_VERSION}/; s/!!ENVRT_TYPE!!/docker:/;
+    s/!!DATE_TIME!!/$(date -Iseconds)/; s/!!COMMENT!!/Build environment/")"
+  - 'curl -k -H "Content-Type: application/json" -H "X-Gitect-Token: ${GITECT_HOST_TOKEN}"
+    -d "$json_data" ${GITECT_EVIDENCE_ENDPOINT}/environment-construction'
+  - scripts/bst-build-or-show systems/minimal-system-content.bst
+  - json_data="$(echo "${GITECT_ARTFTC_CONSTR_EVIDENCE}" | sed "s/!!ARTFCT_ID!!/sda.img_${CI_COMMIT_SHA}/;
+    s/!!ARTFCT_NAME!!/sda.img/; s/!!CONTRIBUTOR_ID!!/buildstream:version_$(bst --version)/;
+    s/!!ENVRT_ID!!/${BUILD_ENVRT_CONSTR_ID}/; s/!!BUILD_ID!!/ci_pipeline:${CI_PIPELINE_ID}_bst-build-minimal-system.bst/;
+    s/!!DATE_TIME!!/$(date -Iseconds)/; s/!!COMMENT!!/Minimal distro image artefact
+    evidence construction/")"
+  - 'curl -k -H "Content-Type: application/json" -H "X-Gitect-Token: ${GITECT_HOST_TOKEN}"
+    -d "$json_data" ${GITECT_EVIDENCE_ENDPOINT}/artefact-construction'
+  stage: build
+  variables: *id003
+bst-minimal-system-deploy:
+  artifacts:
+    expire_in: 1 week
+    name: ${CI_BUILD_NAME}-${CI_BUILD_REF}
+    paths:
+    - ./minimal-system/sda.img
+    - ${CHANGE_VALIDATIONS_PATH}
+  before_script: *id001
+  cache: *id002
+  dependencies:
+  - bst-build-minimal-system
+  except:
+  - master
+  - tags
+  script:
+  - export TEST_MINIMAL_HOST_ENVRT_CONSTR_ID="${CI_PIPELINE_ID}_test_minimal_distro_host"
+  - export TEST_MINIMAL_QEMU_ENVRT_CONSTR_ID="${CI_PIPELINE_ID}_test_minimal_distro_qemu"
+  - json_data="$(echo "${GITECT_ENVRT_CONSTR_EVIDENCE}" | sed "s/!!ENVRT_ID!!/${TEST_MINIMAL_HOST_ENVRT_CONSTR_ID}/;
+    s/!!ORCHESTRATOR_ID!!/gitlab-ci:${CI_RUNNER_VERSION}/; s/!!ENVRT_TYPE!!/docker:/;
+    s/!!DATE_TIME!!/$(date -Iseconds)/; s/!!COMMENT!!/gitect docker environment to
+    host qemu/")"
+  - 'curl -k -H "Content-Type: application/json" -H "X-Gitect-Token: ${GITECT_HOST_TOKEN}"
+    -d "$json_data" ${GITECT_EVIDENCE_ENDPOINT}/environment-construction'
+  - scripts/bst-build-or-show systems/minimal-system-image-x86_64.bst
+  - bst checkout systems/minimal-system-image-x86_64.bst ./minimal-system
+  - dnf install -y qemu-system-x86
+  - dnf install -y bc
+  - qemu_version=$(qemu-system-x86_64 -version | head -n 1 | sed 's/.*version //;s/(.*//')
+  - json_data="$(echo "${GITECT_ENVRT_CONSTR_EVIDENCE}" | sed "s/!!ENVRT_ID!!/${TEST_MINIMAL_QEMU_ENVRT_CONSTR_ID}/;
+    s/!!ORCHESTRATOR_ID!!/gitlab-ci:${CI_RUNNER_VERSION}/; s/!!ENVRT_TYPE!!/qemu:${qemu_version}/;
+    s/!!DATE_TIME!!/$(date -Iseconds)/; s/!!COMMENT!!/qemu environment for Minimal
+    distro testing/")"
+  - 'curl -k -H "Content-Type: application/json" -H "X-Gitect-Token: ${GITECT_HOST_TOKEN}"
+    -d "$json_data" ${GITECT_EVIDENCE_ENDPOINT}/environment-construction'
+  - "(\n  dnf install -y libabigail --enablerepo=updates-testing\n  wget https://gitlab.com/freedesktop-sdk/freedesktop-sdk/raw/freedesktop-sdk-18.08.18/utils/check-abi\n\
+    \  REFERENCE=$(git merge-base origin/master ${CI_COMMIT_SHA}) &&\n  python3 check-abi\
+    \ --old=${REFERENCE} --new=${CI_COMMIT_SHA} systems/minimal-system-image-x86_64.bst\n\
+    \  abi_chk=$?\n)\n"
+  - scripts/test-minimal-system ./minimal-system/sda.img
+  - output=$?
+  - json_data="$(echo "${GITECT_ARTFCT_DEPLOY_EVIDENCE}" | sed "s/!!ARTFCT_DEPLOY_ID!!/${TEST_MINIMAL_QEMU_ENVRT_CONSTR_ID}_sda.img_${CI_COMMIT_SHA}/;
+    s/!!ARTFCT_ID!!/sda.img_${CI_COMMIT_SHA}/; s/!!ORCHESTRATOR_ID!!/gitlab-ci:${CI_RUNNER_VERSION}/;
+    s/!!ENVRT_ID!!/${TEST_MINIMAL_QEMU_ENVRT_CONSTR_ID}/; s/!!DATE_TIME!!/$(date -Iseconds)/;
+    s/!!COMMENT!!/deploy of the sda.img minimal distro image to qemu/")"
+  - 'curl -k -H "Content-Type: application/json" -H "X-Gitect-Token: ${GITECT_HOST_TOKEN}"
+    -d "$json_data" ${GITECT_EVIDENCE_ENDPOINT}/artefact-deployment'
+  - if [ -s results.dat ]; then
+  - N="$(wc -l results.dat | grep -o [0-9]*)"
+  - sum=$(awk '{sum += $2} END {print sum}' results.dat)
+  - variance=$(awk -v sum=$sum -v N=$N '{a=($2 - (sum/N)^2)/N} END {print a}' results.dat)
+  - variance=$(bc <<< "if(${variance} < 0){${variance}*(-1)}")
+  - s_deviation=$(bc <<< "sqrt(${variance})")
+  - check=$(bc <<< "if(${s_deviation} < 10) {0} else {1}")
+  - else
+  - check=0
+  - fi
+  - global_result=false
+  - if [ "$output" = 0 ] && [ "$abi_chk" = 0 ] && [ "$check" = 0 ] ; then
+  - global_result=true
+  - comment="No error detected"
+  - else
+  - if [ "$check" != 0 ] ; then
+  - comment="Latency's standard deviation is greater than 10%"
+  - elif [ "$abi_chk" != 0 ] ; then
+  - comment="Error detected while running abi-check"
+  - elif [ "$output" != 0 ] ; then
+  - comment="Error detected while running test-minimal-distro, probably related to
+    memtester or uname tests"
+  - fi
+  - exit 1
+  - fi
+  - change_validation_id=${CI_PROJECT_PATH_SLUG}_test_minimal_system_$(date +%s%N)
+  - mkdir -p "${CHANGE_VALIDATIONS_PATH}"
+  - echo "export MINIMAL_DISTRO_VALIDATION_ID=$change_validation_id" >> "${CHANGE_VALIDATIONS_PATH}test-minimal-system.env"
+  - json_data="$(echo "${GITECT_CHANGE_VALID_EVIDENCE}" | sed "s/!!CHANGE_VALIDATION_ID!!/$change_validation_id/;
+    s%!!VALIDATION_RESULTS!!%[]%; s%!!TESTS_IDS!!%[]%; s/!!CHANGE_VALIDATION_TYPE!!/Minimal
+    distro testing/; s/!!CHANGE_VALIDATOR_ID!!/GIT_LAB_CI:.gitlab-ci.yml_${CI_COMMIT_SHA}/;
+    s/!!ENVRT_ID!!/${TEST_MINIMAL_QEMU_ENVRT_CONSTR_ID}/; s/!!GLOBAL_RESULT!!/${global_result}/;
+    s/!!DATE_TIME!!/$(date -Iseconds)/")"
+  - json_data=${json_data/!!COMMENT!!/$comment}
+  - 'curl -k -H "Content-Type: application/json" -H "X-Gitect-Token: ${GITECT_HOST_TOKEN}"
+    -d "$json_data" ${GITECT_EVIDENCE_ENDPOINT}/change-validation'
+  stage: deploy
+  variables: *id003
+image: buildstream/buildstream-fedora:latest
+policy:
+  except:
+  - master
+  - tags
+  script:
+  - for f in $(ls -1 "${CHANGE_VALIDATIONS_PATH}"); do
+  - source "${CHANGE_VALIDATIONS_PATH}/$f"
+  - done
+  - 'output=$(curl -k -H "Accept: application/json" -H "X-Gitect-Token: ${GITECT_HOST_TOKEN}"
+    -G --data-urlencode "validation-id=${MINIMAL_DISTRO_VALIDATION_ID}" --data-urlencode
+    "target-branch=${TARGET_BRANCH}" "${GITECT_HOST}/api/v1/gitlab.com/${CI_PROJECT_PATH}/~/${CI_COMMIT_REF_NAME}/${CI_COMMIT_SHA}/policy-compliance")'
+  - echo $output
+  - if [[ "$output" != *"true"* ]];then
+  - echo "Policy compliance check failed."
+  - exit 1
+  - fi
+  - pip3 install pyyaml
+  - git fetch origin refs/notes/*:refs/notes/*
+  - git notes --ref environment-construction show HEAD >> evidence.txt
+  - git notes --ref artefact-construction show HEAD >> evidence.txt
+  - git notes --ref artefact-deployment show HEAD >> evidence.txt
+  - git notes --ref change-validation show HEAD >> evidence.txt
+  - python3 -c 'import sys, yaml, json; [(yaml.safe_dump(json.loads(l), sys.stdout,
+    default_flow_style=False), print("\n")) for l in sys.stdin.readlines() if l !="\n"
+    ]' < evidence.txt
+  stage: policy
+  variables:
+    GIT_STRATEGY: fetch
+stages:
+- build
+- deploy
+- policy
+variables:
+  CHANGE_VALIDATIONS_PATH: change_validations/
+  GET_SOURCES_ATTEMPTS: 3
+  GITECT_ARTFCT_DEPLOY_EVIDENCE: '{"elements": [{"schema-version":"1", "feature":
+    "${CI_COMMIT_REF_NAME}", "id": "!!ARTFCT_DEPLOY_ID!!", "artefact-id": "!!ARTFCT_ID!!",
+    "orchestrator-id": "!!ORCHESTRATOR_ID!!", "environment-id": "!!ENVRT_ID!!", "date-time":
+    "!!DATE_TIME!!", "comment": "!!COMMENT!!"}]}'
+  GITECT_ARTFTC_CONSTR_EVIDENCE: '{"elements": [{"schema-version":"1", "feature":
+    "${CI_COMMIT_REF_NAME}", "id": "!!ARTFCT_ID!!", "artefact-name": "!!ARTFCT_NAME!!",
+    "contributor-id": "!!CONTRIBUTOR_ID!!", "environment-id": "!!ENVRT_ID!!", "build-id":
+    "!!BUILD_ID!!", "date-time": "!!DATE_TIME!!", "comment": "!!COMMENT!!"}]}'
+  GITECT_CHANGE_VALID_EVIDENCE: '{"elements": [{"schema-version": "1", "feature":
+    "${CI_COMMIT_REF_NAME}", "id": "!!CHANGE_VALIDATION_ID!!", "validation-results-list":
+    !!VALIDATION_RESULTS!!, "test-id-list": !!TESTS_IDS!!, "change-validation-type":
+    "!!CHANGE_VALIDATION_TYPE!!", "change-validator-id": "!!CHANGE_VALIDATOR_ID!!",
+    "environment-id": "!!ENVRT_ID!!", "result": !!GLOBAL_RESULT!!, "date-time": "!!DATE_TIME!!",
+    "comment": "!!COMMENT!!"}]}'
+  GITECT_ENVRT_CONSTR_EVIDENCE: '{"elements": [{"schema-version": "1", "feature":
+    "${CI_COMMIT_REF_NAME}", "id": "!!ENVRT_ID!!", "orchestrator-id": "!!ORCHESTRATOR_ID!!",
+    "environment-type": "!!ENVRT_TYPE!!", "date-time": "!!DATE_TIME!!", "comment":
+    "!!COMMENT!!"}]}'
+  GITECT_EVIDENCE_ENDPOINT: ${GITECT_HOST}/api/v1/gitlab.com/${CI_PROJECT_PATH}/~/${CI_COMMIT_REF_NAME}/${CI_COMMIT_SHA}/evidence
+  GITECT_HOST: https://gitect2.codethink.co.uk
+  TARGET_BRANCH: master
+  XDG_CACHE_HOME: ${CI_PROJECT_DIR}/.cache

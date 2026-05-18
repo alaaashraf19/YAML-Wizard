@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_13656",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1706,
+  "description": "Create a GitLab CI pipeline using the python Docker image, define three stages (test, package, deploy), set variables COVERAGE_STATIC_DIR, PAGES_DIR, SPHINX_DOC_DIR, and enable a per‑job cache keyed by $CI_JOB_NAME-$CI_COMMIT_REF_NAME with a global before_script that runs apt‑get update -qq, apt‑get -qq -y install python3-pip, and pip3 install --upgrade --only-binary=numpy,scipy numpy scipy (except the pages job which clears before_script). In the test stage add a coverage job that executes pip3 install coveralls, coverage run setup.py test, coverage html, coverage report, and mv htmlcov/ $COVERAGE_STATIC_DIR, then stores $COVERAGE_STATIC_DIR as a one‑week artifact and extracts coverage using the regex /TOTAL.*\\s+(\\d+\\%)/, and also add a pip-install-local job that runs pip3 install --prefix=~/.local . and pip3 install --prefix=~/.local '.[gui]'. In the package stage add a dist job that runs apt‑get update && apt‑get -y install gettext, pip install '.[dev]', make dist, and publishes the dist/* files as a one‑week artifact, and a sphinx job that runs pip3 install sphinx sphinx_rtd_theme matplotlib ipython, apt‑get -y -qq install python3-gi python3-cairocffi gir1.2-gtk-3.0, make docs, moves docs/build/html to $SPHINX_DOC_DIR, and stores $SPHINX_DOC_DIR as a one‑week artifact. In the deploy stage add a pages job that runs only on tags, clears $PAGES_DIR, moves $SPHINX_DOC_DIR and $COVERAGE_STATIC_DIR into $PAGES_DIR, publishes $PAGES_DIR as the GitLab Pages artifact and depends on sphinx and coverage, and a pypi-upload job (included from an external template) that also runs only on tags, depends on dist, and uploads the built distribution to PyPI in the production environment.",
+  "tags": [
+    "python",
+    "coverage",
+    "sphinx",
+    "docs",
+    "pypi",
+    "pages",
+    "pip",
+    "make",
+    "ci"
+  ]
+}

@@ -1,0 +1,34 @@
+.build:
+  image: docker:git
+  interruptible: true
+  rules:
+  - if: $CI_COMMIT_BRANCH == "master"
+  script:
+  - docker info
+  - echo "$CI_JOB_TOKEN" | docker login -u gitlab-ci-token --password-stdin=true "$CI_REGISTRY"
+  - export REGISTRY="$CI_REGISTRY_IMAGE" IMAGE="$CI_JOB_NAME"
+  - docker build -f "./$IMAGE.dockerfile" -t "$REGISTRY/$IMAGE" .
+  - docker push "$REGISTRY/$IMAGE:latest"
+  services:
+  - docker:dind
+  stage: build
+android-ndk:
+  extends: .build
+cdev-alpine:
+  extends: .build
+cdev-arch:
+  extends: .build
+cdev-debian:
+  extends: .build
+cdev-debian-oldstable:
+  extends: .build
+cdev-rocky-8:
+  extends: .build
+cdev-rocky-9:
+  extends: .build
+cdev-ubuntu:
+  extends: .build
+lua-testing:
+  extends: .build
+  needs:
+  - cdev-arch

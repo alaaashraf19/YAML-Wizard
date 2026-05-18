@@ -1,0 +1,16 @@
+{
+  "sha": "baa7a36074c71cb06f35b0068ae00f45ebeb7390381293158b3927211ae34e74",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2241,
+  "description": "Create a GitHub Actions workflow named Coverity Scan that runs on push to the master branch. The workflow should have read-all permissions and set environment variables for build concurrency and Coverity project. It should then run a job named Coverity Linux on an ubuntu-latest environment, but only for a specific repository. The job should download the Coverity tool, build with cov-build, archive the build results, and submit them for analysis using the Coverity token and email from secrets.",
+  "tags": [
+    "coverity",
+    "linux",
+    "cmake",
+    "gcc",
+    "g++",
+    "ubuntu",
+    "security"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "05c62ae5105166b5b4dabacf41042e0efbebc1d2dfc06ace84393dfe25b8550a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1019,
+  "description": "Create a GitHub Actions workflow named Passenger generic binaries tests CI tests that runs on push and pull request events to branches stable-* and feature/*. Use a matrix job strategy to build and test binaries on multiple OS and architecture combinations, including macOS and Linux on x86_64 and aarch64. For each matrix combination, check out the repository with submodules, prepare and build binaries, upload the resulting artifacts, and run tests.",
+  "tags": [
+    "ci",
+    "tests",
+    "binaries",
+    "matrix",
+    "multios",
+    "multiarch"
+  ]
+}

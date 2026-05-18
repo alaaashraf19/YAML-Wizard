@@ -1,0 +1,31 @@
+build:
+  artifacts:
+    expire_in: 10 mins
+    paths:
+    - build/reports/tests
+    reports:
+      junit: build/test-results/test/TEST-*.xml
+  coverage: /test_coverage=(.*)%/
+  script:
+  - ./gradlew clean build -x javadoc
+  - cat build/reports/tests/coverage/index.html | grep -o 'Total[^%]*%' | sed -e 's/Total.*>/test_coverage=/g'
+  stage: build
+cache:
+  key: $CI_PROJECT_NAMESPACE
+  paths:
+  - /root/.gradle/wrapper
+  - /root/.gradle/caches
+image: openjdk:10-jre-slim
+pages:
+  artifacts:
+    paths:
+    - public
+  dependencies:
+  - build
+  only:
+  - master
+  script:
+  - mkdir -p public
+  - mv docs/javadoc public/api
+  - mv build/reports/tests public
+  stage: deploy

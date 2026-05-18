@@ -1,0 +1,15 @@
+{
+  "sha": "9a9c53ff089d916a804664d001eafe570e64f32429a99f2818462dfcb9fca92f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2430,
+  "description": "Create a GitHub Actions workflow named CodeQL that analyzes code for security vulnerabilities and errors. The workflow should trigger on push to the master branch, on pull requests to the master branch, and on a scheduled basis every Tuesday at 17:00 UTC. Use an ubuntu-latest job with read permissions for actions and repository contents, and write permission for security events. The job should use a matrix strategy to analyze C++ and JavaScript code, checking out the repository, initializing CodeQL tools, fetching submodules, autobuilding compiled languages, and performing CodeQL analysis.",
+  "tags": [
+    "codeql",
+    "security",
+    "analysis",
+    "cpp",
+    "javascript",
+    "ubuntu"
+  ]
+}

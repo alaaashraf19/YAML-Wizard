@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_07360",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2114,
+  "description": "Create a GitLab CI pipeline with three stages: build, test, and deploy. In the build stage add a build_job that runs the following Windows commands in order: set MSBUILDDISABLENODEREUSE=1, echo Restoring NuGet Packages..., \"c:\\nuget\\nuget.exe\" restore \"Queste.sln\", echo NuGet Packages restored, echo Release build..., \"C:\\Program Files (x86)\\MSBuild\\14.0\\Bin\\msbuild.exe\" /consoleloggerparameters:ErrorsOnly /maxcpucount /nologo /property:Configuration=Release /verbosity:quiet /m:4 /nr:false \"Queste.sln\", echo Build completed, echo Cleaning up.., DEL /Q \".\", echo Tests cleaned. In the test stage add a test_job that repeats the restore and build commands, then runs the test suite with \"C:\\xunit\\xunit.console.exe\" \".\\Queste.Test\\bin\\Release\\Queste.Test.dll\", echoes test completion, and performs the same cleanup steps. In the deploy stage add a deploy_job that runs only on the master branch (and on_success), repeats the restore and build steps, then packs the NuGet package using \"c:\\nuget\\nuget.exe\" pack \"Queste.csproj\" -Prop Configuration=Release, pushes it to https://www.nuget.org/api/v2/package with \"c:\\nuget\\nuget.exe\" push Queste.*.nupkg -Source https://www.nuget.org/api/v2/package, and finally cleans up. No Docker image, services, caches, or artifacts are defined.",
+  "tags": [
+    "windows",
+    "nuget",
+    "msbuild",
+    "xunit",
+    "gitlab-ci"
+  ]
+}

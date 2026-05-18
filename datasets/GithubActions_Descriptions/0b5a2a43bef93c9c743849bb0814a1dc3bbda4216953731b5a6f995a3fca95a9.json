@@ -1,0 +1,15 @@
+{
+  "sha": "0b5a2a43bef93c9c743849bb0814a1dc3bbda4216953731b5a6f995a3fca95a9",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2742,
+  "description": "Create a GitHub Actions workflow named Test that runs on push and pull request events. The workflow has three jobs: check, test, and deploy. The check job checks out the repository, sets up Python, and runs pre-commit checks. The test job runs tests on multiple Python versions. The deploy job deploys to PyPI and creates a release if the workflow is triggered by a tag push.",
+  "tags": [
+    "python",
+    "pre-commit",
+    "pytest",
+    "codecov",
+    "pypi",
+    "release"
+  ]
+}

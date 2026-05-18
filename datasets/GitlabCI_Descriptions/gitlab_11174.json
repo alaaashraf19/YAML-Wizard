@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_11174",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 680,
+  "description": "Create a GitLab CI pipeline that uses the continuumio/miniconda3 Docker image and defines three stages: build, test, and release. In the build stage add a conda_build job that runs 'conda install -y conda-build' then 'conda build . -c conda-forge' to produce a .tar.bz2 package, and a wheel_build job that runs 'python setup.py bdist_wheel' to create a .whl file; both jobs cache the ~/.conda and ~/.cache/pip directories and store the resulting .tar.bz2 and .whl files as artifacts. In the test stage add a pytest job that installs the package with 'pip install -e .' and runs 'pytest --cov=jobsubmitter --junitxml=report.xml', uploading report.xml as a JUnit artifact and caching pip packages. In the release stage add a deploy_conda job that runs 'anaconda upload -u $ANACONDA_USER -p $ANACONDA_TOKEN $CI_PROJECT_DIR/*.tar.bz2' and a deploy_pypi job that runs 'twine upload dist/*.whl' to publish the artifacts, both jobs only run on tags. All jobs use rules to run on the main branch for builds and on tags for releases.",
+  "tags": [
+    "conda",
+    "python",
+    "pytest",
+    "wheel",
+    "ci",
+    "coverage",
+    "anaconda",
+    "twine"
+  ]
+}

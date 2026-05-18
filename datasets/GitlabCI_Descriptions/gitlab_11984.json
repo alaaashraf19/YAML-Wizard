@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_11984",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 119,
+  "description": "Create a GitLab CI pipeline that uses the node:latest Docker image and caches the node_modules/ directory. Define a single job named test_async that runs in the default test stage, executing the shell commands npm install and npm test. The pipeline has no additional services, artifacts, or rules, and simply runs the tests on each pipeline execution.",
+  "tags": [
+    "node",
+    "npm",
+    "cache",
+    "test-async"
+  ]
+}

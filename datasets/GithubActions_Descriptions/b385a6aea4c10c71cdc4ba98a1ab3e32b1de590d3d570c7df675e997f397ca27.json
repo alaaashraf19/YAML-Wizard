@@ -1,0 +1,14 @@
+{
+  "sha": "b385a6aea4c10c71cdc4ba98a1ab3e32b1de590d3d570c7df675e997f397ca27",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1848,
+  "description": "Create a GitHub Actions workflow named CTest (BVTs) that runs on push to main and on pull requests to main, ignoring certain paths. Use a Windows 2022 job with read permissions to repository contents. In a matrix build with multiple tool versions, build types, and architectures, check out the repository, clone a test repository, install Ninja, set up the MSVC development environment, configure CMake, build the project, and run basic validation tests (BVTs) with CTest.",
+  "tags": [
+    "windows",
+    "cmake",
+    "ctest",
+    "bvt",
+    "github-actions"
+  ]
+}

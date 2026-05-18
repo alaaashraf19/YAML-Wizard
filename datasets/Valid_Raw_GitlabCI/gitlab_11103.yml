@@ -1,0 +1,18 @@
+build:
+  artifacts:
+    paths:
+    - test_results/*.png
+  script:
+  - make test
+  stage: build
+image: registry.gitlab.com/keithwberry/connectiq:latest
+release:
+  artifacts:
+    paths:
+    - bin/*.iq
+  script:
+  - make package
+  stage: release
+stages:
+- build
+- release

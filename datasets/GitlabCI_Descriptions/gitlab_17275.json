@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_17275",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 4934,
+  "description": "Create a GitLab CI pipeline with stages prepare, build, install, and package, using variables IMAGE_REPOSITORY, IMAGE_VERSION and GIT_DEPTH. In the prepare stage add linux-prepare, mingw-x64-prepare, and docs-prepare jobs that run on the $IMAGE_REPOSITORY/utilities-env:$IMAGE_VERSION image, set GIT_STRATEGY none, compute SOLARUS_REF or SOLDOC_REF, download the corresponding artifact with wget, extract it with 7za, and store the result in staging or solarus-doc, each producing an artifact that expires in one week. In the build stage add linux-build and mingw-x64-build jobs extending the .build template: they export CCACHE variables, cache the ccache directory, then execute \"$CMAKE_GEN_CMD -B build $CMAKE_GEN_FLAGS\" and \"$CMAKE_CMD --build build\" using the linux-build-env or mingw-build-env images (mingw-x64-build overrides CMAKE_GEN_CMD to x86_64-w64-mingw32-cmake), and archive the build directory as a one‑week artifact. In the install stage add mingw-x64-install extending .install, which runs \"$CMAKE_CMD --install build --strip\" on the linux-build-env image and stores the staging directory as a one‑month artifact. Finally, in the package stage add mingw-x64-package that defines PACKAGE_REF and PACKAGE, echoes the package name, runs a find command with unix2dos, calls mingw_make_pkg.sh and optional pkg_add.sh scripts, copies documentation and lua51.dll into the package, and publishes the resulting $PACKAGE_PREFIX-*.zip files as a one‑month artifact.",
+  "tags": [
+    "cmake",
+    "ccache",
+    "mingw",
+    "linux",
+    "solarus",
+    "gitlab-ci"
+  ]
+}

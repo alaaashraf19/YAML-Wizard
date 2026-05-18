@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_08200",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1156,
+  "description": "Create a GitLab CI pipeline using the registry.gitlab.com/gitlab-examples/openshift-deploy Docker image and define two stages: build and deploy. Add a build job in the build stage that runs only on branches, sets DOCKER_DRIVER=overlay and DOCKER_HOST=tcp://docker:2375, uses the docker:dind service, and executes the command 'command build'. Add a review job in the deploy stage that runs on branches except master, creates a review environment named review/$CI_BUILD_REF_NAME with URL http://$CI_ENVIRONMENT_SLUG.ruby-openshift-example.tanukionline.com and on_stop stop_review, sets CI_ENVIRONMENT_URL to http://${CI_ENVIRONMENT_SLUG}.ruby-openshift-example.tanukionline.com, and runs 'command deploy'. Add a staging job in the deploy stage that runs only on master, creates a staging environment with URL http://$CI_ENVIRONMENT_SLUG.ruby-openshift-example.tanukionline.com, sets CI_ENVIRONMENT_URL similarly, and runs 'command deploy'. Finally add a stop_review job in the deploy stage that runs on branches except master, stops the review environment, sets GIT_STRATEGY=none, and runs 'command remove_deploy', while a global variable KUBE_DOMAIN is set to ruby-openshift-example.tanukionline.com.",
+  "tags": [
+    "openshift",
+    "docker-dind",
+    "review-environment",
+    "staging",
+    "gitlab-ci"
+  ]
+}

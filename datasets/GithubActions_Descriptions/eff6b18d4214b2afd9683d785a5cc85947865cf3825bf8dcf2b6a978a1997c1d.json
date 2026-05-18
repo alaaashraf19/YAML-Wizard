@@ -1,0 +1,14 @@
+{
+  "sha": "eff6b18d4214b2afd9683d785a5cc85947865cf3825bf8dcf2b6a978a1997c1d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 961,
+  "description": "Create a GitHub Actions workflow named Marketplace - AWS that runs on release events. The workflow has two jobs: validate and publish. The validate job checks out the repository and uses the hashicorp/packer-github-actions to fix and validate a Packer template for AWS, but both steps are currently disabled. The publish job depends on validate, checks out the repository, and uses the same action to build the Packer template, but this step is also currently disabled.",
+  "tags": [
+    "packer",
+    "aws",
+    "github-actions",
+    "marketplace",
+    "release"
+  ]
+}

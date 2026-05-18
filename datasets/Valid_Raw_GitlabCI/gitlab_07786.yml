@@ -1,0 +1,21 @@
+before_script:
+- ruby -v
+- apt-get update -q && apt-get install nodejs -yqq
+- gem install bundler --no-doc
+- bundle config set --local path 'vendor'
+- bundle install -j $(nproc) --quiet
+cache:
+  paths:
+  - vendor/ruby
+image: ruby:2.7.6
+services:
+- postgres:13
+test:
+  script:
+  - env | grep DATABASE_URL
+  - bin/rails db:create db:schema:load test
+  variables:
+    DATABASE_URL: postgresql://postgres:postgres@postgres:5432/$POSTGRES_DB
+    RAILS_ENV: test
+variables:
+  POSTGRES_DB: scoutinv_test

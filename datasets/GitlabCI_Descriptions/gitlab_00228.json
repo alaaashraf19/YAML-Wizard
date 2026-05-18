@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_00228",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1639,
+  "description": "Create a GitLab CI pipeline using the python:3.5 Docker image. Define six jobs—student-test-week-3, student-test-week-4, student-test-week-5, student-test-week-6, student-test-week-7, and teaching-team-test—each running in the default test stage. Each student-test-week-X job executes `python -m unittest discover -s week_X -v` and is excluded from runs on the master branch and any branch of AdvProg2016/course-materials-development and AdvProg2016/weekly-exercises via `except`. The teaching-team-test job runs `python -m unittest discover -s week_7 -v`, then weeks 6,5,4,3 in that order, also excludes the same branches, but is limited to commits whose branch name matches the regex `.*sol$` in AdvProg2016/course-materials-development via an `only` rule. No caches, artifacts, services, or deployment targets are defined.",
+  "tags": [
+    "python",
+    "unittest",
+    "gitlab-ci",
+    "advprog2016",
+    "student-tests",
+    "teaching-team"
+  ]
+}

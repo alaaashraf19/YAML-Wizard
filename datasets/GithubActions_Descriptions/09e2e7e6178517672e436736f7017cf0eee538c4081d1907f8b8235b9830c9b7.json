@@ -1,0 +1,14 @@
+{
+  "sha": "09e2e7e6178517672e436736f7017cf0eee538c4081d1907f8b8235b9830c9b7",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1492,
+  "description": "Create a GitHub Actions workflow named publish that triggers on push events with any tag. The workflow should run on an ubuntu-latest environment and only if the commit reference starts with refs/tags. It checks out the repository with submodules, sets up Python 3.10, upgrades pip, installs dependencies from requirements.txt, installs the build package, builds a binary wheel and source tarball, and publishes the distribution to both Test PyPI and PyPI using provided API tokens.",
+  "tags": [
+    "python",
+    "pypi",
+    "release",
+    "tags",
+    "test-pypi"
+  ]
+}

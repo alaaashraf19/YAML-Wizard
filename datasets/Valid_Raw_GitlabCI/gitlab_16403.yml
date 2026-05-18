@@ -1,0 +1,156 @@
+.build-job-shared:
+  artifacts: &id003
+    expire_in: 1 hrs
+    paths:
+    - vendor/
+  cache: &id004
+    key: $CI_JOB_NAME-composer-full
+    paths:
+    - vendor/
+  needs: &id005 []
+  script: &id001
+  - curl -sSL https://getcomposer.org/download/2.3.5/composer.phar --output composer.phar
+  - echo "3b3b5a899c06a46aec280727bdf50aad14334f6bc40436ea76b07b650870d8f4  composer.phar"
+    > checksums
+  - sha256sum -c checksums
+  - php composer.phar update --prefer-dist --optimize-autoloader --no-interaction
+    --no-progress
+  stage: build
+.build-setup-composer:
+  script: *id001
+.finalization-package-job-shared:
+  artifacts: &id006
+    paths:
+    - bin/distribution.phar
+  cache: &id007
+    key: $CI_JOB_NAME-composer-no-dev
+    paths:
+    - vendor/
+  needs: &id008 []
+  script: &id009
+  - curl -sSL https://getcomposer.org/download/2.3.5/composer.phar --output composer
+  - echo "3b3b5a899c06a46aec280727bdf50aad14334f6bc40436ea76b07b650870d8f4  composer"
+    > checksums
+  - chmod +x composer
+  - curl -sSL https://github.com/box-project/box/releases/download/3.16.0/box.phar
+    --output box
+  - echo "f508e28f309d7e95a319bdcd5f13dcfbb18eb91cb7a6cac9b69bc7799d78bdf9  box" >>
+    checksums
+  - sha256sum -c checksums
+  - export PATH="$PATH:$(realpath .)"
+  - ./composer update --prefer-dist --optimize-autoloader --no-interaction --no-progress
+    --no-dev
+  - php -d phar.readonly=0 ./box compile
+  stage: finalization
+.test-job-shared:
+  script: &id002
+  - php -d memory_limit=512M vendor/bin/phpunit
+  stage: test
+.test-run-phpunit:
+  script: *id002
+build:php-8.0:
+  artifacts: *id003
+  cache: *id004
+  image: php:8.0-cli-alpine
+  needs: *id005
+  script: *id001
+  stage: build
+build:php-8.1:
+  artifacts: *id003
+  cache: *id004
+  image: php:8.1-cli-alpine
+  needs: *id005
+  script: *id001
+  stage: build
+finalization:code-coverage:
+  artifacts:
+    expire_in: 1 weeks
+    paths:
+    - coverage/
+  coverage: /^\s*Lines:\s*\d+.\d+\%/
+  image: php:8.1-cli-alpine
+  needs:
+  - artifacts: true
+    job: build:php-8.1
+  script:
+  - phpdbg -d memory_limit=2048M -qrr vendor/bin/phpunit --coverage-text --colors=never
+    --coverage-html=coverage
+  stage: finalization
+finalization:package-php-8.0:
+  artifacts: *id006
+  cache: *id007
+  image: php:8.0-cli-alpine
+  needs: *id008
+  script: *id009
+  stage: finalization
+finalization:package-php-8.1:
+  artifacts: *id006
+  cache: *id007
+  image: php:8.1-cli-alpine
+  needs: *id008
+  script: *id009
+  stage: finalization
+include:
+- template: Code-Quality.gitlab-ci.yml
+stages:
+- build
+- test
+- finalization
+test:php-8.0:
+  image: php:8.0-cli-alpine
+  needs:
+  - artifacts: true
+    job: build:php-8.0
+  script: *id002
+  stage: test
+test:php-8.1:
+  image: php:8.1-cli-alpine
+  needs:
+  - artifacts: true
+    job: build:php-8.1
+  script: *id002
+  stage: test
+test:run-composer-require-checker:
+  image: php:8.0-cli-alpine
+  script:
+  - curl -sSL https://github.com/maglnet/ComposerRequireChecker/releases/download/4.1.0/composer-require-checker.phar
+    --output composer-require-checker.phar
+  - echo "2a4c652de474e5dbbda1662ff82f207be7aa86b44912093cf5fb135345506e66  composer-require-checker.phar"
+    > checksums
+  - sha256sum -c checksums
+  - php ./composer-require-checker.phar check ./composer.json
+  stage: test
+test:run-phpcs:
+  artifacts:
+    expire_in: 1 hrs
+    paths:
+    - phpcs-test-report.xml
+    reports:
+      junit: phpcs-test-report.xml
+  image: php:8.1-cli-alpine
+  needs:
+  - artifacts: true
+    job: build:php-8.1
+  script:
+  - php vendor/bin/phpcs src tests --warning-severity=8 --report-junit=./phpcs-test-report.xml
+  stage: test
+test:run-phpstan:
+  artifacts:
+    expire_in: 1 hrs
+    paths:
+    - phpstan-report.xml
+    reports:
+      junit: phpstan-report.xml
+    when: always
+  cache:
+    key: $CI_JOB_NAME-cache
+    paths:
+    - cache
+  image: php:8.1-cli-alpine
+  needs:
+  - artifacts: true
+    job: build:php-8.1
+  script:
+  - php -d memory_limit=2048M vendor/bin/phpstan analyse -c phpstan-ci.neon --no-interaction
+    --no-progress --error-format junit > ./phpstan-report.xml
+  stage: test

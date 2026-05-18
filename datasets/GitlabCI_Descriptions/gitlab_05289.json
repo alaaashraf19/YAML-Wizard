@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_05289",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 849,
+  "description": "Create a GitLab CI pipeline using the alpine Docker image. Define variables HUGO_SHA, HUGO_VERSION, THEME_VERSION and a before_script that runs: apk update && apk add openssl ca-certificates unzip; wget -O ${HUGO_VERSION}.tar.gz https://github.com/spf13/hugo/releases/download/v${HUGO_VERSION}/hugo_${HUGO_VERSION}_Linux-64bit.tar.gz; echo \"${HUGO_SHA}  ${HUGO_VERSION}.tar.gz\" | sha256sum -c; tar xf ${HUGO_VERSION}.tar.gz && mv hugo* /usr/bin/hugo; hugo version; mkdir -p themes/castanet; wget -O castanet.zip https://github.com/mattstratton/castanet/releases/download/${THEME_VERSION}/castanet-${THEME_VERSION}.zip; unzip castanet.zip -d themes/castanet. Add a pages job in the default test stage that runs hugo, stores the public/ directory as an artifact, and runs only on the master branch to publish to GitLab Pages. Add a test job also in the test stage that runs hugo, stores the public/ directory as an artifact, and runs on all branches except master.",
+  "tags": [
+    "alpine",
+    "hugo",
+    "gitlab-pages",
+    "static-site",
+    "ci"
+  ]
+}

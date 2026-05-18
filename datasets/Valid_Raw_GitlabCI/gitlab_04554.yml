@@ -1,0 +1,24 @@
+.test_template:
+  script: &id001
+  - julia -e 'using Pkg; Pkg.clone(pwd()); Pkg.build("Bitcoin"); Pkg.test("Bitcoin";
+    coverage = true)'
+  - julia -e 'using Pkg; Pkg.add("Coverage"); import Bitcoin; cd(joinpath(dirname(pathof(Bitcoin)),
+    "..")); using Coverage; cl, tl = get_summary(process_folder()); println("(", cl/tl*100,
+    "%) covered")'
+pages:
+  artifacts:
+    paths:
+    - public
+  image: julia:1.0
+  only:
+  - master
+  script:
+  - apt-get update -qq && apt-get install -y git
+  - julia -e 'using Pkg; Pkg.clone(pwd()); Pkg.build("Bitcoin");'
+  - julia -e 'using Pkg; import Bitcoin; Pkg.add("Documenter")'
+  - julia --color=yes docs/make.jl
+  - mv docs/build public
+  stage: deploy
+test:1.0:
+  image: julia:1.0
+  script: *id001

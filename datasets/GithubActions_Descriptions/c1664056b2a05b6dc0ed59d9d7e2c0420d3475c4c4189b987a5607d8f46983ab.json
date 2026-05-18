@@ -1,0 +1,15 @@
+{
+  "sha": "c1664056b2a05b6dc0ed59d9d7e2c0420d3475c4c4189b987a5607d8f46983ab",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 949,
+  "description": "Create a GitHub Actions workflow that runs on push to the master branch and on pull requests to master. The workflow should have two jobs, fedora-rpm-build and centos-rpm-build, both running on ubuntu-latest. The fedora-rpm-build job uses a fedora:34 container to install tools and dependencies, then build an RPM package using a mouse_m908.spec file. The centos-rpm-build job uses a centos:8 container to install tools and dependencies, enable powertools, then build the same RPM package.",
+  "tags": [
+    "rpm",
+    "fedora",
+    "centos",
+    "ubuntu",
+    "containers",
+    "make"
+  ]
+}

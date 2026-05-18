@@ -1,0 +1,17 @@
+rst:
+  before_script:
+  - pip install Pygments rstcheck
+  image: python:latest
+  script:
+  - rstcheck --ignore-directives youtube --ignore-languages c --report-level warning
+    *.rst
+trigger_build:
+  image: fedora:latest
+  needs:
+  - rst
+  only:
+    variables:
+    - $TOKEN
+  script:
+  - curl -X POST -F token=$TOKEN -F ref=master https://gitlab.freedesktop.org/api/v4/projects/spice%2Fspice-space/trigger/pipeline
+  stage: deploy

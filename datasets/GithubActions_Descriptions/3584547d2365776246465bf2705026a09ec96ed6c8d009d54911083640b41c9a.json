@@ -1,0 +1,16 @@
+{
+  "sha": "3584547d2365776246465bf2705026a09ec96ed6c8d009d54911083640b41c9a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1155,
+  "description": "Create a GitHub Actions workflow named C/C++ CI that runs on every push to the master branch and on pull requests to master. Use a single ubuntu-latest job that checks out the repository, updates apt, installs required packages, installs cpp-coveralls, and then runs autogen, configure, make, make check, and make distcheck. Also upload code coverage to Coveralls and a Linux 64-bit build artifact.",
+  "tags": [
+    "c",
+    "cpp",
+    "ci",
+    "ubuntu",
+    "gcc",
+    "tests",
+    "coverage"
+  ]
+}

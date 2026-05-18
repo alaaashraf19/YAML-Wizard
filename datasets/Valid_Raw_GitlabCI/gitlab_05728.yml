@@ -1,0 +1,15 @@
+pages:
+  artifacts:
+    paths:
+    - public
+  before_script:
+  - apk update && apk upgrade && apk add make
+  - pip install -r requirements.txt
+  image: python:3.6-alpine
+  only:
+  - master
+  script:
+  - make html
+  - cd pdfs; make; cd ..;
+  - mv _build/html public
+  stage: deploy

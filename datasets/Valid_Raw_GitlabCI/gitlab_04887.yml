@@ -1,0 +1,12 @@
+before_script:
+- apt-get update --yes
+- apt-get install --yes cmake
+image: gcc
+stages:
+- build
+trigger_build:
+  script:
+  - rm -rf build && mkdir build && cd build && cmake ..
+  - make -j4
+  - ./hello
+  stage: build

@@ -1,0 +1,38 @@
+.disable-issue-processor-schedule-base:
+  extends: .common-job-setup
+  rules:
+  - if: ($CI_PIPELINE_SOURCE =~ /^(pipeline|web|api)$/) && ($SECURITY_RELEASE_PIPELINE
+      =~ /^(disable_issue_processor|true)$/)
+  stage: security_release:disable_issue_processor_schedule
+.if-disable-issue-processor-schedule:
+  if: ($CI_PIPELINE_SOURCE =~ /^(pipeline|web|api)$/) && ($SECURITY_RELEASE_PIPELINE
+    =~ /^(disable_issue_processor|true)$/)
+security_release_disable_issue_processor_schedule:execute:
+  extends:
+  - .disable-issue-processor-schedule-base
+  - .common-ci-tokens
+  needs:
+  - security_release_disable_issue_processor_schedule:start
+  script:
+  - bundle exec rake 'security:disable_security_target_processor:execute'
+security_release_disable_issue_processor_schedule:start:
+  extends:
+  - .disable-issue-processor-schedule-base
+  - .common-ci-tokens
+  needs: []
+  script:
+  - bundle exec rake 'security:disable_security_target_processor:start'
+  stage: security_release:disable_issue_processor_schedule:start
+  when: manual
+security_release_disable_issue_processor_schedule:verify-managed-version-projects:
+  extends: .disable-issue-processor-schedule-base
+  needs:
+  - security_release_disable_issue_processor_schedule:start
+  script:
+  - bundle exec rake 'security:disable_security_target_processor:verify_managed_version_projects'
+security_release_disable_issue_processor_schedule:verify_pending_issues:
+  extends: .disable-issue-processor-schedule-base
+  needs:
+  - security_release_disable_issue_processor_schedule:start
+  script:
+  - bundle exec rake 'security:disable_security_target_processor:verify_pending_issues'

@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_05610",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 824,
+  "description": "Create a GitLab CI pipeline that uses the node:10-jessie Docker image as the default, runs npm install --quiet in a global before_script, and caches the node_modules/ directory. Define the variable REGISTRY_STAGING_URL set to ageingarpanetwork/arpa-network and the stages build, test, check, and release. In the check stage add a lint job that allows failure, executes npm run lint, and has no additional triggers. In the release stage add a release-image job that runs only on the master branch, must be triggered manually, uses the docker:stable image with the docker:dind service, and runs a before_script that logs into the GitLab registry, verifies the registry, installs python and python-magic via apk and pip, then removes pip, before building the image with docker build --pull -t \"$CI_REGISTRY_IMAGE\" . and pushing it with docker push \"$CI_REGISTRY_IMAGE\". Tag the release-image job with the docker tag.",
+  "tags": [
+    "node",
+    "npm",
+    "lint",
+    "docker",
+    "dind",
+    "release",
+    "cache"
+  ]
+}

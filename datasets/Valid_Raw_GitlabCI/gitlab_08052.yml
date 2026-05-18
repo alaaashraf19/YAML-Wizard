@@ -1,0 +1,38 @@
+before_script:
+- apk add bash curl git
+- mkdir -p /builds/$CI_PROJECT_PATH/mnt
+- mkdir -p ${CI_PROJECT_DIR}/image
+- mkdir ~/.docker
+- chmod 700 ~/.docker
+- cp ${CONFIG_JSON} ~/.docker/config.json
+build:
+  only:
+  - branches
+  script:
+  - bash -x pipeline/pipeline-entry.sh
+  stage: build
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+  - image/
+deploy:
+  only:
+  - master
+  script:
+  - bash -x pipeline/pipeline-entry.sh
+  stage: deploy
+image: docker:latest
+services:
+- docker:dind
+stages:
+- build
+- test
+- deploy
+test:
+  only:
+  - branches
+  script:
+  - bash -x pipeline/pipeline-entry.sh
+  stage: test
+variables:
+  EXTERNAL_REGISTRY: docker.io

@@ -1,0 +1,23 @@
+beta:cargo:
+  image: rustdocker/rust:beta
+  script:
+  - rustc --version && cargo --version
+  - cargo test --verbose --jobs 1 --release
+  - cargo doc
+  - cd dds-utils && cargo run --bin dds-info ../examples/dxt1.dds
+image: scorpil/rust:stable
+nightly:cargo:
+  image: rustdocker/rust:nightly
+  script:
+  - rustc --version && cargo --version
+  - cargo test --verbose --jobs 1 --release
+  - cargo bench --verbose --jobs 1
+  - cargo doc
+  - cd dds-utils && cargo run --bin dds-info ../examples/dxt1.dds
+stable:cargo:
+  image: rustdocker/rust:stable
+  script:
+  - rustc --version && cargo --version
+  - cargo test --verbose --jobs 1 --release
+  - cargo doc
+  - cd dds-utils && cargo run --bin dds-info ../examples/dxt1.dds

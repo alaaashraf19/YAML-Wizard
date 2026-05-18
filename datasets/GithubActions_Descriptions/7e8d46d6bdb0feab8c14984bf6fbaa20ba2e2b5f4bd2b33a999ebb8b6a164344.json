@@ -1,0 +1,16 @@
+{
+  "sha": "7e8d46d6bdb0feab8c14984bf6fbaa20ba2e2b5f4bd2b33a999ebb8b6a164344",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2476,
+  "description": "Create a GitHub Actions workflow named CI that runs on push to master and try-import branches and on pull requests. The workflow has four jobs: cpu-test and gpu-test running on a self-hosted environment with a custom container, auto-merge running on ubuntu-latest if the workflow is triggered on try-import branch, and send-dingding also on ubuntu-latest. The cpu-test and gpu-test jobs checkout the repository, prepare submodules, build MegEngine, and run Python and C++ tests. The auto-merge job checks out the repository, merges try-import into master, and pushes the changes. The send-dingding job sends a DingTalk notification if either cpu-test or gpu-test fails on the try-import branch.",
+  "tags": [
+    "ci",
+    "self-hosted",
+    "container",
+    "megengine",
+    "gpu",
+    "dingtalk",
+    "auto-merge"
+  ]
+}

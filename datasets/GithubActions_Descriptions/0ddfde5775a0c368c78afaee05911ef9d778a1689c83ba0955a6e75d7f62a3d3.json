@@ -1,0 +1,17 @@
+{
+  "sha": "0ddfde5775a0c368c78afaee05911ef9d778a1689c83ba0955a6e75d7f62a3d3",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2086,
+  "description": "Create a GitHub Actions workflow named unit tests that runs on push to master branch and on pull requests to master. The workflow should trigger when changes are made to specific paths including src, tests, ci, and certain files. Use a matrix strategy to run a build job on ubuntu-latest, macos-latest, and windows-latest with gcc and clang compilers. In the job, check out the repository, install Python 3.11, set up uv with caching, install dependencies, and run multiple tests including checking for namespace usage in headers, running example Blink, and executing unit tests for JSON and all tests.",
+  "tags": [
+    "unit-tests",
+    "ci",
+    "python",
+    "gcc",
+    "clang",
+    "ubuntu",
+    "macos",
+    "windows"
+  ]
+}

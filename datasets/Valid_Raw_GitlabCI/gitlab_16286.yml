@@ -1,0 +1,10 @@
+image: ruby:2.3
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - gem install jekyll
+  - jekyll build --source pages/helios -d public/

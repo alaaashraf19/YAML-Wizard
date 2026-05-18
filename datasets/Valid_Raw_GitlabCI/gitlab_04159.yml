@@ -1,0 +1,14 @@
+image: node:6.10.0
+pages:
+  artifacts:
+    paths:
+    - public
+  cache:
+    key: project
+    paths:
+    - node_modules
+  only:
+  - master
+  script:
+  - npm install
+  - ./node_modules/hexo/bin/hexo generate

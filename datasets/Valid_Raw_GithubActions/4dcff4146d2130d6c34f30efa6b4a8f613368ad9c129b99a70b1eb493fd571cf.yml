@@ -1,0 +1,13 @@
+name: Code Quality Checks
+
+on: [push]
+
+jobs:
+  black:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Run Black
+      uses: psf/black@stable
+      with:
+        options: "--check"

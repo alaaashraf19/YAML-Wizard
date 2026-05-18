@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_16767",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 150,
+  "description": "Create a GitLab CI pipeline that runs a before_script updating the system with yum and installing php, php-common, httpd and httpd-tools, then prints the httpd and php versions using httpd -V and php -v. Define a job named job1 that runs in the default test stage and executes the shell command echo \"Testing\". No custom Docker image or services are specified, so the runner's default image is used. No caches, artifacts, or conditional rules are defined for this pipeline.",
+  "tags": [
+    "yum",
+    "php",
+    "httpd",
+    "gitlab-ci",
+    "default-image"
+  ]
+}

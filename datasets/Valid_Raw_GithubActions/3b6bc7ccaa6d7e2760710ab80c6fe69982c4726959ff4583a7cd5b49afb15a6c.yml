@@ -1,0 +1,41 @@
+name: Template check
+
+on: push
+
+jobs:
+  check:
+    name: Check templates
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install git
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -qq --force-yes git rename perl
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          submodules: "recursive"
+
+      - name: Dependencies
+        run: |
+          ./ci/ubuntu.deps.sh
+
+      - name: Clone templates
+        run: |
+          for template in score-vfx-template score-device-template score-process-template score-audio-addon-template; do
+            git clone https://github.com/ossia-templates/$template
+            (
+             cd $template
+             ./init.sh $(echo $template | sed 's/score//;s/template//;s/addon//;s/-//g')
+             ./release.sh
+             mv score-* ../src/addons/
+            )
+          done
+
+          ls src/addons
+
+      - name: Build
+        run: |
+          ./ci/ubuntu.build.sh

@@ -1,0 +1,16 @@
+{
+  "sha": "ee9f554ba30d74f0614410530ca1be5d529344dce927da988b95a20cadfeef8e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2535,
+  "description": "Create a GitHub Actions workflow named 'rpmbuild test' that runs on push to the master branch and on pull requests to master, excluding certain paths. Use a matrix strategy with a ubuntu-latest job that runs in different Linux containers (Fedora, OpenSUSE, CentOS Stream). In each container, install necessary packages, check out the repository, install build dependencies, and build SRPM and RPMs using a Python script.",
+  "tags": [
+    "rpmbuild",
+    "linux",
+    "fedora",
+    "opensuse",
+    "centos",
+    "github-actions",
+    "ci"
+  ]
+}

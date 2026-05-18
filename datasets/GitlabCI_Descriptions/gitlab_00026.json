@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_00026",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 355,
+  "description": "Create a GitLab CI pipeline that uses the node Docker image and defines a single deploy stage. Add a deploy job that runs only on the master branch, caches the directories /usr/local/lib/node_modules/ and node_modules/ with cache key \"deploy\", and stores the same paths as artifacts. In the before_script run \"npm install -g phantomjs-prebuilt casperjs\" then \"npm install\". In the script run \"node ./deploy.js\". The job belongs to the deploy stage.",
+  "tags": [
+    "node",
+    "npm",
+    "phantomjs",
+    "casperjs",
+    "deploy",
+    "cache",
+    "artifacts",
+    "master"
+  ]
+}

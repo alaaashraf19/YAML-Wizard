@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_11113",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 501,
+  "description": "Create a GitLab CI pipeline using the ruby:2.5 Docker image and a before_script that installs bundler with `gem install bundler --no-ri --no-rdoc` and runs `bundle install -j $(nproc) --path vendor/bundle`. Define a cache for the vendor directory. Add a bundler_audit job in the default test stage that executes `bin/bundler-audit check --verbose --update`. Add a reek job in the test stage that runs `bin/reek --line-numbers`. Add an rspec job in the test stage that runs `bin/rspec spec --format documentation --warnings` and stores the `coverage/` directory as an artifact. Add a rubocop job in the test stage that runs `bin/rubocop --format html -o rubocop.html --format progress` and stores `rubocop.html` as an artifact.",
+  "tags": [
+    "ruby",
+    "bundler",
+    "bundler-audit",
+    "reek",
+    "rspec",
+    "rubocop",
+    "coverage",
+    "cache"
+  ]
+}

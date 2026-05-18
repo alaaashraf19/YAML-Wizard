@@ -1,0 +1,17 @@
+{
+  "sha": "63e6b2322bdff7d1983c18373717888777b41178035c10eb08a953d3f139e09e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2251,
+  "description": "Create a GitHub Actions workflow named Test that runs on push, pull request, and a scheduled cron job on Mondays at 9:00, as well as a workflow dispatch. The workflow has two jobs: test and deploy. The test job runs on ubuntu-latest with a matrix of Python 3.7 and 3.11, checks out the repository, sets up Python, installs dependencies, runs pytest, and uploads coverage to Codecov. The deploy job depends on the test job and deploys to PyPI, creates a GitHub release with changelog, and builds and deploys documentation to gh-pages.",
+  "tags": [
+    "python",
+    "pytest",
+    "codecov",
+    "pypi",
+    "github-pages",
+    "docs",
+    "release",
+    "cron"
+  ]
+}

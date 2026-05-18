@@ -1,0 +1,34 @@
+name: C/C++ CI windows
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+    
+    steps:
+    - uses: actions/checkout@v1
+    - name: depot_tools
+      run: git clone --depth 1 https://chromium.googlesource.com/chromium/tools/depot_tools.git
+    - name: fetch webrtc
+      run: |
+          git config --global core.autocrlf false 
+          git config --global core.filemode false 
+          git config --global branch.autosetuprebase always
+          set PATH=%CD%\depot_tools;%PATH%
+          mkdir webrtc
+          pushd webrtc
+          fetch --no-history --nohooks webrtc
+          gclient sync 
+          popd
+    - name: cmake
+      run: |
+          set PATH=%CD%\depot_tools;%CD%\webrtc\src\third_party\llvm-build\Release+Asserts\bin;%CD%\webrtc\src\build\toolchain\win\rc\win;%PATH%
+          cmake -G Ninja -DCMAKE_C_COMPILER=clang-cl.exe -DCMAKE_CXX_COMPILER=clang-cl.exe -DWEBRTCROOT=%CD:\=/%/webrtc .
+    - name: make 
+      run: |
+          set PATH=%CD%\depot_tools;%PATH%
+          ninja 
+    - name: cpack 
+      run: cpack       

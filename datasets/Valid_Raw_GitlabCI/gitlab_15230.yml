@@ -1,0 +1,5 @@
+test:
+  image: python:3.5
+  script:
+  - pip3 install -r requirements.txt
+  - scrapy check

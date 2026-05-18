@@ -1,0 +1,112 @@
+name: "Build PIP Packages"
+
+on:
+  workflow_call:
+    inputs:
+      ice_version:
+        required: false
+        type: string
+      repository_url:
+        required: false
+        type: string
+      repository_username:
+        description: "The username to authenticate with the repository"
+        required: false
+        type: string
+    secrets:
+      PYPI_PASSWORD:
+        required: false
+  workflow_dispatch:
+    inputs:
+      ice_version:
+        description: "The Ice version to build"
+        required: false
+      repository_url:
+        description: "The URL of the PYPI registry to publish to"
+        required: false
+        type: string
+      repository_username:
+        description: "The username to authenticate with the repository"
+        required: false
+        type: string
+
+jobs:
+  build-python-packages:
+    strategy:
+      matrix:
+        include:
+          - os: macos-latest
+          - os: windows-latest
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup C++
+        uses: ./.github/actions/setup-cpp
+
+      - name: Setup Python
+        uses: ./.github/actions/setup-python
+
+      - name: Setup Cache
+        uses: ./.github/actions/setup-cache
+        with:
+          prefix: build-pip-packages
+
+      - name: Install Build Dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install build
+          python3 -m pip install toml
+
+      - name: Update PYPI Version
+        run: python3 packaging/pypi/update_version.py ${{ inputs.ice_version }} python/pyproject.toml
+        if: inputs.ice_version != ''
+
+      - name: Build PIP Package
+        working-directory: python
+        run: python3 -m build
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: pip-packages-${{ matrix.os }}
+          path: |
+            python/dist/zeroc_ice-*.whl
+            python/dist/zeroc_ice-*.tar.gz
+
+  publish-python-packages:
+    runs-on: ubuntu-latest
+    needs: build-python-packages
+
+    steps:
+      - name: Download All PIP Package Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          pattern: pip-packages-*
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: ./.github/actions/setup-python
+
+      - name: Publish PIP Package
+        run: |
+          set -eux
+          mkdir -p ${{ github.workspace }}/dist
+          find artifacts -name 'zeroc_ice-*' -type f | while read -r file; do
+            cp -vf $file ${{ github.workspace }}/dist
+          done
+
+          python3 -m venv venv
+          source venv/bin/activate
+          pip install twine
+          twine upload --verbose --repository-url ${{ inputs.repository_url }} ${{ github.workspace }}/dist/*
+        env:
+          TWINE_USERNAME: ${{ inputs.repository_username }}
+          TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+        if: inputs.repository_url != ''

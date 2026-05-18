@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_12545",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 373,
+  "description": "Create a GitLab CI pipeline that runs a before_script on every job to update apt, install libcunit1, libcunit1-doc, libcunit1-dev and libcairo2-dev, clone the Bats testing framework from GitHub into /tmp/bats, install it to /tmp/local and add its bin directory to PATH. Define two stages named build and test. Add a build job in the build stage that executes the command make. Add a test job in the test stage that executes the command make test. The pipeline uses the default image and has no caches, artifacts, or special rules.",
+  "tags": [
+    "c",
+    "make",
+    "bats",
+    "libcunit",
+    "libcairo"
+  ]
+}

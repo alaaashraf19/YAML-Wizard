@@ -1,0 +1,48 @@
+before_script:
+- node --version
+- npm --version
+- which ssh-agent || (apt-get update -y && apt-get install openssh-client -y)
+- eval $(ssh-agent -s)
+- ssh-add <(echo "$SSH_PRIVATE_KEY")
+- mkdir -p ~/.ssh
+- '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+- which rsync || (apt-get update -y && apt-get install rsync -y)
+build:
+  artifacts:
+    paths:
+    - node_modules/
+  script:
+  - npm install
+  stage: build
+  tags:
+  - docker
+  - shared
+cache:
+  paths:
+  - node_modules/
+deploy:
+  environment:
+    name: production
+    url: https://apilab.gitlab.org
+  only:
+  - master
+  script:
+  - rsync -r --delete-after --exclude 'data' --quiet ./ $SSH_USER@$DEPLOY_HOST::apilab/
+  - ssh $SSH_USER@$DEPLOY_HOST '. ~/.bashrc && . ~/.nvm/nvm.sh && nvm use stable &&
+    pm2 restart apilab'
+  stage: deploy
+  tags:
+  - docker
+  - shared
+image: node:boron
+stages:
+- build
+- test
+- deploy
+test:
+  script:
+  - npm run lint
+  stage: test
+  tags:
+  - docker
+  - shared

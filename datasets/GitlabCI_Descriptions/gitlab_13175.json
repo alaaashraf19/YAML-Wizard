@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_13175",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1804,
+  "description": "Create a GitLab CI pipeline with stages mirror, build:win, build:linux, and deploy:both. In the mirror stage add a \"Mirror to gh\" job using the registry.gitlab.com/nickdonnelly/horus/git-mirror:latest image that runs git-mirror \"${CI_PROJECT_DIR}\" git@github.com:${GITHUB_REPOSITORY} to push the repository to GitHub. In the build:win stage add a \"Build Windows\" job using haffmans/mingw-qt5:latest image, limited to master and staging branches, that runs x86_64-w64-mingw32-qmake-qt5 horus.pro and make -j7, and stores the resulting build/* artifacts for 1 week. In the build:linux stage add a \"Build Linux\" job using rabits/qt:5.10-desktop image, also only on master and staging, that runs export QMAKE_CXXFLAGS=\"-std=c++14\", sudo apt-get -qq update, qmake horus.pro, and make -j4, and archives build/* for 1 week. In the deploy:both stage add a \"Deploy both platforms\" job using nickdonnelly/deploy_horus image, only on master, that extracts VERSION from app/horus.cpp, zips the Linux and Windows binaries, and uploads them via req post to https://horus.donnelly.cc/dist/deploy/new/linux/${VERSION} and https://horus.donnelly.cc/dist/deploy/new/win64/${VERSION} with x-deployment-key and x-api-key headers.",
+  "tags": [
+    "qt",
+    "linux-build",
+    "windows-build",
+    "docker",
+    "github-mirror",
+    "deployment",
+    "zip"
+  ]
+}

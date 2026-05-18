@@ -1,0 +1,17 @@
+{
+  "sha": "d63112007dc7e441fa36c1037286be99987a1cd558086ece2cb08e1bb77ad330",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 9022,
+  "description": "Create a GitHub Actions release workflow that triggers on published releases. The workflow should have three jobs: build_deb, build-appimage, and build-windows-packages. The build_deb job builds .deb files for debian-based systems (Ubuntu 24.04, 22.04, and 20.04) with QT5 or QT6 dependencies. The build-appimage job builds a universal and portable AppImage package on ubuntu-20.04. The build-windows-packages job creates Windows packages on a windows-2022 runner.",
+  "tags": [
+    "release",
+    "ubuntu",
+    "appimage",
+    "windows",
+    "deb",
+    "qt",
+    "cmake",
+    "sdl2"
+  ]
+}

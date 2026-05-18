@@ -1,0 +1,14 @@
+{
+  "sha": "a12094622a07839fbfeece0f8afe4df6e3a8b9fe88883457c041c8c4c632b7f2",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2903,
+  "description": "Create a GitHub Actions workflow named beta-release that triggers on push to the beta-release branch. Use a windows-latest job to set up .NET Core SDK 9.0.x, restore NuGet packages, and perform a series of build and publish steps. Configure Git to use LF line endings, then modify source code to inject build and release versions. Build and publish the app, create a changelog, zip the release, and upload it as a pre-release with a generated tag and name.",
+  "tags": [
+    "dotnet",
+    "beta-release",
+    "windows",
+    "github-release",
+    "zip"
+  ]
+}

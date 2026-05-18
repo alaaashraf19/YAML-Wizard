@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_16212",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 649,
+  "description": "Create a GitLab CI pipeline using the docker image with a docker:dind service and two stages: build and deploy. In the build stage add a docker-compose-build job that runs before_script commands: apk --update add 'py-pip==9.0.1-r1', pip install docker-compose, chmod +x /usr/bin/docker-compose, then executes docker-compose build. In the deploy stage add a docker-compose-deploy job that repeats the same before_script steps, logs in to the GitLab Container Registry with docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com, and pushes the services collect-service, control-service, picking-process-manager, simple-legacy_adapter, picking-projector, picking-processor using docker-compose push. No caches, artifacts, or conditional rules are defined.",
+  "tags": [
+    "docker",
+    "docker-compose",
+    "dind",
+    "build",
+    "deploy"
+  ]
+}

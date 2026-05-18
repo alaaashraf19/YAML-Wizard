@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_05736",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 256,
+  "description": "Create a GitLab CI pipeline that runs a before_script on all jobs to update apt, install libnss3-tools, display the Node version, show npm version, set NPM_CONFIG_LOGLEVEL=warn, install npm dependencies and generate certificates. Cache the node_modules directory per job using a cache key of $CI_JOB_NAME. Define a single job named test:current that uses the node:latest Docker image, runs the script npm t, and inherits the before_script. The pipeline has the default test stage and no additional triggers or deployment targets.",
+  "tags": [
+    "node",
+    "npm",
+    "apt",
+    "cache"
+  ]
+}

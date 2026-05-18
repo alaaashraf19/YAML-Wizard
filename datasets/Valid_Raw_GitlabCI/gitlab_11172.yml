@@ -1,0 +1,134 @@
+.build:
+  artifacts: &id001
+    paths:
+    - conda-bld
+  script: &id003
+  - cd "${CI_PROJECT_DIR}/.conda"
+  - conda build . --no-test --python $PYTHON_VERSION --output-folder "${CI_PROJECT_DIR}/conda-bld"
+  stage: build
+.conda_configure:
+  before_script: &id002
+  - export CONDA_PKGS_DIRS="${CI_PROJECT_DIR}/.conda_packages"
+  - mkdir -p "${CI_PROJECT_DIR}/conda-bld" "${CONDA_PKGS_DIRS}"
+  - conda config --set channel_priority true
+  - conda config --append pkgs_dirs "${CONDA_PKGS_DIRS}"
+  - conda config --append channels conda-forge
+  - conda config --append channels pytorch
+  - conda config --append channels ostrokach-forge
+  - conda config --append channels bioconda
+  - case "${PACKAGE_VERSION}" in *dev*) conda config --append channels kimlab; conda
+    config --append channels kimlab/label/dev; ;; *) conda config --append channels
+    kimlab; ;; esac
+.deploy:
+  before_script: &id004
+  - conda install twine -yq --no-channel-priority
+  except: &id005
+  - triggers
+  only: &id006
+  - master
+  script: &id007
+  - for i in $CI_PROJECT_DIR/conda-bld/linux-64/*.whl ; do echo $i; mv "${i}" "${i%%-linux_x86_64.whl}-manylinux1_x86_64.whl";
+    done
+  - case "${PACKAGE_VERSION}" in *dev*) anaconda -t $ANACONDA_TOKEN upload $CI_PROJECT_DIR/conda-bld/linux-64/*.tar.bz2
+    -u ${CI_PROJECT_NAMESPACE} --label dev --force; ;; *) anaconda -t $ANACONDA_TOKEN
+    upload $CI_PROJECT_DIR/conda-bld/linux-64/*.tar.bz2 -u ${CI_PROJECT_NAMESPACE};
+    twine upload $CI_PROJECT_DIR/conda-bld/linux-64/*.whl; ;; esac
+  stage: deploy
+.docs:
+  dependencies: &id008
+  - build-py36
+  script: &id009
+  - cp -r $CI_PROJECT_DIR/conda-bld/* /opt/conda/conda-bld/
+  - conda index /opt/conda/conda-bld/
+  - conda install -yq --use-local "python=$PYTHON_VERSION" $CI_PROJECT_NAME
+  - conda install -yq nbconvert ipython ipykernel pandoc
+  - pip install -q sphinx sphinx_rtd_theme recommonmark nbsphinx
+  - sphinx-build docs public
+  stage: test
+  variables: &id010
+    PYTHON_VERSION: '3.6'
+.py35:
+  PYTHON_VERSION: '3.5'
+.py36:
+  PYTHON_VERSION: '3.6'
+.test:
+  artifacts: &id011
+    paths:
+    - environment-py${PYTHON_VERSION/./}.yml
+  coverage: /^TOTAL.* (\d+\%)/
+  script: &id012
+  - cp -r $CI_PROJECT_DIR/conda-bld/* /opt/conda/conda-bld/
+  - conda index /opt/conda/conda-bld/
+  - cd $CI_PROJECT_DIR/.conda
+  - conda build . --test --python $PYTHON_VERSION
+  stage: test
+build-py36:
+  artifacts: *id001
+  before_script: *id002
+  script: *id003
+  stage: build
+  variables:
+    PYTHON_VERSION: '3.6'
+cache:
+  key: ${CI_COMMIT_REF_NAME}
+  paths:
+  - .conda_packages
+deploy-py36:
+  before_script: *id004
+  dependencies:
+  - build-py36
+  except: *id005
+  only: *id006
+  script: *id007
+  stage: deploy
+image: registry.gitlab.com/kimlab/linux-anvil:latest
+lint:
+  before_script: *id002
+  script:
+  - conda install -yq "python=${PYTHON_VERSION}" isort flake8 mypy
+  - python -m isort -p ${CI_PROJECT_NAME} -c
+  - python -m flake8
+  - python -m mypy -p ${CI_PROJECT_NAME}
+  stage: lint
+  variables:
+    PYTHON_VERSION: '3.6'
+pages:
+  artifacts:
+    paths:
+    - public
+  before_script: *id002
+  dependencies: *id008
+  except:
+  - triggers
+  only:
+  - master
+  - tags
+  script: *id009
+  stage: test
+  variables: *id010
+stages:
+- lint
+- build
+- test
+- deploy
+test-pages:
+  before_script: *id002
+  dependencies: *id008
+  except:
+  - master
+  - tags
+  script: *id009
+  stage: test
+  variables: *id010
+test-py36:
+  artifacts: *id011
+  before_script: *id002
+  coverage: /^TOTAL.* (\d+\%)/
+  dependencies:
+  - build-py36
+  script: *id012
+  stage: test
+  variables:
+    PYTHON_VERSION: '3.6'
+variables:
+  PACKAGE_VERSION: 0.1.1

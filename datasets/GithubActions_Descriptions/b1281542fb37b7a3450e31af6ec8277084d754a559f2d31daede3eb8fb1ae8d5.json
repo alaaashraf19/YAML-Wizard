@@ -1,0 +1,15 @@
+{
+  "sha": "b1281542fb37b7a3450e31af6ec8277084d754a559f2d31daede3eb8fb1ae8d5",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1826,
+  "description": "Create a GitHub Actions workflow named lint-and-test that runs on push to the default branch and on pull requests to the default branch. Run four ubuntu-latest jobs in parallel: lint-docs, lint-code, lint-style, and test. Each job checks out the code, sets up a specific Python version, installs tox, and then runs a tox command. The test job runs on multiple Python versions, while the others run on Python 3.8.",
+  "tags": [
+    "python",
+    "linting",
+    "testing",
+    "tox",
+    "ubuntu",
+    "ci"
+  ]
+}

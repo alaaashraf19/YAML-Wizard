@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_17300",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 280,
+  "description": "Create a GitLab CI pipeline that uses the node:8.15.0 Docker image, caches the node_modules/ directory, and runs `yarn install` in a before_script for every job. Define a hidden `.build` template that executes `yarn build` and publishes the `public` directory as an artifact. Add a `pages` job in the `deploy` stage that extends `.build`, runs only on the `master` branch, and deploys the `public` artifact to GitLab Pages. Add a `test-webpack` job in the `test` stage that also extends `.build`, runs on all branches except `master`, and therefore also executes `yarn build` with the same artifact settings.",
+  "tags": [
+    "node",
+    "yarn",
+    "webpack",
+    "gitlab-pages",
+    "cache",
+    "deploy"
+  ]
+}

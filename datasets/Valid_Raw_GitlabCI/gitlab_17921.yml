@@ -1,0 +1,15 @@
+before_script:
+- curl -L https://cpanmin.us | perl - App::cpanminus
+- cpanm Carton
+- carton install
+cache:
+  paths:
+  - local/
+  - /usr/lib/perl/
+image: perl:5.14
+job1:
+  script:
+  - carton bundle
+  stage: build
+stages:
+- build

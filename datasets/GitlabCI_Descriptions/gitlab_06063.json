@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_06063",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 238,
+  "description": "Create a GitLab CI pipeline that uses the python:3.5-alpine Docker image. Add a test stage with a job called test that runs pip install -r requirements.txt, then pip install -r requirements-dev.txt, then python ./setup.py develop, then flake8, then pylint golinks, then py.test --cov-report term-missing --cov=golinks tests -v. The pipeline has no caches, artifacts, services, variables, or special rules.",
+  "tags": [
+    "python",
+    "alpine",
+    "flake8",
+    "pylint",
+    "pytest",
+    "coverage"
+  ]
+}

@@ -1,0 +1,30 @@
+before_script:
+- docker login -u gitlab-ci-token -p "$CI_BUILD_TOKEN" "$CI_REGISTRY"
+development:
+  only:
+  - master
+  script:
+  - docker build -t "$CI_REGISTRY_IMAGE:latest" .
+  - docker push "$CI_REGISTRY_IMAGE:latest"
+  stage: deploy
+image: docker:git
+services:
+- docker:dind
+stable:
+  only:
+  - tags
+  script:
+  - docker build -t "$CI_REGISTRY_IMAGE:${CI_COMMIT_REF_SLUG}" .
+  - docker push "$CI_REGISTRY_IMAGE:${CI_COMMIT_REF_SLUG}"
+  stage: deploy
+testing:
+  except:
+  - master
+  only:
+  - branches
+  script:
+  - docker build -t "$CI_REGISTRY_IMAGE:${CI_COMMIT_REF_SLUG}" .
+  - docker push "$CI_REGISTRY_IMAGE:${CI_COMMIT_REF_SLUG}"
+  stage: deploy
+variables:
+  DOCKER_DRIVER: overlay

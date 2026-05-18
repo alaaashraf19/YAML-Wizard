@@ -1,0 +1,175 @@
+.build:package:base:definition:
+  before_script: &id001
+  - apt-get update -qq && apt-get install -qqy ruby ruby-dev make gcc curl
+  - gem install fpm
+  image: ubuntu:22.04
+  stage: build
+  variables: &id002
+    ODOO_HELPER_BIN: $CI_PROJECT_DIR/bin
+    ODOO_HELPER_LIB: $CI_PROJECT_DIR/lib
+    ODOO_HELPER_ROOT: $CI_PROJECT_DIR
+.test:definition:
+  artifacts: &id003
+    expire_in: 3 day
+    paths:
+    - coverage
+    when: always
+  before_script: &id004
+  - mkdir -p .cache && chmod a+rwx -R .cache
+  - apt-get update -qq && apt-get install -yqq adduser sudo locales ruby git
+  - update-locale LANG=C.UTF-8 && update-locale LC_ALL=C.UTF-8 && update-locale LANGUAGE=C.UTF-8
+  - gem install bashcov -v 1.8.2
+  - gem install codecov simplecov-console
+  - adduser -q odoo
+  - echo ' odoo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+  - sudo -u odoo -HE git config --global user.email "test-oh@test.test"
+  - sudo -u odoo -HE git config --global user.name "test-oh"
+  coverage: /COVERAGE:.*\s+(\d{1,3}\.\d{2}\%)/
+  rules: &id005
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+    when: never
+  - if: $CI_COMMIT_BRANCH
+  script: &id006
+  - bash install-system.bash
+  - sudo -u odoo -HE bashcov tests/test.bash
+  stage: test
+build:package:branch:dev:
+  after_script:
+  - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file "build/odoo-helper-scripts.deb"
+    "${PACKAGE_REGISTRY_URL}/${CI_COMMIT_REF_NAME}/odoo-helper-scripts_${CI_COMMIT_REF_NAME}.deb"'
+  before_script: *id001
+  image: ubuntu:22.04
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  script:
+  - bash scripts/build_packages.bash "${CI_COMMIT_REF_NAME}"
+  stage: build
+  variables: *id002
+  when: manual
+build:package:branch:master:
+  after_script:
+  - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file "build/odoo-helper-scripts.deb"
+    "${PACKAGE_REGISTRY_URL}/${CI_COMMIT_REF_NAME}/odoo-helper-scripts_${CI_COMMIT_REF_NAME}.deb"'
+  before_script: *id001
+  image: ubuntu:22.04
+  rules:
+  - if: $CI_COMMIT_BRANCH == "master"
+  script:
+  - bash scripts/build_packages.bash "${CI_COMMIT_REF_NAME}"
+  stage: build
+  variables: *id002
+build:package:tag:
+  after_script:
+  - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file "build/odoo-helper-scripts.deb"
+    "${PACKAGE_REGISTRY_URL}/${CI_COMMIT_TAG#v}/odoo-helper-scripts_${CI_COMMIT_TAG#v}.deb"'
+  before_script: *id001
+  image: ubuntu:22.04
+  rules:
+  - if: $CI_COMMIT_TAG =~ /^v\d.*/
+  script:
+  - bash scripts/build_packages.bash
+  stage: build
+  variables: *id002
+cache:
+  key: ${CI_JOB_NAME}
+  paths:
+  - .cache
+do_release:tag:
+  before_script:
+  - apk add coreutils
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  release:
+    assets:
+      links:
+      - link_type: package
+        name: odoo-helper-scripts_${CI_COMMIT_TAG}.deb
+        url: $PACKAGE_REGISTRY_URL/${CI_COMMIT_TAG#v}/odoo-helper-scripts_${CI_COMMIT_TAG#v}.deb
+    description: ./CHANGELOG.00.md
+    name: ${CI_COMMIT_TAG}
+    tag_name: $CI_COMMIT_TAG
+  rules:
+  - if: $CI_COMMIT_TAG =~ /^v\d.*/
+  script:
+  - echo "Preparing release $CI_COMMIT_TAG."
+  - csplit --prefix=CHANGELOG. --suffix=%02d.md CHANGELOG.md '/---/'
+  stage: release
+flake8:
+  before_script:
+  - pip install flake8
+  image: python:3
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+    when: never
+  - if: $CI_COMMIT_BRANCH
+  - if: $CI_COMMIT_TAG !~ /^v\d.*/
+  script:
+  - flake8 ./lib/pylib/
+  stage: lint
+image: ubuntu:20.04
+pages:
+  artifacts:
+    paths:
+    - public
+  before_script:
+  - apt-get update
+  - apt-get install -y python3-pip
+  - bash install-system.bash
+  - python3 -m pip install mkdocs mkdocs-cinder==0.14.0
+  image: ubuntu:20.04
+  rules:
+  - if: $CI_COMMIT_BRANCH == "master"
+  script:
+  - bash scripts/build_docs.bash
+  stage: deploy
+shellcheck:
+  before_script:
+  - shellcheck --version
+  image: koalaman/shellcheck-alpine:stable
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+    when: never
+  - if: $CI_COMMIT_BRANCH
+  - if: $CI_COMMIT_TAG !~ /^v\d.*/
+  script:
+  - shellcheck -s bash -x -a --color -e "SC1090,SC1091,SC2034" ./bin/* ./lib/*.bash
+  stage: lint
+stages:
+- lint
+- test
+- build
+- release
+- deploy
+tests:ubuntu:20.04:
+  artifacts: *id003
+  before_script: *id004
+  coverage: /COVERAGE:.*\s+(\d{1,3}\.\d{2}\%)/
+  image: ubuntu:20.04
+  rules: *id005
+  script: *id006
+  stage: test
+tests:ubuntu:22.04:
+  artifacts: *id003
+  before_script: *id004
+  coverage: /COVERAGE:.*\s+(\d{1,3}\.\d{2}\%)/
+  image: ubuntu:22.04
+  rules: *id005
+  script: *id006
+  stage: test
+variables:
+  ALWAYS_ANSWER_YES: '1'
+  APT_CACHE_ARCHIVES: $APT_DIR/archives
+  APT_DIR: $CI_PROJECT_DIR/.apt-cache
+  APT_STATE_LISTS: $APT_DIR/lists
+  CI_RUN: '1'
+  DEBIAN_FRONTEND: noninteractive
+  GIT_SUBMODULE_STRATEGY: recursive
+  LANG: C.UTF-8
+  LANGUAGE: C.UTF-8
+  LC_ALL: C.UTF-8
+  ODOO_HELPER_INSTALL_PATH: $CI_PROJECT_DIR
+  PACKAGE_REGISTRY_URL: ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/odoo-helper-scripts
+  PIP_CACHE_DIR: $CI_PROJECT_DIR/.cache
+  TEST_TMP_DIR: /tmp/odoo-helper-tests

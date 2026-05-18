@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_14384",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1020,
+  "description": "Create a GitLab CI pipeline that uses the ruby:2.7 Docker image and defines global variables JEKYLL_ENV=production and LC_ALL=C.UTF-8. Add a global before_script that runs `bundle config set path '.vendor'`, `bundle install`, `apt-get -qq update`, and `apt-get -qq install -y lftp`. Configure a cache keyed by $CI_JOB_NAME-$CI_COMMIT_REF_SLUG that always stores the paths .jekyll-cache/, .vendor/, public/ and pf-org/. Define a pf-org job in the build stage that is interruptible, runs only on the pub branch, executes `bundle exec jekyll build -d pf-org --incremental`, and publishes the pf-org directory as an artifact. Define a deploy job in the deploy stage that is interruptible, runs only on the pub branch, and executes `lftp -e \"set ssl:verify-certificate no; set mirror:overwrite true; set mirror:parallel-transfer-count 5; open pathfinder-fr.org; user $ftp_username $ftp_password; mirror --reverse --delete --use-cache --no-perms --no-umask --overwrite --only-newer pf-org/ /; bye\"`. Define a pages job in the deploy stage that is interruptible, runs only on the master branch, executes `bundle exec jekyll build -d public -b \"/pf2-jekyll/\" --verbose --incremental`, and publishes the public directory as a pages artifact.",
+  "tags": [
+    "ruby",
+    "jekyll",
+    "lftp",
+    "ftp-deploy",
+    "cache",
+    "pages",
+    "build",
+    "deploy"
+  ]
+}

@@ -1,0 +1,7 @@
+include:
+- template: Dependency-Scanning.gitlab-ci.yml
+- template: SAST.gitlab-ci.yml
+- template: Secret-Detection.gitlab-ci.yml
+- file: /includes-dev/go.yml
+  project: gitlab-org/security-products/ci-templates
+  ref: master

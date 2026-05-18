@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_17223",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 649,
+  "description": "Create a GitLab CI pipeline using the deborasetton/ruby-casperjs:latest Docker image. Include a before_script that runs ruby -v, which ruby, which phantomjs, which casperjs, which istanbul, installs bundler with gem install bundler --no-ri --no-rdoc, runs bundle check || bundle install --jobs $(nproc) --path=/cache/bundler, writes $GOOGLE_API_KEY to config/keys/server_key_1 and writes DUMMY-KEY to config/keys/smart_parking_api_key. Add a casperjs job (default test stage) that starts a Rails server in development mode on port 3011 as a daemon, checks the Puma process, prepares CasperJS specs with RAILS_ENV=development bundle exec rake spec:casperjs:prepare, then runs them with RAILS_ENV=development bundle exec rake spec:casperjs:run. Add a teaspoon job (default test stage) that runs RAILS_ENV=test bundle exec teaspoon. No caches, artifacts, or special rules are defined.",
+  "tags": [
+    "ruby",
+    "casperjs",
+    "teaspoon",
+    "rails",
+    "bundler",
+    "phantomjs",
+    "istanbul",
+    "docker-image"
+  ]
+}

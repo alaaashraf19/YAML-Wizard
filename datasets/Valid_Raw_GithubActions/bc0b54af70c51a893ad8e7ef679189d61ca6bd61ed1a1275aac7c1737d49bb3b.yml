@@ -1,0 +1,178 @@
+name: Build Packages
+
+on:
+  push:
+    paths-ignore:
+    - 'docs/**'
+    - '**.md'
+    - 'appveyor.yml'
+    - '.travis.yml'
+  pull_request:
+    paths-ignore:
+    - 'docs/**'
+    - '**.md'
+    - 'appveyor.yml'
+    - '.travis.yml'
+
+env:
+  QT_VERSION: 5.15.1
+  QTCREATOR_VERSION: 4.13.1
+  TILED_SNAPSHOT: true
+
+jobs:
+  appimage:
+    name: Linux
+    runs-on: ubuntu-16.04
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: |
+        sudo apt update
+        sudo apt install libgl1-mesa-dev libxkbcommon-x11-0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-render-util0 libxcb-xinerama0 libzstd-dev
+
+    - name: Install Qt
+      run: |
+        ./dist/install-qt.sh --version ${QT_VERSION} qtbase qtdeclarative qtscript qtsvg qtimageformats qttools icu | tee -a $GITHUB_PATH
+        ./dist/install-qt.sh --version ${QTCREATOR_VERSION} qtcreator | tee -a $GITHUB_PATH
+
+    - name: Setup Qbs
+      run: |
+        qbs --version
+        qbs setup-toolchains --detect
+        qbs config defaultProfile x86_64-linux-gnu-gcc-7
+
+    - name: Build Tiled
+      run: |
+        export TILED_VERSION=$(date "+%Y.%m.%d")
+        qbs install --install-root Tiled config:release qbs.installPrefix:/usr projects.Tiled.version:$TILED_VERSION projects.Tiled.enableZstd:true
+
+    - name: Build AppImage
+      run: |
+        cp LICENSE* COPYING *md Tiled/
+        wget -c "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage" -O linuxdeployqt
+        chmod a+x linuxdeployqt
+        ./linuxdeployqt ./Tiled/usr/share/applications/org.mapeditor.Tiled.desktop -bundle-non-qt-libs -extra-plugins=imageformats/libqsvg.so -exclude-libs=libpython3.5m.so.1 -verbose=2
+        ./linuxdeployqt --appimage-extract
+        export PATH=$(readlink -f ./squashfs-root/usr/bin/):$PATH
+        ./squashfs-root/usr/bin/appimagetool Tiled/
+        find ./Tiled -executable -type f -exec ldd {} \; | grep " => /usr" | cut -d " " -f 2-3 | sort | uniq
+
+    - name: Upload Tiled.AppImage
+      uses: actions/upload-artifact@v2
+      with:
+        name: Tiled-x86_64.AppImage
+        path: Tiled-x86_64.AppImage
+
+  macos_app:
+    name: macOS
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Install Qt
+      run: |
+        sudo ./dist/install-qt.sh --version ${QT_VERSION} qtbase qtdeclarative qtscript qtsvg qtimageformats qttools | tee -a $GITHUB_PATH
+        sudo ./dist/install-qt.sh --version ${QTCREATOR_VERSION} qtcreator | tee -a $GITHUB_PATH
+
+    - name: Setup Qbs
+      run: |
+        qbs setup-toolchains --detect
+        qbs config defaultProfile xcode
+
+    - name: Build Zstandard
+      run: |
+        git clone --depth 1 -b master https://github.com/facebook/zstd.git
+        pushd zstd/lib
+        make libzstd.a
+        popd
+
+    - name: Build Tiled
+      run: |
+        export TILED_VERSION=$(date "+%Y.%m.%d")
+        qbs install --install-root install config:release qbs.installPrefix:"" projects.Tiled.enableZstd:true
+
+    - name: Package
+      run: |
+        macdeployqt install/Tiled.app -verbose=2
+        pushd install
+        ruby ../dist/macos/fixup-install-names.rb
+        ditto -c -k --sequesterRsrc --keepParent Tiled.app ../Tiled-macos.zip
+        popd
+
+    - name: Upload Tiled.app
+      uses: actions/upload-artifact@v2
+      with:
+        name: Tiled-macos.app
+        path: Tiled-macos.zip
+
+  windows:
+    name: Windows (${{ matrix.arch }}-bit)
+    runs-on: windows-latest
+
+    strategy:
+      matrix:
+        include:
+        - arch: 32
+          openssl_arch: x86
+        - arch: 64
+          openssl_arch: x64
+
+    env:
+      QT_TOOLCHAIN: win${{ matrix.arch }}_mingw81
+      MINGW_VERSION: 8.1.0
+      MINGW_COMPONENT: win${{ matrix.arch }}_mingw810
+      OPENSSL_VERSION: 1.1.1
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Install Qt
+      run: |
+        echo "QT_PATH=$(./dist/install-qt.sh --version ${QT_VERSION} --toolchain ${QT_TOOLCHAIN} qtbase qtdeclarative qtscript qtsvg qtimageformats qttools qttranslations)" >> $GITHUB_ENV
+        echo "MINGW_PATH=$(./dist/install-qt.sh --version ${MINGW_VERSION} ${MINGW_COMPONENT})" >> $GITHUB_ENV
+        echo "OPENSSL_PATH=$(./dist/install-qt.sh --version ${OPENSSL_VERSION} openssl --arch ${{ matrix.openssl_arch }})" >> $GITHUB_ENV
+        ./dist/install-qt.sh --version ${QTCREATOR_VERSION} qtcreator >> $GITHUB_PATH
+
+    - name: Setup Qbs
+      run: |
+        qbs setup-toolchains ${MINGW_PATH}/*-w64-mingw32-gcc.exe mingw
+        qbs setup-qt ${QT_PATH}/qmake.exe qt
+        qbs config defaultProfile qt
+
+    - name: Build Zstandard
+      run: |
+        export PATH="${MINGW_PATH}:$PATH"
+        git clone --depth 1 -b master https://github.com/facebook/zstd.git
+        pushd zstd/lib
+        CC=gcc mingw32-make -j2 libzstd.a
+        popd
+
+    - name: Build Tiled
+      run: |
+        export TILED_VERSION=$(date "+%Y.%m.%d")
+        export TILED_MSI_VERSION=1.4.${GITHUB_RUN_NUMBER}
+        qbs build --all-products config:release projects.Tiled.windowsInstaller:true projects.Tiled.enableZstd:true
+        mv release/installer*/Tiled-*.msi .
+        mv release/archive*/Tiled-*.7z .
+
+    - name: Upload Tiled installer
+      uses: actions/upload-artifact@v2
+      with:
+        name: Tiled-win${{ matrix.arch }}.msi
+        path: Tiled-*.msi
+
+    - name: Upload Tiled archive
+      uses: actions/upload-artifact@v2
+      with:
+        name: Tiled-win${{ matrix.arch }}.7z
+        path: Tiled-*.7z

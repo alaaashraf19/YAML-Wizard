@@ -1,0 +1,16 @@
+{
+  "sha": "5b52858d087a0d4b6afa8bcda673e14c60baaf50308b972c1d53f01982bbf999",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3106,
+  "description": "Create a GitHub Actions workflow named Build Flatpak that triggers on push, pull request, and workflow dispatch events. In an ubuntu-latest job, install flatpak and its dependencies, configure flatpak, and then checkout multiple repositories into a directory structure. Set up a tmate session on failure, move a manifest file, build a flatpak package using flatpak-builder, create a bundle, upload the bundle as an artifact, and perform cleanup.",
+  "tags": [
+    "flatpak",
+    "ubuntu",
+    "github-actions",
+    "multi-repo",
+    "build",
+    "bundle",
+    "artifact"
+  ]
+}

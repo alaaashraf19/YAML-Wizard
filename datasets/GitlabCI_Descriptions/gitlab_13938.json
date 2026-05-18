@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_13938",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 4141,
+  "description": "Create a GitLab CI pipeline with stages build, test, post_test, and deploy using a global node:latest image. In the build stage add jobs build_commonjs, build_docs, build_es6 and build_quality that each run 'yarn install' followed by 'yarn build:common', 'yarn build:docs', 'yarn build:es6' or 'yarn build:quality' respectively, share a node_modules cache keyed by ${CI_COMMIT_REF_SLUG} (pull‑push for the first three, pull‑only for build_quality), and produce 1‑hour artifacts named $CI_JOB_NAME-$CI_COMMIT_REF_NAME-<type> containing lib/common, docs/, lib/es6 or quality/. In the test stage add jobs test_commonjs_node_10, test_commonjs_node_6, test_commonjs_node_8 and test_commonjs_node_latest that depend on build_commonjs, pull the same cache, use node:10, node:6, node:8 or node:latest images, run 'yarn install' then 'yarn test' (the latest also runs './node_modules/.bin/nyc -x \"**/lib/es6/**/*.js\" -x \"**/src/**/*.js\" -x \"**/tests/**/*.js\" yarn test' and stores .nyc_output/ as an artifact). In the post_test stage add code_coverage (node:latest) that depends on test_commonjs_node_latest, runs './node_modules/.bin/nyc report --reporter=\"text-summary\" --reporter=\"lcov\"', allows failure, captures coverage with a regex, and uploads coverage/lcov-report/ as a 1‑day artifact; also add code_quality and dependency_scanning jobs using docker:latest with a docker:stable-dind service, set DOCKER_DRIVER=overlay2, export SP_VERSION from CI_SERVER_VERSION, and execute docker run commands against the GitLab security product images to produce gl-code-quality-report.json and gl-dependency-scanning-report.json artifacts, both allowing failure. Finally, in the deploy stage add publish_npm that runs only on tags or triggers, depends on build_docs, build_commonjs and build_es6, writes the npm auth token to ~/.npmrc and executes 'npm publish --scope=@openrailuk --access=public' to publish the package to the npm registry.",
+  "tags": [
+    "node",
+    "yarn",
+    "npm",
+    "docker",
+    "code-quality",
+    "dependency-scanning",
+    "coverage",
+    "gitlab-ci"
+  ]
+}

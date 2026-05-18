@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_12475",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 706,
+  "description": "Create a GitLab CI pipeline using the relateiq/oracle-java8 Docker image. Add a job named build_and_publish_release that runs only on the master branch, decodes the $SIGNING_SECRET_KEY_RING_FILE base64 string into secring.gpg, then executes ./gradlew clean build uploadArchives -Psnapshot=false -Psigning.keyId=\"${SIGNING_KEY_ID}\" -Psigning.password=\"${SIGNING_PASSWORD}\" -Psigning.secretKeyRingFile=\"$(pwd)/secring.gpg\" and finally runs ./gradlew closeAndReleaseRepository. Add a job named build_and_publish_snapshot that runs on all branches except master, also decodes $SIGNING_SECRET_KEY_RING_FILE into secring.gpg and runs ./gradlew clean build uploadArchives -Psigning.keyId=\"${SIGNING_KEY_ID}\" -Psigning.password=\"${SIGNING_PASSWORD}\" -Psigning.secretKeyRingFile=\"$(pwd)/secring.gpg\". Both jobs use the same image and default stage with no caches or artifacts.",
+  "tags": [
+    "java",
+    "gradle",
+    "oracle-java8",
+    "release",
+    "snapshot"
+  ]
+}

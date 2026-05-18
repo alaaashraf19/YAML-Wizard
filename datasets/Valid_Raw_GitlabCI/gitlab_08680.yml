@@ -1,0 +1,42 @@
+build:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - node_modules/
+  image: node:10
+  script:
+  - npm install
+  stage: build
+  tags:
+  - docker
+  - shared
+cache:
+  paths:
+  - node_modules/
+stages:
+- build
+- test
+test:
+  before_script:
+  - apt-get update
+  - apt-get install curl -y
+  - curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh
+    | bash
+  - export NVM_DIR="$HOME/.nvm"
+  - \[ -s "$NVM_DIR/nvm.sh" \] && \. "$NVM_DIR/nvm.sh"
+  - nvm install 10
+  image: redis:4
+  script:
+  - npm test
+  stage: test
+  tags:
+  - docker
+  - shared
+validate:
+  image: node:10
+  script:
+  - npm run validate
+  stage: test
+  tags:
+  - docker
+  - shared

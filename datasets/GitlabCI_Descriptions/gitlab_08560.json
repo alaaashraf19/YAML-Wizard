@@ -1,0 +1,21 @@
+{
+  "sha": "gitlab_08560",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1808,
+  "description": "Create a GitLab CI pipeline with a single test stage that uses the ${GITLAB_DEPENDENCY_PROXY}ruby:${RUBY_VERSION} image and runs a parallel matrix over RUBY_VERSION values 3.2, 3.3, and 3.4, installing gitlab-sdk, sentry-ruby, zeitwerk, tty-spinner, and terminal-table in a before_script. Add auto-generated, rspec, rubocop, ruby-version, shellcheck, gdk-example-yml, and checkmake jobs that inherit the test stage and the ruby before_script (checkmake uses golang:latest and docs-lint uses ${DOCS_LINT_IMAGE}), each gated by .rules:code-changes, .rules:docs-changes, or .rules:ruby-version-changes as appropriate. The auto-generated job runs support/ci/verify-auto-generated; the checkmake job installs yq and checkmake at the version from gdk.example.yml, concatenates Makefile and support/makefiles/*.mk into tmp/.makefile_combined, runs checkmake on it and echoes OK; the docs-lint job runs make lint. The rspec job sets RSPEC_ARGS='--format doc --format RspecJunitFormatter --out rspec.xml', runs make rspec and git diff --exit-code, and publishes rspec.xml and coverage/ as artifacts with JUnit and Cobertura reports. The rubocop job runs make rubocop, the ruby-version job runs support/ruby-check-versions, and the shellcheck job runs apt-get update then make shellcheck.",
+  "tags": [
+    "ruby",
+    "parallel-matrix",
+    "rspec",
+    "rubocop",
+    "checkmake",
+    "docs-lint",
+    "shellcheck",
+    "golang",
+    "make",
+    "cobertura",
+    "junit",
+    "gitlab-ci"
+  ]
+}

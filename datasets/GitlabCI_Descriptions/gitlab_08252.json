@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_08252",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 355,
+  "description": "Create a GitLab CI pipeline that uses the ruby:2.5-alpine Docker image. Add a pages job that runs only on the master branch, caches the vendor directory, and publishes the public/ folder as a GitLab Pages artifact with a 1‑hour expiration. In the job script execute apk add --update build-base nodejs tzdata, then gem install bundler --no-ri --no-rdoc, ruby --version, gem --version, bundle --version, bundle install --path vendor --retry=3, and finally rake build. The job deploys the generated site to GitLab Pages.",
+  "tags": [
+    "ruby",
+    "alpine",
+    "pages",
+    "bundler",
+    "rake",
+    "gitlab-pages"
+  ]
+}

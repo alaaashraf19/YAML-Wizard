@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_12462",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 261,
+  "description": "Create a GitLab CI pipeline that uses the python:3.6 Docker image. Define a test stage with a py36_nose job that runs apt-get update -q -y, then pip install -r requirements.txt, then nosetests -c .noserc -q --with-coverage --cover-html-dir=build --cover-html --cover-package=groupBug/. The job should publish the generated HTML coverage report by storing the htmlcov/ directory as an artifact. No services, caches, or special rules are required.",
+  "tags": [
+    "python-3.6",
+    "nose",
+    "coverage",
+    "gitlab-ci",
+    "test"
+  ]
+}

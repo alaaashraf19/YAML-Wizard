@@ -1,0 +1,84 @@
+.script:
+  script: &id001
+  - mkdir build && cd build
+  - CXXFLAGS="-D_GLIBCXX_ASSERTIONS" cmake -DBUILD_TESTING=1 ..
+  - make -j$(nproc)
+  - broadwayd & CTEST_OUTPUT_ON_FAILURE=1 make test
+  stage: test
+Clean appveyor cache:
+  script:
+  - 'curl -H "Authorization: Bearer v2.${APPVEYOR_TOKEN}" -H "Content-Type: application/json"
+    -X "DELETE" https://ci.appveyor.com/api/projects/zalox/jucipp-oisms/buildcache'
+  stage: chore
+  when: manual
+address-sanitizer:
+  image: cppit/jucipp:arch
+  script:
+  - mkdir build && cd build
+  - CXXFLAGS="-fsanitize=address" cmake -DBUILD_TESTING=1 ..
+  - make -j$(nproc)
+  - broadwayd & CTEST_OUTPUT_ON_FAILURE=1 LSAN_OPTIONS=detect_leaks=0 make test
+  stage: test
+arch:
+  image: cppit/jucipp:arch
+  script: *id001
+  stage: test
+check-format:
+  image: cppit/jucipp:arch
+  script:
+  - find src -name "*.cpp" -exec clang-format --Werror --assume-filename={} {} -n
+    2>> lint-errors.txt \;
+  - find src -name "*.hpp" -exec clang-format --Werror --assume-filename={} {} -n
+    2>> lint-errors.txt \;
+  - find tests -name "*.cpp" -exec clang-format --Werror --assume-filename={} {} -n
+    2>> lint-errors.txt \;
+  - find tests -name "*.hpp" -exec clang-format --Werror --assume-filename={} {} -n
+    2>> lint-errors.txt \;
+  - HAS_ERRORS=$(cat lint-errors.txt | wc -l)
+  - '[ "$HAS_ERRORS" == "0" ] || cat lint-errors.txt'
+  - '[ "$HAS_ERRORS" == "0" ]'
+  stage: lint
+debian:
+  image: cppit/jucipp:debian
+  script: *id001
+  stage: test
+debian-testing:
+  image: cppit/jucipp:debian-testing
+  script: *id001
+  stage: test
+fedora:
+  image: cppit/jucipp:fedora
+  script: *id001
+  stage: test
+stages:
+- lint
+- test
+- chore
+static-analysis:
+  image: cppit/jucipp:arch
+  script:
+  - mkdir build && cd build
+  - scan-build cmake ..
+  - scan-build --status-bugs make -j$(nproc)
+  stage: test
+thread-safety-analysis:
+  image: cppit/jucipp:arch
+  script:
+  - mkdir build && cd build
+  - CXX=clang++ CXXFLAGS=-Werror cmake ..
+  - make -j$(nproc)
+  stage: test
+ubuntu:
+  image: cppit/jucipp:ubuntu
+  script: *id001
+  stage: test
+undefined-sanitizer:
+  image: cppit/jucipp:arch
+  script:
+  - mkdir build && cd build
+  - CXXFLAGS="-fsanitize=undefined" cmake -DBUILD_TESTING=1 ..
+  - make -j$(nproc)
+  - broadwayd & CTEST_OUTPUT_ON_FAILURE=1 make test
+  stage: test
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive

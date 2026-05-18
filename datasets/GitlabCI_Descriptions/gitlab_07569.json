@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_07569",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 277,
+  "description": "Create a GitLab CI pipeline that uses the python:latest Docker image and defines a PIP_CACHE_DIR variable pointing to .cache/pip. In a global before_script run python -V, install virtualenv via pip, create a virtual environment in a venv directory and activate it. Cache both the pip cache directory (.cache/pip) and the virtual environment (venv/). Add a test job (default test stage) named test that installs development dependencies with pip install -r requirements_dev.txt and then runs pytest. The pipeline should execute on every pipeline run.",
+  "tags": [
+    "python",
+    "virtualenv",
+    "pytest",
+    "pip",
+    "cache"
+  ]
+}

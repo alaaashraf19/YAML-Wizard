@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_11576",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1947,
+  "description": "Create a GitLab CI pipeline with stages lint, unit_test, integration_test, and deploy, using a pip cache at $PIP_CACHE_DIR keyed by $CI_PROJECT_ID and defining variables PIP_CACHE_DIR, TWINE_REPOSITORY, and TWINE_REPOSITORY_URL. In the lint stage add a pep8 job using the python:3.4 image that runs \"tox -e pep8\". In the unit_test stage add test_py27_unit (python:2.7) and test_py34_unit (python:3.4) jobs, each with before_script \"pip install --upgrade pip setuptools\" and \"pip install tox codecov\", then script \"tox -e py27 -- -m unit\" (or \"tox -e py34 -- -m unit\") followed by \"codecov -F unittests\". In the integration_test stage add test_py27_integration (python:2.7) and test_py34_integration (python:3.4) jobs with the same before_script, then script \"tox -e py27 -- -m integration\" (or \"tox -e py34 -- -m integration\") and \"codecov -F integrationtests\". In the deploy stage add a pages job using python:3.4 that runs \"tox -e build-docs\" then \"mv docs/_build/html/ public/\", publishes the public/ directory as an artifact, runs only on the master branch and deploys to the production environment via GitLab Pages, and also add an upload_pypi2 job using python:2.7 with before_script \"pip install twine\" that builds source and universal wheel packages with \"python setup.py sdist\" and \"python setup.py bdist_wheel --universal\", registers and uploads them to the test PyPI repository using twine, and runs only on tag pushes.",
+  "tags": [
+    "python-3.4",
+    "python-2.7",
+    "tox",
+    "lint",
+    "unit-test",
+    "integration-test",
+    "gitlab-pages",
+    "pypi",
+    "testpypi",
+    "codecov"
+  ]
+}

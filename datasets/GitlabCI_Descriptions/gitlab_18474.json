@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_18474",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1467,
+  "description": "Create a GitLab CI pipeline that uses the mobiledevops/android-sdk-image:34.0.0-jdk17 Docker image for Android builds and defines the stages build, release, upload, and release_apk, with variables APK_DEBUG=app-debug.apk, APK_RELEASE=app-release-unsigned.apk, APK_FOLDER=app/build/outputs/apk/, and PACKAGE_REGISTRY_URL=${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/unote/${CI_COMMIT_TAG}. In the build stage add a build job that runs export CI_COMMIT_SHORT_SHA then ./gradlew assembleDebug and saves the app/build/outputs/ directory as an artifact. In the release stage add a release job that runs ./gradlew assembleRelease and also saves the same outputs as an artifact. In the upload stage, which runs only when a tag is present, use the curlimages/curl:latest image to execute curl --header \"JOB-TOKEN: ${CI_JOB_TOKEN}\" --upload-file ${APK_FOLDER}/release/app-release-unsigned.apk \"${PACKAGE_REGISTRY_URL}/${APK_RELEASE}\" and curl --header \"JOB-TOKEN: ${CI_JOB_TOKEN}\" --upload-file ${APK_FOLDER}/debug/app-debug.apk \"${PACKAGE_REGISTRY_URL}/${APK_DEBUG}\". In the release_apk stage, also only on tag commits, use the registry.gitlab.com/gitlab-org/release-cli:latest image to run release-cli create --name \"Release $CI_COMMIT_TAG\" --tag-name $CI_COMMIT_TAG --assets-link \"{\\\"name\\\":\\\"${APK_RELEASE}\\\",\\\"url\\\":\\\"${PACKAGE_REGISTRY_URL}/${APK_RELEASE}\\\"}\" --assets-link \"{\\\"name\\\":\\\"${APK_DEBUG}\\\",\\\"url\\\":\\\"${PACKAGE_REGISTRY_URL}/${APK_DEBUG}\\\"}\" to create a GitLab release with the uploaded APKs as assets.",
+  "tags": [
+    "android",
+    "gradle",
+    "curl",
+    "release-cli",
+    "gitlab-packages",
+    "apk"
+  ]
+}

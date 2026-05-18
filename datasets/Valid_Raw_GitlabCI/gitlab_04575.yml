@@ -1,0 +1,10 @@
+stages:
+- test
+unit_test:
+  artifacts:
+    paths:
+    - coverage/
+  image: brianegan/flutter:v7
+  script:
+  - flutter test
+  stage: test

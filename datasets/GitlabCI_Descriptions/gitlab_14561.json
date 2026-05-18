@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_14561",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2316,
+  "description": "Create a GitLab CI pipeline using the debian:stable Docker image with a before_script that runs apt-get update -q. Define a test stage with an all_tests_debian job that installs a long list of Python packages via apt-get, installs xvfb and pytest, runs pip3 install ., then executes xvfb-run -a --server-args=\"-screen 0, 1024x768x24\" python3 -m pytest --doctest-modules --cov=pixstem pixstem/ and xvfb-run -a --server-args=\"-screen 0, 1024x768x24\" python3 -m pytest --doctest-glob=\"*.rst\" doc/. Add a flake8_checks job in the test stage that installs python3-flake8 and runs python3 -m flake8 pixstem/. Add a deploy stage with a pages job that runs only on the release branch, installs the same apt dependencies plus xvfb, python3-sphinx, python3-sphinx-rtd-theme and build-essential, runs pip3 install ., executes a series of xvfb-run commands to generate documentation images (cd into each doc/images subdirectory and run the corresponding python scripts), builds the Sphinx HTML with make html, moves the output to a public directory, and publishes it as a pages artifact. Also add a pages_development job that runs only on the master branch, performs the same steps but stores the HTML in public_development and publishes that artifact.",
+  "tags": [
+    "debian",
+    "apt",
+    "pytest",
+    "flake8",
+    "sphinx",
+    "pages",
+    "release",
+    "master",
+    "xvfb",
+    "docker"
+  ]
+}

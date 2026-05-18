@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_03866",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 186,
+  "description": "Create a GitLab CI pipeline that uses the default Docker image of the runner and runs a before_script to update the package list and install python3-pip, then installs pylint via pip3. Define a job called python-sanity-check (which runs in the default stage) that executes the command pylint --disable=R,C,F0001 $(ls -R1 | grep \".py\" | grep -v \".py.\"). No services, caches, artifacts, or special rules are configured, so the job runs on every pipeline execution.",
+  "tags": [
+    "python",
+    "pylint",
+    "sanity-check",
+    "apt"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_09692",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 679,
+  "description": "Create a GitLab CI pipeline using the docker:latest image with a docker:dind service. Define variables CONTAINER_TEST_IMAGE as ${CI_REGISTRY_IMAGE}:${CI_BUILD_REF_NAME}_${CI_BUILD_REF}_test and CONTAINER_RELEASE_IMAGE as ${CI_REGISTRY_IMAGE}:latest, and add a cache keyed by $CI_BUILD_REF that stores src/static/dist. In the build stage add a build job that runs docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY, then docker build --pull -t $CONTAINER_TEST_IMAGE . and docker push $CONTAINER_TEST_IMAGE. In the release stage add a release job that runs docker pull $CONTAINER_TEST_IMAGE, docker tag $CONTAINER_TEST_IMAGE $CONTAINER_RELEASE_IMAGE and docker push $CONTAINER_RELEASE_IMAGE, and it should run on runners tagged docker.",
+  "tags": [
+    "docker",
+    "dind",
+    "cache",
+    "ci-registry",
+    "build",
+    "release"
+  ]
+}

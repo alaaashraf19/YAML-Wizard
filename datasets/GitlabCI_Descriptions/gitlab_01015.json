@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_01015",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1061,
+  "description": "Create a GitLab CI pipeline using the node:9.3.0 Docker image with a global before_script that runs npm install --progress=false and caches the node_modules directory. Define three stages: build, test, and deploy. In the build stage add a build job that executes npm run clear then npm run build -- --production and publishes the dist directory as a one‑week artifact. In the test stage add a lint job that runs npm run lint and a test job that runs npm run test. In the deploy stage add a deploy job that runs only on tags, depends on build, copies @types/i18next-tui.d.ts to index.d.ts, writes an .npmrc containing the NPM_TOKEN, and runs npm publish to the npm registry, and also add a pages job that runs on master and tags, depends on build, copies demo and built files into a public folder, creates React UMD directories and copies the UMD files, and publishes the public folder as a Pages artifact.",
+  "tags": [
+    "node",
+    "npm",
+    "cache",
+    "build",
+    "test",
+    "lint",
+    "deploy",
+    "pages",
+    "npm-publish"
+  ]
+}

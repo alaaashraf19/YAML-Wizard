@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_04443",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 152,
+  "description": "Create a GitLab CI pipeline that uses the node:latest Docker image and caches the node_modules/ directory. Define a single stage called build. Add a build job named build that runs in the build stage, executes npm install in before_script and then npm run build in script. No additional services, artifacts, or rules are required.",
+  "tags": [
+    "node",
+    "npm",
+    "build",
+    "cache"
+  ]
+}

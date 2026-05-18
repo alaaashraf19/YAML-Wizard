@@ -1,0 +1,17 @@
+{
+  "sha": "943440b7c2a63080aa59736c31dde25c9b3f284a1a49e0c6542e67977d955265",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5402,
+  "description": "Create a GitHub Actions workflow named Build PR that triggers on pull requests affecting .cpp, .hpp, .cmake, or CMakeLists.txt files. The workflow has two jobs: Check Formatting and Build. The Check Formatting job runs on ubuntu-24.04, checks code formatting with clang-format, and installs dependencies. The Build job runs on a matrix of operating systems (ubuntu-24.04, windows-2025, macos-15, macos-13), configurations (Debug, RelWithDebInfo), and Vulkan versions (1.4.313.0), and performs a build with Clang-Tidy, installs dependencies, generates a build system with CMake, builds NovelRT, and publishes build artifacts.",
+  "tags": [
+    "cpp",
+    "cmake",
+    "vulkan",
+    "clang-format",
+    "ubuntu",
+    "windows",
+    "macos",
+    "github-actions"
+  ]
+}

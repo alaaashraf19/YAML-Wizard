@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_13875",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 134,
+  "description": "Create a GitLab CI pipeline that uses the ruby:2.4 Docker image. Add a pages job in the deploy stage that runs \"bundle install -j4\" followed by \"bundle exec nanoc\" to generate the site. Configure the job to publish the \"public\" directory as a Pages artifact. Restrict the job to run only on the master branch, so it deploys to GitLab Pages when code is merged to master.",
+  "tags": [
+    "ruby",
+    "bundler",
+    "nanoc",
+    "gitlab-pages"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_13181",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1625,
+  "description": "Create a GitLab CI pipeline using the maven:3.3.3-jdk-8 Docker image and three stages: build, test, and deploy. In the build stage add a build_job that runs only on the master branch and executes `mvn --batch-mode compile -Dmaven.test.skip=true -Djacoco.skip=true`; also add a build_merge_job that runs on all branches except master and tags, checks out origin/master, merges the current commit without committing, then runs the same Maven compile command. In the test stage add a test_sonar_job that runs only on master and runs `mvn --batch-mode verify org.sonarsource.scanner.maven:sonar-maven-plugin:3.4.0.905:sonar -Dsonar.host.url=$SONAR_URL -Dsonar.login=$SONAR_LOGIN`, and a test_sonar_preview_job that runs on non‑master, non‑tag commits, checks out origin/master, merges the commit, and runs the Sonar scanner in preview mode with the appropriate -D options. In the deploy stage add a deploy_job that runs only on master and executes `mvn --batch-mode deploy -DskipTests -Djacoco.skip=true`, and a deploy_tags_job that runs only on tags and first sets the project version with `mvn --batch-mode org.codehaus.mojo:versions-maven-plugin:2.1:set -DnewVersion=$CI_BUILD_REF_NAME -DgenerateBackupPoms=false` then deploys with `mvn --batch-mode deploy -Dmaven.test.skip=true -Djacoco.skip=true -Prelease`. All jobs use the docker tag executor.",
+  "tags": [
+    "maven",
+    "docker",
+    "sonar",
+    "java",
+    "gitlab-ci",
+    "deploy"
+  ]
+}

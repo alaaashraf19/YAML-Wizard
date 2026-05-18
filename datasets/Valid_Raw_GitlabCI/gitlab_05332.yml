@@ -1,0 +1,27 @@
+build:
+  script:
+  - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+  - docker build --no-cache -t $CONTAINER_TEST_IMAGE .
+  - docker push $CONTAINER_TEST_IMAGE
+  stage: build
+image: docker:stable
+latest-image:
+  only:
+  - master
+  script:
+  - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+  - docker pull $CONTAINER_TEST_IMAGE
+  - docker tag $CONTAINER_TEST_IMAGE $CONTAINER_LATEST_IMAGE
+  - docker push $CONTAINER_LATEST_IMAGE
+  stage: release
+services:
+- docker:dind
+stages:
+- build
+- test
+- release
+- deploy
+variables:
+  CONTAINER_LATEST_IMAGE: $REPO:latest
+  CONTAINER_TEST_IMAGE: $REPO:$CI_COMMIT_REF_NAME
+  REPO: registry.gitlab.com/christophs/aws_adfs

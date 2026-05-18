@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_11288",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 445,
+  "description": "Create a GitLab CI pipeline that uses the thebiftek/nette-tester Docker image with a mariadb:10.0.21 service, caches the vendor/ directory, and runs composer install in a global before_script. Define four stages: build, deploy, test, and cleanup, and set MySQL variables MYSQL_DATABASE, MYSQL_USER, MYSQL_PASSWORD, and MYSQL_ROOT_PASSWORD for the service. In the test stage add a test job that copies app/config/config.local.neon.ci to app/config/config.local.neon and then executes php tester tests -c tests/php.ini. No artifacts, caches, or conditional rules are specified, so the job runs on every pipeline execution.",
+  "tags": [
+    "php",
+    "composer",
+    "mariadb",
+    "nette-tester",
+    "gitlab-ci",
+    "test"
+  ]
+}

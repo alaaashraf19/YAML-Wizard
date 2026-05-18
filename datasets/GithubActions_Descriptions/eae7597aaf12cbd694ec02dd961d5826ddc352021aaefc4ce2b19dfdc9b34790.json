@@ -1,0 +1,15 @@
+{
+  "sha": "eae7597aaf12cbd694ec02dd961d5826ddc352021aaefc4ce2b19dfdc9b34790",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4984,
+  "description": "Create a GitHub Actions workflow named FBGEMM_GPU Release Build that triggers on push to main, pull requests to main, and manual dispatch. The workflow has two jobs: build_artifact and test_and_publish_artifact. The build_artifact job runs on a linux.12xlarge host, sets up the environment, installs dependencies, builds FBGEMM_GPU for multiple Python and CUDA versions, and uploads the built wheel as a GHA artifact. The test_and_publish_artifact job runs on a linux.g5.4xlarge.nvidia.gpu host, downloads the artifact, tests FBGEMM_GPU with PyTest, and pushes the binary to PyPI if the workflow is not triggered by a pull request or push and the CUDA version matches the specified publish version.",
+  "tags": [
+    "fbgemm",
+    "gpu",
+    "release",
+    "pytorch",
+    "cuda",
+    "pypi"
+  ]
+}

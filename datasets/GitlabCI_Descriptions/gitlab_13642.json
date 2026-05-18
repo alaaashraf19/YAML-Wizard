@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_13642",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 757,
+  "description": "Create a GitLab CI pipeline with three stages: build, test, and docker. Use the node:9.2.0 Docker image for the build and test jobs and the docker:latest image with a docker:dind service for the docker job. Define a cache keyed by the branch name that stores node_modules and includes untracked files. In the build stage add a build job that echoes the current branch and tag, runs npm install, then NODE_ENV=production npm run build, and saves the build/ directory as an artifact. In the test stage add a test job that runs only on branches and tags and executes npm run coverage. In the docker stage add a docker job that runs only on the master branch, installs py-pip and docker‑compose via apk and pip, logs in to registry.gitlab.com with the CI_BUILD_TOKEN, runs docker-compose up --build prod, and pushes the resulting image to registry.gitlab.com/nlabbe/gold.",
+  "tags": [
+    "node",
+    "npm",
+    "docker",
+    "docker-compose",
+    "cache",
+    "artifacts",
+    "gitlab-registry"
+  ]
+}

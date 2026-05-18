@@ -1,0 +1,12 @@
+Test:
+  before_script:
+  - npm install
+  script:
+  - npm run test
+  stage: test
+cache:
+  paths:
+  - node_modules/
+image: node:14
+stages:
+- test

@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_06860",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 23344,
+  "description": "Create a GitLab CI pipeline with stages build, test, e2e and deploy that uses the Docker image registry.hub.docker.com/atlassianlabs/docker-node-jdk-chrome-firefox:latest for the e2e job and the default image for all other jobs, prints CPU, memory, node, npm and yarn versions in a before_script, and skips jobs on tag pipelines. In the build stage add jobs build:babel, build:express, build:jest, build:jest-babel, build:jest-graphql, build:jest-react, build:jest-typescript, build:koa, build:scripts and build:webpack that each run \"PARALLEL='off' npm run lerna -- run build --scope @digest/...\" (including filtered dependencies where applicable), publish their respective dist directories as artifacts (expire in 12h), have retry 0 and are excluded on tags. In the test stage add a .lint job that caches node_modules and packages/node_modules, depends on all build jobs, and runs the project's lint scripts, and add multiple build:demo-webpack-* jobs (e.g., build:demo-webpack-cssModules, build:demo-webpack-react, build:demo-webpack-typescript, etc.) that each run \"PARALLEL='off' npm run lerna -- run build --scope @digest-demo/...\" followed by \"npm run copy:stats\", cache node_modules, depend on the build jobs, and publish the public/ directory as a 12‑hour artifact. Add an .e2e job that runs in the e2e stage using the specified Docker image, caches node_modules, depends on lint and all demo‑webpack build jobs, and stores the public/ artifact for 12 hours. Finally, define a .deploy template that pulls the same cache, depends on all lint jobs, runs only on the master, next and beta branches of digested/node-digest, and has no script (placeholder for deployment).",
+  "tags": [
+    "node",
+    "npm",
+    "lerna",
+    "docker",
+    "e2e",
+    "cache",
+    "ci",
+    "build",
+    "test"
+  ]
+}

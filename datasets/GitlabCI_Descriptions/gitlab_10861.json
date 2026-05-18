@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_10861",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 274,
+  "description": "Create a GitLab CI pipeline that uses the node:8 Docker image, caches the node_modules directory, and runs npm install in a global before_script. Define a single test stage. Add a test:node:8 job in the test stage that runs only on the master branch, uses the default node:8 image, and executes npm install followed by npm test. Add a test:node:latest job also in the test stage, limited to master, that overrides the image to node:latest and runs the same npm install and npm test commands.",
+  "tags": [
+    "node",
+    "npm",
+    "test",
+    "cache",
+    "gitlab-ci"
+  ]
+}

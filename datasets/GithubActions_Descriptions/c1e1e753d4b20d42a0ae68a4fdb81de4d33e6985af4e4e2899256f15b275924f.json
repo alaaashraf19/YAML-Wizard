@@ -1,0 +1,14 @@
+{
+  "sha": "c1e1e753d4b20d42a0ae68a4fdb81de4d33e6985af4e4e2899256f15b275924f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4314,
+  "description": "Create a GitHub Actions release workflow that triggers on push to the master branch. Run multiple jobs in parallel: test-frontend and test-backend to lint and test the frontend and backend code respectively, and then run Release Please to create a release. If a release is created, run build-release to build, tag, and publish a Docker image, and build-push-pypa to build and push to PyPA.",
+  "tags": [
+    "release",
+    "docker",
+    "pypi",
+    "github-actions",
+    "multi-job-workflow"
+  ]
+}

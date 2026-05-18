@@ -1,0 +1,15 @@
+{
+  "sha": "8ef9fe4edc6410a09e0019517cfecf843393abf2883df4b0d86ea54bca9582ea",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 9555,
+  "description": "Create a GitHub Actions workflow named Build Python Package that runs on push, pull request, and workflow dispatch events. The workflow should have a package version of 1.0.0rc1 and include jobs for building on Linux, Windows, and macOS. On Linux, build a Docker image, build wheel packages, and upload them for Python 3.8, 3.9, and 3.10. On Windows and macOS, set up Python, install dependencies, build the package, and upload wheel packages for respective Python versions.",
+  "tags": [
+    "python",
+    "docker",
+    "github-actions",
+    "ci",
+    "cd",
+    "package-building"
+  ]
+}

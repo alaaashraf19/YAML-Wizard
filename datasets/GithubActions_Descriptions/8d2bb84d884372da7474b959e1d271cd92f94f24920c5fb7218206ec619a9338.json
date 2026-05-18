@@ -1,0 +1,16 @@
+{
+  "sha": "8d2bb84d884372da7474b959e1d271cd92f94f24920c5fb7218206ec619a9338",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5931,
+  "description": "Create a daily GitHub Actions workflow named CI Upstream that runs on pushes to main, on pull requests to main, on a daily schedule, and manually. The workflow detects if a specific keyword is present in the commit message or PR title, and if so, triggers a job to test the upstream-dev environment with Python 3.10 using conda and pytest. If the test fails, it uploads the logs as an artifact. If the workflow runs on a schedule and the test fails, it reports the failures to an existing or new GitHub issue labeled with CI.",
+  "tags": [
+    "python",
+    "conda",
+    "pytest",
+    "github-actions",
+    "ci",
+    "schedule",
+    "reporting"
+  ]
+}

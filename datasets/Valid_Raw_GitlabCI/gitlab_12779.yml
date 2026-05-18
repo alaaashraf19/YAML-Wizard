@@ -1,0 +1,19 @@
+cache:
+  paths:
+  - node_modules/
+image: mwallasch/docker-ruby-node
+production:
+  only:
+  - master
+  script:
+  - npm -v
+  - npm install -qs
+  - gem install dpl
+  - dpl --skip_cleanup --provider=heroku --app=snake-pipeline --api-key=$HEROKU_PRODUCTION_API_KEY
+  stage: deploy
+test:
+  script:
+  - npm install
+  - npm run test:unit
+  - npm run test:app
+  stage: test

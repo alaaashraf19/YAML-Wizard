@@ -1,0 +1,17 @@
+{
+  "sha": "0464dab63907bbc7880a8a17e391e4b0e9ea61ff19f6b592f6626be50f1ec7c2",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4172,
+  "description": "Create a GitHub Actions workflow named test-p4c that runs on push to main and on pull requests to main. The workflow should have a concurrency group that cancels in-progress runs on non-main branches. It should have three jobs: build-linux, build-fedora-linux, and build-mac-os, each building and testing p4c with different configurations and environments.",
+  "tags": [
+    "p4c",
+    "test",
+    "github-actions",
+    "ubuntu",
+    "fedora",
+    "macos",
+    "docker",
+    "ctest"
+  ]
+}

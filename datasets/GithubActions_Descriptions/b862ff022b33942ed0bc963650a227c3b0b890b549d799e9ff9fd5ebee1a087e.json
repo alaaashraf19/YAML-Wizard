@@ -1,0 +1,15 @@
+{
+  "sha": "b862ff022b33942ed0bc963650a227c3b0b890b549d799e9ff9fd5ebee1a087e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1315,
+  "description": "Create a GitHub Actions workflow named Python package that runs on push and pull request events. Use an ubuntu-latest job with a matrix strategy to test multiple Python versions (3.9, 3.10, 3.11). For each version, check out the repository, set up Python with pip caching, install dependencies (including those from requirements.txt if present), lint the code with flake8, and run tests with pytest.",
+  "tags": [
+    "python",
+    "tests",
+    "linting",
+    "pytest",
+    "flake8",
+    "ci"
+  ]
+}

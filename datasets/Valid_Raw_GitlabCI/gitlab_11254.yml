@@ -1,0 +1,50 @@
+.test_template:
+  coverage: /\[info]\sAll\sdone\.\sCoverage\swas\s\[(.*)%\]/
+  services: &id001
+  - alias: clammy
+    command:
+    - -m
+    - 2M
+    name: registry.gitlab.com/kpmeen/docker-clamav
+  stage: test
+  variables: &id002
+    CLAM_HOST: clammy
+    CLAM_PORT: 3310
+cache:
+  paths:
+  - cache
+  untracked: true
+check style and formatting:
+  image: registry.gitlab.com/kpmeen/docker-scala-sbt:scala_2.13_jdk11
+  script:
+  - sbt clean scalastyle scalafmt
+  - git diff --exit-code || (echo "ERROR Code formatting check failed, see differences
+    above."; false)
+  stage: stylecheck
+include:
+- template: SAST.gitlab-ci.yml
+run test suites for 2.12:
+  coverage: /\[info]\sAll\sdone\.\sCoverage\swas\s\[(.*)%\]/
+  image: registry.gitlab.com/kpmeen/docker-scala-sbt:scala_2.12_jdk11
+  script:
+  - sbt ++2.12.11 clean coverage test coverageReport
+  - sbt ++2.12.11 coverageAggregate
+  services: *id001
+  stage: test
+  variables: *id002
+run test suites for 2.13:
+  coverage: /\[info]\sAll\sdone\.\sCoverage\swas\s\[(.*)%\]/
+  image: registry.gitlab.com/kpmeen/docker-scala-sbt:scala_2.13_jdk11
+  script:
+  - sbt ++2.13.2 clean test
+  services: *id001
+  stage: test
+  variables: *id002
+stages:
+- stylecheck
+- test
+variables:
+  COURSIER_CACHE: /root/cache/coursier
+  DOCKER_DRIVER: overlay
+  SAST_EXCLUDED_PATHS: target
+  SAST_JAVA_VERSION: 11

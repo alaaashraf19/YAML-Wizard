@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_12290",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 116,
+  "description": "Create a GitLab CI pipeline that uses the maven:3-jdk-8 Docker image and defines a single stage called build. Add a job named maven-build in the build stage that executes the exact shell command \"mvn compile\". Configure the job to collect all JAR files matching target/*.jar as build artifacts. The pipeline has no additional caches, variables, services, or conditional rules, so the job runs on every pipeline execution.",
+  "tags": [
+    "maven",
+    "java",
+    "jar",
+    "build"
+  ]
+}

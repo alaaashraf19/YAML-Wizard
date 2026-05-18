@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_18169",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1094,
+  "description": "Create a GitLab CI pipeline that uses the gableroux/unity3d:2018.3.14f1 Docker image for build jobs and alpine:latest for the deploy pages job, with stages build and deploy and a global variable BUILD_NAME set to RRCS. In the build stage add a build-StandaloneWindows64 job that runs a before_script `chmod +x ./ci/before_script.sh && ./ci/before_script.sh`, then a script `chmod +x ./ci/build.sh && ./ci/build.sh`, sets the variable BUILD_TARGET=StandaloneWindows64, archives the ./src/Builds/ directory as an artifact, and runs only when $CI_COMMIT_REF_NAME is \"ci\" or matches $PAGES_BRANCH. Also in the build stage add a build-WebGL job that is identical but sets BUILD_TARGET=WebGL. In the deploy stage add a pages job that uses the alpine:latest image, runs `apk update`, `apk add zip`, `chmod +x ./ci/pages.sh && ./ci/pages.sh`, and `chmod +x ./ci/pages-apply-runtime-config.sh && ./ci/pages-apply-runtime-config.sh`, publishes the public/ folder as an artifact, and runs only when $CI_COMMIT_REF_NAME equals $PAGES_BRANCH. No caches or services are defined.",
+  "tags": [
+    "unity",
+    "docker",
+    "alpine",
+    "pages",
+    "build",
+    "artifact",
+    "ci-branch"
+  ]
+}

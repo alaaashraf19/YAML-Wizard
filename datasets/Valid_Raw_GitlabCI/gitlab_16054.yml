@@ -1,0 +1,20 @@
+before_script:
+- conda update --quiet --yes --name base conda
+image: condaforge/mambaforge:latest
+resolve_env:
+  allow_failure: true
+  script:
+  - mamba env create --name prophane --file environment.yaml
+  stage: test
+stages:
+- test
+test:
+  artifacts:
+    paths:
+    - prophane_test-
+    when: on_failure
+  before_script:
+  - conda install --name base --channel conda-forge mamba --yes
+  script:
+  - ./test.sh
+  stage: test

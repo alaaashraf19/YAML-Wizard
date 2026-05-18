@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_17683",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1001,
+  "description": "Create a GitLab CI pipeline using the docker:latest image with the docker:dind service. Define stages build, lint, unittest and set IMAGE_NAME variable to ${CI_REGISTRY_IMAGE}/tessia-baselib:${CI_COMMIT_REF_SLUG}. Add a before_script that logs in to the registry with docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY. In the build stage, create a build job that runs apk add --no-cache git, git bundle create tools/ci/docker/assets/tessia-baselib.git HEAD, docker build --pull --force-rm -f tools/ci/docker/Dockerfile -t $IMAGE_NAME tools/ci/docker, docker run --env TESSIA_BASELIB_INTERACTIVE=no --rm $IMAGE_NAME, and docker push $IMAGE_NAME. In the lint stage, add a lint job that runs docker pull $IMAGE_NAME and docker run -t --rm --entrypoint /assets/tessia-baselib/tools/run_pylint.py $IMAGE_NAME. In the unittest stage, add a unittest job that runs docker pull $IMAGE_NAME, docker run -t --rm --entrypoint /assets/tessia-baselib/tools/run_tests.py $IMAGE_NAME, and docker run -t --rm --entrypoint /assets/tessia-baselib/tools/run_pytest_tests.py $IMAGE_NAME.",
+  "tags": [
+    "docker",
+    "dind",
+    "docker-build",
+    "lint",
+    "unittest",
+    "gitlab-ci"
+  ]
+}

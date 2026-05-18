@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_08007",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 647,
+  "description": "Create a GitLab CI pipeline using the ubuntu:16.04 Docker image. Define a single stage called newdatacheck. Add a global before_script that runs apt-get --quiet update --yes, installs git, sets the remote URL to https://gdroidbot:${CI_PUSH_TOKEN}@gitlab.com/gdroid/gdroiddata.git, and configures git user email and name. Add a job named doall that runs in the newdatacheck stage, is excluded from push events (except pushes), and executes the script commands: apt-get --quiet install --yes git python zip unzip virtualenv build-essential python-dev curl; git checkout -B master; ./make_env.sh; ./do_all.sh $MODE; git commit -m \"update `date +'%Y-%m-%d %H:%M:%S'`\" .; git push --follow-tags origin master. No caches, artifacts, services, or deployment targets are defined.",
+  "tags": [
+    "ubuntu-16.04",
+    "apt-get",
+    "git",
+    "python",
+    "virtualenv",
+    "newdatacheck",
+    "doall"
+  ]
+}

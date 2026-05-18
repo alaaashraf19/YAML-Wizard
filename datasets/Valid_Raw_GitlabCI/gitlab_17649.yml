@@ -1,0 +1,20 @@
+.install: &id001
+- apt-get update && apt-get install -qy ruby asciidoctor ruby-bundler ruby-rspec rubocop
+  ruby-simplecov codespell ronn
+codespell:
+  before_script: *id001
+  script:
+  - rake codespell
+image: debian:testing
+manpages:
+  before_script: *id001
+  script:
+  - rake man
+style:
+  before_script: *id001
+  script:
+  - rake style
+tests:
+  before_script: *id001
+  script:
+  - rake test

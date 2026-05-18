@@ -1,0 +1,13 @@
+{
+  "sha": "890ccf944894237fe8fe85a471e61c4eb9bc221bae769426bf354854dba29413",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 6249,
+  "description": "Create a GitHub Actions workflow that dispatches on a workflow trigger. The workflow should run on an ubuntu-latest environment, free up disk space, check out a repository, get the latest version tag from Git, and then build and push a Docker image to the GitHub Container Registry (ghcr.io) with the repository's image name and version. The workflow should also test the Docker image, and then build, test and push an Apptainer image.",
+  "tags": [
+    "docker",
+    "github-container-registry",
+    "apptainer",
+    "workflow-dispatch"
+  ]
+}

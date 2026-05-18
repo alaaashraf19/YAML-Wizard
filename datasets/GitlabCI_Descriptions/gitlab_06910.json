@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_06910",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 702,
+  "description": "Create a GitLab CI pipeline that runs apt-get update and installs gcc and valgrind in a before_script block. Add a build job that executes \"make build\". Add check2, check3, check_10k_10k, check_1k_1k, and sample_check jobs that each run \"make build/checker\" followed by \"valgrind ./build/checker\" with their respective input files (ref_file2.txt, ref_file3.txt, ref_file_10k_10k.txt, ref_file_1k_1k.txt, sample_ref_file.txt); the check_1k_1k job also runs \"cat newStoreCoords.txt\". All jobs use the default stage (test) and have no explicit image, services, caches, artifacts, or rules. The pipeline relies solely on make and valgrind for building and checking the code.",
+  "tags": [
+    "make",
+    "valgrind",
+    "gcc",
+    "c",
+    "gitlab-ci"
+  ]
+}

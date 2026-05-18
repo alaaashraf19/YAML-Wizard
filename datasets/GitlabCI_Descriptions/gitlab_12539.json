@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_12539",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 376,
+  "description": "Create a GitLab CI pipeline using the ruby:3.0 Docker image. Set JEKYLL_ENV=production and LC_ALL=C.UTF-8 variables. Include a before_script that runs `curl -sL https://deb.nodesource.com/setup_20.x | bash`, `apt-get install -y nodejs`, `gem install bundler`, and `bundle install` before each job. Define a deploy stage with a pages job that executes `bundle exec jekyll build -d public`, publishes the public/ directory as a pages artifact, and only runs when $CI_COMMIT_REF_NAME equals $CI_DEFAULT_BRANCH.",
+  "tags": [
+    "ruby",
+    "jekyll",
+    "bundler",
+    "nodejs",
+    "gitlab-pages",
+    "deploy"
+  ]
+}

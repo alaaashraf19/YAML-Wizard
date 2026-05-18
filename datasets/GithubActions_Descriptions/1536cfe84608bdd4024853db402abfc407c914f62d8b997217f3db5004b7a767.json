@@ -1,0 +1,19 @@
+{
+  "sha": "1536cfe84608bdd4024853db402abfc407c914f62d8b997217f3db5004b7a767",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3101,
+  "description": "Create a GitHub Actions workflow named Build IDE examples that runs on every pull request. The workflow performs cross-platform builds to ensure the Core and toolchain work correctly. It consists of four jobs: a sanity check on ubuntu-latest, and builds on ubuntu-latest for Linux with different LwIP versions and chunks, on windows-latest for Windows, and on macOS-latest for macOS. Each job checks out the repository, sets up Python 3.x, and uses caching for the tools/dist directory.",
+  "tags": [
+    "cross-platform",
+    "arduino",
+    "esp8266",
+    "github-actions",
+    "python",
+    "ubuntu",
+    "windows",
+    "macos",
+    "build",
+    "test"
+  ]
+}

@@ -1,0 +1,71 @@
+.if-monthly-release-initial-rc:
+  if: ($CI_PIPELINE_SOURCE =~ /^(pipeline|web|api)$/) && ($MONTHLY_RELEASE_PIPELINE
+    =~ /^(initial_rc|true)$/)
+.monthly-release-initial-rc-base:
+  extends: .common-job-setup
+  needs:
+  - monthly_release_initial_rc:tag
+  rules:
+  - if: ($CI_PIPELINE_SOURCE =~ /^(pipeline|web|api)$/) && ($MONTHLY_RELEASE_PIPELINE
+      =~ /^(initial_rc|true)$/)
+  stage: monthly_release:initial_rc
+monthly_release_initial_rc:release_environment:
+  extends: .monthly-release-initial-rc-base
+  script:
+  - bundle exec rake 'monthly:initial_rc:release_environment'
+monthly_release_initial_rc:start:
+  artifacts:
+    reports:
+      dotenv: release_candidate.env
+  extends: .common-job-setup
+  rules:
+  - if: ($CI_PIPELINE_SOURCE =~ /^(pipeline|web|api)$/) && ($MONTHLY_RELEASE_PIPELINE
+      =~ /^(initial_rc|true)$/)
+  script:
+  - bundle exec rake 'monthly:initial_rc:start'
+  - echo "STABLE_BRANCH_SOURCE_COMMITS=$STABLE_BRANCH_SOURCE_COMMITS_INPUT" >> release_candidate.env
+  stage: monthly_release:initial_rc:start
+  when: manual
+monthly_release_initial_rc:tag:
+  extends: .common-job-setup
+  needs:
+  - monthly_release_initial_rc:start
+  rules:
+  - if: ($CI_PIPELINE_SOURCE =~ /^(pipeline|web|api)$/) && ($MONTHLY_RELEASE_PIPELINE
+      =~ /^(initial_rc|true)$/)
+  script:
+  - source scripts/setup_ssh.sh
+  - source scripts/setup_git.sh
+  - bundle exec rake 'monthly:initial_rc:tag'
+  stage: monthly_release:initial_rc
+monthly_release_initial_rc:update_branch_permissions:
+  extends: .monthly-release-initial-rc-base
+  script:
+  - bundle exec rake 'monthly:initial_rc:update_branch_permissions'
+monthly_release_initial_rc:update_release_status:
+  extends: .monthly-release-initial-rc-base
+  script:
+  - bundle exec rake 'monthly:initial_rc:update_release_status'
+monthly_release_initial_rc:verify_ce:
+  extends: .monthly-release-initial-rc-base
+  script:
+  - bundle exec rake 'monthly:initial_rc:verify_ce'
+monthly_release_initial_rc:verify_pre_deployment:
+  extends: .monthly-release-initial-rc-base
+  rules:
+  - if: ($CI_PIPELINE_SOURCE =~ /^(pipeline|web|api)$/) && ($MONTHLY_RELEASE_PIPELINE
+      =~ /^(initial_rc|true)$/)
+    start_in: 120 minutes
+    when: delayed
+  script:
+  - bundle exec rake "monthly:initial_rc:verify_pre_deployment"
+  timeout: 2h
+monthly_release_initial_rc:verify_rc_pipeline:
+  extends: .monthly-release-initial-rc-base
+  rules:
+  - if: ($CI_PIPELINE_SOURCE =~ /^(pipeline|web|api)$/) && ($MONTHLY_RELEASE_PIPELINE
+      =~ /^(initial_rc|true)$/)
+    start_in: 120 minutes
+    when: delayed
+  script:
+  - bundle exec rake "monthly:initial_rc:verify_rc_pipeline"

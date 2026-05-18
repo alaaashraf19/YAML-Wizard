@@ -1,0 +1,20 @@
+{
+  "sha": "gitlab_13725",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1376,
+  "description": "Create a GitLab CI pipeline using the clojure:lein-2.7.0 Docker image with a global before_script exporting LEIN_SNAPSHOTS_IN_RELEASE=true and a shared cache key all-y-all for the .local-m2 directory. Define three stages: test, build, and deploy. In the test stage add a test job that runs apt-get update -y, apt-get install postgresql-client -y, psql -h postgres -U postgres < db-setup.sql, echo $DATABASE_URL, cp resources/test-config.default.edn ./test-config.edn, lein with-profile test run migrate, lein with-profile test cloverage --codecov, and bash <(curl -s https://codecov.io/bash) -f target/coverage/codecov.json -t $CODECOV_KEY, uses the postgres:latest service, restores the Maven cache before the script, and copies it back after the script; it does not produce artifacts. In the build stage add an uberjar job that runs lein uberjar, restores and saves the .local-m2 cache, and publishes target/uberjar/memento.jar as an artifact, running only on git tags. In the deploy stage add a production job that runs lein uberjar then HEROKU_API_KEY=$HEROKU_PRODUCTION_API_KEY lein heroku deploy, also restores and saves the cache, stores the same jar as an artifact, and runs only on the master branch.",
+  "tags": [
+    "clojure",
+    "leiningen",
+    "postgres",
+    "codecov",
+    "heroku",
+    "docker",
+    "cache",
+    "ci",
+    "test",
+    "build",
+    "deploy"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_03647",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 630,
+  "description": "Create a GitLab CI pipeline with a single stage build_stage. Use a before_script that runs apt-get update -qq && apt-get install -y -qq gcc g++ libprotobuf-dev protobuf-compiler cmake bc python swig. Add a build_kernel_script job in the build_stage that executes: wget https://www.kernel.org/pub/linux/kernel/v4.x/linux-4.13.10.tar.gz; tar zxf linux-4.13.10.tar.gz; pushd .; cd linux-4.13.10; make defconfig; make modules_prepare; popd; uname -a; ./configure --kernbuilddir $(pwd)/linux-4.13.10 --no-user; make ker; make ker_install. Add a build_user_script job also in build_stage that runs: ./configure --no-kernel; make usr; make test; make usr_install. No specific Docker image, services, caches, artifacts, or rules are defined.",
+  "tags": [
+    "kernel-build",
+    "make",
+    "gcc",
+    "cmake",
+    "gitlab-ci"
+  ]
+}

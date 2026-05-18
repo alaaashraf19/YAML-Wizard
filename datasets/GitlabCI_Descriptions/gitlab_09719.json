@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_09719",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 948,
+  "description": "Create a GitLab CI pipeline using the griest/karma-full-test-env:latest Docker image, with a node_modules/ cache and three stages: build, test, and deploy. In the build stage add a build job that runs yarn install then npm run build, stores the dist/ directory as an artifact, and runs only on tags and the master branch. Also in the build stage add a docs job that runs npm run docs, stores the public/ directory as an artifact, and runs only on tags and the master branch. In the test stage add a test job that runs npm run test -- --single-run --browsers Chrome, creates public/reports, copies test/reports/unit to public/reports, moves test/reports/coverage/lcov-report to public/reports/coverage, and uploads the public/ directory as an artifact. In the deploy stage add a pages job that depends on test and docs, runs echo Building Pages, publishes the public/ directory as a pages artifact, and runs only on the master branch. Also add a publish job that depends on build, docs, and test, writes the npm auth token to ~/.npmrc with echo \"//registry.npmjs.org/:_authToken=${NPM_TOKEN}\" > ~/.npmrc, runs npm publish, and runs only on tags.",
+  "tags": [
+    "node",
+    "npm",
+    "yarn",
+    "karma",
+    "pages",
+    "publish",
+    "docker"
+  ]
+}

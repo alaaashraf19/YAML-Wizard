@@ -1,0 +1,35 @@
+name: Push Container to Heroku
+
+on: 
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Check Heroku Version
+      env: 
+        HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+      run: heroku --version
+    - name: Login to Heroku Container registry
+      env: 
+        HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+      run: heroku container:login 
+    - name: Add remote origin
+      run: |
+        git remote add heroku https://heroku:${{ secrets.HEROKU_API_KEY }}@git.heroku.com/djangosnippets.git
+    - name: Check branches
+      env: 
+        HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+      run: git fetch --all --unshallow
+    - name: Pull
+      run: |
+        git branch
+    - name: Deploy to Heroku
+      run: |
+        git push heroku main
+      env: 
+        HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_05657",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 133,
+  "description": "Create a GitLab CI pipeline that defines a single job named shellcheck using the koalaman/shellcheck-alpine:stable Docker image. The job runs in the default test stage and executes the exact command: sed 's/&|/\\&/' codestats.plugin.zsh | shellcheck --shell=bash -. No caches, artifacts, services, or special rules are configured, and the pipeline does not deploy anywhere.",
+  "tags": [
+    "shellcheck",
+    "bash",
+    "zsh",
+    "docker",
+    "gitlab-ci"
+  ]
+}

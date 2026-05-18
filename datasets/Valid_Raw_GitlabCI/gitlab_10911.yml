@@ -1,0 +1,32 @@
+include:
+- standard.yml
+preferences:
+  skip_indicatives: 0
+topics:
+- conf: ratiolevels
+  floor: 0
+  format: '%{code} : %{message}'
+  id: A0
+  name: A seul, positif
+  questions:
+  - A-*
+- conf: pclevels
+  id: A
+  name: A
+  questions: A*
+- decimalspc: 2
+  id: B
+  name: B
+  questions: '*B*'
+- decimalspc: 2
+  exclude_questions:
+  - B-2
+  - B-4
+  id: Bi
+  name: B, questions impaires
+  questions: B-*
+- decimalspc: 2
+  id: M
+  name: Questions multiples
+  questions:
+  - ^.*M.*

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_09981",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1708,
+  "description": "Create a GitLab CI pipeline using the docker:stable image with the docker:stable-dind service and global variables ARG_ARCH=amd64, ARG_BASEIMG=ubuntu, ARG_BASEVERS=focal, DOCKER_DRIVER=overlay. Add a job named build:amd64 that runs in the default stage, executes before_script commands 'apk add --no-cache curl gzip bash' and 'docker login -u \"gitlab-ci-token\" -p \"$CI_JOB_TOKEN\" \"$CI_REGISTRY\"', then runs './scripts/unifi-build.sh -c stable -e latest -g \"${CI_COMMIT_SHORT_SHA}\" \"${CI_REGISTRY_IMAGE}/unifi\"', './scripts/unifi-publi.sh -c stable -e latest -g \"${CI_COMMIT_SHORT_SHA}\" \"${CI_REGISTRY_IMAGE}/unifi\"', './scripts/unifi-build.sh -c oldstable -g \"${CI_COMMIT_SHORT_SHA}\" \"${CI_REGISTRY_IMAGE}/unifi\"', './scripts/unifi-publi.sh -c oldstable -g \"${CI_COMMIT_SHORT_SHA}\" \"${CI_REGISTRY_IMAGE}/unifi\"', './scripts/unifi-build.sh -c unifi-8.2 -t lts -g \"${CI_COMMIT_SHORT_SHA}\" \"${CI_REGISTRY_IMAGE}/unifi\"', and './scripts/unifi-publi.sh -c unifi-8.2 -t lts -g \"${CI_COMMIT_SHORT_SHA}\" \"${CI_REGISTRY_IMAGE}/unifi\"', and runs only on the master branch. Add a job named build:dev:amd64 that also runs in the default stage, runs before_script commands 'apk add --no-cache curl gzip', 'export VERSION_UNIFI=\"$(./scripts/ci-get-unifi-version.sh ${UNIFI_CHANNEL})\"', and 'docker login -u \"gitlab-ci-token\" -p \"$CI_JOB_TOKEN\" $CI_REGISTRY', then builds a Docker image with 'docker build --pull --build-arg stable -t \"${CI_REGISTRY_IMAGE}/unifi:dev-${VERSION_UNIFI}-$CI_COMMIT_REF_SLUG\" .'', tags it with 'docker tag \"${CI_REGISTRY_IMAGE}/unifi:dev-${VERSION_UNIFI}-$CI_COMMIT_REF_SLUG\" \"${CI_REGISTRY_IMAGE}/unifi:dev-latest\"', pushes both tags with 'docker push \"${CI_REGISTRY_IMAGE}/unifi:dev-${VERSION_UNIFI}-$CI_COMMIT_REF_SLUG\"' and 'docker push \"${CI_REGISTRY_IMAGE}/unifi:dev-latest\"', and runs on all branches except master, oldstable, and testing. Both jobs use the docker tag and run on runners with the docker tag.",
+  "tags": [
+    "docker",
+    "dind",
+    "unifi",
+    "build",
+    "dev",
+    "amd64"
+  ]
+}

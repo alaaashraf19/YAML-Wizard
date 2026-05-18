@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_09037",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1750,
+  "description": "Create a GitLab CI pipeline that runs security early‑merge release jobs. Define a stage named security_release:early_merge and a sub‑stage security_release:early_merge:start. Add a security_release_early_merge:start job in the security_release:early_merge:start stage that runs manually, executes `bundle exec rake 'security:early_merge:start'`, has no needs, and is triggered only when CI_PIPELINE_SOURCE matches pipeline, web or api and SECURITY_RELEASE_PIPELINE matches early_merge or true. Add a security_release_early_merge:merge job in the security_release:early_merge stage that extends the common base, runs `bundle exec rake 'security:merge[:merge_default:'true']'` under the same rule condition. Add a security_release_early_merge:verify_pending_merge job in the security_release:early_merge stage that depends on the merge job, runs `bundle exec rake 'security:early_merge:verify_pending_merge'` with a delayed start of 120 minutes, and uses the same rule condition. Finally, add a security_release_early_merge:verify_pending_deploy job in the security_release:early_merge stage that depends on the verify_pending_merge job, runs manually, executes `bundle exec rake 'security:early_merge:verify_pending_deploy'`, and follows the same rule condition.",
+  "tags": [
+    "security",
+    "early-merge",
+    "rake",
+    "manual",
+    "delayed",
+    "gitlab-ci"
+  ]
+}

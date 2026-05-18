@@ -1,0 +1,176 @@
+before_script:
+- docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+- apk update
+- apk add --no-cache zip curl tar findutils
+build:
+  artifacts:
+    paths:
+    - pvr.linux.amd64.tar.gz
+    - pvr.linux.arm.tar.gz
+    - pvr.linux.arm64.tar.gz
+    - pvr.darwin.amd64.tar.gz
+    - pvr.darwin.arm64.tar.gz
+    - pvr.windows.x32.zip
+    - pvr.windows.x64.zip
+    - pvr-vendor.tar.gz
+  except:
+  - master
+  only:
+  - branches
+  script:
+  - docker pull $CONTAINER_IMAGE:$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA || true
+  - docker build --build-arg DOCKERTAG=$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA --cache-from
+    $CONTAINER_IMAGE:$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA --tag $CONTAINER_IMAGE:$CI_COMMIT_REF_SLUG
+    --tag $CONTAINER_IMAGE:$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA --tag $CONTAINER_IMAGE:$CI_COMMIT_SHORT_SHA
+    .
+  - docker build --build-arg DOCKERTAG=$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA --cache-from
+    $CONTAINER_IMAGE:utils-$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA --tag $CONTAINER_IMAGE:utils-$CI_COMMIT_REF_SLUG
+    --tag $CONTAINER_IMAGE:utils-$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA .
+  - docker push $CONTAINER_IMAGE:$CI_COMMIT_REF_SLUG
+  - docker push $CONTAINER_IMAGE:$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA
+  - docker push $CONTAINER_IMAGE:$CI_COMMIT_SHORT_SHA
+  - tempdir=`mktemp -d`
+  - docker run --rm $CONTAINER_IMAGE:$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA | tar
+    -C $tempdir -x
+  - tar -cvzf pvr.linux.amd64.tar.gz -C $tempdir/bin/linux_amd64 pvr
+  - tar -cvzf pvr.linux.arm.tar.gz -C $tempdir/bin/linux_arm pvr
+  - tar -cvzf pvr.linux.arm64.tar.gz -C $tempdir/bin/linux_arm64 pvr
+  - tar -cvzf pvr.darwin.amd64.tar.gz -C $tempdir/bin/darwin_amd64 pvr
+  - tar -cvzf pvr.darwin.arm64.tar.gz -C $tempdir/bin/darwin_arm64 pvr
+  - echo CWD `pwd`
+  - sh -c "cd $tempdir/bin/windows_386/; zip pvr.windows.x32.zip pvr.exe"
+  - cp $tempdir/bin/windows_386/pvr.windows.x32.zip .
+  - sh -c "cd $tempdir/bin/windows_amd64/; zip pvr.windows.x64.zip pvr.exe"
+  - cp $tempdir/bin/windows_amd64/pvr.windows.x64.zip .
+  - cp $tempdir/pvr-vendor.tar.gz .
+  stage: build
+build-master:
+  artifacts:
+    paths:
+    - pvr.linux.amd64.tar.gz
+    - pvr.linux.arm.tar.gz
+    - pvr.linux.arm64.tar.gz
+    - pvr.darwin.amd64.tar.gz
+    - pvr.darwin.arm64.tar.gz
+    - pvr.windows.x32.zip
+    - pvr.windows.x64.zip
+    - pvr-vendor.tar.gz
+  only:
+  - master
+  script:
+  - docker pull $CONTAINER_IMAGE:latest || true
+  - docker build --build-arg DOCKERTAG=latest --cache-from $CONTAINER_IMAGE:latest
+    --tag $CONTAINER_IMAGE:$CI_COMMIT_SHORT_SHA --tag $CONTAINER_IMAGE:latest .
+  - docker push $CONTAINER_IMAGE:$CI_COMMIT_SHORT_SHA
+  - docker push $CONTAINER_IMAGE:latest
+  - tempdir=`mktemp -d`
+  - docker run --rm $CONTAINER_IMAGE:$CI_COMMIT_SHORT_SHA| tar -C $tempdir -x
+  - tar -cvzf pvr.linux.amd64.tar.gz -C $tempdir/bin/linux_amd64 pvr
+  - tar -cvzf pvr.linux.arm.tar.gz -C $tempdir/bin/linux_arm pvr
+  - tar -cvzf pvr.linux.arm64.tar.gz -C $tempdir/bin/linux_arm64 pvr
+  - tar -cvzf pvr.darwin.amd64.tar.gz -C $tempdir/bin/darwin_amd64 pvr
+  - tar -cvzf pvr.darwin.arm64.tar.gz -C $tempdir/bin/darwin_arm64 pvr
+  - echo CWD `pwd`
+  - sh -c "cd $tempdir/bin/windows_386/; zip pvr.windows.x32.zip pvr.exe"
+  - cp $tempdir/bin/windows_386/pvr.windows.x32.zip .
+  - sh -c "cd $tempdir/bin/windows_amd64/; zip pvr.windows.x64.zip pvr.exe"
+  - cp $tempdir/bin/windows_amd64/pvr.windows.x64.zip .
+  - cp $tempdir/pvr-vendor.tar.gz .
+  stage: build
+build-tags:
+  artifacts:
+    expire_in: never
+    paths:
+    - pvr-$CI_COMMIT_TAG.linux.amd64.tar.gz
+    - pvr-$CI_COMMIT_TAG.linux.arm64.tar.gz
+    - pvr-$CI_COMMIT_TAG.linux.arm.tar.gz
+    - pvr-$CI_COMMIT_TAG.darwin.amd64.tar.gz
+    - pvr-$CI_COMMIT_TAG.darwin.arm64.tar.gz
+    - pvr-$CI_COMMIT_TAG.windows.x32.zip
+    - pvr-$CI_COMMIT_TAG.windows.x64.zip
+    - pvr-vendor-$CI_COMMIT_TAG.tar.gz
+  only:
+  - tags
+  script:
+  - docker pull $CONTAINER_IMAGE:stable || true
+  - docker build --build-arg DOCKERTAG=stable --cache-from $CONTAINER_IMAGE:stable
+    --tag $CONTAINER_IMAGE:$CI_COMMIT_SHORT_SHA --tag $CONTAINER_IMAGE:stable .
+  - test -n "$CI_COMMIT_TAG" && docker tag $CONTAINER_IMAGE:$CI_COMMIT_TAG || true
+  - docker push $CONTAINER_IMAGE:$CI_COMMIT_SHORT_SHA
+  - docker push $CONTAINER_IMAGE:stable
+  - test -n "$CI_COMMIT_TAG" && docker push $CONTAINER_IMAGE:$CI_COMMIT_TAG || true
+  - tempdir=`mktemp -d`
+  - docker run --rm $CONTAINER_IMAGE:$CI_COMMIT_SHORT_SHA| tar -C $tempdir -x
+  - tar -cvzf pvr-$CI_COMMIT_TAG.linux.amd64.tar.gz -C $tempdir/bin/linux_amd64 pvr
+  - tar -cvzf pvr-$CI_COMMIT_TAG.linux.arm.tar.gz -C $tempdir/bin/linux_arm pvr
+  - tar -cvzf pvr-$CI_COMMIT_TAG.linux.arm64.tar.gz -C $tempdir/bin/linux_arm64 pvr
+  - tar -cvzf pvr-$CI_COMMIT_TAG.darwin.amd64.tar.gz -C $tempdir/bin/darwin_amd64
+    pvr
+  - tar -cvzf pvr-$CI_COMMIT_TAG.darwin.arm64.tar.gz -C $tempdir/bin/darwin_arm64
+    pvr
+  - echo CWD `pwd`
+  - sh -c "cd $tempdir/bin/windows_386/; zip pvr-$CI_COMMIT_TAG.windows.x32.zip pvr.exe"
+  - cp $tempdir/bin/windows_386/pvr-$CI_COMMIT_TAG.windows.x32.zip .
+  - sh -c "cd $tempdir/bin/windows_amd64/; zip pvr-$CI_COMMIT_TAG.windows.x64.zip
+    pvr.exe"
+  - cp $tempdir/bin/windows_amd64/pvr-$CI_COMMIT_TAG.windows.x64.zip .
+  - cp $tempdir/pvr-vendor.tar.gz ./pvr-vendor-$CI_COMMIT_TAG.tar.gz
+  stage: build
+build-utils:
+  only:
+  - develop
+  script:
+  - docker pull $CONTAINER_IMAGE:utils-$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA ||
+    true
+  - docker build -f Dockerfile.utils --cache-from $CONTAINER_IMAGE:utils-$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA
+    --tag $CONTAINER_IMAGE:utils-$CI_COMMIT_REF_SLUG --tag $CONTAINER_IMAGE:utils-$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA
+    .
+  - docker push $CONTAINER_IMAGE:utils-$CI_COMMIT_REF_SLUG
+  - docker push $CONTAINER_IMAGE:utils-$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA
+  stage: deploy
+image: docker:stable
+package-deploy:
+  only:
+  - tags
+  - develop
+  script: "set -ex\nPACKAGE_NAME=\"pvr\"\nVERSION_SHORT=${CI_COMMIT_TAG:-$CI_COMMIT_REF_SLUG}\n\
+    VERSION_LONG=\"$VERSION_SHORT-$CI_COMMIT_SHORT_SHA\"\nROOT_FOLDER=\"pvr-$VERSION_SHORT\"\
+    \ntar -czvf src.tar.gz --exclude vendor -C . go.mod go.sum Makefile $(find . -name\
+    \ '*.go' -type f -printf '%P ') --transform \"s,^,${ROOT_FOLDER}/,\"\ndocker pull\
+    \ $CONTAINER_IMAGE:$CI_COMMIT_SHORT_SHA || true || true\ntempdir=`mktemp -d`\n\
+    docker run --rm $CONTAINER_IMAGE:$CI_COMMIT_SHORT_SHA | tar -C $tempdir -x\ntar\
+    \ -cvzf pvr.linux.amd64.tar.gz -C $tempdir/bin/linux_amd64 pvr\ntar -cvzf pvr.linux.arm.tar.gz\
+    \ -C $tempdir/bin/linux_arm pvr\ntar -cvzf pvr.linux.arm64.tar.gz -C $tempdir/bin/linux_arm64\
+    \ pvr\ntar -cvzf pvr.darwin.amd64.tar.gz -C $tempdir/bin/darwin_amd64 pvr\ntar\
+    \ -cvzf pvr.darwin.arm64.tar.gz -C $tempdir/bin/darwin_arm64 pvr\necho CWD `pwd`\n\
+    sh -c \"cd $tempdir/bin/windows_386/; zip pvr.windows.x32.zip pvr.exe\"\ncp $tempdir/bin/windows_386/pvr.windows.x32.zip\
+    \ .\nsh -c \"cd $tempdir/bin/windows_amd64/; zip pvr.windows.x64.zip pvr.exe\"\
+    \ncp $tempdir/bin/windows_amd64/pvr.windows.x64.zip .\ncp $tempdir/pvr-vendor.tar.gz\
+    \ .\nfor file in $(find . -maxdepth 1 -type f -name \"*.tar.gz\" -o -name \"*.zip\"\
+    ); do\n  filename=$(basename $file)\n  ARCH=$(echo $filename | cut -d '.' -f 2,3)\n\
+    \  extension=$(echo $filename | cut -d '.' -f 4,5)\n  if [ \"$filename\" == \"\
+    pvr-vendor.tar.gz\" ]; then\n    ARCH=\"vendor\"\n    extension=\"tar.gz\"\n \
+    \ fi\n  if [ \"$filename\" == \"src.tar.gz\" ]; then\n    ARCH=\"src\"\n    extension=\"\
+    tar.gz\"\n  fi\n  curl --header \"JOB-TOKEN: $CI_JOB_TOKEN\" --upload-file $file\
+    \ \"${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${PACKAGE_NAME}/${VERSION_LONG}/${PACKAGE_NAME}.${VERSION_LONG}.${ARCH}.${extension}\"\
+    \n  curl --header \"JOB-TOKEN: $CI_JOB_TOKEN\" --upload-file $file \"${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${PACKAGE_NAME}/${VERSION_SHORT}/${PACKAGE_NAME}.${VERSION_SHORT}.${ARCH}.${extension}\"\
+    \ndone\n"
+  stage: deploy
+run-test:
+  script:
+  - docker pull $CONTAINER_IMAGE:test-latest || true
+  - docker build -f Dockerfile.test --cache-from $CONTAINER_IMAGE:test-latest --tag
+    $CONTAINER_IMAGE:test-$CI_COMMIT_SHORT_SHA --tag $CONTAINER_IMAGE:test-latest
+    .
+  - docker push $CONTAINER_IMAGE:test-$CI_COMMIT_SHORT_SHA
+  - docker push $CONTAINER_IMAGE:test-latest
+  stage: test
+services:
+- docker:dind
+stages:
+- test
+- build
+- deploy
+variables:
+  CONTAINER_IMAGE: registry.gitlab.com/$CI_PROJECT_PATH
+  DOCKER_DRIVER: overlay2

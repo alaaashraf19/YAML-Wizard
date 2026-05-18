@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_18248",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2266,
+  "description": "Create a GitLab CI pipeline with three stages: analysis, test, and deploy. In the analysis stage add a clang-tidy job using the base/archlinux:2018.09.01 image that runs sudo pacman -Syu --needed --noconfirm clang-tools-extra=6.0.1-2 and clang-tidy -warnings-as-errors=\\\"*\\\" -checks=\\\"-*,clang-analyzer-*,-clang-analyzer-alpha*\\\" lib/hello.cpp -- -Iinclude, setting CC=clang and CXX=clang++; add a cppcheck job using ubuntu:bionic that installs cppcheck and runs cppcheck lib/*.cpp --verbose --enable=all --inconclusive --language=c++ --error-exitcode=1; and a doxygen job using alpine:3.7 that installs doxygen and graphviz then runs doxygen docs/Doxyfile and stores build/docs/html/ as an artifact. In the test stage add a build-clang6 job using lasote/conanclang60 that updates apt, installs gcovr, creates a build directory, runs conan install .., cmake .., cmake --build ., then cmake --build . --target test, memcheck, and coverage; also add a build-gcc7 job using lasote/conangcc7 that installs gcovr, performs the same build steps, and publishes the build/coverage/ and build/test/Testing/Temporary/ directories as artifacts. In the deploy stage add a deploy-bintray job using lasote/conangcc7 that installs curl, builds the project in Release mode without tests, creates a DEB package with cpack, and uploads the resulting .deb file to Bintray via curl using the $BINTRAY_API_KEY secret, storing the .deb as an artifact.",
+  "tags": [
+    "clang-tidy",
+    "cppcheck",
+    "doxygen",
+    "conan",
+    "cmake",
+    "bintray",
+    "analysis",
+    "test",
+    "deploy"
+  ]
+}

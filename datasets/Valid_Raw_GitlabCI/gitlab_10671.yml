@@ -1,0 +1,39 @@
+before_script:
+- export GRADLE_USER_HOME=`pwd`/.gradle
+cache:
+  paths:
+  - build
+  - .gradle
+gradle-build:
+  script:
+  - gradle classes
+  stage: build
+gradle-doc:
+  artifacts:
+    paths:
+    - build/doc
+  script:
+  - gradle doc
+  stage: production
+gradle-package:
+  artifacts:
+    paths:
+    - build/libs
+  script:
+  - gradle jar
+  stage: production
+gradle-test:
+  artifacts:
+    paths:
+    - build/reports
+    - build/test-results
+  script:
+  - gradle check
+  stage: test
+image: gradle:alpine
+stages:
+- build
+- test
+- production
+variables:
+  GRADLE_OPTS: -Dorg.gradle.daemon=false

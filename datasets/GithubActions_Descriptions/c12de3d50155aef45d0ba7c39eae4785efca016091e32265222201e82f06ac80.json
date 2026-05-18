@@ -1,0 +1,17 @@
+{
+  "sha": "c12de3d50155aef45d0ba7c39eae4785efca016091e32265222201e82f06ac80",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3769,
+  "description": "Create a GitHub Actions workflow named Evennia test-suite and coveralls that runs on pushes to master and develop branches and on pull requests to those branches. Use an ubuntu-latest job with a matrix strategy to test with Python 3.7 and 3.8 and databases sqlite3, postgresql, and mysql. For each matrix combination, set up the database, install dependencies, initialize Evennia, run tests, and optionally submit coverage reports to Coveralls and Codacy.",
+  "tags": [
+    "evennia",
+    "python",
+    "tests",
+    "coveralls",
+    "codacy",
+    "postgresql",
+    "mysql",
+    "sqlite"
+  ]
+}

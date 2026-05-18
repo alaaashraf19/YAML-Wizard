@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_11932",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 183,
+  "description": "Create a GitLab CI pipeline using the docker:stable Docker image with the docker:stable-dind service. Add a before_script that runs \"apk add --no-cache git git-lfs make docker-compose\" and then \"git lfs pull -I '*'\" to install tools and fetch all LFS objects. Define a single stage named build and a job called build that runs in the build stage and executes the command \"make\". No caches, artifacts, or conditional rules are specified.",
+  "tags": [
+    "docker",
+    "docker-dind",
+    "make",
+    "apk",
+    "git-lfs"
+  ]
+}

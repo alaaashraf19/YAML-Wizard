@@ -1,0 +1,16 @@
+{
+  "sha": "dff98afe9fc69227de5608d4a160d5007699d55ac0bf4bef5beb48bc630ff1b0",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1660,
+  "description": "Create a GitHub Actions workflow named Build Linux x86_64 Distributable that runs on push to the master branch and on pull requests to master. Use an ubuntu-latest job to check out the repository, fetch the entire repository, update the package repodb, install prerequisites, build with make using specific environment variables, determine the OpenMSX version, prepare a redistributable directory, and upload a redistributable zip artifact.",
+  "tags": [
+    "linux",
+    "x86-64",
+    "make",
+    "ubuntu",
+    "openmsx",
+    "ci",
+    "artifact"
+  ]
+}

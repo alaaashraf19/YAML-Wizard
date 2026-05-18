@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_07413",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 843,
+  "description": "Create a GitLab CI pipeline with a job named pages that runs on the default Docker image (inherited from the .pages template) and is limited to the master and next branches. The job uses a resource_group called pages, defines variables MASTER_ARTIFACT_URL and NEXT_ARTIFACT_URL pointing to the API artifact download URLs, and publishes the public/ directory as an artifact. Its script runs: UPDATES=docs; echo $UPDATES; mkdir public; wget -q $MASTER_ARTIFACT_URL -O master.zip && unzip -q master.zip -d master && mv -t public master/public/master || true; wget -q $NEXT_ARTIFACT_URL -O next.zip && unzip -q next.zip -d next && mv -t public next/public/next || true; mkdir -p public/$CI_COMMIT_REF_NAME; for PART in $UPDATES; do echo Updating $PART; rm -rf public/$CI_COMMIT_REF_NAME/$PART; mv build/$PART public/$CI_COMMIT_REF_NAME/; done.",
+  "tags": [
+    "pages",
+    "gitlab-pages",
+    "wget",
+    "unzip",
+    "artifacts",
+    "resource-group"
+  ]
+}

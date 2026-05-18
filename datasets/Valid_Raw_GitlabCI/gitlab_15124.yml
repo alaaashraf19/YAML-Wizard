@@ -1,0 +1,59 @@
+before_script:
+- docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+build:
+  script:
+  - docker build --pull -t $CONTAINER_TEST_IMAGE .
+  - docker push $CONTAINER_TEST_IMAGE
+  stage: build
+image: docker:latest
+pages:
+  artifacts:
+    paths:
+    - public
+  before_script:
+  - pip install mkdocs mkdocs-rtd-dropdown
+  image: python:alpine
+  only:
+  - master
+  script:
+  - mkdocs build
+  - mv site public
+  stage: build
+pylint:
+  allow_failure: true
+  before_script:
+  - echo
+  image: python:3-slim
+  script:
+  - pip install --no-cache-dir -r requirements.txt
+  - pip install --no-cache-dir pylint
+  - FILES=$(find . -name "*.py")
+  - pylint ${FILES}
+  stage: test
+release-image:
+  only:
+  - master
+  script:
+  - docker pull $CONTAINER_TEST_IMAGE
+  - docker tag $CONTAINER_TEST_IMAGE $CONTAINER_RELEASE_IMAGE
+  - docker push $CONTAINER_RELEASE_IMAGE
+  stage: release
+services:
+- docker:dind
+stages:
+- build
+- test
+- release
+unitests:
+  script:
+  - docker pull $CONTAINER_TEST_IMAGE
+  - docker network create pushfish
+  - docker run -d --name mqtt --network pushfish toke/mosquitto:latest
+  - docker run -e MQTT_ADDRESS='mqtt' --network pushfish $CONTAINER_TEST_IMAGE python
+    tests.py
+  - docker stop mqtt
+  - docker rm mqtt
+  stage: test
+variables:
+  CONTAINER_RELEASE_IMAGE: registry.gitlab.com/pushfish/pushfish-api:latest
+  CONTAINER_TEST_IMAGE: registry.gitlab.com/pushfish/pushfish-api:$CI_COMMIT_REF_SLUG

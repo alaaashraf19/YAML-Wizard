@@ -1,0 +1,43 @@
+.build_template:
+  script: &id001
+  - meson --prefix /usr/ build
+  - ninja -C build install
+  stage: build
+.debpkg_template:
+  artifacts: &id002
+    name: $CI_PROJECT_NAME%-$CI_COMMIT_TAG
+    paths:
+    - ./*.deb
+    when: on_success
+  before_script: &id003
+  - apt-get update -y
+  - apt-get install -y $DEPENS
+  only: &id004
+  - tags
+  script: &id005
+  - git clone $METEO_REPO
+  - cd meteo && dpkg-checkbuilddeps && dpkg-buildpackage
+  stage: package
+build:debian:
+  before_script:
+  - apt-get update -y
+  - apt-get -y install $DEPENS
+  image: debian:12
+  script: *id001
+  stage: build
+package:debian:
+  artifacts: *id002
+  before_script: *id003
+  dependencies:
+  - build:debian
+  image: debian:12
+  only: *id004
+  script: *id005
+  stage: package
+stages:
+- build
+- package
+variables:
+  DEPENS: build-essential git meson ninja-build valac desktop-file-utils libgtk-3-dev
+    libsoup2.4-dev libjson-glib-dev libgeocode-glib-dev libwebkit2gtk-4.0-dev libayatana-appindicator3-dev
+  METEO_REPO: https://gitlab.com/bitseater/meteo.git

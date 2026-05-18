@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_17571",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 449,
+  "description": "Create a GitLab CI pipeline with three stages: pre-build, build, and deploy, using the node:latest Docker image and a docker:19.03.1-dind service for both jobs. Add a download_deps_npm job in the pre-build stage that runs npm install, stores the node_modules/ directory as an artifact, and is tagged npm. Add a run_infopack job in the build stage that depends on download_deps_npm, runs npm start, and publishes the output_files/ directory as an artifact named output_files, also using the npm tag. No caches, rules, or deployment steps are defined.",
+  "tags": [
+    "node",
+    "npm",
+    "docker-dind",
+    "pre-build",
+    "build"
+  ]
+}

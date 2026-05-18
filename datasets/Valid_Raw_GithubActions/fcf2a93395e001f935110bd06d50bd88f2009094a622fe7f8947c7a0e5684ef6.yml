@@ -1,0 +1,133 @@
+# This workflow performs functions that must occur before launching all the Python tests
+# The cache will detect if any of the extra downloads need an update and, if so, will
+# fail the workflow. This is required so a maintainer can manually delete the existing
+# cache. Deliberate updates to the cache is important to keep track the health and
+# status of the cache instead of automatic updates
+# Then launch the Python tests in parallel
+
+name: Build
+
+on:
+  push:
+    branches: ["dev", "main"]
+  pull_request:
+    branches: ["dev", "main"]
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Lint
+  black:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Print concurrency group
+        run: echo '${{ github.workflow }}-${{ github.ref }}'
+      - uses: psf/black@stable
+        with:
+          src: "./isofit"
+          version: "24.2.0"
+
+  # Test building the package
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        shell: bash
+        run: |
+          python3 -m pip install --upgrade pip build twine
+
+      - name: Build package
+        shell: bash
+        run: |
+          python3 -m build --sdist --wheel
+
+      - name: Install tarball
+        shell: bash
+        run: |
+          python3 -m pip install dist/*.gz
+
+      - name: Test installation
+        shell: bash
+        run: |
+          isofit
+
+  # Either build the cache or check for updates, fail if updates are needed: does not block tests on failure
+  cache:
+    continue-on-error: true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cache Extras
+        id: cache-extras
+        uses: actions/cache@v4
+        with:
+          path: ~/.isofit
+          key: cache-extras
+
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+          cache-dependency-path: pyproject.toml
+
+      - name: Install ISOFIT
+        shell: bash
+        run: |
+          python3 -m pip install --editable ".[test]"
+
+      - if: steps.cache-extras.outputs.cache-hit == 'true'
+        name: Check for Updates
+        shell: bash
+        run: |
+          # Module must report "[x]" to be detected
+          SUMMARY="$(isofit -S validate all)"
+
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "$SUMMARY" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if echo "$SUMMARY" | grep "\[x]"; then
+            MSG="Cache update needed, please request a maintainer to delete the cache-extras then rerun this workflow"
+
+            echo ":x: $MSG" >> $GITHUB_STEP_SUMMARY
+
+            echo "$SUMMARY"
+            echo "::error::$MSG"
+            exit 1
+          else
+            MSG="No cache update needed"
+            echo ":white_check_mark: $MSG" >> $GITHUB_STEP_SUMMARY
+            echo "$MSG"
+          fi
+
+      - if: steps.cache-extras.outputs.cache-hit != 'true'
+        name: Download Extras
+        shell: bash
+        run: |
+          echo "Downloading extras"
+          isofit download all
+          echo "Building examples"
+          isofit build
+
+  # Test pip installation
+  pip:
+    needs: cache
+    uses: ./.github/workflows/test_pip.yml
+
+  # Test $PYTHONPATH installation
+  path:
+    needs: cache
+    uses: ./.github/workflows/test_path.yml

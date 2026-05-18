@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_05710",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 553,
+  "description": "Create a GitLab CI pipeline using the docker:latest image with the docker:dind service and a single build stage. Add a build job that runs on all branches except master, uses a before_script to log in to $CI_REGISTRY with $CI_REGISTRY_USER and $CI_REGISTRY_PASSWORD, then executes docker build --pull -t \"$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG\" . and docker push \"$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG\". Add a build-master job that runs only on the master branch, shares the same before_script login step, and runs docker build --pull -t \"$CI_REGISTRY_IMAGE\" . followed by docker push \"$CI_REGISTRY_IMAGE\". Both jobs belong to the build stage and no caches, artifacts, or deployments are defined.",
+  "tags": [
+    "docker",
+    "dind",
+    "build",
+    "ci-registry",
+    "gitlab-ci"
+  ]
+}

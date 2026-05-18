@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_09150",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 843,
+  "description": "Create a GitLab CI pipeline using the docker:latest image with a docker:dind service and a global before_script that logs in to the registry. Define a single build stage. Add a build job that runs on all branches except master, executing docker build --pull -t \"$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG\" . and docker push \"$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG\". Add a build-master job that runs only on master, executing docker build --pull -t \"$CI_REGISTRY_IMAGE\" . and docker push \"$CI_REGISTRY_IMAGE\". Add a test job that also runs on all branches except master, uses the golang:alpine image, runs a before_script that installs git via apk --no-cache add git, sets OLDPATH=$(readlink -f ..) and SOURCE=/go/src/gitlab.com/gitlab-micro/listen, creates the source directory, moves the code, then runs go get -v ./..., go test -v -cover -tags test ./..., and finally restores the original directory. No caches, artifacts, or deployment targets are defined.",
+  "tags": [
+    "docker",
+    "dind",
+    "golang",
+    "go-test",
+    "build",
+    "ci"
+  ]
+}

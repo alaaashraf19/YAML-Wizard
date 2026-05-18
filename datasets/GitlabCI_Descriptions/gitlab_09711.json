@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_09711",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 503,
+  "description": "Create a GitLab CI pipeline using the node Docker image with three stages: install, build, and deploy. In the install stage add a clean job that runs `npm run clean` and stores the `public` directory as an artifact, and an installDeps job that runs `npm i` and stores the `node_modules` directory as an artifact. In the build stage add a build job that depends on clean and installDeps, runs `ls -ltar` then `npm run build`, and publishes the `public` directory as an artifact. In the deploy stage add a pages job that depends on build, runs `ls -ltarR public`, publishes the `public` directory as the pages artifact, and only runs on the master branch.",
+  "tags": [
+    "node",
+    "npm",
+    "gitlab-pages",
+    "install",
+    "build",
+    "deploy",
+    "clean",
+    "dependencies"
+  ]
+}

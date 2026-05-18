@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_09716",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 213,
+  "description": "Create a GitLab CI pipeline that uses the Docker image registry.gitlab.com/greysonp/gitlab-ci-shared-runner-android-example:latest. Define a single job named build that runs in the default stage, executes a before_script step to chmod +x ./gradlew, then runs ./gradlew assembleDebug. The job should publish the contents of app/build/outputs/ as artifacts. No additional services, caches, or rules are defined.",
+  "tags": [
+    "android",
+    "gradle",
+    "docker",
+    "build-artifacts"
+  ]
+}

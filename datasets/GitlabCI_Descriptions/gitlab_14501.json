@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_14501",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 4635,
+  "description": "Create a GitLab CI pipeline that includes the local template /.gitlab-ci.d/crossbuild-template.yml which defines the Docker image, stages (accel, system, user) and the core build commands (configure, make, make check). Add a cross‑amd64‑xen‑only job extending .cross_accel_build_job, needing amd64-debian-cross-container, running in the accel stage with ACCEL=xen, EXTRA_CONFIGURE_OPTS='--disable-tcg --disable-kvm' and IMAGE=debian-amd64-cross, and executing the template's configure‑make‑check sequence. For each architecture (arm64, armhf, i686, mips64el, mipsel, ppc64el, riscv64, s390x, win64) define the appropriate cross‑accel, cross‑system and cross‑user jobs that extend .cross_accel_build_job, .cross_system_build_job or .cross_user_build_job, declare a needs on the matching <arch>-debian-cross-container (or win64‑fedora‑cross-container), set IMAGE to debian-<arch>-cross (or fedora-win64-cross), and pass architecture‑specific EXTRA_CONFIGURE_OPTS and ACCEL variables; the i686‑system job also sets MAKE_CHECK_ARGS='check‑qtest', the i686‑tci job adds a 60m timeout and MAKE_CHECK_ARGS='check check‑tcg -j2', and the i686‑user job sets MAKE_CHECK_ARGS='check'. Mark the cross‑riscv64‑system and cross‑riscv64‑user jobs as allow_failure, and configure the cross‑win64‑system job to publish build/qemu-setup*.exe as an artifact on success while skipping a long list of CROSS_SKIP_TARGETS. All jobs inherit the standard cross‑build script from the template, ensuring each architecture is built, tested and its artifacts collected according to the defined variables and rules.",
+  "tags": [
+    "cross-build",
+    "qemu",
+    "debian",
+    "fedora",
+    "ci",
+    "template",
+    "arch"
+  ]
+}

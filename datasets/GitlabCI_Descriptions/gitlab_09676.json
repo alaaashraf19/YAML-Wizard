@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_09676",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 880,
+  "description": "Create a GitLab CI pipeline with stages test, package, deploy, and release, using a global node:6 Docker image and overriding images per job. Add a test job in the test stage that runs `npm install` then `npm test` with the node:6 image. Add a build-container-image job in the package stage that uses the docker:latest image with the docker:dind service, runs a before_script `docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY`, defines the variable IMAGE_TAG as `$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME`, then executes `docker build --tag $IMAGE_TAG --file Dockerfile.node .` and `docker push $IMAGE_TAG`, and is limited to tags and the master branch. Add a production job in the deploy stage that uses the ruby:2.1 image, runs `apt-get update -qy`, `apt-get install -y ruby-dev`, `gem install dpl`, and `dpl --provider=heroku --app=fe-bruecke-bot --api-key=$HEROKU_PRODUCTION_API_KEY`, and only runs on the master branch to deploy to Heroku. Finally, add a release job in the release stage that uses the node:6 image, runs a before_script `npm install`, then `npm --no-git-tag-version version` and `$(npm bin)/semantic-release-gitlab`, and is also restricted to the master branch.",
+  "tags": [
+    "node",
+    "docker",
+    "dind",
+    "heroku",
+    "npm",
+    "ruby",
+    "gitlab-ci"
+  ]
+}

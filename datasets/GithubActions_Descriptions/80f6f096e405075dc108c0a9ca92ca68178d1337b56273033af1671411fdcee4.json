@@ -1,0 +1,13 @@
+{
+  "sha": "80f6f096e405075dc108c0a9ca92ca68178d1337b56273033af1671411fdcee4",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 447,
+  "description": "Create a GitHub Actions workflow named Sync labels that runs on push to main branch when .github/labels.yml changes or on workflow dispatch. Use an ubuntu-latest job with write permission to pull requests to check out the repository without persisting credentials, then use the label syncer action to sync labels without pruning, authenticated with the GITHUB_TOKEN secret.",
+  "tags": [
+    "github-actions",
+    "labels",
+    "sync",
+    "workflow-dispatch"
+  ]
+}

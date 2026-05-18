@@ -1,0 +1,14 @@
+{
+  "sha": "00e128cf84f3f47db74c6f288e678178759569c0d0bec034e1047ec1dbdd40cf",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 748,
+  "description": "Create a GitHub Actions workflow named Build that runs on push to main and tags starting with v*, as well as on pull requests. Use a matrix job that runs on multiple OS environments (macOS, ubuntu, windows) and Python versions (3.6, 3.7, 3.8, 3.9). For each matrix combination, check out the repository, set up the corresponding Python version, upgrade pip, install dependencies with make setup, install the package, run tests with make test, and lint with make lint.",
+  "tags": [
+    "python",
+    "matrix",
+    "multios",
+    "tests",
+    "linting"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_19038",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 184,
+  "description": "Create a GitLab CI pipeline that installs the nightly Rust toolchain in a before_script by downloading rustup.sh with curl, making it executable, and running it with --disable-sudo -y --channel=nightly. Define a single job called build (using the default stage) that executes the exact shell commands \"cargo build\" followed by \"cargo test\". Use the default runner image, no additional services, caches, artifacts, or rules, and do not specify any deployment targets.",
+  "tags": [
+    "rust",
+    "cargo",
+    "nightly",
+    "rustup",
+    "build",
+    "test"
+  ]
+}

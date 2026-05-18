@@ -1,0 +1,24 @@
+clippy:
+  image: rust
+  script:
+  - rustc --version && cargo --version
+  - rustup component add clippy-preview
+  - cargo clippy --verbose
+rustfmt:
+  image: rust
+  script:
+  - rustc --version && cargo --version
+  - rustup component add rustfmt-preview
+  - cargo fmt -- --check
+test:1.61:
+  image: rust:1.61
+  script: &id001
+  - rustc --version && cargo --version
+  - cargo test --all --verbose
+  - cargo test --all --all-features --verbose
+test:nightly:
+  image: rustlang/rust:nightly
+  script: *id001
+test:stable:
+  image: rust
+  script: *id001

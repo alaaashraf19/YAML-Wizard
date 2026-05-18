@@ -1,0 +1,55 @@
+code_quality:
+  artifacts:
+    paths:
+    - report.html
+  dependencies: []
+  except:
+    variables:
+    - $CODE_QUALITY_DISABLED
+  image: docker:latest
+  script:
+  - docker pull codeclimate/codeclimate
+  - docker run --env CODECLIMATE_DEBUG=1 --env CODECLIMATE_CODE="$PWD" --volume "$PWD":/code
+    --volume /var/run/docker.sock:/var/run/docker.sock --volume /tmp/cc:/tmp/cc codeclimate/codeclimate
+    analyze -f html > report.html
+  services:
+  - docker:dind
+  stage: test
+  variables:
+    DOCKER_DRIVER: overlay
+  when: manual
+debug:
+  artifacts:
+    paths:
+    - Reports_Coverage/
+    reports:
+      junit:
+      - '*.Test/TestResults/TestResults.xml'
+  before_script:
+  - echo | dotnet --version
+  - dotnet tool install dotnet-reportgenerator-globaltool --tool-path tools
+  coverage: /Line coverage[\s\S].+%/
+  script:
+  - dotnet test --logger "junit" --collect:"XPlat Code Coverage"
+  - ls -ld ${CI_PROJECT_DIR}/**/TestResults/*
+  - ./tools/reportgenerator "-reports:${CI_PROJECT_DIR}/**/TestResults/*/coverage.cobertura.xml"
+    "-targetdir:Reports_Coverage" -reportTypes:TextSummary;
+  - ./tools/reportgenerator "-reports:${CI_PROJECT_DIR}/**/TestResults/*/coverage.cobertura.xml"
+    "-targetdir:Reports_Coverage" -reportTypes:Html;
+  - ls Reports_Coverage
+  - cat ./Reports_Coverage/Summary.txt
+  - echo 'End Summary'
+  stage: test
+image: mcr.microsoft.com/dotnet/core/sdk:2.2.301
+release:
+  artifacts:
+    paths:
+    - publish/
+  only:
+  - master
+  script:
+  - dotnet publish -c Release -o ../publish MyProject/MyProject.csproj
+  stage: deploy
+stages:
+- test
+- deploy

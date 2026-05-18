@@ -1,0 +1,10 @@
+deploy:
+  image: beardedio/git-tools
+  only:
+  - master
+  script: git-push git@github.com:bskrtich/dotfiles.git
+  stage: deploy
+  variables:
+    SSH_PRIVATE_KEY: set-as-secret-variable
+stages:
+- deploy

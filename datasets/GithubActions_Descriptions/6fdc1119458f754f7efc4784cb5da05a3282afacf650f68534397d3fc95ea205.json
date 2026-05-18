@@ -1,0 +1,15 @@
+{
+  "sha": "6fdc1119458f754f7efc4784cb5da05a3282afacf650f68534397d3fc95ea205",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4388,
+  "description": "Create a GitHub Actions workflow named 'MiNiFi-CPP Verify Python Compatibility' that runs on workflow dispatch. The workflow should have two jobs: 'rocky-build' and 'docker-python-tests'. The 'rocky-build' job runs on ubuntu-22.04, checks out the repository, installs dependencies, builds a package, and uploads the artifact. The 'docker-python-tests' job runs on ubuntu-20.04, depends on 'rocky-build', and performs various tests on different platforms with Python.",
+  "tags": [
+    "minifi-cpp",
+    "python-compatibility",
+    "docker",
+    "cmake",
+    "ccache",
+    "test-reporting"
+  ]
+}

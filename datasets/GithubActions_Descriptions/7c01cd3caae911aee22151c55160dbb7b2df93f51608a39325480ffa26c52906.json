@@ -1,0 +1,14 @@
+{
+  "sha": "7c01cd3caae911aee22151c55160dbb7b2df93f51608a39325480ffa26c52906",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2819,
+  "description": "Create a GitHub Actions workflow named test_release that runs on every pull request to the master branch and on workflow dispatch. The workflow performs a check and then runs tests using a reusable workflow test_runner.yml. It also has a commented out section for testing a new release, which involves reading a version from a YAML file, updating the version in pyproject.toml, building and uploading the package to TestPyPI, and testing the new release.",
+  "tags": [
+    "github-actions",
+    "release",
+    "testing",
+    "python",
+    "workflow-reuse"
+  ]
+}

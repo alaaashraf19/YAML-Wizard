@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_17460",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 152,
+  "description": "Create a GitLab CI pipeline that uses the rust:latest Docker image and defines a single stage called build. Add a job named build in the build stage that executes the command cargo build --release. Configure the job to collect the compiled binary at target/release/espota-server as an artifact. No caches, services, variables, or conditional rules are required.",
+  "tags": [
+    "rust",
+    "cargo",
+    "build",
+    "artifact"
+  ]
+}

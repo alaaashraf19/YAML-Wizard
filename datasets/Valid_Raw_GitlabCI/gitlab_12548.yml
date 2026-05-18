@@ -1,0 +1,14 @@
+after_script: null
+before_script: null
+image: maven:3.5.2-jdk-7-alpine
+job1:
+  only:
+  - master
+  script: echo "OKK"
+  stage: build
+  tags:
+  - docker
+stages:
+- build
+- test
+- deploy

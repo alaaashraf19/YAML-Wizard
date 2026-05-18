@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_04873",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 531,
+  "description": "Create a GitLab CI pipeline using the ubuntu Docker image with two stages: build and deploy. In the build stage add a build job that runs `apt update && apt -y install g++ make libyaml-cpp-dev` in before_script and then executes `make noMEGAlib`. Also add a debug-build job that runs `apt update && apt -y install g++ git make libyaml-cpp-dev libdw-dev` in before_script and then `make debug-noMEGAlib`. In the deploy stage add a pages job that runs `apt update && apt -y install make autoconf g++ doxygen doxygen-doc doxygen-latex doxygen-gui libyaml-cpp-dev` and `doxygen Doxyfile`, publishes the public/ directory as an artifact, and only runs on the master branch.",
+  "tags": [
+    "ubuntu",
+    "make",
+    "doxygen",
+    "gitlab-pages",
+    "c-plus-plus",
+    "debug-build"
+  ]
+}

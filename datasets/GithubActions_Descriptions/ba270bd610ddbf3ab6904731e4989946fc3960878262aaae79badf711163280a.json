@@ -1,0 +1,16 @@
+{
+  "sha": "ba270bd610ddbf3ab6904731e4989946fc3960878262aaae79badf711163280a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1771,
+  "description": "Create a GitHub Actions workflow named build-shelly-homekit that runs on every push and pull request. Use a matrix build job that runs on an ubuntu-latest container with a custom Docker image, building multiple Shelly HomeKit models in parallel. For each model, check out the code, build the firmware with specific make commands, and upload the resulting artifacts. Additionally, run a merge job that depends on the build job, merging all artifacts into a single upload.",
+  "tags": [
+    "docker",
+    "make",
+    "firmware",
+    "homekit",
+    "shelly",
+    "matrix-build",
+    "artifact-upload"
+  ]
+}

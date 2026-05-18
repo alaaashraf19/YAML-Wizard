@@ -1,0 +1,9 @@
+image: python:latest
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - "echo \"N\xE3o estamos fazendo nada, AINDA\""

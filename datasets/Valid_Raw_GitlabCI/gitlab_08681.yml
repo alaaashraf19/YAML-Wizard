@@ -1,0 +1,177 @@
+.build_job:
+  after_script:
+  - rm -f android-signing-keystore.jks || true
+  artifacts:
+    paths:
+    - app/build/outputs
+  before_script:
+  - wget --output-document=artifacts.zip "https://gitlab.com/gitlab-org/gitter/webapp/-/jobs/artifacts/master/download?job=mobile-asset-build"
+  - unzip artifacts.zip
+  - mkdir -p app/src/main/assets/www
+  - mv output/android/www/* app/src/main/assets/www/
+  - echo "$signing_jks_file_hex" | xxd -r -p - > android-signing-keystore.jks
+  - export VERSION_CODE=$((100 + $CI_PIPELINE_IID)) && echo $VERSION_CODE
+  - export VERSION_SHA=`echo ${CI_COMMIT_SHA:0:8}` && echo $VERSION_SHA
+  - mv ./fastlane/metadata/android/en-GB/changelogs/CURRENT_VERSION.txt "./fastlane/metadata/android/en-GB/changelogs/$VERSION_CODE.txt"
+  image: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+  stage: build
+.promote_job:
+  after_script:
+  - rm -f ~/google_play_api_key.json
+  before_script:
+  - echo $google_play_service_account_api_key_json > ~/google_play_api_key.json
+  dependencies: []
+  image: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+  when: manual
+.updateContainerJob:
+  image: docker:stable
+  script:
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+  - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG || true
+  - docker build --cache-from $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+    .
+  - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+  services:
+  - docker:dind
+  stage: environment
+.use-docker-in-docker:
+  image: docker:${DOCKER_VERSION}
+  services:
+  - docker:${DOCKER_VERSION}-dind
+  tags:
+  - gitlab-org-docker
+  variables:
+    DOCKER_DRIVER: overlay2
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ''
+buildCreateReleaseNotes:
+  extends: .build_job
+  only:
+  - tags
+  script:
+  - ./ci-scripts/create-changelog-mr.sh
+buildDebug:
+  extends: .build_job
+  script:
+  - bundle exec fastlane buildDebug
+buildRelease:
+  environment:
+    name: production
+  extends: .build_job
+  script:
+  - bundle exec fastlane buildRelease
+dependency_scanning:
+  extends: .use-docker-in-docker
+  rules:
+  - when: always
+  stage: security
+  variables:
+    DS_DEFAULT_ANALYZERS: bundler-audit,gemnasium-maven
+    DS_DISABLE_DIND: 'true'
+deployReview:
+  artifacts:
+    paths:
+    - appetize-information.json
+    reports:
+      dotenv: deploy.env
+  environment:
+    name: review/$CI_COMMIT_REF_NAME
+    on_stop: stopReview
+    url: https://appetize.io/app/$APPETIZE_PUBLIC_KEY
+  except:
+  - master
+  image: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+  only:
+  - branches
+  script:
+  - bundle exec fastlane review
+  stage: review
+  when: manual
+ensureContainer:
+  allow_failure: true
+  before_script:
+  - 'mkdir -p ~/.docker && echo ''{"experimental": "enabled"}'' > ~/.docker/config.json'
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+  - docker manifest inspect $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG > /dev/null &&
+    exit || true
+  extends: .updateContainerJob
+include:
+- template: Security/SAST.gitlab-ci.yml
+- template: Security/Dependency-Scanning.gitlab-ci.yml
+- template: Secret-Detection.gitlab-ci.yml
+promoteAlpha:
+  extends: .promote_job
+  script:
+  - bundle exec fastlane promote_internal_to_alpha
+  stage: alpha
+promoteBeta:
+  extends: .promote_job
+  script:
+  - bundle exec fastlane promote_alpha_to_beta
+  stage: beta
+promoteProduction:
+  extends: .promote_job
+  only:
+  - tags
+  script:
+  - bundle exec fastlane promote_beta_to_production
+  stage: production
+publishInternal:
+  after_script:
+  - rm -f ~/google_play_api_key.json
+  before_script:
+  - echo $google_play_service_account_api_key_json > ~/google_play_api_key.json
+  dependencies:
+  - buildRelease
+  image: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+  script:
+  - bundle exec fastlane internal
+  stage: internal
+  when: manual
+sast:
+  extends: .use-docker-in-docker
+  rules:
+  - when: always
+  stage: security
+  variables:
+    FAIL_NEVER: 1
+    SAST_EXCLUDED_PATHS: /test/**,**/*-test.js,/scripts,/build-scripts
+stages:
+- environment
+- build
+- test
+- review
+- security
+- internal
+- alpha
+- beta
+- production
+- stop
+stopReview:
+  environment:
+    action: stop
+    name: review/$CI_COMMIT_REF_NAME
+  except:
+  - master
+  only:
+  - branches
+  script:
+  - apt-get -y update && apt-get -y upgrade && apt-get -y install jq curl
+  - curl --request DELETE https://$APPETIZE_TOKEN@api.appetize.io/v1/apps/`jq -r '.publicKey'
+    < appetize-information.json`
+  stage: stop
+  variables:
+    GIT_STRATEGY: none
+  when: manual
+testDebug:
+  dependencies:
+  - buildDebug
+  image: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+  script:
+  - bundle exec fastlane test
+  stage: test
+updateContainer:
+  extends: .updateContainerJob
+  only:
+    changes:
+    - Dockerfile

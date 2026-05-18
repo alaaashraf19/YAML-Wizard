@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_17987",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 461,
+  "description": "Create a GitLab CI pipeline using the python:3 Docker image globally and defining a before_script that runs pip install tox. Define two stages: lint and test. In the lint stage add a flake8 job that runs the command tox -e flake8, and an isort job that runs tox -e isort. In the test stage add a py37-dj22-wagtail27 job that uses the python:3.7 image and runs tox -e py37-dj22-wagtail27, a py38-dj22-wagtail27 job that also uses python:3.7 and runs tox -e py37-dj22-wagtail27, and a py38-dj22-wagtailmaster job that uses python:3.8 and runs tox -e py37-dj22-wagtail27, with no additional caches, artifacts, or rules.",
+  "tags": [
+    "python",
+    "tox",
+    "lint",
+    "test",
+    "flake8",
+    "isort",
+    "wagtail",
+    "django22",
+    "python-3-7",
+    "python-3-8"
+  ]
+}

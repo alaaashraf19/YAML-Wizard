@@ -1,0 +1,15 @@
+{
+  "sha": "fa6597199e28814ccf704bfa4ec88d00d249764c337e923e042f0e12c5cbaebb",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 8511,
+  "description": "Create a GitHub Actions workflow named Build and Run tests that runs on every push. The workflow should have three jobs: build_linux, build_macos, and build_win64, build_win32, each building and packaging on a different OS. For each job, checkout the repository, initialize submodules, install CMake, Qt, and other dependencies, configure the project, build the project, collect artifacts, and upload them.",
+  "tags": [
+    "cmake",
+    "qt",
+    "multi-os",
+    "build",
+    "test",
+    "packaging"
+  ]
+}

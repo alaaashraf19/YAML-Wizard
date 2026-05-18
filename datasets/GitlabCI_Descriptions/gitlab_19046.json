@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_19046",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 180,
+  "description": "Create a GitLab CI pipeline that defines a single stage called test. Add a job named test:1.7 that runs in the test stage using the golang:1.7 Docker image and executes the shell commands `go-wrapper download` followed by `go test`. Add another job named test:1.8 that also runs in the test stage, uses the golang:1.8 Docker image, and runs the same commands `go-wrapper download` and `go test`. The pipeline does not define any caches, artifacts, services, variables, or conditional rules.",
+  "tags": [
+    "go",
+    "golang",
+    "golang-1.7",
+    "golang-1.8",
+    "test"
+  ]
+}

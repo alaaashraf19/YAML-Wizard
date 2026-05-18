@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_00752",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 772,
+  "description": "Create a GitLab CI pipeline with three stages: build, test, and deploy. Use the microsoft/dotnet:latest Docker image for the build and test jobs and node:8.11.4 for the pages job. In the build stage add a build job that runs `dotnet restore` in before_script, then `dotnet build`, and runs only on the master branch. In the test stage add a test job that also runs `dotnet restore` then executes `dotnet test test/FactoryMethodTest/FactoryMethodTest.csproj`, `dotnet test test/AbstractFactoryTest/AbstractFactoryTest.csproj`, `dotnet test test/BuilderTest/BuilderTest.csproj`, and `dotnet test test/PrototypeTest/PrototypeTest.csproj`, only on master. In the deploy stage add a pages job that installs gitbook-cli globally with `npm install gitbook-cli -g`, runs `gitbook install`, caches the `node_modules/` directory, builds the site with `gitbook build . public`, and publishes the `public/` directory as a GitLab Pages artifact, also only on master.",
+  "tags": [
+    "dotnet",
+    "gitbook",
+    "gitlab-pages",
+    "node",
+    "microsoft-dotnet",
+    "master-only"
+  ]
+}

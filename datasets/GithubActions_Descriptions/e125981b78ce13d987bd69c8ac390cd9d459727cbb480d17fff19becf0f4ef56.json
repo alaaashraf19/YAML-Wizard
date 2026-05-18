@@ -1,0 +1,14 @@
+{
+  "sha": "e125981b78ce13d987bd69c8ac390cd9d459727cbb480d17fff19becf0f4ef56",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 10181,
+  "description": "Create a complex GitHub Actions workflow named build that handles repository pushes, pull requests, and tag creations. The workflow consists of multiple jobs: release, build, starcatcher-publish, and starcatcher-release. The release job creates a draft release if the commit type isn't dev. The build job compiles the project on various platforms and toolsets. The starcatcher-publish and starcatcher-release jobs handle publishing and releasing the project on starcatcher.us if certain conditions are met.",
+  "tags": [
+    "github-actions",
+    "release-workflow",
+    "multi-job-workflow",
+    "cross-platform",
+    "starcatcher"
+  ]
+}

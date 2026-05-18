@@ -1,0 +1,110 @@
+name: 'linters'
+
+on:
+  pull_request:
+    branches: ['master']
+    paths:
+      - '.github/**'
+      - '**.py'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  mypy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+      - run: pip config set global.break-system-packages 1
+      - run: pip install mypy
+      - run: pip install types-cryptography types-urllib3
+      - run: pip install distro keyring progressbar zstandard
+      - run: mypy osc
+
+  darker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v4
+      - uses: akaihola/darker@1.6.1
+        with:
+          options: "--check --diff --color --line-length=120"
+          src: "."
+
+  pylint_errors:
+    name: 'Run pylint that reports only errors'
+    runs-on: 'ubuntu-latest'
+    steps:
+      - name: 'Install packages'
+        run: |
+            sudo apt-get -y update
+            sudo apt-get -y --no-install-recommends install pylint python3-rpm
+
+      - uses: actions/checkout@v3
+
+      - name: 'Run pylint --errors-only'
+        run: |
+            pylint --errors-only osc
+
+  pylint_plugins:
+    name: 'Diff pylint runs on osc plugin'
+    runs-on: 'ubuntu-latest'
+    strategy:
+      fail-fast: false
+      matrix:
+        plugin_repository:
+          - openSUSE/openSUSE-release-tools
+          - openSUSE/osc-plugin-collab
+          - openSUSE/osc-plugin-install
+          - openSUSE/osc-plugin-overview
+          - openSUSE/osc-plugin-qam
+
+    steps:
+      - name: 'Install packages'
+        run: |
+            sudo apt-get -y update
+            sudo apt-get -y --no-install-recommends install diffutils pylint
+
+      - uses: actions/checkout@v3
+        with:
+          path: osc-pr
+
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: osc-master
+
+      - uses: actions/checkout@v3
+        with:
+          repository: ${{ matrix.plugin_repository }}
+          path: plugin
+
+      - name: 'Run pylint with osc from master'
+        run: |
+            cd plugin
+            find . -type f -name "*.py" | sort | PYTHONPATH="../osc-master" xargs pylint --errors-only >> pylint-osc-master.log || :
+
+            echo
+            echo ">>>>> pylint-osc-master.log <<<<<"
+            cat pylint-osc-master.log
+
+      - name: 'Run pylint with osc from pull-request'
+        run: |
+            cd plugin
+            find . -type f -name "*.py" | sort | PYTHONPATH="../osc-pr" xargs pylint --errors-only >> pylint-osc-pr.log || :
+
+            echo
+            echo ">>>>> pylint-osc-pr.log <<<<<"
+            cat pylint-osc-pr.log
+
+      - name: 'Diff pylint runs'
+        run: |
+            cd plugin
+
+            echo
+            echo ">>>>> diff <<<<<"
+            diff -u pylint-osc-master.log pylint-osc-pr.log

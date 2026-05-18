@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_10973",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 598,
+  "description": "Create a GitLab CI pipeline using the node:8.9.4 Docker image with a cache of node_modules/ and a global before_script that runs npm install. Define four stages: lint, test, release_test, and report. Add a lint job in the lint stage that runs npm run lint on a docker runner. Add a test job in the test stage that runs npm t on a docker runner but is excluded for tag pipelines (except tags). Add a release_test job in the release_test stage that runs npm t, allows failure, stores the coverage/ directory as an artifact for 1 year, runs only on tags, and uses a docker runner. Add a pages job in the report stage that allows failure, creates a public directory, moves coverage/ into it, publishes the public/ directory as an artifact, and runs only on tags.",
+  "tags": [
+    "node",
+    "npm",
+    "lint",
+    "test",
+    "release-test",
+    "pages",
+    "coverage",
+    "cache"
+  ]
+}

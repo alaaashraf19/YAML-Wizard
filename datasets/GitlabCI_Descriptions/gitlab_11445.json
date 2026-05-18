@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_11445",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1045,
+  "description": "Create a GitLab CI pipeline that uses the python Docker image for both jobs. Define a run_tests_on_branch job in the default test stage that runs on all branches except master (only branches, except master) and executes: python --version; pip install awscli; pip install pytest; pip install boto3; pip install pytest-mock; cd sam-app/; pip install -r requirements.txt; pytest tests/; cd letmehelp/; aws cloudformation validate-template --template-body file://template.yaml. Define a sam_deploy_to_aws job also in the test stage that runs only on the master branch and executes the same initial commands plus: pip install -r requirements.txt -t letmehelp/; cd letmehelp/; aws cloudformation validate-template --template-body file://template.yaml; aws cloudformation package --template-file template.yaml --output-template-file serverless-output.yaml --s3-bucket letmehelp-lambda-api; aws cloudformation deploy --template-file ./serverless-output.yaml --stack-name letmehelp-api --capabilities CAPABILITY_IAM to deploy the SAM application to AWS via CloudFormation.",
+  "tags": [
+    "python",
+    "awscli",
+    "pytest",
+    "boto3",
+    "cloudformation",
+    "sam"
+  ]
+}

@@ -1,0 +1,57 @@
+name: Build
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+jobs:
+  build-linux:
+    runs-on: ${{ matrix.os }}
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-20.04, ubuntu-22.04 ]
+    steps:
+      - uses: actions/checkout@v4
+      - name: "Update dependencies"
+        run: sudo apt-get update
+      - name: "Install dependencies"
+        run: sudo apt-get install -y build-essential cmake pkg-config qtbase5-dev libqt5opengl5-dev libgl1-mesa-dev libglu1-mesa-dev libprotobuf-dev protobuf-compiler libode-dev libboost-dev
+      - name: "Build"
+        run: make
+
+  build-macos:
+    runs-on: ${{ matrix.os }}
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ macos-12, macos-13 ]
+    steps:
+      - uses: actions/checkout@v4
+      - name: "Install dependencies"
+        run: brew tap robotology/formulae && brew install cmake pkg-config qt@5
+      - name: "Build"
+        # for some reason qt5 is not correctly in the path and this will break whenever the location of it changes
+        # 5.15.11 is for macos-12 and 5.15.12 is for macos-13
+        run: PATH=/usr/local/Cellar/qt@5/5.15.11/lib/cmake/Qt5:/usr/local/Cellar/qt@5/5.15.12/lib/cmake/Qt5:$PATH && make BUILD_ODE=ON
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies # saves / restores cache to avoid rebuilding dependencies
+        uses: lukka/run-vcpkg@v11
+        with:
+          vcpkgGitCommitId: 8eb57355a4ffb410a2e94c07b4dca2dffbee8e50
+          vcpkgDirectory: c:/vcpkg  # folder must reside in c:\ otherwise qt wont install due to long path errors
+          # needed to actually install the vcpkg dependencies
+          runVcpkgInstall: true
+
+      - name: Run CMake and run vcpkg to build packages
+        uses: lukka/run-cmake@v10
+        with:
+          configurePreset: "windows-default"
+          buildPresetAdditionalArgs: "['--config Release']"

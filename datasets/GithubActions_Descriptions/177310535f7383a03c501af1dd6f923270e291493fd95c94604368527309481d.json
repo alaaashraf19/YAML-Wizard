@@ -1,0 +1,15 @@
+{
+  "sha": "177310535f7383a03c501af1dd6f923270e291493fd95c94604368527309481d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3819,
+  "description": "Create a GitHub Actions workflow named Container Image Deployment CI (ML stack) that triggers on push to master, ml-deploy-* branches, and specific tags (ml-*), but only if docker/ml.yml or .github/workflows/container-deploy-ml.yml changed. The workflow uses an ubuntu-latest job to connect to a remote host via SSH, clone or update a repository, set environment variables, start services with Docker Compose, check services are up, and clean up obsolete Docker objects.",
+  "tags": [
+    "ssh",
+    "docker",
+    "docker-compose",
+    "ml",
+    "deployment",
+    "ci"
+  ]
+}

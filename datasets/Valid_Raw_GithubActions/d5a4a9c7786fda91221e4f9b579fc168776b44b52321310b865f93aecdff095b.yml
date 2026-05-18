@@ -1,0 +1,46 @@
+name: "Build MATLAB Packages"
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+jobs:
+  build-matlab-packages:
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-24.04
+          - os: windows-latest
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup C++
+        uses: ./.github/actions/setup-cpp
+
+      - name: Setup MATLAB
+        uses: ./.github/actions/setup-matlab
+
+      - name: Setup Cache
+        uses: ./.github/actions/setup-cache
+        with:
+          prefix: build-matlab-packages
+
+      - name: Build Linux MATLAB ToolBox
+        run: |
+          make -C cpp srcs
+          make -C matlab toolbox
+        if: runner.os == 'Linux'
+
+      - name: Build Windows MATLAB ToolBox
+        run: MSBuild /p:Configuration=Release /p:Platform=x64 /t:Package matlab\msbuild\ice.proj
+        if: runner.os == 'Windows'
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: matlab-packages-${{ matrix.os }}
+          path: matlab/toolbox/*.mltbx

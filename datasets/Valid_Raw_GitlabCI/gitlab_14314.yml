@@ -1,0 +1,27 @@
+before_script:
+- apt --quiet update --yes
+- apt --quiet upgrade --yes
+- apt install curl gnupg2 lsb-release --yes
+- curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key  -o /usr/share/keyrings/ros-archive-keyring.gpg
+- echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg]
+  http://packages.ros.org/ros2/ubuntu $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/ros2.list
+  > /dev/null
+- apt update
+- apt install ros-foxy-ros-base --yes
+- source /opt/ros/foxy/setup.bash
+- apt install g++ git python3-rosdep2 python3-colcon-common-extensions ros-foxy-gazebo-ros
+  ros-foxy-gazebo-plugins socat --yes
+- cd ..
+- git clone https://gitlab.com/PalouseRobosub/Software/robosub_msgs.git
+build:
+  script:
+  - colcon build
+image: ubuntu:20.04
+lint:
+  script:
+  - cd robosub
+  - ament_flake8 --linelength 80
+  - ament_cpplint
+variables:
+  CXX: /usr/bin/g++
+  DEBIAN_FRONTEND: noninteractive

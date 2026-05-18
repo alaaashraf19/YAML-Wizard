@@ -1,0 +1,51 @@
+name: Coverage
+
+on:
+  push:
+    branches: [ master ]
+  workflow_dispatch:
+#    inputs:
+#      debug_enabled:
+#        description: 'Run with tmate'
+#        required: false
+#        default: ''
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: checkout
+        uses: actions/checkout@v4
+      -
+        name: packages
+        run: sudo apt-get update && sudo apt-get install -y libmosquitto1 libmosquitto-dev libssl1.1 libssl-dev
+      -
+        name: build
+        run: cmake -Dcoverage=1 -DBUILD_TESTING=1 . && make
+      -
+        name: test regular
+        run: cd src/lib/ebus/test && ./test_symbol && ./test_filereader && ./test_data && ./test_message
+      -
+        name: test contrib
+        run: cd src/lib/ebus/contrib/test && ./test_contrib
+#      -
+#        name: setup tmate
+#        uses: mxschmitt/action-tmate@v3.7
+#        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled }}
+#        timeout-minutes: 15
+#        with:
+#          limit-access-to-actor: true
+      -
+        name: test coverage
+        run: ./test_coverage.sh
+      -
+        name: push result
+        uses: codecov/codecov-action@v4
+        with:
+          name: codecov-umbrella
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true
+          verbose: true
+          gcov: true
+          gcov_args: -pb
+          path_to_write_report: ./coverage_report.txt

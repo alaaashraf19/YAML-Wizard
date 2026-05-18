@@ -1,0 +1,14 @@
+{
+  "sha": "068b96f0c9b5449e8f3fee5dee78ab660f031d268bada10af56a6ffa7253db27",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1040,
+  "description": "Create a GitHub Actions workflow named publish documentation that runs on push to the master branch. Use an ubuntu-latest job to check out the code, install uv with Python 3.10, install project dependencies for docs, build the documentation with make html, initialize a git repository for the generated files, and deploy to GitHub Pages using the GITHUB_TOKEN from secrets.",
+  "tags": [
+    "documentation",
+    "github-pages",
+    "python",
+    "make",
+    "uv"
+  ]
+}

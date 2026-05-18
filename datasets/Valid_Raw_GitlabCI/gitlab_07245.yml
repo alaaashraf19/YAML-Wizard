@@ -1,0 +1,29 @@
+capybara:
+  inherit:
+    variables: false
+  script: bundle exec capybara
+default:
+  before_script:
+  - echo Hello World
+  image: ruby:2.4
+karma:
+  inherit:
+    default: true
+    variables:
+    - DOMAIN
+  script: karma
+rspec:
+  inherit:
+    default:
+    - image
+    variables:
+    - WEBHOOK_URL
+  script: bundle exec rspec
+rubocop:
+  inherit:
+    default: false
+    variables: false
+  script: bundle exec rubocop
+variables:
+  DOMAIN: example.com
+  WEBHOOK_URL: https://my-webhook.example.com

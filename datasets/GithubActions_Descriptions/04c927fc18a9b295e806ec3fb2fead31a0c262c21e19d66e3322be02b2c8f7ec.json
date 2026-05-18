@@ -1,0 +1,16 @@
+{
+  "sha": "04c927fc18a9b295e806ec3fb2fead31a0c262c21e19d66e3322be02b2c8f7ec",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1927,
+  "description": "Create a GitHub Actions workflow named Build that runs on push to master and windows-github-actions branches and on pull requests. Use three jobs for Linux, macOS, and Windows, each checking out the repository and building the project with CMake and make. For Linux and macOS, install dependencies with apt-get and brew respectively. For Windows, use vcpkg to install dependencies.",
+  "tags": [
+    "cmake",
+    "make",
+    "ubuntu",
+    "macos",
+    "windows",
+    "github-actions",
+    "cross-platform"
+  ]
+}

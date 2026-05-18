@@ -1,0 +1,15 @@
+{
+  "sha": "7a5171e5a2165dd386f78cecbff5684008fbc40d87d7203440b2d7618e54ae90",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5362,
+  "description": "Create a GitHub Actions workflow named bindgen that runs on every push to the master branch and on pull requests to master. The workflow consists of multiple jobs: rustfmt, msrv, quickchecking, test-expectations, test, test_aarch64, and test-book. Each job runs on ubuntu-latest or a specific version, checks out the repository, installs the required Rust toolchain, and runs specific commands like rustfmt, building with a minimum supported Rust version, quickchecks, testing expectations, and testing with various configurations.",
+  "tags": [
+    "rust",
+    "github-actions",
+    "ci",
+    "testing",
+    "aarch64",
+    "ubuntu"
+  ]
+}

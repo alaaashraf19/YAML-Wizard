@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_11290",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1530,
+  "description": "Create a GitLab CI pipeline using the alpine Docker image with four stages: compile, test, package, and ssh-stage. Add a compile job in the compile stage that runs `cat file1.txt file2.txt > compiled.txt` and stores `compiled.txt` as an artifact for 20 minutes. Add a test job in the test stage that runs `cat compiled.txt | grep -q 'Hello world'`. In the package stage add a pack-gz job that runs `gzip -k compiled.txt` then `mv compiled.txt.gz package.gz` and publishes `package.gz` as a 20‑minute artifact, and a pack-iso job that first executes `echo \"ipv6\" >> /etc/modules`, `apk update`, `apk add xorriso` then runs `mkisofs -o ./packaged.iso ./compiled.txt` and stores `packaged.iso` as a 20‑minute artifact. Finally add an update-repo job in the ssh-stage that runs a series of before‑script commands (`echo \"ipv6\" >> /etc/modules`, `apk update`, `apk add openssh-client`, `apk add bash bash-doc bash-completion`, `apk add git`, `eval $(ssh-agent -s)`, `bash -c \"ssh-add <(echo '$SSH_PRIVATE_KEY')\"`, `mkdir -p ~/.ssh`, conditional SSH config, `ssh git@gitlab.com`) and a script that creates a date.txt file, checks out a new master branch, rewrites the remote to git@gitlab.com:kubouch/ci-test.git, configures Git user, commits and pushes the date file; this job runs only on scheduled pipelines or manual web triggers.",
+  "tags": [
+    "alpine",
+    "compile",
+    "test",
+    "gzip",
+    "iso",
+    "ssh",
+    "gitlab-ci",
+    "artifacts"
+  ]
+}

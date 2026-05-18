@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_05521",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 671,
+  "description": "Create a GitLab CI pipeline using the node:6 Docker image with a global before_script that runs npm install --silent. Define two stages, test and deploy. In the test stage add a testing job that runs npm run unit. In the deploy stage add an npm-publish job (allow_failure) that runs npm run build, then echo \"//registry.npmjs.org/:_authToken=${NPM_TOKEN}\" > ~/.npmrc, then npm publish and rm ~/.npmrc, and configure it to run only on the master branch and deploy to an environment named \"npm package\" with URL https://www.npmjs.com/package/vue-gitlab-api. Also in the deploy stage add a pages job that runs ./node_modules/.bin/jsdoc src/GitLabAPI.js, moves the out directory to public, publishes the public/ directory as a pages artifact, runs only on master, and sets an environment \"JSDoc API Documentation\" with URL https://clorichel.gitlab.io/vue-gitlab-api/.",
+  "tags": [
+    "node6",
+    "npm",
+    "jsdoc",
+    "pages",
+    "npm-publish",
+    "gitlab-ci"
+  ]
+}

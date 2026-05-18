@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_12193",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 174,
+  "description": "Create a GitLab CI pipeline that includes the built‑in Security/SAST.gitlab-ci.yml template. Add a sast job that runs the default SAST scanning commands from the template and set the variable SAST_EXCLUDED_PATHS to cloud,docker,docs,model,scripts,tests to exclude those directories. Define a nodejs-scan-sast job but disable it entirely by adding a rule with when: never. The pipeline relies on the template's default stages and artifacts.",
+  "tags": [
+    "sast",
+    "security",
+    "gitlab-template",
+    "nodejs-scan-sast",
+    "excluded-paths"
+  ]
+}

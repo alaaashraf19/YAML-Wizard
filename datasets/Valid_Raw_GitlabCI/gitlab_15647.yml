@@ -1,0 +1,19 @@
+Test:
+  before_script:
+  - yarn config set cache-folder .yarn
+  - yarn install
+  image: buildkite/puppeteer:v1.11.0
+  script:
+  - npm run test:build:server
+  stage: test
+before_script:
+- apt-get update -qq && apt-get install
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+  - node_modules/
+  - .yarn
+  untracked: true
+image: node:8.12.0-alpine
+stages:
+- test

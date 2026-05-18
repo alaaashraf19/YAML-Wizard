@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_11002",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 5041,
+  "description": "Create a GitLab CI pipeline with stages version, build, image, and release using golang:1.12 as the default image. In the version stage add a version job (image registry.gitlab.com/juhani/go-semrel-gitlab:v0.20.4) that runs `release next-version --allow-current > .next-version`, stores the .next-version file as an artifact, and runs on all branches except tags. In the build stage add a compile job that runs `(cd /; go get github.com/mitchellh/gox)`, `GO_FLAGS=-mod=vendor CGO_ENABLED=0 gox -arch=amd64 -os=\"linux windows darwin\" -output=\"build/{{.OS}}_{{.Arch}}/release\" -ldflags \"-X main.version=v$(<.next-version)\"`, `cp build/linux_amd64/release .`, `go build -mod=vendor ./cmd/gendoc`, several `./release` commands to test and output version info, and a series of `echo` statements that write RELEASE_URL, RELEASE_DESC, MAC_RELEASE_URL, MAC_RELEASE_DESC, WIN_RELEASE_URL, WIN_RELEASE_DESC, RELEASE_SHA, and RELEASE_VERSION into a build_info file; it publishes the release, build_info, gendoc, and build directories as artifacts and excludes tags, and also adds a test job that runs `./wait_for_gitlab.sh` and `go test ./pkg/gitlabutil` with a docker service alias gitlab pointing to registry.gitlab.com/juhani/go-semrel-gitlab/gitlab-test, runs manually, and excludes tags. In the image stage add a gitlab-test-image job (image docker:stable, service docker:dind) that logs in to $CI_REGISTRY, builds `$CI_REGISTRY_IMAGE/gitlab-test` from the gitlab-docker directory, pushes it, runs manually, and excludes tags. In the release stage add pre-release-image, pre-release, release, and pages jobs: pre-release-image and pre-release use docker:stable with docker:dind, login to the registry, copy the compiled release binary and CA certificates into a Docker context, build and push `$CI_REGISTRY_IMAGE:v$RELEASE_VERSION` (or `$tag`), then invoke `./release` to tag, commit, and add download links using the URLs stored in build_info; both run manually on branches. The pages job uses the juranki/hugo image, runs manually only on the master branch, removes old artifacts, injects the GA_ID into the Hugo config, runs `./gendoc`, appends CHANGELOG.md, rewrites commit hashes, builds the site with `hugo -s site3 -d ../public`, and publishes the public directory as a pages artifact.",
+  "tags": [
+    "go",
+    "docker",
+    "gitlab-ci",
+    "semantic-release",
+    "pages",
+    "hugo",
+    "gox",
+    "docker-registry",
+    "manual"
+  ]
+}

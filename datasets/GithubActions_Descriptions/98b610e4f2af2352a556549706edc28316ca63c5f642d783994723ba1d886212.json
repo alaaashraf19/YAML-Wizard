@@ -1,0 +1,15 @@
+{
+  "sha": "98b610e4f2af2352a556549706edc28316ca63c5f642d783994723ba1d886212",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1800,
+  "description": "Create a GitHub Actions workflow named pull_request that runs on every pull request to the master, release, and ci-test branches, and allows manual triggering. The workflow consists of two jobs: lint and test. The lint job runs in a clang-format-3.9 container, clones the Apache Pegasus source code, and checks code formatting. The test job depends on lint, runs in a ubuntu1804 container with prebuilt third-parties, checks out the code, unpacks third-parties, compiles, packages server and tools, and runs unit tests.",
+  "tags": [
+    "github-actions",
+    "clang-format",
+    "ubuntu",
+    "apache-pegasus",
+    "ci",
+    "testing"
+  ]
+}

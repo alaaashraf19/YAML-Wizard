@@ -1,0 +1,77 @@
+.build-job-template:
+  image: ${CI_REGISTRY_IMAGE}/${NAME}:latest
+  script: &id001
+  - meson --prefix="`pwd`/vroot" -Denable-gtk-doc=true build
+  - ninja -C build dist
+  - if [ test -f /usr/bin/rpmbuild ]; then rpmbuild --nodeps --define "_sourcedir
+    `pwd`" -ta --clean entangle*.tar.xz ; fi
+  stage: build
+.container-job-template:
+  after_script: &id002
+  - docker logout
+  before_script: &id003
+  - export TAG="$CI_REGISTRY_IMAGE/$NAME:latest"
+  - export COMMON_TAG="$CI_REGISTRY/entangle/entangle/$NAME:latest"
+  - docker info
+  - docker login registry.gitlab.com -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD"
+  image: docker:stable
+  script: &id004
+  - docker pull "$TAG" || docker pull "$COMMON_TAG" || true
+  - docker build --cache-from "$TAG" --cache-from "$COMMON_TAG" --tag "$TAG" -f "ci/$NAME.docker"
+    ci
+  - docker push "$TAG"
+  services: &id005
+  - docker:dind
+  stage: container
+build-fedora:
+  image: ${CI_REGISTRY_IMAGE}/${NAME}:latest
+  script: *id001
+  stage: build
+  variables:
+    NAME: build-fedora
+build-ubuntu:
+  image: ${CI_REGISTRY_IMAGE}/${NAME}:latest
+  script: *id001
+  stage: build
+  variables:
+    NAME: build-ubuntu
+clang-format:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - clang-format.patch
+    when: on_failure
+  image: ${CI_REGISTRY_IMAGE}/build-fedora:latest
+  script:
+  - meson build
+  - ninja -C build clang-format
+  - if git diff --patch --exit-code > clang-format.patch; then echo "Clang format
+    changed nothing"; else echo "Clang format found changes to make!"; false; fi
+  stage: style
+container-build-fedora:
+  after_script: *id002
+  before_script: *id003
+  image: docker:stable
+  script: *id004
+  services: *id005
+  stage: container
+  variables:
+    NAME: build-fedora
+container-build-ubuntu:
+  after_script: *id002
+  before_script: *id003
+  image: docker:stable
+  script: *id004
+  services: *id005
+  stage: container
+  variables:
+    NAME: build-ubuntu
+stages:
+- container
+- style
+- build
+syntax-check:
+  image: ${CI_REGISTRY_IMAGE}/build-fedora:latest
+  script:
+  - make syntax-check
+  stage: style

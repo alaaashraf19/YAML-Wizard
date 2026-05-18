@@ -1,0 +1,14 @@
+{
+  "sha": "fc7db2917c13dc8fbd2dbbe394512f5d8cb8c23abd9f05c2544de406de5da5cb",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 782,
+  "description": "Create a GitHub Actions workflow named Static Analysis that runs on every pull request. Use a single ubuntu-latest job with a matrix strategy to test multiple Python versions (3.6, 3.7, 3.8, 3.9). In each job, check out the repository, set up the corresponding Python version, cache pip dependencies, install development dependencies, and run static analysis checks using make static-analysis.",
+  "tags": [
+    "python",
+    "static-analysis",
+    "pull-request",
+    "ubuntu",
+    "tests"
+  ]
+}

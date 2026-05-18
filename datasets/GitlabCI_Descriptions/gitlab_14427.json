@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_14427",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 706,
+  "description": "Create a GitLab CI pipeline using the docker:latest image with a docker:dind service and define the variables CONTAINER_TEST_IMAGE and CONTAINER_RELEASE_IMAGE pointing to registry.gitlab.com/perlstalker/octopress-deploy with appropriate tags. Include a before_script that logs in to registry.gitlab.com with the gitlab-ci-token and $CI_BUILD_TOKEN. In the build stage add a build job that runs docker build --pull -t $CONTAINER_TEST_IMAGE . then docker push $CONTAINER_TEST_IMAGE, and runs on runners tagged docker. In the release stage add a release-image job that only runs on the master branch, runs docker pull $CONTAINER_TEST_IMAGE, docker tag $CONTAINER_TEST_IMAGE $CONTAINER_RELEASE_IMAGE, and docker push $CONTAINER_RELEASE_IMAGE, also on docker‑tagged runners. Define the stages build and release.",
+  "tags": [
+    "docker",
+    "dind",
+    "registry",
+    "build",
+    "release",
+    "gitlab-ci"
+  ]
+}

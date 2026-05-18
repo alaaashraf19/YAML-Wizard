@@ -1,0 +1,15 @@
+{
+  "sha": "5b7756d2e9ee3af51ba3473afbf70229911724337f75ed3055c96c2e15594db1",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1436,
+  "description": "Create a GitHub Actions workflow named Python package that runs on pushes to master and dev branches and on pull requests to those branches. Use an ubuntu-latest job with a matrix strategy to test with Python 3.10, 3.11, and 3.12. For each Python version, check out the code, install dependencies from requirements.txt, run black checks, lint with flake8, and test with pytest.",
+  "tags": [
+    "python",
+    "tests",
+    "linting",
+    "pytest",
+    "ubuntu",
+    "matrix"
+  ]
+}

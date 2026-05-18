@@ -1,0 +1,16 @@
+{
+  "sha": "f8c70df08d9273f115dff303ee6d91970f4f0daa0dc69531bfeda4781cf4dfdc",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3706,
+  "description": "Create a GitHub Actions workflow named linux that runs on push and pull request events. The workflow has read permission to repository contents and uses a ubuntu-latest job with a bash shell to run a matrix build strategy for Linux with various GCC and Clang compilers, C++ standards, and build types. For each matrix configuration, it checks out the code, installs dependencies, sets up the compiler, and builds and tests the project using CMake and make.",
+  "tags": [
+    "linux",
+    "gcc",
+    "clang",
+    "cmake",
+    "ubuntu",
+    "tests",
+    "c++"
+  ]
+}

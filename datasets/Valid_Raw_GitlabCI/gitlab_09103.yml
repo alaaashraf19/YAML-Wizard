@@ -1,0 +1,68 @@
+.if-security-release-update-paths:
+  if: ($CI_PIPELINE_SOURCE =~ /^(pipeline|web|api)$/) && ($SECURITY_RELEASE_PIPELINE
+    =~ /^(update_paths|true)$/)
+security_release_update_paths:
+  needs:
+  - security_release_update_paths:create_dynamic_pipeline
+  rules:
+  - if: ($CI_PIPELINE_SOURCE =~ /^(pipeline|web|api)$/) && ($SECURITY_RELEASE_PIPELINE
+      =~ /^(update_paths|true)$/)
+  stage: security_release:update_paths
+  trigger:
+    forward:
+      pipeline_variables: true
+    include:
+    - artifact: dynamic-gitlab-ci.yml
+      job: security_release_update_paths:create_dynamic_pipeline
+    - local: .gitlab/ci/include/secrets-self-contained.yml
+    strategy: depend
+security_release_update_paths:create_dynamic_pipeline:
+  artifacts:
+    paths:
+    - dynamic-gitlab-ci.yml
+  extends:
+  - .with-bundle
+  - .common-ci-tokens
+  needs:
+  - security_release_update_paths:start
+  rules:
+  - if: ($CI_PIPELINE_SOURCE =~ /^(pipeline|web|api)$/) && ($SECURITY_RELEASE_PIPELINE
+      =~ /^(update_paths|true)$/)
+  script:
+  - 'set -eo pipefail
+
+
+    # Generate dynamic pipeline YAML
+
+    bundle exec rake ''security:update_paths:generate_dynamic_pipeline'' # Writes
+    dynamic-gitlab-ci.yml
+
+
+    # Display generated YAML content
+
+    echo -e "section_start:$(date +%s):generated_dynamic_pipeline[collapsed=true]\r\e[0KGenerated
+    dynamic-gitlab-ci.yml"
+
+    cat dynamic-gitlab-ci.yml
+
+    echo -e "section_end:$(date +%s):generated_dynamic_pipeline\r\e[0K"
+
+    '
+  stage: security_release:update_paths
+security_release_update_paths:start:
+  extends:
+  - .with-bundle
+  - .common-ci-tokens
+  needs:
+  - job: security_release_tag:check_omnibus_packages_tagging
+    optional: true
+  rules:
+  - if: ($CI_PIPELINE_SOURCE =~ /^(pipeline|web|api)$/) && ($SECURITY_RELEASE_PIPELINE
+      =~ /^(update_paths)$/)
+    when: manual
+  - if: ($CI_PIPELINE_SOURCE =~ /^(pipeline|web|api)$/) && ($SECURITY_RELEASE_PIPELINE
+      =~ /^(true)$/)
+    when: on_success
+  script:
+  - bundle exec rake 'security:update_paths:start'
+  stage: security_release:update_paths:start

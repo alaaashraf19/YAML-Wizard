@@ -1,0 +1,36 @@
+before_script:
+- pip install tox
+build:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - dist/*
+  script:
+  - python setup.py sdist bdist_wheel
+  stage: build
+coverage:
+  coverage: /^TOTAL.*\s+(\d+\%)\s*$/
+  script:
+  - tox -e coverage
+  stage: test
+docs:
+  script:
+  - tox -e docs
+  stage: test
+flake8:
+  script:
+  - tox -e flake8
+  stage: test
+image: python:3.6
+stages:
+- test
+- build
+test-py35:
+  image: python:3.5
+  script:
+  - tox -e py35
+  stage: test
+test-py36:
+  script:
+  - tox -e py36
+  stage: test

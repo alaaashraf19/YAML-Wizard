@@ -1,0 +1,25 @@
+before_script:
+- pip install -r requirements.txt
+deploy_dev_env:
+  before_script:
+  - pip install awsebcli --upgrade --user
+  - chmod +x ./.eb-config.sh
+  - ./.eb-config.sh
+  - git checkout master
+  environment:
+    name: dev
+    url: https://your.url.com
+  only:
+  - master
+  script:
+  - /root/.local/bin/eb deploy flask-starter-dev --profile user
+  stage: deploy
+  when: manual
+image: python:3.6-stretch
+stages:
+- test
+- deploy
+test:
+  script:
+  - python -m unittest discover tests
+  stage: test

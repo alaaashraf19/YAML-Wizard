@@ -1,0 +1,18 @@
+{
+  "sha": "1cce0d980718dc3e9acf6f8bc4eacc3d33b6b0cf7711605da17a6309d60caaba",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2916,
+  "description": "Create a GitHub Actions workflow named Build that runs on every push to main and on pull requests to files excluding docs, notebooks, python, LICENSE, MANIFEST.in, pyproject.toml, README.md, and setup.py. The workflow uses a matrix strategy to run on ubuntu-latest and macos-latest for Debug and Release configurations, and on windows-latest for Debug and Release configurations. For each job, check out the repository, install dependencies, cache the build, prepare ccache, configure, build, and run tests.",
+  "tags": [
+    "cmake",
+    "ccache",
+    "sccache",
+    "ninja",
+    "ubuntu",
+    "macos",
+    "windows",
+    "tests",
+    "matrix"
+  ]
+}

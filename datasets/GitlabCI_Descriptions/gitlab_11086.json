@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_11086",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 190,
+  "description": "Create a GitLab CI pipeline that uses the alpine:latest Docker image and installs sassc and make via apk add --update sassc make in a global before_script. Define a pages job (named \"pages\") that runs in the default stage, executes the shell commands \"cd site\", \"make build\", and \"mv public ../public\", then publishes the resulting public/ directory as a GitLab Pages artifact, and configure it to run only on the master branch.",
+  "tags": [
+    "alpine",
+    "sassc",
+    "make",
+    "gitlab-pages",
+    "static-site"
+  ]
+}

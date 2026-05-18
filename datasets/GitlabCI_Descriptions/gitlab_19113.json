@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_19113",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 330,
+  "description": "Create a GitLab CI pipeline that uses the python:latest Docker image, includes mysql:latest and postgres:latest services, and caches pip packages in ~/.cache/pip/. Define a global variable POSTGRES_DB set to database_name and a before_script that prints the Python version and installs dependencies with pip install -r requirements.txt. Add a test job in the default test stage named test that runs python manage.py test and sets a job‑specific DATABASE_URL variable pointing to the postgres service using the POSTGRES_DB variable. The pipeline has no explicit artifacts or rules, so the test job runs on every pipeline execution.",
+  "tags": [
+    "python",
+    "mysql",
+    "postgres",
+    "pip-cache",
+    "django",
+    "gitlab-ci"
+  ]
+}

@@ -1,0 +1,54 @@
+build:
+  before_script:
+  - docker info
+  image: docker:stable
+  script:
+  - docker build -t buildbox-fuse .
+  - docker run --cap-add SYS_ADMIN --device /dev/fuse buildbox-fuse ./integration-test/scripts/test-stage-empty-file.sh
+  services:
+  - docker:dind
+  stage: build
+  variables:
+    DOCKER_DRIVER: overlay2
+    DOCKER_HOST: tcp://docker:2375/
+check_formatting:
+  before_script:
+  - apt-get update && apt-get install -y clang-format-6.0 git-core
+  image: ubuntu:bionic
+  script:
+  - echo `which clang-format-6.0`
+  - ln -s `which clang-format-6.0` /usr/bin/clang-format
+  - cd "$CI_PROJECT_DIR"
+  - export CLANG_FORMAT_SINCE_COMMIT="4b825dc642cb6eb9a060e54bf8d69288fbee4904"
+  - linter_errors=$(git-clang-format-6.0 --commit "$CLANG_FORMAT_SINCE_COMMIT" -q
+    --diff --style file --extensions c,cc,cpp,cxx,h | grep -v --color=never "no modified
+    files to format" || true)
+  - echo "$linter_errors"
+  - if [[ ! -z "$linter_errors" ]]; then echo "Detected formatting issues; please
+    fix"; exit 1; else echo "Formatting is correct"; exit 0; fi
+  stage: build
+stages:
+- pre
+- build
+- test
+test:
+  image: registry.gitlab.com/buildgrid/buildbox/buildbox-common:latest
+  script:
+  - apt-get update
+  - apt-get install -y attr cmake fuse3 gcc g++ git grpc++ libfuse3-dev libssl-dev
+    net-tools pkg-config socat sudo uuid-dev
+  - apt-get clean
+  - git clone https://gitlab.com/BuildGrid/buildbox/buildbox-casd.git
+  - mkdir buildbox-casd/build && cd buildbox-casd/build && cmake .. && make -j4 &&
+    cd -
+  - export PATH="$PWD/buildbox-casd/build/buildboxcasd:$PATH"
+  - export CTEST_OUTPUT_ON_FAILURE=1
+  - useradd -s /bin/bash -m testeruser && chown -R testeruser:testeruser $(pwd)
+  - sudo -u testeruser PATH="$PATH" sh -c 'mkdir build && cd build && cmake .. &&
+    make && make test'
+  stage: test
+trigger_integration_test:
+  only:
+  - master
+  stage: pre
+  trigger: buildgrid/buildbox/buildbox-integration

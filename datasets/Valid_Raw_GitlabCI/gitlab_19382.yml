@@ -1,0 +1,103 @@
+.auto_devops: "function docker_login() {\n  if [[ -n \"$CI_REGISTRY_USER\" ]]; then\n\
+  \    echo \"Logging to GitLab Container Registry with CI credentials... (CI_REGISTRY_USER=$CI_REGISTRY_USER,\
+  \ CI_REGISTRY=$CI_REGISTRY)\"\n    docker login -u \"$CI_REGISTRY_USER\" -p \"$CI_REGISTRY_PASSWORD\"\
+  \ \"$CI_REGISTRY\"\n    echo \"\"\n  fi\n}\n\nfunction build() {\n  echo \"docker\
+  \ pull $CONTAINER_IMAGE:latest || true ... (Trying to fetch latest Docker image)\"\
+  \n  docker pull $CONTAINER_IMAGE:latest || true\n\n  echo \"docker build --cache-from\
+  \ $CONTAINER_IMAGE:latest --tag $CONTAINER_IMAGE:$CI_BUILD_REF . ... (Building Dockerfile-based\
+  \ application)\"\n  docker build --cache-from $CONTAINER_IMAGE:latest --tag $CONTAINER_IMAGE:$CI_BUILD_REF\
+  \ .\n\n  echo \"docker push $CONTAINER_IMAGE:$CI_BUILD_REF ... (Pushing to GitLab\
+  \ Container Registry)\"\n  docker push \"$CONTAINER_IMAGE:$CI_BUILD_REF\"\n\n  echo\
+  \ \"\"\n}\n\nfunction boot_selenium() {\n  echo \"docker run --rm --network rrdb\
+  \ --name selenium --detach selenium/standalone-chrome:3.11.0-antimony ... (Booting\
+  \ Selenium)\"\n  docker run --rm --network rrdb --name selenium --detach selenium/standalone-chrome:3.11.0-antimony\n\
+  }\n\nfunction wait_selnium_to_be_ready() {\n  echo \"Waiting Selenium Server to\
+  \ load ...\"\n  until $(docker run --rm --network rrdb --env SELENIUM_PORT=4444\
+  \ \"$CONTAINER_IMAGE:$CI_BUILD_REF\" curl --output /dev/null --silent --head --fail\
+  \ http://selenium:4444/wd/hub); do\n    printf '.'\n    sleep 1\n  done\n  echo\
+  \ \"Selenium server up and running!\"\n}\n\nfunction fetch_docker_image() {\n  echo\
+  \ \"docker pull $CONTAINER_IMAGE:$CI_BUILD_REF ... (Fetching Docker image $CONTAINER_IMAGE:$CI_BUILD_REF\
+  \ from $CI_REGISTRY)\"\n  docker pull \"$CONTAINER_IMAGE:$CI_BUILD_REF\"\n}\n\n\
+  function show_docker_env() {\n  echo \"docker run --rm \"$CONTAINER_IMAGE:$CI_BUILD_REF\"\
+  \ env | sort ... (Show Docker environment)\"\n  docker run --rm \"$CONTAINER_IMAGE:$CI_BUILD_REF\"\
+  \ env | sort\n}\n\nfunction create_rrdb_network() {\n  echo \"docker network create\
+  \ rrdb ... (Creating rrdb network)\"\n  docker network create rrdb\n}\n\nfunction\
+  \ bundle_exec_rake() {\n  echo \"docker run --rm --network rrdb --name app --env\
+  \ SELENIUM_PORT=4444 \"$CONTAINER_IMAGE:$CI_BUILD_REF\" bundle exec rake ... (Running\
+  \ automated tests)\"\n  docker run --rm --network rrdb --name app --env SELENIUM_PORT=4444\
+  \ \"$CONTAINER_IMAGE:$CI_BUILD_REF\" bundle exec rake\n}\n\nfunction tag_as_latest_and_push()\
+  \ {\n  echo \"docker tag $CONTAINER_IMAGE:$CI_BUILD_REF $CONTAINER_IMAGE:latest\
+  \ ... (Tagging Docker image $CI_BUILD_REF as latest) ...\"\n  docker tag \"$CONTAINER_IMAGE:$CI_BUILD_REF\"\
+  \ \"$CONTAINER_IMAGE:latest\"\n\n  echo \"docker push $CONTAINER_IMAGE:latest ...\
+  \ (Pushing new verison of the latest Docker image)\"\n  docker push \"$CONTAINER_IMAGE:latest\"\
+  \n}\n"
+before_script:
+- "function docker_login() {\n  if [[ -n \"$CI_REGISTRY_USER\" ]]; then\n    echo\
+  \ \"Logging to GitLab Container Registry with CI credentials... (CI_REGISTRY_USER=$CI_REGISTRY_USER,\
+  \ CI_REGISTRY=$CI_REGISTRY)\"\n    docker login -u \"$CI_REGISTRY_USER\" -p \"$CI_REGISTRY_PASSWORD\"\
+  \ \"$CI_REGISTRY\"\n    echo \"\"\n  fi\n}\n\nfunction build() {\n  echo \"docker\
+  \ pull $CONTAINER_IMAGE:latest || true ... (Trying to fetch latest Docker image)\"\
+  \n  docker pull $CONTAINER_IMAGE:latest || true\n\n  echo \"docker build --cache-from\
+  \ $CONTAINER_IMAGE:latest --tag $CONTAINER_IMAGE:$CI_BUILD_REF . ... (Building Dockerfile-based\
+  \ application)\"\n  docker build --cache-from $CONTAINER_IMAGE:latest --tag $CONTAINER_IMAGE:$CI_BUILD_REF\
+  \ .\n\n  echo \"docker push $CONTAINER_IMAGE:$CI_BUILD_REF ... (Pushing to GitLab\
+  \ Container Registry)\"\n  docker push \"$CONTAINER_IMAGE:$CI_BUILD_REF\"\n\n  echo\
+  \ \"\"\n}\n\nfunction boot_selenium() {\n  echo \"docker run --rm --network rrdb\
+  \ --name selenium --detach selenium/standalone-chrome:3.11.0-antimony ... (Booting\
+  \ Selenium)\"\n  docker run --rm --network rrdb --name selenium --detach selenium/standalone-chrome:3.11.0-antimony\n\
+  }\n\nfunction wait_selnium_to_be_ready() {\n  echo \"Waiting Selenium Server to\
+  \ load ...\"\n  until $(docker run --rm --network rrdb --env SELENIUM_PORT=4444\
+  \ \"$CONTAINER_IMAGE:$CI_BUILD_REF\" curl --output /dev/null --silent --head --fail\
+  \ http://selenium:4444/wd/hub); do\n    printf '.'\n    sleep 1\n  done\n  echo\
+  \ \"Selenium server up and running!\"\n}\n\nfunction fetch_docker_image() {\n  echo\
+  \ \"docker pull $CONTAINER_IMAGE:$CI_BUILD_REF ... (Fetching Docker image $CONTAINER_IMAGE:$CI_BUILD_REF\
+  \ from $CI_REGISTRY)\"\n  docker pull \"$CONTAINER_IMAGE:$CI_BUILD_REF\"\n}\n\n\
+  function show_docker_env() {\n  echo \"docker run --rm \"$CONTAINER_IMAGE:$CI_BUILD_REF\"\
+  \ env | sort ... (Show Docker environment)\"\n  docker run --rm \"$CONTAINER_IMAGE:$CI_BUILD_REF\"\
+  \ env | sort\n}\n\nfunction create_rrdb_network() {\n  echo \"docker network create\
+  \ rrdb ... (Creating rrdb network)\"\n  docker network create rrdb\n}\n\nfunction\
+  \ bundle_exec_rake() {\n  echo \"docker run --rm --network rrdb --name app --env\
+  \ SELENIUM_PORT=4444 \"$CONTAINER_IMAGE:$CI_BUILD_REF\" bundle exec rake ... (Running\
+  \ automated tests)\"\n  docker run --rm --network rrdb --name app --env SELENIUM_PORT=4444\
+  \ \"$CONTAINER_IMAGE:$CI_BUILD_REF\" bundle exec rake\n}\n\nfunction tag_as_latest_and_push()\
+  \ {\n  echo \"docker tag $CONTAINER_IMAGE:$CI_BUILD_REF $CONTAINER_IMAGE:latest\
+  \ ... (Tagging Docker image $CI_BUILD_REF as latest) ...\"\n  docker tag \"$CONTAINER_IMAGE:$CI_BUILD_REF\"\
+  \ \"$CONTAINER_IMAGE:latest\"\n\n  echo \"docker push $CONTAINER_IMAGE:latest ...\
+  \ (Pushing new verison of the latest Docker image)\"\n  docker push \"$CONTAINER_IMAGE:latest\"\
+  \n}\n"
+build:
+  image: docker:stable-git
+  script:
+  - docker_login
+  - build
+  stage: build
+deploy:
+  image: docker:stable-git
+  script:
+  - docker_login
+  - fetch_docker_image
+  - tag_as_latest_and_push
+  stage: deploy
+image: alpine:latest
+services:
+- docker:dind
+stages:
+- build
+- test
+- deploy
+test:
+  image: docker:stable-git
+  script:
+  - env | sort
+  - docker_login
+  - show_docker_env
+  - create_rrdb_network
+  - boot_selenium
+  - fetch_docker_image
+  - wait_selnium_to_be_ready
+  - bundle_exec_rake
+  stage: test
+variables:
+  CONTAINER_IMAGE: registry.gitlab.com/$CI_PROJECT_PATH
+  DOCKER_DRIVER: overlay2
+  DOCKER_HOST: tcp://docker:2375/

@@ -1,0 +1,19 @@
+before_script:
+- docker-php-source extract
+- apk add --no-cache build-base autoconf
+- pecl install xdebug-2.9.0
+- docker-php-ext-enable xdebug
+- curl -sS https://getcomposer.org/installer | php
+- php composer.phar install --no-ansi --no-interaction --profile --no-progress --no-suggest
+  --prefer-dist
+- alias phpunit="vendor/bin/phpunit"
+cache:
+  paths:
+  - vendor/
+image: php:7.4-alpine3.10
+test:
+  only:
+  - branches
+  - merge_requests
+  script:
+  - phpunit --configuration phpunit.xml.dist --coverage-text --colors=never

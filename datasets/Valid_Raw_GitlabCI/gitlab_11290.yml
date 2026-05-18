@@ -1,0 +1,69 @@
+compile:
+  artifacts:
+    expire_in: 20 minutes
+    paths:
+    - compiled.txt
+  script: cat file1.txt file2.txt > compiled.txt
+  stage: compile
+image: alpine
+pack-gz:
+  artifacts:
+    expire_in: 20 minutes
+    paths:
+    - package.gz
+  script:
+  - gzip -k compiled.txt
+  - mv compiled.txt.gz package.gz
+  stage: package
+pack-iso:
+  artifacts:
+    expire_in: 20 minutes
+    paths:
+    - packaged.iso
+  before_script:
+  - echo "ipv6" >> /etc/modules
+  - apk update
+  - apk add xorriso
+  script:
+  - mkisofs -o ./packaged.iso ./compiled.txt
+  stage: package
+stages:
+- compile
+- test
+- package
+- ssh-stage
+test:
+  script: cat compiled.txt | grep -q 'Hello world'
+  stage: test
+update-repo:
+  before_script:
+  - echo "ipv6" >> /etc/modules
+  - apk update
+  - apk add openssh-client
+  - apk add bash bash-doc bash-completion
+  - apk add git
+  - eval $(ssh-agent -s)
+  - bash -c "ssh-add <(echo '$SSH_PRIVATE_KEY')"
+  - mkdir -p ~/.ssh
+  - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+  - ssh git@gitlab.com
+  only:
+  - schedules
+  - web
+  script:
+  - pwd
+  - echo ~
+  - rm -rf date.txt
+  - date > date.txt
+  - echo date.txt
+  - git checkout -B 'master'
+  - git remote -v
+  - git remote set-url origin git@gitlab.com:kubouch/ci-test.git
+  - git remote -v
+  - git config --global user.email $GITLAB_USER_EMAIL
+  - git config --global user.name $GITLAB_USER_LOGIN
+  - git status
+  - git add date.txt
+  - git commit -m "Automatic date file update"
+  - git push origin master
+  stage: ssh-stage

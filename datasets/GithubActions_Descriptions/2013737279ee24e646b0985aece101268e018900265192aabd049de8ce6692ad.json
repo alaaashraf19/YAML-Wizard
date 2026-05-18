@@ -1,0 +1,15 @@
+{
+  "sha": "2013737279ee24e646b0985aece101268e018900265192aabd049de8ce6692ad",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2230,
+  "description": "Create a GitHub Actions workflow named ci build that runs on every push to master and on pull requests to master. The workflow should have three jobs: ubuntu-cmake, fedora-cmake, and ubuntu-bazel, each running on ubuntu-latest. The ubuntu-cmake job should check out the code, install dependencies, update submodules, and run various make commands. The fedora-cmake job should set up Podman, create a container, and run tests. The ubuntu-bazel job should check out the code, install Bazel 5.4.0, and run a Bazel build.",
+  "tags": [
+    "cmake",
+    "bazel",
+    "ubuntu",
+    "fedora",
+    "ci",
+    "tests"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_06697",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 587,
+  "description": "Create a GitLab CI pipeline using the node:8.11.4 Docker image with two stages: test and publish. In the test stage add a code quality job that runs `npm install` then `npm run lint`; also add a test & coverage job that runs `npm it`, stores the coverage/ directory as an artifact and extracts coverage using the regex `/All files[^|]*\\|[^|]*\\s+([\\d\\.]+)/`. In the publish stage add a package job that runs `npm pack` and publishes the generated *.tgz files as artifacts, but only on tag pipelines. Also add a publish job that runs on tags or triggers, writes an .npmrc file with the secret NPM_TOKEN, then runs `npm publish`, and sets the environment name to npm with URL https://www.npmjs.com/package/vue-app-env.",
+  "tags": [
+    "node",
+    "npm",
+    "lint",
+    "test",
+    "coverage",
+    "publish",
+    "npm-publish"
+  ]
+}

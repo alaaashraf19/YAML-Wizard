@@ -1,0 +1,7 @@
+build:
+  script:
+  - ./my-script.sh
+  stage: build
+  tags:
+  - runner-gcc
+image: gcc

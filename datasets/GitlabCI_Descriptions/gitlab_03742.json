@@ -1,0 +1,12 @@
+{
+  "sha": "gitlab_03742",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 179,
+  "description": "Create a GitLab CI pipeline that uses the python:3.10 Docker image. Define a single job named test that runs in the default test stage and executes the exact script commands: export CONFIG=testing, export MAIL_VIA_API=0, export MAIL_VIA_SMTP=0, pip install -e ., pip install pytest, and python -m pytest. The job has no additional services, caches, artifacts, or rules and runs on every pipeline execution.",
+  "tags": [
+    "python",
+    "pytest",
+    "testing"
+  ]
+}

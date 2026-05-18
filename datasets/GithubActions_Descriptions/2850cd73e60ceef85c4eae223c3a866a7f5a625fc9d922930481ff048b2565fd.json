@@ -1,0 +1,14 @@
+{
+  "sha": "2850cd73e60ceef85c4eae223c3a866a7f5a625fc9d922930481ff048b2565fd",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1309,
+  "description": "Create a reusable GitHub Actions workflow named github-OSX that runs on macOS. The workflow should have read-all permissions and support concurrent runs with a cancel-in-progress option for pull requests. Use a matrix strategy to run a job named osx-ci with different backend and cmake build type combinations. For each combination, check out the repository, configure the build with specific cmake flags, build the project in parallel, and run tests with output on failure.",
+  "tags": [
+    "macos",
+    "cmake",
+    "ctest",
+    "kokkos",
+    "reusable-workflow"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_16378",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 305,
+  "description": "Create a GitLab CI pipeline that uses the nixos/nix:latest Docker image and defines a single deploy stage with a pages job. The pages job runs in the deploy stage, executes the script lines: '# Build Snowflake.', then (cd tool && nix-build), '# Build site.', then (cd site && ../tool/result/snowflake build site), '# Install site.', then mkdir public and cp site/result/* public. It publishes the public/ directory as a GitLab Pages artifact and only runs on the master branch.",
+  "tags": [
+    "nix",
+    "gitlab-pages",
+    "snowflake",
+    "deploy"
+  ]
+}

@@ -1,0 +1,35 @@
+default:
+  interruptible: true
+test:install:
+  before_script:
+  - apt update -qq
+  - apt install -y git
+  image: $IMG
+  parallel:
+    matrix:
+    - IMG: python:3.10-slim
+    - IMG: python:3.11-slim
+    - IMG: python:3.12-slim
+    - IMG: python:3.13-slim
+  script:
+  - ./install.py -vv
+  - git status --short && test "$(git status --short)" = ""
+  - stat $(cat .gitmodules|grep path|sed -e 's/\spath\s=\s//')
+  stage: test
+test:lint:
+  image: python:slim
+  script:
+  - export PATH=$HOME/.local/bin:$PATH
+  - pip install --user --upgrade pip
+  - pip install --user --upgrade setuptools wheel
+  - pip install --user --upgrade \ bandit \ black \ dlint \ flake8 \ flake8-annotations
+    \ flake8-docstrings \ flake8-future-import \ flake8-import-order \ mypy \ pep8-naming
+    \ pydocstyle \ types-termcolor
+  - pip check
+  - black --version
+  - flake8 --version
+  - mypy --version
+  - black --diff --check ./install.py
+  - flake8 --statistics install.py
+  - mypy --strict install.py
+  stage: test

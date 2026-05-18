@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_15981",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 227,
+  "description": "Create a GitLab CI pipeline that uses the node Docker image. Define a pages job that runs in the default stage, caches the node_modules/ directory, and only executes on the master branch. In its before_script install ember-cli globally with npm install -g ember-cli and install project dependencies with npm install. The script should run ember build -e production -o public, and the job should publish the public/ directory as a pages artifact.",
+  "tags": [
+    "node",
+    "ember",
+    "gitlab-pages",
+    "npm",
+    "cache"
+  ]
+}

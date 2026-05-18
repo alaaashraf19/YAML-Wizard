@@ -1,0 +1,14 @@
+{
+  "sha": "c340e4199652493e49a08e7bda9830786f180e909916aaadff210e37bcba12d7",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 382,
+  "description": "Create a nightly GitHub Actions workflow named Nightly Test that can be manually triggered and runs on a schedule. The workflow should use a concurrency group named pyngrok-singleton to prevent simultaneous runs. Define a test job that uses a matrix strategy to test on ubuntu-latest with Python 3.12, and reuse the build workflow from .github/workflows/build.yml with the specified OS and Python version.",
+  "tags": [
+    "python",
+    "nightly",
+    "tests",
+    "schedule",
+    "concurrency"
+  ]
+}

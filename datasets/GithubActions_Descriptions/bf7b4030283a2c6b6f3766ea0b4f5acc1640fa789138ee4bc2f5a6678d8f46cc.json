@@ -1,0 +1,16 @@
+{
+  "sha": "bf7b4030283a2c6b6f3766ea0b4f5acc1640fa789138ee4bc2f5a6678d8f46cc",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5562,
+  "description": "Create a GitHub Actions workflow named build_conduit_gcc that triggers on pull requests to the develop branch. The workflow should have two ubuntu-22.04 jobs: build_basic and build_basic_pyvenv. Both jobs should install system dependencies, checkout the repository with submodules, display environment information, build TPLs, configure Conduit, build Conduit, install Conduit, and check the installation. The build_basic job builds Conduit with GCC, while the build_basic_pyvenv job builds Conduit with GCC and a Python virtual environment.",
+  "tags": [
+    "gcc",
+    "ubuntu",
+    "conduit",
+    "cmake",
+    "mpi",
+    "python",
+    "github-actions"
+  ]
+}

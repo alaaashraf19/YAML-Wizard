@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_15842",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 374,
+  "description": "Create a GitLab CI pipeline using the tsgkadot/sphinx-plantuml Docker image. Define a single deploy stage with a job named pages that runs only on the master branch. In the pages job execute the exact shell commands: mkdir -p .public/48181acd22b3edaebc8a447868a7df7ce629920a, mv doc/password.html .public/index.html, sphinx-build -b html ./doc doc/.build/html/, cp -r doc/.build/html/* .public/48181acd22b3edaebc8a447868a7df7ce629920a, and mv .public public. Publish the resulting public/ directory as a GitLab Pages artifact.",
+  "tags": [
+    "sphinx",
+    "plantuml",
+    "gitlab-pages",
+    "docker"
+  ]
+}

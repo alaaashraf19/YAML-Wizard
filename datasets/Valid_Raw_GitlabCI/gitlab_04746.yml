@@ -1,0 +1,22 @@
+pages:
+  artifacts:
+    paths:
+    - public
+  image: rustlang/rust:nightly
+  only:
+  - master
+  script:
+  - rustup install stable
+  - rustup component add rustfmt
+  - cargo +stable check
+  - cargo +nightly check
+  - cargo fmt -- --check
+  - cd fuzz
+  - cargo check
+  - cd ../benchmark
+  - cargo check
+  - cd ..
+  - ./test.sh
+  - cargo doc --no-deps
+  - cp -r target/doc public
+  stage: deploy

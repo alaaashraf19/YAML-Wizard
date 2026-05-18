@@ -1,0 +1,13 @@
+{
+  "sha": "833ef7ba4226888901bcf55851f3a5acdf5454f4ccbf4b9107eb730a538c7ca8",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 512,
+  "description": "Create a GitHub Actions workflow named Wiki that triggers on push to dev branch, specifically to README.md and docs/. Run an ubuntu-latest job that checks out the repository using a provided ACCESS_TOKEN_WIKI, then uses the github-docs-to-wiki action to convert documentation from the docs/ folder to a wiki, authenticated with the same ACCESS_TOKEN_WIKI.",
+  "tags": [
+    "wiki",
+    "documentation",
+    "github-actions",
+    "ubuntu"
+  ]
+}

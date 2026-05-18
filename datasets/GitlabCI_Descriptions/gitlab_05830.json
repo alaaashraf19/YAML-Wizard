@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_05830",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1083,
+  "description": "Create a GitLab CI pipeline using the node:latest Docker image and three stages: code-testing, staging-server, and acceptance-testing. In the code-testing stage define unit-testing (npm install then npm test), linting (npm install then npm run linter), code-coverage (npm install, npm run coverage, npm run check-coverage), code-duplication (npm install then npm run duplication), and dependency-checks (npm install then npm run dependency) jobs, each running the listed npm commands. In the staging-server stage add coverage-report (runs npm install and npm run coverage, stores the docs directory as an artifact that expires in 30 days, and runs only on the master branch) and deploy-staging-server (apt-get update -qy, apt-get install -y ruby ruby-dev rubygems-integration, gem install dpl, then dpl --provider=heroku --app=notes-api-test --api-key=95023c27-5a9d-4250-a3fd-d2e19e0dac02) which also runs only on master. In the acceptance-testing stage add acceptance-tests (npm install --only=dev then npm run acceptance) job that runs only on the master branch. Ensure all jobs inherit the node:latest image with no extra services and respect the only: master rules for the specified jobs.",
+  "tags": [
+    "node",
+    "npm",
+    "heroku",
+    "gitlab-ci",
+    "code-testing",
+    "staging",
+    "acceptance-testing"
+  ]
+}

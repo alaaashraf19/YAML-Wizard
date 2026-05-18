@@ -1,0 +1,62 @@
+before_script:
+- apt --quiet update --yes
+- export GRADLE_USER_HOME=`pwd`/tmp/.gradle
+- chmod +x ./gradlew
+build_desktop:
+  artifacts:
+    paths:
+    - desktop/build/libs/
+  script:
+  - ./gradlew desktop:dist
+  stage: build
+build_release:
+  artifacts:
+    paths:
+    - android/build/outputs/
+  before_script:
+  - export GRADLE_USER_HOME=$(pwd)/.gradle
+  - export ANDROID_HOME="${PWD}/android-home"
+  - install -d $ANDROID_HOME
+  - chmod +x ./setup_cmdline_tools.sh
+  - sh ./setup_cmdline_tools.sh
+  - export PATH=$PATH:${ANDROID_HOME}/cmdline-tools/cmdline-tools/bin/
+  - chmod +x ./gradlew
+  script:
+  - ./gradlew assembleRelease
+  - ./gradlew assembleDebug
+  stage: build
+cache:
+  paths:
+  - tmp/.gradle/wrapper
+  - tmp/.gradle/caches
+image: docker.io/dummertrottel/openjdk-17-ubuntu
+licensecheck:
+  script:
+  - apt --quiet install --yes licensecheck git
+  - ./licensecheck.sh
+  stage: sanitychecks
+stages:
+- sanitychecks
+- build
+- test
+unit_tests:
+  artifacts:
+    paths:
+    - tests/build/reports/
+  script:
+  - echo skipped
+  stage: test
+validateI18N:
+  script:
+  - apt --quiet install --yes fonttools
+  - ./validateI18N.sh
+  stage: sanitychecks
+validate_images:
+  script:
+  - apt --quiet install --yes imagemagick
+  - ./scripts/validate-images.sh
+  stage: sanitychecks
+variables:
+  ANDROID_BUILD_TOOLS: 30.0.2
+  ANDROID_COMPILE_SDK: '30'
+  ANDROID_SDK_TOOLS: '9477386'

@@ -1,0 +1,14 @@
+{
+  "sha": "055bed7bdda37ef3ab7a1d11a0bd067220efa2953c1a1314ff465dcd8b63216c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 501,
+  "description": "Create a GitHub Actions workflow named Qodana that runs on workflow dispatch and on push to the develop branch. Use an ubuntu-latest job that checks out the repository with full history, then runs a Qodana scan with a specific linter and pushes fixes as a pull request, using a QODANA_TOKEN from secrets and a custom QODANA_ENDPOINT.",
+  "tags": [
+    "qodana",
+    "security",
+    "linter",
+    "ubuntu",
+    "workflow-dispatch"
+  ]
+}

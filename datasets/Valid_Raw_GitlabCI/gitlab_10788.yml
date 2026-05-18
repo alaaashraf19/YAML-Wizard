@@ -1,0 +1,58 @@
+before_script:
+- REVISION_STABLE=${CI_COMMIT_TAG}
+- REVISION_UNSTABLE=${CI_COMMIT_REF_SLUG}+sha.${CI_COMMIT_SHA:0:8}
+- export MAVEN_USER_HOME=`pwd`/.maven
+build:stable:
+  artifacts:
+    expire_in: 10 mins
+  only:
+  - /^\d+\.\d+\.\d+-rc\.[0-9]+$/
+  - /^\d+\.\d+\.\d+$/
+  script:
+  - mvn install -B -DskipTests=true -Dmaven.javadoc.skip=true -Drevision=$REVISION_STABLE
+  stage: build
+  tags:
+  - docker
+build:unstable:
+  artifacts:
+    expire_in: 10 mins
+  only:
+  - develop
+  script:
+  - mvn install -B -DskipTests=true -Dmaven.javadoc.skip=true -Drevision=$REVISION_UNSTABLE
+  stage: build
+  tags:
+  - docker
+cache:
+  key: $CI_COMMIT_REF_NAME
+  paths:
+  - .maven
+image: maven:3.5.4-jdk-8-alpine
+sonarqube:issues:
+  only:
+  - develop
+  script:
+  - mvn --batch-mode verify sonar:sonar -DskipTests=true -Drevision=$REVISION_UNSTABLE
+    -Dsonar.host.url=$SONAR_URL -Dsonar.login=$SONAR_LOGIN -Dsonar.gitlab.project_id=$CI_PROJECT_PATH
+    -Dsonar.gitlab.ref_name=$CI_COMMIT_REF_NAME -Dsonar.gitlab.commit_sha=$CI_COMMIT_SHA
+    -Dsonar.gitlab.failure_notification_mode=exit-code -Dsonar.analysis.mode=issues
+  stage: code_analysis
+  tags:
+  - docker
+sonarqube:publish:
+  only:
+  - /^\d+\.\d+\.\d+-rc\.[0-9]+$/
+  - /^\d+\.\d+\.\d+$/
+  script:
+  - mvn --batch-mode verify sonar:sonar -Drevision=$REVISION_STABLE -Dsonar.host.url=$SONAR_URL
+    -Dsonar.login=$SONAR_LOGIN -Dsonar.gitlab.project_id=$CI_PROJECT_PATH -Dsonar.gitlab.ref_name=$CI_COMMIT_REF_NAME
+    -Dsonar.gitlab.commit_sha=$CI_COMMIT_SHA -Dsonar.gitlab.failure_notification_mode=exit-code
+    -Dsonar.analysis.mode=publish
+  stage: code_analysis
+  tags:
+  - docker
+stages:
+- code_analysis
+- build
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive

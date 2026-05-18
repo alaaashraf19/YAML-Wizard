@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_17710",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 157,
+  "description": "Create a GitLab CI pipeline that uses the dettmering/hugo-build Docker image for all jobs. Add a pages job that runs the command hugo, stores the generated public/ directory as an artifact, and is limited to the master branch via only, so it publishes the site to GitLab Pages. Add a test job that also runs hugo but is excluded from the master branch using except, allowing the build to be validated on other branches. Both jobs run in the default test stage and no additional services, caches, or variables are required.",
+  "tags": [
+    "hugo",
+    "gitlab-pages",
+    "docker",
+    "ci"
+  ]
+}

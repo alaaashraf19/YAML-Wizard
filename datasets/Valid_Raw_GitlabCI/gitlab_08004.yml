@@ -1,0 +1,14 @@
+before_script:
+- pip install mkdocs
+- pip install mkdocs-material
+- pip install pygments
+image: python:alpine
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - mkdocs build
+  - mv site public

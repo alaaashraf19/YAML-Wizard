@@ -1,0 +1,9 @@
+build:
+  artifacts:
+    paths:
+    - '*.pdf'
+    - '*.odt'
+  script:
+  - pandoc *.md -o bericht.pdf
+  - pandoc *.md -o bericht.odt
+image: xldrkp/pandoc_23_auto

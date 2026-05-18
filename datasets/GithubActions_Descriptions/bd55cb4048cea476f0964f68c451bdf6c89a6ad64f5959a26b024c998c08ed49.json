@@ -1,0 +1,14 @@
+{
+  "sha": "bd55cb4048cea476f0964f68c451bdf6c89a6ad64f5959a26b024c998c08ed49",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3599,
+  "description": "Create a reusable GitHub Actions workflow named Build Brew Packages that can be triggered manually or called by another workflow. The workflow takes inputs for Ice version, repository URL, and repository username, and an optional secret for the repository password. On a macOS 15 environment, it checks out the repository, sets up C++, caches build results, taps a nightly repository, creates a nightly tap, builds a Homebrew bottle, and uploads it along with the tap to a provided repository.",
+  "tags": [
+    "brew",
+    "homebrew",
+    "macos",
+    "reusable-workflow",
+    "nightly-build"
+  ]
+}

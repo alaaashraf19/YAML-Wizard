@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_08575",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 301,
+  "description": "Create a GitLab CI pipeline that uses the ruby:2.3 Docker image, runs apt-get update -yqqq; apt-get -o dir::cache::archives=\"vendor/apt\" install -y -qq --force-yes libicu-dev cmake in before_script, installs bundler via gem install bundler, and runs bundle install -j $(nproc). Define an elasticsearch:5.1 service and set the ELASTICSEARCH_HOST variable to elasticsearch. Add an rspec job in the default test stage that executes rspec. No caches, artifacts, or special rules are required.",
+  "tags": [
+    "ruby",
+    "rspec",
+    "elasticsearch",
+    "bundler",
+    "cmake",
+    "apt",
+    "libicu-dev"
+  ]
+}

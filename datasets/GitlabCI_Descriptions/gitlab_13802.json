@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_13802",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 995,
+  "description": "Create a GitLab CI pipeline that uses the docker:latest image with the docker:dind service and runs a before_script that logs in to the GitLab Container Registry via docker login -u gitlab-ci-token -p ${CI_JOB_TOKEN} ${CI_REGISTRY}. Define DEPLOY_REGISTRY and DOCKER_DRIVER variables, and add three parallel matrix jobs: build_arm_none_eabi_gcc, build_clang, and build_gcc, each running in the default stage. In build_arm_none_eabi_gcc, use a matrix with VERSION 14 and execute docker build -t arm-none-eabi-gcc:${VERSION} --build-arg VERSION=${VERSION}.3.rel1 -f arm-none-eabi-gcc/Dockerfile . followed by build/publish_image.sh arm-none-eabi-gcc:${VERSION}. In build_clang, use a matrix with VERSION 21,20,19,18,17,16,14 and run docker build -t clang:${VERSION} --build-arg VERSION=${VERSION} -f clang/Dockerfile . then build/publish_image.sh clang:${VERSION}; in build_gcc, use a matrix with VERSION 15,14,13,12,11 and run docker build -t gcc:${VERSION} --build-arg VERSION=${VERSION} -f gcc/Dockerfile . then build/publish_image.sh gcc:${VERSION}.",
+  "tags": [
+    "docker",
+    "dind",
+    "arm-none-eabi-gcc",
+    "clang",
+    "gcc",
+    "parallel",
+    "matrix",
+    "ci-registry",
+    "build"
+  ]
+}

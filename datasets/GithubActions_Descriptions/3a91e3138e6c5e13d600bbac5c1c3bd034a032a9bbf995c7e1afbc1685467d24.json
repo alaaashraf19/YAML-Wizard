@@ -1,0 +1,15 @@
+{
+  "sha": "3a91e3138e6c5e13d600bbac5c1c3bd034a032a9bbf995c7e1afbc1685467d24",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1480,
+  "description": "Create a GitHub Actions workflow named msvc that runs on push to main and on pull requests to main. Use a matrix job strategy to run on both windows-2019 and windows-latest environments with different architectures. For each job, check out the repository, set up Python 3.x, install MSVC dev command, upgrade pip, install dependencies like meson and ninja, build the project using meson, and run tests.",
+  "tags": [
+    "msvc",
+    "windows",
+    "python",
+    "meson",
+    "ninja",
+    "tests"
+  ]
+}

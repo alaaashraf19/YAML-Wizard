@@ -1,0 +1,21 @@
+.id-tokens:
+  id_tokens:
+    VAULT_ID_TOKEN:
+      aud: https://vault.gitlab.net
+.with-bundle:
+  before_script:
+  - bundle install --jobs=$(nproc) --retry=3 --quiet
+include:
+- local: .gitlab/ci/secrets.gitlab-ci.yml
+- local: .gitlab/ci/shared-ops-vault-tokens.gitlab-ci.yml
+  rules:
+  - if: $CI_SERVER_HOST == "ops.gitlab.net"
+- local: .gitlab/ci/shared-vault-tokens.gitlab-ci.yml
+  rules:
+  - if: $CI_SERVER_HOST == "gitlab.com"
+- local: .gitlab/ci/protected-ops-vault-tokens.gitlab-ci.yml
+  rules:
+  - if: $CI_SERVER_HOST == "ops.gitlab.net" && $CI_COMMIT_REF_PROTECTED == "true"
+- local: .gitlab/ci/protected-vault-tokens.gitlab-ci.yml
+  rules:
+  - if: $CI_SERVER_HOST == "gitlab.com" && $CI_COMMIT_REF_PROTECTED == "true"

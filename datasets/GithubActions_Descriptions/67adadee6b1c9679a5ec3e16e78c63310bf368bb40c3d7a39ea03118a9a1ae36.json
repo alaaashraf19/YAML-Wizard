@@ -1,0 +1,16 @@
+{
+  "sha": "67adadee6b1c9679a5ec3e16e78c63310bf368bb40c3d7a39ea03118a9a1ae36",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3721,
+  "description": "Create a GitHub Actions workflow named Codecov that runs on push to the master branch and on pull requests. Use an ubuntu-22.04 job that checks out the repository, sets up a complex environment with SSH, installs dependencies, restores vcpkg and its artifacts from the GitHub cache, builds the project with CMake and make, runs tests, generates code coverage with lcov, and uploads the coverage to Codecov using the codecov-action.",
+  "tags": [
+    "codecov",
+    "ubuntu",
+    "cmake",
+    "lcov",
+    "vcpkg",
+    "coverage",
+    "tests"
+  ]
+}

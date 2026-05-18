@@ -1,0 +1,14 @@
+{
+  "sha": "cde9196138e7a34e993c20a9eb073f9b4545a9e60b42dff38394bb739c1f1504",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1221,
+  "description": "Create a GitHub Actions workflow named tests that runs on push to the master branch and on pull requests to master. Use a matrix strategy to test with multiple Python versions (3.6, 3.7, 3.8, 3.9) and PyTorch versions (1.7.1+cpu, 1.8.1+cpu, 1.9.1+cpu, 1.10.1+cpu) on ubuntu-latest. For each combination, check out the code, set up Python, install dependencies from requirements-dev.txt and requirements.txt, install PyTorch and the package under test, then run tests with pytest.",
+  "tags": [
+    "python",
+    "tests",
+    "pytorch",
+    "pytest",
+    "matrix"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_19166",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 725,
+  "description": "Create a GitLab CI pipeline with a single job named pages in the pages stage. The job runs only on the master branch when CI_SERVER_HOST is gitlab.com and CI_PROJECT_NAMESPACE is gitlab-org, inherits default tags, retry, cache, and only settings, and depends on the coverage, karma, and gitlab:assets:compile jobs. Its script executes: mv public/ .public/; mkdir public/; mv coverage/ public/coverage-ruby/ || true; mv coverage-javascript/ public/coverage-javascript/ || true; mv webpack-report/ public/webpack-report/ || true; cp .public/assets/application-*.css public/application.css || true; cp .public/assets/application-*.css.gz public/application.css.gz || true. The job publishes the public directory as an artifact with path public. No explicit Docker image or services are defined, so the default runner image is used.",
+  "tags": [
+    "pages",
+    "coverage",
+    "karma",
+    "gitlab-assets",
+    "master",
+    "gitlab-com"
+  ]
+}

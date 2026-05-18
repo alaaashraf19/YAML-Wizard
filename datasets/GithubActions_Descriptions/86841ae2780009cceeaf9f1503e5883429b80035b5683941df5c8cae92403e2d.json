@@ -1,0 +1,17 @@
+{
+  "sha": "86841ae2780009cceeaf9f1503e5883429b80035b5683941df5c8cae92403e2d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5285,
+  "description": "Create a GitHub Actions workflow named FBGEMM_GPU Nightly Build that runs on a schedule, on push to main, on pull requests to main, and manually. The workflow has two jobs: build_artifact and test_and_publish_artifact. The build_artifact job runs on a linux.12xlarge host, sets up the environment, installs dependencies, builds FBGEMM_GPU, and uploads the built wheel as a GHA artifact. The test_and_publish_artifact job runs on a linux.g5.4xlarge.nvidia.gpu host, downloads the artifact, tests FBGEMM_GPU, and pushes the nightly binary to PyPI if the CUDA version matches.",
+  "tags": [
+    "fbgemm",
+    "gpu",
+    "nightly",
+    "build",
+    "test",
+    "pypi",
+    "cuda",
+    "pytorch"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_14032",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 139,
+  "description": "Create a GitLab CI pipeline that defines two hidden jobs to set default runner tags: .ansible_run_tags with tags k8s, lfn, windriver, and .syntax_checking_tags with tag windriver. Then include the local file gitlab-ci/base.yml to bring in the rest of the pipeline configuration. No stages, images, scripts, caches, or artifacts are defined directly in this file.",
+  "tags": [
+    "ansible",
+    "k8s",
+    "lfn",
+    "windriver",
+    "include"
+  ]
+}

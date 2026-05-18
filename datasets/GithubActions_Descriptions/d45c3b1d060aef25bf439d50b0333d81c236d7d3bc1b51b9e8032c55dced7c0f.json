@@ -1,0 +1,14 @@
+{
+  "sha": "d45c3b1d060aef25bf439d50b0333d81c236d7d3bc1b51b9e8032c55dced7c0f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1812,
+  "description": "Create a GitHub Actions workflow that builds and publishes a Docker image. The workflow should trigger on push to the main branch, on a scheduled cron job, and on workflow dispatch. It should use an ubuntu-latest job with read permission to repository contents and write permission to packages, checking out the repository, logging in to the GitHub Container registry, setting up Docker buildx, extracting metadata, and then building and pushing the Docker image.",
+  "tags": [
+    "docker",
+    "github-container-registry",
+    "schedule",
+    "workflow-dispatch",
+    "ubuntu"
+  ]
+}

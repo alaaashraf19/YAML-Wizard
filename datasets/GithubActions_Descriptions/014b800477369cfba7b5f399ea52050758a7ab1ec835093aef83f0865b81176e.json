@@ -1,0 +1,16 @@
+{
+  "sha": "014b800477369cfba7b5f399ea52050758a7ab1ec835093aef83f0865b81176e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1774,
+  "description": "Create a GitHub Actions workflow for EVE Randomized Precision Tests that runs on every pull request to the main branch. Use a ubuntu-latest job with a custom container image, and a matrix strategy to test different compiler and architecture configurations. Fetch the current branch, prepare EVE with the specified compiler and architecture, compile random sampling tests, and run them using ctest.",
+  "tags": [
+    "eve",
+    "randomized-tests",
+    "compilers",
+    "matrix",
+    "ubuntu",
+    "ctest",
+    "cmake"
+  ]
+}

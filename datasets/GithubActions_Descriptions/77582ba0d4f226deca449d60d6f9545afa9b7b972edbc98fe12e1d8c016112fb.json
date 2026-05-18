@@ -1,0 +1,14 @@
+{
+  "sha": "77582ba0d4f226deca449d60d6f9545afa9b7b972edbc98fe12e1d8c016112fb",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4354,
+  "description": "Create a GitHub Actions workflow named CMake that runs on every push and pull request. Use a matrix job that builds on multiple operating systems (ubuntu-20.04, macos-10.15, windows-2019) with different configurations (Debug, Release) and library linkages (dynamic, static). For each job, check out the repository, install CMake, restore vcpkg and its artifacts from the cache, configure and build the project with CMake, list build files, run tests, and install the project.",
+  "tags": [
+    "cmake",
+    "vcpkg",
+    "matrix",
+    "multios",
+    "c++"
+  ]
+}

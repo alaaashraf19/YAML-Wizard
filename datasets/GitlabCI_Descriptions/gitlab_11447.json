@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_11447",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 502,
+  "description": "Create a GitLab CI pipeline with two jobs using the chybie/node-aws-cli Docker image. The build_on_branches job runs on all branches except master, executes python --version and node --version, changes into the app directory, runs npm install, lists files, runs npm test with coverage, builds the project with npm run build, then lists the contents of the resulting build folder. The upload_to_s3_frontend job runs only on the master branch, repeats the same setup and build steps, and finally uploads the build directory to an S3 bucket using aws s3 sync . s3://${BUCKET_NAME}. No explicit stages, caches, or artifacts are defined.",
+  "tags": [
+    "node",
+    "aws-cli",
+    "s3",
+    "npm",
+    "python"
+  ]
+}

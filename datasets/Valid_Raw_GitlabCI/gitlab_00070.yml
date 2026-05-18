@@ -1,0 +1,26 @@
+before_script:
+- ruby -v
+- bundle install --jobs $(nproc) --path vendor
+cache:
+  key: jekyll
+  paths:
+  - vendor
+image: ruby:2.3
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - gh-pages
+  script:
+  - jekyll build -d public
+  stage: deploy
+test:
+  except:
+  - gh-pages
+  script:
+  - jekyll build
+  - htmlproof ./_site --only-4xx
+variables:
+  LANG: C.UTF-8
+  NOKOGIRI_USE_SYSTEM_LIBRARIES: 'true'

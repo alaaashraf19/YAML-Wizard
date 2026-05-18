@@ -1,0 +1,21 @@
+{
+  "sha": "gitlab_08082",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 4126,
+  "description": "Create a GitLab CI pipeline with stages build, test, deploy, deploy_test, tag_latest, and cleanup and define variables DISTRO_RELEASE, DOCKER_NAMESPACE, OC_INFO_IMAGE_LICENSE, OC_INFO_IMAGE_REFNAME, OC_INFO_IMAGE_TITLE, and OC_INFO_IMAGE_VENDOR. In the build stage add a build_rootfs job using the gioxa/imagebuilder image that runs export target=\"${CI_PROJECT_DIR}/rootfs\", export BASE=\"${CI_PROJECT_DIR}\", export OS_CONFIG=make_os.conf, mkdir -pv $target, ./make_os, several copy commands to generate description.md, and a registry_push command, then publishes description.md as an artifact; it runs on the oc-runner-starter tag. In the test stage add a test_build-image-IS-registry job using ImageStream/$CI_PIPELINE_ID:1 that executes gcc -v, runs on the oc-runner-starter tag and sets GIT_STRATEGY to none. In the deploy_test stage add test-image-docker-hub (image ${DOCKER_NAMESPACE}/${OC_INFO_IMAGE_REFNAME}:${CI_COMMIT_TAG}) and test-image-gitlab-registry (image Gitlab:$CI_COMMIT_TAG) jobs, both executing gcc -v, limited to tag pipelines (only tags, except branches), using the oc-runner-starter tag and GIT_STRATEGY none. In the deploy stage add a push-image-tags job on the scratch image that runs two registry_push commands to push the built image to the production registry, runs only on tags, excludes branches, and targets the production environment. In the tag_latest stage add a tag-image-latest job on the scratch image that tags the image as latest with registry_tag_image, updates Docker Hub description with DockerHub_set_description, triggers MicroBadger_Update, runs only on tags, excludes branches, and targets the production environment. Finally, add a cleanup job that always runs (when: always), uses the scratch image to execute ImageStream_delete --name=$CI_PIPELINE_ID, allows failure, runs on the oc-runner-starter tag, and sets GIT_STRATEGY to none.",
+  "tags": [
+    "docker",
+    "imagebuilder",
+    "oc-runner",
+    "registry-push",
+    "tag-latest",
+    "cleanup",
+    "build-rootfs",
+    "test-image",
+    "deploy",
+    "gitlab-registry",
+    "docker-hub",
+    "gcc"
+  ]
+}

@@ -1,0 +1,126 @@
+.build:
+  artifacts:
+    paths:
+    - conda-bld
+    - config.log
+    - build.log
+    when: always
+  extends: .configure
+  script:
+  - cd "${CI_PROJECT_DIR}/recipe"
+  - conda build . --variant-config-files conda_build_config.yaml --python ${PYTHON_VERSION}
+    --output-folder "${CI_PROJECT_DIR}/conda-bld" --no-test 2>&1 | tee "${CI_PROJECT_DIR}/build-log.txt"
+  stage: build
+  tags:
+  - 16gb
+.configure:
+  before_script:
+  - sudo ln -s /usr/lib64/libssl.so.1.0.1e /usr/lib64/libssl.so.1.0.0
+  - sudo ln -s /usr/lib64/libcrypto.so.1.0.1e /usr/lib64/libcrypto.so.1.0.0
+  - mkdir -p "${CI_PROJECT_DIR}/.conda/envs" "${CI_PROJECT_DIR}/.conda/pkgs"
+  - conda config --add envs_dirs "${CI_PROJECT_DIR}/.conda/envs"
+  - conda config --add pkgs_dirs "${CI_PROJECT_DIR}/.conda/pkgs"
+  - mkdir -p "${CI_PROJECT_DIR}/conda-bld"
+  - mkdir -p ~/.conda/envs
+  - conda config --remove channels conda-forge
+  - conda config --add channels conda-forge/label/gcc7
+.deploy:
+  only:
+  - master
+  script:
+  - if [[ ${CI_COMMIT_REF_NAME} = 'master' ]] ; then anaconda -t $ANACONDA_TOKEN upload
+    $CI_PROJECT_DIR/conda-bld/linux-64/*.tar.bz2 -u ${CI_PROJECT_NAMESPACE} --force
+    --no-progress ; else anaconda -t $ANACONDA_TOKEN upload $CI_PROJECT_DIR/conda-bld/linux-64/*.tar.bz2
+    -u ${CI_PROJECT_NAMESPACE} --label dev --force --no-progress ; fi
+  stage: deploy
+.py27:
+  PYTHON_VERSION: '2.7'
+.py36:
+  PYTHON_VERSION: '3.6'
+.py37:
+  PYTHON_VERSION: '3.7'
+.test:
+  extends: .configure
+  script:
+  - conda build --test $CI_PROJECT_DIR/conda-bld/linux-64/*.tar.bz2
+  stage: test
+.test-plotting:
+  artifacts:
+    paths:
+    - environment-py${PYTHON_VERSION/./}.yml
+    - graph-draw-sfdp.png
+  extends: .configure
+  script:
+  - cp -r $CI_PROJECT_DIR/conda-bld/* /opt/conda/conda-bld/
+  - conda index /opt/conda/conda-bld/
+  - conda create -n graph-tool -y -q "python=$PYTHON_VERSION"
+  - conda install -n graph-tool -y -q --use-local graph-tool
+  - source activate graph-tool
+  - python ./tests/make_plot.py
+  - '[[ -f graph-draw-sfdp.png ]]'
+  stage: test
+build-py27:
+  extends: .build
+  variables:
+    PYTHON_VERSION: '2.7'
+build-py36:
+  extends: .build
+  variables:
+    PYTHON_VERSION: '3.6'
+build-py37:
+  extends: .build
+  variables:
+    PYTHON_VERSION: '3.7'
+deploy-py27:
+  dependencies:
+  - build-py27
+  extends: .deploy
+deploy-py36:
+  dependencies:
+  - build-py36
+  extends: .deploy
+deploy-py37:
+  dependencies:
+  - build-py37
+  extends: .deploy
+image: registry.gitlab.com/ostrokach-docker/conda:latest
+stages:
+- build
+- test
+- deploy
+test-plotting-py27:
+  dependencies:
+  - build-py27
+  extends: .test-plotting
+  variables:
+    PYTHON_VERSION: '2.7'
+test-plotting-py36:
+  dependencies:
+  - build-py36
+  extends: .test-plotting
+  variables:
+    PYTHON_VERSION: '3.6'
+test-plotting-py37:
+  dependencies:
+  - build-py37
+  extends: .test-plotting
+  variables:
+    PYTHON_VERSION: '3.7'
+test-py27:
+  dependencies:
+  - build-py27
+  extends: .test
+  variables:
+    PYTHON_VERSION: '2.7'
+test-py36:
+  dependencies:
+  - build-py36
+  extends: .test
+  variables:
+    PYTHON_VERSION: '3.6'
+test-py37:
+  dependencies:
+  - build-py37
+  extends: .test
+  variables:
+    PYTHON_VERSION: '3.7'

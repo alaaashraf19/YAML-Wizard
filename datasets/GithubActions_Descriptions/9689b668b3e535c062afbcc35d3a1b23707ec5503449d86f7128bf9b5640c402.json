@@ -1,0 +1,14 @@
+{
+  "sha": "9689b668b3e535c062afbcc35d3a1b23707ec5503449d86f7128bf9b5640c402",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1200,
+  "description": "Create a GitHub Actions workflow named Windows that runs on pull requests, pushes, and published releases. Use a single windows-latest job that checks out the repository, installs re2c with choco, builds ninja using cmake and bash, tests ninja, creates a ninja archive with 7z, uploads the archive as an artifact, and uploads the archive as a release asset if the workflow is triggered by a published release.",
+  "tags": [
+    "windows",
+    "ninja",
+    "cmake",
+    "release",
+    "artifacts"
+  ]
+}

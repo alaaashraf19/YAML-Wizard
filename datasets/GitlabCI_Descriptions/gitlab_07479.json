@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_07479",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 145,
+  "description": "Create a GitLab CI pipeline with a single job called pages that runs in the default stage, sets the variable GIT_DEPTH to 1, runs the shell commands `mkdir .public`, `cp -r * .public/`, and `mv .public public`, and publishes the `public/` directory as an artifact. The job uses the default GitLab runner image and has no additional services or rules, so it executes on every pipeline run.",
+  "tags": [
+    "pages",
+    "artifact",
+    "git-depth",
+    "default-image"
+  ]
+}

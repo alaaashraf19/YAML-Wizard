@@ -1,0 +1,14 @@
+{
+  "sha": "59a54c9213afd48edaec0ea7571e093a8b4de714227526cbae48caa93a6c8f7b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3730,
+  "description": "Create a GitHub Actions workflow named lint-poster that triggers when the lint-tidier workflow completes successfully. In an ubuntu-latest job with write permission to pull requests, download and extract linter results, set environment variables from the results, check out the head repository, re-download and re-extract linter results, and run the clang-tidy-pr-comments action with the extracted results and a GitHub token.",
+  "tags": [
+    "github-actions",
+    "workflow-run",
+    "linter",
+    "clang-tidy",
+    "pull-requests"
+  ]
+}

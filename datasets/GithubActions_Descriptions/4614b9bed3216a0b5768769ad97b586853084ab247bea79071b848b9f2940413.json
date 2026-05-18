@@ -1,0 +1,17 @@
+{
+  "sha": "4614b9bed3216a0b5768769ad97b586853084ab247bea79071b848b9f2940413",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5805,
+  "description": "Create a GitHub Actions workflow named FBGEMM_GPU CI that runs on every push to main, on pull requests to main, and manually. The workflow has three jobs: build_and_test_amd, test_amd_gpu, and build_and_test_cpu. The build_and_test_amd job runs on a linux.12xlarge instance with a container, using a matrix strategy to test different Python and ROCm versions. The test_amd_gpu job is currently disabled. The build_and_test_cpu job runs on a linux.12xlarge instance with a container, using a matrix strategy to test different Python versions on CPU.",
+  "tags": [
+    "fbgemm",
+    "gpu",
+    "ci",
+    "rocm",
+    "pytorch",
+    "linux",
+    "ubuntu",
+    "tests"
+  ]
+}

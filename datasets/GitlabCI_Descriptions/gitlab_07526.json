@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_07526",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1721,
+  "description": "Create a GitLab CI pipeline with variables DEBIAN_FRONTEND=noninteractive and LC_ALL=C.UTF-8, defining two stages: test (default) and deploy. In the test stage add a fdroid-website job using the debian:bookworm image that runs the following commands in order: apt-get -q update; apt-get -qy install bundler git ruby --no-install-recommends; git -C .. clone --depth=1 https://gitlab.com/fdroid/fdroid-website.git; cd ../fdroid-website; sed -i -e 's,^languages:,ignored_languages:,' -e 's,^gitlab_ci_languages:,languages:,' _config.yml; perl -i -pe \"BEGIN{undef $/;} s@\\n *gem 'jekyll-fdroid'.*?\\n\\s*:ref *=> *'[^']+'\\n@\\n@smg\" Gemfile; sed -i \"s@^end@    gem 'jekyll-fdroid', path\\x3a '$CI_PROJECT_DIR'\\nend@\" Gemfile; $CI_PROJECT_DIR/.ci-get-from-fdroid-website.rb | bash -e; cd $CI_PROJECT_DIR; rubocop lib spec; rspec; cd ../fdroid-website; sed -Ei -e \"s,^(url\\x3a).*,\\1 'https://$CI_PROJECT_NAMESPACE.gitlab.io',\" -e \"s,^(baseurl\\x3a).*,\\1 '/$CI_PROJECT_NAME',\" _config.yml; echo \"Jekyll config used for CI:\" && cat _config.yml; mkdir $CI_PROJECT_DIR/public; ln -s $CI_PROJECT_DIR/public; jekyll build -d public --trace --future; cp -v robots.txt.noindex public/robots.txt; ./tools/prepare-multi-lang.sh public --no-type-maps; apt-get install curl; mkdir -p $CI_PROJECT_DIR/public/css; curl https://fdroid.gitlab.io/fdroid-website/css/main.css > $CI_PROJECT_DIR/public/css/main.css; and publishes the public directory as an artifact. Also in the test stage add a ruby_latest job using the ruby image that runs: ruby -v; for f in `find * -name *.rb`; do printf \"$f\\t\"; ruby -c $f; done; apt-get update; apt-get install -y bundler; bundle install; bundle exec rubocop lib spec; bundle exec rspec;. In the deploy stage add a pages job that runs ls -lR public, always uploads the public directory as a GitLab Pages artifact with a one‑week expiration.",
+  "tags": [
+    "debian",
+    "ruby",
+    "jekyll",
+    "gitlab-pages",
+    "fdroid-website",
+    "ci"
+  ]
+}

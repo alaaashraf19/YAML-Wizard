@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_12245",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 653,
+  "description": "Create a GitLab CI pipeline with three jobs: a nightly build job called build:nightly that runs in the default build stage using the rustlang/rust:nightly image and executes `rustc --version && cargo --version`, `cargo build --all && cargo build --examples`, `cargo test --all --verbose`, `ASAN_OPTIONS=detect_odr_violation=0 RUSTFLAGS=\"-Z sanitizer=leak\" cargo test --all`, and `ASAN_OPTIONS=detect_odr_violation=0 RUSTFLAGS=\"-Z sanitizer=address\" cargo test --all`; a stable build job called build:stable also in the default build stage using the rust:latest image that runs `rustc --version && cargo --version`, `cargo build --all && cargo build --examples`, and `cargo test --all --verbose`; and a pages job called pages using rust:latest that runs `cargo doc` then `mv target/doc/ public/`, publishes the `public/` directory as a pages artifact, and is limited to the master branch.",
+  "tags": [
+    "rust",
+    "nightly",
+    "stable",
+    "pages",
+    "cargo",
+    "gitlab-pages",
+    "documentation"
+  ]
+}

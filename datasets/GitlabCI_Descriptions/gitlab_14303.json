@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_14303",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 377,
+  "description": "Create a GitLab CI pipeline that uses the iquiw/alpine-emacs Docker image. Define two jobs named pages and test that both execute the exact command `emacs --batch --no-init-file --load publish.el --funcall org-publish-all`. The pages job runs only when `$CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH` and publishes the `public/` directory as a GitLab Pages artifact, while the test job runs when `$CI_COMMIT_REF_NAME != $CI_DEFAULT_BRANCH` and also stores `public/` as an artifact. No additional stages, caches, services, or deployment targets are specified beyond the default Pages deployment for the pages job.",
+  "tags": [
+    "emacs",
+    "gitlab-pages",
+    "alpine",
+    "org-publish",
+    "ci"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_04796",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1670,
+  "description": "Create a GitLab CI pipeline using the Docker image `registry.gitlab.com/camelot-project/camelot/image` and set the variable `GIT_SSL_NO_VERIFY` to `1`, with stages **build**, **test**, and **package**. In the **build** stage add a **compile** job that runs `export LEIN_ROOT=1`, `export LEIN_SNAPSHOTS_IN_RELEASE=1`, `export PATH='$HOME/bin:${PATH}'` in a before_script, then executes `script/build` and publishes `target/camelot.jar` as an artifact that expires in 20 minutes. Also in **build**, add **unittest-clj** and **unittest-cljs** jobs, each exporting `LEIN_ROOT=1` and updating `PATH`, then running `script/test clj` and `script/test cljs` respectively. In the **test** stage add a **new-install** job that runs `script/test-runtime.sh`, an **upgrade** job that creates `~/.ssh`, sets permissions, adds gitlab.com to known_hosts, then runs `script/setup-testdata.sh` and `CAMELOT_DATADIR='testdata' script/test-runtime.sh`, and a **securityscan** job that runs only on scheduled pipelines, exports `LEIN_ROOT=1`, `LEIN_SNAPSHOTS_IN_RELEASE=1`, updates `PATH`, and runs `clojure -J-Dclojure.main.report=stderr -Tnvd nvd.task/check :config-filename 'nvd-config.json'  :classpath '$(lein with-profile -user classpath)'`. Finally, in the **package** stage add a **package** job that creates a directory `camelot-${CI_BUILD_REF_NAME}/`, runs `script/prepare-snapshot.sh`, copies `target/camelot-*.jar` and the desktop scripts into that directory, and stores the directory as an artifact named `camelot-${CI_BUILD_REF_NAME}-$(date '+%Y%m%d%H%M%S')`.",
+  "tags": [
+    "clojure",
+    "lein",
+    "docker-image",
+    "build",
+    "test",
+    "package",
+    "security-scan",
+    "gitlab-ci"
+  ]
+}

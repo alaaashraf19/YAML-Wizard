@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_12289",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 240,
+  "description": "Create a GitLab CI pipeline that uses the node:latest Docker image. Define two stages, test and deploy. Add a test job named test that runs in the test stage, executes the shell command `source ./build.sh`, and uploads the public directory as an artifact, but it should run on all branches except master. Add a pages job named pages that runs in the deploy stage, also runs `source ./build.sh`, publishes the public directory as a pages artifact, and is limited to the master branch. No services, caches, or additional variables are required.",
+  "tags": [
+    "node",
+    "gitlab-pages",
+    "test",
+    "deploy",
+    "source-build"
+  ]
+}

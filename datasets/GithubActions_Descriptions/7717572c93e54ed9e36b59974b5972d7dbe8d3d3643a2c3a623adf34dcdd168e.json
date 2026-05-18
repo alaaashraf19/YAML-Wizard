@@ -1,0 +1,15 @@
+{
+  "sha": "7717572c93e54ed9e36b59974b5972d7dbe8d3d3643a2c3a623adf34dcdd168e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2960,
+  "description": "Create a GitHub Actions workflow named Bazel that runs on push to master, on pull requests, and allows manual invocation. The workflow consists of three ubuntu-24.04 jobs: test with Bazel v5.3.0 in a matrix of hardware and parallelism optimizers, test with sanitizers in a matrix of sanitizer options, and test with tcmalloc. Each job checks out the repository, sets up Bazel, installs requirements, and runs C++ tests with specific configurations.",
+  "tags": [
+    "bazel",
+    "ubuntu",
+    "tests",
+    "c++",
+    "sanitizers",
+    "tcmalloc"
+  ]
+}

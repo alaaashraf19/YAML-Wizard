@@ -1,0 +1,8 @@
+deploy:
+  allow_failure: false
+  only:
+  - master
+  script:
+  - chmod +x gradlew
+  - ./gradlew clean build artifactoryPublish --info --stacktrace
+  stage: build

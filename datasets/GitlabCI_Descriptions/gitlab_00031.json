@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_00031",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 682,
+  "description": "Create a GitLab CI pipeline with three stages: test, release, and deploy. In the test stage add a test job that uses the node:alpine image, runs \"yarn\" in before_script and then executes \"yarn swagger project verify\"; it should run only on branch pipelines for <GROUP>/<NAME> and be excluded from the master and production branches. In the release stage add a release job that uses the registry.gitlab.com/4geit/docker/semantic-release-gitlab image, runs \"DEBUG=* semantic-release-gitlab\", and runs only on the master branch of <GROUP>/<NAME>. In the deploy stage add a deploy job that uses the registry.gitlab.com/4geit/docker/docker-compose image, sets the environment name to staging with URL http://<NAME>.vc1s.4ge.it, runs \"docker-compose down\", \"docker-compose build\", and \"docker-compose up -d\", and runs only on tag pipelines for <GROUP>/<NAME>.",
+  "tags": [
+    "node",
+    "yarn",
+    "swagger",
+    "semantic-release",
+    "docker-compose",
+    "staging",
+    "gitlab-ci"
+  ]
+}

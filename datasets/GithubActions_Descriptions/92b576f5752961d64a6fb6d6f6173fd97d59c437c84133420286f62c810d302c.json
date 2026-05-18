@@ -1,0 +1,15 @@
+{
+  "sha": "92b576f5752961d64a6fb6d6f6173fd97d59c437c84133420286f62c810d302c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2158,
+  "description": "Create a GitHub Actions workflow named macOS CI that runs on push and on pull requests to the master branch. Use a macos-latest job that installs dependencies, caches pyenv, installs Python 3.6.9 if necessary, checks out the repository, caches third-party packages, builds BioDynaMo with custom CMake settings, runs unit tests, and notifies Slack about the job status.",
+  "tags": [
+    "macos",
+    "ci",
+    "python",
+    "cmake",
+    "slack",
+    "tests"
+  ]
+}

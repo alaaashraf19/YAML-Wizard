@@ -1,0 +1,155 @@
+.centOS:
+  artifacts: &id001
+    expire_in: 4 week
+    name: mtn-$CI_JOB_NAME
+    paths:
+    - ./bin/*
+  before_script: &id002
+  - yum -y -q install https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-$(rpm
+    -E %centos).noarch.rpm
+  - yum -y -q install curl make gcc-c++ ffmpeg-devel gd-devel zlib-devel libpng-devel
+  only: &id003
+  - master
+  - devel
+  script: &id004
+  - cd src
+  - make ENABLE_WEBP=0 ENABLE_AVIF=0
+  stage: build
+.fedora:
+  artifacts: &id005
+    expire_in: 4 week
+    name: mtn-$CI_JOB_NAME
+    paths:
+    - ./bin/*
+  before_script: &id006
+  - dnf -yq install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm
+    -E %fedora).noarch.rpm
+  - dnf -yq install curl make gcc-c++ ffmpeg-devel gd-devel zlib-devel libpng-devel
+  script: &id007
+  - cd src
+  - make
+  stage: build
+.ubu:
+  before_script: &id008
+  - apt-get update
+  - DEBIAN_FRONTEND=noninteractive apt-get install -qq curl gcc make libgd-dev libavutil-dev
+    libavcodec-dev libavformat-dev libavfilter-dev libswscale-dev
+  only: &id009
+  - master
+  - devel
+  script: &id010
+  - cd src
+  - make $make_opt
+  stage: build
+  when: manual
+centos7:
+  artifacts: *id001
+  before_script: *id002
+  image: centos:7
+  only: *id003
+  script: *id004
+  stage: build
+debian:
+  artifacts:
+    expire_in: 4 week
+    name: mtn-$CI_JOB_NAME
+    paths:
+    - ./bin/mtn
+    - ./mtn-static.tar.gz
+    - ./*.jpg
+  before_script:
+  - sh misc/gitlab-ci-info.sh > build_info.txt
+  - apt-get update
+  - apt-get install -qq git wget libc6-dev zlib1g-dev libfontconfig-dev libpng-dev
+    libbz2-dev libjpeg-dev libwebp-dev libfreetype6-dev libbrotli-dev libzimg-dev
+    pkg-config gcc make g++ cmake
+  - wget --no-verbose --no-clobber -O /home/sample.avi $MOVIE_URL || echo $MOVIE_URL
+    exists
+  image: debian:12
+  only:
+    variables:
+    - $CI_PROJECT_NAMESPACE == "movie_thumbnailer"
+  script:
+  - echo cloning FFmpeg branch $STATIC_FFMPEG_BRANCH...
+  - git clone --depth=1 -b $STATIC_FFMPEG_BRANCH https://github.com/FFmpeg/FFmpeg.git
+    lib/FFmpeg
+  - echo cloning GD branch $STATIC_GD_BRANCH...
+  - git clone --depth=1 -b $STATIC_GD_BRANCH https://github.com/libgd/libgd.git lib/libgd
+  - patch -p1 < misc/gdjpeg.patch
+  - CPUS=`getconf _NPROCESSORS_ONLN`
+  - cd lib/FFmpeg
+  - sh -e ../../misc/configureFFmpeg.sh
+  - make -j$CPUS
+  - cd -
+  - cd lib/libgd
+  - cmake -DBUILD_SHARED_LIBS=0 -DBUILD_STATIC_LIBS=1 -DENABLE_FREETYPE=1 -DENABLE_FONTCONFIG=1
+    -DENABLE_JPEG=1 -DENABLE_PNG=1 -DENABLE_WEBP=1 -DENABLE_AVIF=0 -DFREETYPE_INCLUDE_DIR_ft2build=/usr/include/freetype2
+    -DFREETYPE_INCLUDE_DIR_freetype2=/usr/include/freetype2 .
+  - make -j$CPUS
+  - cd -
+  - cd src
+  - make ENABLE_AVIF=0 static_test
+  - cd -
+  - pushd lib/FFmpeg
+  - make distclean
+  - popd
+  - pushd lib/libgd
+  - make distclean
+  - popd
+  - tar czhf mtn-static.tar.gz *
+  - mv /tmp/*.jpg .
+  stage: build
+  when: manual
+fc_latest:
+  artifacts: *id005
+  before_script: *id006
+  image: fedora
+  script: *id007
+  stage: build
+stages:
+- build
+u18.04:
+  before_script: *id008
+  image: ubuntu:18.04
+  only: *id009
+  script: *id010
+  stage: build
+  variables:
+    make_opt: ENABLE_WEBP=0 ENABLE_AVIF=0
+  when: manual
+ubuntu_devel:
+  before_script: *id008
+  image: ubuntu:devel
+  only: *id009
+  script: *id010
+  stage: build
+  when: manual
+variables:
+  MOVIE_URL: https://$MYDOWNLOADSERVER/sample.avi
+win:
+  artifacts:
+    expire_in: 4 week
+    name: mtn-$CI_JOB_NAME
+    paths:
+    - mtn-win64
+  before_script:
+  - sh misc/gitlab-ci-info.sh > build_info.txt
+  - dnf -yq install curl make mingw64-gcc.x86_64
+  - curl --output /tmp/deps-win-libgd.tgz  -L https://$MYDOWNLOADSERVER/deps-libgd-$WIN_LIBGD_VER-x64.tgz
+  - curl --output /tmp/deps-win-ffmpeg.tgz -L https://$MYDOWNLOADSERVER/deps-FFmpeg-$WIN_FFMPEG_VER-x64.tgz
+  image: fedora
+  only:
+    variables:
+    - $CI_PROJECT_NAMESPACE == "movie_thumbnailer"
+  script:
+  - mkdir -p lib/windows/bin
+  - tar xzf /tmp/deps-win-ffmpeg.tgz -C lib/windows
+  - tar xzf /tmp/deps-win-libgd.tgz -C lib/windows
+  - cd src
+  - make -f Makefile.mingw
+  - cd ..
+  - mkdir -p mtn-win64
+  - mv lib/windows/bin/* mtn-win64/
+  - mv bin/mtn.exe mtn-win64/
+  stage: build
+  when: manual

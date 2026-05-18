@@ -1,0 +1,12 @@
+build_project:
+  script:
+  - xcodebuild clean -project NMEAParser.xcodeproj -scheme NMEAParser | xcpretty
+  - xcodebuild build -project NMEAParser.xcodeproj -scheme NMEAParser | xcpretty
+  - xcodebuild test -project NMEAParser.xcodeproj -scheme NMEAParser | xcpretty -s
+  stage: build
+  tags:
+  - swift
+  - nmea
+  - parser
+stages:
+- build

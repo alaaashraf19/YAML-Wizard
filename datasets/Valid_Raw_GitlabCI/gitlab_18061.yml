@@ -1,0 +1,32 @@
+.web:
+  artifacts: &id001
+    paths:
+    - public
+  image: conoria/alpine-pandoc:latest
+  script: &id002
+  - make
+  stage: deploy
+before_script:
+- apk add --update make
+image: alpine:latest
+pages:
+  artifacts: *id001
+  image: conoria/alpine-pandoc:latest
+  only:
+  - master
+  script: *id002
+  stage: deploy
+preview:
+  artifacts: *id001
+  except:
+  - master
+  image: conoria/alpine-pandoc:latest
+  script: *id002
+  stage: deploy
+size-check:
+  script:
+  - make size-check
+  stage: test
+stages:
+- test
+- deploy

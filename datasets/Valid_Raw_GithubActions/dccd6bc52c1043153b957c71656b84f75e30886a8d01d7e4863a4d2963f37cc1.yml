@@ -1,0 +1,52 @@
+name: Linux CI coverage
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/grumpycoders/pcsx-redux-build:latest
+      env:
+        TEST_RESULTS: /tmp/test-results
+        BUILD: Coverage
+        CPPFLAGS: -Werror=format-security
+    steps:
+      - name: Update lcov, because https://bugs.launchpad.net/ubuntu/+source/lcov/+bug/2029924
+        run: |
+          apt install -y cpanminus
+          cpanm DateTime
+          cpanm Capture::Tiny
+          wget https://github.com/linux-test-project/lcov/releases/download/v2.0/lcov-2.0.tar.gz
+          tar xf lcov-2.0.tar.gz
+          cd lcov-2.0
+          make install
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+          set-safe-directory: true
+      - uses: n1hility/cancel-previous-runs@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - run: |
+          make -j 2 all pcsx-redux-tests
+          make -C src/mips/openbios -j 2
+          cp src/mips/openbios/openbios.bin .
+          make -C src/mips/openbios clean
+          make -C src/mips/tests -j 2 PCSX_TESTS=true
+          cp ./openbios.bin src/mips/openbios/
+      - name: Test
+        run: |
+          xvfb-run catchsegv ./pcsx-redux-tests
+      - name: Produce code coverage
+        run: |
+          apt install -y luarocks luajit
+          luarocks install luacov
+          luarocks install luacov-reporter-lcov
+          luacov -r lcov
+          lcov --ignore-errors mismatch --directory . --capture --output-file coverage.info
+      - uses: codecov/codecov-action@v2

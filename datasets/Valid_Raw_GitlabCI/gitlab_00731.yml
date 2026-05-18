@@ -1,0 +1,25 @@
+before_script:
+- apt-get update -qy
+- apt-get install sqlite3>=3.20.0 -qy
+- python -V
+cache:
+  paths:
+  - ~/.cache/pip/
+image: python:3.6
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - pip install -U pip setuptools
+  - pip install -e .[docs]
+  - make docs
+  - mv build/sphinx/html/ public/
+  stage: deploy
+test:
+  script:
+  - pip install -U pip setuptools
+  - pip install -e .[test]
+  - tox -e "py36-django{20,21,22},style"

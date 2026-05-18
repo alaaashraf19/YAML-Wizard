@@ -1,0 +1,18 @@
+build:
+  artifacts:
+    paths:
+    - chromeExtension.zip
+  only:
+  - master
+  script:
+  - apk update
+  - apk upgrade
+  - apk add zip
+  - yarn
+  - npm run bundle
+  - cd chromeExtension
+  - zip -9 -r ../chromeExtension.zip . -x *.map
+cache:
+  paths:
+  - node_modules/
+image: node:alpine

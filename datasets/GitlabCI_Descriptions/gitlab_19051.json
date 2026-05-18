@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_19051",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1904,
+  "description": "Create a GitLab CI pipeline with three stages: test, other_version, and real. Add five jobs (centos, debian, fedora, opensuse, ubuntu) in the real stage that each use the ocaml/opam:<distro> Docker image, allow failures, run a before_script installing m4 with the distro's package manager (yum -y m4, apt-get update && apt-get install -y m4, dnf -y m4, zypper --non-interactive up && zypper --non-interactive in m4) and then execute `export OC_NOTEST=true; ./gitlab-ci.sh system`. Add five Alpine‑based jobs for specific OCaml versions: ocaml_402, ocaml_403, ocaml_403_flambda, ocaml_404, ocaml_404_flambda, each using the matching ocaml/opam:alpine_ocaml-<version> image, install m4 via `apk update && apk add m4` in before_script, and run `./gitlab-ci.sh` (ocaml_403 runs without the OC_NOTEST export and is not allowed to fail, all others allow failures); place ocaml_402, ocaml_403_flambda, ocaml_404, ocaml_404_flambda in the other_version stage and ocaml_403 in the test stage. No caches, artifacts, services, or deployment targets are defined, and the allow_failure flag is true for all jobs except ocaml_403.",
+  "tags": [
+    "ocaml",
+    "opam",
+    "docker",
+    "centos",
+    "debian",
+    "fedora",
+    "opensuse",
+    "ubuntu",
+    "alpine",
+    "m4"
+  ]
+}

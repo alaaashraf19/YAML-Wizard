@@ -1,0 +1,14 @@
+{
+  "sha": "16c318a846a17338deedb264c8dd46ccee45db26352c6a0b0492d2f4368b859e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1091,
+  "description": "Create a GitHub Actions workflow named Release that triggers on release creation. The workflow should have three jobs: validate-version, build, and release. The validate-version job checks out the code, sets up Python 3.13, and validates the release version using make. The build job uses a reusable workflow from alexdlaird/pyngrok. The release job depends on build and validate-version, checks out the code, sets up Python 3.13, and publishes to PyPI using make upload with credentials from secrets.",
+  "tags": [
+    "python",
+    "release",
+    "pypi",
+    "twine",
+    "github-actions"
+  ]
+}

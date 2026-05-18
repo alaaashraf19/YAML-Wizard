@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_16229",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 381,
+  "description": "Create a GitLab CI pipeline that uses the ruby:2.4 Docker image. Define a deploy stage with a job named Deployment that runs in the deploy stage. In its before_script run `gem install dpl` and `wget -qO- https://cli-assets.heroku.com/install-ubuntu.sh | sh` to install the Heroku CLI. In the script execute `dpl --provider=heroku --app=$HEROKU_APPNAME --api-key=$HEROKU_APIKEY`, then `export HEROKU_API_KEY=$HEROKU_APIKEY`, and finally `heroku run --app $HEROKU_APPNAME migrate`. Set the job environment to production with URL `$HEROKU_APP_HOST`. No caches, artifacts, or conditional rules are defined.",
+  "tags": [
+    "ruby",
+    "heroku",
+    "dpl",
+    "deploy"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_08018",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 264,
+  "description": "Create a GitLab CI pipeline that uses the python:3.6 Docker image and defines two stages: test and publish. Include a before_script that creates a virtual environment with python3 -m venv fctx, upgrades pip, activates the venv, upgrades wheel and setuptools, and installs test requirements from requirements_test.txt. Add a test-django-sqlite job in the test stage that runs make test-all. No artifacts, caches, or special rules are defined.",
+  "tags": [
+    "python-3.6",
+    "django",
+    "sqlite",
+    "make",
+    "pip",
+    "venv",
+    "test"
+  ]
+}

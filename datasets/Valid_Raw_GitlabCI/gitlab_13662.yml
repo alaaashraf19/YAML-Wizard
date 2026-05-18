@@ -1,0 +1,60 @@
+.docker_build:
+  script:
+  - docker build -t "$APPLICATION_REPOSITORY:$APPLICATION_TAG" .
+  - '[[ -n "$CI_REGISTRY_USER" ]] && docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD"
+    "$CI_REGISTRY"'
+  - docker push "$APPLICATION_REPOSITORY:$APPLICATION_TAG"
+.docker_release:
+  script:
+  - docker pull "$APPLICATION_REPOSITORY:$APPLICATION_TAG"
+  - docker tag "$APPLICATION_REPOSITORY:$APPLICATION_TAG" "$RELEASE_REPOSITORY:$RELEASE_TAG"
+  - '[[ -n "$CI_REGISTRY_USER" ]] && docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD"
+    "$CI_REGISTRY"'
+  - docker push "$RELEASE_REPOSITORY:$RELEASE_TAG"
+  stage: release
+  variables:
+    RELEASE_REPOSITORY: $CI_REGISTRY_IMAGE
+    RELEASE_TAG: latest
+codequality:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - gl-code-quality-report.json
+    reports:
+      codequality: gl-code-quality-report.json
+  script:
+  - docker pull "$APPLICATION_REPOSITORY:$APPLICATION_TAG"
+  - docker tag "$APPLICATION_REPOSITORY:$APPLICATION_TAG" codeclimate/codeclimate-gocyclo
+  - docker run --rm --env CODECLIMATE_CODE="$(pwd)" --volume "$(pwd)":/code --volume
+    /var/run/docker.sock:/var/run/docker.sock --volume /tmp/cc:/tmp/cc codeclimate/codeclimate:0.85.5
+    analyze -f json --dev | tee gl-code-quality-report.json
+  - "if [ \"$(cat gl-code-quality-report.json)\" != \"[]\" ] ; then\n  apk add -U\
+    \ --no-cache jq > /dev/null\n  jq -C . gl-code-quality-report.json\nfi\n"
+  stage: test
+docker tagged image:
+  extends: .docker_release
+  only:
+  - tags
+  variables:
+    RELEASE_TAG: $CI_COMMIT_TAG
+docker_image:
+  extends: .docker_build
+  stage: build
+image: docker:19.03.1-git
+promote to latest:
+  extends: .docker_release
+  only:
+  - tags
+  - master
+  when: manual
+services:
+- docker:19.03.1-dind
+stages:
+- build
+- test
+- release
+variables:
+  APPLICATION_REPOSITORY: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG
+  APPLICATION_TAG: $CI_COMMIT_SHA
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: ''

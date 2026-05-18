@@ -1,0 +1,14 @@
+{
+  "sha": "e7e92f2d0388367bb6579d75cda16cfab2f7421c69a4ef9eeaf0dc03e7da6f8c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 678,
+  "description": "Create a GitHub Actions workflow named Integration Tests that runs on pull requests and workflow dispatches. Use an ubuntu-latest job with a matrix strategy to run integration tests for multiple examples (mupdf, poppler, qpdf). In each job, check out the repository with submodules, build a base Docker image, and then build a demo Docker image for the specific example.",
+  "tags": [
+    "docker",
+    "integration-tests",
+    "ubuntu",
+    "matrix",
+    "github-actions"
+  ]
+}

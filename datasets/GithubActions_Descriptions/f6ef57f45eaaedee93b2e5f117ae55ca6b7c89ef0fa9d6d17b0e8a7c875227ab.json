@@ -1,0 +1,16 @@
+{
+  "sha": "f6ef57f45eaaedee93b2e5f117ae55ca6b7c89ef0fa9d6d17b0e8a7c875227ab",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2347,
+  "description": "Create a GitHub Actions workflow named CI that runs on every push. The workflow has two jobs: build-windows and build-other. The build-windows job runs on a Windows environment with a matrix strategy for different OS configurations, and it uses vcpkg to install packages, restore artifacts, and build with CMake and Ninja. The build-other job runs on macOS and Linux environments, installs dependencies, creates a build environment, configures CMake, and builds the project.",
+  "tags": [
+    "ci",
+    "cmake",
+    "vcpkg",
+    "windows",
+    "macos",
+    "linux",
+    "build"
+  ]
+}

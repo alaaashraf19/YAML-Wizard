@@ -1,0 +1,87 @@
+before_script:
+- sed "s/JWT_SECRET/$JWT_TOKEN/g" -i src/main/resources/config/application-prod.yml
+- sed "s/GMAIL_PASSWORD/$GMAIL_PASS/g" -i src/main/resources/config/application-prod.yml
+- export MAVEN_USER_HOME=`pwd`/.maven
+- ./mvnw com.github.eirslett:frontend-maven-plugin:install-node-and-yarn -DnodeVersion=v8.12.0
+  -DyarnVersion=v1.10.1 -Dmaven.repo.local=$MAVEN_USER_HOME
+- ./mvnw com.github.eirslett:frontend-maven-plugin:yarn -Dmaven.repo.local=$MAVEN_USER_HOME
+cache:
+  key: $CI_COMMIT_REF_NAME
+  paths:
+  - .maven/
+docker-push:
+  before_script:
+  - docker info
+  - cp target/*.war src/main/docker
+  dependencies:
+  - maven-package
+  image: docker:latest
+  script:
+  - docker login -u "gitlab-ci-token" -p "$CI_BUILD_TOKEN" $REGISTRY_URL
+  - docker build -f src/main/docker/Dockerfile -t $IMAGE_TAG src/main/docker
+  - docker push $IMAGE_TAG
+  services:
+  - docker:dind
+  stage: release
+  variables:
+    DOCKER_DRIVER: overlay2
+    DOCKER_HOST: tcp://docker:2375
+    IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+    REGISTRY_URL: registry.gitlab.com
+frontend-test:
+  artifacts:
+    expire_in: 1 day
+    paths:
+    - target/test-results
+    reports:
+      junit: target/test-results/jest/TESTS-*.xml
+  script:
+  - ./mvnw com.github.eirslett:frontend-maven-plugin:yarn -Dfrontend.yarn.arguments='test
+    -u' -Dmaven.repo.local=$MAVEN_USER_HOME
+  stage: test
+image: jhipster/jhipster:v5.4.2
+maven-compile:
+  artifacts:
+    expire_in: 1 day
+    paths:
+    - target/classes/
+    - target/generated-sources/
+  script:
+  - cat src/main/resources/config/application-prod.yml
+  - ./mvnw compile -Dmaven.repo.local=$MAVEN_USER_HOME
+  stage: build
+maven-package:
+  artifacts:
+    expire_in: 1 day
+    paths:
+    - target/*.war
+  script:
+  - ./mvnw verify -Pprod -DskipTests -Dmaven.repo.local=$MAVEN_USER_HOME
+  stage: package
+maven-test:
+  artifacts:
+    expire_in: 1 day
+    paths:
+    - target/test-results
+    reports:
+      junit: target/surefire-reports/TEST-*.xml
+  script:
+  - ./mvnw test -Dmaven.repo.local=$MAVEN_USER_HOME
+  stage: test
+sonar-analyze:
+  allow_failure: true
+  dependencies:
+  - maven-test
+  - frontend-test
+  script:
+  - ./mvnw compile -Dmaven.repo.local=$MAVEN_USER_HOME
+  - ./mvnw org.jacoco:jacoco-maven-plugin:prepare-agent sonar:sonar -Dsonar.organization=timo69-github
+    -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN -Dmaven.repo.local=$MAVEN_USER_HOME
+  stage: analyze
+stages:
+- build
+- test
+- analyze
+- package
+- release
+- deploy

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_03934",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 366,
+  "description": "Create a GitLab CI pipeline that uses the baasie/java-node-terraform:latest Docker image and defines two stages: AAT and deploy. In the AAT stage add an AAT job that runs `npm i --silent` then `npm run aat`, and publishes the `target/site/serenity/` directory as an artifact. In the deploy stage add a pages job that moves `target/site/serenity/` to `public/`, sets the environment name to production, keeps the `public/` artifact for 30 days, and only runs on the master branch. Ensure the pages job is configured for GitLab Pages deployment.",
+  "tags": [
+    "java-node-terraform",
+    "npm",
+    "aat",
+    "pages",
+    "production",
+    "gitlab-pages"
+  ]
+}

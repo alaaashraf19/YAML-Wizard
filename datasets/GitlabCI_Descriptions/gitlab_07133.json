@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_07133",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 6507,
+  "description": "Create a GitLab CI pipeline using the ubuntu:bionic Docker image with a cache keyed by $CI_JOB_NAME that stores the depends/ directory. Define global variables BINDIR, BITCOIN_CONFIGURE_OPTS_GLOBAL, BUILD_DEPS, COMMON_DEPS, LIBDIR, LOGDIR, OUTDIR and a before_script that creates those directories. Add a build stage with six jobs—build:arm, build:linux-32, build:linux-64, build:osx, build:win-32, build:win-64—each running its listed apt-get update/install commands, building dependencies via 'make HOST=$HOST -j4', exporting BITCOIN_CONFIGURE_OPTS, LD_LIBRARY_PATH and LDFLAGS as shown, then executing './autogen.sh', './configure $BITCOIN_CONFIGURE_OPTS', and 'make -j4 install' or 'make -j4 deploy', stripping binaries or moving installer files, and always publishing $OUTDIR (and for osx also e-Gulden-Core.dmg) as artifacts that expire in one week. Then add a test stage with a test:linux-64 job that depends on build:linux-64 and runs '$BINDIR/test_egulden || true', '$BINDIR/test_egulden-qt || true', and '$BINDIR/test_egulden --run_test=oerushield_tests'. No special rules, only/except, or deployment targets are defined.",
+  "tags": [
+    "ubuntu-bionic",
+    "cross-compile",
+    "bitcoin-core",
+    "make",
+    "apt",
+    "docker-image",
+    "cache"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_10734",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 709,
+  "description": "Create a GitLab CI pipeline using the golang Docker image and define variables ARTIFACTS_DIR, BIN_NAME, and GO_PROJECT. Add a single stage called build-and-unit-test and a job named build-and-unit-test-project in that stage. In the global before_script, create the Go workspace directories (${GOPATH}/src/${GO_PROJECT} and ${CI_PROJECT_DIR}/${ARTIFACTS_DIR}), copy the project files into the workspace, and change to the project directory. In the job script, run go build -o ${CI_PROJECT_DIR}/${ARTIFACTS_DIR}/${BIN_NAME}, then run go test $(go list ./... | grep -v /vendor/) -v -coverprofile .testCoverage.txt, and finally build a Windows 386 binary with GOOS=windows GOARCH=386 go build -o ${CI_PROJECT_DIR}/${ARTIFACTS_DIR}/amd64/${BIN_NAME}. Archive the ${ARTIFACTS_DIR} directory as job artifacts.",
+  "tags": [
+    "golang",
+    "go-build",
+    "go-test",
+    "artifacts",
+    "gitlab-ci"
+  ]
+}

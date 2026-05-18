@@ -1,0 +1,13 @@
+{
+  "sha": "d922df21b54c53af26f935c039010adc77ee0e9d3e2e6e2599e65bdb4899f9fd",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 959,
+  "description": "Create a GitHub Actions workflow named SHA that runs on every push to non-main branches. The workflow checks out the repository on an ubuntu-latest machine, generates a short SHA hash, and commits it as a new file named GITHUB_SHA.h using the GITHUB_TOKEN from secrets.",
+  "tags": [
+    "github-actions",
+    "commit-sha",
+    "ubuntu",
+    "autocommit"
+  ]
+}

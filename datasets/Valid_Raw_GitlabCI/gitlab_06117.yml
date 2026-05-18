@@ -1,0 +1,319 @@
+.build_image:
+  before_script:
+  - docker info
+  - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" "$CI_REGISTRY"
+  image: registry.gitlab.com/datadrivendiscovery/images/testing-docker:ubuntu-bionic
+  only:
+  - master
+  services:
+  - alias: docker
+    name: registry.gitlab.com/datadrivendiscovery/images/docker:19-dind
+  variables:
+    DOCKER_DRIVER: overlay2
+    DOCKER_HOST: tcp://docker:2375
+    GIT_SUBMODULE_STRATEGY: recursive
+base:ubuntu-bionic-python36:
+  extends: .build_image
+  needs: []
+  script: ./build.sh base ubuntu-bionic-python36
+  stage: base
+base:ubuntu-bionic-python37:
+  extends: .build_image
+  needs: []
+  script: ./build.sh base ubuntu-bionic-python37
+  stage: base
+base:ubuntu-bionic-python38:
+  extends: .build_image
+  needs: []
+  script: ./build.sh base ubuntu-bionic-python38
+  stage: base
+base:ubuntu-focal-python39:
+  extends: .build_image
+  needs: []
+  script: ./build.sh base ubuntu-focal-python39
+  stage: base
+core-lite:ubuntu-bionic-python36-devel:
+  extends: .build_image
+  needs:
+  - libs-lite:ubuntu-bionic-python36
+  script: ./build.sh core-lite ubuntu-bionic-python36-devel
+  stage: core
+core-lite:ubuntu-bionic-python36-master:
+  extends: .build_image
+  needs:
+  - libs-lite:ubuntu-bionic-python36
+  script: ./build.sh core-lite ubuntu-bionic-python36-master
+  stage: core
+core-lite:ubuntu-bionic-python37-devel:
+  extends: .build_image
+  needs:
+  - libs-lite:ubuntu-bionic-python37
+  script: ./build.sh core-lite ubuntu-bionic-python37-devel
+  stage: core
+core-lite:ubuntu-bionic-python37-master:
+  extends: .build_image
+  needs:
+  - libs-lite:ubuntu-bionic-python37
+  script: ./build.sh core-lite ubuntu-bionic-python37-master
+  stage: core
+core-lite:ubuntu-bionic-python38-devel:
+  extends: .build_image
+  needs:
+  - libs-lite:ubuntu-bionic-python38
+  script: ./build.sh core-lite ubuntu-bionic-python38-devel
+  stage: core
+core-lite:ubuntu-bionic-python38-master:
+  extends: .build_image
+  needs:
+  - libs-lite:ubuntu-bionic-python38
+  script: ./build.sh core-lite ubuntu-bionic-python38-master
+  stage: core
+core:ubuntu-bionic-python36-devel:
+  extends: .build_image
+  needs:
+  - libs:ubuntu-bionic-python36
+  script: ./build.sh core ubuntu-bionic-python36-devel
+  stage: core
+  tags:
+  - d3m runner
+core:ubuntu-bionic-python36-master:
+  extends: .build_image
+  needs:
+  - libs:ubuntu-bionic-python36
+  script: ./build.sh core ubuntu-bionic-python36-master
+  stage: core
+  tags:
+  - d3m runner
+core:ubuntu-bionic-python37-devel:
+  extends: .build_image
+  needs:
+  - libs:ubuntu-bionic-python37
+  script: ./build.sh core ubuntu-bionic-python37-devel
+  stage: core
+  tags:
+  - d3m runner
+core:ubuntu-bionic-python37-master:
+  extends: .build_image
+  needs:
+  - libs:ubuntu-bionic-python37
+  script: ./build.sh core ubuntu-bionic-python37-master
+  stage: core
+  tags:
+  - d3m runner
+core:ubuntu-bionic-python38-devel:
+  extends: .build_image
+  needs:
+  - libs:ubuntu-bionic-python38
+  script: ./build.sh core ubuntu-bionic-python38-devel
+  stage: core
+  tags:
+  - d3m runner
+core:ubuntu-bionic-python38-master:
+  extends: .build_image
+  needs:
+  - libs:ubuntu-bionic-python38
+  script: ./build.sh core ubuntu-bionic-python38-master
+  stage: core
+  tags:
+  - d3m runner
+dind:
+  extends: .build_image
+  needs: []
+  only:
+  - schedules
+  script:
+  - docker pull docker:19-dind
+  - docker tag docker:19-dind "$CI_REGISTRY_IMAGE/docker:19-dind"
+  - docker push "$CI_REGISTRY_IMAGE/docker:19-dind"
+  stage: base
+libs-lite:ubuntu-bionic-python36:
+  extends: .build_image
+  needs:
+  - base:ubuntu-bionic-python36
+  script: ./build.sh libs-lite ubuntu-bionic-python36
+  stage: libs
+libs-lite:ubuntu-bionic-python37:
+  extends: .build_image
+  needs:
+  - base:ubuntu-bionic-python37
+  script: ./build.sh libs-lite ubuntu-bionic-python37
+  stage: libs
+libs-lite:ubuntu-bionic-python38:
+  extends: .build_image
+  needs:
+  - base:ubuntu-bionic-python38
+  script: ./build.sh libs-lite ubuntu-bionic-python38
+  stage: libs
+libs:ubuntu-bionic-python36:
+  extends: .build_image
+  needs:
+  - shared:ubuntu-bionic-python36
+  script: ./build.sh libs ubuntu-bionic-python36
+  stage: libs
+  tags:
+  - d3m runner
+libs:ubuntu-bionic-python37:
+  extends: .build_image
+  needs:
+  - shared:ubuntu-bionic-python37
+  script: ./build.sh libs ubuntu-bionic-python37
+  stage: libs
+  tags:
+  - d3m runner
+libs:ubuntu-bionic-python38:
+  extends: .build_image
+  needs:
+  - shared:ubuntu-bionic-python38
+  script: ./build.sh libs ubuntu-bionic-python38
+  stage: libs
+  tags:
+  - d3m runner
+primitives:ubuntu-bionic-python36-devel:
+  extends: .build_image
+  needs:
+  - core:ubuntu-bionic-python36-devel
+  script: ./build.sh primitives ubuntu-bionic-python36-devel
+  stage: primitives
+  tags:
+  - d3m runner
+primitives:ubuntu-bionic-python36-master:
+  extends: .build_image
+  needs:
+  - core:ubuntu-bionic-python36-master
+  script: ./build.sh primitives ubuntu-bionic-python36-master
+  stage: primitives
+  tags:
+  - d3m runner
+primitives:ubuntu-bionic-python37-devel:
+  extends: .build_image
+  needs:
+  - core:ubuntu-bionic-python37-devel
+  script: ./build.sh primitives ubuntu-bionic-python37-devel
+  stage: primitives
+  tags:
+  - d3m runner
+primitives:ubuntu-bionic-python37-master:
+  extends: .build_image
+  needs:
+  - core:ubuntu-bionic-python37-master
+  script: ./build.sh primitives ubuntu-bionic-python37-master
+  stage: primitives
+  tags:
+  - d3m runner
+primitives:ubuntu-bionic-python38-devel:
+  extends: .build_image
+  needs:
+  - core:ubuntu-bionic-python38-devel
+  script: ./build.sh primitives ubuntu-bionic-python38-devel
+  stage: primitives
+  tags:
+  - d3m runner
+primitives:ubuntu-bionic-python38-master:
+  extends: .build_image
+  needs:
+  - core:ubuntu-bionic-python38-master
+  script: ./build.sh primitives ubuntu-bionic-python38-master
+  stage: primitives
+  tags:
+  - d3m runner
+shared:ubuntu-bionic-python36:
+  extends: .build_image
+  needs:
+  - base:ubuntu-bionic-python36
+  script: ./build.sh shared ubuntu-bionic-python36
+  stage: shared
+shared:ubuntu-bionic-python37:
+  extends: .build_image
+  needs:
+  - base:ubuntu-bionic-python37
+  script: ./build.sh shared ubuntu-bionic-python37
+  stage: shared
+shared:ubuntu-bionic-python38:
+  extends: .build_image
+  needs:
+  - base:ubuntu-bionic-python38
+  script: ./build.sh shared ubuntu-bionic-python38
+  stage: shared
+shared:ubuntu-focal-python39:
+  extends: .build_image
+  needs:
+  - base:ubuntu-focal-python39
+  script: ./build.sh shared ubuntu-focal-python39
+  stage: shared
+stages:
+- base
+- shared
+- libs
+- core
+- primitives
+- testing
+- deploy
+testing-docker:ubuntu-bionic:
+  extends: .build_image
+  needs: []
+  script: ./build.sh testing-docker ubuntu-bionic
+  stage: testing
+testing-lite:ubuntu-bionic-python36:
+  extends: .build_image
+  needs:
+  - base:ubuntu-bionic-python36
+  script: ./build.sh testing-lite ubuntu-bionic-python36
+  stage: testing
+testing-lite:ubuntu-bionic-python37:
+  extends: .build_image
+  needs:
+  - base:ubuntu-bionic-python37
+  script: ./build.sh testing-lite ubuntu-bionic-python37
+  stage: testing
+testing-lite:ubuntu-bionic-python38:
+  extends: .build_image
+  needs:
+  - base:ubuntu-bionic-python38
+  script: ./build.sh testing-lite ubuntu-bionic-python38
+  stage: testing
+testing-lite:ubuntu-focal-python39:
+  extends: .build_image
+  needs:
+  - base:ubuntu-focal-python39
+  script: ./build.sh testing-lite ubuntu-focal-python39
+  stage: testing
+testing:ubuntu-bionic-python36:
+  extends: .build_image
+  needs:
+  - shared:ubuntu-bionic-python36
+  script: ./build.sh testing ubuntu-bionic-python36
+  stage: testing
+testing:ubuntu-bionic-python37:
+  extends: .build_image
+  needs:
+  - shared:ubuntu-bionic-python37
+  script: ./build.sh testing ubuntu-bionic-python37
+  stage: testing
+testing:ubuntu-bionic-python38:
+  extends: .build_image
+  needs:
+  - shared:ubuntu-bionic-python38
+  script: ./build.sh testing ubuntu-bionic-python38
+  stage: testing
+testing:ubuntu-focal-python39:
+  extends: .build_image
+  needs:
+  - shared:ubuntu-focal-python39
+  script: ./build.sh testing ubuntu-focal-python39
+  stage: testing
+trigger_docs_generation:
+  image: registry.gitlab.com/datadrivendiscovery/images/testing-docker:ubuntu-bionic
+  only:
+  - master
+  script:
+  - if [ -n "$DOCS_TRIGGER_TOKEN" ]; then curl --fail -X POST -F token=$DOCS_TRIGGER_TOKEN
+    -F ref=master https://gitlab.com/api/v4/projects/7130595/trigger/pipeline; fi
+  stage: deploy
+trigger_primitives_tests:
+  image: registry.gitlab.com/datadrivendiscovery/images/testing-docker:ubuntu-bionic
+  only:
+  - master
+  script:
+  - if [ -n "$PRIMITIVE_TESTS_TRIGGER_TOKEN" ]; then curl -X POST -F token=$PRIMITIVE_TESTS_TRIGGER_TOKEN
+    -F ref=master https://gitlab.com/api/v4/projects/17019004/trigger/pipeline; fi
+  stage: deploy

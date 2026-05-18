@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_09148",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 975,
+  "description": "Create a GitLab CI pipeline using the node:10 Docker image and caching the node_modules directory. Apply a global before_script that runs git config --global user.email \"mail@antlike.tech\", npm install, and npm run build. Define two stages: test and deploy. In the test stage add a lint_code job that runs npm run lint, a check_for_outdated_dependencies job (only on master) that runs npx npm-check -ps, a check_for_vulnerable_dependencies job (only on master) that runs npm i -g snyk then snyk test, and four test jobs: run_tests_latest (image node:10) running npm test, run_tests_lts (image node:8) running npm test, run_tests_maintenance (image node:9) running npm test, and run_tests_maintenance_lts (image node:6) running npm test. In the deploy stage add a create_release_file job (only on master) that runs npm i --no-save semantic-release @semantic-release/gitlab @semantic-release/changelog @semantic-release/npm @semantic-release/git @semantic-release/gitlab-config and then npx semantic-release.",
+  "tags": [
+    "node",
+    "npm",
+    "npm-check",
+    "snyk",
+    "semantic-release",
+    "lint",
+    "tests",
+    "cache"
+  ]
+}

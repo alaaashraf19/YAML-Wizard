@@ -1,0 +1,20 @@
+{
+  "sha": "gitlab_11954",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2649,
+  "description": "Create a GitLab CI pipeline using the python:3.5 Docker image globally and node:12 for JavaScript jobs, with a redis:latest and postgres:9.5 service for the Django tests. Define three stages: test, package, and unit_tests, and set a cache keyed by $CI_MERGE_REQUEST_ID that stores ${PIP_CACHE}, ${APP}/frontend/node_modules, and ${VENV_DIR}. In the package stage add a buildwheels job that runs apt‑get update, installs apt‑transport‑https, wget, adds the NodeSource repo, installs nodejs and libldap2-dev/libsasl2-dev, then pip3 ${PIP_TRUSTED_HOSTS} --cache-dir=${PIP_CACHE} install -r requirements/build.txt and pip3 wheel --wheel-dir=${WHEELHOUSE} ., publishing the ${WHEELHOUSE} directory as a \"packaged-wheels\" artifact that expires in one hour. In the test stage add a djangotests job (with the global before_script creating ${PIP_CACHE}, a virtualenv at ${VENV_DIR} and activating it) that installs libldap2-dev/libsasl2-dev, copies configuration, generates RSA keys and a self‑signed certificate with openssl, installs dev requirements via pip3, runs python setup.py develop, and finally executes ${APP} test; also add javascript_lint (node:12, before_script cd ${APP}/frontend && npm install, script npm run lint), javascript_test (node:12, before_script sets timezone, cd ${APP}/frontend && npm install, script npm test), python_lint (allow_failure true, script pip3 ${PIP_TRUSTED_HOSTS} --cache-dir=${PIP_CACHE} install flake8 && flake8), and security_checks (script pip3 ${PIP_TRUSTED_HOSTS} --cache-dir=${PIP_CACHE} install bandit==1.6.2 && bandit -r ${APP} -x ${APP}/*/migrations,${APP}/frontend).",
+  "tags": [
+    "python-3.5",
+    "node-12",
+    "docker",
+    "redis",
+    "postgres",
+    "pip-cache",
+    "wheel-build",
+    "django",
+    "eslint",
+    "flake8",
+    "bandit"
+  ]
+}

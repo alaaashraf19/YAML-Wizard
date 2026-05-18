@@ -1,0 +1,16 @@
+{
+  "sha": "ed0be8be5287c417a29d701d0315761744bef88e4e80b73b83fc3f4721388b95",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2212,
+  "description": "Create a GitHub Actions workflow named Ubuntu 22.04 CI that runs on push to main and tags, and on pull requests. Use an ubuntu-latest job in a ubuntu:22.04 container with a matrix of LLVM versions 11, 13, 14, and 15. The job should install software, checkout sources with submodules, detect package metadata, run a CI task with ansible-playbook, and publish or move a package depending on the presence of a Cloudsmith API key.",
+  "tags": [
+    "ubuntu",
+    "llvm",
+    "ansible",
+    "cloudsmith",
+    "github-actions",
+    "ci",
+    "package-management"
+  ]
+}

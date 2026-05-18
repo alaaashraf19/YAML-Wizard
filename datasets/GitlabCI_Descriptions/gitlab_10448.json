@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_10448",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 212,
+  "description": "Create a GitLab CI pipeline that uses the gcc Docker image. Define a single stage called build. Add a job named build that runs in the build stage, executes \"cd 'Project Avenue'\" then compiles all .cpp and .hpp files with \"g++ *.cpp *.hpp -std=c++11 -lpthread -lsfml-system -lsfml-window -lsfml-graphics -lsfml-audio -o main\", and finally uploads the resulting \"main\" executable as an artifact. No caches, services, or special rules are required.",
+  "tags": [
+    "gcc",
+    "c++",
+    "sfml",
+    "build",
+    "gitlab-ci"
+  ]
+}

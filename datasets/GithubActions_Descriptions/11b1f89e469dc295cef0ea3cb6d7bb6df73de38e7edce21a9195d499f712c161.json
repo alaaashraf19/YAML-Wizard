@@ -1,0 +1,14 @@
+{
+  "sha": "11b1f89e469dc295cef0ea3cb6d7bb6df73de38e7edce21a9195d499f712c161",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1000,
+  "description": "Create a GitHub Actions workflow named release that runs when the tests workflow on the master branch completes successfully. The workflow has two jobs: publish and notify. The publish job runs on ubuntu-latest, checks out the code, installs poetry, sets up poetry with a PyPI token from secrets, and publishes the package. The notify job runs on ubuntu-latest, depends on the publish job, and sends a Slack notification with a success message.",
+  "tags": [
+    "poetry",
+    "pypi",
+    "slack",
+    "release",
+    "notifications"
+  ]
+}

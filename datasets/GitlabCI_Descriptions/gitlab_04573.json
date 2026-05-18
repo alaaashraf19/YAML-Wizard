@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_04573",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 397,
+  "description": "Create a GitLab CI pipeline with two stages: test and deploy. In the test stage add a unit_test job that uses the brianegan/flutter_lcov:v9 Docker image, runs \"flutter test --coverage\" then \"genhtml coverage/lcov.info --output=coverage\", and stores the coverage/ directory as an artifact. In the deploy stage add a pages job that uses the alpine Docker image, depends on unit_test, runs \"mkdir public\" and \"mv coverage/ public/coverage/\", publishes the public/ directory as a pages artifact, and only runs on the master branch.",
+  "tags": [
+    "flutter",
+    "lcov",
+    "coverage",
+    "gitlab-pages",
+    "alpine",
+    "test"
+  ]
+}

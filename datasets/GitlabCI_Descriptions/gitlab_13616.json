@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_13616",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2679,
+  "description": "Create a GitLab CI pipeline using the docker:latest image with a docker:dind service and a before_script that runs docker info and logs in to $CI_REGISTRY with $CI_JOB_TOKEN. Define three stages: build, test, and release. Add build_centos6 and build_centos7 jobs in the build stage (except master) that set DISTRO and TAG variables and execute \"docker build --pull -t $CONTAINER_TEST_IMAGE:$TAG -f Dockerfile.$DISTRO .\" then \"docker push $CONTAINER_TEST_IMAGE:$TAG\". Add test_centos6 and test_centos7 jobs in the test stage (except master) that set DISTRO, INIT and TAG variables and run \"docker pull $CONTAINER_TEST_IMAGE:$TAG\", \"docker run --name $CONTAINER_ID -d --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro $CONTAINER_TEST_IMAGE:$TAG $INIT\", \"docker exec --tty $CONTAINER_ID env TERM=xterm ansible --version\", and \"docker rm -f $CONTAINER_ID\". Add release-image_centos6, release-image_centos7, and release-image_latest jobs in the release stage (only master) that set RELEASE_TAG and TAG variables and run \"docker pull $CONTAINER_DEV_IMAGE:$TAG\", \"docker tag $CONTAINER_DEV_IMAGE:$TAG $CONTAINER_RELEASE_IMAGE:$RELEASE_TAG\", and \"docker push $CONTAINER_RELEASE_IMAGE:$RELEASE_TAG\", using the variables CONTAINER_DEV_IMAGE, CONTAINER_ID, CONTAINER_RELEASE_IMAGE, and CONTAINER_TEST_IMAGE throughout.",
+  "tags": [
+    "docker",
+    "dind",
+    "build",
+    "test",
+    "release",
+    "centos6",
+    "centos7",
+    "ansible",
+    "gitlab-ci"
+  ]
+}

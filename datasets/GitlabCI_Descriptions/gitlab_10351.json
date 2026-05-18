@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_10351",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 603,
+  "description": "Create a GitLab CI pipeline with two stages, build and deploy, and no global image. In the build stage add a job named build that runs `mkdir .public`, `cp -r * .public`, and `mv .public public`, then publishes the resulting public/ directory as an artifact. In the deploy stage add a job named \"deploy to production\" that uses the python:latest Docker image, runs only on the master branch, sets the variable S3_BUCKET_NAME to improbible.com, and runs `pip install awscli`, `aws s3 rm s3://$S3_BUCKET_NAME --recursive`, `aws s3 cp ./public/ s3://$S3_BUCKET_NAME/ --recursive --exclude \".git/*\" --include \"*\" --acl public-read`, and `aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths \"/*\"`. The deploy job targets the production environment and updates the S3 bucket and CloudFront distribution.",
+  "tags": [
+    "python",
+    "awscli",
+    "s3",
+    "cloudfront",
+    "gitlab-ci",
+    "static-site",
+    "production"
+  ]
+}

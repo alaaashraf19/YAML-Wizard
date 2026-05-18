@@ -1,0 +1,44 @@
+node-10:
+  before_script:
+  - npm install
+  image: node:10
+  script:
+  - npm test
+  services:
+  - alias: dynamodb
+    name: cnadiminti/dynamodb-local
+  stage: test
+  variables:
+    AWS_DYNAMODB_ENDPOINT: http://dynamodb:8000
+    DATA_DIR: ./test/data
+    NODE_ENV: test
+node-6:
+  before_script:
+  - npm install
+  image: node:6
+  script:
+  - npm test
+  services:
+  - alias: dynamodb
+    name: cnadiminti/dynamodb-local
+  stage: test
+  variables:
+    AWS_DYNAMODB_ENDPOINT: http://dynamodb:8000
+    DATA_DIR: ./test/data
+    NODE_ENV: test
+node-8:
+  before_script:
+  - npm install
+  image: node:8
+  script:
+  - npm test
+  services:
+  - alias: dynamodb
+    name: cnadiminti/dynamodb-local
+  stage: test
+  variables:
+    AWS_DYNAMODB_ENDPOINT: http://dynamodb:8000
+    DATA_DIR: ./test/data
+    NODE_ENV: test
+stages:
+- test

@@ -1,0 +1,14 @@
+{
+  "sha": "ed1f3fadf1a1c5cb00009812e01e919d13b2508c09a3328513798d0fdf5f5781",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 829,
+  "description": "Create a GitHub Actions workflow named VS15-CI that runs on push and pull request events. The workflow should skip if any commit message contains '[skip ci]' or '[skip github]'. Use a windows-2016 job with a matrix strategy to build for both Win32 and x64 architectures with Visual Studio 15 2017 generator. Check out the repository, configure the build with CMake, build the project, and run CTest for the basic test.",
+  "tags": [
+    "windows",
+    "vs2017",
+    "cmake",
+    "ctest",
+    "ci"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "sha": "c588d24b3ea5b2cbb97b1a787552f155e2e5752ee92928821eeedfc6613b29a1",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3521,
+  "description": "Create a GitHub Actions workflow named 'CI: test with different hardware options' that runs on push to master and main branches, on pull request open and synchronize, on merge group checks requested, and on workflow dispatch with an optional debug input. The workflow should find changed files, then for each combination of hardware and parallelism options, test with a ubuntu-24.04 environment, checking out the repository, setting up Bazel and Python with caching, installing dependencies, running C++ tests, and executing a sample simulation.",
+  "tags": [
+    "bazel",
+    "python",
+    "tests",
+    "ubuntu",
+    "ci",
+    "hardware",
+    "parallelism"
+  ]
+}

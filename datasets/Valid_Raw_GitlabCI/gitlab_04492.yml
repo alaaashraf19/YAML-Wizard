@@ -1,0 +1,8 @@
+check_code:
+  script:
+  - ./.test/php_syntax.sh
+  stage: test
+  tags:
+  - php
+stages:
+- test

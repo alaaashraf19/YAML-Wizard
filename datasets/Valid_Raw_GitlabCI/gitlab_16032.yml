@@ -1,0 +1,23 @@
+build:cargo:
+  script:
+  - rustc --version && cargo --version
+  - cargo build --release
+  stage: build
+image: scorpil/rust:stable
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - cargo doc
+  - mkdir .public
+  - cp -a target/doc/. .public
+  - cp index.html .public/
+  - mv .public public
+test:cargo:
+  script:
+  - rustc --version && cargo --version
+  - cargo test --verbose --jobs 1 --release
+  stage: test

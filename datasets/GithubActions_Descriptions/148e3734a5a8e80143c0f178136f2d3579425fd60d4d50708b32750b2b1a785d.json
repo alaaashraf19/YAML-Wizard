@@ -1,0 +1,14 @@
+{
+  "sha": "148e3734a5a8e80143c0f178136f2d3579425fd60d4d50708b32750b2b1a785d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2660,
+  "description": "Create a GitHub Actions workflow named Deploy to Steam that can be triggered manually with inputs for commit hash, version, and release channel. The workflow should run on an ubuntu-22.04 environment, install dependencies, clone the repository with submodules, fetch 3rd party SDKs using a token, restore ccache, cross-compile win64 artifacts with specific CMake arguments and secrets, and then deploy to Steam using secrets for authentication and configuration.",
+  "tags": [
+    "steam",
+    "deploy",
+    "cross-compile",
+    "ubuntu",
+    "github-actions"
+  ]
+}

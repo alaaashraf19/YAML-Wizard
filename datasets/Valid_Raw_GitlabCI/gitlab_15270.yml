@@ -1,0 +1,78 @@
+default:
+  image: node:lts
+packages:build:
+  before_script:
+  - corepack enable
+  - corepack prepare pnpm@latest-10 --activate
+  - pnpm config set store-dir .pnpm-store
+  cache:
+  - key:
+      files:
+      - pnpm-lock.yaml
+    paths:
+    - .pnpm-store
+  - key: radiolise-build-cache
+    paths:
+    - node_modules
+    - packages/**/dist
+    policy: push
+  script:
+  - pnpm -F './packages/*' install
+  - pnpm -F './packages/*' build
+  stage: build
+packages:deploy:
+  before_script:
+  - corepack enable
+  - corepack prepare pnpm@latest-10 --activate
+  - pnpm config set -- //registry.npmjs.org/:_authToken=$NPM_TOKEN
+  - pnpm -F './packages/*' install
+  cache:
+    key: radiolise-build-cache
+    paths:
+    - node_modules
+    - packages/**/dist
+    policy: pull
+  needs:
+  - packages:build
+  rules:
+  - if: $CI_PROJECT_ID == $TRUSTED_PROJECT_ID
+  script:
+  - pnpm changeset publish
+  stage: deploy
+pages:
+  artifacts:
+    paths:
+    - public
+  cache:
+    key: radiolise-build-cache
+    paths:
+    - packages/radiolise/dist
+    policy: pull
+  image: alpine:latest
+  needs:
+  - packages:build
+  script:
+  - mv packages/radiolise/dist public
+  - find public -type f -regex '.*\.\(htm\|html\|txt\|text\|js\|css\)$' -exec gzip
+    -f -k {} \;
+  stage: deploy
+server:deploy:
+  image: docker:git
+  needs: []
+  rules:
+  - if: $CI_PROJECT_ID == $TRUSTED_PROJECT_ID
+  script:
+  - ln -f sites/radiolise.com/Caddyfile Caddyfile
+  - docker compose build
+  - docker compose up -d
+  stage: deploy
+  tags:
+  - deployment
+variables:
+  RADIOLISE_BUILD_TARGET: backend
+  RADIOLISE_METADATA_SOCKET: wss://backend.radiolise.com/api/data-service
+  RADIOLISE_SITE_ADDRESS: backend.radiolise.com
+  TRUSTED_PROJECT_ID: '2921423'
+workflow:
+  rules:
+  - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH

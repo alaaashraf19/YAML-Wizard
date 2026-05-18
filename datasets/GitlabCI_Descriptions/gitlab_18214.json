@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_18214",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 675,
+  "description": "Create a GitLab CI pipeline using the mcr.microsoft.com/dotnet/sdk:8.0 Docker image and a global variable project set to NoData, with stages build, test, and publish. In the build stage add a build job that sets a build_path variable to $project, runs `cd $build_path` then `dotnet build --no-incremental -v q /warnaserror`. In the test stage add a test job that sets test_path to $project.Tests, runs `cd $test_path` then `dotnet test`. In the publish stage add a publish job targeting the production environment, limited to the master branch, that also sets build_path to $project and runs `cd $build_path`, `rm -rf bin`, `dotnet pack -v q /warnaserror -c Release`, `cd bin/Release`, and `dotnet nuget push ./*.nupkg --source https://api.nuget.org/v3/index.json --api-key $NUGET`.",
+  "tags": [
+    "dotnet",
+    "sdk-8.0",
+    "build",
+    "test",
+    "publish",
+    "nuget",
+    "production",
+    "gitlab-ci"
+  ]
+}

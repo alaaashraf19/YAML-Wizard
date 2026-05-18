@@ -1,0 +1,15 @@
+{
+  "sha": "affb871fc4032030589195dbb6b03627aff70c1812ae5efd0cb7124ed076560e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2004,
+  "description": "Create a GitHub Actions workflow named ros2 that runs on push and pull request events to the ros2 branch. The workflow should use an ubuntu-latest environment with a matrix strategy to build on different ROS distributions (humble, iron, jazzy) and Docker images. For each job, set up the ROS environment, create a ros2 workspace, checkout the rtabmap repository, and perform a colcon build.",
+  "tags": [
+    "ros2",
+    "ros",
+    "colcon",
+    "docker",
+    "ubuntu",
+    "github-actions"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_18895",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 674,
+  "description": "Create a GitLab CI pipeline using the uelen/archlinux-wayless:latest Docker image, caching the target/, cargo/, and xargo/ directories, and defining CARGO_HOME and XARGO_HOME variables pointing to the project’s cargo and xargo folders. Define three stages: build, test, and run. In the build stage add a make job that runs rustc --version && cargo --version, sets PATH to include $CARGO_HOME/bin and ~/.cargo/bin, then executes make. In the test stage add a test job that sets the same PATH and runs make test. In the run stage add a run job that sets PATH, runs make, then runs timeout 80 make nographic piping output to a file and finally checks the last 20 lines of the output for the string \"FIN\" and echoes \"Successfully ran\" if found.",
+  "tags": [
+    "archlinux",
+    "rust",
+    "cargo",
+    "make",
+    "gitlab-ci",
+    "cache"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_14502",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 555,
+  "description": "Create a GitLab CI pipeline that defines a reusable job template called .custom_runner_template. The template extends .base_job_template, sets GIT_FETCH_EXTRA_FLAGS to '--no-tags --prune --quiet' and GIT_STRATEGY to 'clone', and configures artifacts to expire in 7 days, name them with $CI_JOB_NAME-$CI_COMMIT_REF_SLUG, include the paths build/build.ninja and build/meson-logs, publish a JUnit report from build/meson-logs/testlog.junit.xml, and always keep them. Include three local configuration files: /.gitlab-ci.d/custom-runners/ubuntu-22.04-s390x.yml, /.gitlab-ci.d/custom-runners/ubuntu-22.04-aarch64.yml, and /.gitlab-ci.d/custom-runners/ubuntu-22.04-aarch32.yml.",
+  "tags": [
+    "custom-runner",
+    "meson",
+    "artifacts",
+    "include",
+    "ubuntu-22.04",
+    "s390x",
+    "aarch64",
+    "aarch32"
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "sha": "gitlab_18124",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 4748,
+  "description": "Create a GitLab CI pipeline with stages test, build, build-docker, and deploy, using golang:1.18.3-alpine3.16 as the default image and defining DOCKER_REGISTRY_IMAGE and REPO_NAME variables. In the test stage add a test job that uses golang:1.18.3 to run `go test -cover -race -p 1 ./...` and `go test -run bench -bench . ./...` with a redis:7.0.2-alpine3.16 service and OTS_STORE_ADDR variable, a lint-go job using golangci/golangci-lint:v1.46.2 that runs `golangci-lint run`, and a lint-node job using node:18.4.0-alpine3.16 that runs `npm install` then `npx standard`. In the build stage add a build job that runs `CGO_ENABLED=0 go build -ldflags \"-s -w\" -o $CI_PROJECT_DIR/onetimesecret` and publishes the onetimesecret binary as a 1‑day artifact. In the build-docker stage (only on main) use the docker:git image with docker:dind service to execute the custom `build` function from before_script, which logs into the GitLab Container Registry, builds the Dockerfile, tags it with the commit SHA and latest, pushes to the GitLab registry, then logs into an external Docker registry using DOCKER_REGISTRY_USER/PASSWORD, retags to $DOCKER_REGISTRY_IMAGE and pushes both tags. In the deploy stage (only on main) use the totakoko/compose-deploy image with an empty entrypoint to run `MODULES_ROOT=$PWD compose-deploy update-module onetimesecret server`, deploying to the production environment at https://secret.totakoko.com with no cache or dependencies.",
+  "tags": [
+    "golang",
+    "go-test",
+    "redis",
+    "lint-go",
+    "golangci-lint",
+    "lint-node",
+    "npm",
+    "docker",
+    "dind",
+    "compose-deploy",
+    "production",
+    "gitlab-ci",
+    "build",
+    "deploy"
+  ]
+}

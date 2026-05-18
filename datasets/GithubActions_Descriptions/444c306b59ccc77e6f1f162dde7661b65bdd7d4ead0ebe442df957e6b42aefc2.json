@@ -1,0 +1,15 @@
+{
+  "sha": "444c306b59ccc77e6f1f162dde7661b65bdd7d4ead0ebe442df957e6b42aefc2",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 535,
+  "description": "Create a GitHub Actions workflow named CI that runs on push and pull request events to the master branch. Use a matrix job that runs on both ubuntu-18.04 and ubuntu-20.04, checks out the repository, sets up cmake with tests enabled, compiles the code with make, runs tests with ./test/etl_tests, and saves the test file as an artifact.",
+  "tags": [
+    "cmake",
+    "make",
+    "tests",
+    "ubuntu",
+    "ci",
+    "artifacts"
+  ]
+}

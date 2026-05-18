@@ -1,0 +1,33 @@
+before_script:
+- tests/ci-setup.sh
+cache:
+  paths:
+  - vendor/
+deploy:
+  only:
+  - stable
+  script:
+  - scripts/deploy.sh
+  stage: deploy
+image: php:7.2-cli
+package:
+  artifacts:
+    paths:
+    - dist/band-manager-backend.tar.gz
+  script:
+  - scripts/package.sh
+  stage: package
+stages:
+- test
+- package
+- deploy
+test:
+  artifacts:
+    paths:
+    - webroot/coverage/
+  script:
+  - pecl install xdebug
+  - docker-php-ext-enable xdebug
+  - cp tests/app.test.php config/app.php
+  - vendor/bin/phpunit --coverage-text --colors=never --coverage-html webroot/coverage
+  stage: test

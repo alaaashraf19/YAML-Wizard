@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_07962",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 918,
+  "description": "Create a GitLab CI pipeline using the docker:19.03.2 Docker image with a docker:19.03.2-dind service, set global variables DOCKER_DRIVER=overlay2 and DOCKER_TLS_CERTDIR=/certs, and add a global before_script that runs docker login -u \"$CI_REGISTRY_USER\" -p \"$CI_REGISTRY_PASSWORD\" $CI_REGISTRY. Define three stages (test, prepare, build) and a hidden .build job template that retries twice, runs the script ci/build.sh, and belongs to the build stage. Add a nothing_to_build job in the build stage that executes the single command echo 'All versions are already built, skipping'. Add a test-ci-generator job in the test stage that uses the python:3.7-alpine image, sets PIP_CACHE_DIR to $CI_PROJECT_DIR/.cache/pip, runs a before_script sequence of cd ci-generator, python -V, pip install virtualenv, virtualenv venv, source venv/bin/activate, pip install -r requirements.txt, caches .cache/pip and ci-generator/venv/, then runs the script commands coverage run -m unittest tests/test*.py, coverage report, and coverage html, stores ci-generator/htmlcov as an artifact, and extracts coverage using the regex /^TOTAL.*\\s+(\\d+\\%)$/.",
+  "tags": [
+    "docker",
+    "dind",
+    "python",
+    "coverage",
+    "unittest",
+    "pip-cache",
+    "ci-generator",
+    "retry"
+  ]
+}

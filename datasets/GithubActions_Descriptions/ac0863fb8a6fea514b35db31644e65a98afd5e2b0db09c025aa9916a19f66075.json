@@ -1,0 +1,15 @@
+{
+  "sha": "ac0863fb8a6fea514b35db31644e65a98afd5e2b0db09c025aa9916a19f66075",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1438,
+  "description": "Create a GitHub Actions workflow named Tests that runs on every push and pull request. Use a matrix strategy to test on multiple Python versions and operating systems, excluding certain combinations. For each job, check out the code, set up Python with caching, upgrade pip, install dependencies with make setup-ci, run tests with tox, and optionally upload a coverage report to Coveralls.",
+  "tags": [
+    "python",
+    "tests",
+    "matrix",
+    "tox",
+    "coverage",
+    "github-actions"
+  ]
+}

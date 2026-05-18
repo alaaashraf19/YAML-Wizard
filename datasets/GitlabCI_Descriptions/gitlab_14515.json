@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_14515",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 3893,
+  "description": "Create a GitLab CI pipeline that runs a single build stage on Ubuntu 22.04 runners tagged ubuntu_22.04 and aarch64. Define seven jobs—ubuntu-22.04-aarch64-all, ubuntu-22.04-aarch64-all-linux-static, ubuntu-22.04-aarch64-alldbg, ubuntu-22.04-aarch64-clang, ubuntu-22.04-aarch64-notcg, ubuntu-22.04-aarch64-tci, and ubuntu-22.04-aarch64-without-defaults—each executing: mkdir build; cd build; ../configure [job‑specific options] || { cat config.log meson-logs/meson-log.txt; exit 1; }; make --output-sync -j`nproc --ignore=40`; (optional make clean for alldbg); make --output-sync -j`nproc --ignore=40` check, with additional steps such as --enable-static, --enable-debug, --cc=clang, --disable-tcg, --enable-tcg-interpreter, or disabling default devices as required. All jobs belong to the build stage, use the same tags, and have rules that allow manual execution with failure when the project namespace is \"qemu-project\" and the branch matches ^staging or when $AARCH64_RUNNER_AVAILABLE is true; some jobs also run automatically when those conditions are met without manual trigger. No caches, artifacts, services, or deployment targets are defined.",
+  "tags": [
+    "ubuntu-22.04",
+    "aarch64",
+    "build",
+    "qemu",
+    "make",
+    "configure"
+  ]
+}

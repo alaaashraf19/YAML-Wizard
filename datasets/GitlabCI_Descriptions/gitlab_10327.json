@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_10327",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 718,
+  "description": "Create a GitLab CI pipeline using the python:3.7-slim Docker image with a global before_script that runs apt-get update, apt-get install -y --no-install-recommends gcc, pip install -r requirements.txt and pip install -e . Define two stages: test and deploy. In the test stage add a test job that executes cd id4me_rp_client/test then python -m unittest2. Also in the test stage add a test_coverage job that runs pip install coverage, cd id4me_rp_client/test, coverage run --source ../ -m unittest2 and coverage report, and records coverage using the regex /TOTAL.*\\s+(\\d+%)$/. In the deploy stage add a deploy_production job that first runs pip install twine and python setup.py sdist bdist_wheel, then uploads the built distribution with twine upload dist/*, runs only on tag pipelines, and uses the variables TWINE_USERNAME and TWINE_PASSWORD sourced from $PYPI_PRODUCTION_USERNAME and $PYPI_PRODUCTION_PASSWORD to publish to PyPI.",
+  "tags": [
+    "python",
+    "unittest",
+    "coverage",
+    "pypi",
+    "twine",
+    "deploy",
+    "test"
+  ]
+}

@@ -1,0 +1,69 @@
+build_on_ubuntu-artful:
+  artifacts:
+    paths:
+    - build/
+  before_script:
+  - apt-get update -qq && apt-get install -qq -y software-properties-common
+  - add-apt-repository -y -u -m ppa:eclufsc/ophidian
+  - apt-get install -qq -y $DEPENDENCIES
+  image: ubuntu:artful
+  script:
+  - mkdir build && cd build
+  - cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release ..
+  - make -j
+  - ./hello_world -v ../input_files/simple/simple.v -d ../input_files/simple/simple.def
+    -l ../input_files/simple/simple.lef
+  stage: build
+build_on_ubuntu-bionic:
+  artifacts:
+    paths:
+    - build/
+  before_script:
+  - apt-get update -qq && apt-get install -qq -y software-properties-common
+  - add-apt-repository -y -u -m ppa:eclufsc/ophidian
+  - apt-get install -qq -y $DEPENDENCIES
+  image: ubuntu:bionic
+  script:
+  - mkdir build && cd build
+  - cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release ..
+  - make -j
+  - ./hello_world -v ../input_files/simple/simple.v -d ../input_files/simple/simple.def
+    -l ../input_files/simple/simple.lef
+  stage: build
+build_using_dependencies_script_on_source:
+  artifacts:
+    paths:
+    - build/
+  before_script:
+  - apt-get update -qq && apt-get install -qq -y $BUILD_LOCAL_DEPENDENCIES
+  image: ubuntu:artful
+  script:
+  - echo "y" | bash build_dependencies.sh
+  - mkdir build && cd build
+  - cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release ..
+  - make -j
+  - ./hello_world -v ../input_files/simple/simple.v -d ../input_files/simple/simple.def
+    -l ../input_files/simple/simple.lef
+  stage: build
+build_using_dependencies_script_on_system:
+  artifacts:
+    paths:
+    - build/
+  before_script:
+  - apt-get update -qq && apt-get install -qq -y $BUILD_LOCAL_DEPENDENCIES
+  image: ubuntu:artful
+  script:
+  - echo y | bash build_dependencies.sh --install_to /usr/local
+  - mkdir build && cd build
+  - cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release ..
+  - make -j
+  - ./hello_world -v ../input_files/simple/simple.v -d ../input_files/simple/simple.def
+    -l ../input_files/simple/simple.lef
+  stage: build
+stages:
+- build
+variables:
+  BUILD_LOCAL_DEPENDENCIES: build-essential git cmake libboost1.63-dev libz-dev flex
+    bison libbison-dev
+  DEPENDENCIES: build-essential git cmake libophidian-dev
+  GIT_SUBMODULE_STRATEGY: recursive

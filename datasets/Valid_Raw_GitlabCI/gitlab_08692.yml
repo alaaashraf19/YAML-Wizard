@@ -1,0 +1,27 @@
+.test-sitespeed-base:
+  artifacts:
+    untracked: true
+  image: docker:latest
+  script:
+  - apk add npm
+  - npm install
+  - docker pull sitespeedio/sitespeed.io:$SITESPEED_VERSION
+  - docker run --shm-size=1g --rm -v "$(pwd)":/sitespeed.io sitespeedio/sitespeed.io:$SITESPEED_VERSION
+    --cpu --plugins.add /sitespeed.io/index.js --outputFolder . https://gitlab.com/gitlab-org/gitlab-foss/issues/1
+    https://gitlab.com/gitlab-org/gitlab-ee/merge_requests/3507
+  - mv data/performance.json performance.json
+  services:
+  - docker:dind
+  stage: test
+  variables:
+    DOCKER_DRIVER: overlay2
+stages:
+- test
+test-sitespeed-27-0-0:
+  extends: .test-sitespeed-base
+  variables:
+    SITESPEED_VERSION: 27.0.0
+test-sitespeed-latest:
+  extends: .test-sitespeed-base
+  variables:
+    SITESPEED_VERSION: latest

@@ -1,0 +1,120 @@
+git_check:
+  before_script:
+  - git lfs fetch --all
+  image: registry.gitlab.com/datadrivendiscovery/images/testing:$IMAGE_TAG
+  parallel:
+    matrix:
+    - IMAGE_TAG:
+      - ubuntu-bionic-python36
+      - ubuntu-bionic-python37
+      - ubuntu-bionic-python38
+  script:
+  - ./git-check.sh
+  stage: build
+style_check:
+  before_script:
+  - git lfs fetch --all
+  image: registry.gitlab.com/datadrivendiscovery/images/testing:$IMAGE_TAG
+  parallel:
+    matrix:
+    - IMAGE_TAG:
+      - ubuntu-bionic-python36
+      - ubuntu-bionic-python37
+      - ubuntu-bionic-python38
+  script:
+  - pycodestyle $(./list_primitives.py --files)
+  stage: build
+test_pipelines:
+  artifacts:
+    name: results-$CI_JOB_ID
+    paths:
+    - results
+    when: always
+  before_script:
+  - git lfs fetch --all
+  - git -C /data/datasets show -s
+  - git -C /data/datasets_public show -s
+  - ls -al /data/static_files
+  image: registry.gitlab.com/datadrivendiscovery/images/primitives:$IMAGE_TAG-$DEPENDENCY_REF
+  parallel:
+    matrix:
+    - IMAGE_TAG:
+      - ubuntu-bionic-python36
+      - ubuntu-bionic-python37
+      - ubuntu-bionic-python38
+  script:
+  - pip3 install --upgrade --upgrade-strategy only-if-needed -e "git+https://gitlab.com/datadrivendiscovery/d3m.git@$DEPENDENCY_REF#egg=d3m"
+  - pip3 install -e .[opencv-headless]
+  - ./run_pipelines.sh
+  stage: build
+  tags:
+  - datasets
+tests:
+  before_script:
+  - docker info
+  - git lfs fetch --all
+  image: registry.gitlab.com/datadrivendiscovery/images/testing:$IMAGE_TAG
+  parallel:
+    matrix:
+    - IMAGE_TAG:
+      - ubuntu-bionic-python36
+      - ubuntu-bionic-python37
+      - ubuntu-bionic-python38
+  script:
+  - pip3 install --upgrade --upgrade-strategy only-if-needed -e "git+https://gitlab.com/datadrivendiscovery/d3m.git@$DEPENDENCY_REF#egg=d3m"
+  - pip3 install -e tests/data/primitives
+  - pip3 install -e .[opencv-headless]
+  - pip3 check
+  - for PRIMITIVE_SUFFIX in $(./list_primitives.py --suffix); do python3 -m d3m primitive
+    describe -i 4 "d3m.primitives.$PRIMITIVE_SUFFIX" > /dev/null; done
+  - python3 ./run_tests.py
+  services:
+  - alias: docker
+    name: registry.gitlab.com/datadrivendiscovery/images/docker:19-dind
+  stage: build
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+tests_with_optimize:
+  before_script:
+  - docker info
+  - git lfs fetch --all
+  image: registry.gitlab.com/datadrivendiscovery/images/testing:$IMAGE_TAG
+  parallel:
+    matrix:
+    - IMAGE_TAG:
+      - ubuntu-bionic-python36
+      - ubuntu-bionic-python37
+      - ubuntu-bionic-python38
+  script:
+  - pip3 install --upgrade --upgrade-strategy only-if-needed -e "git+https://gitlab.com/datadrivendiscovery/d3m.git@$DEPENDENCY_REF#egg=d3m"
+  - pip3 install -e tests/data/primitives
+  - pip3 install -e .[opencv-headless]
+  - for PRIMITIVE_SUFFIX in $(./list_primitives.py --suffix); do python3 -m d3m primitive
+    describe -i 4 "d3m.primitives.$PRIMITIVE_SUFFIX" > /dev/null; done
+  - python3 ./run_tests.py
+  services:
+  - alias: docker
+    name: registry.gitlab.com/datadrivendiscovery/images/docker:19-dind
+  stage: build
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    PYTHONOPTIMIZE: 'true'
+type_check:
+  before_script:
+  - git lfs fetch --all
+  image: registry.gitlab.com/datadrivendiscovery/images/testing:$IMAGE_TAG
+  parallel:
+    matrix:
+    - IMAGE_TAG:
+      - ubuntu-bionic-python36
+      - ubuntu-bionic-python37
+      - ubuntu-bionic-python38
+  script:
+  - pip3 install --upgrade --upgrade-strategy only-if-needed -e "git+https://gitlab.com/datadrivendiscovery/d3m.git@$DEPENDENCY_REF#egg=d3m"
+  - pip3 install -e .[opencv-headless]
+  - mypy --install-types --non-interactive $(./list_primitives.py --files)
+  stage: build
+variables:
+  DEPENDENCY_REF: master
+  GIT_STRATEGY: clone
+  GIT_SUBMODULE_STRATEGY: recursive

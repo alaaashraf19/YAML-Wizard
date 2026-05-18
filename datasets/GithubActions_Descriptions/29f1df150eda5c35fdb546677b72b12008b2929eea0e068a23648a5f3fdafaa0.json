@@ -1,0 +1,15 @@
+{
+  "sha": "29f1df150eda5c35fdb546677b72b12008b2929eea0e068a23648a5f3fdafaa0",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1221,
+  "description": "Create a GitHub Actions workflow named Run Tests that runs on push to main and on pull requests to main. The workflow should run tests in a concurrency group that cancels in-progress runs. It should have two jobs: lint and build. The lint job runs on ubuntu-latest, checks out the code, sets up Python 3.12, and runs pre-commit. The build job depends on lint, runs on ubuntu-latest with a matrix of Python 3.12 and 3.13, checks out the code, sets up Python, installs dependencies, runs tests with Pytest, and uploads coverage to Codecov.",
+  "tags": [
+    "python",
+    "tests",
+    "pre-commit",
+    "pytest",
+    "codecov",
+    "ubuntu"
+  ]
+}

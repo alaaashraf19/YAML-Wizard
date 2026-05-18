@@ -1,0 +1,24 @@
+{
+  "sha": "gitlab_11554",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2609,
+  "description": "Create a GitLab CI pipeline using the python:3.9.12 Docker image and the librespace/kaitai:0.10 image for Kaitai compilation. Define stages compile, static, build, test, deploy, trigger, and security. In the compile stage add a compile job that runs \"/usr/bin/ksc --target python --outdir satnogsdecoders/decoder ksy/*.ksy\", stores the generated satnogsdecoders/decoder directory as an artifact for 1 week, and has no dependencies. In the static stage add a static job that runs \"pip install -cconstraints.txt tox\" then \"tox run-parallel -e \\\"yamllint,flake8,isort,yapf,pylint\\\"\" and depends on compile artifacts. In the build stage add a build job that runs \"pip install -cconstraints.txt tox\", removes the dist directory, runs \"tox run -e \\\"build\\\"\", and publishes the dist folder as an artifact for 1 week, requiring compile artifacts. In the test stage add a deps job (\"tox run -e \\\"deps\\\"\") and a test job (\"tox run -e \\\"pytest\\\"\") each with the same before_script and depending on compile artifacts. In the deploy stage add a deploy job that runs \"pip install -cconstraints.txt tox\", removes dist, runs \"tox run -e \\\"upload\\\"\" and only executes on tag pushes when $PYPI_USERNAME and $PYPI_PASSWORD are present, publishing the package to PyPI. Finally, add a trigger job that runs only on tag pushes when $PIPELINE_TRIGGERS is set, passing $CI_COMMIT_TAG and $SATNOGS_DB_GIT_URL as variables, and include security jobs (dependency_scanning, sast, secret_detection) that depend on compile artifacts.",
+  "tags": [
+    "python",
+    "tox",
+    "kaitai",
+    "compile",
+    "static",
+    "build",
+    "test",
+    "deps",
+    "deploy",
+    "pypi",
+    "trigger",
+    "security",
+    "dependency-scanning",
+    "sast",
+    "secret-detection"
+  ]
+}

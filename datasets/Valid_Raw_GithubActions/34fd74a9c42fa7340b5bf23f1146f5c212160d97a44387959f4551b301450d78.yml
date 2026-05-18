@@ -1,0 +1,121 @@
+name: Static Analysis
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  cppcheck:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Create static_analysis directory
+      run: mkdir -p static_analysis
+
+    - name: Run Cppcheck
+      run: |
+        sudo apt-get install -y cppcheck
+        cppcheck --enable=all --inconclusive --force --language=c++ --file-list=<(find lwlog/src/ -name "*.cpp" -o -name "*.h") &> static_analysis/cppcheck.txt
+      continue-on-error: true
+
+    - name: Upload Cppcheck Results
+      uses: actions/upload-artifact@v4
+      with:
+        name: cppcheck_results
+        path: static_analysis/cppcheck.txt
+
+  clang-tidy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Create static_analysis directory
+      run: mkdir -p static_analysis
+
+    - name: Install Dependencies
+      run: sudo apt-get install -y build-essential cmake
+
+    - name: Create Build Environment
+      run: cmake -E make_directory ${{runner.workspace}}/build
+
+    - name: Generate compile_commands.json
+      run: |
+        mkdir -p build
+        cd build
+        cmake .. -DCMAKE_EXPORT_COMPILE_COMMANDS=1
+
+    - name: Run Clang-Tidy
+      run: |
+        sudo apt-get install -y clang-tidy
+        find lwlog/src/ -name "*.cpp" -o -name "*.h" | xargs clang-tidy -p=build/compile_commands.json &> static_analysis/clang-tidy.txt
+      continue-on-error: true
+
+    - name: Upload Clang-Tidy Results
+      uses: actions/upload-artifact@v4
+      with:
+        name: clangtidy_results
+        path: static_analysis/clang-tidy.txt
+
+  sonar-scanner:
+    runs-on: ubuntu-latest
+
+    env:
+      BUILD_WRAPPER_OUT_DIR: build_wrapper_output_directory
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Install GCC
+      run: sudo apt-get install -y gcc g++
+
+    - name: Install sonar-scanner and build-wrapper
+      uses: SonarSource/sonarcloud-github-c-cpp@v3
+
+    - name: Create Build Environment
+      run: cmake -E make_directory ${{ runner.workspace }}/build
+
+    - name: Configure GCC Build
+      working-directory: ${{ runner.workspace }}/build
+      run: | 
+        cmake -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -DCMAKE_EXPORT_COMPILE_COMMANDS=1 $GITHUB_WORKSPACE
+
+    - name: Build with GCC (with build-wrapper)
+      working-directory: ${{ runner.workspace }}/build
+      run: |
+        build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} cmake --build . --config ${{ env.BUILD_TYPE }}
+          
+    - name: Run sonar-scanner
+      env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      run: |
+        sonar-scanner --define sonar.cfamily.compile-commands="${{ runner.workspace }}/build/compile_commands.json"
+  
+  coverity-scan:
+    runs-on: ubuntu-latest
+  
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up dependencies
+      run: sudo apt-get install -y build-essential cmake
+
+    - name: Coverity Scan
+      uses: synopsys-sig/synopsys-action@v1.13.0
+      with:
+          coverity_url: ${{ vars.COVERITY_URL }}
+          coverity_user: ${{ vars.COVERITY_USER }}
+          coverity_passphrase: ${{ secrets.COVERITY_PASSPHRASE }}
+          coverity_project_name: "ChristianPanov/lwlog"
+          coverity_stream_name: "master"

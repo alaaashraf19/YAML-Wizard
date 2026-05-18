@@ -1,0 +1,14 @@
+{
+  "sha": "1aea48d395061a453553ec5b746f0352282482a9753b9230144c241abd9de9d5",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5581,
+  "description": "Create a GitHub Actions workflow named Build Windows Releases that triggers on push to master, actions branches and tags. The workflow consists of two jobs: get_version_name and build. The get_version_name job runs on ubuntu-latest, checks out the repository, and outputs the version name and revision count. The build job runs on windows-2019, needs get_version_name, and performs a matrix build with different architectures, CUDA versions, and platforms. It checks out dependencies, sets up CUDA, builds with MSBuild, creates an archive, and uploads the release asset to GitHub.",
+  "tags": [
+    "windows",
+    "cuda",
+    "msbuild",
+    "github-release",
+    "archive"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_05735",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 177,
+  "description": "Create a GitLab CI pipeline that runs a job named Node.js Current using the node:latest Docker image. Use a cache with key node-current that stores the node_modules directory. In the default test stage, execute the script commands: node -v, npm version, set NPM_CONFIG_LOGLEVEL=warn, and run npm it. No additional services, artifacts, or rules are required.",
+  "tags": [
+    "node",
+    "npm",
+    "cache",
+    "node-latest"
+  ]
+}

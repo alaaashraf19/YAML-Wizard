@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_12242",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 605,
+  "description": "Create a GitLab CI pipeline using the rust:latest Docker image. Add a test stage job called test:cargo that runs the commands rustc --version && cargo --version, then cargo build --all && cargo build --examples, then cargo test --all --verbose. Add a deploy stage job called pages that runs cargo doc followed by mv target/doc/ public/, publishes the public/ directory as a pages artifact, and is limited to the master branch. Add another deploy stage job called deploy with a before_script that installs openssh-client if missing, starts ssh-agent, adds the base64‑decoded $SSH_DEPLOY_KEY to the agent, runs only on tags, and executes ssh $(echo $DEPLOY_SERVER | base64 --decode) ./deploy.sh futures-retry $CI_COMMIT_TAG. No caches, services, or additional artifacts are defined.",
+  "tags": [
+    "rust",
+    "cargo",
+    "pages",
+    "ssh-deploy",
+    "gitlab-pages",
+    "docs"
+  ]
+}

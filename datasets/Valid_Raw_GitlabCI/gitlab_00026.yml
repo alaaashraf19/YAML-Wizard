@@ -1,0 +1,21 @@
+deploy:
+  artifacts:
+    paths:
+    - /usr/local/lib/node_modules/
+    - node_modules/
+  before_script:
+  - npm install -g phantomjs-prebuilt casperjs
+  - npm install
+  cache:
+    key: deploy
+    paths:
+    - /usr/local/lib/node_modules/
+    - node_modules/
+  image: node
+  only:
+  - master
+  script:
+  - node ./deploy.js
+  stage: deploy
+stages:
+- deploy

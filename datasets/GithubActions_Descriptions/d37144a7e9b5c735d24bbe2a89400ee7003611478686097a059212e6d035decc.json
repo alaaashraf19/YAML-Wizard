@@ -1,0 +1,16 @@
+{
+  "sha": "d37144a7e9b5c735d24bbe2a89400ee7003611478686097a059212e6d035decc",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2550,
+  "description": "Create a GitHub Actions workflow named Unit Tests that runs on push to src, test, and workflow files, on pull requests to those files, on a monthly schedule, and manually. Use a build matrix to run a job on ubuntu-latest and macos-latest, checking out the repo, creating a build directory, running CMake, building unit tests, and running unit tests with ctest.",
+  "tags": [
+    "cmake",
+    "unit-tests",
+    "matrix",
+    "ubuntu",
+    "macos",
+    "scheduled",
+    "manual"
+  ]
+}

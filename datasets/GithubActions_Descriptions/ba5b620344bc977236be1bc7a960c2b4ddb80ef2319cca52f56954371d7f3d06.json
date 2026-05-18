@@ -1,0 +1,14 @@
+{
+  "sha": "ba5b620344bc977236be1bc7a960c2b4ddb80ef2319cca52f56954371d7f3d06",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1942,
+  "description": "Create a GitHub Actions workflow named Release that triggers on release creation. The workflow should have two jobs: pack and release. The pack job runs on ubuntu-latest, clones the repository with submodules, creates a source tarball, and uploads it. The release job runs on a matrix of ubuntu-18.04 with amd64 architecture, clones the repository, installs dependencies, builds the project with custom cmake defines, and uploads the build artifacts.",
+  "tags": [
+    "release",
+    "ubuntu",
+    "github-actions",
+    "cmake",
+    "packaging"
+  ]
+}

@@ -1,0 +1,15 @@
+before_script:
+- apt-get update -qq
+- apt-get install -y --no-install-recommends git pandoc libxml2-dev libcurl4-openssl-dev
+  libssl-dev libgit2-dev libfontconfig1-dev libharfbuzz-dev libfribidi-dev libfreetype6-dev
+  libpng-dev libtiff5-dev libjpeg-dev
+image: r-base
+test:
+  script:
+  - Rscript -e 'install.packages(c("xml2", "openxlsx", "devtools", "roxygen2", "testthat",
+    "covr"))'
+  - Rscript -e 'devtools::install_dev_deps()'
+  - R CMD build . --no-build-vignettes --no-manual
+  - PKG_FILE_NAME=$(ls -1t *.tar.gz | head -n 1)
+  - R CMD check "${PKG_FILE_NAME}" --no-build-vignettes --no-manual
+  - Rscript -e 'covr::codecov(token = "bd5cfa37-91c5-4f29-a8f5-bf942ae22f55")'

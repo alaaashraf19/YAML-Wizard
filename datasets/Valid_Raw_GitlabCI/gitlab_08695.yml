@@ -1,0 +1,15 @@
+before_script:
+- apk add --update git
+- gem install bundler
+- bundle install --path vendor/ruby
+cache:
+  key: ruby-3.0
+  paths:
+  - vendor/ruby
+image: ruby:3.0-alpine
+rspec:
+  script:
+  - bundle exec rspec spec
+rubocop:
+  script:
+  - bundle exec rubocop

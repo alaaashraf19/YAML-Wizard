@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_06880",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 348,
+  "description": "Create a GitLab CI pipeline that runs a global before_script installing tox with pip. Define three jobs in the default test stage: a job named test:36 using the python:3.6 image, setting the TOX_ENV variable to py36 and executing tox -e $TOX_ENV; a job named test:manifest also using python:3.6, setting TOX_ENV to manifest and running tox -e $TOX_ENV; and a job named test:pep8 using python:3.6, setting TOX_ENV to pep8 and running tox -e $TOX_ENV. Each job is configured with when: always so they run on every pipeline. No caches, artifacts, or special triggers are defined.",
+  "tags": [
+    "python",
+    "tox",
+    "py36",
+    "manifest",
+    "pep8",
+    "gitlab-ci"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "c7d6e20fe9084dd3ea5b17bf02d3b36b66c0f67af3c115cc9abe5263be849d22",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1860,
+  "description": "Create a GitHub Actions workflow named Turbinia E2E Test that runs on push and pull request events. Use an ubuntu-latest job with a matrix strategy to run end-to-end tests with different Docker base images and gift PPA tracks. The job should check out the code, pull and build Turbinia server and worker Docker images, prepare and display Turbinia configuration, patch docker-compose config, and run the E2E test script.",
+  "tags": [
+    "turbinia",
+    "e2e",
+    "docker",
+    "ubuntu",
+    "tests"
+  ]
+}

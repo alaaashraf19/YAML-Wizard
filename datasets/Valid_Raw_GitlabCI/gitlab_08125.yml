@@ -1,0 +1,32 @@
+build:
+  artifacts:
+    expire_in: 1 month
+    paths:
+    - butterbot
+    - butterbot-darwin
+    - butterbot-arm64
+  script:
+  - make build
+  stage: build
+image: golang:1.9
+release:
+  image: docker:latest
+  only:
+  - tags
+  - master
+  script:
+  - echo ${CI_JOB_TOKEN} | docker login -u gitlab-ci-token --password-stdin ${CI_REGISTRY}
+  - apk add --no-cache make
+  - make release
+  services:
+  - docker:dind
+  stage: release
+  variables:
+    DOCKER_DRIVER: overlay2
+stages:
+- build
+- release
+test:
+  script:
+  - make test
+  stage: build

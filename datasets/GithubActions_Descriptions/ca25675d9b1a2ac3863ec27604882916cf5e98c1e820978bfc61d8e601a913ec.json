@@ -1,0 +1,14 @@
+{
+  "sha": "ca25675d9b1a2ac3863ec27604882916cf5e98c1e820978bfc61d8e601a913ec",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1041,
+  "description": "Create a GitHub Actions workflow that triggers on push and pull request events. Use a matrix strategy to build a Libretro project for multiple targets (ngc, wii, wiiu, switch) and build types (release, debug) in separate ubuntu-latest jobs, each using a specific devkitpro container. For each job, check out the repository with submodules and build the libretro core using a make command with customized parameters.",
+  "tags": [
+    "libretro",
+    "devkitpro",
+    "matrix",
+    "ubuntu",
+    "make"
+  ]
+}

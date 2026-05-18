@@ -1,0 +1,25 @@
+.default-only:
+  only:
+    refs:
+    - master
+    - tags
+    - merge_requests
+build:
+  image: docker:latest
+  script:
+  - docker build -t "$CI_REGISTRY_IMAGE/dev-image:$CI_COMMIT_REF_NAME" .
+  - docker login --username=$CI_REGISTRY_USER --password=$CI_REGISTRY_PASSWORD $CI_REGISTRY
+  - docker push "$CI_REGISTRY_IMAGE/dev-image:$CI_COMMIT_REF_NAME"
+  services:
+  - docker:dind
+  stage: build
+  variables:
+    DOCKER_DRIVER: overlay2
+    DOCKER_HOST: tcp://docker:2375/
+image: ubuntu:18.04
+stages:
+- build
+- configure
+- test
+- build-deployable-image
+- deploy

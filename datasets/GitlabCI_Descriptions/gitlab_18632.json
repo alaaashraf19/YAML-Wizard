@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_18632",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 236,
+  "description": "Create a GitLab CI pipeline that uses the Docker image registry.gitlab.com/pages/hugo/hugo_extended:0.135.0 and sets the variable GIT_SUBMODULE_STRATEGY to recursive. Define a single job named pages (which runs in the default test stage) that first executes the before_script command \"apk update && apk add git\", then runs the script command \"hugo\". Configure the job to publish the generated public/ directory as a pages artifact (paths: public) and restrict its execution to the master branch only. No additional services, caches, or extra stages are required, and the job deploys the site to GitLab Pages.",
+  "tags": [
+    "hugo",
+    "gitlab-pages",
+    "apk",
+    "master",
+    "git-submodule"
+  ]
+}

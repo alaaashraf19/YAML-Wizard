@@ -1,0 +1,11 @@
+behave:
+  script:
+  - bash .behave.sh
+  stage: network validation with behave
+lint:
+  script:
+  - bash linter.sh
+  stage: validate yaml syntax
+stages:
+- validate yaml syntax
+- network validation with behave

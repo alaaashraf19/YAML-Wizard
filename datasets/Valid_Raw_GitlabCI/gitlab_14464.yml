@@ -1,0 +1,8 @@
+before_script:
+- pacman -Syy dmd dub --needed --noconfirm
+- mkdir -p ~/.fixer
+- printf "$FIXER_API_ACCESS_KEY" > ~/.fixer/api-access-key.txt
+image: base/archlinux
+unit_tests:
+  script: dub test
+  stage: test

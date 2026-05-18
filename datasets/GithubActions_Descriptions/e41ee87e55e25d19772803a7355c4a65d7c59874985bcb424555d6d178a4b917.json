@@ -1,0 +1,17 @@
+{
+  "sha": "e41ee87e55e25d19772803a7355c4a65d7c59874985bcb424555d6d178a4b917",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4767,
+  "description": "Create a GitHub Actions workflow named Test that runs on every push and pull request. The workflow has multiple jobs: sdist to build a source distribution on ubuntu-latest, bdist_wheel to build wheels on ubuntu-latest, windows-latest, and macos-latest, and test jobs on different operating systems and Python versions to run tests with tox. The test jobs depend on the sdist and bdist_wheel jobs.",
+  "tags": [
+    "python",
+    "tests",
+    "tox",
+    "coverage",
+    "ci",
+    "ubuntu",
+    "windows",
+    "macos"
+  ]
+}

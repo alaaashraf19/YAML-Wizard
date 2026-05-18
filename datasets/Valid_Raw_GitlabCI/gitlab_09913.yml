@@ -1,0 +1,210 @@
+.test_settings:
+  artifacts: &id001
+    paths:
+    - coverage/
+  before_script: &id002
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  image: docker:latest
+  services: &id003
+  - docker:dind
+  stage: test
+  variables: &id004
+    BUNDLE_WITHOUT: assorted
+.yjit_matrix:
+  parallel: &id005
+    matrix:
+    - RUBYOPT:
+      - ''
+      - --yjit
+cache:
+  key: $CI_JOB_NAME-$CI_COMMIT_REF_SLUG
+  paths:
+  - vendor
+coverage:
+  artifacts:
+    paths:
+    - coverage/
+  coverage: '/Coverage: \d+.\d+\%/'
+  image: ruby:3.4
+  script:
+  - gem install simplecov --no-doc
+  - find coverage -name "*resultset.json" -exec sed -i 's?/home?'`pwd`'?' {} \;
+  - rake coverage:report
+  stage: prepare
+  variables:
+    BUNDLE_WITHOUT: lint:test:assorted
+image:
+  name: docker/compose:latest
+lint rubocop code:
+  before_script:
+  - bundle install
+  image: ruby:3.4
+  script:
+  - bundle exec rake rubocop
+  variables:
+    BUNDLE_WITHOUT: test:coverage:assorted
+lint rubocop wiki:
+  before_script:
+  - git clone https://gitlab.com/os85/httpx.wiki.git
+  - bundle install
+  - "cat > .rubocop-wiki.yml << FILE\nrequire:\n  - rubocop-md\n\nAllCops:\n  TargetRubyVersion:\
+    \ 3.4\n  DisabledByDefault: true\nFILE\n"
+  image: ruby:3.4
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "schedule"
+  script:
+  - bundle exec rubocop httpx.wiki --config .rubocop-wiki.yml
+  variables:
+    BUNDLE_ONLY: lint
+pages:
+  artifacts:
+    paths:
+    - rdoc/
+    - wiki/
+    - data/
+    - coverage/
+    - public/
+  before_script:
+  - gem install hanna-nouveau
+  image: ruby:3.4
+  needs:
+  - coverage
+  only:
+  - master
+  script:
+  - rake prepare_website
+  - mkdir -p public/
+  - cp -r coverage/ public/
+  stage: deploy
+prepare_release:
+  artifacts:
+    reports:
+      dotenv: variables.env
+  rules:
+  - if: $CI_COMMIT_TAG
+    when: never
+  script:
+  - echo "EXTRA_DESCRIPTION=$(cat doc/release_notes/${${CI_COMMIT_TAG:1}//./_}.md)"
+    >> variables.env
+  - echo "TAG=v$(cat CI_COMMIT_TAG)" >> variables.env
+  stage: prepare
+regression tests:
+  artifacts:
+    paths:
+    - coverage/
+  before_script:
+  - apt-get update && apt-get install -y libmagic-dev shared-mime-info
+  - bundle install
+  image: ruby:3.4
+  script:
+  - bundle exec rake regression_tests
+  stage: test
+  variables:
+    BUNDLE_WITHOUT: lint:assorted
+    CI: 1
+    COVERAGE_KEY: ruby-3.4-regression-tests
+release:
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  needs:
+  - artifacts: true
+    job: prepare_release
+  release:
+    description: $EXTRA_DESCRIPTION
+    name: Release $TAG
+    ref: $CI_COMMIT_SHA
+    tag_name: $TAG
+  rules:
+  - if: $CI_COMMIT_TAG
+    when: never
+  script:
+  - echo "running release_job for $TAG"
+  stage: deploy
+stages:
+- build
+- test
+- prepare
+- deploy
+test jruby 10:
+  allow_failure: true
+  artifacts: *id001
+  before_script: *id002
+  image: docker:latest
+  script: ./spec.sh jruby 10
+  services: *id003
+  stage: test
+  variables: *id004
+test jruby 9:
+  allow_failure: true
+  artifacts: *id001
+  before_script: *id002
+  image: docker:latest
+  script: ./spec.sh jruby 9.0.0.0
+  services: *id003
+  stage: test
+  variables: *id004
+test ruby 2/7:
+  artifacts: *id001
+  before_script: *id002
+  image: docker:latest
+  script: ./spec.sh ruby 2.7
+  services: *id003
+  stage: test
+  variables: *id004
+test ruby 3/0:
+  artifacts: *id001
+  before_script: *id002
+  image: docker:latest
+  only:
+  - master
+  script: ./spec.sh ruby 3.0
+  services: *id003
+  stage: test
+  variables: *id004
+test ruby 3/1:
+  artifacts: *id001
+  before_script: *id002
+  image: docker:latest
+  only:
+  - master
+  script: ./spec.sh ruby 3.1
+  services: *id003
+  stage: test
+  variables: *id004
+test ruby 3/2:
+  artifacts: *id001
+  before_script: *id002
+  image: docker:latest
+  script: ./spec.sh ruby 3.2
+  services: *id003
+  stage: test
+  variables: *id004
+test ruby 3/3:
+  artifacts: *id001
+  before_script: *id002
+  image: docker:latest
+  script: ./spec.sh ruby 3.3
+  services: *id003
+  stage: test
+  variables: *id004
+test ruby 3/4:
+  artifacts: *id001
+  before_script: *id002
+  image: docker:latest
+  parallel: *id005
+  script: ./spec.sh ruby 3.4
+  services: *id003
+  stage: test
+  variables: *id004
+test truffleruby:
+  allow_failure: true
+  artifacts: *id001
+  before_script: *id002
+  image: docker:latest
+  script: ./spec.sh truffleruby latest
+  services: *id003
+  stage: test
+  variables: *id004
+variables:
+  BUNDLE_JOBS: 4
+  BUNDLE_PATH: vendor
+  MOUNT_POINT: /builds/$CI_PROJECT_PATH/vendor

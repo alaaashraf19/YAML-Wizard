@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_10978",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1028,
+  "description": "Create a GitLab CI pipeline that uses the microsoft/powershell Docker image for all jobs and runs a global before_script `apt-get -qq install git`. Define four stages: test, build, artifacts, and deploy. In the test stage add a `test` job that runs `pwsh -Command \". ./build.init.ps1; Invoke-Build Test\"`. In the build stage add a `build` job that inherits the global before_script and then runs `pwsh -Command \". ./build.init.ps1; Invoke-Build Build\"`, publishing the `.build` directory as an artifact that expires after 1 hour. In the artifacts stage add a `create_artifacts` job that first runs `chmod +x ./linuxbuilddependencies.sh` and `./linuxbuilddependencies.sh`, then executes `pwsh -Command \". ./build.init.ps1; Invoke-Build CreateArtifacts\"`, and stores the `.build` directory as an artifact. In the deploy stage add a `pages` job that runs only on the `master` branch, runs `pwsh -Command \". ./build.init.ps1; Invoke-Build DeployDocs_GitLabPages\"`, publishes the `public` directory as an artifact expiring after 1 week, and deploys to GitLab Pages at the specified URL.",
+  "tags": [
+    "powershell",
+    "invoke-build",
+    "gitlab-pages",
+    "artifact",
+    "docker-image",
+    "apt-get"
+  ]
+}

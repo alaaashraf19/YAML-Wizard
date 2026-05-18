@@ -1,0 +1,38 @@
+before_script:
+- export GRADLE_USER_HOME=`pwd`/.gradle
+- export VERSION=$(date --utc +%y%m%d.%H%M --date="@$(git show --no-patch --format=%ct)")
+cache:
+  paths:
+  - ./.gradle/wrapper
+  - ./.gradle/caches
+gradle:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - ./server/build/libs/*.jar
+    - ./server/build/reports/tests/*
+    - ./server/build/reports/jacocoHtml/*
+    when: always
+  script:
+  - ./gradlew --no-daemon -Pversion=${VERSION} clean build
+  stage: build
+image: openjdk:15-jdk
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+    refs:
+    - master
+  script:
+  - mkdir -p .public/jacoco
+  - cp -r ./server/build/reports/jacocoHtml/* .public/jacoco
+  - cp ./server/build/libs/*.jar .public
+  - export artifactName=$(find ./server/build/libs -type f -name "server*.jar" -exec
+    basename {} \;); sed "s|ARTIFACT_NAME|$artifactName|g" ./server/src/gitlab/page-index.html
+    > .public/index.html
+  - mv .public public
+  stage: publish
+stages:
+- build
+- publish

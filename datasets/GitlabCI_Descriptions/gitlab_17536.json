@@ -1,0 +1,12 @@
+{
+  "sha": "gitlab_17536",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 146,
+  "description": "Create a GitLab CI pipeline that uses the python:3.7 Docker image. Define a job named flake8 (default test stage) that runs the following shell commands in order: pip install pipenv, pipenv install --dev, pipenv run python -m flake8, and pipenv run python main.py. No services, caches, artifacts, or special rules are required.",
+  "tags": [
+    "python",
+    "flake8",
+    "pipenv"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_12211",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 450,
+  "description": "Create a GitLab CI pipeline that uses the google/dart Docker image and a before_script that runs `apt-get update -qq && apt-get install -y -qq ruby-full`, `ruby -v`, and `gem install sass`. Add a `pages` job in the `deploy` stage that only runs on the `master` branch. In that job execute the commands `echo \"Getting dependencies\"`, `pub get`, `echo \"Building page\"`, `pub build`, `echo \"Setting proper base href\"`, `dart tool/set_base_href.dart`, `echo \"Moving build/web to public\"`, `mv build/web public`, and `echo \"Deploy to pages\"`. Publish the `public/` directory as a pages artifact.",
+  "tags": [
+    "dart",
+    "pub",
+    "gitlab-pages",
+    "ruby",
+    "sass"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_04897",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 789,
+  "description": "Create a GitLab CI pipeline with a single build stage containing two jobs. The build:linux job runs on the Docker image registry.gitlab.com/cfmm/dcmproxy/image:latest, executes \"mkdir build/\", \"cd build\", \"cmake ../DicomProxy\", and \"make\", stores the resulting build/DicomProxy as an artifact, and runs only for tag pipelines. The build:macos job runs on runners tagged macOS and xcode_9.0, executes \"carthage bootstrap\", \"xcodebuild clean -project DcmProxy.xcodeproj -scheme DcmProxy\", \"xcodebuild archive -project DcmProxy.xcodeproj -scheme DcmProxy -archivePath build\", \"xcodebuild -exportArchive -archivePath build.xcarchive/ -exportPath build/ -exportOptionsPlist export.plist\", and \"hdiutil create -volname DcmProxy -srcfolder build -ov -format UDZO \\\"DcmProxy-${CI_COMMIT_REF_NAME}.dmg\\\"\", stores the generated DcmProxy-${CI_COMMIT_REF_NAME}.dmg as an artifact, and also runs only for tag pipelines.",
+  "tags": [
+    "docker",
+    "cmake",
+    "make",
+    "macos",
+    "xcode",
+    "carthage",
+    "dcmproxy"
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "sha": "gitlab_10810",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 7875,
+  "description": "Create a GitLab CI pipeline with stages test, cargo:test:nightly, cargo, build, and sign. In the test stage add a test:cargo job using the rust:1.56-slim-buster image that runs `cd oab-utils` then `cargo test`. In the cargo:test:nightly stage add a cargo:test:nightly job using rustlang/rust:nightly that runs `cd oab-utils` and `cargo test` and is allowed to fail. In the build stage add a build job using openjdk:8-jdk that first installs Android SDK tools, downloads and extracts the SDK, accepts licenses, installs build-tools $ANDROID_BUILD_TOOLS and platform $ANDROID_COMPILE_SDK, sets ANDROID_HOME and updates PATH; then installs Rust via rustup, adds Android targets, downloads and extracts NDK r17, creates standalone toolchains for armv7, arm64, x86, x86_64, writes a .cargo/config with custom linkers; then creates $ASSETS directory, creates apks directory, runs `./gradlew clean build` and copies all *.apk files to apks. The build job publishes the apks directory as an artifact. In the sign stage add a sign job (only on master) using openjdk:8-jdk that repeats the Android SDK setup, decodes $ANDROID_KEY_BASE64 to a keystore, then for each unsigned APK runs `zipalign -v -p 4` and `apksigner sign` with the keystore password, producing signed APKs, and publishes all signed APKs as artifacts. Global variables define ANDROID_BUILD_TOOLS=26.0.2 and ANDROID_COMPILE_SDK=26 and job‑specific toolchain path variables.",
+  "tags": [
+    "android",
+    "rust",
+    "openjdk",
+    "gradle",
+    "apksigner",
+    "zipalign",
+    "cargo",
+    "nightly",
+    "build",
+    "sign",
+    "gitlab-ci"
+  ]
+}

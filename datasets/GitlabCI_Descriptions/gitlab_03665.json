@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_03665",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1216,
+  "description": "Create a GitLab CI pipeline using the ubuntu:18.10 Docker image and three stages: prepare, build, and test. In the prepare stage add a setup_env job that runs apt update -qq, apt install -y clang-format python3-pip, pip3 install keras tensorflow, and python3 make_tests.py, and archives the include/test/ and models/ directories as artifacts that expire in 1 hour. In the build stage add a build:debug job that depends on setup_env, runs apt update -qq, apt install -y cmake clang, creates a build_debug directory, executes cmake .. -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DCMAKE_BUILD_TYPE=Debug and cmake --build ., and stores build_debug/kerasify as a 1‑hour artifact. Also add a build:release job with the same steps but using a build_release directory and -DCMAKE_BUILD_TYPE=Release, publishing build_release/kerasify as an artifact for 1 hour. In the test stage add test:debug and test:release jobs that depend on setup_env and their respective build jobs and simply execute ./build_debug/kerasify and ./build_release/kerasify respectively.",
+  "tags": [
+    "ubuntu",
+    "cmake",
+    "clang",
+    "kerasify",
+    "tensorflow",
+    "keras",
+    "debug",
+    "release",
+    "gitlab-ci"
+  ]
+}

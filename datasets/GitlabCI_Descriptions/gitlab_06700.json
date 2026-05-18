@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_06700",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 247,
+  "description": "Create a GitLab CI pipeline that uses the denis4inet/toxvpn-build-env Docker image and defines the variables CC=gcc-5, CXX=g++-5, LINK_STATICALLY='true', and VERSION=0.0.${CI_PROJECT_ID}. Define a single stage called build. Add a toxvpn job in the build stage that runs the shell command 'make all', stores the resulting 'toxvpn' directory as an artifact, and is configured to run only on the master branch. No services, caches, or deployment targets are required.",
+  "tags": [
+    "toxvpn",
+    "make",
+    "gcc5",
+    "docker-image",
+    "build"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_04428",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 808,
+  "description": "Create a GitLab CI pipeline using the python Docker image with a .cache/ cache and variables DEBIAN_FRONTEND=noninteractive, XDG_CACHE_HOME set to .cache, and _APT_PACKAGE_NAMES listing gfortran, graphviz, libopenblas-dev, python3-dev, python3-numpy, python3-pip, python3-scipy. Define a single test stage and three jobs: test_python310, test_python38, test_python39. Each job runs a before_script that updates apt with apt-get update --quiet --quiet --yes, installs the packages from _APT_PACKAGE_NAMES with apt-get install --quiet --quiet --yes ${_APT_PACKAGE_NAMES}, and installs tox via python3 -m pip --quiet install tox. Then each job runs python3 -m tox -e py310 (or py38, py39) respectively, using the python:3.10, python:3.8, and python:3.9 images. No special rules; all jobs run on every pipeline.",
+  "tags": [
+    "python",
+    "tox",
+    "apt",
+    "test",
+    "ci",
+    "cache"
+  ]
+}

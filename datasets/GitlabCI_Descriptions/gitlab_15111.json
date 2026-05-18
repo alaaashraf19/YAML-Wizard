@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_15111",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 227,
+  "description": "Create a GitLab CI pipeline that uses the node:7 Docker image and caches the node_modules/ directory. Define a deploy stage with a pages job that runs the before_script command npm install, then executes npm run build and cp -R site/public/.well-known public/ as its script, publishes the public/ folder as a pages artifact, and is limited to the master branch via only. The pipeline should deploy the built site to GitLab Pages.",
+  "tags": [
+    "node",
+    "npm",
+    "pages",
+    "cache",
+    "node7"
+  ]
+}

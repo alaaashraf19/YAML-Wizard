@@ -1,0 +1,32 @@
+name: MLIR
+
+on: workflow_dispatch
+
+jobs:
+  build-mlir-emscripten:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install emsdk
+        run: |
+          git clone --depth 1 http://github.com/emscripten-core/emsdk.git /opt/emsdk
+          /opt/emsdk/emsdk install latest
+          /opt/emsdk/emsdk activate latest
+
+      - name: Install dependencies
+        run: |
+          npm ci
+
+      - name: Build
+        run: |
+          source "/opt/emsdk/emsdk_env.sh"
+          npm run build:mlir
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: mlir
+          path: |
+            build.em/llvm-project/install/

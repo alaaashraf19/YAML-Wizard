@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_11931",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2659,
+  "description": "Create a GitLab CI pipeline with stages build, test, release, staging, and production, using docker:latest as the default image, docker:dind as a global service, and setting the DOCKER_DRIVER variable to overlay. Define a global before_script that runs docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY. Add a build job (stage: build) that runs on all branches except tags and executes docker build --pull -t $CI_REGISTRY_IMAGE:$CI_BUILD_REF . then docker push $CI_REGISTRY_IMAGE:$CI_BUILD_REF. Add test1 and test2 jobs (stage: test) that run on the image $CI_REGISTRY_IMAGE:$CI_BUILD_REF, have no before_script or services, echo \"test1\" or \"test2\" respectively, and are excluded for tags. Add release-by-name (stage: release) that runs on all branches except master, pulls $CI_REGISTRY_IMAGE:$CI_BUILD_REF, tags it as $CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME, and pushes it; and release-master (stage: release) that runs only on master, pulls the same image, tags it as $CI_REGISTRY_IMAGE:latest, and pushes it. Define a shared before_script (named .gcloud) that decodes $GCLOUD_SERVICE_KEY, activates the service account, and gets GKE credentials, then create staging and production deployment jobs using the google/cloud-sdk image: auto-deploy-master (stage: staging, only on master, environment: staging) runs kubectl patch deployment $STAGING_SERVICE_NAME with image $CI_REGISTRY_IMAGE:$CI_BUILD_REF; auto-deploy-tags (stage: production, only on tags, environment: production) runs kubectl patch deployment $PRODUCTION_SERVICE_NAME with image $CI_REGISTRY_IMAGE:$CI_BUILD_REF; manual deploy to staging (stage: staging, except master and tags, environment: staging) runs the same staging patch; manual deploy to production (stage: production, only master, environment: production, manual) runs the production patch.",
+  "tags": [
+    "docker",
+    "docker-dind",
+    "gcloud",
+    "kubernetes",
+    "gitlab-ci",
+    "release",
+    "staging",
+    "production"
+  ]
+}

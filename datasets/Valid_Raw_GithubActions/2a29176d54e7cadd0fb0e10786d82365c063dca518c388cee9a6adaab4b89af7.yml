@@ -1,0 +1,447 @@
+name: Build
+on:
+  push: {}
+  pull_request: {}
+  schedule:
+    - cron: "0 5 * * MON"
+  workflow_dispatch: {}
+
+concurrency:
+  group: ${{ github.repository }}-${{ github.head_ref || github.run_id }}-build
+  cancel-in-progress: true
+
+jobs:
+  ubuntu:
+    name: "Ubuntu"
+    needs: clang-format
+    strategy:
+      matrix:
+        os: [ubuntu:24.10]
+        compiler: [gcc, clang]
+        build_type: ["", Release, Debug, RelWithDebInfo]
+        exclude:
+          - compiler: clang
+            build_type: RelWithDebInfo
+    runs-on: ubuntu-latest
+    container:
+      image: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup mirror
+        run: |
+          sed -i 's/archive\.ubuntu\.com/azure.archive.ubuntu.com/g' /etc/apt/sources.list.d/ubuntu.sources
+          apt-get update
+      - name: Install GCC
+        if: ${{ matrix.compiler == 'gcc' }}
+        run: |
+          apt-get install -y g++
+      - name: Install clang
+        if: ${{ matrix.compiler == 'clang' }}
+        run: |
+          apt-get install -y clang
+          export CC=$(which clang)
+          export CXX=$(which clang++)
+      - name: Install dependencies
+        run: |
+          apt-get install -y \
+            cmake \
+            ninja-build \
+            python3 \
+            python3-virtualenv \
+            gettext \
+            qt6-base-dev \
+            qt6-multimedia-dev \
+            qt6-svg-dev \
+            libkf6archive-dev \
+            liblua5.3-dev \
+            libsqlite3-dev \
+            libsdl2-mixer-dev
+          virtualenv venv
+          . venv/bin/activate
+          pip install -r docs/requirements.txt
+      - name: Configure
+        run: |
+          cmake . -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+            -DCMAKE_INSTALL_PREFIX=/usr
+      - name: Build
+        run: |
+          cmake --build build
+      #- name: Test
+      #  run: |
+      #    cmake --build build --target test
+      #- name: Debug
+      #  if: failure()
+      #  run: |
+      #    cat build/Testing/Temporary/LastTest.log
+      - name: Install
+        run: |
+          DESTDIR=$PWD/build/install cmake --build build --target install
+      - name: Package
+        run: |
+          cmake --build build --target package
+      - name: Upload package
+        uses: softprops/action-gh-release@v2
+        if: |
+          startsWith(github.ref, 'refs/tags/')
+            && matrix.compiler == 'gcc'
+            && matrix.build_type == 'Release'
+        with:
+          files: |
+            build/Linux-x86_64/freeciv21_*_amd64.deb
+            build/Linux-x86_64/freeciv21_*_amd64.deb.sha256
+
+  flagstest:
+    name: "Additional compile flags in Ubuntu"
+    needs: clang-format
+    runs-on: ubuntu-latest
+    container:
+      image: ubuntu:24.10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup mirror
+        run: |
+          sed -i 's/archive\.ubuntu\.com/azure.archive.ubuntu.com/g' /etc/apt/sources.list.d/ubuntu.sources
+          apt-get update
+      - name: Install GCC
+        run: |
+          apt-get install -y g++
+      - name: Install dependencies
+        run: |
+          apt-get install -y \
+            cmake \
+            ninja-build \
+            python3 \
+            gettext \
+            qt6-base-dev \
+            qt6-multimedia-dev \
+            qt6-svg-dev \
+            libkf6archive-dev \
+            liblua5.3-dev \
+            libsqlite3-dev \
+            libsdl2-mixer-dev
+      - name: Configure
+        run: |
+            cmake . -B build -G "Ninja Multi-Config" --preset "DistroRelease"
+      - name: Build
+        run: |
+          cmake --build build
+      #- name: Test
+      #  run: |
+      #    cmake --build build --target test
+
+  windows:
+    name: "Windows MSYS2 (clang)"
+    runs-on: windows-latest
+    needs: clang-format
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: CLANG64
+          update: true
+          install: |
+            git
+            mingw-w64-clang-x86_64-cmake
+            mingw-w64-clang-x86_64-nsis
+            mingw-w64-clang-x86_64-clang
+            mingw-w64-clang-x86_64-readline
+            mingw-w64-clang-x86_64-lua
+            mingw-w64-clang-x86_64-SDL2_mixer
+            mingw-w64-clang-x86_64-qt6-base
+            mingw-w64-clang-x86_64-qt6-multimedia
+            mingw-w64-clang-x86_64-qt6-svg
+            mingw-w64-clang-x86_64-karchive
+      - name: Configure
+        run: |
+          export PATH=/clang64/bin:${PATH}
+          export MSYSTEM=CLANG64
+          export PKG_CONFIG_PATH=${PKG_CONFIG_PATH}:/clang64/lib/pkgconfig:/clang64/share/pkgconfig
+          cmake . -B build -G Ninja \
+           -DCMAKE_INSTALL_PREFIX=$PWD/build/install \
+           -DCMAKE_BUILD_TYPE=Release
+      - name: Build
+        run: |
+          cmake --build build
+      #- name: Test
+      #  run: |
+      #    cmake --build build --target test
+      - name: Install
+        run: |
+          cmake --build build --target install
+      - name: Package
+        run: |
+          cmake --build build --target package
+      - name: Upload package
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            build/Windows-x86_64/Freeciv21-*-Windows-x86_64.exe
+            build/Windows-x86_64/Freeciv21-*-Windows-x86_64.exe.sha256
+      - name: Upload a build
+        uses: actions/upload-artifact@v4
+        with:
+          name: Windows-exe
+          path: build/Windows-x86_64/Freeciv21-*.exe
+
+#  windows_clang_msvc:
+#    name: "Windows Clang"
+#    runs-on: windows-latest
+#    needs: clang-format
+#    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+#    env:
+#      VCPKG_ROOT: ${{github.workspace}}/vcpkg
+#      VCPKG_DEFAULT_BINARY_CACHE: ${{github.workspace}}/vcpkg/bincache
+#    steps:
+#      - uses: actions/checkout@v4
+#        with:
+#          fetch-depth: 0
+#      - uses: lukka/run-vcpkg@v11
+#        name: Install dependencies
+#        with:
+#          vcpkgGitCommitId: b322364f06308bdd24823f9d8f03fe0cc86fd46f
+#      - name: Configure
+#        run: cmake -S . -B build --preset "windows-debug"
+#      - name: Building
+#        run: cmake --build build --config Debug
+      #- name: Test
+      #  run: cmake --build build --target test
+
+  os_x:
+    name: "macOS (x64-osx)"
+    runs-on: macos-latest
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    needs: clang-format
+    env:
+      VCPKG_BUILD_TYPE: release
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install build tools
+        run: |
+          brew update
+          # Remove the bloat installed by default to avoid conflicts
+          brew remove --force $(brew list)
+          # Make sure to overwrite existing symlinks
+          brew install --overwrite \
+            autoconf \
+            autoconf-archive \
+            automake \
+            cmake \
+            create-dmg \
+            libtool \
+            ninja \
+            pkgconf
+      - uses: actions/setup-python@v5  # Workaround for #2069
+        with:
+          python-version: '3.11'
+      - uses: lukka/run-vcpkg@v11
+        name: Install dependencies
+        with:
+          vcpkgGitCommitId: e9bb3f9e7ae3bf82a861a818e8a0f1187db399c0
+      - name: Configure and Build
+        run: |
+          cmake --preset fullrelease-macos -S .
+          cmake --build build
+      - name: Test
+        run: |
+          cmake --build build --target test
+      - name: Install
+        run: |
+          cmake --build build --target install
+      - name: Split Branch Name
+        env:
+          BRANCH: ${{github.ref_name}}
+        id: split
+        run: echo "fragment=${BRANCH##*/}" >> $GITHUB_OUTPUT
+      - name: Create App Bundle
+        run: |
+          cd build
+          mkdir -pv Freeciv21.app/Contents/MacOS Freeciv21.app/Contents/Resources/doc Freeciv21.app/Contents/Resources/locale
+          cp -v dist/Info.plist Freeciv21.app/Contents
+          cp -rv install/share/doc/freeciv21/* Freeciv21.app/Contents/Resources/doc
+          cp -rv install/share/freeciv21/* Freeciv21.app/Contents/Resources
+          cp -rv install/share/locale/* Freeciv21.app/Contents/Resources/locale
+          cp -v install/bin/freeciv21-* Freeciv21.app/Contents/MacOS
+          mkdir client.iconset
+          cp -v ../data/icons/16x16/freeciv21-client.png client.iconset/icon_16x16.png
+          cp -v ../data/icons/32x32/freeciv21-client.png client.iconset/icon_16x16@2x.png
+          cp -v ../data/icons/32x32/freeciv21-client.png client.iconset/icon_32x32.png
+          cp -v ../data/icons/64x64/freeciv21-client.png client.iconset/icon_32x32@2x.png
+          cp -v ../data/icons/128x128/freeciv21-client.png client.iconset/icon_128x128.png
+          iconutil -c icns client.iconset
+          cp -v client.icns Freeciv21.app/Contents/Resources
+          create-dmg \
+            --hdiutil-verbose \
+            --volname "Freeciv21 Game Installer" \
+            --volicon "client.icns" \
+            --window-pos 200 120 \
+            --window-size 600 400 \
+            --icon-size 128 \
+            --icon "Freeciv21.app" 200 190 \
+            --hide-extension "Freeciv21.app" \
+            --app-drop-link 400 185 \
+            "Freeciv21-${{steps.split.outputs.fragment}}x64-osx.dmg" \
+            "Freeciv21.app"
+          shasum -a 256 Freeciv21-${{steps.split.outputs.fragment}}-x64-osx.dmg > Freeciv21-${{steps.split.outputs.fragment}}x64-osx.dmg.sha256
+      - name: Upload package
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            build/Freeciv21-*.dmg
+            build/Freeciv21-*.dmg.sha256
+      - name: Upload a build
+        uses: actions/upload-artifact@v4
+        with:
+          name: macOS-dmg
+          path: build/Freeciv21-*.dmg
+
+  fedora:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    container: fedora:latest
+    steps:
+      - name: Install dependencies
+        run: |
+          sudo dnf install -y \
+            git \
+            cmake \
+            ninja-build \
+            python \
+            gettext \
+            qt6-qtbase-devel \
+            qt6-qtmultimedia-devel \
+            qt6-qtsvg-devel \
+            kf6-karchive-devel \
+            lua-devel \
+            sqlite-devel \
+            SDL2_mixer-devel \
+            readline-devel \
+            zlib-devel \
+            libunwind-devel \
+            elfutils-libs
+      - uses: actions/checkout@v4
+      - name: Configure
+        # Set ALWAYS_ROOT because the container user is root and creating an
+        # unpriviledged user would be too much work.
+        run: |
+          cmake . -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+            -DCMAKE_INSTALL_PREFIX=/usr \
+            -DALWAYS_ROOT=YES
+      - name: Build
+        run: |
+          cmake --build build
+      - name: Test
+        run: |
+          cmake --build build --target test
+      - name: Install
+        run: |
+          DESTDIR=$PWD/build/install cmake --build build --target install
+
+  freebsd:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    steps:
+    - uses: actions/checkout@v4
+    # This has to be executed in a single step because freebsd-vm fails if run
+    # twice.
+    - name: Build, test, and install on FreeBSD
+      uses: vmactions/freebsd-vm@v1
+      with:
+        run: |
+          set -e
+          pkg install -y \
+            git \
+            cmake \
+            ninja \
+            gettext \
+            qt6-base \
+            qt6-multimedia \
+            qt6-svg \
+            kf6-karchive \
+            lua53 \
+            sqlite3 \
+            sdl2_mixer \
+            readline \
+            libunwind \
+            elfutils \
+            pkgconf
+
+          # Create an unpriviledged user to run tests as, otherwise the server
+          # refuses to start (and rightfully so)
+          pw user add -n action -m
+
+          # Create a script with the commands to run
+          cat >build-and-test.sh <<EOF
+          cmake -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+            -DCMAKE_INSTALL_PREFIX=/usr
+          cmake --build build
+          cmake --build build --target test
+          DESTDIR=$PWD/build/install cmake --build build --target install
+          EOF
+
+          chmod +x build-and-test.sh
+          su action -c 'sh build-and-test.sh'
+
+  nix:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v22
+      - run: nix flake check
+      # TODO: We can add the build to a cache for others (see cachix.org)
+      # It's free for FOSS.
+      - run: nix build .#freeciv21
+
+  snapcraft:
+    name: "Snap Package"
+    runs-on: ubuntu-latest
+    needs: clang-format
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Configure
+        run: |
+          mkdir -vp build/snap/local
+          cp -v data/icons/128x128/freeciv21-client.png build/snap/local
+          cp -v dist/snapcraft.yaml build/snap
+      - name: Build
+        uses: snapcore/action-build@v1
+        id: snapcraft
+        with:
+          path: build
+      - name: Upload a build
+        uses: actions/upload-artifact@v4
+        with:
+          name: snap
+          path: ${{ steps.snapcraft.outputs.snap }}
+
+  clang-format:
+    name: clang-format Code Formatter
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - name: Run clang-format style check for C/C++
+      uses: jidicula/clang-format-action@v4.15.0
+      with:
+        clang-format-version: '17'
+        exclude-regex: 'dependencies'

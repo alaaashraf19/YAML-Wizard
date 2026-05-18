@@ -1,0 +1,16 @@
+{
+  "sha": "7a688add9e56b6f98d639a0b2820f189e7e6751f71194c750e5bb47d85b02e9f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2290,
+  "description": "Create a GitHub Actions workflow named Lint CI that runs on every push to the master branch and on pull requests to master. The workflow should have four jobs: clang-format, cmake-format, clang-tidy, and asan, each running on ubuntu-20.04. The clang-format job should install clang-format, check out the code, format specified C++ files, and verify no changes were made. The cmake-format job should set up Python, install cmakelang, check out the code, list specified CMake files, and check their format. The clang-tidy job should install clang-tidy, check out the code, install CMake and gtest, configure and run a build with clang-tidy, and verify no changes were made. The asan job should check out the code, install CMake and gtest, configure and build with address sanitizer flags, and run example and test binaries.",
+  "tags": [
+    "clang-format",
+    "cmake-format",
+    "clang-tidy",
+    "asan",
+    "ubuntu",
+    "linting",
+    "ci"
+  ]
+}

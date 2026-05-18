@@ -1,0 +1,21 @@
+{
+  "sha": "gitlab_13679",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 856,
+  "description": "Create a GitLab CI pipeline using the image registry.gitlab.com/noughmad/serde_any_ci:latest. Define six jobs—test:ansi, test:cargo, test:conf, test:nofeatures, test:petgraph, and test:value—each running in the default test stage. In test:ansi run rustc --version && cargo --version then cargo test --all --no-default-features --features ansi. In test:cargo run rustc --version && cargo --version, cargo test --all, cargo doc, linkchecker target/doc/ptree/, cargo tarpaulin --out Xml, and upload coverage with bash <(curl -s https://codecov.io/bash). In test:conf run rustc --version && cargo --version then cargo test --all --no-default-features --features conf. In test:nofeatures run rustc --version && cargo --version then cargo test --all --no-default-features. In test:petgraph run rustc --version && cargo --version then cargo test --all --no-default-features --features petgraph. In test:value run rustc --version && cargo --version then cargo build --all --no-default-features --features value.",
+  "tags": [
+    "rust",
+    "cargo",
+    "test",
+    "ansi",
+    "conf",
+    "petgraph",
+    "value",
+    "doc",
+    "linkchecker",
+    "coverage",
+    "codecov",
+    "tarpaulin"
+  ]
+}

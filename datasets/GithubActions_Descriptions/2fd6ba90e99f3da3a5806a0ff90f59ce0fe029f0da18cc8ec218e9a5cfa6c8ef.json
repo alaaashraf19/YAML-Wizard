@@ -1,0 +1,15 @@
+{
+  "sha": "2fd6ba90e99f3da3a5806a0ff90f59ce0fe029f0da18cc8ec218e9a5cfa6c8ef",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1688,
+  "description": "Create a GitHub Actions workflow named ptf-ebpf that runs on every push to main and on pull requests to main. The workflow should have a concurrency policy that cancels any in-progress runs on non-main branches. Use an ubuntu-latest job with a recursive checkout, ccache setup, and then build and test PTF for eBPF backend in a Docker environment.",
+  "tags": [
+    "docker",
+    "ptf",
+    "ebpf",
+    "linux",
+    "tests",
+    "ccache"
+  ]
+}

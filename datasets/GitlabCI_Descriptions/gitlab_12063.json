@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_12063",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 305,
+  "description": "Create a GitLab CI pipeline using the rust:slim Docker image, with a global before_script that runs cargo --version and a cache of the target directory. Define two stages in order: test then build. Add a Test job in the test stage that runs cargo test. Add a Build job in the build stage that runs only for tags, executes cargo build --release then copies the resulting binary to the project root, and publishes the scribe file as an artifact. Ensure the cache persists the target directory across jobs.",
+  "tags": [
+    "rust",
+    "cargo",
+    "build",
+    "test",
+    "artifact",
+    "tags",
+    "cache"
+  ]
+}

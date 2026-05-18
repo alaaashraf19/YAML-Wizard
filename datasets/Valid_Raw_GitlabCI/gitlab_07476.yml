@@ -1,0 +1,37 @@
+before_script:
+- echo $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin registry.gitlab.com
+build:
+  script:
+  - docker build -t $SERVER_TEST_IMAGE .
+  - docker push $SERVER_TEST_IMAGE
+  stage: docker_build
+image: docker:git
+pip-check-requirements:
+  before_script:
+  - apk add --no-cache bash ca-certificates python3 git openssh
+  - python3 -m ensurepip
+  - python3 -m pip install pip-upgrader
+  image: alpine:3.14
+  rules:
+  - allow_failure: true
+  script:
+  - pip-upgrade requirements.txt --skip-package-installation -p all
+  - test -z "`git status | grep '^\s*modified:\s\+requirements.txt$'`"
+  stage: tests
+release:
+  only:
+  - production
+  script:
+  - docker pull $SERVER_TEST_IMAGE
+  - docker tag $SERVER_TEST_IMAGE $SERVER_RELEASE_IMAGE
+  - docker push $SERVER_RELEASE_IMAGE
+  stage: docker_release
+services:
+- docker:dind
+stages:
+- tests
+- docker_build
+- docker_release
+variables:
+  SERVER_RELEASE_IMAGE: registry.gitlab.com/$CI_PROJECT_NAMESPACE/${CI_PROJECT_NAME}:latest
+  SERVER_TEST_IMAGE: registry.gitlab.com/$CI_PROJECT_NAMESPACE/${CI_PROJECT_NAME}:$CI_COMMIT_REF_NAME

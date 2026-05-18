@@ -1,0 +1,14 @@
+{
+  "sha": "22d860fd959a406b7cd1ecf2b5130ae721f3266fab281b813986786eccf030b3",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 656,
+  "description": "Create a GitHub Actions workflow named deploy that triggers on push events with tags matching 'v*.*.*'. The workflow should run on an ubuntu-latest environment, checking out the code, setting an environment variable RELEASE_VERSION based on the GitHub reference, displaying the RELEASE_VERSION, setting up .NET 7.0.x, packing the project with a specific version, and pushing the package to NuGet using a provided secret.",
+  "tags": [
+    "dotnet",
+    "nuget",
+    "release",
+    "tags",
+    "deploy"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_04754",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 757,
+  "description": "Create a GitLab CI pipeline that defines stages Prepare, Image, Release, Staging, and Finalise Staging and sets the DEPLOYMENT_NAME variable to gateway. Add a Go Lint job in the Prepare stage that extends the .Go Service - Go Lint template (runs golint ./...). Add a Go Build job in the Prepare stage that extends .Go Service - Binary Build (runs go build -o $DEPLOYMENT_NAME ./...). Add a Docker Build job in the Image stage that extends .Go Service - Docker Build (runs docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA .). Add a Docker Release job in the Release stage that extends .Go Service - Docker Release (runs docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA). Add a Deploy job in the Staging stage that extends .Go Service - Deploy Staging (runs kubectl apply -f deployment.yaml). Add a Sentry Deploy job in the Finalise Staging stage that extends .Sentry - Sentry Deploy with SENTRY_ENV=staging (runs sentry-cli releases deploys $CI_COMMIT_SHA --env staging). Add a Sentry Release job in the Release stage that extends .Sentry - Sentry Release (runs sentry-cli releases new -p $DEPLOYMENT_NAME $CI_COMMIT_SHA). Include the external templates /go-service.yml and /sentry.yml from the Cacophony/gitlab-ci project.",
+  "tags": [
+    "go",
+    "docker",
+    "sentry",
+    "staging",
+    "gitlab-ci-templates"
+  ]
+}

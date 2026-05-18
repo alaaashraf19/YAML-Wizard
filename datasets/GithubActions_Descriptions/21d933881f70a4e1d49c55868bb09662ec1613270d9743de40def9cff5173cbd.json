@@ -1,0 +1,14 @@
+{
+  "sha": "21d933881f70a4e1d49c55868bb09662ec1613270d9743de40def9cff5173cbd",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1183,
+  "description": "Create a scheduled GitHub Actions workflow named Test: feature that runs every Saturday at 16:00 and can be manually triggered. The workflow uses a ubuntu-latest job matrix with different node indices and a total of 16 nodes. For each node, it checks out the repository, pulls a specific Docker image, runs feature tests in a Docker container with a custom script, and uploads the test log as an artifact.",
+  "tags": [
+    "docker",
+    "nodejs",
+    "tests",
+    "scheduled",
+    "github-actions"
+  ]
+}

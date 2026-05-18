@@ -1,0 +1,17 @@
+{
+  "sha": "b7077383b120887d51f081ad61c962e1517f7ddd586202fa419b5e27b2532085",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2698,
+  "description": "Create a GitHub Actions workflow named Build OSW-OS that runs on a schedule, on pull requests, and on workflow dispatch. The workflow uses two jobs: Find-feature and build-OSW. The Find-feature job checks out the repository, filters for i8n changes, and outputs languages and models. The build-OSW job uses these outputs to create a matrix build across multiple OS, models, and languages, checking out the repository, caching pip and PlatformIO, setting up Python, installing PlatformIO, and compiling firmware.",
+  "tags": [
+    "python",
+    "firmware",
+    "ubuntu",
+    "windows",
+    "macos",
+    "github-actions",
+    "ci",
+    "build"
+  ]
+}

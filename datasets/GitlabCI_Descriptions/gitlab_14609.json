@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_14609",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 223,
+  "description": "Create a GitLab CI pipeline that uses the circleci/node:8.11.1 Docker image and caches the node_modules/ directory. Define a single deploy stage and a deploy job that runs only on the master branch. In the deploy job execute npm install, then npm test, then npm run build --prod, and publish the public/ directory as an artifact. Ensure the job uses the cache and the artifact paths as specified.",
+  "tags": [
+    "node",
+    "npm",
+    "cache",
+    "deploy",
+    "master"
+  ]
+}

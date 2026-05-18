@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_12184",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 370,
+  "description": "Create a GitLab CI pipeline that uses the docker:latest image with a docker:dind service. Define a single stage named build-meltano and a job called docker_licnese_finder. In its before_script run docker --version, then in the script log in to $CI_REGISTRY with $CI_REGISTRY_USER and $CI_REGISTRY_PASSWORD, build the Docker image from license_finder/Dockerfile tagging it as $CI_REGISTRY_IMAGE/license_finder:latest, and push that image to the registry. The job runs in the build-meltano stage and has no caches, artifacts, or conditional rules.",
+  "tags": [
+    "docker",
+    "dind",
+    "license-finder",
+    "build-meltano",
+    "ci-registry"
+  ]
+}

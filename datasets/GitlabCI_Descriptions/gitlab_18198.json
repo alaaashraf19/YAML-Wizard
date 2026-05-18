@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_18198",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2611,
+  "description": "Create a GitLab CI pipeline using the python:latest Docker image with a cache key of $CI_JOB_NAME-$CI_COMMIT_REF_NAME and define variables COVERAGE_STATIC_DIR, PAGES_DIR, PYPIRC and SPHINX_DOC_DIR. In the test stage add a coverage job that runs `pip3 install coveralls`, sets `PACKAGE_NAME=$(python3 -c 'from setuptools import find_packages;print(find_packages(exclude=[\"tests\"])[0])')`, executes `coverage run --source=$PACKAGE_NAME setup.py test`, `coverage html`, `coverage report` and moves the generated htmlcov directory to `$COVERAGE_STATIC_DIR`, then publishes `$COVERAGE_STATIC_DIR` as a 1‑week artifact and extracts the total coverage percentage; also include the external python-black-pep8 job from the provided template. In the package stage add a dist job that runs `./setup.py sdist` and stores `dist/*` as a 1‑week artifact, an rpm-sfos job using the python:3.8 image that runs `apt update -qq` and `apt install -y -qq rpm >/dev/null`, then `make rpm-sfos` and `mv dist/*.rpm .` publishing `*.rpm` as a 1‑week artifact, and a sphinx job using the ubuntu image that runs `apt-get -qq update && apt-get -y -qq install pandoc python3-pip git >/dev/null`, `pip3 install --user .`, `pip3 install sphinx sphinx_rtd_theme jupyter ipython==6.5`, `make docs` and `mv docs/_build/html $SPHINX_DOC_DIR`, publishing `$SPHINX_DOC_DIR` as a 1‑week artifact. In the deploy stage add a pages job using the alpine image that runs only on tags, clears `$PAGES_DIR`, moves `$SPHINX_DOC_DIR` and `$COVERAGE_STATIC_DIR` into `$PAGES_DIR`, publishes `$PAGES_DIR` as the GitLab Pages artifact and sets the environment URL, a pypi-upload job (from the included template) that runs only on tags, depends on the dist job and deploys the package to PyPI, and an openrepos-upload-rpm job that extends the .openrepos-upload-rpm template, runs only on tags, depends on rpm-sfos and uploads the RPM to OpenRepos with variables OPENREPOS_UPLOAD_RPM_APPNAME, OPENREPOS_UPLOAD_RPM_CATEGORY and OPENREPOS_UPLOAD_RPM_PLATFORM.",
+  "tags": [
+    "python",
+    "coverage",
+    "sphinx",
+    "rpm",
+    "pages",
+    "pypi",
+    "openrepos",
+    "black-pep8"
+  ]
+}

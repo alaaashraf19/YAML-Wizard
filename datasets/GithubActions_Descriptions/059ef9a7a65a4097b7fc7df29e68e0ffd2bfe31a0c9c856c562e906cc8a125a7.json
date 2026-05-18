@@ -1,0 +1,16 @@
+{
+  "sha": "059ef9a7a65a4097b7fc7df29e68e0ffd2bfe31a0c9c856c562e906cc8a125a7",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 736,
+  "description": "Create a GitHub Actions workflow named Build source tarball that triggers on release creation and workflow dispatch. Run a single ubuntu-latest job that checks out the repository with full history, installs required build dependencies, builds a source tarball using tools/make_src_dist.py, and uploads the resulting tarball as a GitHub Actions artifact unless running in Actions environment.",
+  "tags": [
+    "ubuntu",
+    "cmake",
+    "sdl2",
+    "tarball",
+    "github-actions",
+    "release",
+    "workflow-dispatch"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "11d4f5659e4d13cf77fc18d7d380e048dd2ffb3f59c5fba9e57eb5497506aec9",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2000,
+  "description": "Create a daily GitHub Actions workflow named CI Upstream that runs on push to main, on pull requests to main with specific labels, and on manual dispatch. The workflow should run a matrix job with a single ubuntu-latest environment and Python 3.11, checking out the repository, setting up a conda environment, installing cf_xarray, running tests with pytest, and conditionally publishing a report if the test fails and the workflow was triggered by a schedule.",
+  "tags": [
+    "python",
+    "conda",
+    "pytest",
+    "ci",
+    "schedule",
+    "workflow-dispatch"
+  ]
+}

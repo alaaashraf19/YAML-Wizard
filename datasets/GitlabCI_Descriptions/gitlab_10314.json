@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_10314",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 502,
+  "description": "Create a GitLab CI pipeline using the python:latest Docker image. Define a single job named run in the default test stage that updates apt and installs fortune-mod and fortunes, installs the Python package toot via pip, creates the directory ~/.config/toot/instances, writes the $TOOT_LOGIN_INFORMATION secret to ~/.config/toot/user.cfg, writes $TOOT_INSTANCE_INFORMATION to ~/.config/toot/instances/$TOOT_INSTANCE, runs toot auth, and then conditionally executes bash run.sh only if $DO_TOOT is set and toot auth succeeds (otherwise logs a message or exits with error). No services, caches, artifacts, or branch rules are required.",
+  "tags": [
+    "python",
+    "toot",
+    "fortune-mod",
+    "apt",
+    "gitlab-ci"
+  ]
+}

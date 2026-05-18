@@ -1,0 +1,10 @@
+before_script:
+- apk update
+- apk add doxygen
+- apk add ttf-freefont graphviz
+image: alpine
+test:
+  except:
+  - master
+  script:
+  - doxygen documentation/doxygen/config.doxyfile

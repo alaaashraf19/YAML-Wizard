@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_07205",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 3005,
+  "description": "Create a GitLab CI pipeline with stages build, test_setup, test, test_teardown, report, docs, and deploy, using java:8-jdk for Java jobs, tmaier/docker-compose for the before_test and after_test jobs, docker:latest for Docker build jobs, cwt114/alpine-ssh for the deploy_staging job, and the dynamically built $JEKYLL_IMAGE for the generate_pages job; define variables EXAMIBUR_IMAGE, JEKYLL_IMAGE, and REGISTRY_BASE and cache the examibur/build/ and examibur/.gradle/ directories. In the test_setup stage run a before_test job that executes \"docker-compose rm -f tomcat postgres\", \"docker-compose up -d --build tomcat postgres\", and \"sleep 15\" with a docker:dind service. In the test stage run a test job that changes to the examibur directory and runs \"./gradlew clean test integrationTest\" with DB_HOST, DB_USER, DB_PASSWORD, LOG_FILE, LOG_LEVEL, and UI_TEST_URL variables, always collecting screenshots and jacoco exec files as artifacts; follow it with an after_test job in the test_teardown stage that runs \"docker-compose stop tomcat postgres\", \"docker cp examibur_tomcat_1:/var/jacoco/jacocoTomcat.exec examibur/jacoco/jacocoTomcat.exec\", \"docker-compose kill tomcat postgres\", and \"docker-compose rm -f tomcat postgres\" always. In the build stage run a build job that cd's into examibur and runs \"./gradlew assemble\", publishing the examibur/build/libs/ directory as an artifact. In the report stage run a jacoco job that cd's into examibur and runs \"ls -la jacoco/ && ./gradlew jacocoTestReport\" publishing the jacoco report directory, and a report_sonar job (only on master) that runs \"./gradlew sonarqube -Dsonar.login=$SONARQUBE_TOKEN\" publishing the full build reports. In the docs stage run a generate_pages job using the $JEKYLL_IMAGE that cd's into docs and runs \"jekyll build -d public\", publishing docs/public as an artifact. In the deploy stage run a build_images job that logs into $REGISTRY_BASE, builds the Jekyll image with \"docker build -t $JEKYLL_IMAGE -f docker/Dockerfile.jekyll .\" and pushes it, an examibur_image job that similarly builds and pushes the examibur image, and a deploy_staging job (only on master) that sets up SSH with $SSH_PRIVATE_KEY and $SSH_SERVER_HOSTKEYS and runs \"ssh deploy@sinv-56077.edu.hsr.ch\" to deploy to the staging environment URL.",
+  "tags": [
+    "java",
+    "gradle",
+    "docker",
+    "docker-compose",
+    "jekyll",
+    "sonarqube",
+    "ssh",
+    "jacoco",
+    "ci-cd",
+    "gitlab-pipeline"
+  ]
+}

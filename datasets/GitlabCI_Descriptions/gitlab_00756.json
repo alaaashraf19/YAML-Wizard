@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_00756",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 945,
+  "description": "Create a GitLab CI pipeline that runs Common Lisp tests using Quicklisp, with a global before_script that installs Quicklisp via /usr/local/bin/install-quicklisp and creates symlinks for all *.asd files into /root/quicklisp/local-projects/. Define a test stage and set variables DEPENDENCIES, INVOCATION, QUICKLISP_ADD_TO_INIT_FILE, and TEST_COMMAND to load required libraries (cl-json, alexandria, closer-mop, local-time, fiveam) and execute the asdf:test-op for the cl-json-object system. Add a ccl job using the clfoundation/ccl:latest Docker image that runs the shell command echo \"$INVOCATION\" | ccl and defines an EXIT variable as (ccl:quit 1) to cause a non‑zero exit on failure. Add an sbcl job using the clfoundation/sbcl:latest Docker image that runs echo \"$INVOCATION\" | sbcl --disable-debugger and defines an EXIT variable as (sb-ext:exit :code 1).",
+  "tags": [
+    "common-lisp",
+    "ccl",
+    "sbcl",
+    "quicklisp",
+    "gitlab-ci"
+  ]
+}

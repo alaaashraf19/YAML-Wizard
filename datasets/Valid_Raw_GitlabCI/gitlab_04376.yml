@@ -1,0 +1,179 @@
+.bst_before_script:
+  before_script: &id001
+  - 'export BST_SHA=''06ae434a7017edbf67bf46c3fe2e327466801787''  # 1.1.3
+
+    export BST_EXTERNAL_SHA=''fcd1fc365d0250bffe02937c89dcc31d11c299cf''
+
+    git clone https://gitlab.com/BuildStream/buildstream.git
+
+    # Use specific version of BuildStream
+
+    cd buildstream && git checkout $BST_SHA
+
+    pip3 install .
+
+    cd -
+
+    git clone https://gitlab.com/BuildStream/bst-external.git
+
+    # Use specific version of bst-external plugins
+
+    cd bst-external && git checkout $BST_EXTERNAL_SHA
+
+    pip3 install .
+
+    cd -
+
+    '
+  - mkdir -p ~/.ssh
+  - "if [ -z \"$baserock_ostree_cache_private_key\" ]; then\n    echo >&2 \"Private\
+    \ key for ostree.baserock.org is not available.\"\nelse\n    echo \"$baserock_ostree_cache_private_key\"\
+    \ > ~/.ssh/id_rsa\n    chmod 600 ~/.ssh/id_rsa\n    ssh-keygen -y -f ~/.ssh/id_rsa\
+    \ > ~/.ssh/id_rsa.pub\nfi\n"
+  - ssh-keyscan -p 22200 ostree.baserock.org >> ~/.ssh/known_hosts
+  - "if [ -n \"$baserock_ostree_cache_private_key\" ]; then\n    mkdir -p ~/.config\n\
+    \    echo \"projects:\" > ~/.config/buildstream.conf\n    echo \"  baserock:\"\
+    \ >> ~/.config/buildstream.conf\n    echo \"    artifacts:\" >> ~/.config/buildstream.conf\n\
+    \    echo \"      - url: ssh://ostree@ostree.baserock.org:22200/cache\" >> ~/.config/buildstream.conf\n\
+    \    echo \"        push: true\" >> ~/.config/buildstream.conf\n    echo \"scheduler:\"\
+    \ >> ~/.config/buildstream.conf\n    echo \"  fetchers: 1\" >> ~/.config/buildstream.conf\n\
+    \    echo \"  on-error: quit\" >> ~/.config/buildstream.conf\nfi\ncat ~/.config/buildstream.conf\n"
+.bst_cache:
+  cache: &id002
+    key: bst
+    paths:
+    - ${XDG_CACHE_HOME}/buildstream/sources/
+bst-build-base-system:
+  before_script: *id001
+  cache: *id002
+  dependencies: []
+  script:
+  - scripts/bst-build-or-show systems/base-system-content.bst
+  stage: build-2
+bst-build-build-system:
+  before_script: *id001
+  cache: *id002
+  dependencies: []
+  script:
+  - scripts/bst-build-or-show systems/build-system-content.bst
+  stage: build-2
+bst-build-build-system-converted:
+  before_script: *id001
+  cache: *id002
+  dependencies:
+  - bst-convert
+  script:
+  - scripts/bst-build-or-show systems/build-system-content.bst
+  stage: build-2
+bst-build-genivi-demo-platform-system:
+  before_script: *id001
+  cache: *id002
+  dependencies: []
+  script:
+  - scripts/bst-build-or-show systems/genivi-demo-platform-content.bst
+  stage: build-2
+bst-build-gnome-system:
+  before_script: *id001
+  cache: *id002
+  dependencies: []
+  script:
+  - scripts/bst-build-or-show systems/gnome-system-content.bst
+  stage: build-2
+bst-build-ivi-demo-platform-system:
+  before_script: *id001
+  cache: *id002
+  dependencies: []
+  script:
+  - scripts/bst-build-or-show systems/ivi-system-content.bst
+  stage: build-2
+bst-build-minimal-system:
+  before_script: *id001
+  cache: *id002
+  dependencies: []
+  script:
+  - scripts/bst-build-or-show systems/minimal-system-content.bst
+  stage: build-1
+bst-build-openstack-system:
+  before_script: *id001
+  cache: *id002
+  dependencies: []
+  script:
+  - scripts/bst-build-or-show systems/openstack-system-content.bst
+  stage: build-2
+bst-build-sysroot-armv8b64:
+  before_script: *id001
+  cache: *id002
+  dependencies: []
+  script:
+  - scripts/bst-cross-build-or-show armv8b64 gnu-toolchain/stage2.bst
+  stage: build-2
+bst-build-sysroot-armv8l64:
+  before_script: *id001
+  cache: *id002
+  dependencies: []
+  script:
+  - scripts/bst-cross-build-or-show armv8l64 gnu-toolchain/stage2.bst
+  stage: build-2
+bst-build-sysroot-ppc64b:
+  before_script: *id001
+  cache: *id002
+  dependencies: []
+  script:
+  - scripts/bst-cross-build-or-show ppc64b gnu-toolchain/stage2.bst
+  stage: build-2
+bst-build-sysroot-ppc64l:
+  before_script: *id001
+  cache: *id002
+  dependencies: []
+  script:
+  - scripts/bst-cross-build-or-show ppc64l gnu-toolchain/stage2.bst
+  stage: build-2
+bst-build-trove-system:
+  before_script: *id001
+  cache: *id002
+  dependencies: []
+  script:
+  - scripts/bst-build-or-show systems/trove-system-content.bst
+  stage: build-2
+bst-convert:
+  artifacts:
+    paths:
+    - elements/
+  before_script: *id001
+  script:
+  - export DEFINITIONS_YBD_SHA='8f8992a18d55c3abf28d4b6fc8036bd39d3dc1cf'
+  - git clone https://gitlab.com/baserock/definitions.git old-definitions-morph-format
+  - git -C old-definitions-morph-format checkout $DEFINITIONS_YBD_SHA
+  - "if [ ! -d ./ybd ]; then\n  git clone https://gitlab.com/baserock/ybd.git\n  git\
+    \ -C ybd checkout $YBD_SHA\n  cd ybd && ./install_dependencies.sh && cd -\nfi\n\
+    git clone https://gitlab.com/BuildStream/defs2bst.git\ngit -C defs2bst checkout\
+    \ $DEFS2BST_SHA\necho \"defs2bst version: $(git -C ./defs2bst rev-parse HEAD)\"\
+    \n"
+  - ./convert
+  stage: preprocess
+bst-minimal-system-deploy:
+  artifacts:
+    expire_in: 1 week
+    name: ${CI_BUILD_NAME}-${CI_BUILD_REF}
+    paths:
+    - ./minimal-system/sda.img
+  before_script: *id001
+  cache: *id002
+  dependencies:
+  - bst-build-minimal-system
+  script:
+  - scripts/bst-build-or-show systems/minimal-system-image-x86_64.bst
+  - bst checkout systems/minimal-system-image-x86_64.bst ./minimal-system
+  - dnf install -y qemu-system-x86
+  - scripts/test-minimal-system ./minimal-system/sda.img
+  stage: deploy-1
+image: buildstream/buildstream-fedora:latest
+stages:
+- preprocess
+- build-1
+- deploy-1
+- build-2
+variables:
+  DEFS2BST_SHA: 1dc5c0719de9357470b29ad4adc9b63f7012db86
+  GET_SOURCES_ATTEMPTS: 3
+  XDG_CACHE_HOME: ${CI_PROJECT_DIR}/.cache

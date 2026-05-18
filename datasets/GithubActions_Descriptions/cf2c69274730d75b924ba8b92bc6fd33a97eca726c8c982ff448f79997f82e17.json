@@ -1,0 +1,14 @@
+{
+  "sha": "cf2c69274730d75b924ba8b92bc6fd33a97eca726c8c982ff448f79997f82e17",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5522,
+  "description": "Create a GitHub Actions workflow named release that triggers on push to any branch and on any pull request. The workflow has three jobs: macos_universal, win32, and win64. Each job checks out the repository, sets up a cache, installs dependencies, clones and checks out a specific version of the PawPaw repository, bootstraps and builds the project, and uploads the resulting artifacts. The workflow also creates a GitHub release with the uploaded artifacts when a tag is pushed.",
+  "tags": [
+    "github-actions",
+    "release",
+    "multi-platform",
+    "cross-compilation",
+    "c++"
+  ]
+}

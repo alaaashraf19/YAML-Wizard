@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_10981",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 711,
+  "description": "Create a GitLab CI pipeline using the inovex/gitlab-ci-android:25 Docker image, set GRADLE_OPTS to -Dorg.gradle.daemon=false, and include a before_script that exports GRADLE_USER_HOME=$(pwd)/.gradle, makes ./gradlew executable, and synchronizes and updates all git submodules recursively. Define a single build stage and a cache keyed by ${CI_PROJECT_ID} that caches the .gradle/ directory. Add a lintDebug job in the build stage that runs ./gradlew -Pci --console=plain lintDebug -PbuildDir=lint. Add a spotlessCheck job in the build stage that runs ./gradlew spotlessCheck. Add an assembleDebug job in the build stage that runs ./gradlew assembleDebug and stores app/build/outputs/ as an artifact, and an assembleRelease job in the same stage that runs ./gradlew assembleRelease and also stores app/build/outputs/ as an artifact.",
+  "tags": [
+    "android",
+    "gradle",
+    "lint",
+    "spotless",
+    "assemble",
+    "gitlab-ci"
+  ]
+}

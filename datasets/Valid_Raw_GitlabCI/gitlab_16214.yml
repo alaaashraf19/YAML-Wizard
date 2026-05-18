@@ -1,0 +1,107 @@
+.compile_template:
+  script: &id001
+  - mkdir build
+  - cd build
+  - tar xzf ../sane-backends-*.tar.gz --strip-components=1
+  - (set -x; ./configure $CONFIGURE_OPTS)
+  - eval "(set -x; make -w -O -j2 -k $MAKE_FLAGS)"
+  stage: compile
+alpine-3.18-musl:
+  image: $REGISTRY_HUB:alpine-3.18-musl
+  script: *id001
+  stage: compile
+  variables:
+    CONFIGURE_OPTS: $CONFIGURE_MINI $CONFIGURE_FULL
+    MAKE_FLAGS: CFLAGS='-Werror -Wno-pedantic' CXXFLAGS=-Werror
+debian-11-mini:
+  image: $REGISTRY_HUB:debian-bullseye-mini
+  script: *id001
+  stage: compile
+  variables:
+    CONFIGURE_OPTS: $CONFIGURE_MINI
+    MAKE_FLAGS: CFLAGS=-Werror CXXFLAGS=-Werror
+debian-12-full:
+  after_script:
+  - make -C build/doc html-pages
+  - rm -rf lists && mkdir lists && mv build/doc/*.html lists/
+  - cd build/doc && doxygen doxygen-sanei.conf && mv sanei-html ../../doc
+  artifacts:
+    expire_in: 1 day
+    paths:
+    - sane-backends-*.tar.gz
+    - lists
+    - doc/sanei-html
+  image: $REGISTRY_HUB:debian-bookworm-full
+  script: *id001
+  stage: compile
+  variables:
+    CONFIGURE_OPTS: $CONFIGURE_MINI $CONFIGURE_FULL
+    MAKE_FLAGS: CFLAGS=-Werror CXXFLAGS=-Werror
+fedora-39-clang:
+  image: $REGISTRY_HUB:fedora-39-clang
+  script: *id001
+  stage: compile
+  variables:
+    CONFIGURE_OPTS: $CONFIGURE_MINI $CONFIGURE_FULL
+    MAKE_FLAGS: CFLAGS='-Werror -Wno-error=unused-but-set-variable' CXXFLAGS='-Werror'
+make-dist:
+  artifacts:
+    expire_in: 1 day
+    paths:
+    - sane-backends-*.tar.gz
+  image: $REGISTRY_HUB:debian-bullseye-mini
+  script:
+  - git ls-files | xargs ./tools/style-check.sh
+  - ./autogen.sh
+  - ./tools/create-changelog.sh
+  - ./configure
+  - make dist
+  stage: tarball
+make-distcheck:
+  artifacts:
+    expire_in: 90 days
+    paths:
+    - sane-backends-*.tar.gz
+    - lists
+    - doc/sanei-html
+  dependencies:
+  - debian-12-full
+  image: $REGISTRY_HUB:debian-bullseye-full
+  script:
+  - tar xzf sane-backends-*.tar.gz --strip-components=1
+  - rm sane-backends-*.tar.gz
+  - ./configure
+  - make distcheck
+  stage: snapshot
+stages:
+- tarball
+- compile
+- snapshot
+- release
+ubuntu-23.10:
+  image: $REGISTRY_HUB:ubuntu-mantic-dist
+  script: *id001
+  stage: compile
+  variables:
+    CONFIGURE_OPTS: $CONFIGURE_MINI $CONFIGURE_FULL
+    MAKE_FLAGS: CFLAGS=-Werror CXXFLAGS=-Werror
+upload:
+  allow_failure: false
+  before_script:
+  - apk --no-cache add curl git jq
+  image: alpine
+  needs:
+  - job: make-dist
+  only:
+  - tags
+  script:
+  - ./tools/create-release.sh
+  stage: release
+  variables:
+    GIT_DEPTH: '3'
+  when: manual
+variables:
+  CONFIGURE_FULL: --with-usb --with-usb-record-replay --with-avahi --enable-pnm-backend
+    --with-libcurl --with-poppler-glib
+  CONFIGURE_MINI: ''
+  REGISTRY_HUB: registry.gitlab.com/sane-project/ci-envs

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_00740",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 228,
+  "description": "Create a GitLab CI pipeline that uses the node:latest Docker image. Add a before_script that sets Yarn's cache folder to .yarn and runs yarn install. Define a deploy stage with a pages job that executes the exact commands: yarn build, rm -rf public, and mv build public; publishes the public/ directory as a Pages artifact; and runs only on the master branch.",
+  "tags": [
+    "node",
+    "yarn",
+    "gitlab-pages",
+    "deploy",
+    "master"
+  ]
+}

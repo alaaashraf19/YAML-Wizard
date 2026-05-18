@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_17916",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 213,
+  "description": "Create a GitLab CI pipeline that uses the continuumio/anaconda3 Docker image and runs python -V in a global before_script. Define a single job named run in the default test stage that executes the following shell commands in order: pip install redis, python setup.py bdist_wheel, pip install dist/*, pip list, and pytest. Configure the run job to collect the built wheel files matching dist/*.whl as artifacts. No additional services, caches, or conditional rules are required.",
+  "tags": [
+    "anaconda",
+    "python",
+    "pip",
+    "wheel",
+    "pytest",
+    "gitlab-ci"
+  ]
+}

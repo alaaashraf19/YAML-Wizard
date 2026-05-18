@@ -1,0 +1,57 @@
+before_script:
+- tlmgr update --self && tlmgr install latexmk pgf glossaries-extra cleveref titling
+  fancyhdr hyperref glossaries beamer varwidth tex-gyre roboto eso-pic xifthen iftex
+  minted
+- mkdir -p /usr/share/fonts/texgyre/
+- cp /opt/texlive/texdir/texmf-dist/fonts/opentype/public/tex-gyre/*.otf /usr/share/fonts/texgyre/
+- cp /opt/texlive/texdir/texmf-dist/fonts/opentype/google/roboto/*.otf /usr/share/fonts/texgyre/
+- fc-cache -f -v
+- apk add make curl tar py3-pygments git zip
+compile_article_pdflatex:
+  script:
+  - latexmk -pdf tests/test.tex
+  stage: test
+compile_article_xetex:
+  script:
+  - latexmk -pdf -xelatex tests/test.tex
+  stage: test
+compile_beamer_pdflatex:
+  script:
+  - latexmk -shell-escape -pdf tests/test_beamer.tex
+  stage: test
+compile_beamer_xetex:
+  script:
+  - latexmk -shell-escape -pdf -xelatex tests/test_beamer.tex
+  stage: test
+image:
+  entrypoint:
+  - ''
+  name: pandoc/extra
+installable-zip:
+  artifacts:
+    paths:
+    - texlive-vub.zip
+  script:
+  - make texlive-vub.zip
+  stage: build
+push-to-overleaf:
+  dependencies:
+  - template-zips
+  only:
+  - master
+  script:
+  - git config --global user.name "$OVERLEAF_USERNAME"
+  - git config --global user.email "$OVERLEAF_USERNAME"
+  - make publish
+  stage: deploy
+stages:
+- build
+- test
+- deploy
+template-zips:
+  artifacts:
+    paths:
+    - templates/*.zip
+  script:
+  - make templates
+  stage: build

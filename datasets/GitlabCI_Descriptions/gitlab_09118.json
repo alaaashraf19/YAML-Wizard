@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_09118",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 6320,
+  "description": "Set up a GitLab CI pipeline with stages go, test, build, and deploy, using the docker:stable image (with a docker:stable-dind service) for Docker jobs and golang:1.13.7 for Go jobs, and define variables DOCKER_DRIVER=overlay2 and MAJOR=2. In the go stage add a go build job that runs \"go build -o ${CI_PROJECT_DIR}/sast\" and stores the \"sast\" directory as an artifact, a go lint job that runs \"go get -u golang.org/x/lint/golint\" followed by \"golint -set_exit_status\", and a go test job that runs \"go test -race -cover -v ./...\". In the test stage add a test job (image docker:stable) that runs \"./test.sh\", depends on the go build job, uploads \"test/fixtures/gl-sast-report.json\" as an artifact, and sets the variable SAST_ANALYZER_IMAGE_TAG=$MAJOR. In the build stage define a .build template that logs into $CI_REGISTRY, builds a Docker image with tag $IMAGE_TAG and build‑arg SAST_ANALYZER_IMAGE_TAG, pushes it, and create build branch (only branches except master, IMAGE_TAG=$CI_COMMIT_REF_NAME), build edge (only master, IMAGE_TAG=edge), build major (only tags, manual, IMAGE_TAG=$MAJOR) and build tag (only tags, checks the changelog and sets IMAGE_TAG from the tag) jobs that extend this template. In the deploy stage define a .deploy template that logs in, builds a Docker image using $DOCKERFILE with build‑args SAST_ANALYZER_IMAGE_TAG=$MAJOR and a job‑specific SAST_DEFAULT_ANALYZERS list, pushes the image, runs only on tags, and instantiate many versioned jobs (11-10-stable through 13-0-stable) with DOCKERFILE=Dockerfile.v2 and their respective SAST_DEFAULT_ANALYZERS, plus a tag latest job that pulls the $MAJOR image, tags it as latest, and pushes it.",
+  "tags": [
+    "docker",
+    "golang",
+    "sast",
+    "ci-cd",
+    "registry",
+    "dind"
+  ]
+}

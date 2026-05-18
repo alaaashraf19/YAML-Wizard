@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_12549",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1204,
+  "description": "Create a GitLab CI pipeline with three stages: test, build, and deploy, and a global before_script that runs `apt-get update -qq && apt-get install -y -qq apache2` followed by `service apache2 start` for every job. In the build stage add a `build0` job that executes `echo \"Building the app\"`. In the test stage add `testecho` running `echo \"Running tests\"`, `testko` running `exit 1`, a failing job `faillingjobmoi` that runs `exit 1`, and an `indexPage` job that runs `curl http://localhost/public/index.html`. In the deploy stage add `deploy_prod` (only on the master branch) that sets the production environment (url https://firebaseHosting.example.com) and runs `echo \"Deploy to prod server npm for cycle analytics  https://gitlab.com/help/ci/environments\"`; add `deploy_staging` (only on master) targeting the staging environment (url https://staging.example.com) with `echo \"Deploy to staging server\"`; add `deploy_review` (for all branches except master) that creates a review environment named `review/$CI_COMMIT_REF_NAME` at `https://$CI_ENVIRONMENT_SLUG.example.com` and runs `echo \"Deploy a review app\"` with an `on_stop` job `stop_review`. Define `stop_review` as a manual job in the deploy stage that stops the review environment (`environment action: stop`) by echoing \"Remove review app\", with `GIT_STRATEGY` set to `none`.",
+  "tags": [
+    "apache2",
+    "build",
+    "test",
+    "deploy",
+    "production",
+    "staging",
+    "review-app",
+    "manual-stop",
+    "ci"
+  ]
+}

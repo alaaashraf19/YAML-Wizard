@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_14226",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 3410,
+  "description": "Create a GitLab CI pipeline using the registry.gitlab.com/ostrokach-docker/conda:latest Docker image and three stages: build, test, deploy. In the build stage define build-py27, build-py36, and build-py37 jobs that each run a before_script installing yum packages, enabling devtoolset-7, configuring conda channels, and updating conda; then execute a script that changes to the recipe directory, sets CF_COMPILER_STACK=comp4, creates symlinks for libssl.so.1.0.0 and libcrypto.so.1.0.0, and runs `conda build . --variant-config-files conda_build_config.yaml --python ${PYTHON_VERSION} --output-folder \"${CI_PROJECT_DIR}/conda-bld\" --no-test 2>&1 | tee \"${CI_PROJECT_DIR}/build-log.txt\"`. Each build job sets PYTHON_VERSION (2.7, 3.6, 3.7) and always stores the paths conda-bld, config.log, and build.log as artifacts. In the test stage add test-py27, test-py36, and test-py37 jobs that depend on their respective build jobs, reuse the same before_script, then run `cp -r $CI_PROJECT_DIR/conda-bld/* /opt/conda/conda-bld/`, `conda index /opt/conda/conda-bld/`, change to the recipe directory, set CF_COMPILER_STACK, and run `conda build . --variant-config-files conda_build_config.yaml --python ${PYTHON_VERSION} --test`; each test job uploads the generated environment-pyX.yml file as an artifact. In the deploy stage add deploy-py27, deploy-py36, and deploy-py37 jobs that depend on their build jobs, are excluded for trigger pipelines, and run a conditional script that uses the Anaconda CLI with $ANACONDA_TOKEN to upload the built packages from conda-bld/linux-64/*.tar.bz2 to the project namespace, using the master branch label or a dev label otherwise.",
+  "tags": [
+    "conda",
+    "yum",
+    "anaconda",
+    "python-2-7",
+    "python-3-6",
+    "python-3-7",
+    "docker-image",
+    "gitlab-ci"
+  ]
+}

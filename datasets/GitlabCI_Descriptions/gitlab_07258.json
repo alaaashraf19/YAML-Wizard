@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_07258",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 132,
+  "description": "Create a GitLab CI pipeline that uses the scorpil/rust:stable Docker image. Define a single job named test:cargo in the default test stage that runs the commands `rustc --version && cargo --version` followed by `cargo test --verbose --jobs 1 --release`. No services, caches, artifacts, or special rules are required.",
+  "tags": [
+    "rust",
+    "cargo",
+    "test",
+    "scorpil-rust"
+  ]
+}

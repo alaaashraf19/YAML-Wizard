@@ -1,0 +1,132 @@
+.test:
+  dependencies: &id001 []
+  image: ImageStream/$CI_PIPELINE_ID:1
+  script: &id002
+  - gcc -v
+  stage: test
+  tags: &id003
+  - oc-runner-starter
+  variables: &id004
+    GIT_STRATEGY: none
+build_rootfs:
+  artifacts:
+    paths:
+    - description.md
+  image: gioxa/imagebuilder
+  script:
+  - export target="${CI_PROJECT_DIR}/rootfs"
+  - export BASE="${CI_PROJECT_DIR}"
+  - export OS_CONFIG=make_os.conf
+  - mkdir -pv $target
+  - ./make_os
+  - copy --from_file=make_os.conf --to_var=MAKE_OS_CONFIG --substitute
+  - copy --from_file=docker_config.yml --to_var=DOCKER_CONFIG_YML --substitute
+  - copy --from_file=description.in.md --to_file=description.md --substitute
+  - copy --to_var=OC_INFO_IMAGE_DESCRIPTION --from_file=description.md
+  - copy --to_var=OC_INFO_IMAGE_VERSION --from_text="$OC_GITVERSION-$OC_RUNNER_SHORT_DATE"
+  - registry_push --rootfs=$target --name=$CI_PIPELINE_ID --ISR --reference=1 --config
+    .
+  stage: build
+  tags:
+  - oc-runner-starter
+  variables:
+    GIT_CACHE_STRATEGY: push-pull
+    WORK_SPACES: "- name: repo C$DISTRO_RELEASE\n  key: x86_64\n  scope: global\n\
+      \  path:\n    - cache/yum/x86_64/$DISTRO_RELEASE/base\n    - cache/yum/x86_64/$DISTRO_RELEASE/updates\n\
+      \  strategy: push-pull\n  threshold:\n    path: \n      - cache/yum/x86_64/$DISTRO_RELEASE/base/packages/*.rpm\n\
+      \      - cache/yum/x86_64/$DISTRO_RELEASE/updates/packages/*.rpm\n- name: deployctl\
+      \ $DISTRO_RELEASE\n  key: x86_64\n  scope: global\n  path:\n    - cache/yum/x86_64/$DISTRO_RELEASE/deployctl\n\
+      \  strategy: push-pull\n  threshold:\n    path:\n      - cache/yum/x86_64/$DISTRO_RELEASE/deployctl/packages/*.rpm\
+      \ \n- name: epel 7\n  key: x86_64\n  scope: global\n  path: \n    - cache/yum/x86_64/$DISTRO_RELEASE/epel\n\
+      \  strategy: push-pull\n  threshold:\n    path:\n      - cache/yum/x86_64/$DISTRO_RELEASE/epel/packages/*.rpm\n"
+cleanup:
+  allow_failure: true
+  dependencies: []
+  image: scratch
+  script:
+  - ImageStream_delete --name=$CI_PIPELINE_ID
+  stage: cleanup
+  tags:
+  - oc-runner-starter
+  variables:
+    GIT_STRATEGY: none
+  when: always
+push-image-tags:
+  dependencies: []
+  environment: production
+  except:
+  - branches
+  image: scratch
+  only:
+  - tags
+  script:
+  - registry_push --from_ISR --from_name=${CI_PIPELINE_ID} --from_reference=1 --GLR
+    --reference=${CI_COMMIT_TAG} --skip_label
+  - registry_push --from_ISR --from_name=${CI_PIPELINE_ID} --from_reference=1  --image=${DOCKER_NAMESPACE}/${OC_INFO_IMAGE_REFNAME}:${CI_COMMIT_TAG}
+    --skip_label
+  stage: deploy
+  tags:
+  - oc-runner-starter
+  variables:
+    GIT_STRATEGY: none
+stages:
+- build
+- test
+- deploy
+- deploy_test
+- tag_latest
+- cleanup
+tag-image-latest:
+  environment: production
+  except:
+  - branches
+  image: scratch
+  only:
+  - tags
+  script:
+  - registry_tag_image --GLR --reference=${CI_COMMIT_TAG} --tag=latest
+  - registry_tag_image --image=${DOCKER_NAMESPACE}/${OC_INFO_IMAGE_REFNAME}:${CI_COMMIT_TAG}
+    --credentials=${DOCKER_CREDENTIALS} --tag=latest
+  - DockerHub_set_description --image=$DOCKER_NAMESPACE/$OC_INFO_IMAGE_REFNAME --credentials=$DOCKER_CREDENTIALS
+  - MicroBadger_Update  --allow-fail --image=${DOCKER_NAMESPACE}/${OC_INFO_IMAGE_REFNAME}
+  stage: tag_latest
+  tags:
+  - oc-runner-starter
+  variables:
+    GIT_STRATEGY: none
+test-image-docker-hub:
+  dependencies: *id001
+  except:
+  - branches
+  image: ${DOCKER_NAMESPACE}/${OC_INFO_IMAGE_REFNAME}:${CI_COMMIT_TAG}
+  only:
+  - tags
+  script: *id002
+  stage: deploy_test
+  tags: *id003
+  variables: *id004
+test-image-gitlab-registry:
+  dependencies: *id001
+  except:
+  - branches
+  image: Gitlab:$CI_COMMIT_TAG
+  only:
+  - tags
+  script: *id002
+  stage: deploy_test
+  tags: *id003
+  variables: *id004
+test_build-image-IS-registry:
+  dependencies: *id001
+  image: ImageStream/$CI_PIPELINE_ID:1
+  script: *id002
+  stage: test
+  tags: *id003
+  variables: *id004
+variables:
+  DISTRO_RELEASE: 7
+  DOCKER_NAMESPACE: gioxa
+  OC_INFO_IMAGE_LICENSE: MIT
+  OC_INFO_IMAGE_REFNAME: build-image-4-oc-runner
+  OC_INFO_IMAGE_TITLE: Custom Build-Image for oc-runner project
+  OC_INFO_IMAGE_VENDOR: Gioxa Ltd.

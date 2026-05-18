@@ -1,0 +1,16 @@
+before_script:
+- npm install hexo-cli -g
+- test -e package.json && npm install
+- hexo generate
+cache:
+  paths:
+  - node_modules/
+image: node:10.15.3
+pages:
+  artifacts:
+    paths:
+    - public
+  rules:
+  - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+  script:
+  - hexo generate

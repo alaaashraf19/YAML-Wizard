@@ -1,0 +1,16 @@
+.cargo_test_template:
+  script: &id001
+  - cargo test --verbose --jobs 1
+  stage: test
+beta:cargo:
+  image: rustdocker/rust:beta
+  script: *id001
+  stage: test
+nightly:cargo:
+  image: rustdocker/rust:nightly
+  script: *id001
+  stage: test
+stable:cargo:
+  image: rustdocker/rust:stable
+  script: *id001
+  stage: test

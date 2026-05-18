@@ -1,0 +1,17 @@
+build-job:
+  artifacts:
+    paths:
+    - target/release/indivisible
+  script:
+  - cargo build --release
+  stage: build
+image: rust:latest
+include:
+- template: Security/License-Scanning.gitlab-ci.yml
+stages:
+- build
+- test
+test-job:
+  script:
+  - ./test.sh
+  stage: test

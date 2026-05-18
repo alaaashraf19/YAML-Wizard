@@ -1,0 +1,24 @@
+{
+  "sha": "gitlab_11563",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 17965,
+  "description": "Create a GitLab CI pipeline with stages build, test, analysis and coverage. Define a .build template that runs on saas-linux-small-amd64, uses before_script to print system info, creates obj/, then runs `cmake $CMAKE_OPTIONS $CMAKE_ADDITIONAL_OPTIONS .. && make -j$(nproc) && make -j$(nproc) install`, stores obj/ as on‑failure artifacts and runs for merge requests and branches. Extend this template in jobs such as fedora/build, .centos10, .centos9, alpine/openssl_3.x/musl, centos10s/openssl_3.5.x/x86_64, centos9s/openssl_3.5.x/x86_64, and .vs which adds Windows vcpkg setup before building with `cmake --build .` and `ctest`. Add analysis jobs like .csbuild, .fedora/memory-sanitizer, .valgrind, .fedora/address-sanitizer, fedora/abidiff, and coverity that run custom scripts (csbuild, clang sanitizers, make test_memcheck, ABI diff checks, Coverity scan) and publish on‑failure artifacts. Include test jobs .tests, .macos, .mingw, .tumbleweed that run `cmake $CMAKE_OPTIONS $CMAKE_ADDITIONAL_OPTIONS .. && make -j$(nproc) && ctest --output-on-failure` on appropriate images, use variable‑driven CMAKE options, cache vcpkg, and trigger with only/except rules for merge requests, branches, tags, schedules and specific refs.",
+  "tags": [
+    "cmake",
+    "make",
+    "ctest",
+    "docker",
+    "centos",
+    "fedora",
+    "macos",
+    "windows",
+    "valgrind",
+    "coverity",
+    "sanitizer",
+    "csbuild",
+    "vcpkg",
+    "coverage",
+    "abidiff"
+  ]
+}

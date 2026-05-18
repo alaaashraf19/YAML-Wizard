@@ -1,0 +1,47 @@
+before_script:
+- bundle config set path '.vendor'
+- bundle install
+- apt-get -qq update
+- apt-get -qq install -y lftp
+cache:
+  key: $CI_JOB_NAME-$CI_COMMIT_REF_SLUG
+  paths:
+  - .jekyll-cache/
+  - .vendor/
+  - public/
+  - pf-org/
+  when: always
+deploy:
+  interruptible: true
+  only:
+  - pub
+  script:
+  - lftp -e "set ssl:verify-certificate no; set mirror:overwrite true; set mirror:parallel-transfer-count
+    5; open pathfinder-fr.org; user $ftp_username $ftp_password; mirror --reverse
+    --delete --use-cache --no-perms --no-umask --overwrite --only-newer pf-org/ /;
+    bye"
+  stage: deploy
+image: ruby:2.7
+pages:
+  artifacts:
+    paths:
+    - public
+  interruptible: true
+  only:
+  - master
+  script:
+  - bundle exec jekyll build -d public -b "/pf2-jekyll/" --verbose --incremental
+  stage: deploy
+pf-org:
+  artifacts:
+    paths:
+    - pf-org
+  interruptible: true
+  only:
+  - pub
+  script:
+  - bundle exec jekyll build -d pf-org --incremental
+  stage: build
+variables:
+  JEKYLL_ENV: production
+  LC_ALL: C.UTF-8

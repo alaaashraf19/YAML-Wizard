@@ -1,0 +1,18 @@
+{
+  "sha": "30149625a3b15b056fee1ca5b5d45c7980e902854aca200531a940d1822c527d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3612,
+  "description": "Create a GitHub Actions workflow named Compiler Integration Tests that runs on push to main and on pull requests to main. The workflow consists of four jobs: gcc, clang, xcode, and VisualStudio. Each job runs on a different environment (ubuntu-latest or macos-latest or windows), uses a matrix strategy to test different compiler versions and C++ standards, and uses a custom CMake script to configure, build, and test.",
+  "tags": [
+    "ci",
+    "gcc",
+    "clang",
+    "xcode",
+    "visualstudio",
+    "cmake",
+    "ubuntu",
+    "macos",
+    "windows"
+  ]
+}

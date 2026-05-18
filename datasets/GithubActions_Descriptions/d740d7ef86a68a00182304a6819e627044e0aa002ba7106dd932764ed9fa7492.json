@@ -1,0 +1,17 @@
+{
+  "sha": "d740d7ef86a68a00182304a6819e627044e0aa002ba7106dd932764ed9fa7492",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 9035,
+  "description": "Create a GitHub Actions workflow named CI that runs on every push to master, develop, and build branches, and on pull requests to these branches. The workflow should have three jobs: build-macos, build-linux, and build-windows, each running on a different environment (macos-latest, ubuntu-latest, and windows-2019 respectively). Each job should check out the repository, determine the KALDI_BRANCH, and then perform specific build and packaging steps for their respective environments, finally uploading the produced wheels as artifacts.",
+  "tags": [
+    "ci",
+    "macos",
+    "linux",
+    "windows",
+    "python",
+    "kaldi",
+    "build",
+    "packaging"
+  ]
+}

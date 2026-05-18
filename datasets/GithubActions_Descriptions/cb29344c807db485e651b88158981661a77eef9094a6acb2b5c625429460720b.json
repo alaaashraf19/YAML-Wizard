@@ -1,0 +1,15 @@
+{
+  "sha": "cb29344c807db485e651b88158981661a77eef9094a6acb2b5c625429460720b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1542,
+  "description": "Create a GitHub Actions workflow named Build that runs on push to master or dev branches and on pull requests to those branches, but only for files in src/ and .gitmodules. The workflow has two jobs: build and deploy. The build job runs on windows-latest, checks out the repository with submodules, sets up MSBuild and .NET Core 3.1.301, restores dependencies, builds Impostor.Client and Impostor.Server, and runs tests. The deploy job runs on windows-latest, depends on the build job, and only runs on release events. It publishes Impostor.Server for win-x64 and linux-x64.",
+  "tags": [
+    "dotnet",
+    "msbuild",
+    "windows",
+    "build",
+    "deploy",
+    "release"
+  ]
+}

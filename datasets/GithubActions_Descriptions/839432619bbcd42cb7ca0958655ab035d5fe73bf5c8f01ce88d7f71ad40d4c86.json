@@ -1,0 +1,17 @@
+{
+  "sha": "839432619bbcd42cb7ca0958655ab035d5fe73bf5c8f01ce88d7f71ad40d4c86",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 6634,
+  "description": "Create a GitHub Actions workflow that triggers on workflow dispatch, push to master or main, pull requests to master or main, and published, created, or edited releases. The workflow has read permissions to repository contents. It consists of two jobs: one for creating an R tarball and another for R CMD check. The R tarball job runs on ubuntu-latest, extracts the mlpack version, sets up Pandoc and R, queries dependencies, caches R packages, installs build dependencies, and uploads the R tarball. The R CMD check job runs on a matrix of Windows, macOS, and Linux with different R versions, downloads the R tarball, sets up Pandoc and R, queries dependencies, caches R packages, installs check dependencies, and checks the R package.",
+  "tags": [
+    "r",
+    "github-actions",
+    "mlpack",
+    "r-cmd-check",
+    "pandoc",
+    "ubuntu",
+    "windows",
+    "macos"
+  ]
+}

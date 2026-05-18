@@ -1,0 +1,15 @@
+{
+  "sha": "1e887451757caf26f75016b6e68527633ae1654d6f61dd293685142f43bc9a11",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2257,
+  "description": "Create a GitHub Actions workflow named Test that runs on every pull request and push. The workflow consists of two jobs: pre-commit and pytest. The pre-commit job runs on ubuntu-20.04, checks out the code, sets up Python 3.8, and runs pre-commit checks. The pytest job runs on ubuntu-20.04 with a matrix of Python versions, installs dependencies, and runs tests with pytest and codecov.",
+  "tags": [
+    "python",
+    "tests",
+    "pre-commit",
+    "pytest",
+    "codecov",
+    "ubuntu"
+  ]
+}

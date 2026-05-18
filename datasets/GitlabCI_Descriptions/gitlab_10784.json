@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_10784",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 405,
+  "description": "Create a GitLab CI pipeline using the gradle:alpine Docker image and set GRADLE_USER_HOME to the repository's .gradle directory via a before_script. Define a GRADLE_OPTS variable with -Dorg.gradle.daemon=false. Add a build job in the build stage that uses a cache keyed by $CI_COMMIT_REF_NAME storing the build and .gradle directories (policy push) and runs the command gradle compileJava. Add a test job in the test stage that pulls the same cache (policy pull) and runs gradle test. No artifacts, services, or branch/tag rules are required.",
+  "tags": [
+    "gradle",
+    "java",
+    "alpine",
+    "cache",
+    "gitlab-ci"
+  ]
+}

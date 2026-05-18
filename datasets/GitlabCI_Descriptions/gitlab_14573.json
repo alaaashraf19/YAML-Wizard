@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_14573",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1686,
+  "description": "Create a GitLab CI pipeline with three stages: create_doc, deploy, and deploy-docker, using a global before_script that echoes \"Before script execution\" and caching the __pycache__ and .pytest_cache directories. In the deploy stage add a conda_package job that runs on the continuumio/miniconda3:latest image, only on the stable branch, and executes the following commands: cd conda; /opt/conda/bin/conda config --set anaconda_upload yes; /opt/conda/bin/conda config --show channels; /opt/conda/bin/conda config --prepend channels conda-forge; /opt/conda/bin/conda config --remove channels defaults; /opt/conda/bin/conda config --append channels nodefaults; /opt/conda/bin/conda config --set channel_priority strict; /opt/conda/bin/conda config --show channels; conda install conda-build anaconda-client -c conda-forge; /opt/conda/bin/conda build --token $ANACONDA_TOKEN --output-folder . .; targeting the staging-conda environment at https://anaconda.org/PLAnT/plant. In the create_doc stage add a create_website_pages job that runs on the registry.gitlab.com/plant/plant/no_plant:latest image, only on stable, sets PREV_DIR=$(pwd), changes to the parent directory, sets PYTHONPATH=$(pwd), then cd $PREV_DIR/website/scripts/, runs bash dump_posts and bash dump_notebooks, and publishes the website/ directory as an artifact. In the deploy-docker stage add a docker_image job that runs on the docker:git image with the docker:dind service, only on stable, logs in to registry.gitlab.com with $BOT_USER and $BOT_PASS, builds the image with docker build --build-arg DOCKER_TOKEN_USER=${DOCKER_TOKEN_USER} --build-arg DOCKER_TOKEN_PASS=${DOCKER_TOKEN_PASS} -t registry.gitlab.com/plant/plant ., pushes it with docker push, and logs out, deploying to the GitLab Container Registry under the staging-docker environment at https://gitlab.com/plant/plant.",
+  "tags": [
+    "conda",
+    "docker",
+    "gitlab-ci",
+    "pages",
+    "cache",
+    "stable"
+  ]
+}

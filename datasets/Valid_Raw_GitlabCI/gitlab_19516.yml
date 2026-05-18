@@ -1,0 +1,33 @@
+build:
+  environment:
+    name: staging
+  only:
+  - next
+  - master
+  script:
+  - bash ./bashell.sh -r
+  stage: build
+  tags:
+  - linux
+production:
+  environment:
+    name: production
+  only:
+  - master
+  script:
+  - bash ./bashell.sh -r
+  stage: production
+  tags:
+  - linux
+stages:
+- test
+- build
+- production
+test:
+  environment:
+    name: test
+  script:
+  - bash ./bashell.sh -r
+  stage: test
+  tags:
+  - linux

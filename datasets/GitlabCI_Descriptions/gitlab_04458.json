@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_04458",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 599,
+  "description": "Create a GitLab CI pipeline with three jobs. The test job runs in the default test stage using the python:3-alpine image, executes \"pip install -r requirements.txt\" then \"python base_test.py\". The staging job runs in the deploy stage using the claudyus/dind-ci-push image, runs \"/ssh/config.sh\" followed by \"git push -f dokku@dokku.krudo.host:flask-dev HEAD:refs/heads/master\" to deploy to a Dokku staging environment, and has no branch restrictions. The production job also runs in the deploy stage with the same image, runs the same two commands but pushes to the Dokku production remote, is limited to the master branch and must be triggered manually. No caches, artifacts, services, or variables are defined.",
+  "tags": [
+    "dokku",
+    "python-alpine",
+    "deployment",
+    "manual",
+    "git-push"
+  ]
+}

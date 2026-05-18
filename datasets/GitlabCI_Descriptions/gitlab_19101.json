@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_19101",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 763,
+  "description": "Create a GitLab CI pipeline that runs a code_quality job in the test stage using the docker:stable image with the docker:stable-dind service. Set variables DOCKER_DRIVER=overlay2 and DOCKER_TLS_CERTDIR='' . The job is allowed to fail, produces a codequality artifact gl-code-quality-report.json that expires in 1 week, and runs only on branches and tags unless the variable CODE_QUALITY_DISABLED is set. In the script first run a shell snippet that checks docker info and, if unavailable and KUBERNETES_PORT is set, exports DOCKER_HOST='tcp://localhost:2375'; then execute docker run --env SOURCE_CODE=\"$PWD\" --volume \"$PWD\":/code --volume /var/run/docker.sock:/var/run/docker.sock \"registry.gitlab.com/gitlab-org/security-products/codequality:12-0-stable\" /code.",
+  "tags": [
+    "docker",
+    "code-quality",
+    "dind",
+    "allow-failure",
+    "gitlab-ci"
+  ]
+}

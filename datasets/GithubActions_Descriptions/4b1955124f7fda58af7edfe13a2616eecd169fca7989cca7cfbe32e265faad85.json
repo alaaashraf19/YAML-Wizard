@@ -1,0 +1,16 @@
+{
+  "sha": "4b1955124f7fda58af7edfe13a2616eecd169fca7989cca7cfbe32e265faad85",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3361,
+  "description": "Create a GitHub Actions workflow that builds C++ code in a matrix of variants including CPU, CUDA, CUDA 12.0, ROCm, and Clang. The workflow should trigger on push events to all branches except gh-readonly-queue/**, pull requests, and merge groups. It should run on an ubuntu-latest environment with concurrency control, cancelling any in-progress runs for the same workflow and reference. For each variant, it should set up Python 3.11, install CMake and TensorFlow, download libtorch, and then build the C++ code using a custom script.",
+  "tags": [
+    "c++",
+    "cuda",
+    "rocm",
+    "clang",
+    "tensorflow",
+    "github-actions",
+    "concurrency"
+  ]
+}

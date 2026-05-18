@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_17173",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 963,
+  "description": "Create a GitLab CI pipeline with three stages: vetting, tests, and deploy. In the vetting stage add a lint job (allow_failure: true) using the golang image that runs `go get github.com/golang/lint/golint` then `golint -set_exit_status ./...`. Also in vetting add a vet job using the golang image that runs `go vet ./...`. In the tests stage add a unit_race_tests job using the golang image that runs `go test -race ./...`. In the deploy stage add a staging job that runs only on the master branch, updates apt, installs ruby-dev, installs the dpl gem, and runs `dpl --provider=heroku --app=gitlab-heroku-deploy-staging --api-key=$HEROKU_API_KEY` to deploy to the Staging environment. Also add a production job that runs only on the master branch, is manual, sets the Production environment, performs the same apt and dpl steps but deploys to the gitlab-heroku-deploy-prod app using the $HEROKU_API_KEY.",
+  "tags": [
+    "go",
+    "golint",
+    "go-vet",
+    "go-test",
+    "heroku",
+    "ruby",
+    "dpl",
+    "manual-deploy",
+    "staging",
+    "production"
+  ]
+}

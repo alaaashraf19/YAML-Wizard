@@ -1,0 +1,14 @@
+{
+  "sha": "1d880cccbf079bcb27617d615fc5829b98bff0a1724cb1f1fafa041d9d1a0dbe",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1412,
+  "description": "Create a GitHub Actions workflow named CodeQL that runs on every push to the master branch and on pull requests to the master branch. Use an ubuntu-latest job with read permissions for actions and contents, and write permission for security events. Perform a CodeQL analysis in a matrix job for the cpp language, checking out the repository with submodules, initializing CodeQL, installing dependencies, building the project with cmake and ninja, and then running the CodeQL analysis.",
+  "tags": [
+    "codeql",
+    "cpp",
+    "ubuntu",
+    "security",
+    "analysis"
+  ]
+}

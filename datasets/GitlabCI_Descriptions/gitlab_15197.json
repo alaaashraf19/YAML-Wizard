@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_15197",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1931,
+  "description": "Create a GitLab CI pipeline using the maven:lates Docker image and the quantr-assembler runner tag, with three stages: build, test, and deploy. Add a build job in the build stage that runs mvn $MAVEN_CLI_OPTS -DskipTests compile. Add a deploy job in the deploy stage that runs mvn $MAVEN_CLI_OPTS -DskipTests package and sets the environment name test with URL https://www.quantr.hk/asmweb. Add a deploy jar job in the deploy stage that runs mvn $MAVEN_CLI_OPTS -DskipTests package, copies the resulting jar with cp target/assembler*.jar /home/gitlab-runner/assembler/assembler.jar, and then runs mvn -DskipTests install deploy. Add three conditional test jobs in the test stage: test-clear-gas runs only when the commit message matches /clear-gas/ and executes mvn $MAVEN_CLI_OPTS -Dtest=hk.quantr.assembler.riscv.ClearGas test -DCI_JOB_ID=$CI_JOB_ID -DGITLAB_USER_ID=\"$GITLAB_USER_ID\" -DGITLAB_USER_NAME=\"$GITLAB_USER_NAME\" -DGITLAB_USER_EMAIL=$GITLAB_USER_EMAIL -DGITLAB_USER_LOGIN=\"$GITLAB_USER_LOGIN\"; test-ia32 runs on /test-ia32/ with mvn $MAVEN_CLI_OPTS -Dtest=hk.quantr.assembler.ia32.FullTest test and the same CI_JOB_ID and GitLab user variables; test-riscv runs on /test-riscv/ and runs two commands: mvn $MAVEN_CLI_OPTS -Dtest=hk.quantr.assembler.riscv.FullTest test and mvn $MAVEN_CLI_OPTS -Dtest=hk.quantr.assembler.riscv.FullTestDisasm test, each with the CI_JOB_ID and GitLab user variables. All jobs use the quantr-assembler tag.",
+  "tags": [
+    "maven",
+    "java",
+    "gitlab-ci",
+    "quantr-assembler",
+    "test",
+    "deploy",
+    "environment"
+  ]
+}

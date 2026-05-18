@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_14336",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 884,
+  "description": "Create a GitLab CI pipeline that uses the Docker image registry.gitlab.com/pantomath-io/demo-tools:latest and defines the stages test and build. Set a global before_script that runs: mkdir -p /go/src/gitlab.com/pantomath-io /go/src/_/builds, cp -r $CI_PROJECT_DIR /go/src/gitlab.com/pantomath-io/pantomath, ln -s /go/src/gitlab.com/pantomath-io /go/src/_/builds/pantomath-io, export CC=clang-5.0, and make dep. Add a build job in the build stage that executes make and publishes the demo-tools directory as an artifact. In the test stage add lint_code (make lint), unit_tests (make test), code_coverage (make coverage), memory_sanitizer (make msan), race_detector (make race), and code_coverage_report which runs only on the master branch and executes make coverhtml. Configure cache paths for /apt-cache, /go/src/github.com, /go/src/golang.org, /go/src/google.golang.org, and /go/src/gopkg.in.",
+  "tags": [
+    "go",
+    "make",
+    "clang",
+    "lint",
+    "unit-tests",
+    "coverage",
+    "memory-sanitizer",
+    "race-detector",
+    "cache",
+    "docker-image"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "0ac69e105c136d0d82c7014ee80705f9688eb6e51c04148b14d918f92e1e3dd7",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1179,
+  "description": "Create a GitHub Actions workflow named Publish Docker image that runs on every push to the master branch. Use an ubuntu-latest job that checks out the repository, sets up QEMU, Docker Buildx, and logs in to Docker Hub and the GitHub Container registry. Then build and push Docker images for linux/amd64 and linux/arm64 platforms to Docker Hub and the GitHub Container registry with the latest tag.",
+  "tags": [
+    "docker",
+    "github-actions",
+    "multi-platform",
+    "docker-hub",
+    "ghcr"
+  ]
+}

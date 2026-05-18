@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_16286",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 162,
+  "description": "Create a GitLab CI pipeline that uses the ruby:2.3 Docker image. Add a pages job that runs in the deploy stage, executes `gem install jekyll` followed by `jekyll build --source pages/helios -d public/`, and publishes the `public/` directory as a GitLab Pages artifact. Configure the job to run only on the master branch. No services, caches, or extra variables are required.",
+  "tags": [
+    "ruby",
+    "jekyll",
+    "gitlab-pages",
+    "pages",
+    "gem"
+  ]
+}

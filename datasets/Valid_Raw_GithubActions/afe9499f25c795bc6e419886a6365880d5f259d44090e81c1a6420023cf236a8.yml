@@ -1,0 +1,150 @@
+name: Build Notepad Next
+
+on: [push, pull_request]
+
+jobs:
+  build-linux:
+    strategy:
+      matrix:
+        config:
+        - 
+          qt_version: "5.15.2"
+          modules: ""
+        - 
+          qt_version: "6.2.4"
+          modules: "qt5compat"
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v2
+        with:
+          version: ${{ matrix.config.qt_version }}
+          modules: ${{ matrix.config.modules }}
+      
+      - name: Setup
+        run: sudo apt-get install libxkbcommon-dev
+
+      - name: Compile
+        run: |
+          rm -rf build-linux
+          mkdir build-linux 
+          cd build-linux
+          qmake ../src/NotepadNext.pro
+          make -j$(nproc)
+
+      - name: Build AppImage
+        run: |
+          cd build-linux
+          make install INSTALL_ROOT=AppDir
+          cd NotepadNext
+          wget --no-verbose "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage"
+          wget --no-verbose "https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage"
+          chmod +x linuxdeploy*.AppImage
+          export OUTPUT=NotepadNext-x86_64.AppImage
+          ./linuxdeploy-x86_64.AppImage --appdir AppDir --plugin qt --output appimage
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: NotepadNext-Linux-Qt${{ matrix.config.qt_version }}-AppImage
+          path: ${{ github.workspace }}/build-linux/NotepadNext/NotepadNext-x86_64.AppImage
+
+  build-mac:
+    strategy:
+      matrix:
+        config:
+        -
+          qt_version: "5.15.2"
+          modules: ""
+        -
+          qt_version: "6.2.4"
+          modules: "qt5compat"
+
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v2
+        with:
+          version: ${{ matrix.config.qt_version }}
+          modules: ${{ matrix.config.modules }}
+
+      - name: Compile
+        run: |
+          rm -rf build-mac
+          mkdir build-mac
+          cd build-mac
+          qmake ../src/NotepadNext.pro
+          make -j$(sysctl -n hw.ncpu)
+          cd NotepadNext
+          macdeployqt NotepadNext.app -dmg
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: NotepadNext-macOS-Qt${{ matrix.config.qt_version }}
+          path: ${{ github.workspace }}/build-mac/NotepadNext/NotepadNext.dmg
+
+  build-windows:
+    strategy:
+      matrix:
+        config:
+        - 
+          qt_version: "5.15.2"
+          modules: ""
+        - 
+          qt_version: "6.2.4"
+          modules: "qt5compat"
+
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v2
+        with:
+          version: ${{ matrix.config.qt_version }}
+          modules: ${{ matrix.config.modules }}
+
+      - name: Setup VS tools
+        uses: egor-tensin/vs-shell@v2
+        with:
+          arch: x64
+
+      - name: Install jom
+        run: choco install jom
+
+      - name: Run QMake
+        run: |
+          mkdir build
+          cd build
+          qmake ..\src\NotepadNext.pro
+      
+      - name: Build
+        run: |
+          cd build
+          jom
+
+      - name: Create package
+        run: |
+          cd build
+          jom package
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: NotepadNext-Windows-Qt${{ matrix.config.qt_version }}
+          path: ${{ github.workspace }}/build/package/

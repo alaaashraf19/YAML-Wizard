@@ -1,0 +1,18 @@
+{
+  "sha": "f40a9a84af4f78e83afb1eda393c4682f25ae7b8b516d8852297cfb98c3a3a88",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2195,
+  "description": "Create a GitHub Actions workflow named windows that runs on push to master and v2.0-preview branches, on pull requests, and on a scheduled cron job. Use a windows-latest job with a matrix strategy to build and test with Python 3.9 in a Release configuration. The job should check out the code, configure and use a cache, set up Miniconda, configure a Conda environment, and then build, test, and install Reaktoro using clcache and Ninja.",
+  "tags": [
+    "windows",
+    "python",
+    "conda",
+    "miniconda",
+    "cmake",
+    "ninja",
+    "tests",
+    "scheduled",
+    "cache"
+  ]
+}

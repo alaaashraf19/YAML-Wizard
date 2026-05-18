@@ -1,0 +1,71 @@
+# Copyright (c) 2020 Mikael Simberg
+#
+# SPDX-License-Identifier: BSL-1.0
+# Distributed under the Boost Software License, Version 1.0. (See accompanying
+# file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+name: Windows CI (Release)
+
+on: [pull_request]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: jwlawson/actions-setup-cmake@v1.9
+      with:
+        cmake-version: '3.18.x'
+    - name: Install dependencies
+      run: |
+        md C:\projects
+        $client = new-object System.Net.WebClient
+        $client.DownloadFile("https://rostam.cct.lsu.edu/download/builder/vcpkg-export-hpx-dependencies.7z","C:\projects\vcpkg-export-hpx-dependencies.7z")
+        7z x C:\projects\vcpkg-export-hpx-dependencies.7z -y -oC:\projects\vcpkg
+    - name: Configure
+      shell: bash
+      run: |
+          cmake . -Bbuild -G'Visual Studio 16 2019' \
+              -DCMAKE_BUILD_TYPE=Release \
+              -DCMAKE_TOOLCHAIN_FILE='C:/projects/vcpkg/scripts/buildsystems/vcpkg.cmake' \
+              -DHPX_WITH_FETCH_HPXLOCAL=ON \
+              -DHPXLocal_WITH_FETCH_ASIO=ON \
+              -DHPXLocal_WITH_EXAMPLES=OFF \
+              -DHPXLocal_WITH_TESTS=OFF \
+              -DHPX_WITH_EXAMPLES=ON \
+              -DHPX_WITH_TESTS=ON \
+              -DHPX_WITH_TESTS_UNIT=ON \
+              -DHPX_WITH_DEPRECATION_WARNINGS=OFF \
+              -DHPX_WITH_TESTS_MAX_THREADS_PER_LOCALITY=2 \
+              -DHPX_WITH_CHECK_MODULE_DEPENDENCIES=On
+    - name: Build
+      shell: bash
+      run: |
+          cmake --build build --config Release \
+          --target ALL_BUILD \
+          -- -maxcpucount -verbosity:minimal -nologo
+    - name: Install
+      shell: bash
+      run: |
+          cmake --install build --config Release
+    - name: Test
+      shell: bash
+      run: |
+          cd build
+          ctest \
+            --verbose \
+            --output-on-failure \
+            --build-config Release \
+            --tests-regex tests.examples \
+            --exclude-regex \
+          "tests.examples.1d_stencil.1d_stencil_6|\
+          tests.examples.1d_stencil.1d_stencil_7|\
+          tests.examples.async_io.async_io_simple|\
+          tests.examples.modules.checkpoint.1d_stencil_4_checkpoint|\
+          tests.examples.modules.resiliency_distributed.distributed.tcp.async_replay_distributed|\
+          tests.examples.modules.resiliency_distributed.distributed.tcp.async_replicate_distributed|\
+          tests.examples.quickstart.1d_wave_equation|\
+          tests.examples.quickstart.partitioned_vector_spmd_foreach|\
+          tests.examples.transpose.transpose_block_numa|\
+          tests.examples.modules.collectives.distributed.tcp.channel_communicator"

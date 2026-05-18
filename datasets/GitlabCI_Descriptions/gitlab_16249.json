@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_16249",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 491,
+  "description": "Create a GitLab CI pipeline that uses the opensuse/tumbleweed Docker image and runs a before_script that installs make, tar, graphviz, liberation-fonts, texlive-xetex-bin, texlive-fontspec, texlive-dejavu, google-worksans-fonts, several TeX packages (beamer.cls, bbm.sty, capt-of.sty, textpos.sty, czech.ldf, pzdr.tfm, fancyvrb.sty) and pandoc via zypper. Define a single stage named build. Add a job called build-pdfs in the build stage that executes the command make -j$(nproc) and collects all generated PDF files matching */*.pdf as artifacts. The pipeline has no services, caches, or conditional rules.",
+  "tags": [
+    "opensuse-tumbleweed",
+    "zypper",
+    "make",
+    "pdf",
+    "pandoc"
+  ]
+}

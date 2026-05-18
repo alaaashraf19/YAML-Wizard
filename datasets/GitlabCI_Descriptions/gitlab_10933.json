@@ -1,0 +1,21 @@
+{
+  "sha": "gitlab_10933",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1335,
+  "description": "Create a GitLab CI pipeline with stages test, check, and deploy using python:3.7 as the default image. In the test stage add three jobs—test2.7, test3.6, and test3.7—each running a before_script that updates apt, installs software-properties-common, adds the openjdk PPA, and installs openjdk-8-jdk, then a script that executes pip install -q -r tests/requirements.txt followed by python -m unittest discover, using images python:2.7, python:3.6, and python:3.7 respectively. In the check stage add a coverage job that uses the same before_script, then runs pip install -q -r tests/requirements.txt, pip install -q coverage, coverage run --source schemaflow -m unittest discover, coverage html, and coverage report -m, and publishes the htmlcov directory as an artifact, and a lint job that runs pip install flake8 mypy, flake8 --ignore E501, and mypy --ignore-missing-imports schemaflow on python:3.7. In the deploy stage add a pages job that runs only on the master branch, uses python:3.7, runs pip install -r docs/requirements.txt, cd docs && make html && cd .., creates public/documentation, moves docs/build/html/ to public/documentation/latest/, and publishes the public directory as an artifact.",
+  "tags": [
+    "python",
+    "unittest",
+    "coverage",
+    "flake8",
+    "mypy",
+    "gitlab-pages",
+    "python-2.7",
+    "python-3.6",
+    "python-3.7",
+    "test",
+    "check",
+    "deploy"
+  ]
+}

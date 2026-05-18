@@ -1,0 +1,162 @@
+name: cmake
+
+on:
+  push:
+    branches:
+      - '*'
+  pull_request:
+    branches:
+      - '*'
+
+env:
+  DESTDIR: ${{ github.workspace }}/build/tmp
+
+jobs:
+  macos-libs:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up dependencies
+        run: |
+          brew install cmake fluid-synth liblo libmagic libsndfile pkg-config
+      - name: configure
+        run: cmake -S cmake -B build -DCARLA_BUILD_FRAMEWORKS=OFF
+      - name: build
+        run: cmake --build build -j $(sysctl -n hw.logicalcpu)
+      - name: install
+        run: cmake --install build --verbose
+      - uses: actions/upload-artifact@v3
+        with:
+          name: macos-libs
+          path: ${{ env.DESTDIR }}
+
+  macos-frameworks:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up dependencies
+        run: |
+          brew install cmake fluid-synth liblo libmagic libsndfile pkg-config
+      - name: configure
+        run: cmake -S cmake -B build -DCARLA_BUILD_FRAMEWORKS=ON
+      - name: build
+        run: cmake --build build -j $(sysctl -n hw.logicalcpu)
+      - name: install
+        run: cmake --install build --verbose
+      - uses: actions/upload-artifact@v3
+        with:
+          name: macos-frameworks
+          path: ${{ env.DESTDIR }}
+
+  mingw32-cross:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up dependencies
+        run: |
+          sudo rm -f /etc/apt/sources.list.d/microsoft-prod.list
+          sudo dpkg --add-architecture i386
+          sudo apt-get update -qq
+          sudo apt-get install -yqq --allow-downgrades cmake libc6:i386 libgcc-s1:i386 libstdc++6:i386 binutils-mingw-w64-i686 g++-mingw-w64-i686 mingw-w64 wine-stable:i386
+      - name: configure
+        env:
+          PKG_CONFIG: false
+        run: cmake -S cmake -B build \
+               -DCMAKE_CROSSCOMPILING=ON \
+               -DCMAKE_CROSSCOMPILING_EMULATOR=wine \
+               -DCMAKE_SYSTEM_NAME=Windows \
+               -DCMAKE_SYSTEM_PROCESSOR=i686 \
+               -DCMAKE_C_COMPILER=i686-w64-mingw32-gcc \
+               -DCMAKE_CXX_COMPILER=i686-w64-mingw32-g++ \
+               -DCMAKE_RANLIB=i686-w64-mingw32-ranlib \
+               -DCMAKE_AR=$(which i686-w64-mingw32-ar)
+      - name: build
+        run: cmake --build build -j $(nproc)
+      - name: install
+        run: cmake --install build --verbose
+      - uses: actions/upload-artifact@v3
+        with:
+          name: mingw32
+          path: ${{ env.DESTDIR }}
+
+  mingw64-cross:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up dependencies
+        run: |
+          sudo rm -f /etc/apt/sources.list.d/microsoft-prod.list
+          sudo dpkg --add-architecture i386
+          sudo apt-get update -qq
+          sudo apt-get install -yqq --allow-downgrades cmake libc6:i386 libgcc-s1:i386 libstdc++6:i386 binutils-mingw-w64-x86-64 g++-mingw-w64-x86-64 mingw-w64 wine-stable
+      - name: configure
+        env:
+          PKG_CONFIG: false
+        run: cmake -S cmake -B build \
+               -DCMAKE_CROSSCOMPILING=ON \
+               -DCMAKE_CROSSCOMPILING_EMULATOR=wine \
+               -DCMAKE_SYSTEM_NAME=Windows \
+               -DCMAKE_SYSTEM_PROCESSOR=x86_64 \
+               -DCMAKE_C_COMPILER=x86_64-w64-mingw32-gcc \
+               -DCMAKE_CXX_COMPILER=x86_64-w64-mingw32-g++ \
+               -DCMAKE_RANLIB=x86_64-w64-mingw32-ranlib \
+               -DCMAKE_AR=$(which x86_64-w64-mingw32-ar)
+      - name: build
+        run: cmake --build build -j $(nproc)
+      - name: install
+        run: cmake --install build --verbose
+      - uses: actions/upload-artifact@v3
+        with:
+          name: mingw64
+          path: ${{ env.DESTDIR }}
+
+  ubuntu-20_04:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -yqq cmake libfluidsynth-dev liblo-dev libmagic-dev libsndfile1-dev libx11-dev pkg-config
+      - name: configure
+        run: cmake -S cmake -B build
+      - name: build
+        run: cmake --build build -j $(nproc)
+      - name: install
+        run: cmake --install build --verbose
+      - uses: actions/upload-artifact@v3
+        with:
+          name: ubuntu-20.04
+          path: ${{ env.DESTDIR }}
+
+  ubuntu-22_04:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -yqq cmake libfluidsynth-dev liblo-dev libmagic-dev libsndfile1-dev libx11-dev pkg-config
+      - name: configure
+        run: cmake -S cmake -B build
+      - name: build
+        run: cmake --build build -j $(nproc)
+      - name: install
+        run: cmake --install build --verbose
+      - uses: actions/upload-artifact@v3
+        with:
+          name: ubuntu-22.04
+          path: ${{ env.DESTDIR }}
+
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: configure
+        run: cmake -S cmake -B build
+      - name: build
+        run: cmake --build build
+      # FIXME fails with error
+      # https://github.com/falkTX/Carla/actions/runs/5137608233/jobs/9245932221
+      #- name: install
+        #run: cmake --install build --verbose

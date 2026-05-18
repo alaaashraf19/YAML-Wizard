@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_06050",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 8998,
+  "description": "Create a GitLab CI pipeline using the Docker image registry.gitlab.com/robertodr/lsdalton-ci:b1d36238 (with an entrypoint /opt/intel-entrypoint.sh for the Intel jobs) and global variables DALTON_TMPDIR, GIT_SSL_NO_VERIFY, GIT_STRATEGY, LSDALTON_DEVELOPER. Add six jobs in the default stage—hybrid-gcc-int64, hybrid-intel (allow_failure), mpi-gcc-int64, mpi-intel (allow_failure), openmp-gcc, and openmp-intel (allow_failure)—each with a before_script that prints system info (uname, free, df, ulimit, lscpu, cmake, python3, and the relevant compiler versions) and echoes a BUILD_NAME variable built from the job name, user ID and branch. In each job the script creates ${DALTON_TMPDIR}, installs mpi4py via python3 -m pip, runs python3 setup with the appropriate compiler flags (e.g., --fc=mpifort/mpiifort/gfortran/ifort, --cc=mpicc/mpiicc/gcc/icc, --cxx=mpic++/mpiicpc/g++/icpc, --mpi, --omp, --type=debug, many -DENABLE options, and CMAKE_INSTALL_PREFIX), then builds with cmake --build . --target install piping to build.log and runs one or two ctest commands (using mpirun or OMP_NUM_THREADS as needed) piping output to full_ctest_output.log. Each job uploads build/build.log and build/full_ctest_output.log as artifacts and defines its own BUILD_NAME variable; the Intel jobs use the custom entrypoint and preload the MKL library in the second ctest command.",
+  "tags": [
+    "lsdalton",
+    "gcc",
+    "intel",
+    "mpi",
+    "openmp",
+    "ci",
+    "docker"
+  ]
+}

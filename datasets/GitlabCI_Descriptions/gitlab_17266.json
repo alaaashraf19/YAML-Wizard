@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_17266",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 69,
+  "description": "Create a GitLab CI pipeline that defines a single job named pages (which runs in the default test stage). The job uses the default Docker image, executes the shell command ./build.sh, and collects the public/ directory as an artifact for GitLab Pages deployment. No additional services, caches, or rules are specified, and the job always runs on every pipeline.",
+  "tags": [
+    "pages",
+    "artifact",
+    "script",
+    "gitlab-pages"
+  ]
+}

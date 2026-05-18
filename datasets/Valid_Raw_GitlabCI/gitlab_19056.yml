@@ -1,0 +1,9 @@
+before_script:
+- apt-get update -yqq
+- apt-get install -yqq libgtk-3-dev libglib2.0-dev libatk1.0-dev libcairo2-dev libgdk-pixbuf2.0-dev
+  libpango1.0-dev libdbus-1-dev libzmq3-dev
+image: rust:latest
+test:cargo:
+  script:
+  - rustc --version && cargo --version
+  - cargo test --all --verbose

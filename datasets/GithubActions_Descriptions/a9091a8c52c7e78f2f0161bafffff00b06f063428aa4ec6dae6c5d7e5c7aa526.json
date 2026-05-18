@@ -1,0 +1,17 @@
+{
+  "sha": "a9091a8c52c7e78f2f0161bafffff00b06f063428aa4ec6dae6c5d7e5c7aa526",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1572,
+  "description": "Create a GitHub Actions workflow that runs on every pull request, excluding changes to markdown files. Use a Linux-Ubuntu matrix job that checks out the repository, installs dependencies, configures Conan, runs Conan, builds, installs, and tests the project with a matrix of build types (Release, Debug) and shared library settings (ON, OFF).",
+  "tags": [
+    "linux",
+    "ubuntu",
+    "conan",
+    "gcc",
+    "cmake",
+    "ctest",
+    "matrix",
+    "pr"
+  ]
+}

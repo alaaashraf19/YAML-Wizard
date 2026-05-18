@@ -1,0 +1,15 @@
+{
+  "sha": "ce509664b697cf2301613cfee523110095b17e2361bd07d1d4382a3c68d4ed06",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1656,
+  "description": "Create a GitHub Actions workflow named abidiff that runs on push and pull request events. The workflow should run on an ubuntu-latest environment with a Debian testing container, and it should check the ABI compatibility between the current and previous versions of the code. The workflow should install necessary dependencies, checkout the current and previous versions of the code, build them using meson and ninja, and then run abidiff to compare the ABI of the two versions.",
+  "tags": [
+    "abidiff",
+    "abi",
+    "testing",
+    "debian",
+    "meson",
+    "ninja"
+  ]
+}

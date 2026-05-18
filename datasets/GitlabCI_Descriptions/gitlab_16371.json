@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_16371",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 278,
+  "description": "Create a GitLab CI pipeline that uses the moul/emacs Docker image and defines a single deploy-stage job named pages to publish a site with GitLab Pages. The pages job runs only on the master branch and executes the exact shell commands: emacs --batch --eval \"(progn (package-initialize) (package-refresh-contents) (package-install 'org))\" and emacs --batch --no-init-file --load publish.el --funcall org-publish-all. It stores the generated public/ directory as an artifact for the Pages deployment. No services, caches, or extra variables are needed.",
+  "tags": [
+    "emacs",
+    "org-mode",
+    "gitlab-pages",
+    "publish"
+  ]
+}

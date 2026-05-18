@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_04757",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 759,
+  "description": "Create a GitLab CI pipeline that includes the /go-service.yml and /sentry.yml templates from the Cacophony/gitlab-ci project (ref master) and defines the stages Prepare, Image, Release, Staging, and Finalise Staging with a DEPLOYMENT_NAME variable set to processor. Add a Go Build job (stage Prepare) that extends the .Go Service - Binary Build template, and a Go Lint job (stage Prepare) that extends the .Go Service - Go Lint template. Add a Docker Build job (stage Image) extending .Go Service - Docker Build and a Docker Release job (stage Release) extending .Go Service - Docker Release. Add a Deploy job (stage Staging) extending .Go Service - Deploy Staging, and a Sentry Deploy job (stage Finalise Staging) extending .Sentry - Sentry Deploy with SENTRY_ENV set to staging, plus a Sentry Release job (stage Release) extending .Sentry - Sentry Release. Each job inherits its concrete shell commands, Docker image, caches, artifacts, and rules from the referenced templates.",
+  "tags": [
+    "go",
+    "docker",
+    "sentry",
+    "staging",
+    "ci-templates"
+  ]
+}

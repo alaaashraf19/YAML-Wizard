@@ -1,0 +1,15 @@
+{
+  "sha": "05e949b44d9f5c8672e9e144862967195de8c5e8c64f151a953ebcc783f67180",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2194,
+  "description": "Create a GitHub Actions workflow named tox that triggers on tag creation, push to main branch, pull requests, published releases, and a monthly schedule. The workflow has three jobs: pre, build, and check. The pre job generates a matrix of Python versions and names. The build job uses this matrix to run tox with different environments. The check job verifies the build job's success and comments on pull requests.",
+  "tags": [
+    "python",
+    "tox",
+    "testpypi",
+    "schedule",
+    "matrix",
+    "github-actions"
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "sha": "gitlab_11362",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1783,
+  "description": "Create a GitLab CI pipeline using the default alpine Docker image (and alpine:3.10 for the generate_pages job) with three stages: test, generate, and deploy. In the test stage define black, flake8, mypy, pylint, and tests jobs; each runs \"apk update && apk add bash python3 python3-dev py-pip\" (black and mypy also add \"apk add build-base\"; pylint adds \"apk add --update alpine-sdk\"; tests add \"apk add build-base linux-headers\"), then installs their Python tools with pip3 (black installs black==22.12.0, flake8 installs flake8, mypy installs mypy types-requests, pylint installs pylint decorator requests, tests install pytest requests psutil pytest-mock) and finally executes the corresponding script (./ci_scripts/black.sh, ./ci_scripts/flake8.sh, mypy tes_lib, ./ci_scripts/pylint.sh, ./ci_scripts/run_tests.sh). The flake8, pylint, and generate_pages jobs each publish artifacts that expire after one day: flake8_issue_count.txt, pylint_score.txt, and the generated HTML and badge SVG files, and they are always uploaded. The generate_pages job runs in the generate stage using alpine:3.10, depends on pylint and flake8, installs additional packages with \"apk add bash make python3 python3-dev py-pip py-gtk-dev git\", installs sphinx and anybadge via pip3, and runs ./ci_scripts/generate_web_pages.sh and ./ci_scripts/generate_badges.sh. The deploy stage contains a pages job that runs only on the main branch, depends on generate_pages, creates a public directory, copies the built docs and badge SVGs into it, and publishes the public/ folder as GitLab Pages.",
+  "tags": [
+    "alpine",
+    "apk",
+    "black",
+    "flake8",
+    "pylint",
+    "mypy",
+    "pytest",
+    "sphinx",
+    "gitlab-pages",
+    "generate",
+    "test"
+  ]
+}

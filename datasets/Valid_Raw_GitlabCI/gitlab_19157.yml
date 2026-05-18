@@ -1,0 +1,14 @@
+image: node:4.2.2
+pages:
+  artifacts:
+    paths:
+    - public
+  cache:
+    paths:
+    - node_modules/
+  only:
+  - master
+  script:
+  - npm install -g metalsmith
+  - npm install
+  - make build

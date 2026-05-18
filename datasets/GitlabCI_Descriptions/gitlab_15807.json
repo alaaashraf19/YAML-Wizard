@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_15807",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 3073,
+  "description": "Create a GitLab CI pipeline that uses the Docker image registry.gitlab.com/rilis/docker-ci:ci-latest and defines three stages: test, stats, and docs. In the test stage add a test job that runs `hell --install -r \"=\" -r \"RILI_SERVICE_COMPUTE_TESTS=ON\" -i \"CMAKE_CXX_STANDARD=11\" -G \"Ninja\"`, then `mkdir build`, `cd build`, `cmake ../ -G\"Ninja\" -DRILI_SERVICE_COMPUTE_TESTS=ON -DCMAKE_INSTALL_PREFIX=../.hell/install -DCMAKE_CXX_STANDARD=11`, `ninja install`, and finally `./rili-service-compute_tests`. In the stats stage add a clang-format job that runs `find * -iname '*.hpp' -o -iname '*.cpp' | xargs clang-format -i -style=file`, `git status --porcelain > ../status.log`, `git diff`, and `test ! -s ../status.log`; a coverage job that runs `hell --install -r \"=\" -r \"RILI_SERVICE_COMPUTE_TESTS=ON\" -r \"RILI_SERVICE_COMPUTE_COVERAGE=ON\" -i \"CMAKE_CXX_STANDARD=11\" -G \"Ninja\"`, `mkdir build`, `cd build`, `cmake ../ -G\"Ninja\" -DRILI_SERVICE_COMPUTE_TESTS=ON -DRILI_SERVICE_COMPUTE_COVERAGE=ON -DCMAKE_INSTALL_PREFIX=../.hell/install -DCMAKE_CXX_STANDARD=11`, `ninja install`, `./rili-service-compute_tests`, `cd ..`, `lcov --directory ./build/ --capture --output-file coverage.info`, `lcov --remove coverage.info '/usr/include/*' '*/tests/*' '*/.hell/*' -o coverage.info`, and `lcov --list coverage.info`; a cppcheck job that runs `find * -iname '*.cpp' -o -iname '*.hpp' | cppcheck --quiet --std=c++11 --enable=warning --enable=style --enable=performance --enable=portability --enable=information --enable=missingInclude --suppress=missingIncludeSystem --file-list=- &> cppcheck.log`, `cat cppcheck.log`, and `test ! -s cppcheck.log`; a cpplint job that runs `find * -iname '*.cpp' -o -iname '*.hpp' | xargs cpplint.py --linelength=120 --extensions=hpp,cpp --filter=-legal/copyright,-build/include_order,-build/c++11,+build/c++14,-runtime/references`; a helgrind job that runs `hell --install -r \"=\" -r \"RILI_SERVICE_COMPUTE_TESTS=ON\" -r \"RILI_SERVICE_COMPUTE_TESTS_WITH_VALGRIND=ON\" -i \"CMAKE_BUILD_TYPE=Debug\" -i \"CMAKE_CXX_STANDARD=11\" -G \"Ninja\"`, `mkdir build`, `cd build`, `cmake ../ -G\"Ninja\" -DRILI_SERVICE_COMPUTE_TESTS=ON -DRILI_SERVICE_COMPUTE_TESTS_WITH_VALGRIND=ON -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=../.hell/install -DCMAKE_CXX_STANDARD=11`, `ninja install`, and `valgrind --tool=helgrind --error-exitcode=123 --sim-hints=no-nptl-pthread-stackcache ./rili-service-compute_tests`; and a valgrind job that runs `hell --install -r \"=\" -r \"RILI_SERVICE_COMPUTE_TESTS=ON\" -r \"RILI_SERVICE_COMPUTE_TESTS_WITH_VALGRIND=ON\" -i \"CMAKE_BUILD_TYPE=Debug\" -i \"CMAKE_CXX_STANDARD=11\" -G \"Ninja\"`, `mkdir build`, `cd build`, `cmake ../ -G\"Ninja\" -DRILI_SERVICE_COMPUTE_TESTS=ON -DRILI_SERVICE_COMPUTE_TESTS_WITH_VALGRIND=ON -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=../.hell/install -DCMAKE_CXX_STANDARD=11`, `ninja install`, and `valgrind --leak-check=full --show-leak-kinds=all --error-exitcode=123 ./rili-service-compute_tests`. In the docs stage add a doxygen job that runs `doxygen Doxyfile` and publishes the `doxygen/html` directory as an artifact that expires in one week. No caches, rules, or deployment targets are defined.",
+  "tags": [
+    "c++",
+    "clang-format",
+    "cppcheck",
+    "cpplint",
+    "doxygen",
+    "valgrind",
+    "coverage",
+    "gitlab-ci"
+  ]
+}

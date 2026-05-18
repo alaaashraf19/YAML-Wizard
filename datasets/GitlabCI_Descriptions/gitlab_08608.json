@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_08608",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2066,
+  "description": "Create a GitLab CI pipeline with a single test stage and no global image, using a hidden .tests-common job that defines a JUnit artifact (junit-test-report.xml) and is extended by all test jobs. Add a build-package-and-qa job in the test stage that has no dependencies, runs only on merge‑request changes to go.mod or go.sum, sets BUILD_ON_ALL_OS and MANUAL_QA_TEST variables, triggers the master branch of the gitlab‑org/build/omnibus‑gitlab‑mirror project with a dependent strategy, and defines several upstream variables (GITLAB_PAGES_VERSION, TOP_UPSTREAM_SOURCE_JOB, TOP_UPSTREAM_SOURCE_PROJECT, TOP_UPSTREAM_SOURCE_REF, ee). Add check‑deps, check‑mocks, code‑quality, cover, and race jobs that all extend .tests-common; check‑deps runs a before_script echo skipping then make deps-check, check‑mocks runs make mocks-check with caching disabled, code‑quality uses the golangci/golangci‑lint:v1.64.6 image to run golangci‑lint run ./... with OUT_FORMAT code‑climate and LINT_FLAGS '--color never --timeout=15m', writes the report to gl‑code‑quality‑report.json and stores it as a code‑quality artifact, cover runs echo \"Running coverage testing\" and make cover, publishing coverage.html and using a coverage regex, and race runs echo \"Running race detector\" and make race. Add tests and tests‑acceptance jobs that extend .tests-matrix, which runs on golang:${GO_VERSION} with a parallel matrix over GO_VERSION values 1.24 and 1.25; tests executes echo \"Running all unit tests...\" then make unit-test, while tests‑acceptance executes echo \"Running just the acceptance tests....\" then make acceptance. Ensure all jobs inherit the JUnit artifact from .tests-common, disable caching for check‑mocks and code‑quality, and set appropriate timeouts (15 minutes for code‑quality).",
+  "tags": [
+    "go",
+    "golang",
+    "golangci-lint",
+    "make",
+    "junit",
+    "code-quality",
+    "coverage",
+    "race",
+    "matrix",
+    "trigger"
+  ]
+}

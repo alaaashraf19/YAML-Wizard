@@ -1,0 +1,29 @@
+before_script:
+- apk add -U openssl curl
+develop:
+  only:
+  - develop
+  script:
+  - curl -X POST -F token=$CI_JOB_TOKEN -F ref=staging https://gitlab.com/api/v4/projects/3536382/trigger/pipeline
+  - curl -X POST -F token=$CI_JOB_TOKEN -F ref=review https://gitlab.com/api/v4/projects/3536382/trigger/pipeline
+image: alpine
+master:
+  only:
+  - master
+  script:
+  - curl -X POST -F token=$CI_JOB_TOKEN -F ref=develop https://gitlab.com/api/v4/projects/3536382/trigger/pipeline
+production:
+  only:
+  - production
+  script:
+  - echo OK
+review:
+  only:
+  - review
+  script:
+  - curl -X POST -F token=$CI_JOB_TOKEN -F ref=production https://gitlab.com/api/v4/projects/3536382/trigger/pipeline
+staging:
+  only:
+  - staging
+  script:
+  - echo OK

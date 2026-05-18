@@ -1,0 +1,64 @@
+name: Pytests
+
+on: [push, pull_request]
+
+jobs:
+  essential:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash -el {0}
+    container:
+      image: jammont/isofit:latest
+      env:
+        ENV_NAME: test
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Install Isofit
+      run: |
+        source /root/.bashrc
+        pip install --editable .
+
+    - name: Check Utils
+      run: |
+        source /root/.bashrc
+        python -c 'from isofit.utils import apply_oe'
+        python -c 'from isofit.utils import empirical_line'
+        python -c 'from isofit.utils import extractions'
+        python -c 'from isofit.utils import instrument_model'
+        python -c 'from isofit.utils import path'
+        python -c 'from isofit.utils import remap'
+        python -c 'from isofit.utils import segment'
+        python -c 'from isofit.utils import surface_model'
+
+    - name: Run Test
+      run: |
+        source /root/.bashrc
+        pytest -k "not cli"
+
+  comprehensive:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash -el {0}
+    container:
+      image: jammont/isofit:latest
+      env:
+        ENV_NAME: test
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Install Isofit
+      run: |
+        source /root/.bashrc
+        pip install --editable .
+
+    - name: Run Test
+      run: |
+        source /root/.bashrc
+        pytest

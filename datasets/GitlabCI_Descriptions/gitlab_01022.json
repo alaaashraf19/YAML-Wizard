@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_01022",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 400,
+  "description": "Create a GitLab CI pipeline that runs a before_script to sync and update git submodules, update apt and install python-dev, python-pip, python3-dev, python3-pip, python-numpy, python3-numpy and g++. Define two stages: test and staging. In the test stage add a test job that executes \"bash lifelib/tests/test_all.sh\". In the staging stage add a staging job that runs \"bash slsparse.cpp\", then \"python check.py\" and \"python3 check.py\". No specific Docker image, services, caches, artifacts, or rules are required.",
+  "tags": [
+    "git-submodule",
+    "apt",
+    "python",
+    "bash",
+    "test",
+    "staging"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_05665",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 162,
+  "description": "Create a GitLab CI pipeline with a single deploy job called production that runs only on the master branch. The job uses the default GitLab runner image, installs the dpl gem with `gem install dpl`, then executes `dpl --provider=heroku --app=codeandsupplybot --api-key=$HEROKU_PRODUCTION_API_KEY` to deploy the code to the Heroku app named codeandsupplybot, using the HEROKU_PRODUCTION_API_KEY secret.",
+  "tags": [
+    "heroku",
+    "ruby",
+    "dpl",
+    "deploy",
+    "gitlab-ci"
+  ]
+}

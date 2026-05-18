@@ -1,0 +1,34 @@
+before_script:
+- apt-get update && apt-get install -y libzip-dev zlib1g-dev
+- docker-php-ext-install zip
+- pecl install xdebug && docker-php-ext-enable xdebug
+- php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+- php composer-setup.php
+- php -r "unlink('composer-setup.php');"
+cache:
+  paths:
+  - vendor/
+code-analysis:
+  image: php:8.1
+  script:
+  - php composer.phar update
+  - vendor/bin/php-cs-fixer fix -v --using-cache=no --dry-run .
+  - vendor/bin/phpstan analyse --no-progress --level=max src/
+  stage: static-code-analysis
+stages:
+- static-code-analysis
+- phpunit
+test-8.1:
+  image: php:8.1
+  script:
+  - php composer.phar update
+  - vendor/bin/phpunit
+  stage: phpunit
+test-8.2:
+  coverage: /^\s*Lines:\s*\d+.\d+\%/
+  image: php:8.2
+  script:
+  - php composer.phar update
+  - echo "xdebug.mode=coverage" >> $(php --ini | grep xdebug | sed 's/,//g')
+  - vendor/bin/phpunit --coverage-text --colors=never
+  stage: phpunit

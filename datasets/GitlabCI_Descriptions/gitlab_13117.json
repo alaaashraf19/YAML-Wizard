@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_13117",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 347,
+  "description": "Create a GitLab CI pipeline using the nerones/docker-laravel:latest Docker image. Set a MYSQL_DATABASE variable to mysql_database and cache the vendor/ directory. In a before_script run pecl install xdebug, docker-php-ext-enable xdebug, apt-get update && apt-get install poppler-utils -y, and composer install. Add a test job in the default test stage that executes vendor/bin/phpunit --configuration phpunit.xml --coverage-text --colors=never. No artifacts or special rules are defined.",
+  "tags": [
+    "php",
+    "laravel",
+    "phpunit",
+    "xdebug",
+    "composer",
+    "docker"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_00858",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 790,
+  "description": "Create a GitLab CI pipeline that uses the python:latest Docker image for linting jobs and a global before_script that runs `python -V`. Define a hidden `.tox` template that installs tox with `pip install tox` and runs `tox`, setting `TOXENV` to `py` by default, and have the `black`, `flake8`, and `isort` jobs extend this template while overriding `TOXENV` to `black`, `flake8`, and `isort` respectively, all executing in the default test stage. Add a `test` job that also extends `.tox` but runs in parallel across the matrix of images `python:3.6`, `python:3.7`, `python:3.8`, `python:3.9`, and `python:3.10` by using the `$IMAGE` variable for the job image. Create a `run` job that extends `test`, runs `python setup.py bdist_wheel` then `pip install dist/*`, stores the resulting `dist/*.whl` files as artifacts, and runs in the test stage. Finally, add a `pages` job in the deploy stage that runs only on the `master` branch, uses `python:latest`, installs `sphinx` and `sphinx-rtd-theme` with `pip install sphinx sphinx-rtd-theme`, builds the documentation via `cd doc ; make html`, moves the output to a `public/` directory, and publishes `public/` as the GitLab Pages artifact.",
+  "tags": [
+    "python",
+    "tox",
+    "black",
+    "flake8",
+    "isort",
+    "pages",
+    "sphinx",
+    "wheel",
+    "parallel",
+    "matrix"
+  ]
+}

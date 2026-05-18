@@ -1,0 +1,35 @@
+before_script:
+- docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+build-build-php74:
+  script:
+  - docker build --pull -t $CI_IMAGE:7.4 -t $CI_IMAGE:latest build-php74
+  - docker push $CI_IMAGE
+  stage: build-ext
+  variables:
+    CI_IMAGE: registry.gitlab.com/rommon/docker/build
+build-build-php80:
+  script:
+  - docker build --pull -t $CI_IMAGE:8.0 build-php80
+  - docker push $CI_IMAGE:8.0
+  stage: build-ext
+  variables:
+    CI_IMAGE: registry.gitlab.com/rommon/docker/build
+build-codeclimate:
+  script:
+  - docker build --pull -t $CI_IMAGE:latest codeclimate
+  - docker push $CI_IMAGE
+  stage: build-ext
+  variables:
+    CI_IMAGE: registry.gitlab.com/rommon/docker/codeclimate
+build-codeclimate-ts-php:
+  script:
+  - docker build --pull -t $CI_IMAGE:latest codeclimate-ts-php
+  - docker push $CI_IMAGE
+  stage: build-ext
+  variables:
+    CI_IMAGE: registry.gitlab.com/rommon/docker/codeclimate-ts-php
+image: docker:latest
+services:
+- docker:dind
+stages:
+- build-ext

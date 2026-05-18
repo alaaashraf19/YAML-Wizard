@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_07567",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 412,
+  "description": "Create a GitLab CI pipeline that uses the openjdk:8 Docker image and runs a before_script that updates apt and installs openjfx and ant. Define two jobs in the default test stage: a build_client job that executes `cd client` then `ant -buildfile ant-build.xml build package` and stores the resulting client/jar/ directory as an artifact, and a build_mdt job that executes `cd forteso-mdt` then `ant -buildfile ant-build.xml build package` and stores forteso-mdt/jar/ as an artifact. No caches, services, or conditional rules are defined, and the pipeline does not deploy anywhere.",
+  "tags": [
+    "openjdk-8",
+    "ant",
+    "java-build",
+    "gitlab-ci",
+    "artifacts"
+  ]
+}

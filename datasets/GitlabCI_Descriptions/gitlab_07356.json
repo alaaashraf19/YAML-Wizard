@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_07356",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1046,
+  "description": "Create a GitLab CI pipeline using the debian:stable Docker image with a global before_script `uname -a` and four stages: test, deploy, fail, ok. In the test stage add jobs `imagemagiccheck`, `licensecheck`, `pngcheck`, and `testxml` each running their respective script (`./.tools/imagemagiccheck.sh`, `./.tools/licensecheck.sh`, `./.tools/pngcheck.sh`, `./.tools/testxml.sh` plus `pwd` for testxml), plus `manaplus` (which overrides the image to debian:unstable and runs `./.tools/manaplus.sh`) and `newlines` (runs `./.tools/newlines.sh`); both `manaplus` and `newlines` upload the `shared` directory as an artifact that expires after 3 weeks and is always kept. In the fail stage add `fail_job` that runs `pwd` and `echo $CI_BUILD_REF_NAME` with `GIT_STRATEGY=none` and triggers only on failure. In the ok stage add `ok_job` that runs the same commands with `GIT_STRATEGY=none` and triggers only on success. In the deploy stage add a `pages` job that runs `./.tools/deploy.sh` and `pwd`, publishes the `public` directory as a pages artifact, and runs only on the `stable` branch.",
+  "tags": [
+    "debian",
+    "test",
+    "deploy",
+    "pages",
+    "artifact",
+    "on-failure",
+    "on-success",
+    "unstable-image"
+  ]
+}

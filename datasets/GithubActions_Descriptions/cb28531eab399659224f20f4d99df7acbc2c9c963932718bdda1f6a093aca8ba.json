@@ -1,0 +1,15 @@
+{
+  "sha": "cb28531eab399659224f20f4d99df7acbc2c9c963932718bdda1f6a093aca8ba",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4004,
+  "description": "Create a GitHub Actions workflow named Pull Request Checks that runs on every pull request to the master branch. Use an ubuntu-latest job that checks out the repository, sets up .NET Core 3.1.102 and Node.js 10.x, prepares a preview comment, checks the build by installing npm dependencies, copying files, building and publishing with dotnet, and then deploys a preview to surge.sh. Finally, show the preview link in a comment.",
+  "tags": [
+    "dotnet",
+    "nodejs",
+    "npm",
+    "surge",
+    "preview",
+    "github-script"
+  ]
+}

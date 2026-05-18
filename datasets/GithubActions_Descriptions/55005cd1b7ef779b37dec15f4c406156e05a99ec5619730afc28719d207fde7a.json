@@ -1,0 +1,15 @@
+{
+  "sha": "55005cd1b7ef779b37dec15f4c406156e05a99ec5619730afc28719d207fde7a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1096,
+  "description": "Create a GitHub Actions workflow named main that runs on push and pull request events. Use an ubuntu-latest job with a matrix strategy to test multiple Python versions (3.8, 3.9, 3.10, 3.11). In each job, check out the code, set up the corresponding Python version, install Poetry, check dependencies with make doctor, install dependencies with make install, test code with make test-repeat, and check code and documentation with make check and make mkdocs notebooks. Cache the .venv directory and upload coverage to Codecov if not a fork.",
+  "tags": [
+    "python",
+    "poetry",
+    "tests",
+    "codecov",
+    "ubuntu",
+    "documentation"
+  ]
+}

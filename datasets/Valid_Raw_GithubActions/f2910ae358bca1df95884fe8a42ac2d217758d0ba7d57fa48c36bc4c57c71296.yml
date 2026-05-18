@@ -1,0 +1,151 @@
+name: CMake Build for Doxygen
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: ${{ matrix.config.name }}
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+        - {
+            name: "Ubuntu Latest GCC Release", artifact: "Linux-gcc.tar.xz",
+            os: ubuntu-latest,
+            build_type: "Release", cc: "gcc", cxx: "g++"
+          }
+        - {
+            name: "Ubuntu Latest GCC Debug", artifact: "Linux-gcc-debug.tar.xz",
+            os: ubuntu-latest,
+            build_type: "Debug", cc: "gcc", cxx: "g++"
+          }
+        - {
+            name: "Ubuntu Latest Clang Release", artifact: "Linux-clang.tar.xz",
+            os: ubuntu-latest,
+            build_type: "Release", cc: "clang", cxx: "clang++"
+          }
+        - {
+            name: "Ubuntu Latest Clang Debug", artifact: "Linux-clang-debug.tar.xz",
+            os: ubuntu-latest,
+            build_type: "Debug", cc: "clang", cxx: "clang++"
+          }
+        - {
+            name: "macOS Latest Release", artifact: "MacOS.xz",
+            os: macos-latest,
+            build_type: "Release", cc: "clang", cxx: "clang++"
+          }
+        - {
+            name: "macOS Latest Debug", artifact: "MacOS.xz",
+            os: macos-latest,
+            build_type: "Debug", cc: "clang", cxx: "clang++"
+          }
+    steps:
+    - uses: actions/checkout@v1
+    
+    - name: Install LaTeX (Linux)
+      run: sudo apt-get install texlive texlive-generic-recommended texlive-extra-utils texlive-latex-extra texlive-font-utils
+      if: matrix.config.os == 'ubuntu-latest'
+
+    - name: Install LaTeX (MacOS)
+      run: brew install --cask mactex
+      if: matrix.config.os == 'macos-latest'
+
+    - name: Install Ghostscript (Linux)
+      run: sudo apt-get install ghostscript
+      if: matrix.config.os == 'ubuntu-latest'
+
+    - name: Install LaTeX (MacOS)
+      run: brew install ghostscript
+      if: matrix.config.os == 'macos-latest'
+
+    - name: Install xmllint (Linux)
+      run: sudo apt-get install libxml2-utils
+      if: matrix.config.os == 'ubuntu-latest'
+
+    - name: Install xmllint (MacOS)
+      run: brew install libxml2
+      if: matrix.config.os == 'macos-latest'
+
+    - name: Install bison (MacOS)
+      run: brew install bison
+      if: matrix.config.os == 'macos-latest'
+
+    - name: Install Ninja
+      uses: seanmiddleditch/gha-setup-ninja@master
+    
+    - name: Setup VS Environment
+      uses: seanmiddleditch/gha-setup-vsdevenv@master
+
+    - name: Configure
+      shell: cmake -P {0}
+      run: |
+        set(ENV{CC} ${{ matrix.config.cc }})
+        set(ENV{CXX} ${{ matrix.config.cxx }})
+
+        execute_process(
+          COMMAND cmake
+            -S .
+            -B build
+            -D CMAKE_BUILD_TYPE=$ENV{BUILD_TYPE}
+            -G Ninja
+            -Dbuild_doc=YES
+            -Dbuild_app=YES
+            -Dbuild_parse=YES
+            -Dbuild_xmlparser=YES            
+          RESULT_VARIABLE result
+        )
+        if (NOT result EQUAL 0)
+          message(FATAL_ERROR "Bad exit status")
+        endif()
+
+    - name: Build
+      shell: cmake -P {0}
+      run: |
+        set(ENV{NINJA_STATUS} "[%f/%t %o/sec] ")
+
+        execute_process(
+          COMMAND cmake --build build
+          RESULT_VARIABLE result
+          OUTPUT_VARIABLE output
+          ERROR_VARIABLE output
+          ECHO_OUTPUT_VARIABLE ECHO_ERROR_VARIABLE
+        )
+        if (NOT result EQUAL 0)
+          string(REGEX MATCH "FAILED:.*$" error_message "${output}")
+          string(REPLACE "\n" "%0A" error_message "${error_message}")
+          message("::error::${error_message}")
+          message(FATAL_ERROR "Build failed")
+        endif()
+
+    - name: Run tests
+      shell: cmake -P {0}
+      run: |
+        include(ProcessorCount)
+        ProcessorCount(N)
+
+        set(ENV{CTEST_OUTPUT_ON_FAILURE} "ON")
+
+        execute_process(
+          COMMAND ctest -j ${N}
+          WORKING_DIRECTORY build
+          RESULT_VARIABLE result
+          OUTPUT_VARIABLE output
+          ERROR_VARIABLE output
+          ECHO_OUTPUT_VARIABLE ECHO_ERROR_VARIABLE
+        )
+        if (NOT result EQUAL 0)
+          message(FATAL_ERROR "Running tests failed!")
+        endif()
+
+    - name: Generate documentation
+      shell: cmake -P {0}
+      run: |
+        execute_process(
+          COMMAND cmake --build build --target docs
+          RESULT_VARIABLE result
+        )
+        if (NOT result EQUAL 0)
+          message(FATAL_ERROR "Bad exit status")
+        endif()
+

@@ -1,0 +1,15 @@
+{
+  "sha": "65af6c9f0b5966b4a46e35d24f9f9c6f8e4dba398bfd85efe5daf32516de4a14",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1108,
+  "description": "Create a GitHub Actions workflow named Build Linux Distributable that runs on every push to the master branch and on pull requests to master. Use a single ubuntu-20.04 job that checks out the repository, fetches the entire repository, installs prerequisites with apt-get, runs make to create a static bindist, determines the OpenMSX version using a Python script, prepares a redistributable directory, and uploads a zip artifact with the distributable.",
+  "tags": [
+    "linux",
+    "make",
+    "ubuntu",
+    "openmsx",
+    "ci",
+    "artifact"
+  ]
+}

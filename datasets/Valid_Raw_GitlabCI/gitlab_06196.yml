@@ -1,0 +1,33 @@
+.artifact_paths_template:
+  paths: &id002
+  - lab_*/build/reports
+.cache_paths_template:
+  paths: &id001
+  - lab_*/build
+  - .gradle
+before_script:
+- export GRADLE_USER_HOME=`pwd`/.gradle
+build:
+  cache:
+    key: $CI_COMMIT_REF_NAME
+    paths: *id001
+    policy: push
+  script: gradle --build-cache assemble
+  stage: build
+image: gradle:4.4.1-jdk8-alpine
+stages:
+- build
+- test
+test:
+  artifacts:
+    expire_in: 2 week
+    name: ${CI_COMMIT_REF_NAME}-TestReports
+    paths: *id002
+  cache:
+    key: $CI_COMMIT_REF_NAME
+    paths: *id001
+    policy: pull
+  script: gradle check
+  stage: test
+variables:
+  GRADLE_OPTS: -Dorg.gradle.daemon=false

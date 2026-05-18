@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_18969",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 612,
+  "description": "Create a GitLab CI pipeline that runs PHP_CodeSniffer on several PHP frameworks using dedicated Alpine Docker images. Add six jobs—phpcs-cakephp, phpcs-drupal, phpcs-laravel, phpcs-psr, phpcs-wordpress, and phpcs-yii—each set to allow_failure, using the images willhallonline/cakephp-phpcs:alpine, willhallonline/drupal-phpcs:alpine, willhallonline/laravel-phpcs:alpine, willhallonline/phpcs:alpine, willhallonline/wordpress-phpcs:alpine, and willhallonline/yii-phpcs:alpine respectively, and each executing the command `phpcs ./`. All jobs run in the default test stage.",
+  "tags": [
+    "php",
+    "phpcs",
+    "cakephp",
+    "drupal",
+    "laravel",
+    "psr",
+    "wordpress",
+    "yii",
+    "alpine",
+    "allow-failure"
+  ]
+}

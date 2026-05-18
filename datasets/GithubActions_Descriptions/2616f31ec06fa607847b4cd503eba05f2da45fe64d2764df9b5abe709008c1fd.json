@@ -1,0 +1,15 @@
+{
+  "sha": "2616f31ec06fa607847b4cd503eba05f2da45fe64d2764df9b5abe709008c1fd",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2302,
+  "description": "Create a GitHub Actions workflow named Claude Code Consolidated that triggers on issue comments, pull request review comments, pull request reviews, and issues. The workflow checks for mentions of '@claude' and runs a job on an ubuntu-latest environment with write permissions to repository contents, pull requests, and issues. The job checks out the repository, sets up a Python 3.11 environment, installs uv and dependencies, and runs the Claude Code action with an Anthropic API key from secrets.",
+  "tags": [
+    "python",
+    "claude",
+    "github-actions",
+    "issues",
+    "pull-requests",
+    "comments"
+  ]
+}

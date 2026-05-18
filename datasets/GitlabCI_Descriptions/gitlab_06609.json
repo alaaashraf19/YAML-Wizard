@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_06609",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2408,
+  "description": "Create a GitLab CI pipeline with a before_script that sets JOB_TIMESTAMP=$(date +'%Y%m%d-%H%M%S'), COMMIT_HASH_SHORT=${CI_COMMIT_SHA:0:8}, COMMIT_BRANCH_OR_TAG=$(echo $CI_COMMIT_REF_NAME | sed 's#[/.:() ]#-#g'), REGISTRY_HOST=$CI_REGISTRY, REGISTRY_USER=$CI_REGISTRY_USER, REGISTRY_PASSWORD=$CI_REGISTRY_PASSWORD, and REGISTRY_IMAGE=$CI_REGISTRY_IMAGE. Define stages build and release and use the docker:dind service with a command that injects a certificate from $CERTIFICATE_URL if present. In the build stage add a build job using the openjdk:17-jdk image that runs \"./gradlew build\" and publishes artifacts from build/distributions/*.tar and build/reports. Also in the build stage add a build-docker-master job using docker:latest that echoes all computed variables, runs \"docker login -u \\\"$REGISTRY_USER\\\" -p \\\"$REGISTRY_PASSWORD\\\" $REGISTRY_HOST\", builds the image with \"docker build --pull -t \\\"$REGISTRY_IMAGE:$COMMIT_BRANCH_OR_TAG-$COMMIT_HASH_SHORT\\\" .\" and pushes it with \"docker push \\\"$REGISTRY_IMAGE:$COMMIT_BRANCH_OR_TAG-$COMMIT_HASH_SHORT\\\" && echo \\\"== Pushed docker image $REGISTRY_IMAGE:$COMMIT_BRANCH_OR_TAG-$COMMIT_HASH_SHORT\\\"\". In the release stage add a release-docker job using docker:latest that logs in, pulls the image with \"docker pull \\\"$REGISTRY_IMAGE:$COMMIT_BRANCH_OR_TAG-$COMMIT_HASH_SHORT\\\"\", retags it to \"\\\"$REGISTRY_IMAGE:$COMMIT_BRANCH_OR_TAG\\\"\" using \"docker tag\", and pushes it. Finally, add a release-docker-master job, also using docker:latest, that runs only on the master branch, logs in, pulls the same image, retags it to \"\\\"$REGISTRY_IMAGE\\\"\" (no suffix), and pushes it to the registry.",
+  "tags": [
+    "java",
+    "gradle",
+    "docker",
+    "dind",
+    "ci-cd",
+    "release",
+    "build"
+  ]
+}

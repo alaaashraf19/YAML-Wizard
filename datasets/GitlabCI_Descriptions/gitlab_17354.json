@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_17354",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 511,
+  "description": "Create a GitLab CI pipeline using the golang:1.12 Docker image and a global before_script that sets GOPATH to /go, creates the module cache directories /go/pkg/mod/github.com, /go/pkg/mod/golang.org, and /go/pkg/mod/google.golang.org, copies the project into /elektron, changes to that directory, and runs go mod download. Define a build job that runs in the default test stage and executes go build -mod vendor -o elektron-from-vendor then go build -v -o elektron. Add a code_coverage job that runs go test --cover ./... to generate coverage data. Add a unit_tests job that runs go test ./... for unit testing. Configure a cache for the paths /go/pkg/mod/github.com, /go/pkg/mod/golang.org, and /go/pkg/mod/google.golang.org to speed up module downloads.",
+  "tags": [
+    "golang",
+    "go-build",
+    "go-test",
+    "code-coverage",
+    "cache"
+  ]
+}

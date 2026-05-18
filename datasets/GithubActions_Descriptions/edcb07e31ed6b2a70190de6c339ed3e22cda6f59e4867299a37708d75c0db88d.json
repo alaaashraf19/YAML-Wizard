@@ -1,0 +1,14 @@
+{
+  "sha": "edcb07e31ed6b2a70190de6c339ed3e22cda6f59e4867299a37708d75c0db88d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1550,
+  "description": "Create a GitHub Actions workflow named docs that triggers when the CMake workflow run completes. Run a single ubuntu-latest job if the repository owner is 'liblava' and the workflow run was successful. In this job, check out the repository, run Doxygen with a specified configuration, install Doxybook2, generate documentation with Doxybook2, and deploy it to the liblava.github.io repository using a personal access token.",
+  "tags": [
+    "docs",
+    "doxygen",
+    "doxybook2",
+    "github-pages",
+    "ubuntu"
+  ]
+}

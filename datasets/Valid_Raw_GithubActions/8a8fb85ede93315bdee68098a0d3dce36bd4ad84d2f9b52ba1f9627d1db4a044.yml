@@ -1,0 +1,19 @@
+name: Cmake CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v1
+    - name: packegs
+      run:  apt install -y build-essential clang-6.0 autoconf automake bison expect libevent-dev libmysqlclient-dev libpcre3-dev libpq-dev libsqlite3-dev libssl-dev libtool libz-dev telnet libgtest-dev libjemalloc-dev
+    - name: cmake
+      run: mkdir build && cd build && cmake ..
+    - name: make
+      run: make
+    - name: make test
+      run: make test

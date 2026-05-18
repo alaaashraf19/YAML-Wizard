@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_11466",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1522,
+  "description": "Create a GitLab CI pipeline with three stages test, build, and package. Use the maven:3.3.9-jdk-8 Docker image for the unit-test-job in the test stage, run mvn package -B, and archive the resulting omod files (omod/target/*.omod) as artifacts that expire in 5 days. In the build stage add a publish job that depends on unit-test-job, runs only on the master branch, uses the same Maven image, and executes three curl commands to delete, upload, and publish a Bintray artifact using $BINTRAY_API_USER and $BINTRAY_API_KEY. In the package stage add a docker-build job that runs on all branches except master, logs in to $CI_REGISTRY with $CI_REGISTRY_USER/$CI_REGISTRY_PASSWORD, builds and pushes a Docker image tagged \"${CI_REGISTRY_IMAGE}/toolkit:${CI_COMMIT_REF_SLUG}\" using docker build --pull, and a docker-build-master job that runs only on master, logs in similarly, builds and pushes the image tagged \"${CI_REGISTRY_IMAGE}/toolkit\". Both Docker jobs use the docker:latest image with the docker:dind service.",
+  "tags": [
+    "docker",
+    "maven",
+    "bintray",
+    "docker-registry",
+    "ci",
+    "test",
+    "package"
+  ]
+}

@@ -1,0 +1,6 @@
+before_script:
+- python setup.py install
+image: python:3
+test:
+  script:
+  - last-good-build

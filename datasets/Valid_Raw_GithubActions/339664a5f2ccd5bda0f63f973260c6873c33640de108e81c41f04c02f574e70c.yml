@@ -1,0 +1,30 @@
+name: Docker
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Specific version to build (overrides on-master and tag-pattern)
+        required: false
+        default: ''
+
+jobs:
+  build-and-push:
+    name: Deploy Docker Image
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build and push
+        uses: openzim/docker-publish-action@v10
+        with:
+          image-name: openzim/zim-tools
+          latest-on-tag: true
+          restrict-to: openzim/zim-tools
+          dockerfile: docker/Dockerfile
+          registries: ghcr.io
+          build-args:
+            VERSION={tag}
+          credentials:
+            GHCRIO_USERNAME=${{ secrets.GHCR_USERNAME }}
+            GHCRIO_TOKEN=${{ secrets.GHCR_TOKEN }}
+          manual-tag: ${{ github.event.inputs.version }}

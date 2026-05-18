@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_07786",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 497,
+  "description": "Create a GitLab CI pipeline using the ruby:2.7.6 Docker image with a postgres:13 service. Set a global POSTGRES_DB variable to scoutinv_test and cache the vendor/ruby directory. Define a test stage job named test that runs the shared before_script: ruby -v; apt-get update -q && apt-get install nodejs -yqq; gem install bundler --no-doc; bundle config set --local path 'vendor'; bundle install -j $(nproc) --quiet. In the job script, output the DATABASE_URL environment variable with env | grep DATABASE_URL and then execute bin/rails db:create db:schema:load test, while providing job-specific variables DATABASE_URL pointing to the postgres service and RAILS_ENV set to test. The job runs on the default test stage and has no additional artifacts or rules.",
+  "tags": [
+    "ruby",
+    "rails",
+    "postgres",
+    "bundler",
+    "nodejs",
+    "cache"
+  ]
+}

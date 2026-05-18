@@ -1,0 +1,45 @@
+.ssh_helper: "function ssh_init() {\n    SSH_PRIVATE_KEY=\"$1\"\n    SSH_KNOWN_HOSTS=\"\
+  $2\"\n    test -n \"$SSH_PRIVATE_KEY\" || ( echo \"missing variable SSH_PRIVATE_KEY\"\
+  \ && exit 1)\n    test -n \"$SSH_KNOWN_HOSTS\" || ( echo \"missing variable SSH_KNOWN_HOSTS\"\
+  \ && exit 1)\n    which ssh-agent || ( apt-get update -y && apt-get install openssh-client\
+  \ -y )\n    eval $(ssh-agent -s)\n    echo \"$SSH_PRIVATE_KEY\" | tr -d '\\r' |\
+  \ ssh-add - > /dev/null\n    mkdir -p ~/.ssh\n    chmod 700 ~/.ssh\n    ssh-keyscan\
+  \ -H \"$SSH_KNOWN_HOSTS\" > ~/.ssh/known_hosts\n    chmod 644 ~/.ssh/known_hosts\n\
+  }\n\nfunction ssh_run() {\n    USER=$1\n    HOST=$2\n    PKEY=$3\n    COMMAND=$4\n\
+  \    ssh_init \"$PKEY\" $HOST\n    ssh $USER@$HOST $COMMAND\n}\n"
+before_script:
+- "function ssh_init() {\n    SSH_PRIVATE_KEY=\"$1\"\n    SSH_KNOWN_HOSTS=\"$2\"\n\
+  \    test -n \"$SSH_PRIVATE_KEY\" || ( echo \"missing variable SSH_PRIVATE_KEY\"\
+  \ && exit 1)\n    test -n \"$SSH_KNOWN_HOSTS\" || ( echo \"missing variable SSH_KNOWN_HOSTS\"\
+  \ && exit 1)\n    which ssh-agent || ( apt-get update -y && apt-get install openssh-client\
+  \ -y )\n    eval $(ssh-agent -s)\n    echo \"$SSH_PRIVATE_KEY\" | tr -d '\\r' |\
+  \ ssh-add - > /dev/null\n    mkdir -p ~/.ssh\n    chmod 700 ~/.ssh\n    ssh-keyscan\
+  \ -H \"$SSH_KNOWN_HOSTS\" > ~/.ssh/known_hosts\n    chmod 644 ~/.ssh/known_hosts\n\
+  }\n\nfunction ssh_run() {\n    USER=$1\n    HOST=$2\n    PKEY=$3\n    COMMAND=$4\n\
+  \    ssh_init \"$PKEY\" $HOST\n    ssh $USER@$HOST $COMMAND\n}\n"
+ssh_init:
+  script:
+  - ssh_init "$TEST_PRIVATE_KEY" "$TEST_HOST_NAME"
+  - ssh $TEST_USER_NAME@$TEST_HOST_NAME "echo logged-in !"
+ssh_init_sh:
+  script:
+  - curl -sL https://gitlab.com/gitlab-cd/ssh-template/raw/master/ssh-init.sh | bash
+  - ssh_run "$TEST_USER_NAME" "$TEST_HOST_NAME" "$TEST_PRIVATE_KEY" "echo logged-in
+    !"
+  variables:
+    SSH_KNOWN_HOSTS: $TEST_HOST_NAME
+    SSH_PRIVATE_KEY: $TEST_PRIVATE_KEY
+ssh_init_sh_no_host:
+  script:
+  - curl -sL https://gitlab.com/gitlab-cd/ssh-template/raw/master/ssh-init.sh | bash
+  - ssh_run "$TEST_USER_NAME" "$TEST_HOST_NAME" "$TEST_PRIVATE_KEY" "echo logged-in
+    !"
+  variables:
+    SSH_PRIVATE_KEY: $TEST_PRIVATE_KEY
+ssh_run:
+  script:
+  - ssh_run "$TEST_USER_NAME" "$TEST_HOST_NAME" "$TEST_PRIVATE_KEY" "echo logged-in
+    !"
+stages:
+- init
+- test

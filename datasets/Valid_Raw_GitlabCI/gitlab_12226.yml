@@ -1,0 +1,17 @@
+build:
+  only:
+  - master
+  - tags
+  script:
+  - docker build . -t ${IMAGE_NAME}
+  - docker login -u gitlab-ci-token -p ${CI_BUILD_TOKEN} ${REGISTRY}
+  - docker push ${IMAGE_NAME}
+  services:
+  - docker:dind
+  stage: build
+image: docker
+stages:
+- build
+variables:
+  IMAGE_NAME: ${REGISTRY}/${CI_PROJECT_PATH}:${CI_COMMIT_REF_NAME}
+  REGISTRY: registry.gitlab.com

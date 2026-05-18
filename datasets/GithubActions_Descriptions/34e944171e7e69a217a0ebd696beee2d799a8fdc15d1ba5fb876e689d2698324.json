@@ -1,0 +1,14 @@
+{
+  "sha": "34e944171e7e69a217a0ebd696beee2d799a8fdc15d1ba5fb876e689d2698324",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4524,
+  "description": "Create a GitHub Actions workflow that deploys to Docker on release. The workflow should have two jobs: deploy_docker_addon and deploy_docker. Both jobs should run on ubuntu-latest, checkout the repository, get the next version, set the version number in specific files, set up QEMU and Docker Buildx, login to Docker Hub and GitHub Container Registry, and then build and push Docker images with the current version and latest tags.",
+  "tags": [
+    "docker",
+    "release",
+    "github-actions",
+    "buildx",
+    "qemu"
+  ]
+}

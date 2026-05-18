@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_12737",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 366,
+  "description": "Create a GitLab CI pipeline using the node:18-alpine Docker image and include the Security/SAST and Code-Quality templates. Define a single test stage. Add a pages job that runs in the test stage, caches the node_modules/ directory, publishes the public/ directory as a pages artifact, and only runs on the master branch. The pages job executes the shell commands: npm i hexo-cli -g, test -e package.json && npm install, node server/index.js, and hexo deploy, then deploys to GitLab Pages. Also include the SAST job from the template, which runs in the test stage using the same image.",
+  "tags": [
+    "node",
+    "hexo",
+    "pages",
+    "sast",
+    "code-quality",
+    "npm",
+    "gitlab-pages"
+  ]
+}

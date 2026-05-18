@@ -1,0 +1,20 @@
+.test_template:
+  script: &id001
+  - npm run lint
+  - npm test
+before_script:
+- npm install
+cache:
+  key: $CI_JOB_NAME
+  paths:
+  - node_modules/
+  untracked: true
+test:node18:
+  image: node:18
+  script: *id001
+test:node20:
+  image: node:20
+  script: *id001
+test:node22:
+  image: node:22
+  script: *id001

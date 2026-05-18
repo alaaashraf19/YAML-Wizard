@@ -1,0 +1,17 @@
+before_script:
+- python -V
+- pip install virtualenv
+- virtualenv venv
+- source venv/bin/activate
+- pip install scrapy
+cache:
+  paths:
+  - .cache/pip
+  - venv/
+image: python:latest
+run:
+  script:
+  - python Ejemplos/QuotesSpider.py
+test:
+  script:
+  - python Ejemplos/QuotesSpider.py test

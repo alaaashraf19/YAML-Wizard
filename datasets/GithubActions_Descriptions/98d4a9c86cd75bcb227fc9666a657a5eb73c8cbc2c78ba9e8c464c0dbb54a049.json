@@ -1,0 +1,16 @@
+{
+  "sha": "98d4a9c86cd75bcb227fc9666a657a5eb73c8cbc2c78ba9e8c464c0dbb54a049",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 12601,
+  "description": "Create a complex GitHub Actions workflow named ci that automates a release process. On push to the master branch, it deletes any previous 'latest' release, creates a new draft release, and then uses MSYS2 to build and package a project for both 64-bit and 32-bit Windows environments using MXE. The workflow handles various build steps, including setting up the environment, running CMake and Ninja, and uploading the resulting installer as a release asset.",
+  "tags": [
+    "github-actions",
+    "release-workflow",
+    "mxe-cross-build",
+    "msys2",
+    "windows",
+    "cmake",
+    "ninja"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_07566",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 198,
+  "description": "Create a GitLab CI pipeline that uses the node:latest Docker image, caches the node_modules/ directory, and runs a global before_script of npm install before each job. Define two stages: lint and test. In the lint stage add a lint job that executes npm run lint, and in the test stage add a test job that executes npm run test. No additional services, rules, or deployment targets are required.",
+  "tags": [
+    "node",
+    "npm",
+    "lint",
+    "test",
+    "cache"
+  ]
+}

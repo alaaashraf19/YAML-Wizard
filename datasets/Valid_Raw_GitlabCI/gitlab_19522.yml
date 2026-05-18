@@ -1,0 +1,13 @@
+audit:
+  script:
+  - bundle audit check --update
+before_script:
+- gem install bundler --no-document
+- bundle install --jobs $(nproc) "${FLAGS[@]}"
+image: ruby:2.4.2
+rspec:
+  script:
+  - bundle exec rspec
+rubocop:
+  script:
+  - bundle exec rubocop

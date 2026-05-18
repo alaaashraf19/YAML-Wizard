@@ -1,0 +1,23 @@
+{
+  "sha": "gitlab_14666",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2762,
+  "description": "Create a GitLab CI pipeline with two stages: test and deploy. In the test stage add a test_backend job that runs before_script commands to install system packages (apt-get install -f, apt-get update -qy, apt-get install -y python3-pip sudo python-dev libpq-dev postgresql postgresql-contrib pep8, apt-get update), start PostgreSQL, create a user and database named ppl, grant privileges, and export DATABASE_* variables; then its script changes to the backend directory, installs Python requirements, runs migrations, executes coverage with a custom omit list and runs the Django tests, runs pycodestyle, generates a coverage report, and returns to the root, storing the public/ folder as an artifact and using a TOTAL‑percentage coverage regex. Also in the test stage add test_frontend and test_microservice jobs that both use the node:8.9.3 image, run before_script commands to cd into their directories, clean the npm cache, remove node_modules, reinstall dependencies, then execute npm test, capturing coverage with an All‑files regex. Finally, add three deploy jobs that all use the ruby:latest image and install ruby‑dev and the dpl tool: deploy_production runs only on master and production branches, targets a Heroku production environment with URL $HEROKU_APP_HOST_PRODUCTION, and deploys both frontend and backend to Heroku apps $HEROKU_APP_PRODUCTION and $HEROKU_APP_PRODUCTION_2 using their respective API keys; deploy_situat runs only on the sit_uat branch, targets a SITUAT environment with URL $HEROKU_APP_HOST_SITUAT, and deploys to Heroku apps $HEROKU_APP_SITUAT_NEW and $HEROKU_APP_SITUAT_2_NEW; deploy_staging runs on all branches except sit_uat, master, and production, targets a staging environment with URL $HEROKU_APP_HOST_STAGING, and deploys to Heroku apps $HEROKU_APP_STAGING and $HEROKU_APP_STAGING_2 using their API keys.",
+  "tags": [
+    "ruby",
+    "heroku",
+    "deploy",
+    "test",
+    "python",
+    "pip",
+    "postgresql",
+    "node",
+    "npm",
+    "frontend",
+    "backend",
+    "microservice",
+    "coverage",
+    "dpl"
+  ]
+}

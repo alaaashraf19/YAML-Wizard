@@ -1,0 +1,9 @@
+before_script:
+- apt-get update -yqq
+image: debian:stretch
+test:7.0:
+  image: debian:stretch
+  script:
+  - apt-get install -yqq php php-zip php-xml composer
+  - composer install
+  - composer test

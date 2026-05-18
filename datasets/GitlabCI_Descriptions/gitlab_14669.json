@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_14669",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 6188,
+  "description": "Create a GitLab CI pipeline using the openjdk:8-jdk Docker image, defining stages build, test, and package, and setting Android SDK variables. In the build stage add a build_debug job (except master) and a build_release job (only master) that run a shared before_script to download and configure the Android SDK, then execute ./gradlew assembleDebug or ./gradlew assembleRelease, storing the app/build/outputs/ and .android/ directories as artifacts that expire in 4 hours. In the test stage add unit_test_android_debug (except master) and unit_test_android_release (only master) jobs that export MINIMUM_COVERAGE, set Android SDK paths, install bc, run lint checks, ./gradlew clean test jacocoTestReport, move the jacoco report, compute instruction coverage with bc and echo the result (the release job also asserts coverage meets the minimum), plus unit_test_backend_debug (except master) and unit_test_backend_release (only master) jobs using the python:3.5 image that install requirements, run Django tests with coverage, compute and echo coverage, and enforce the minimum in the release job. In the package stage add package_develop (only sit_uat) and package_release (only master) jobs that run a shared before_script to extract VERSION_NAME and VERSION_CODE, create a deliverables folder with build metadata, rename the generated APK to MeetU-v$VERSION_NAME-$VERSION_CODE-debug.apk or -release.apk, and publish the deliverables as artifacts (3‑day or 4‑week expiry), and also add deploy_staging (only sit_uat) and deploy_production (only master) jobs that install ruby-dev, gem install dpl and deploy the backend to Heroku apps meetu-backend-dev and meetu-backend respectively using $HEROKU_API_KEY.",
+  "tags": [
+    "android",
+    "gradle",
+    "heroku",
+    "unit-test",
+    "coverage",
+    "openjdk",
+    "gitlab-ci"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "eb7d34bebc2a6edf3cf10ff42cdcc4b1806612ced88698adf0370248a545fdc9",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 6391,
+  "description": "Create a GitHub Actions workflow named Container Image Deployment CI that runs on push to master, deploy-* branches, and tags matching v*.*.*. Use an ubuntu-latest job with a matrix strategy for different environments (robotoff-org and robotoff-net). Wait for a build workflow to complete, then SSH into a host to clone a repository, set environment variables, create Docker volumes, start services with Docker Compose, check if services are up, and perform cleanup tasks. Finally, create a Grafana annotation with deployment status.",
+  "tags": [
+    "github-actions",
+    "docker",
+    "deployment",
+    "grafana",
+    "ssh",
+    "ubuntu"
+  ]
+}

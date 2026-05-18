@@ -1,0 +1,15 @@
+{
+  "sha": "dcc8c91bb60ba2f8e6e40467db7f2e097ec1580fb437d711fc90ceedcef9df38",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1217,
+  "description": "Create a GitHub Actions workflow named tests that runs on push to the master branch, on pull requests to the master branch, and on a scheduled cron job. Use a matrix strategy to test multiple Python versions (3.8 to 3.12) on ubuntu-latest environments. For each job, check out the code, set up the corresponding Python version, install dependencies with pip, run tests with tox, and upload coverage reports to Codecov.",
+  "tags": [
+    "python",
+    "tests",
+    "tox",
+    "codecov",
+    "ubuntu",
+    "scheduled"
+  ]
+}

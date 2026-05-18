@@ -1,0 +1,13 @@
+image: jekyll/jekyll
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - bundle install
+  - bundle exec jekyll build -d public
+variables:
+  JEKYLL_ENV: production
+  LC_ALL: C.UTF-8

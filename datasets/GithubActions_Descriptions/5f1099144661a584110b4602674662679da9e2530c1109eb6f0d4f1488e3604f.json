@@ -1,0 +1,14 @@
+{
+  "sha": "5f1099144661a584110b4602674662679da9e2530c1109eb6f0d4f1488e3604f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 808,
+  "description": "Create a GitHub Actions workflow named Integration Tests that runs on pull requests and workflow dispatches. Use an ubuntu-latest job with a matrix strategy to test multiple examples (mupdf, poppler, qpdf). For each example, check out the repository with submodules, build a base Polytracker Docker image, build an example Docker image, and run PolyTracker tests with pytest.",
+  "tags": [
+    "docker",
+    "pytest",
+    "integration-tests",
+    "ubuntu",
+    "matrix"
+  ]
+}

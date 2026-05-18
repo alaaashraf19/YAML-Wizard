@@ -1,0 +1,14 @@
+{
+  "sha": "3a60bc5a7f03f44e6803ebb56b1d49c52ed0dd10fbc3465e5b88ae4ee40a2cd9",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1083,
+  "description": "Create a GitHub Actions workflow named Container that runs on push to the main branch, excluding changes to the web directory. Use an ubuntu-latest job to check out the repository, set up Docker Buildx, and login to the GitHub Container Registry if the repository is libgeos/geos. Then, build and push a Docker image using the Dockerfile in tools/ci/geosop, targeting the ghcr.io/libgeos/geosop:latest tag for linux/amd64 architecture.",
+  "tags": [
+    "docker",
+    "github-container-registry",
+    "geos",
+    "container",
+    "buildx"
+  ]
+}

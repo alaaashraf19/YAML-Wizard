@@ -1,0 +1,68 @@
+name: Build
+on:
+  workflow_call:
+
+jobs:
+  Ubuntu:
+    name: ${{ matrix.config.name }}
+    strategy:
+      matrix:
+        config:
+        - {
+            name: "Ubuntu x86_64",
+            os: ubuntu-22.04,
+            platform: amd64
+          }
+        - {
+            name: "Ubuntu ARM64",
+            os: ubuntu-22.04-arm,
+            platform: arm64
+          }
+    runs-on: ${{ matrix.config.os }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checking out the code
+        uses: actions/checkout@v4
+        with:
+          submodules: 'true'
+          fetch-depth: 0
+
+      - name: Install dependencies
+        id: vars
+        run: |
+          sudo apt-get -qq update
+          sudo apt-get -qq install libxkbcommon-x11-0 build-essential libgl1-mesa-dev mesa-common-dev libgles2-mesa-dev libxcb-icccm4-dev libxcb-xinerama0 libxcb-image0 libxcb-keysyms1 libxcb-* fakeroot
+          sudo apt-get -qq install qt6-base-dev qt6-tools-dev qmake6
+          sudo pip install git-archive-all
+          sudo qtchooser -install qt6 $(which qmake6)
+          export QT_SELECT=qt6
+          QT6_CONFIG_PATH=$(dpkg -L qt6-base-dev | grep 'Qt6Config.cmake' | head -n1)
+          QT6_DIR=$(dirname "$QT6_CONFIG_PATH")
+          echo "Qt6_DIR=$QT6_DIR" >> "$GITHUB_ENV"
+
+      - name: Generate project
+        run: |
+          cmake -S . -B build -G "Unix Makefiles" -DVERSION="${{ env.VERSION_TAG }}" -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=$Qt6_DIR
+
+      - name: Compile and deploy
+        run: |
+          cmake --build build --target GitQlient -j4
+          cmake --build build --target install
+
+      - name: Build DEB package
+        run: |
+          cmake --build build --target package
+
+      - name: Test install
+        run: |
+          sudo dpkg -i build/packages/gitqlient*.deb
+          sudo apt-get install -f
+
+      - name: Upload DEB package
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux_deb_${{ matrix.config.platform }}
+          path: |
+            build/packages/gitqlient*.deb

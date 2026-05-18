@@ -1,0 +1,12 @@
+before_script:
+- git submodule init
+- git submodule update --force
+image: monachus/hugo
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - hugo

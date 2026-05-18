@@ -1,0 +1,37 @@
+before_script:
+- bundle install
+pages:
+  artifacts:
+    expire_in: 30 days
+    paths:
+    - public
+  dependencies:
+  - test:latest
+  only:
+  - master
+  script:
+  - mv coverage/ public/
+  stage: deploy
+test:2.5:
+  image: ruby:2.5
+  script:
+  - bundle exec rake
+test:3.0:
+  image: ruby:3.0
+  script:
+  - bundle exec rake
+test:3.1:
+  image: ruby:3.1
+  script:
+  - bundle exec rake
+test:3.2:
+  image: ruby:3.2
+  script:
+  - bundle exec rake
+test:latest:
+  artifacts:
+    paths:
+    - coverage/
+  image: ruby:latest
+  script:
+  - CODE_COV=TRUE bundle exec rake

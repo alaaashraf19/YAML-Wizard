@@ -1,0 +1,969 @@
+name: Build
+on: [push, pull_request]
+env:
+  QT_VERSION: 6.7.0
+  QT_MODULES: qtwebengine qtwebchannel qtpositioning qtimageformats
+  GCC_VERSION: 13
+  CLANG_VERSION: 17
+
+jobs:
+  linux:
+    name: Linux
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        ref: ${{ github.ref }}
+        fetch-depth: 0
+    - name: Install Tools
+      run: |
+        sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+        sudo apt-get update
+        sudo apt install gcc-${{ env.GCC_VERSION }} g++-${{ env.GCC_VERSION }}
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt install libxcb-cursor0
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v3
+      with:
+        version: ${{ env.QT_VERSION }}
+        modules: ${{ env.QT_MODULES }} qtserialport
+        cache: true
+    - name: ccache
+      uses: hendrikmuhs/ccache-action@main
+      with:
+        key: linux
+    - uses: seanmiddleditch/gha-setup-ninja@v3
+    - name: Compile
+      run: scripts/linux-build.sh
+      env:
+        CC: gcc-${{ env.GCC_VERSION }}
+        CXX: g++-${{ env.GCC_VERSION }}
+    - name: AppImage
+      run: |
+        installers/linux/build.sh
+      env:
+        CC: gcc-${{ env.GCC_VERSION }}
+        CXX: g++-${{ env.GCC_VERSION }}
+    - uses: actions/upload-artifact@v4
+      if: github.event_name != 'pull_request'
+      with:
+        name: linux-appimage
+        path: build/gcc/Graphia-*.tar.gz
+    - uses: actions/upload-artifact@v4
+      with:
+        name: linux-logs
+        path: build/gcc/*.log
+    - name: Upload Symbols
+      if: github.event_name != 'pull_request'
+      run: scripts/upload-symbols.sh
+      shell: bash
+      env:
+        SYM_UPLOAD_URL: ${{ secrets.SYM_UPLOAD_URL }}
+
+  windows:
+    name: Windows
+    runs-on: windows-2022
+    needs:
+      - check-is-release
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        ref: ${{ github.ref }}
+        fetch-depth: 0
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v3
+      with:
+        version: ${{ env.QT_VERSION }}
+        modules: ${{ env.QT_MODULES }}
+        cache: true
+    - name: ccache
+      uses: hendrikmuhs/ccache-action@main
+      with:
+        variant: sccache
+        key: windows
+    - name: Register msdia
+      shell: cmd
+      run: regsvr32.exe /s "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\DIA SDK\bin\msdia140.dll"
+    - uses: ilammy/msvc-dev-cmd@v1
+    - uses: seanmiddleditch/gha-setup-ninja@v3
+    - name: Compile
+      shell: pwsh
+      run: . .\scripts\windows-build.ps1
+      env:
+        CC: cl.exe
+        CXX: cl.exe
+    - name: Upload Executables for Signing
+      id: unsigned-exes
+      if: needs.check-is-release.outputs.is-release == 'true'
+      uses: actions/upload-artifact@v4
+      with:
+        name: windows-unsigned-exes
+        path: |
+          build/CrashReporter.exe
+          build/Graphia.exe
+          build/MessageBox.exe
+          build/Updater.exe
+          build/plugins/*.dll
+    - name: Sign Executables
+      if: needs.check-is-release.outputs.is-release == 'true'
+      uses: signpath/github-action-submit-signing-request@v1
+      with:
+        api-token: ${{ secrets.WINDOWS_SIGNPATH_API_TOKEN }}
+        organization-id: ${{ secrets.WINDOWS_SIGNPATH_ORGANIZATION_ID }}
+        project-slug: ${{ secrets.WINDOWS_SIGNPATH_PROJECT_SLUG }}
+        signing-policy-slug: ${{ secrets.WINDOWS_SIGNPATH_SIGNING_POLICY_SLUG }}
+        artifact-configuration-slug: zipped-exes
+        github-artifact-id: ${{ steps.unsigned-exes.outputs.artifact-id }}
+        wait-for-completion: true
+        output-artifact-directory: build
+    - name: Prepare NSIS Installer
+      shell: pwsh
+      run: .\installers\windows\prepare-installer.ps1
+      env:
+        CRTDIRECTORY: ${{ env.VcToolsRedistDir }}\x64\Microsoft.VC143.CRT
+    - name: Upload Uninstaller for Signing
+      id: unsigned-uninstaller
+      if: needs.check-is-release.outputs.is-release == 'true'
+      uses: actions/upload-artifact@v4
+      with:
+        name: windows-unsigned-uninstaller
+        path: installer/Uninstall.exe
+    - name: Sign Uninstaller
+      if: needs.check-is-release.outputs.is-release == 'true'
+      uses: signpath/github-action-submit-signing-request@v1
+      with:
+        api-token: ${{ secrets.WINDOWS_SIGNPATH_API_TOKEN }}
+        organization-id: ${{ secrets.WINDOWS_SIGNPATH_ORGANIZATION_ID }}
+        project-slug: ${{ secrets.WINDOWS_SIGNPATH_PROJECT_SLUG }}
+        signing-policy-slug: ${{ secrets.WINDOWS_SIGNPATH_SIGNING_POLICY_SLUG }}
+        artifact-configuration-slug: zipped-exes
+        github-artifact-id: ${{ steps.unsigned-uninstaller.outputs.artifact-id }}
+        wait-for-completion: true
+        output-artifact-directory: installer
+    - name: Make NSIS Installer
+      shell: pwsh
+      run: .\installers\windows\make-installer.ps1
+    - name: Upload Installer for Signing
+      id: unsigned-installer
+      if: needs.check-is-release.outputs.is-release == 'true'
+      uses: actions/upload-artifact@v4
+      with:
+        name: windows-unsigned-installer
+        path: installer/*-installer.exe
+    - name: Sign Installer
+      if: needs.check-is-release.outputs.is-release == 'true'
+      uses: signpath/github-action-submit-signing-request@v1
+      with:
+        api-token: ${{ secrets.WINDOWS_SIGNPATH_API_TOKEN }}
+        organization-id: ${{ secrets.WINDOWS_SIGNPATH_ORGANIZATION_ID }}
+        project-slug: ${{ secrets.WINDOWS_SIGNPATH_PROJECT_SLUG }}
+        signing-policy-slug: ${{ secrets.WINDOWS_SIGNPATH_SIGNING_POLICY_SLUG }}
+        artifact-configuration-slug: zipped-exes
+        github-artifact-id: ${{ steps.unsigned-installer.outputs.artifact-id }}
+        wait-for-completion: true
+        output-artifact-directory: build
+    - name: Move Unsigned Installer
+      if: needs.check-is-release.outputs.is-release != 'true'
+      shell: pwsh
+      run: Move-Item installer/*-installer.exe build -Verbose
+    - uses: actions/upload-artifact@v4
+      if: github.event_name != 'pull_request'
+      with:
+        name: windows-installer
+        path: build/Graphia-*-installer.exe
+    - uses: actions/upload-artifact@v4
+      with:
+        name: windows-logs
+        path: build/*.log
+    - name: Upload Symbols
+      if: github.event_name != 'pull_request'
+      run: scripts/upload-symbols.sh
+      shell: bash
+      env:
+        SYM_UPLOAD_URL: ${{ secrets.SYM_UPLOAD_URL }}
+
+  macos:
+    name: macOS
+    runs-on: macos-13
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        ref: ${{ github.ref }}
+        fetch-depth: 0
+    - name: Force Python to version 3.10 to workaround node-gyp install problem (remove later)
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v3
+      with:
+        version: ${{ env.QT_VERSION }}
+        modules: ${{ env.QT_MODULES }}
+        cache: true
+        setup-python: false # Python installed above
+    - name: ccache
+      uses: hendrikmuhs/ccache-action@main
+      with:
+        key: macos
+    - uses: seanmiddleditch/gha-setup-ninja@v3
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '12'
+    - name: Compile
+      run: scripts/macos-build.sh
+    - name: app and dmg
+      run: |
+        npm install -g appdmg
+        installers/macos/build.sh
+      env:
+        APPLE_CERTIFICATE_P12_BASE64: ${{ secrets.APPLE_CERTIFICATE_P12_BASE64 }}
+        APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+        APPLE_KEYCHAIN_PASSWORD: ${{ secrets.APPLE_KEYCHAIN_PASSWORD }}
+        APPLE_NOTARIZATION_PASSWORD: ${{ secrets.APPLE_NOTARIZATION_PASSWORD }}
+        APPLE_NOTARIZATION_USERNAME: ${{ secrets.APPLE_NOTARIZATION_USERNAME }}
+        APPLE_SIGN_ID: ${{ secrets.APPLE_SIGN_ID }}
+        APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+    - uses: actions/upload-artifact@v4
+      if: github.event_name != 'pull_request'
+      with:
+        name: macos-disk-image
+        path: build/Graphia-*.dmg
+    - uses: actions/upload-artifact@v4
+      with:
+        name: macos-logs
+        path: build/*.log
+    - name: Upload Symbols
+      if: github.event_name != 'pull_request'
+      run: scripts/upload-symbols.sh
+      shell: bash
+      env:
+        SYM_UPLOAD_URL: ${{ secrets.SYM_UPLOAD_URL }}
+
+  wasm:
+    name: WebAssembly
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        ref: ${{ github.ref }}
+        fetch-depth: 0
+    - name: Determine appropriate emsdk version
+      run: |
+        EMSDK_VERSION=$(scripts/emsdk-version-for-qt-version.sh ${{ env.QT_VERSION }})
+        echo "EMSDK_VERSION=${EMSDK_VERSION}" >> $GITHUB_ENV
+    - name: Install emsdk
+      uses: mymindstorm/setup-emsdk@v13
+      with:
+        version: ${{ env.EMSDK_VERSION }}
+    - name: Install Qt
+      uses: timangus/install-qt-action@deployed
+      with:
+        aqtsource: git+https://github.com/timangus/aqtinstall.git
+        version: ${{ env.QT_VERSION }}
+        host: all_os
+        target: wasm
+        arch: wasm_multithread
+        extra: --autodesktop
+        cache: true
+    - name: ccache
+      uses: hendrikmuhs/ccache-action@main
+      with:
+        key: wasm
+    - uses: seanmiddleditch/gha-setup-ninja@v3
+    - name: Compile
+      run: |
+        scripts/wasm-build.sh
+      env:
+        UNITY_BUILD: OFF
+    - name: Archive
+      run: |
+        installers/wasm/build.sh
+    - uses: actions/upload-artifact@v4
+      if: github.event_name != 'pull_request'
+      with:
+        name: webassembly
+        path: build/wasm/Graphia-WebAssembly-*
+    - uses: actions/upload-artifact@v4
+      with:
+        name: webassembly-logs
+        path: build/wasm/*.log
+
+  wasm-deploy:
+    name: Deploy WebAssembly
+    if: github.event_name != 'pull_request' && needs.check-is-release.outputs.is-release == 'true'
+    runs-on: ubuntu-latest
+    needs:
+      - check-is-release
+      - wasm
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        ref: ${{ github.ref }}
+        fetch-depth: 0
+    - uses: actions/checkout@v4
+      with:
+        repository: graphia-app/web
+        ssh-key: ${{ secrets.WASM_SSH_PRIVATE_KEY }}
+        path: web
+    - uses: actions/download-artifact@v4
+      with:
+        name: webassembly
+        path: build
+    - name: Deploy
+      run: scripts/wasm-deploy.sh web
+
+  clang-debug:
+    name: Clang Debug
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        ref: ${{ github.ref }}
+        fetch-depth: 0
+    - name: Install Tools
+      run: |
+        sudo wget -O /tmp/llvm.sh https://apt.llvm.org/llvm.sh
+        sudo bash /tmp/llvm.sh ${{ env.CLANG_VERSION }}
+        sudo apt-get update
+        sudo apt-get install libc++-${{ env.CLANG_VERSION }}-dev libc++1-${{ env.CLANG_VERSION }} libc++abi-${{ env.CLANG_VERSION }}-dev libc++abi1-${{ env.CLANG_VERSION }}
+        sudo apt-get install libunwind-${{ env.CLANG_VERSION }}-dev
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v3
+      with:
+        version: ${{ env.QT_VERSION }}
+        modules: ${{ env.QT_MODULES }}
+        cache: true
+    - name: ccache
+      uses: hendrikmuhs/ccache-action@main
+      with:
+        key: clang-debug
+    - uses: seanmiddleditch/gha-setup-ninja@v3
+    - name: Compile
+      run: |
+        scripts/linux-build.sh
+        scripts/parse-compile_commands-json.sh
+      env:
+        BUILD_TYPE: Debug
+        UNITY_BUILD: OFF
+        CC: clang-${{ env.CLANG_VERSION }}
+        CXX: clang++-${{ env.CLANG_VERSION }}
+    - uses: actions/upload-artifact@v4
+      with:
+        name: static-analysis-logs-clang
+        path: build/clang/*.log
+    - uses: actions/upload-artifact@v4
+      with:
+        name: static-analysis-build
+        path: |
+          build/clang/variables.sh
+          build/clang/compile_commands.json
+          build/clang/**/*.h
+          build/clang/**/*.hpp
+          build/clang/**/*.hxx
+          build/clang/**/*.c
+          build/clang/**/*.cpp
+          build/clang/**/*.cxx
+
+  windows-clang:
+    name: Windows Clang
+    runs-on: windows-2022
+    needs:
+      - check-is-release
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        ref: ${{ github.ref }}
+        fetch-depth: 0
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v3
+      with:
+        version: ${{ env.QT_VERSION }}
+        modules: ${{ env.QT_MODULES }}
+        cache: true
+    - name: ccache
+      uses: hendrikmuhs/ccache-action@main
+      with:
+        variant: sccache
+        key: windows-clang
+    - name: Register msdia
+      shell: cmd
+      run: regsvr32.exe /s "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\DIA SDK\bin\msdia140.dll"
+    - uses: ilammy/msvc-dev-cmd@v1
+    - uses: seanmiddleditch/gha-setup-ninja@v3
+    - name: Compile
+      shell: pwsh
+      run: . .\scripts\windows-build.ps1
+      env:
+        CC: clang-cl.exe
+        CXX: clang-cl.exe
+    - name: Upload Executables for Signing
+      id: unsigned-exes
+      if: needs.check-is-release.outputs.is-release == 'true'
+      uses: actions/upload-artifact@v4
+      with:
+        name: windows-clang-unsigned-exes
+        path: |
+          build/CrashReporter.exe
+          build/Graphia.exe
+          build/MessageBox.exe
+          build/Updater.exe
+          build/plugins/*.dll
+    - name: Sign Executables
+      if: needs.check-is-release.outputs.is-release == 'true'
+      uses: signpath/github-action-submit-signing-request@v1
+      with:
+        api-token: ${{ secrets.WINDOWS_SIGNPATH_API_TOKEN }}
+        organization-id: ${{ secrets.WINDOWS_SIGNPATH_ORGANIZATION_ID }}
+        project-slug: ${{ secrets.WINDOWS_SIGNPATH_PROJECT_SLUG }}
+        signing-policy-slug: ${{ secrets.WINDOWS_SIGNPATH_SIGNING_POLICY_SLUG }}
+        artifact-configuration-slug: zipped-exes
+        github-artifact-id: ${{ steps.unsigned-exes.outputs.artifact-id }}
+        wait-for-completion: true
+        output-artifact-directory: build
+    - name: Prepare NSIS Installer
+      shell: pwsh
+      run: .\installers\windows\prepare-installer.ps1
+      env:
+        CRTDIRECTORY: ${{ env.VcToolsRedistDir }}\x64\Microsoft.VC143.CRT
+    - name: Upload Uninstaller for Signing
+      id: unsigned-uninstaller
+      if: needs.check-is-release.outputs.is-release == 'true'
+      uses: actions/upload-artifact@v4
+      with:
+        name: windows-clang-unsigned-uninstaller
+        path: installer/Uninstall.exe
+    - name: Sign Uninstaller
+      if: needs.check-is-release.outputs.is-release == 'true'
+      uses: signpath/github-action-submit-signing-request@v1
+      with:
+        api-token: ${{ secrets.WINDOWS_SIGNPATH_API_TOKEN }}
+        organization-id: ${{ secrets.WINDOWS_SIGNPATH_ORGANIZATION_ID }}
+        project-slug: ${{ secrets.WINDOWS_SIGNPATH_PROJECT_SLUG }}
+        signing-policy-slug: ${{ secrets.WINDOWS_SIGNPATH_SIGNING_POLICY_SLUG }}
+        artifact-configuration-slug: zipped-exes
+        github-artifact-id: ${{ steps.unsigned-uninstaller.outputs.artifact-id }}
+        wait-for-completion: true
+        output-artifact-directory: installer
+    - name: Make NSIS Installer
+      shell: pwsh
+      run: .\installers\windows\make-installer.ps1
+    - name: Upload Installer for Signing
+      id: unsigned-installer
+      if: needs.check-is-release.outputs.is-release == 'true'
+      uses: actions/upload-artifact@v4
+      with:
+        name: windows-clang-unsigned-installer
+        path: installer/*-installer.exe
+    - name: Sign Installer
+      if: needs.check-is-release.outputs.is-release == 'true'
+      uses: signpath/github-action-submit-signing-request@v1
+      with:
+        api-token: ${{ secrets.WINDOWS_SIGNPATH_API_TOKEN }}
+        organization-id: ${{ secrets.WINDOWS_SIGNPATH_ORGANIZATION_ID }}
+        project-slug: ${{ secrets.WINDOWS_SIGNPATH_PROJECT_SLUG }}
+        signing-policy-slug: ${{ secrets.WINDOWS_SIGNPATH_SIGNING_POLICY_SLUG }}
+        artifact-configuration-slug: zipped-exes
+        github-artifact-id: ${{ steps.unsigned-installer.outputs.artifact-id }}
+        wait-for-completion: true
+        output-artifact-directory: build
+    - name: Move Unsigned Installer
+      if: needs.check-is-release.outputs.is-release != 'true'
+      shell: pwsh
+      run: Move-Item installer/*-installer.exe build -Verbose
+    - uses: actions/upload-artifact@v4
+      if: github.event_name != 'pull_request'
+      with:
+        name: windows-clang-installer
+        path: build/Graphia-*-installer.exe
+    - uses: actions/upload-artifact@v4
+      with:
+        name: windows-clang-logs
+        path: build/*.log
+    - name: Upload Symbols
+      if: github.event_name != 'pull_request'
+      run: scripts/upload-symbols.sh
+      shell: bash
+      env:
+        SYM_UPLOAD_URL: ${{ secrets.SYM_UPLOAD_URL }}
+
+  clang-tidy:
+    name: Clang-Tidy
+    runs-on: ubuntu-latest
+    needs:
+      - clang-debug
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        ref: ${{ github.ref }}
+        fetch-depth: 0
+    - name: Install Tools
+      run: |
+        sudo wget -O /tmp/llvm.sh https://apt.llvm.org/llvm.sh
+        sudo bash /tmp/llvm.sh ${{ env.CLANG_VERSION }}
+        sudo apt-get update
+        sudo apt-get install libc++-${{ env.CLANG_VERSION }}-dev libc++1-${{ env.CLANG_VERSION }} libc++abi-${{ env.CLANG_VERSION }}-dev libc++abi1-${{ env.CLANG_VERSION }}
+        sudo apt-get install libunwind-${{ env.CLANG_VERSION }}-dev
+        sudo apt-get install clang-tidy-${{ env.CLANG_VERSION }}
+    - name: Checkout ctcache
+      uses: actions/checkout@v4
+      with:
+        repository: matus-chochlik/ctcache
+        path: ctcache
+    - name: Install ctcache
+      run: |
+        sudo mv ctcache /opt/ctcache
+    - name: Get Date
+      id: get-date
+      run: |
+        echo "date=$(/bin/date -u "+%Y%m%d")" >> $GITHUB_OUTPUT
+      shell: bash
+    - name: Store ctcache
+      uses: actions/cache@v4
+      with:
+        key: ctcache-${{ steps.get-date.outputs.date }}
+        path: /tmp/clang-tidy-cache
+        restore-keys: |
+          ctcache-
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v3
+      with:
+        version: ${{ env.QT_VERSION }}
+        modules: ${{ env.QT_MODULES }}
+        cache: true
+    - uses: actions/download-artifact@v4
+      with:
+        name: static-analysis-build
+        path: build/clang/
+    - name: Analyse
+      run: scripts/clang-tidy.sh
+      env:
+        CLANGTIDY: /opt/ctcache/clang-tidy
+        CTCACHE_DIR: /tmp/clang-tidy-cache
+        CTCACHE_CLANG_TIDY: clang-tidy-${{ env.CLANG_VERSION }}
+        CTCACHE_SAVE_OUTPUT: 1
+        BUILD_DIR: build/clang/
+    - uses: actions/upload-artifact@v4
+      with:
+        name: static-analysis-logs-clang-tidy
+        path: build/clang/*.log
+
+  cppcheck:
+    name: cppcheck
+    runs-on: ubuntu-latest
+    needs:
+      - clang-debug
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        ref: ${{ github.ref }}
+        fetch-depth: 0
+    - name: Install Tools
+      run: |
+        sudo wget -O /tmp/llvm.sh https://apt.llvm.org/llvm.sh
+        sudo bash /tmp/llvm.sh ${{ env.CLANG_VERSION }}
+        sudo apt-get update
+        sudo apt-get install libc++-${{ env.CLANG_VERSION }}-dev libc++1-${{ env.CLANG_VERSION }} libc++abi-${{ env.CLANG_VERSION }}-dev libc++abi1-${{ env.CLANG_VERSION }}
+        sudo apt-get install libunwind-${{ env.CLANG_VERSION }}-dev
+        sudo apt-get update
+        sudo apt-get install cppcheck
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v3
+      with:
+        version: ${{ env.QT_VERSION }}
+        modules: ${{ env.QT_MODULES }}
+        cache: true
+    - uses: actions/download-artifact@v4
+      with:
+        name: static-analysis-build
+        path: build/clang/
+    - name: Analyse
+      run: scripts/cppcheck.sh
+      env:
+        CPPCHECK: cppcheck
+        BUILD_DIR: build/clang/
+    - uses: actions/upload-artifact@v4
+      with:
+        name: static-analysis-logs-cppcheck
+        path: build/clang/*.log
+
+  clazy:
+    name: Clazy
+    runs-on: ubuntu-latest
+    needs:
+      - clang-debug
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        ref: ${{ github.ref }}
+        fetch-depth: 0
+    - name: Install Tools
+      run: |
+        sudo wget -O /tmp/llvm.sh https://apt.llvm.org/llvm.sh
+        sudo bash /tmp/llvm.sh ${{ env.CLANG_VERSION }}
+        sudo apt install g++ cmake clang llvm-${{ env.CLANG_VERSION }}-dev git-core libclang-${{ env.CLANG_VERSION }}-dev
+        sudo update-alternatives --install /usr/bin/llvm-config llvm-config /usr/bin/llvm-config-${{ env.CLANG_VERSION }} 100
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v3
+      with:
+        version: ${{ env.QT_VERSION }}
+        modules: ${{ env.QT_MODULES }}
+        cache: true
+    - uses: actions/checkout@v4
+      with:
+        repository: KDE/clazy
+        ref: d0b033ae1b297fce288df6a3d59c718b522f4259
+        path: clazy
+    - name: ccache
+      uses: hendrikmuhs/ccache-action@main
+      with:
+        key: clazy
+    - uses: seanmiddleditch/gha-setup-ninja@v3
+    - name: Build clazy
+      run: |
+        cd clazy/
+        sed -i 's/target_precompile_headers/#target_precompile_headers/' CMakeLists.txt
+        cmake -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release -G Ninja
+        cmake --build .
+        sudo cmake --build . --target install
+    - uses: actions/download-artifact@v4
+      with:
+        name: static-analysis-build
+        path: build/clang/
+    - name: Analyse
+      run: scripts/clazy.sh
+      env:
+        CLAZY: /usr/bin/clazy
+        BUILD_DIR: build/clang/
+    - uses: actions/upload-artifact@v4
+      with:
+        name: static-analysis-logs-clazy
+        path: build/clang/*.log
+
+  qmllint:
+    name: QML Lint
+    runs-on: ubuntu-latest
+    needs:
+      - clang-debug
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        ref: ${{ github.ref }}
+        fetch-depth: 0
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v3
+      with:
+        version: ${{ env.QT_VERSION }}
+        modules: ${{ env.QT_MODULES }}
+        cache: true
+    - uses: actions/download-artifact@v4
+      with:
+        name: static-analysis-build
+        path: build/clang/
+    - name: Analyse
+      run: scripts/qmllint.sh
+      env:
+        BUILD_DIR: build/clang/
+    - uses: actions/upload-artifact@v4
+      with:
+        name: static-analysis-logs-qmllint
+        path: build/clang/*.log
+
+  iwyu:
+    name: Include What You Use
+    runs-on: ubuntu-latest
+    needs:
+      - clang-debug
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        ref: ${{ github.ref }}
+        fetch-depth: 0
+    - name: Install Tools
+      run: |
+        sudo wget -O /tmp/llvm.sh https://apt.llvm.org/llvm.sh
+        sudo bash /tmp/llvm.sh ${{ env.CLANG_VERSION }}
+        sudo apt install g++ cmake clang llvm-${{ env.CLANG_VERSION }}-dev git-core libclang-${{ env.CLANG_VERSION }}-dev
+        sudo update-alternatives --install /usr/bin/llvm-config llvm-config /usr/bin/llvm-config-${{ env.CLANG_VERSION }} 100
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v3
+      with:
+        version: ${{ env.QT_VERSION }}
+        modules: ${{ env.QT_MODULES }}
+        cache: true
+    - uses: actions/checkout@v4
+      with:
+        repository: include-what-you-use/include-what-you-use
+        ref: clang_${{ env.CLANG_VERSION }}
+        path: iwyu
+    - name: ccache
+      uses: hendrikmuhs/ccache-action@main
+      with:
+        key: iwyu
+    - uses: seanmiddleditch/gha-setup-ninja@v3
+    - name: Build IWYU
+      run: |
+        cd iwyu/
+        cmake -DCMAKE_PREFIX_PATH=/usr/lib/llvm-${{ env.CLANG_VERSION }} -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release -G Ninja
+        cmake --build .
+        sudo cmake --build . --target install
+    - uses: actions/download-artifact@v4
+      with:
+        name: static-analysis-build
+        path: build/clang/
+    - name: Analyse
+      run: scripts/iwyu.sh
+      env:
+        BUILD_DIR: build/clang/
+        IWYU_SOURCE: ${{ github.workspace }}/iwyu
+    - uses: actions/upload-artifact@v4
+      with:
+        name: static-analysis-logs-iwyu
+        path: build/clang/*.log
+
+  check-is-release:
+    if: github.event_name != 'pull_request'
+    name: Check For Release Tag
+    runs-on: ubuntu-latest
+    outputs:
+      is-release: ${{ steps.is-release-test.outputs.result }}
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        ref: ${{ github.ref }}
+        fetch-depth: 0
+    - name: Check Release Tag
+      id: is-release-test
+      run: |
+        GIT_TAG=$(git describe --exact-match --tags || true)
+        if [[ -z "${GIT_TAG}" || "${{ github.ref_type }}" != 'tag' ]]
+        then
+          echo "Not tagged"
+          echo "result=false" >> $GITHUB_OUTPUT
+        elif [[ "${GIT_TAG}" =~ ^[0-9]+\.[0-9]+(-rc[0-9]+)?$ ]]
+        then
+          echo "'${GIT_TAG}' is a release"
+          echo "result=true" >> $GITHUB_OUTPUT
+        else
+          echo "'${GIT_TAG}' is not a release"
+          echo "result=false" >> $GITHUB_OUTPUT
+        fi
+      shell: bash
+
+  release:
+    name: GitHub Release
+    if: github.event_name != 'pull_request' && needs.check-is-release.outputs.is-release == 'true'
+    runs-on: ubuntu-latest
+    needs:
+      - check-is-release
+      - linux
+      - windows
+      - macos
+      - wasm
+    steps:
+    - uses: actions/download-artifact@v4
+      with:
+        name: linux-appimage
+        path: release/Linux AppImage
+    - uses: actions/download-artifact@v4
+      with:
+        name: macos-disk-image
+        path: release/macOS Disk Image
+    - uses: actions/download-artifact@v4
+      with:
+        name: windows-installer
+        path: release/Windows Installer
+    - uses: actions/download-artifact@v4
+      with:
+        name: webassembly
+        path: release/WebAssembly
+    - name: Create Release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+    - name: Upload Linux Binary
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: release/Linux AppImage/*.tar.gz
+        tag: ${{ github.ref }}
+        overwrite: true
+        file_glob: true
+    - name: Upload macOS Binary
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: release/macOS Disk Image/*.dmg
+        tag: ${{ github.ref }}
+        overwrite: true
+        file_glob: true
+    - name: Upload Windows Binary
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: release/Windows Installer/*.exe
+        tag: ${{ github.ref }}
+        overwrite: true
+        file_glob: true
+    - name: Upload WebAssembly Tarball
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: release/WebAssembly/*.tar.gz
+        tag: ${{ github.ref }}
+        overwrite: true
+        file_glob: true
+
+  prereleasebuilds:
+    if: github.event_name != 'pull_request'
+    name: Upload Builds to graphia.dev
+    runs-on: ubuntu-latest
+    needs:
+      - linux
+      - windows
+      - macos
+      - wasm
+      - windows-clang
+    steps:
+    - uses: actions/download-artifact@v4
+      with:
+        name: linux-appimage
+        path: prerelease/Linux AppImage
+    - uses: actions/download-artifact@v4
+      with:
+        name: linux-logs
+        path: prerelease/Linux Logs
+    - uses: actions/download-artifact@v4
+      with:
+        name: macos-disk-image
+        path: prerelease/macOS Disk Image
+    - uses: actions/download-artifact@v4
+      with:
+        name: macos-logs
+        path: prerelease/macOS Logs
+    - uses: actions/download-artifact@v4
+      with:
+        name: windows-installer
+        path: prerelease/Windows Installer
+    - uses: actions/download-artifact@v4
+      with:
+        name: windows-logs
+        path: prerelease/Windows Logs
+    - uses: actions/download-artifact@v4
+      with:
+        name: windows-clang-installer
+        path: prerelease/Windows Clang Installer
+    - uses: actions/download-artifact@v4
+      with:
+        name: windows-clang-logs
+        path: prerelease/Windows Clang Logs
+    - uses: actions/download-artifact@v4
+      with:
+        name: webassembly
+        path: prerelease/WebAssembly
+    - uses: actions/download-artifact@v4
+      with:
+        name: webassembly-logs
+        path: prerelease/WebAssembly Logs
+    - uses: horochx/deploy-via-scp@master
+      with:
+        host: ${{ secrets.PRERELEASE_HOST }}
+        user: ${{ secrets.PRERELEASE_USERNAME }}
+        key: ${{ secrets.PRERELEASE_KEY }}
+        local: "prerelease/*"
+        remote: ${{ secrets.PRERELEASE_DIR }}
+
+  prereleasestaticanalysislogs:
+    if: github.event_name != 'pull_request'
+    name: Upload Logs to graphia.dev
+    runs-on: ubuntu-latest
+    needs:
+      - clang-debug
+      - clang-tidy
+      - cppcheck
+      - clazy
+      - iwyu
+      - qmllint
+    steps:
+    - uses: actions/download-artifact@v4
+      with:
+        pattern: static-analysis-logs-*
+        merge-multiple: true
+        path: prerelease/Static Analysis Logs
+    - uses: horochx/deploy-via-scp@master
+      with:
+        host: ${{ secrets.PRERELEASE_HOST }}
+        user: ${{ secrets.PRERELEASE_USERNAME }}
+        key: ${{ secrets.PRERELEASE_KEY }}
+        local: "prerelease/*"
+        remote: ${{ secrets.PRERELEASE_DIR }}
+
+  log-analysis:
+    if: github.event_name != 'pull_request'
+    name: Analyse Logs
+    runs-on: ubuntu-latest
+    needs:
+      - linux
+      - windows
+      - macos
+      - wasm
+      - clang-debug
+      - windows-clang
+      - clang-tidy
+      - cppcheck
+      - clazy
+      - qmllint
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        ref: ${{ github.ref }}
+        fetch-depth: 0
+    - uses: actions/download-artifact@v4
+      with:
+        name: linux-logs
+        path: logs/linux
+    - uses: actions/download-artifact@v4
+      with:
+        name: macos-logs
+        path: logs/macos
+    - uses: actions/download-artifact@v4
+      with:
+        name: windows-logs
+        path: logs/windows
+    - uses: actions/download-artifact@v4
+      with:
+        name: windows-clang-logs
+        path: logs/windows-clang
+    - uses: actions/download-artifact@v4
+      with:
+        name: webassembly-logs
+        path: logs/wasm
+    - uses: actions/download-artifact@v4
+      with:
+        pattern: static-analysis-logs-*
+        merge-multiple: true
+        path: logs/staticanalysis
+    - name: Install Perl modules
+      uses: perl-actions/install-with-cpanm@v1
+      with:
+        install: |
+          Text::Table::CSV
+          Text::Table::Tiny
+    - uses: actions/checkout@v4
+      with:
+        repository: graphia-app/defects
+        ssh-key: ${{ secrets.DEFECTS_SSH_PRIVATE_KEY }}
+        path: defects
+    - name: Analyse
+      run: |
+        SHORT_SHA=$(git rev-parse --short HEAD)
+        MESSAGE=$(git log --format=%B -n1 HEAD | head -n1)
+        BRANCH=$(echo ${GITHUB_REF#refs/*/})
+        cd defects
+        git config user.email ""
+        git config user.name "Log Analyser"
+        ./update.sh -b $BRANCH -l "../logs" -m "$SHORT_SHA $MESSAGE"

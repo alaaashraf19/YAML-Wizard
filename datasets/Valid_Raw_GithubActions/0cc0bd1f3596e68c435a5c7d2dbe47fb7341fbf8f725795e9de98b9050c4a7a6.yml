@@ -1,0 +1,70 @@
+name: test_hiopbbpy
+
+on: [push]
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.13"
+
+      - name: Set up Conda
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-activate-base: true
+          channels: conda-forge
+
+      - name: Install IPOPT via conda
+        run: |
+          conda init bash
+          conda install -c conda-forge cyipopt pkg-config
+          export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
+
+      - name: Verify cyipopt installation
+        run: |
+          source ~/.bashrc
+          conda activate base
+          python -c "import cyipopt; print('cyipopt install OK')"
+      
+      - name: Install mpi4py via conda
+        run: |
+          conda init bash
+          conda install -c conda-forge mpi4py mpich 
+      
+      - name: Verify mpi4py installation
+        run: |
+          source ~/.bashrc
+          conda activate base
+          python -c "import mpi4py; print('mpi4py install OK')"
+
+      - name: Install HiOpBBPy
+        run: |
+          source ~/.bashrc
+          conda activate base
+          export SKIP_CYIPOPT=1
+          python -m pip install --upgrade pip
+          pip install .
+
+      - name: Run BO Test
+        run: |
+          source ~/.bashrc
+          conda activate base
+          python src/Drivers/hiopbbpy/BODriverCI.py -nrepeat 10
+        continue-on-error: false
+      
+      - name: Run MPI Evaluator Test
+        run: |
+          source ~/.bashrc
+          conda activate base
+          python src/Drivers/hiopbbpy/EvaluationManagerCI.py -n 10 -t 0.001
+        continue-on-error: false

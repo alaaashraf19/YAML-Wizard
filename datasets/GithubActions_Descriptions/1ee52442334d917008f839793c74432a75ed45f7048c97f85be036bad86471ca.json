@@ -1,0 +1,13 @@
+{
+  "sha": "1ee52442334d917008f839793c74432a75ed45f7048c97f85be036bad86471ca",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1096,
+  "description": "Create a GitHub Actions workflow named Update Snap that triggers on push to the master branch, excluding certain paths. The workflow should run on an ubuntu-latest environment, only for the cpeditor repository owner. It checks out the repository with submodules and a specific ref, updates an Appdata file with the SNAP_VERSION, prepares Snapcraft, builds and publishes a snap package to the edge channel using a store login from secrets.",
+  "tags": [
+    "snap",
+    "github-actions",
+    "ubuntu",
+    "workflow"
+  ]
+}

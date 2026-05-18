@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_04536",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 417,
+  "description": "Create a GitLab CI pipeline that uses the Docker image registry.gitlab.com/thkoch/hakyll-docker-image/hakyll-docker-image-compile-lts-12.22:latest and sets the variable STACK_RESOLVER to lts-12.22. Define a before_script that runs `stack --resolver $STACK_RESOLVER build`. Add a build job (default stage) that runs on all branches except master, executes `stack --resolver $STACK_RESOLVER exec -- site build`, and inherits the before_script. Add a pages job that runs only on the master branch, runs the same `stack --resolver $STACK_RESOLVER exec -- site build` command, and publishes the `public/` directory as a GitLab Pages artifact.",
+  "tags": [
+    "hakyll",
+    "stack",
+    "gitlab-pages",
+    "docker-image",
+    "lts-12.22"
+  ]
+}

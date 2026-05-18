@@ -1,0 +1,18 @@
+{
+  "sha": "f899fd50508fbd1a1604c43fb68052e556fbfda14e7d0e21218bfb4a3d46f288",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 14801,
+  "description": "Create a GitHub Actions workflow named Build and test that runs on every pull request to the main branch and on workflow dispatch. The workflow should have multiple jobs for building and testing on different environments including Ubuntu arm64 with Clang and GCC, Ubuntu x64 with Clang and GCC, macOS x64 with Clang, macOS universal with Clang, and Windows x64 with MSVC. Each job should check out the repository, install dependencies, build the project with CMake, and run system and unit tests.",
+  "tags": [
+    "cmake",
+    "ubuntu",
+    "macos",
+    "windows",
+    "clang",
+    "gcc",
+    "msvc",
+    "python",
+    "tests"
+  ]
+}

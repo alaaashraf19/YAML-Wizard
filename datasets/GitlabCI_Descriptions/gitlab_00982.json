@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_00982",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1498,
+  "description": "Create a GitLab CI pipeline with stages install, test, prebuild, build, production_android, production_iOS using node:6.10.3 as the default image and docker.io/aossie/react-native-ci:version1.3 for Android build jobs. In the install stage add an install_dependencies job that runs npm install and stores node_modules/ as an artifact. In the prebuild stage add a key_build job that runs npm install -g envsub and bash createKeys-CI.sh, archives the android/ and src/ directories as artifacts, and always runs. In the test stage add a unit_test job that depends on install_dependencies, runs npm test, and runs on_success. In the build stage add a build_apk job (using the react-native-ci image) that creates the assets directory, bundles the React Native app with react-native bundle, runs ./gradlew assembleDebug, moves the generated app-debug.apk to the project root, depends on key_build and install_dependencies, always runs, and publishes app-debug.apk as an artifact. In the production_android stage add a deploy_android job (also using the react-native-ci image) that runs ./gradlew assembleRelease with the RELEASE_STORE_PASSWORD and RELEASE_KEY_PASSWORD variables, moves the app-release.apk to the root, depends on key_build and install_dependencies, always runs, and publishes app-release.apk as an artifact.",
+  "tags": [
+    "react-native",
+    "android",
+    "gradle",
+    "npm",
+    "node-6",
+    "docker",
+    "ci"
+  ]
+}

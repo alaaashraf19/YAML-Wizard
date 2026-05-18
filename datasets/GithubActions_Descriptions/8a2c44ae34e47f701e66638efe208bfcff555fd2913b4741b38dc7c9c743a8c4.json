@@ -1,0 +1,14 @@
+{
+  "sha": "8a2c44ae34e47f701e66638efe208bfcff555fd2913b4741b38dc7c9c743a8c4",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3310,
+  "description": "Create a GitHub Actions workflow named Compiler Tests that runs every Friday at 7AM UTC and allows manual dispatch. The workflow consists of three jobs: all-compilers, latest-compilers-all-gem5-builds, and compiler-tests. The all-compilers job runs a matrix of compiler tests across various images and options on a self-hosted Linux environment. The latest-compilers-all-gem5-builds job tests the two latest GCC and Clang compilers against all gem5 compilations. The compiler-tests job checks if the compiler tests have passed.",
+  "tags": [
+    "compiler-tests",
+    "scheduled-workflow",
+    "self-hosted",
+    "linux",
+    "gem5"
+  ]
+}

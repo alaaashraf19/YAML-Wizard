@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_19398",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 926,
+  "description": "Create a GitLab CI pipeline using the node:latest Docker image. Define three stages: lint, test, and build_and_deploy. Add a lint job in the lint stage that runs npm run lint. Add a test job in the test stage that runs npm run test. Add a build_and_deploy job in the build_and_deploy stage, limited to the master branch and targeting the production environment, that first adds the DigitalOcean SSH private key, creates and secures the ~/.ssh directory, adds the server to known_hosts, runs npm run build, syncs the project directory to the remote server with rsync excluding hidden files, and restarts nginx via ssh. Include a before_script that ensures ssh-agent and rsync are installed, starts ssh-agent, and runs npm install. Cache the node_modules/ directory.",
+  "tags": [
+    "node",
+    "npm",
+    "lint",
+    "test",
+    "rsync",
+    "ssh",
+    "digitalocean",
+    "deployment",
+    "ci"
+  ]
+}

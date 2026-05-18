@@ -1,0 +1,15 @@
+{
+  "sha": "8ea9092db1e7b3668c4a41f79345ad45401316a27ade28bdf0d5f92f633ab3cc",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4137,
+  "description": "Create a GitHub Actions workflow named Ubuntu CI that runs on every push and on pull requests to the master branch. Use a matrix strategy to run a job on both ubuntu-22.04 and ubuntu-24.04, with concurrency control to cancel in-progress jobs. The job should set up the environment, install dependencies, start Xvfb, and then checkout the repository, cache pyenv and third-party packages, build BioDynaMo, run unit tests, and perform style guide checks.",
+  "tags": [
+    "ubuntu",
+    "ci",
+    "matrix",
+    "pyenv",
+    "cmake",
+    "tests"
+  ]
+}

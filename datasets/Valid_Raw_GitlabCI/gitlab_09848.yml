@@ -1,0 +1,350 @@
+.parallel_matrix:
+- matrix: &id001
+  - HARDWARE:
+    - armhf:linux/arm/v6
+    IMAGE:
+    - balenalib/rpi-raspbian:bullseye
+    - balenalib/rpi-raspbian:bookworm
+  - HARDWARE:
+    - amd64:linux/amd64
+    - arm64:linux/arm64
+    - i386:linux/386
+    IMAGE:
+    - debian:bullseye
+    - debian:bookworm
+  - HARDWARE:
+    - amd64:linux/amd64
+    - arm64:linux/arm64
+    - riscv64:linux/riscv64
+    - i386:linux/386
+    IMAGE:
+    - debian:trixie
+    - debian:sid
+  - HARDWARE:
+    - amd64:linux/amd64
+    - arm64:linux/arm64
+    IMAGE:
+    - ubuntu:jammy
+    - ubuntu:noble
+  - HARDWARE:
+    - amd64:linux/amd64
+    - arm64:linux/arm64
+    - riscv64:linux/riscv64
+    IMAGE:
+    - ubuntu:oracular
+    - ubuntu:plucky
+.parallel_matrix_dists:
+- matrix: &id002
+  - DIST:
+    - bullseye
+    - bookworm
+    - trixie
+    - sid
+    - jammy
+    - noble
+    - oracular
+    - plucky
+build:linux:
+  artifacts:
+    expire_in: 1 day
+    paths:
+    - build/src/qrsspig_test
+    - build/src/plugins/*/*/*.so
+    - build/bin/
+    - build/lib/
+  script:
+  - apt-get update -qq && apt-get install -y -qq --no-install-recommends build-essential
+    clang cmake
+  - apt-get install -y -qq --no-install-recommends libboost-filesystem-dev libfftw3-dev
+    libliquid-dev libyaml-cpp-dev
+  - apt-get install -y -qq --no-install-recommends libairspy-dev libasound-dev gnuradio-dev
+    gr-osmosdr libhackrf-dev liblimesuite-dev libpulse-dev librtlsdr-dev
+  - apt-get install -y -qq --no-install-recommends libgd-dev
+  - apt-get install -y -qq --no-install-recommends libcurl4-openssl-dev libssh-dev
+  - mkdir -p build
+  - cd build
+  - cmake -DCMAKE_INSTALL_PREFIX=. -DWITH_INPUT_AIRSPY=ON -DWITH_INPUT_GROSMOSDR=ON
+    -DWITH_INPUT_LIMESDR=ON ..
+  - make -j 4
+  - make -j 4 install
+  stage: build
+image: debian:bookworm
+package:bin:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - build/deb/*/qrsspig*_${VERSION}-${DEBREVISION}_*.*deb
+    - build/deb/*/qrsspig_${VERSION}-${DEBREVISION}_*.build*
+    - build/deb/*/qrsspig_${VERSION}-${DEBREVISION}_*.changes
+  before_script:
+  - docker info
+  image: docker:23.0.1-git
+  needs:
+  - artifacts: true
+    job: package:src
+  only:
+  - staging
+  - master
+  parallel:
+    matrix: *id001
+  script:
+  - DIST=${IMAGE##*:}
+  - ARCH=${HARDWARE%%:*}
+  - PLATFORM=${HARDWARE##*:}
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  - docker run -e DIST=${DIST} -e GPG_PRIVATE_KEY=${GPG_PRIVATE_KEY} -e VERSION=${VERSION}
+    --platform ${PLATFORM} --volume $(pwd):$(pwd) --volume ${GPG_PRIVATE_KEY}:${GPG_PRIVATE_KEY}
+    $CI_REGISTRY/hb9fxx/qrsspig/image_${DIST}_${ARCH}:${VERSION} /builds/hb9fxx/qrsspig/docker/build_binary
+  services:
+  - docker:23.0.1-dind
+  stage: package-bin
+  variables:
+    DOCKER_HOST: tcp://docker:2376
+    DOCKER_TLS_CERTDIR: /certs
+package:bundle:
+  artifacts:
+    paths:
+    - qrsspig_${VERSION}-${DEBREVISION}.tar.xz
+    - cppcheck.xml
+    - valgrind1.xml
+    - valgrind2.xml
+  needs:
+  - artifacts: true
+    job: package:bin
+  only:
+  - staging
+  - master
+  script:
+  - apt-get update -qq && apt-get install -y -qq --no-install-recommends xz-utils
+  - cd build/deb
+  - tar cJf qrsspig_${VERSION}-${DEBREVISION}.tar.xz *
+  - mv qrsspig_${VERSION}-${DEBREVISION}.tar.xz ../../
+  stage: package-bundle
+package:docker:
+  before_script:
+  - docker info
+  image: docker:23.0.1-git
+  needs: []
+  only:
+  - staging
+  - master
+  parallel:
+    matrix: *id001
+  script:
+  - docker pull tonistiigi/binfmt:latest
+  - docker run --privileged --rm tonistiigi/binfmt --uninstall qemu-*
+  - docker run --privileged --rm tonistiigi/binfmt --install all
+  - DIST=${IMAGE##*:}
+  - ARCH=${HARDWARE%%:*}
+  - PLATFORM=${HARDWARE##*:}
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  - docker pull $CI_REGISTRY/hb9fxx/qrsspig/image_${DIST}_${ARCH}:latest || true
+  - docker pull $CI_REGISTRY/hb9fxx/qrsspig/image_${DIST}_${ARCH}:${VERSION} || true
+  - docker context create context
+  - docker buildx create --use --bootstrap context
+  - docker buildx build -f "docker/Dockerfile" --build-arg IMAGE=${IMAGE} --build-arg
+    BUILDKIT_INLINE_CACHE=1 --cache-from $CI_REGISTRY/hb9fxx/qrsspig/image_${DIST}_${ARCH}:latest
+    --cache-from $CI_REGISTRY/hb9fxx/qrsspig/image_${DIST}_${ARCH}:${VERSION} --platform
+    ${PLATFORM} --push --tag $CI_REGISTRY/hb9fxx/qrsspig/image_${DIST}_${ARCH}:latest
+    --tag $CI_REGISTRY/hb9fxx/qrsspig/image_${DIST}_${ARCH}:${VERSION} docker
+  services:
+  - docker:23.0.1-dind
+  stage: package-docker
+  variables:
+    DOCKER_HOST: tcp://docker:2376
+    DOCKER_TLS_CERTDIR: /certs
+package:src:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - build/deb/${DIST}/qrsspig-${VERSION}
+    - build/deb/${DIST}/qrsspig_${VERSION}.orig.tar.xz
+    - build/deb/${DIST}/qrsspig_${VERSION}-${DEBREVISION}.debian.tar.xz
+    - build/deb/${DIST}/qrsspig_${VERSION}-${DEBREVISION}.dsc
+    - build/deb/${DIST}/qrsspig_${VERSION}-${DEBREVISION}_source.build*
+    - build/deb/${DIST}/qrsspig_${VERSION}-${DEBREVISION}_source.changes
+  before_script:
+  - docker info
+  image: docker:23.0.1-git
+  needs:
+  - artifacts: true
+    job: package:tar
+  - job: package:docker
+  only:
+  - staging
+  - master
+  parallel:
+    matrix: *id002
+  script:
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  - docker run -e DIST=${DIST} -e GPG_PRIVATE_KEY=${GPG_PRIVATE_KEY} -e VERSION=${VERSION}
+    --platform linux/arm64 --volume $(pwd):$(pwd) --volume ${GPG_PRIVATE_KEY}:${GPG_PRIVATE_KEY}
+    $CI_REGISTRY/hb9fxx/qrsspig/image_${DIST}_arm64:${VERSION} /builds/hb9fxx/qrsspig/docker/build_source
+  services:
+  - docker:23.0.1-dind
+  stage: package-src
+  variables:
+    DOCKER_HOST: tcp://docker:2376
+    DOCKER_TLS_CERTDIR: /certs
+package:tar:
+  artifacts:
+    expire_in: 1 day
+    paths:
+    - build/deb/qrsspig-${VERSION}
+    - build/deb/qrsspig_${VERSION}.orig.tar.xz
+  needs: []
+  only:
+  - staging
+  - master
+  script:
+  - apt-get update -qq && apt-get install -y -qq --no-install-recommends xz-utils
+  - mkdir -p build/deb/qrsspig-${VERSION}
+  - cp -a cmake debian etc src systemd CMakeLists.txt ChangeLog LICENSE README.md
+    THANKS qrsspig.yaml.template build/deb/qrsspig-${VERSION}
+  - cd build/deb
+  - tar cJf qrsspig_${VERSION}.orig.tar.xz qrsspig-${VERSION}
+  stage: package-tar
+package:test:
+  before_script:
+  - docker info
+  image: docker:23.0.1-git
+  needs:
+  - artifacts: true
+    job: package:bin
+  only:
+  - staging
+  - master
+  parallel:
+    matrix: *id001
+  script:
+  - docker pull tonistiigi/binfmt:latest
+  - docker run --privileged --rm tonistiigi/binfmt --uninstall qemu-*
+  - docker run --privileged --rm tonistiigi/binfmt --install all
+  - DIST=${IMAGE##*:}
+  - ARCH=${HARDWARE%%:*}
+  - PLATFORM=${HARDWARE##*:}
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  - docker run -e ARCH=${ARCH} -e DEBREVISION=${DEBREVISION} -e DIST=${DIST} -e VERSION=${VERSION}
+    --platform ${PLATFORM} --volume $(pwd):$(pwd) ${IMAGE} /builds/hb9fxx/qrsspig/docker/test_binary
+  services:
+  - docker:23.0.1-dind
+  stage: package-test
+  variables:
+    DOCKER_HOST: tcp://docker:2376
+    DOCKER_TLS_CERTDIR: /certs
+package:upload:
+  needs:
+  - artifacts: true
+    job: package:bundle
+  only:
+  - master
+  script:
+  - apt-get update -qq && apt-get install -y -qq --no-install-recommends openssh-client
+  - eval $(ssh-agent -s)
+  - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+  - mkdir -p ~/.ssh
+  - chmod 700 ~/.ssh
+  - scp -o 'StrictHostKeyChecking no' -P 11235 qrsspig_${VERSION}-${DEBREVISION}.tar.xz
+    gitlab@debian.hb9fxx.ch:incoming/
+  stage: package-upload
+report:cppcheck:
+  allow_failure: true
+  artifacts:
+    expire_in: 1 day
+    paths:
+    - reports/cppcheck/
+    when: on_success
+  image:
+    entrypoint:
+    - ''
+    name: neszt/cppcheck-docker:2.10
+  needs:
+  - artifacts: true
+    job: unittests:cppcheck
+  script:
+  - apk add python3 py3-pygments
+  - mkdir -p reports/cppcheck/
+  - cppcheck-htmlreport --file=cppcheck.xml --report-dir=reports/cppcheck/ --source-dir=.
+  stage: report
+stages:
+- build
+- test
+- report
+- package-tar
+- package-docker
+- package-src
+- package-bin
+- package-test
+- package-bundle
+- package-upload
+unittests:
+  needs:
+  - artifacts: true
+    job: build:linux
+  script:
+  - apt-get update -qq && apt-get install -y -qq --no-install-recommends libboost-filesystem1.74.0
+    libyaml-cpp0.7 libfftw3-bin libgd3
+  - apt-get install -y -qq --no-install-recommends librtlsdr0 libhackrf0 libasound2
+    liblimesuite22.09-1 gr-osmosdr libairspy0 pulseaudio
+  - apt-get install -y -qq --no-install-recommends libliquid1
+  - apt-get install -y -qq --no-install-recommends libcurl4 libssh-4
+  - sed -i "s/load-module module-native-protocol-unix/load-module module-native-protocol-unix
+    auth-anonymous=1/g" /etc/pulse/system.pa
+  - pulseaudio --system --daemonize
+  - mkdir -p test/ftpdir
+  - chown -R 1000:1000 test/ftpdir
+  - ./build/src/qrsspig_test
+  - ./build/bin/qrsspig --listmodules --listdevices
+  services:
+  - alias: ftp
+    name: delfer/alpine-ftp-server:latest
+    variables:
+      USERS: qrsspig|qrsspass|/builds/hb9fxx/qrsspig/test/ftpdir/|1000|1000
+  stage: test
+unittests:cppcheck:
+  allow_failure: true
+  artifacts:
+    expire_in: 1 day
+    paths:
+    - cppcheck.xml
+    when: always
+  image:
+    entrypoint:
+    - ''
+    name: neszt/cppcheck-docker:2.10
+  needs: []
+  script:
+  - cppcheck --quiet --force --enable=all --suppressions-list=cppcheck.supp --xml
+    --xml-version=2 --error-exitcode=42 src 2> cppcheck.xml
+  stage: test
+unittests:valgrind:
+  allow_failure: true
+  artifacts:
+    expire_in: 1 day
+    paths:
+    - valgrind1.xml
+    - valgrind2.xml
+    when: on_failure
+  needs:
+  - artifacts: true
+    job: build:linux
+  script:
+  - apt-get update -qq && apt-get install -y -qq --no-install-recommends libboost-filesystem1.74.0
+    libyaml-cpp0.7 libfftw3-bin libgd3
+  - apt-get install -y -qq --no-install-recommends librtlsdr0 libhackrf0 libasound2
+    liblimesuite22.09-1 gr-osmosdr libairspy0 pulseaudio
+  - apt-get install -y -qq --no-install-recommends libliquid1
+  - apt-get install -y -qq --no-install-recommends libcurl4 libssh-4
+  - apt-get install -y -qq --no-install-recommends valgrind
+  - sed -i "s/load-module module-native-protocol-unix/load-module module-native-protocol-unix
+    auth-anonymous=1/g" /etc/pulse/system.pa
+  - pulseaudio --system --daemonize
+  - valgrind --leak-check=full --error-exitcode=42 --xml=yes --xml-file=valgrind1.xml
+    ./build/src/qrsspig_test
+  - valgrind --leak-check=full --error-exitcode=42 --suppressions=valgrind.supp --gen-suppressions=all
+    --xml=yes --xml-file=valgrind2.xml ./build/bin/qrsspig --listmodules --listdevices
+  stage: test
+variables:
+  DEBREVISION: 1
+  IMAGEVERSION: 0.8.1
+  VERSION: 0.8.1

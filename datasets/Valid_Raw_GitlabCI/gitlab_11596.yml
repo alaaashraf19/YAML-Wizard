@@ -1,0 +1,23 @@
+container-build:
+  image:
+    entrypoint:
+    - ''
+    name: gcr.io/kaniko-project/executor:v1.23.2-debug
+  script:
+  - /kaniko/executor --context "${CI_PROJECT_DIR}" --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
+    --destination "${CI_REGISTRY}/linux-wiiu/linux-loader/ci"
+  stage: container
+image: $CI_REGISTRY/linux-wiiu/linux-loader/ci
+loader-build:
+  artifacts:
+    name: ${CI_JOB_NAME}-${CI_COMMIT_REF_NAME}
+    paths:
+    - fw.img
+  script:
+  - sed s/B5XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX/${DEFINITELY_LEGAL}/g -i castify.py
+  - sed s/91XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX/${DO_THEY_EVEN_CARE}/g -i castify.py
+  - make -j$(nproc)
+  stage: build
+stages:
+- container
+- build

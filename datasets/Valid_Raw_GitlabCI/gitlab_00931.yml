@@ -1,0 +1,78 @@
+.ruby_setup:
+  before_script: &id001
+  - ruby -v
+  - bundle install --path vendor
+  cache: &id002
+    key: ruby
+    paths:
+    - vendor/ruby
+  image: ruby:2.5
+build-docbook:
+  artifacts:
+    expire_in: 2 weeks
+    paths:
+    - build/*.xml
+  before_script: *id001
+  cache: *id002
+  image: ruby:2.5
+  script:
+  - cd article-sciences-du-design
+  - "bundle exec asciidoctor -b docbook --doctype article -r asciidoctor-bibliography\
+    \ -a toclevels=3 -a toc-title=\"Table des mati\xE8res\" -a webfonts! -a stylesheet!\
+    \ -a linkattrs -a idprefix -D ../build index.adoc"
+  - "bundle exec asciidoctor -b docbook --doctype article -a toc-title=\"Table des\
+    \ mati\xE8res\" -a webfonts! -a stylesheet! -a linkattrs -a idprefix -D ../build\
+    \ authors.adoc"
+  stage: build
+build-docx:
+  artifacts:
+    paths:
+    - build/*.docx
+    - build/*.jpg
+  before_script:
+  - wget --no-clobber https://github.com/jgm/pandoc/releases/download/${PANDOC_VERSION}/pandoc-${PANDOC_VERSION}-1-amd64.deb
+  - dpkg -i pandoc-${PANDOC_VERSION}-1-amd64.deb
+  cache:
+    key: pandoc
+    paths:
+    - pandoc-${PANDOC_VERSION}-1-amd64.deb
+  script:
+  - cd article-sciences-du-design
+  - cp *.jpg ../build
+  - pandoc --from docbook --to docx -o ../build/index.docx --data-dir=vendor --standalone
+    ../build/index.xml
+  - pandoc --from docbook --to docx -o ../build/authors.docx --data-dir=vendor --standalone
+    ../build/authors.xml
+  stage: post-build
+build-html:
+  artifacts:
+    expire_in: 2 weeks
+    paths:
+    - build/*.html
+  before_script: *id001
+  cache: *id002
+  image: ruby:2.5
+  script:
+  - cd article-sciences-du-design
+  - "bundle exec asciidoctor -b html5 --doctype article -r asciidoctor-bibliography\
+    \ --trace --timings --verbose -a toc=left -a toclevels=3 -a toc-title=\"Table\
+    \ des mati\xE8res\" -a webfonts -a linkattrs -a idprefix -D ../build index.adoc"
+  stage: build
+pages:
+  artifacts:
+    paths:
+    - public
+  image: alpine:latest
+  only:
+  - master
+  - 20-reduction
+  script:
+  - mkdir -p public
+  - cp build/*.html public
+  - cp article-sciences-du-design/*.jpg public
+  stage: post-build
+stages:
+- build
+- post-build
+variables:
+  PANDOC_VERSION: '2.2'

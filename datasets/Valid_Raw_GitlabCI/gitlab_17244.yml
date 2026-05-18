@@ -1,0 +1,10 @@
+image: alpine:latest
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - cp README.md public/README.md
+  stage: deploy

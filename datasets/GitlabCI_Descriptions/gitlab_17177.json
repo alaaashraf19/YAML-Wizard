@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_17177",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1895,
+  "description": "Create a GitLab CI pipeline with stages test, build, deploy_dev, and deploy_prod, using global variables GIT_CHECKOUT=true, GIT_DEPTH=1, GIT_STRATEGY=clone. Add a test job in the test stage that runs chmod a+x ./web/tests/test.sh && ./web/tests/test.sh, sets FLASK_DEBUG=1, runs only on the develop branch, and uses the tag test. Add a build job in the build stage that logs in to registry.gitlab.com with docker login -u gitlab-ci-token -p ${CI_JOB_TOKEN} registry.gitlab.com, builds the image using docker build -t ${IMG_NAME} -f $(pwd)/web/Dockerfile ./web, pushes it with docker push ${IMG_NAME}, runs only on develop and master branches, has an after_script docker rmi ${IMG_NAME}, and uses the tag build. Add a deploy_dev job in the deploy_dev stage that logs in and pulls ${IMG_NAME}, writes DEV_MODE=1 and the variables ENV_DEV_URL, DEV_API_ID, DEV_API_SECRET, SENTRY_TOKEN to .env, then runs docker-compose -f docker-compose.develop.yml up -d --force-recreate, targets the staging environment at ${ENV_DEV_URL}, runs only on develop and on_success, and uses the tag deploy_dev. Finally, add a deploy_prod job in the deploy_prod stage that logs in and pulls ${IMG_NAME}, writes ENV_PROD_URL, PROD_API_ID, PROD_API_SECRET, SENTRY_TOKEN to .env, runs docker-compose -f docker-compose.master.yml up -d --force-recreate, targets the production environment at ${ENV_PROD_URL}, runs only on master as a manual job, and uses the tag deploy_prod.",
+  "tags": [
+    "docker",
+    "docker-compose",
+    "gitlab-ci",
+    "staging",
+    "production",
+    "test"
+  ]
+}

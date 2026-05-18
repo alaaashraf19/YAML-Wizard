@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_10666",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2122,
+  "description": "Create a GitLab CI pipeline using the registry.gitlab.com/itxtech/docker-env-cenisys Docker image and three build-stage jobs: build:gcc runs in the build stage, creates a build directory, runs cmake with CC=gcc CXX=g++ and installs to usr/ via DESTDIR=.. ninja install, caches the build/ directory (untracked) and stores the usr/ directory as an artifact named cenisys-gcc-${CI_BUILD_REF:0:7}; build:unit-test runs in the build stage, creates a build directory, runs cmake with clang, enables profiling flags, installs to prefix/, caches build/, and archives the prefix/ directory as cenisys-test-${CI_BUILD_REF:0:7}; clang-static runs in the build stage, creates a build directory, runs scan-build with cmake in Debug mode and then scan-build ninja, and saves the report/ directory as cenisys-clang-report-${CI_BUILD_REF:0:7}. Add a test:unit-test job in the test stage that depends on build:unit-test, executes the built test binary with LLVM_PROFILE_FILE, merges profiling data with llvm-profdata, generates a coverage report with llvm-cov, and publishes unit-test.profdata as an artifact named cenisys-test-cov-${CI_BUILD_REF:0:7}. Finally, add a pages job in the deploy stage that depends on build:gcc, copies the generated documentation from usr/share/doc/cenisys/html/ to a public/ folder, publishes the public/ directory as a Pages artifact, and runs only on the master branch.",
+  "tags": [
+    "gcc",
+    "clang",
+    "cmake",
+    "ninja",
+    "scan-build",
+    "gitlab-pages",
+    "coverage",
+    "docker-env-cenisys"
+  ]
+}

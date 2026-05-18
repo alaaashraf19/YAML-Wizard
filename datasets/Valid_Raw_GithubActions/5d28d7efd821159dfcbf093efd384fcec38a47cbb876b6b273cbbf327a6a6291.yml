@@ -1,0 +1,65 @@
+name: Automated Test Build
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: windows-2022
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Download dependencies
+      run: |
+        bash -c " \
+        curl -Z --retry 5 --connect-timeout 30 --location \
+        --create-dirs --output-dir temp --remote-name-all \
+        https://www.lua.org/ftp/lua-5.4.7.tar.gz \
+        https://github.com/premake/premake-core/releases/download/v5.0.0-beta5/premake-5.0.0-beta5-windows.zip \
+        ; exit 0"
+
+    - name: Lua
+      run: |
+        tar -xzf temp/lua-5.4.7.tar.gz
+        move lua-5.4.7 lua
+
+    - name: Premake
+      run: |
+        mkdir premake-5
+        tar -C premake-5 -xzf temp/premake-5.0.0-beta5-windows.zip
+        copy premake\lua.lua lua\premake5.lua
+        copy premake\dll.lua dll.lua
+        .\premake-5\premake5.exe vs2022 --file=dll.lua
+
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Build
+      run: |
+        msbuild build\ocgcoredll.sln /t:Build /p:"Configuration=Release;Platform=Win32"
+        msbuild build\ocgcoredll.sln /t:Build /p:"Configuration=Release;Platform=x64"
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        path: |
+          build\bin\x32\Release\ocgcore.dll
+          build\bin\x64\Release\ocgcore.dll
+
+    - name: GitHub Release
+      if: github.event_name == 'push'
+      uses: salix5/action-automatic-releases@node20
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "latest"
+        prerelease: true
+        title: "Development Build"
+        files: |
+          build/bin/x64/Release/ocgcore.dll

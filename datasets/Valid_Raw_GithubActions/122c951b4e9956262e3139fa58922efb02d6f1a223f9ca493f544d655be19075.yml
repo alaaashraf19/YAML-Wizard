@@ -1,0 +1,49 @@
+name: Test
+
+on:
+  push:
+  schedule:
+    - cron:  "0 0 * * *"
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  tox:
+    runs-on: ubuntu-latest
+
+    env:
+      AWS_DEFAULT_REGION: us-west-2
+      AWS_ATHENA_S3_STAGING_DIR: s3://laughingman7743-pyathena/github/
+      AWS_ATHENA_WORKGROUP: pyathena
+      AWS_ATHENA_SPARK_WORKGROUP: pyathena-spark
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [3.8, 3.9, "3.10", "3.11"]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install poetry
+        run: pipx install poetry
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'poetry'
+      - name: Install dependencies
+        run: poetry install --no-interaction --no-root
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::676287850544:role/github-actions-oidc-pyathena
+          role-session-name: PyAthenaTestSession
+          aws-region: ${{ env.AWS_DEFAULT_REGION }}
+
+      - name: Test with tox
+        run: |
+          make tox

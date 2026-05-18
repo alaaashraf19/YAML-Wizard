@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_14299",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 363,
+  "description": "Create a GitLab CI pipeline with a single job named pages that runs in the deploy stage using the node Docker image. The job defines the variable NUXT_APP_BASE_URL set to /nuxt/, configures a cache keyed on package-lock.json that stores .npm/, runs npm ci --cache .npm --prefer-offline in before_script, then executes npm run generate in the script, publishes the generated site from .output/public, and stores .output/public as an artifact. It only runs when $CI_COMMIT_REF_NAME equals $CI_DEFAULT_BRANCH.",
+  "tags": [
+    "node",
+    "npm",
+    "nuxt",
+    "gitlab-pages",
+    "cache",
+    "ci"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "32e1178d68760f7db10d9a4d367129649aeae8ee09bc7a8aabd2e2161550ec8a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1843,
+  "description": "Create a GitHub Actions workflow named Sanitizers that runs on push and pull request events. The workflow should have three ubuntu-latest jobs: sanitizers, clang-tidy, and benchmarks. The sanitizers job checks out the code, installs ninja, creates a build directory, configures and builds with sanitizers enabled, and runs tests. The clang-tidy job checks out the code, installs ninja and clang-tidy, creates a build directory, configures and builds with clang-tidy enabled. The benchmarks job checks out the code, installs ninja, creates a build directory, configures and builds with benchmarks enabled.",
+  "tags": [
+    "cmake",
+    "sanitizers",
+    "clang-tidy",
+    "benchmarks",
+    "ubuntu",
+    "tests"
+  ]
+}

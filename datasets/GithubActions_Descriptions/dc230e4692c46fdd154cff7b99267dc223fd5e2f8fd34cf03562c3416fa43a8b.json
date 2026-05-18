@@ -1,0 +1,13 @@
+{
+  "sha": "dc230e4692c46fdd154cff7b99267dc223fd5e2f8fd34cf03562c3416fa43a8b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 716,
+  "description": "Create a GitHub Actions workflow named GitHub Release that triggers on push to main branch when Version.txt changes. The workflow should cancel any in-progress runs except on the main branch. In an ubuntu-latest job, check out the code, extract the version from Version.txt, and use the softprops/action-gh-release action to create a GitHub release with the extracted version as the tag.",
+  "tags": [
+    "github-release",
+    "versioning",
+    "ubuntu",
+    "release-workflow"
+  ]
+}

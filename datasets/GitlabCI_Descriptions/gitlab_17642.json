@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_17642",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 485,
+  "description": "Create a GitLab CI pipeline using the owitzia/tucker Docker image and set the OMPI_ALLOW_RUN_AS_ROOT, OMPI_ALLOW_RUN_AS_ROOT_CONFIRM, and OMPI_MCA_rmaps_base_oversubscribe variables. Define three stages: build, test, and deploy. In the build stage add a build job that runs `mkdir build`, `cd build`, `cmake ../src`, and `make`, and stores the resulting build/ directory as an artifact. In the test stage add a test job that depends on the build job and runs `cd build` followed by `ctest --output-on-failure`. Finally, add a pages job (deploy stage) that runs `doxygen doxygen/Doxyfile` and `mv doxygen/documentation/html/ public/`, publishing the public/ directory as a GitLab Pages artifact.",
+  "tags": [
+    "c++",
+    "cmake",
+    "make",
+    "ctest",
+    "doxygen",
+    "gitlab-pages",
+    "docker-image"
+  ]
+}

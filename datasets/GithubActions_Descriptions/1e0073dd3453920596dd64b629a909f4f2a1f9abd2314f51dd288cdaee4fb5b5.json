@@ -1,0 +1,14 @@
+{
+  "sha": "1e0073dd3453920596dd64b629a909f4f2a1f9abd2314f51dd288cdaee4fb5b5",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 503,
+  "description": "Create a GitHub Actions workflow named build that runs on every push. Use a matrix strategy to compile on multiple OS environments (Windows, macOS, Ubuntu) and modes (debug, release). For each job, check out the repository with submodules, set up luamake, build with luamake in the specified mode, and on Linux, run an additional test to verify glibc version.",
+  "tags": [
+    "lua",
+    "luamake",
+    "ci",
+    "multi-os",
+    "matrix-strategy"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_15178",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 427,
+  "description": "Create a GitLab CI pipeline that uses the python:3.5 Docker image. Define three stages: lint, test, and deploy. Add a lint job named lint that runs python setup.py flake8 in the lint stage. Add a test job named test that runs python setup.py test in the test stage. Add a documentation test job named doc-test in the test stage that first runs pip install -r requirements_dev.txt then executes sphinx-build -nW -b html -d docs/_build/doctrees docs/ docs/_build/html. Add a documentation build job named doc-build in the deploy stage that triggers a Read the Docs build with curl -X POST http://readthedocs.org/build/sir-bot-a-lot and configure it to run only on the master branch.",
+  "tags": [
+    "python-3.5",
+    "lint",
+    "test",
+    "sphinx",
+    "readthedocs"
+  ]
+}

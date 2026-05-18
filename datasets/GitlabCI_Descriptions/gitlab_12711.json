@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_12711",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 714,
+  "description": "Create a GitLab CI pipeline that uses the Docker image registry.gitlab.com/muttmua/mutt/ubuntu:18.04 and defines three stages: shellcheck, build, and deploy. In the shellcheck stage add a shellcheck job that runs (find . -name \\*.sh && echo \"gen_defs muttbug prepare\") | xargs shellcheck --exclude=SC2003,SC2006,SC2086,SC2162,SC2046. In the build stage add a build job that executes ./prepare --disable-dependency-tracking --enable-gpgme --enable-sidebar --enable-compressed --enable-pop --enable-imap --enable-smtp --enable-debug --enable-hcache --enable-autocrypt --with-sqlite3 --with-gnutls and then runs make -j. In the deploy stage add a pages job that runs ./prepare, make update-doc, mkdir -p public, and cp doc/manual.html public/manual-dev.html, then publishes the public/ directory as a GitLab Pages artifact. Configure the pages job to run only on the master branch.",
+  "tags": [
+    "ubuntu-18.04",
+    "shellcheck",
+    "build",
+    "pages",
+    "gitlab-pages",
+    "mutt"
+  ]
+}

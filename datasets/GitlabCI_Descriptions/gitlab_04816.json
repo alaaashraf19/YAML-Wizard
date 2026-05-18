@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_04816",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1867,
+  "description": "Create a GitLab CI pipeline with three stages (build, test, deploy) using the Docker image gitlab.sdu.dk:5050/sdurobotics/docker-images/caros-build:ubuntu-2004 for all jobs and the linux tag. In the default before_script set orig=$(pwd), source ROS Noetic or Melodic if present, cd into catkin_ws if it exists, and source devel/setup.bash if present. In the build stage add a build:ubuntu-2004 job that runs mkdir ../caros_tmp, mkdir catkin_ws, mkdir catkin_ws/src, mkdir catkin_ws/src/caros, cp -r * ../caros_tmp/, cp -r ../caros_tmp/* ./catkin_ws/src/caros, ln -s /LeapSDK ./catkin_ws/src/caros/hwcomponents/caros_leapmotion/LeapSDK, cd catkin_ws, and catkin_make -j$(nproc --all); archive the ./catkin_ws directory as an artifact that expires after 1 hour and is kept on success. In the test stage add a test:ubuntu-2004 job that depends on and needs the build job, runs catkin_make run_tests, catkin_make roslint, and rospack list-names | grep '^caros_' | xargs -L 1 catkin_lint --strict -W 2 --explain --ignore header_outside_package_include_path --pkg. In the deploy stage add a doc:ubuntu-2004 job that runs only on the master branch, depends on and needs both build and test jobs, cd src/caros/doc, runs ./generate_documentation.sh, moves the generated output to ${orig}/public/, and publishes the public directory as an artifact.",
+  "tags": [
+    "ros",
+    "catkin",
+    "ubuntu-2004",
+    "docker",
+    "linux",
+    "documentation",
+    "build",
+    "test"
+  ]
+}

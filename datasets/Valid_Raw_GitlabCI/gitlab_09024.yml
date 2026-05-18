@@ -1,0 +1,27 @@
+.if-security-release-backport-merge:
+  if: ($CI_PIPELINE_SOURCE =~ /^(pipeline|web|api)$/) && ($SECURITY_RELEASE_PIPELINE
+    =~ /^(backport_merge|true)$/)
+.security-release-backport-merge-base:
+  extends: .common-job-setup
+  needs:
+  - security_release_backport_merge:start
+  rules:
+  - if: ($CI_PIPELINE_SOURCE =~ /^(pipeline|web|api)$/) && ($SECURITY_RELEASE_PIPELINE
+      =~ /^(backport_merge|true)$/)
+  stage: security_release:backport_merge
+security_release_backport_merge:merge:
+  extends:
+  - .security-release-backport-merge-base
+  - .common-ci-tokens
+  script:
+  - bundle exec rake 'security:merge'
+security_release_backport_merge:start:
+  extends: .common-job-setup
+  needs: []
+  rules:
+  - if: ($CI_PIPELINE_SOURCE =~ /^(pipeline|web|api)$/) && ($SECURITY_RELEASE_PIPELINE
+      =~ /^(backport_merge|true)$/)
+  script:
+  - bundle exec rake 'security:backport_merge:start'
+  stage: security_release:backport_merge:start
+  when: manual

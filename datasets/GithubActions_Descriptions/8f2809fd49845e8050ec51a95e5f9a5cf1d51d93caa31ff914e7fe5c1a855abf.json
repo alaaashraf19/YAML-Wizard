@@ -1,0 +1,13 @@
+{
+  "sha": "8f2809fd49845e8050ec51a95e5f9a5cf1d51d93caa31ff914e7fe5c1a855abf",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2950,
+  "description": "Create a GitHub Actions workflow named Build and Push that runs on every push to the master branch and on pull requests to master. The workflow should also be triggerable manually. Use a single ubuntu-latest job that checks out the repository, installs various Arduino libraries (TFT_eSPI, LinkedList, lv_arduino, JPEGDecoder, NimBLE-Arduino, Adafruit_NeoPixel, ArduinoJson, SwitchLib) from their respective repositories, and then compiles an Arduino sketch (esp32_marauder.ino) for an ESP32 board using the arduino-test-compile action.",
+  "tags": [
+    "arduino",
+    "esp32",
+    "github-actions",
+    "workflow"
+  ]
+}

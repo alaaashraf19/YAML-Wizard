@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_13825",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 269,
+  "description": "Create a GitLab CI pipeline with a single build stage that defines two jobs, rust-latest and rust-nightly. The rust-latest job uses the rust:latest Docker image and runs the commands cargo build --verbose then cargo test --verbose. The rust-nightly job uses the rustlang/rust:nightly Docker image, runs the same cargo build --verbose and cargo test --verbose commands, and is marked allow_failure so its failure does not stop the pipeline. No caches, artifacts, services, or special rules are configured.",
+  "tags": [
+    "rust",
+    "cargo",
+    "build",
+    "test",
+    "allow-failure"
+  ]
+}

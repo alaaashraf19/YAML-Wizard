@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_08405",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2160,
+  "description": "Create a GitLab CI pipeline that uses the ${BASE_BUILD_REGISTRY_IMAGE}/debian-bookworm-slim:docker-${DOCKER_VERSION} image with a docker:${DOCKER_VERSION}-dind service (entrypoint runs dockerd-entrypoint.sh $DOCKER_OPTIONS), enables interruptible jobs by default, and tags runners with gitlab-org-docker. Define a large list of stages (lint, automation, comparator, custom, customers, docker, e2e, dx, ci, runtime, gitaly, gitlab, gitlab-assets, gitlab-chart, gitlab-cng, gitlab-kas, gitlab-workhorse, gitlab-workspaces, report) and set many CI variables (ALPINE_IMAGE, GOLANG_IMAGE, DOCKER_HOST, etc.). Add a dont-interrupt-me job in the .pre stage that disables interruptibility, runs \"echo \\\"This jobs makes sure this pipeline won't be interrupted! See https://docs.gitlab.com/ee/ci/yaml/#interruptible.\\\"\", allows failure on the default branch and on merge requests, and can be triggered manually for MRs. Add a cache-chrome-chromium job that extends the .cache-google-chrome template to cache Google Chrome/Chromium artifacts, inheriting its script and cache settings. Include all *.yml files from .gitlab/ci/ and the danger-review component (job_stage lint) with a rule that only runs on gitlab.com, and configure workflow rules to run on merge requests or on the default branch with optional PUSH_CUSTOM_IMAGE variables.",
+  "tags": [
+    "docker",
+    "dind",
+    "debian",
+    "chrome-cache",
+    "gitlab-ci",
+    "workflow"
+  ]
+}

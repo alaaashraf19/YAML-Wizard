@@ -1,0 +1,37 @@
+before_script:
+- pip install -r .ci/requirements.txt
+- REQUIREMENTS=$(mktemp) && python setup.py requirements > ${REQUIREMENTS} && pip
+  install -r ${REQUIREMENTS} && rm ${REQUIREMENTS}
+- pip install -r .ci/requirements_modules.txt
+build:3:
+  image: python:3
+  script:
+  - ./tools/local_install.sh --local-modules ~/bin
+  stage: build
+doc:3:
+  image: python:3
+  script:
+  - cd ./docs && make html
+  stage: deploy
+lint:3:
+  allow_failure: true
+  image: python:3
+  script:
+  - ./tools/weboob_lint.sh
+  stage: test
+pyflakes:3:
+  image: python:3
+  script:
+  - ./tools/pyflakes.sh
+  stage: test
+unittests-modules:3:
+  allow_failure: true
+  image: python:3
+  script:
+  - ./tools/run_tests.sh --no-core
+  stage: test
+unittests:3:
+  image: python:3
+  script:
+  - ./tools/run_tests.sh --no-modules
+  stage: test

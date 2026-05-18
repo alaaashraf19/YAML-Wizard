@@ -1,0 +1,14 @@
+{
+  "sha": "7a9c59c469c39924fc9a14e2c5cbf446604bf0e5fa3d3ff9a23940a70a603d11",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 763,
+  "description": "Create a GitHub Actions workflow that comments on pull requests with a pylint issue comparison report. The workflow should run on every pull request target, using an ubuntu-latest job that sets up Python 3.x, checks out the PR, caches pip for speed, installs dependencies, and uses the pylint-compare action to generate a report comparing pylint issues between targets antismash and *.py.",
+  "tags": [
+    "python",
+    "pylint",
+    "github-actions",
+    "pull-requests",
+    "code-quality"
+  ]
+}

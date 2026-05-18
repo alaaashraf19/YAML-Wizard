@@ -1,0 +1,17 @@
+{
+  "sha": "d2115c5a5f7de377a9f718b3040512fa79601725a78c70caaec450b49f2287f0",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2191,
+  "description": "Create a GitHub Actions workflow named GitHub CI that runs on push to the master branch and on pull requests to master. Run multiple jobs on different environments: osx_13_x86 on macos-13, osx_14_arm64 on macos-14, and several ubuntu-latest jobs for conda_asan, conda_ubsan, conda_tsan, conda_debuggmp. Also, run a windows_2022 job with a custom setup and a binder_cache job on ubuntu-latest that only runs on the master branch, which caches a binder build on mybinder.org.",
+  "tags": [
+    "github-ci",
+    "multi-job",
+    "osx",
+    "ubuntu",
+    "windows",
+    "conda",
+    "binder",
+    "cache"
+  ]
+}

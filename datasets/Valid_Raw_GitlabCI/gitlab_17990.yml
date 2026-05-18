@@ -1,0 +1,20 @@
+before_script: null
+image: python:3.7
+pages:
+  allow_failure: false
+  artifacts:
+    paths:
+    - public
+  before_script:
+  - pip install -r requirements.txt Jinja2 markdown
+  only:
+  - master
+  - beta
+  script:
+  - python get-commands.py toaster | python build-command-reference.py command-ref
+  - mv command-ref public/docs/
+  - cp -r command-ref-templates/favicons public/favicons/
+  stage: pages
+stages:
+- pages
+variables: null

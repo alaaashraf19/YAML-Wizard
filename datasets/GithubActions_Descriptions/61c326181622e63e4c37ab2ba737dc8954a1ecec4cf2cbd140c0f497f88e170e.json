@@ -1,0 +1,17 @@
+{
+  "sha": "61c326181622e63e4c37ab2ba737dc8954a1ecec4cf2cbd140c0f497f88e170e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3421,
+  "description": "Create a GitHub Actions workflow named Vcpkg Build that runs on push to the master branch and on pull requests. Use a matrix job that builds vcpkg across ubuntu-latest, macos-latest, and windows-latest environments. For each environment, install dependencies, check out the repository with submodules, restore vcpkg and its artifacts from the GitHub cache, generate project files with CMake using vcpkg's toolchain, build the project with Ninja, and upload the resulting artifact.",
+  "tags": [
+    "vcpkg",
+    "cmake",
+    "ninja",
+    "ubuntu",
+    "macos",
+    "windows",
+    "ci",
+    "build"
+  ]
+}

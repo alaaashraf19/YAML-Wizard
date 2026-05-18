@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_05713",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1303,
+  "description": "Create a GitLab CI pipeline using the docker:latest image with a docker:dind service and a per-branch cache keyed by ${CI_PROJECT_PATH_SLUG}-${CI_COMMIT_REF_SLUG} storing vendor/. Define stages build and deploy. In the build stage add a build-master job that runs a before_script to log in to $CI_REGISTRY with $CI_REGISTRY_USER and $CI_REGISTRY_PASSWORD, then executes: docker run --rm -v \"$PWD:/app:rw\" --workdir \"/app\" composer:latest sh -c \"composer install\"; docker build --pull -t \"$CI_REGISTRY_IMAGE\"/php -f - . < ./docker/php/Dockerfile; docker push \"$CI_REGISTRY_IMAGE\"/php; docker build --pull -t \"$CI_REGISTRY_IMAGE\"/nginx -f - . < ./docker/nginx/Dockerfile; docker push \"$CI_REGISTRY_IMAGE\"/nginx; and only runs on the master branch. In the deploy stage add a deploy job that uses the alpine:latest image, runs apk update and apk add openssh-client, writes $PROD_SSH_KEY to a file named key with mode 0600, and SSHes to evkon@collabatube.com to execute \"cd /srv/deploy && make api-deploy\", runs only on master except when the commit message matches /skip-deploy/, and sets the production environment with URL https://collabatube.com/.",
+  "tags": [
+    "docker",
+    "dind",
+    "composer",
+    "php",
+    "nginx",
+    "ssh-deploy",
+    "cache",
+    "production"
+  ]
+}

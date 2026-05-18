@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_03888",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 467,
+  "description": "Create a GitLab CI pipeline that uses the ruby:2.5.0 Docker image and runs a before_script that updates apt, installs the locales package, writes \"en_US UTF-8\" to /etc/locale.gen, generates the locale, and exports LANG, LANGUAGE, and LC_ALL as en_US.UTF-8. Define a single deploy stage with a pages job that executes the script commands: gem install jekyll, gem install jekyll-sitemap, gem install jekyll-paginate, gem install jekyll-feed, and jekyll build -d public/. The job publishes the public/ directory as a GitLab Pages artifact. Configure the job to run only on the master branch.",
+  "tags": [
+    "ruby",
+    "jekyll",
+    "gitlab-pages",
+    "locale",
+    "deploy"
+  ]
+}

@@ -1,0 +1,335 @@
+.prepare-venv-pinned:
+  before_script:
+  - uv venv
+  - uv pip sync requirements/requirements.txt
+  - uv cache prune --ci
+.prepare-venv-unpinned:
+  before_script:
+  - uv venv
+  - uv sync --all-extras
+  - uv cache prune --ci
+.tests-coverage:
+  after_script:
+  - mkdir -p coverage/
+  - cp .coverage coverage/coverage."${CI_JOB_NAME}"
+  artifacts:
+    paths:
+    - coverage/
+.unit-tests:
+  artifacts:
+    reports:
+      junit: report.xml
+  script:
+  - apt-get update && apt-get install -y --no-install-recommends postgresql sudo
+  - useradd -s /bin/bash -m testeruser && chown -R testeruser:testeruser $(pwd)
+  - python --version
+  - ./dev-scripts/moto
+  - sudo -u testeruser bash -c 'ulimit -n 4096 && .venv/bin/python -m pytest -n 2
+    --color=yes --junitxml=report.xml -rs tests'
+  stage: test
+.unit-tests-unpinned:
+  allow_failure: true
+  extends:
+  - .prepare-venv-unpinned
+  - .unit-tests
+.venv-pinned-template:
+  before_script:
+  - ls
+  - source .venv/bin/activate
+  needs:
+  - artifacts: true
+    job: prepare-venv-pinned
+.venv-template:
+  before_script:
+  - ls
+  - source .venv/bin/activate
+  needs:
+  - artifacts: true
+    job: prepare-venv-unpinned
+cache:
+  paths:
+  - $UV_CACHE_DIR
+coverage:
+  artifacts:
+    paths:
+    - coverage/
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage/coverage.xml
+  coverage: /TOTAL +\d+ +\d+ +(\d+\.\d+)%/
+  needs:
+  - artifacts: true
+    job: unit-tests-python311
+  script:
+  - pip3 install coverage[toml]==7.4.1
+  - cd coverage/ && ls -l .
+  - python3 -m coverage combine --rcfile=../pyproject.toml --append coverage.*
+  - python3 -m coverage html --rcfile=../pyproject.toml --directory .
+  - python3 -m coverage report --rcfile=../pyproject.toml --show-missing
+  - python3 -m coverage xml --rcfile=../pyproject.toml
+  - sed -i "s|/builds/BuildGrid/buildgrid/||g" coverage.xml
+  stage: post
+coverity-scan:
+  needs: []
+  rules:
+  - allow_failure: true
+    if: $CI_COMMIT_TAG
+    when: on_success
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    when: never
+  - allow_failure: true
+    when: manual
+  script:
+  - apt-get update && apt-get install -y curl python3 python3-pip
+  - curl -o /tmp/cov-analysis-linux64.tgz "https://scan.coverity.com/download/linux64"
+    --form project=$COVERITY_SCAN_PROJECT_NAME --form token=$COVERITY_SCAN_TOKEN
+  - tar xfz /tmp/cov-analysis-linux64.tgz
+  - pip3 install -r requirements/requirements.txt
+  - cov-analysis-linux64-*/bin/cov-configure --python
+  - cov-analysis-linux64-*/bin/cov-build --dir cov-int --no-command --fs-capture-search
+    $CI_PROJECT_DIR
+  - tar czf cov-int.tar.gz cov-int
+  - curl https://scan.coverity.com/builds?project=$COVERITY_SCAN_PROJECT_NAME --form
+    token=$COVERITY_SCAN_TOKEN --form email=$GITLAB_USER_EMAIL --form file=@cov-int.tar.gz
+    --form version="`git describe --tags`" --form description="`git describe --tags`
+    / $CI_COMMIT_TITLE / $CI_COMMIT_REF_NAME:$CI_PIPELINE_ID"
+  stage: lint
+documentation:
+  after_script:
+  - mkdir -p documentation/
+  - cp -a docs/build/html/. documentation/
+  artifacts:
+    paths:
+    - documentation/
+  extends: .venv-pinned-template
+  interruptible: true
+  script:
+  - apt-get update  && apt-get install -y --no-install-recommends graphviz
+  - ./dev-scripts/docs
+  stage: post
+documentation-unpinned:
+  allow_failure: true
+  extends: .venv-template
+  interruptible: true
+  script:
+  - apt-get update  && apt-get install -y --no-install-recommends graphviz
+  - ./dev-scripts/docs
+  stage: post
+e2e:
+  before_script:
+  - export DOCKER_SOCKET="/var/run/docker.sock"
+  - export DOCKER_HOST="unix://$DOCKER_SOCKET"
+  - export E2E_IMAGE="registry.gitlab.com/buildgrid/buildbox/buildbox-e2e/new-e2e"
+  - DOCKER_TLS_CERTDIR=/certs
+  - dockerd-entrypoint.sh &
+  - 'until docker info >/dev/null 2>&1
+
+    do
+
+    sleep 1;
+
+    done
+
+    '
+  - docker version
+  - docker pull "$E2E_IMAGE"
+  dependencies: []
+  image: docker:dind
+  needs: []
+  script:
+  - docker run -v "$DOCKER_SOCKET":"$DOCKER_SOCKET" -v $(pwd):/buildbox-e2e/src/buildgrid
+    "$E2E_IMAGE"
+  services: []
+  stage: end-to-end-tests
+  tags:
+  - $LARGE_RUNNER_TAG
+format-pinned:
+  extends: .venv-pinned-template
+  script:
+  - ruff format --check --diff
+  stage: lint
+format-unpinned:
+  allow_failure: true
+  extends: .venv-template
+  script:
+  - ruff format --check --diff
+  stage: lint
+gemnasium-python-dependency_scanning:
+  before_script:
+  - sed -i -e '/^pycurl/d' requirements/requirements*
+  - cp requirements/requirements.txt .
+  needs: []
+image: ghcr.io/astral-sh/uv:python3.11-bookworm
+include:
+- template: Dependency-Scanning.gitlab-ci.yml
+latest-docker-image:
+  after_script:
+  - docker push ${LATEST_IMAGE_NAME}
+  before_script:
+  - 'docker login --username gitlab-ci-token --password ${CI_JOB_TOKEN} ${CI_REGISTRY}
+
+    '
+  - docker info
+  image: docker:latest
+  only:
+  - master
+  script:
+  - docker build --pull -t ${LATEST_IMAGE_NAME} .
+  services:
+  - docker:dind
+  stage: deploy
+  variables:
+    DOCKER_DRIVER: overlay2
+    DOCKER_HOST: tcp://docker:2375
+    LATEST_IMAGE_NAME: ${CI_REGISTRY_IMAGE}/buildgrid:latest
+lint-pinned:
+  extends: .venv-pinned-template
+  script:
+  - ruff check
+  stage: lint
+lint-unpinned:
+  allow_failure: true
+  extends: .venv-template
+  script:
+  - ruff check
+  stage: lint
+pages:
+  artifacts:
+    paths:
+    - public/
+  needs:
+  - artifacts: true
+    job: coverage
+  - artifacts: true
+    job: documentation
+  only:
+  - master
+  script:
+  - mkdir -p public/coverage/
+  - cp -a coverage/* public/coverage/
+  - ls -la public/coverage/
+  - cp -a documentation/* public/
+  - ls -la public/
+  stage: deploy
+prepare-venv-pinned:
+  artifacts:
+    paths:
+    - .venv
+  extends: .prepare-venv-pinned
+  script:
+  - uv pip list
+  stage: venv-setup
+prepare-venv-unpinned:
+  artifacts:
+    paths:
+    - uv.lock
+    - .venv
+  extends: .prepare-venv-unpinned
+  script:
+  - uv tree
+  stage: venv-setup
+release-docker-image:
+  after_script:
+  - docker push ${VERSIONED_IMAGE_NAME}
+  before_script:
+  - 'docker login --username gitlab-ci-token --password ${CI_JOB_TOKEN} ${CI_REGISTRY}
+
+    '
+  - docker info
+  image: docker:latest
+  rules:
+  - if: $CI_COMMIT_TAG
+  script:
+  - docker build --pull -t ${VERSIONED_IMAGE_NAME} .
+  services:
+  - docker:dind
+  stage: deploy
+  variables:
+    DOCKER_DRIVER: overlay2
+    DOCKER_HOST: tcp://docker:2375
+    VERSIONED_IMAGE_NAME: ${CI_REGISTRY_IMAGE}/buildgrid:${CI_COMMIT_TAG}
+release-gitlab:
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  needs:
+  - release-docker-image
+  - release-pypi
+  release:
+    assets:
+      links:
+      - name: PyPI release
+        url: https://pypi.org/project/buildgrid/${CI_COMMIT_TAG}/
+    description: $CI_COMMIT_TAG
+    tag_name: $CI_COMMIT_TAG
+  rules:
+  - if: $CI_COMMIT_TAG
+  script:
+  - echo "Creating GitLab release for $CI_COMMIT_TAG"
+  stage: deploy
+release-pypi:
+  before_script:
+  - uv tool install twine
+  rules:
+  - if: $CI_COMMIT_TAG
+  script:
+  - uv build
+  - uvx twine upload dist/*
+  stage: deploy
+stages:
+- venv-setup
+- type-check
+- lint
+- test
+- end-to-end-tests
+- post
+- deploy
+type-check-pinned:
+  extends: .venv-pinned-template
+  script:
+  - mypy buildgrid
+  stage: type-check
+type-check-unpinned:
+  allow_failure: true
+  extends: .venv-template
+  script:
+  - mypy buildgrid
+  stage: type-check
+unit-tests-python311:
+  extends:
+  - .prepare-venv-pinned
+  - .unit-tests
+  - .tests-coverage
+  image: ghcr.io/astral-sh/uv:python3.11-bookworm
+  needs: []
+unit-tests-python311-unpinned:
+  extends:
+  - .unit-tests-unpinned
+  - .tests-coverage
+  image: ghcr.io/astral-sh/uv:python3.11-bookworm
+  needs: []
+unit-tests-python312:
+  extends:
+  - .prepare-venv-pinned
+  - .unit-tests
+  image: ghcr.io/astral-sh/uv:python3.12-bookworm
+  needs: []
+unit-tests-python312-unpinned:
+  extends: .unit-tests-unpinned
+  image: ghcr.io/astral-sh/uv:python3.12-bookworm
+  needs: []
+unit-tests-python313:
+  extends:
+  - .prepare-venv-pinned
+  - .unit-tests
+  image: ghcr.io/astral-sh/uv:python3.13-bookworm
+  needs: []
+unit-tests-python313-unpinned:
+  extends: .unit-tests-unpinned
+  image: ghcr.io/astral-sh/uv:python3.13-bookworm
+  needs: []
+variables:
+  LARGE_RUNNER_TAG: saas-linux-medium-amd64
+  PIP_CACHE_DIR: ${CI_PROJECT_DIR}/.cache/pip
+  SECURE_LOG_LEVEL: debug
+  UV_CACHE_DIR: .uv-cache
+  UV_LINK_MODE: copy

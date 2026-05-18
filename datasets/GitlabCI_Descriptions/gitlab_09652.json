@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_09652",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 332,
+  "description": "Create a GitLab CI pipeline that uses the Docker image registry.gitlab.com/gluttton/munkres-cpp and defines a single stage called test. Add a test_job in the test stage that first runs a before_script to set BUILD_DIR=`pwd`/build, creates the directory with mkdir -p ${BUILD_DIR}, changes into it (cd ${BUILD_DIR}), runs cmake -DCMAKE_BUILD_TYPE=Debug ${BUILD_DIR}/.. and then make to build the project. Then the script executes ./test/bronkerbosch_test followed by make coverage to run the unit tests and generate coverage. No caches, artifacts, or special rules are required.",
+  "tags": [
+    "cpp",
+    "cmake",
+    "make",
+    "test",
+    "coverage",
+    "docker-image"
+  ]
+}

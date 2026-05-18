@@ -1,0 +1,14 @@
+{
+  "sha": "46f354bccb9702fdd9b901a7e9964b454e5a245774776c123985bbd1c38a2c3b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2212,
+  "description": "Create a GitHub Actions workflow named Build Cmder that runs on push to master and tags matching v*, and on pull requests to master and development. Use a single windows-latest job with write permissions to repository contents and discussions. Check out the repository, add MSBuild to PATH, build Cmder Launcher and pack built files using PowerShell scripts, then upload multiple artifacts and create a draft release with generated notes when a tag is pushed.",
+  "tags": [
+    "windows",
+    "powershell",
+    "msbuild",
+    "release",
+    "artifacts"
+  ]
+}

@@ -1,0 +1,36 @@
+.digits_template:
+  script: &id001
+  - VERSION="${CI_BUILD_NAME:1}"
+  - docker build -t "${REPOSITORY}:${VERSION}" --build-arg "repository=nvidia/caffe"
+    "${VERSION}"
+  - if [[ "${LATEST}" == true ]]; then docker tag "${REPOSITORY}:${VERSION}" "${REPOSITORY}:latest";
+    fi
+  - docker push "${REPOSITORY}"
+  stage: digits
+before_script:
+- docker login -u "${REGISTRY_USER}" -p "${REGISTRY_TOKEN}"
+image: docker:stable
+services:
+- docker:stable-dind
+stages:
+- digits
+v3.0:
+  script: *id001
+  stage: digits
+v3.3:
+  script: *id001
+  stage: digits
+v4.0:
+  script: *id001
+  stage: digits
+v5.0:
+  script: *id001
+  stage: digits
+v6.0:
+  script: *id001
+  stage: digits
+  variables:
+    LATEST: 'true'
+variables:
+  OS: ${CI_BUILD_REF_NAME}
+  REPOSITORY: ${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}

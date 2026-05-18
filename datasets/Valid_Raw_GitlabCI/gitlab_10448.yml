@@ -1,0 +1,10 @@
+build:
+  artifacts:
+    paths:
+    - main
+  script:
+  - cd 'Project Avenue'
+  - g++ *.cpp *.hpp -std=c++11 -lpthread -lsfml-system -lsfml-window -lsfml-graphics
+    -lsfml-audio -o main
+  stage: build
+image: gcc

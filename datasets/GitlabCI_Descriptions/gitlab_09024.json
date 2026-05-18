@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_09024",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 947,
+  "description": "Create a GitLab CI pipeline with two stages named security_release:backport_merge:start and security_release:backport_merge. Add a manual job called security_release_backport_merge:start in the start stage that extends .common-job-setup, has no dependencies, runs the exact command `bundle exec rake 'security:backport_merge:start'`, and is triggered only when CI_PIPELINE_SOURCE matches pipeline, web, or api and the variable SECURITY_RELEASE_PIPELINE matches backport_merge or true. Add a job called security_release_backport_merge:merge in the merge stage that extends .security-release-backport-merge-base and .common-ci-tokens, needs the start job, runs the exact command `bundle exec rake 'security:merge'`, and uses the same rule conditions as the start job. Both jobs inherit any common setup defined in the extended templates.",
+  "tags": [
+    "security",
+    "rake",
+    "backport-merge",
+    "gitlab-ci",
+    "manual"
+  ]
+}

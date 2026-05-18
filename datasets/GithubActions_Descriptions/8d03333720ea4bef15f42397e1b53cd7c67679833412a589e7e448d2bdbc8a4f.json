@@ -1,0 +1,14 @@
+{
+  "sha": "8d03333720ea4bef15f42397e1b53cd7c67679833412a589e7e448d2bdbc8a4f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 746,
+  "description": "Create a GitHub Actions workflow named Run tests that runs on push and pull request events to branches releases/** and master. Use a matrix job strategy to test multiple Python versions (3.6, 3.7, 3.8, 3.9) on an ubuntu-latest environment. For each job, check out the repository, set up the Python version, upgrade pip, install pipenv, and then install pipenv dependencies and run tests.",
+  "tags": [
+    "python",
+    "tests",
+    "pipenv",
+    "matrix",
+    "ubuntu"
+  ]
+}

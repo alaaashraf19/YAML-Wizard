@@ -1,0 +1,16 @@
+{
+  "sha": "0e928e7787a72831662a569ecad0ed9e1fa327c7232aa7fa1585db82a02e2a98",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2897,
+  "description": "Create a GitHub Actions workflow named VCPKG Continuous Integration that runs on push to the master branch, on pull requests, and daily. The workflow has two jobs, build_linux and build_mac, each with a matrix strategy to test multiple environments and LLVM versions. For each job, check out the code, install utility tools, build with a script, run tests, and perform smoketests with the installed executable.",
+  "tags": [
+    "vcpkg",
+    "ci",
+    "continuous-integration",
+    "llvm",
+    "ubuntu",
+    "macos",
+    "docker"
+  ]
+}

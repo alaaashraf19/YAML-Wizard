@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_09019",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 235,
+  "description": "Create a GitLab CI pipeline with an automation stage containing a job named auto_build:timer. The job extends the .with-bundle and .common-ci-tokens templates, uses the resource_group auto-build-timer, and runs only when the CI variable AUTO_BUILD_TIMER is set to \"true\" (when: always). In the script it executes `bundle exec rake 'auto_build:timer'`. No specific Docker image or services are defined, so the default runner image is used. Ensure the job is placed in the automation stage.",
+  "tags": [
+    "ruby",
+    "bundle",
+    "rake",
+    "automation",
+    "ci-templates"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "644298f1774afd359b377552ac242dd0d92cd15761ed9b3717d3a08655e8c14a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 7362,
+  "description": "Create a GitHub Actions workflow named CI-Windows that runs on every push to the master branch and on pull requests to master. The workflow also allows for manual dispatch. It uses a Windows 2019 environment with a 120-minute timeout and runs a matrix of four jobs with different Qt and architecture configurations. For each job, it checks out the repository, initializes submodules, caches Qt, installs Qt, creates a build directory, clones OpenSSL, configures and builds the project, packages the project and installer, archives artifacts, updates tags, and releases continuous builds.",
+  "tags": [
+    "windows",
+    "qt",
+    "ci",
+    "github-actions",
+    "vnote"
+  ]
+}

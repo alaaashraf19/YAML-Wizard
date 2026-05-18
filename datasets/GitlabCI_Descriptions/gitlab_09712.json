@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_09712",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 269,
+  "description": "Create a GitLab CI pipeline that uses the default image and runs a before_script installing the rspec, rake and coveralls gems with no documentation. Add a pages job that moves the doc directory to public, publishes the public/ folder as a pages artifact, and only runs on the master branch. Add an rspec job that executes rspec spec/yahoo_spec.rb. Both jobs run in the default test stage.",
+  "tags": [
+    "ruby",
+    "rspec",
+    "coveralls",
+    "gitlab-pages"
+  ]
+}

@@ -1,0 +1,25 @@
+build:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - SAP-Report-Source-Decompressor/sap-reposrc-decompressor
+  before_script:
+  - . /etc/os-release; echo $PRETTY_NAME; uname -srm; echo "gcc $GCC_VERSION"
+  script:
+  - cd SAP-Report-Source-Decompressor
+  - make
+  stage: build
+cppcheck:
+  before_script:
+  - apt-get -qq update
+  - apt-get -y install cppcheck >/dev/null
+  script:
+  - cd SAP-Report-Source-Decompressor
+  - cppcheck --enable=all --error-exitcode=1 -i lib/ .
+  stage: test
+image: gcc
+test:
+  script:
+  - cd SAP-Report-Source-Decompressor
+  - make test
+  stage: test

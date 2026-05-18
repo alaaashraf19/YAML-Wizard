@@ -1,0 +1,15 @@
+{
+  "sha": "d59d1ba26972d20bbe59d0be9362b7f403341b86ac80dabf9df205e00fa0f960",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1562,
+  "description": "Create a GitHub Actions workflow named Tests and Linting that runs on push and pull request events for specific files and directories. The workflow should have two jobs: unit-tests and linting. The unit-tests job should run on ubuntu-latest with Python 3.8, install dependencies, and run unit tests with pytest. The linting job should depend on unit-tests, run on ubuntu-latest with Python 3.8, install dependencies, and lint the code with pylint.",
+  "tags": [
+    "python",
+    "tests",
+    "linting",
+    "pytest",
+    "pylint",
+    "ubuntu"
+  ]
+}

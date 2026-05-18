@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_17984",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 348,
+  "description": "Create a GitLab CI pipeline that uses the ubuntu:oracular-20241120 Docker image and defines a single build stage. Add a job named build that runs in the build stage, with a before_script that runs apt-get update && apt-get -y install autoconf g++ make librtaudio-dev libstk-dev libgtkmm-3.0-dev. The script should execute ./autogen.sh && ./configure && make && make check && make distcheck. Cache any compiled object files matching src/*.o and publish the src/polygnome directory as an artifact. No special rules, services, or deployment targets are required.",
+  "tags": [
+    "ubuntu",
+    "c++",
+    "autotools",
+    "make",
+    "cache",
+    "artifact"
+  ]
+}

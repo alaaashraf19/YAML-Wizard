@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_10443",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 3051,
+  "description": "Create a GitLab CI pipeline using the Docker image registry.gitlab.com/inkscape/inkscape-ci-docker/documentation, with global variables GIT_DEPTH='0' and INKBRANCH=master and two stages: build and deploy. In the build stage define four jobs (keys, man, statistics, tutorials) that each set a target_dir variable (keys, man, statistics, tutorials), execute the script: cd $target_dir; make version; make check-input; make all --always-make -j1; make check-output; make copy, and publish artifacts named $target_dir containing export-website/ and export-inkscape/ (statistics also has allow_failure true). Add a pre‑stage job patch_itstool that runs sed -i -e \"s/re.sub('/re.sub(r'/g\" /usr/bin/itstool and sed -i -e \"s/re.compile('/re.compile(r'/g\" /usr/bin/itstool. In the deploy stage add a deploy job that creates export-website/data, writes a formatted git log to export-website/data/documentation.log, aborts if CI_TOKEN is unset, builds a commit message from CI_BUILD_BEFORE_SHA, configures git user, clones the ${CI_PROJECT_PATH}-export repository, copies export-website/* into it, optionally resets tutorials when not on master, commits with \"Automatic update from CI\" plus the generated message and link, sets up a credential cache using CI_TOKEN, pushes to origin (with pull‑rebase fallback), clears the credential cache, and publishes artifacts named documentation containing export-website/ and export-inkscape/.",
+  "tags": [
+    "docker-image",
+    "make",
+    "documentation",
+    "inkscape",
+    "gitlab-ci",
+    "deploy"
+  ]
+}

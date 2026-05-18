@@ -1,0 +1,16 @@
+{
+  "sha": "ca1afa9ac5842c84add36d49cda958189cc6b57e618c969de7c20b32fa129710",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3590,
+  "description": "Create a GitHub Actions workflow named Build that runs on push to the master branch and on pull requests to master. The workflow has two jobs: Unix and a commented-out Windows job. The Unix job runs on a matrix of Linux and macOS environments with different configurations, checks out the repository, installs dependencies, caches the build, configures and builds the project using CMake, and runs tests.",
+  "tags": [
+    "cmake",
+    "ccache",
+    "ubuntu",
+    "macos",
+    "linux",
+    "tests",
+    "matrix"
+  ]
+}

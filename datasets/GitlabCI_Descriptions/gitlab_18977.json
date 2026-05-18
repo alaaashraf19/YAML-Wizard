@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_18977",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 174,
+  "description": "Create a GitLab CI pipeline that uses the python:3.12 Docker image as the default image. Define a single lint job that runs in the default test stage. In its before_script, install Ansible via pip install ansible. Then execute ansible-playbook --inventory playbooks/hosts.yml --syntax-check playbooks/site.yml as the main script. The job has no caches, artifacts, services, or conditional rules.",
+  "tags": [
+    "python",
+    "ansible",
+    "lint",
+    "syntax-check"
+  ]
+}

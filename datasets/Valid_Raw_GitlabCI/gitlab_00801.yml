@@ -1,0 +1,23 @@
+before_script:
+- npm install
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+  - node_modules
+image: node:latest
+npm_test:
+  script:
+  - npm test
+  - npm run coverage
+  stage: test
+stages:
+- test
+- deploy
+submit_npmjs:
+  only:
+  - tags
+  script:
+  - npm run build
+  - echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}'>.npmrc
+  - npm publish
+  stage: deploy

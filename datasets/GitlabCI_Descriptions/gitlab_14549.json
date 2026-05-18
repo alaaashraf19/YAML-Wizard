@@ -1,0 +1,21 @@
+{
+  "sha": "gitlab_14549",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1182,
+  "description": "Create a GitLab CI pipeline with test and build stages, using global services postgres:latest and mdillon/postgis:latest and variables IMAGE_TAG, POSTGRES_DB, POSTGRES_USER, POSTGRES_PASSWORD. In the test stage add a backend_tests job that runs on ruby:2.7.0, installs postgresql, postgresql-contrib, libpq-dev, cmake and gpsbabel via apt-get, prints ruby version, runs bundle install, copies config/database.yml.example and config/secrets.yml.example, loads the test schema with RAILS_ENV=test bundle exec rails db:schema:load and executes RAILS_ENV=test bundle exec rspec, and stores the backend/coverage directory as an artifact that expires in one month. Also in the test stage add a frontend_tests job that installs curl, sets up Node.js 13 via the official script, installs nodejs, runs npm install and npm run lint in the frontend directory. In the build stage add a build_image job that runs on docker:git with a docker:dind service, logs in to registry.gitlab.com using the gitlab-ci-token and $CI_BUILD_TOKEN, builds the Docker image with tag $IMAGE_TAG, pushes it to the registry, and is configured to run only for Git tags.",
+  "tags": [
+    "ruby",
+    "rails",
+    "rspec",
+    "docker",
+    "dind",
+    "node",
+    "npm",
+    "lint",
+    "postgres",
+    "postgis",
+    "coverage",
+    "ci-registry"
+  ]
+}

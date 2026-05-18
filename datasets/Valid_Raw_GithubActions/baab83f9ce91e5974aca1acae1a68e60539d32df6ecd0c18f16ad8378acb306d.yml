@@ -1,0 +1,27 @@
+name: macOS
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Install dependencies
+        run: |
+          brew update
+          brew install ykpers libyubikey libusb swig
+          python -m pip install --upgrade pip
+          pip install tox
+          pip install .
+
+      - name: Run unit tests
+        run: tox -- -v
+
+      - name: Run CLI
+        run: |
+          ykman --version
+          [[ -z "$(ykman --version | grep -E "not found|missing")" ]]

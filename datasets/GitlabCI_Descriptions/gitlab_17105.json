@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_17105",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1220,
+  "description": "Create a GitLab CI pipeline with stages build, test, docker, and deploy. Use the node:13 Docker image for the build and test jobs, caching the node_modules and build directories and publishing them as artifacts from the build job. In the build stage add a job named build that runs npm install then npm run build, caches and stores node_modules and build as artifacts. In the test stage add a job named test that runs npm run test using the same node:13 image. In the docker stage add a job named docker that uses the docker:latest image with the docker:dind service, logs in to $CI_REGISTRY with $CI_REGISTRY_USER and $CI_REGISTRY_PASSWORD, builds the image with tags $CI_REGISTRY/simonbreiter/color-name:$CI_COMMIT_SHORT_SHA and $CI_REGISTRY/simonbreiter/color-name:latest, and pushes both tags. Also add a job named docker:arm64 that uses the jonoh/docker-buildx-qemu image with docker:dind service, runs a before_script to log in, create and bootstrap a buildx builder, enables binfmt, then builds and pushes an arm64 image with tag $CI_REGISTRY/simonbreiter/color-name:$CI_COMMIT_SHORT_SHA-arm64. Set the DOCKER_HOST variable to tcp://docker:2375/. All jobs run on any branch unless otherwise filtered.",
+  "tags": [
+    "node",
+    "npm",
+    "docker",
+    "dind",
+    "buildx",
+    "qemu",
+    "arm64",
+    "ci-registry"
+  ]
+}

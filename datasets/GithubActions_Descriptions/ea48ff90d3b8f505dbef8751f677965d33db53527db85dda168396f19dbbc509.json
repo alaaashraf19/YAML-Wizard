@@ -1,0 +1,14 @@
+{
+  "sha": "ea48ff90d3b8f505dbef8751f677965d33db53527db85dda168396f19dbbc509",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2801,
+  "description": "Create a GitHub Actions workflow named Packages that runs on every push and pull request. Use an ubuntu-latest job with a matrix strategy to build Debian packages for multiple Ubuntu distributions. For each distribution, checkout the code, determine the Launchpad PPA to upload to, generate a Debian changelog, build the package, upload the artifact, and conditionally upload the package to Launchpad PPAs based on the event and reference.",
+  "tags": [
+    "debian",
+    "ubuntu",
+    "launchpad",
+    "packages",
+    "matrix"
+  ]
+}

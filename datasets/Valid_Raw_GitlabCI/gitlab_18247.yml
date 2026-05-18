@@ -1,0 +1,20 @@
+before_script:
+- apt update -qq
+- apt install -y -qq build-essential ca-certificates gobject-introspection gtk-doc-tools
+  libgirepository1.0-dev libglib2.0-dev libsoup2.4-dev libxml2-utils meson pkg-config
+  valac
+build-check:
+  artifacts:
+    paths:
+    - _build/config.h
+    - _build/meson-logs/
+    - _build/docs/reference/
+  script:
+  - meson -Dgtk_doc=true -Dintrospection=true -Dvapi=enabled --buildtype debug --wrap-mode=nodownload
+    --fatal-meson-warnings --werror _build
+  - ninja -C _build
+  - meson test -C _build
+  stage: build
+image: debian:unstable
+stages:
+- build

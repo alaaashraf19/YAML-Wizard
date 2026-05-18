@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_17487",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 343,
+  "description": "Create a GitLab CI pipeline using the default Docker image with a before_script that sets LANG=en_US.UTF-8, runs `apt-get update -qq && apt-get install -y python3-pip python3-pandas python3-openpyxl python3-pyqt5`, checks the Python version with `python3 --version` and its path with `which python3`, then changes directory to `tests`. Define three jobs in the default test stage: `abs_vol_check` runs `python3 scripts_tests.py`; `data_check` runs `python3 data_tests.py`; and `dvh_textfile_check` runs `python3 utils_tests.py`. All jobs inherit the before_script, have no artifacts, caches, or conditional rules, and simply execute the specified Python test scripts.",
+  "tags": [
+    "python",
+    "apt",
+    "gitlab-ci",
+    "tests",
+    "default-stage"
+  ]
+}

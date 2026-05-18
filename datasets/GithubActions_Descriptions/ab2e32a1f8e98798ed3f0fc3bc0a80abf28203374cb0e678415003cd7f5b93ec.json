@@ -1,0 +1,16 @@
+{
+  "sha": "ab2e32a1f8e98798ed3f0fc3bc0a80abf28203374cb0e678415003cd7f5b93ec",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1660,
+  "description": "Create a GitHub Actions workflow named Automated Test Build that runs on push to the master branch and on pull requests to master. Use a single windows-2022 job that checks out the repository with full history, installs Lua 5.4.7, downloads and runs premake to generate Visual Studio 2022 project files, sets up msbuild, builds the solution for both Win32 and x64 platforms, uploads the build artifacts, and creates a GitHub release with the x64 build artifact on push events.",
+  "tags": [
+    "lua",
+    "premake",
+    "msbuild",
+    "visual-studio",
+    "windows",
+    "github-release",
+    "artifacts"
+  ]
+}

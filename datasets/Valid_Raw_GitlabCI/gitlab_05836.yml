@@ -1,0 +1,25 @@
+.script:
+  script: &id001
+  - mkdir build
+  - cd build
+  - scan-build cmake ..
+  - scan-build --status-bugs make -j$(nproc)
+  - rm -r *
+  - cmake -DBUILD_TESTING=1 ..
+  - make -j$(nproc)
+  - CTEST_OUTPUT_ON_FAILURE=1 make test
+arch:
+  image: cppit/jucipp:arch
+  script: *id001
+debian:
+  image: cppit/jucipp:debian
+  script: *id001
+debian-testing:
+  image: cppit/jucipp:debian-testing
+  script: *id001
+fedora:
+  image: cppit/jucipp:fedora
+  script: *id001
+ubuntu:
+  image: cppit/jucipp:ubuntu
+  script: *id001

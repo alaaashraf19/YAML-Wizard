@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_17452",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 154,
+  "description": "Create a GitLab CI pipeline that defines a single job called master-test which runs only on the master branch. The job uses the default runner image (no explicit Docker image or services are declared) and executes the shell commands: git checkout master, git pull, npm install, and mocha -t 10000 test/test.js. No caches, artifacts, additional stages, or deployment targets are configured.",
+  "tags": [
+    "npm",
+    "mocha",
+    "git",
+    "test",
+    "master-branch"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_14077",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 240,
+  "description": "Create a GitLab CI pipeline that uses the node:8.5.0 Docker image with a mongo service, and defines the variables MONGO_URI=mongodb://mongo/ornix and NODE_ENV=ci. Add a cache keyed by $CI_BUILD_REF_NAME that stores the node_modules/ directory. Define a single job named all_tests that runs in the default test stage, executing the shell commands \"npm install && npm install --only=dev\" followed by \"npm run test:ci\". The pipeline has no explicit artifacts or rules, so the job runs on every pipeline execution.",
+  "tags": [
+    "node",
+    "npm",
+    "mongo",
+    "ci",
+    "cache"
+  ]
+}

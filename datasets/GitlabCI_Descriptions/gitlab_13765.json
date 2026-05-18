@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_13765",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 257,
+  "description": "Create a GitLab CI pipeline using the node:8 Docker image with a cache keyed by $CI_BUILD_REF_NAME that stores node_modules/ and includes untracked files. Define two stages, setup and test. In the setup stage add a setup job that runs npm install. In the test stage add a jest job that runs npm run test and a lint job that runs npm run lint, with no artifacts or special rules.",
+  "tags": [
+    "node",
+    "npm",
+    "jest",
+    "lint",
+    "cache",
+    "ci"
+  ]
+}

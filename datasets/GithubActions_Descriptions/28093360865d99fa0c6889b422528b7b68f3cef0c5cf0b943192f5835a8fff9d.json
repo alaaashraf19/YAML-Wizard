@@ -1,0 +1,14 @@
+{
+  "sha": "28093360865d99fa0c6889b422528b7b68f3cef0c5cf0b943192f5835a8fff9d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1902,
+  "description": "Create a GitHub Actions workflow that builds and publishes a Docker image on push to specific branches and tags, and on pull requests to main and dev branches. The workflow uses ubuntu-latest, checks out the repository, sets up QEMU, Docker Buildx, and logs in to the GitHub Container registry. It extracts metadata and builds a Docker image with specific platforms, tags, and labels, then pushes it to the registry.",
+  "tags": [
+    "docker",
+    "github-actions",
+    "container",
+    "registry",
+    "buildx"
+  ]
+}

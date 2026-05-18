@@ -1,0 +1,17 @@
+{
+  "sha": "277bb39f9bb1e237dfacc93db6918cb22409b5cc1461d6de234fd9866a9f5a6c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2100,
+  "description": "Create a GitHub Actions workflow named Test that runs on push to the master branch and on pull requests to master. The workflow consists of two jobs: ruff and test. The ruff job lints the code using ruff, while the test job runs tests in a matrix of Django, Python, and Elasticsearch versions, with services for Elasticsearch and Solr. The test job depends on the ruff job and fails if linting fails.",
+  "tags": [
+    "python",
+    "django",
+    "elasticsearch",
+    "solr",
+    "tests",
+    "linting",
+    "ruff",
+    "tox"
+  ]
+}

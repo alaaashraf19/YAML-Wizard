@@ -1,0 +1,19 @@
+{
+  "sha": "fb8551dcd7be2f1681ed04744f9a25675319547eceb60786581c030d2d40bf75",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5840,
+  "description": "Create a GitHub Actions workflow named Linux/MacOS Build that runs on push and pull requests to the master branch. Use a matrix strategy to build and test on multiple operating systems (macos-latest, ubuntu-20.04), compilers (g++-9, clang++), build types (Release, Debug), and task backends (Threads, OneTBB, PaRSEC, LegacyTBB). For each job, install prerequisites, configure CMake, build, test, and optionally install and test the installation tree.",
+  "tags": [
+    "cmake",
+    "ccache",
+    "ubuntu",
+    "macos",
+    "tbb",
+    "mpi",
+    "tests",
+    "matrix",
+    "build",
+    "install"
+  ]
+}

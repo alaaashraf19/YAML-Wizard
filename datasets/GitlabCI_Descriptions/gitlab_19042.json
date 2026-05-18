@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_19042",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 108,
+  "description": "Create a GitLab CI pipeline that includes the external configuration from https://gitlab.wpdesk.dev/wpdesk/gitlab-ci/raw/master/gitlab-ci-1.2.yml and defines a variable IS_LIBRARY set to 1. The pipeline should inherit all stages, jobs, images, services, caches, artifacts, and rules defined in the included file, while the IS_LIBRARY variable is available to all jobs for conditional logic. Ensure the include directive is placed at the top level and the variable is declared under the global variables section.",
+  "tags": [
+    "include",
+    "external-ci",
+    "variable",
+    "library"
+  ]
+}

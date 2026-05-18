@@ -1,0 +1,81 @@
+build:
+  rules:
+  - if: $CI_COMMIT_TAG
+    when: never
+  - changes:
+    - src/**/*
+    - cargo.*
+    when: on_success
+  script:
+  - rustc --version
+  - cargo version
+  - cargo build
+  stage: build
+cache:
+  key: $CI_JOB_NAME
+  paths:
+  - .cargo
+  - target
+image: rust:latest
+lint-clippy:
+  rules:
+  - if: $CI_COMMIT_TAG
+    when: never
+  - changes:
+    - src/**/*
+    - cargo.*
+    when: always
+  script:
+  - rustup component add clippy
+  - rustc --version
+  - cargo version
+  - cargo clippy
+  stage: lint
+lint-fmt:
+  rules:
+  - if: $CI_COMMIT_TAG
+    when: never
+  - changes:
+    - src/**/*
+    - cargo.*
+    when: always
+  script:
+  - rustup component add rustfmt
+  - rustc --version
+  - cargo version
+  - cargo fmt -- --check
+  stage: lint
+nixos:
+  only:
+    refs:
+    - main
+  stage: deploy
+  trigger: nix17/nixos-config
+  variables:
+    PACKAGE_NAME: silver_api_dw2
+    UPDATE_FLAKE: 'yes'
+stages:
+- lint
+- test
+- build
+- deploy
+test:
+  artifacts:
+    reports:
+      junit: $CI_PROJECT_DIR/target/nextest/ci/junit.xml
+    when: always
+  rules:
+  - if: $CI_COMMIT_TAG
+    when: never
+  - changes:
+    - src/**/*
+    - cargo.*
+    when: on_success
+  script:
+  - mkdir -p $CARGO_HOME/bin && curl -LsSf https://get.nexte.st/latest/linux | tar
+    zxf - -C $CARGO_HOME/bin
+  - cargo nextest run --profile ci
+  stage: test
+variables:
+  CARGO_HOME: ${CI_PROJECT_DIR}/.cargo
+  RUSTFLAGS: -Dwarnings

@@ -1,0 +1,18 @@
+image: debian:bullseye
+pages:
+  artifacts:
+    expire_in: 60m
+    paths:
+    - public
+    when: always
+  only:
+  - master
+  script:
+  - apt-get update
+  - apt-get -qy install --no-install-recommends python3-chardet python3-feedparser
+    python3-html5lib python3-httplib2 python-librdf python3-libxml2 python3-portalocker
+    python3-utidylib python3-bs4 python3-lxml xsltproc
+  - test -d public || mkdir public
+  - test -d cache || mkdir cache
+  - python3 planet.py fdroid.ini
+  stage: deploy

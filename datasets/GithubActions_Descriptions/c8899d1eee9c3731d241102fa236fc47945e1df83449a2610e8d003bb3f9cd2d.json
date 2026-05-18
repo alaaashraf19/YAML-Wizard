@@ -1,0 +1,14 @@
+{
+  "sha": "c8899d1eee9c3731d241102fa236fc47945e1df83449a2610e8d003bb3f9cd2d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 993,
+  "description": "Create a GitHub Actions workflow named Build that triggers on push events. The workflow should have two jobs: one for building and testing the project, and another for building a Docker image. The build job should run on ubuntu-latest, check out the repository, install uv, set up Python according to pyproject.toml, install the project with uv, perform type checking with mypy, and run tests with pytest. The docker job should also run on ubuntu-latest, check out the repository, and build a Docker image using the docker/build-push-action.",
+  "tags": [
+    "python",
+    "docker",
+    "github-actions",
+    "build",
+    "tests"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_07069",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 248,
+  "description": "Create a GitLab CI pipeline that logs into a Docker registry using the before_script command `docker login -u \\\"$DOCKER_LOGIN\\\" -p \\\"$DOCKER_PASS\\\"`. Define a single stage called build and a job named build that runs in this stage, uses the runner tag `dockerarmhf`, and executes `docker build -t \\\"$DOCKER_IMAGE\\\" .` followed by `docker push \\\"$DOCKER_IMAGE\\\"`. After the job finishes, run an after_script that removes all local Docker images with `docker rmi --force $(docker images -q)`. The pipeline relies on the environment variables DOCKER_LOGIN, DOCKER_PASS and DOCKER_IMAGE and does not define any caches, artifacts, or conditional rules.",
+  "tags": [
+    "docker",
+    "docker-login",
+    "docker-build",
+    "docker-push",
+    "cleanup",
+    "dockerarmhf"
+  ]
+}

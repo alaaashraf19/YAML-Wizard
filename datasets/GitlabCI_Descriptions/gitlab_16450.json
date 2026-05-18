@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_16450",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 286,
+  "description": "Create a GitLab CI pipeline that uses the node:latest Docker image as the default and defines a single production stage. Add a production job that runs in the ruby:latest image, only on the master branch, executes the commands apt-get update -qy, apt-get install -y ruby-dev, gem install dpl, and dpl --provider=heroku --app=node-heroku-dpl --api-key=$HEROKU_API_KEY to deploy the app to Heroku, and is marked as a deploy type.",
+  "tags": [
+    "node",
+    "ruby",
+    "heroku",
+    "dpl",
+    "deploy"
+  ]
+}

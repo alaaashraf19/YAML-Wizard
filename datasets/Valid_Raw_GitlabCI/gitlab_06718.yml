@@ -1,0 +1,105 @@
+build:
+  artifacts:
+    paths:
+    - public
+  image: ruby:2.3
+  script:
+  - echo "Build $CI_PROJECT_PATH_SLUG"
+  - cd  web
+  - ls -la
+  - bundle install
+  - ls -la
+  - bundle exec jekyll build
+  - mv _site ../public
+  - cd ..
+  - ls -la
+  stage: build
+  tags:
+  - jekyll
+production:
+  environment:
+    name: production
+    url: http://$DEPLOY_DOMAIN
+  only:
+  - master
+  script:
+  - deployctl deploy
+  - deployctl conf_https
+  stage: production
+  tags:
+  - gioxapp.com
+  - deployctl
+  when: manual
+review:
+  environment:
+    name: review/$CI_BUILD_REF_NAME
+    on_stop: stop_review
+    url: http://$CI_ENVIRONMENT_SLUG.$CI_PROJECT_PATH_SLUG.$DEPLOY_DOMAIN_APP
+  except:
+  - master
+  only:
+  - branches
+  script:
+  - deployctl --verbose --debug deploy
+  stage: review
+  tags:
+  - gioxapp.com
+  - deployctl
+stages:
+- build
+- review
+- staging
+- production
+staging:
+  environment:
+    name: staging
+    on_stop: stop_staging
+    url: http://staging.$CI_PROJECT_PATH_SLUG.$DEPLOY_DOMAIN_APP
+  only:
+  - master
+  script:
+  - deployctl deploy
+  stage: staging
+  tags:
+  - gioxapp.com
+  - deployctl
+  variables:
+    GIT_STRATEGY: none
+stop_review:
+  dependencies: []
+  environment:
+    action: stop
+    name: review/$CI_BUILD_REF_NAME
+  except:
+  - master
+  only:
+  - branches
+  script:
+  - deployctl delete
+  stage: review
+  tags:
+  - gioxapp.com
+  - deployctl
+  variables:
+    GIT_STRATEGY: none
+  when: manual
+stop_staging:
+  dependencies: []
+  environment:
+    action: stop
+    name: staging
+  only:
+  - master
+  script:
+  - deployctl delete
+  stage: staging
+  tags:
+  - gioxapp.com
+  - deployctl
+  variables:
+    GIT_STRATEGY: none
+  when: manual
+variables:
+  CI_PROJECT_PATH_SLUG: web-www-deployctl-com
+  DEPLOY_DOMAIN: www.deployctl.com
+  DEPLOY_DOMAIN_APP: gioxapp.com

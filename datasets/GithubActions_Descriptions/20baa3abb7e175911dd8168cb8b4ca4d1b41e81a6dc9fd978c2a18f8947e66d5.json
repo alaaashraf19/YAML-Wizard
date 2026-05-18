@@ -1,0 +1,15 @@
+{
+  "sha": "20baa3abb7e175911dd8168cb8b4ca4d1b41e81a6dc9fd978c2a18f8947e66d5",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5263,
+  "description": "Create a GitHub Actions workflow named Dev with concurrency set to build. Trigger it on push to master and release/* branches, and on pull requests to those branches. Run a multi-step ubuntu-latest job that checks out the code, sets up Node.js 18, Docker, and QEMU, then builds and tests the project with various Docker and .NET configurations, runs Playwright tests, and finally publishes the Docker image to Docker Hub if the event is not a pull request.",
+  "tags": [
+    "docker",
+    "nodejs",
+    "dotnet",
+    "playwright",
+    "github-actions",
+    "multi-platform"
+  ]
+}

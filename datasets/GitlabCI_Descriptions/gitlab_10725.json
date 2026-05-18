@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_10725",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 334,
+  "description": "Create a GitLab CI pipeline using the haskell:8.2 Docker image. Set a STACK_ROOT variable to ${CI_PROJECT_DIR}/.stack and define a cache for .stack-work and .stack with untracked files. Include a before_script that runs stack upgrade, apt-get update, and apt-get install make xz-utils. Define two stages, build and test. Add a src_build job in the build stage that runs stack build, and a src_test job in the test stage that runs stack test, with no additional services, artifacts, or rules.",
+  "tags": [
+    "haskell",
+    "stack",
+    "build",
+    "test",
+    "docker"
+  ]
+}

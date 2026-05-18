@@ -1,0 +1,135 @@
+name: Generate API Coverage
+
+on:
+  workflow_dispatch:
+
+jobs:
+  generate-cpp-coverage-report:
+    runs-on: macos-15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Dependencies
+        uses: ./.github/actions/setup-dependencies
+        with:
+          use_ccache: false
+
+      - name: Generate C++ Coverage
+        working-directory: ./cpp
+        run: ../scripts/generate-code-coverage.sh
+
+      - name: Generate C++ Coverage Reports
+        working-directory: ./cpp
+        run: |
+          for binary in bin/*; do
+            ../scripts/generate-code-coverage.sh "$binary"
+          done
+
+          for library in lib/*; do
+            if [[ $library =~ lib/lib[a-zA-Z0-9]+\.dylib ]]; then
+              ../scripts/generate-code-coverage.sh "$library"
+            fi
+          done
+
+      # This will perform a full sync of the documentation to S3 every time the workflow is run since
+      # the timestamps will always be different. Using --size-only is not sufficient since the
+      # documentation may be updated without changing the size of the files. S3 does not offer a hash based sync.
+      - name: Sync Documentation to S3
+        working-directory: ./cpp/coverage/html
+        run: |
+          for coverage_dir in *; do
+              if [[ -d $coverage_dir ]]; then
+                  aws s3 sync $coverage_dir s3://${AWS_S3_CODE_BUCKET}/ice/cpp/main/coverage/$(basename $coverage_dir) --delete
+              fi
+          done
+
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_S3_CODE_BUCKET: ${{ secrets.AWS_S3_CODE_BUCKET }}
+          AWS_DEFAULT_REGION: us-east-1
+        if: github.ref == 'refs/heads/main'
+
+  generate-csharp-coverage-report:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Dependencies
+        uses: ./.github/actions/setup-dependencies
+        with:
+          use_ccache: false
+
+      - name: Build
+        run: |
+          make -C cpp srcs
+          make -C csharp
+
+      - name: Generate C# Coverage
+        working-directory: ./csharp
+        run: |
+          dotnet tool install  dotnet-coverage --global
+          dotnet-coverage collect --server-mode --background --session-id dotnet-coverage --output coverage.cobertura.xml --output-format cobertura --settings msbuild/coverage.runsettings
+          python3 allTests.py --all --workers=4 --debug --coverage-session dotnet-coverage
+          dotnet-coverage shutdown dotnet-coverage
+
+      - name: Generate Coverage Reports
+        uses: danielpalme/ReportGenerator-GitHub-Action@5.3.8
+        with:
+          reports: csharp/coverage.cobertura.xml
+          targetdir: coveragereport
+          reporttypes: Html;Badges
+          license: ${{ secrets.REPORT_GENERATOR_LICENSE }}
+
+      - name: Sync Documentation to S3
+        working-directory: ./coveragereport
+        run: aws s3 sync . s3://${AWS_S3_CODE_BUCKET}/ice/csharp/main/coverage --delete
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_S3_CODE_BUCKET: ${{ secrets.AWS_S3_CODE_BUCKET }}
+          AWS_DEFAULT_REGION: us-east-1
+        if: github.ref == 'refs/heads/main'
+
+  generate-java-coverage-report:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Dependencies
+        uses: ./.github/actions/setup-dependencies
+        with:
+          use_ccache: false
+
+      - name: Build
+        run: |
+          make -C cpp srcs
+          make -C java
+
+      - name: Generate Java Coverage
+        working-directory: ./java
+        run: |
+          wget https://repo1.maven.org/maven2/org/jacoco/org.jacoco.cli/0.8.12/org.jacoco.cli-0.8.12-nodeps.jar
+          wget https://repo1.maven.org/maven2/org/jacoco/org.jacoco.agent/0.8.12/org.jacoco.agent-0.8.12-runtime.jar
+
+          python3 allTests.py --all --workers=4 --debug --jacoco $(pwd)/org.jacoco.agent-0.8.12-runtime.jar
+
+          args=""
+          for pkg in src/*; do
+            args="$args --classfiles $pkg/build/classes/ --sourcefiles $pkg/src/main/java/"
+          done
+
+          java -jar org.jacoco.cli-0.8.12-nodeps.jar report $(find . -name \*.jacoco.exec) $args --html coverage
+
+      - name: Sync Documentation to S3
+        working-directory: ./java/coverage
+        run: aws s3 sync . s3://${AWS_S3_CODE_BUCKET}/ice/java/main/coverage --delete
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_S3_CODE_BUCKET: ${{ secrets.AWS_S3_CODE_BUCKET }}
+          AWS_DEFAULT_REGION: us-east-1
+        if: github.ref == 'refs/heads/main'

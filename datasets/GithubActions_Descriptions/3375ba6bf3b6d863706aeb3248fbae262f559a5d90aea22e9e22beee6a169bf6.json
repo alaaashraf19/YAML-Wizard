@@ -1,0 +1,16 @@
+{
+  "sha": "3375ba6bf3b6d863706aeb3248fbae262f559a5d90aea22e9e22beee6a169bf6",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 7748,
+  "description": "Create a nightly GitHub Actions workflow named FBGEMM_GPU PIP Installation Test that tests the download and installation of FBGEMM_GPU releases published to PyTorch PyPI. The workflow should trigger on a daily schedule and allow manual dispatch with inputs for PyTorch version, FBGEMM-GPU channel and version, build target, and build variant. For each build variant (cuda, cpu, rocm), set up a test job that installs PyTorch and FBGEMM_GPU from PyPI and runs tests with PyTest.",
+  "tags": [
+    "pytorch",
+    "fbgemm",
+    "gpu",
+    "pip",
+    "test",
+    "nightly",
+    "workflow-dispatch"
+  ]
+}

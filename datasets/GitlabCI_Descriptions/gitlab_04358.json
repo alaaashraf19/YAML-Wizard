@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_04358",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1476,
+  "description": "Create a GitLab CI pipeline with stages build and deploy and a variable CONTAINER_IMAGE set to ${CI_REGISTRY}/${CI_PROJECT_PATH}. In the build stage add a build job using the golang:1.12 image that runs `go build -mod vendor -ldflags \"-s -w -X main.Version=${CI_COMMIT_TAG}\" -o octaaf`, stores the resulting octaaf binary as an artifact that expires in one week. Also in the build stage add a test job using the same golang:1.12 image that runs `go test -mod vendor ./...`. In the deploy stage add a deploy-stable job that depends on build, uses the docker:stable image with the docker:dind service, runs `docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY`, pulls the latest image, builds a new image with `--cache-from \"${CONTAINER_IMAGE}:latest\"` tagging it as `${CONTAINER_IMAGE}:${CI_COMMIT_TAG/\\//-}` and `${CONTAINER_IMAGE}:latest`, and pushes both, and it only runs when the commit tag matches the regex ^release-.*$. Also add a deploy-unstable job that depends on build, uses the same docker image and service, runs similar docker login, pulls `${CONTAINER_IMAGE}:unstable-${CI_COMMIT_REF_NAME/\\//-}`, builds with `--cache-from` that tag, tags the image accordingly, pushes it, and runs for all commits except those matching the release tag regex.",
+  "tags": [
+    "go",
+    "golang",
+    "docker",
+    "dind",
+    "ci-registry",
+    "release",
+    "unstable",
+    "build",
+    "test",
+    "deploy"
+  ]
+}

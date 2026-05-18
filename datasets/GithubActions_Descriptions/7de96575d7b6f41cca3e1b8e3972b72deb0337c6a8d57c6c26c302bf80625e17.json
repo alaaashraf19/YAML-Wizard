@@ -1,0 +1,15 @@
+{
+  "sha": "7de96575d7b6f41cca3e1b8e3972b72deb0337c6a8d57c6c26c302bf80625e17",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5530,
+  "description": "Create a GitHub Actions workflow named E.V.E CI that runs on every pull request to the main branch. The workflow has concurrent execution with cancel-in-progress set to true, grouped by environment and reference. It consists of multiple jobs: install, specials, mainline, avx512, and supplemental, each running on different environments and testing EVE with various configurations, compilers, and architectures.",
+  "tags": [
+    "eve",
+    "ci",
+    "ubuntu",
+    "self-hosted",
+    "matrix",
+    "concurrency"
+  ]
+}

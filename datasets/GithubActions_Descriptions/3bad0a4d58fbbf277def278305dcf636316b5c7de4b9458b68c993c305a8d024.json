@@ -1,0 +1,17 @@
+{
+  "sha": "3bad0a4d58fbbf277def278305dcf636316b5c7de4b9458b68c993c305a8d024",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 6257,
+  "description": "Create a GitHub Actions workflow named Publish MISC Packages that publishes various packages (MSI, MATLAB, XCFramework, Swift, Brew) to S3. The workflow can be triggered manually with a channel and run ID, or called by another workflow with the same inputs. It uses separate jobs for each package type, each running on ubuntu-24.04 or macos-15, downloading artifacts from a previous workflow run, and uploading them to S3.",
+  "tags": [
+    "github-actions",
+    "s3",
+    "publish",
+    "msi",
+    "matlab",
+    "xcframework",
+    "swift",
+    "brew"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "ef4677ab3b1f00bb1d23237d0a1c094df805c22ea382310a55b750d63e393c07",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 749,
+  "description": "Create a GitHub Actions workflow named CIFuzz that runs on pushes to main, master, build, and build/* branches, excluding changes to ChangeLog, README*, and TODO files, and on pull requests. Use an ubuntu-latest job that builds fuzzers for the qpdf project with google/oss-fuzz, runs the fuzzers for 600 seconds, and uploads artifacts on failure.",
+  "tags": [
+    "fuzzing",
+    "oss-fuzz",
+    "ubuntu",
+    "cifuzz",
+    "qpdf"
+  ]
+}

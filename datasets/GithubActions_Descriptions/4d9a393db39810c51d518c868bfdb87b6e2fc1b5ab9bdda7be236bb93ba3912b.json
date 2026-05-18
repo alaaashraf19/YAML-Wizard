@@ -1,0 +1,15 @@
+{
+  "sha": "4d9a393db39810c51d518c868bfdb87b6e2fc1b5ab9bdda7be236bb93ba3912b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1206,
+  "description": "Create a GitHub Actions workflow named Run Unit Tests that runs on every push, pull request, and daily at a scheduled time. The workflow can also be called by another workflow. Use a single ubuntu-latest job with a matrix strategy to test multiple Python versions (3.7 to 3.11). For each version, check out the repository, set up Python, install system and package dependencies, and run unit tests for hdijupyterutils, autovizwidget, and sparkmagic using pytest.",
+  "tags": [
+    "python",
+    "tests",
+    "ubuntu",
+    "pytest",
+    "scheduled",
+    "ci"
+  ]
+}

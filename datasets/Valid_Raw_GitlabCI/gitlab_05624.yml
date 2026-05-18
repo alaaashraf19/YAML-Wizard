@@ -1,0 +1,36 @@
+.build_env:
+  artifacts:
+    name: $CI_JOB_NAME-$CI_COMMIT_REF_SLUG
+    paths:
+    - public
+  extends: .test_env
+.test_env:
+  cache:
+    key: test
+    paths:
+    - .cache/pip
+  stage: test
+build:
+  before_script:
+  - pip install -r requirements.txt
+  extends: .build_env
+  script:
+  - ./.ci/build.sh
+  stage: build
+image: python:3.6
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - echo 'Nothing to do'
+  stage: deploy
+  variables:
+    CONTEXT: production
+stages:
+- build
+- deploy
+variables:
+  XDG_CACHE_HOME: $CI_PROJECT_DIR/.cache/

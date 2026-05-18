@@ -1,0 +1,163 @@
+.build:otp:
+  before_script: &id001
+  - curl -sS http://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
+  - echo "deb http://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
+  - curl -sL http://deb.nodesource.com/setup_lts.x | bash -
+  - apt-get -y update
+  - apt-get -y install nodejs yarn
+  - export PATH="$PATH:`yarn global bin`"
+  image: erlang
+  script: &id002
+  - export ERL_LIBS="${CI_PROJECT_DIR}/.build/otp-${OTP_VERSION}/lib"
+  - export ERLANG_INSTALL_LIB_DIR=${ERL_LIBS}
+  - aclocal
+  - autoheader
+  - autoconf
+  - libtoolize --automake
+  - automake --add-missing
+  - rm -rf .build/otp-${OTP_VERSION}
+  - mkdir -p .build/otp-${OTP_VERSION}/{lib,ocs}
+  - cd .build/otp-${OTP_VERSION}/
+  - git clone https://github.com/mochi/mochiweb.git
+  - cd mochiweb
+  - make all
+  - MOCHIWEB_VERSION=`grep vsn ebin/mochiweb.app | cut -d"\"" -f 2`
+  - cd ../../
+  - if [ ! -d otp-${OTP_VERSION}/lib/mochiweb-${MOCHIWEB_VERSION} ]; then mv -v otp-${OTP_VERSION}/mochiweb/
+    otp-${OTP_VERSION}/lib/mochiweb-${MOCHIWEB_VERSION}; fi
+  - git clone https://gitlab.com/sigscale/radierl.git
+  - cd radierl
+  - aclocal
+  - autoheader
+  - autoconf
+  - automake --add-missing
+  - ./configure
+  - make
+  - make install
+  - git clone https://gitlab.com/sigscale/sigscale_mibs.git
+  - cd sigscale_mibs
+  - aclocal
+  - autoheader
+  - autoconf
+  - automake --add-missing
+  - ./configure
+  - make
+  - make install
+  - cd ${CI_PROJECT_DIR}/.build/otp-${OTP_VERSION}/ocs
+  - ../../../configure
+  - make
+  stage: build
+.check:otp:
+  image: erlang
+  script: &id003
+  - export ERL_LIBS="${CI_PROJECT_DIR}/.build/otp-${OTP_VERSION}/lib"
+  - export DIALYZER_PLT="${CI_PROJECT_DIR}/.build/otp-${OTP_VERSION}/.dialyzer_plt"
+  - if ! dialyzer --plt_info; then dialyzer --no_native --build_plt --apps erts kernel
+    stdlib crypto compiler public_key diameter inets mnesia ssl mochiweb radius syntax_tools;
+    fi
+  - cd .build/otp-${OTP_VERSION}/ocs
+  - make check
+  stage: test
+build:otp-18:
+  artifacts:
+    paths:
+    - .build/otp-18.*
+    untracked: true
+  before_script: *id001
+  image: erlang:18
+  script: *id002
+  stage: build
+build:otp-20:
+  artifacts:
+    paths:
+    - .build/otp-20.*
+    untracked: true
+  before_script: *id001
+  image: erlang:20
+  script: *id002
+  stage: build
+build:otp-21:
+  artifacts:
+    paths:
+    - .build/otp-21.*
+    untracked: true
+  before_script: *id001
+  image: erlang:21
+  script: *id002
+  stage: build
+check:otp-18:
+  artifacts:
+    paths:
+    - .build/otp-18.*
+    when: always
+  dependencies:
+  - build:otp-18
+  image: erlang:18
+  script: *id003
+  stage: test
+check:otp-20:
+  artifacts:
+    paths:
+    - .build/otp-20.*
+    when: always
+  dependencies:
+  - build:otp-20
+  image: erlang:20
+  script: *id003
+  stage: test
+check:otp-21:
+  artifacts:
+    paths:
+    - .build/otp-21.*
+    when: always
+  dependencies:
+  - build:otp-21
+  image: erlang:21
+  script: *id003
+  stage: test
+pages:otp-18:
+  artifacts:
+    paths:
+    - public
+    when: always
+  dependencies:
+  - check:otp-18
+  script:
+  - mkdir -p .public/doc .public/tests
+  - cp -r .build/otp-18.*/ocs/test/log/* .public/tests
+  - cp -r .build/otp-18.*/ocs/doc/* .public/doc
+  - mv .public public
+  stage: deploy
+  when: always
+pages:otp-20:
+  artifacts:
+    paths:
+    - public
+    when: always
+  dependencies:
+  - check:otp-20
+  script:
+  - mkdir -p .public/doc .public/tests
+  - cp -r .build/otp-20.*/ocs/test/log/* .public/tests
+  - cp -r .build/otp-20.*/ocs/doc/* .public/doc
+  - mv .public public
+  stage: deploy
+  when: always
+pages:otp-21:
+  artifacts:
+    paths:
+    - public
+    when: always
+  dependencies:
+  - check:otp-21
+  script:
+  - mkdir -p .public/doc .public/tests
+  - cp -r .build/otp-21.*/ocs/test/log/* .public/tests
+  - cp -r .build/otp-21.*/ocs/doc/* .public/doc
+  - mv .public public
+  stage: deploy
+  when: always
+stages:
+- build
+- test
+- deploy

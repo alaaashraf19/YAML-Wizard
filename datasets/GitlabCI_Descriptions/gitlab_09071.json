@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_09071",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2983,
+  "description": "Create a GitLab CI pipeline with two stages: security_release:start and security_release:prepare, and a rule that runs only when the pipeline source is pipeline, web or api and the variable SECURITY_RELEASE_PIPELINE is set to prepare or true. Add a manual start job (security_release_prepare:start) in the start stage that runs `bundle exec rake 'security:prepare:start'`. In the prepare stage add jobs: security_release_prepare:appsec_issue (needs start and comms_issue, runs `bundle exec rake 'security:prepare:appsec_issue'`), security_release_prepare:check_component_branch_pipeline_status (needs start, runs `bundle exec rake 'security:check_component_branch_pipeline_status'`), security_release_prepare:comms_issue (needs start, runs `bundle exec rake 'security:prepare:comms_issue'`), security_release_prepare:mirror_status (needs start, runs `bundle exec rake 'mirror:status'`), security_release_prepare:notify_dedicated (needs start, runs `bundle exec rake 'security:prepare:notify_stage_team'` with variable STAGE_TEAM=dedicated), security_release_prepare:notify_developer_experience (runs the same rake with STAGE_TEAM=developer_experience), security_release_prepare:notify_development_analytics (runs the same rake with STAGE_TEAM=development_analytics), security_release_prepare:notify_jihu (runs `bundle exec rake 'security:prepare:notify_jihu'`), security_release_prepare:notify_releases (runs notify_stage_team with STAGE_TEAM=releases), security_release_prepare:notify_runner (runs notify_stage_team with STAGE_TEAM=runner), and security_release_prepare:review_security_fixes (runs `bundle exec rake 'security:prepare:review_security_fixes'`). All jobs inherit common setup and CI token configuration, share the same rule condition, and have no artifacts, caches, or deployment targets.",
+  "tags": [
+    "ruby",
+    "rake",
+    "security",
+    "gitlab-ci",
+    "manual",
+    "pipeline"
+  ]
+}

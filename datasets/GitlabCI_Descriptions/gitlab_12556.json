@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_12556",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1210,
+  "description": "Create a GitLab CI pipeline with stages versionBumpGradle, build, checkFormatting, and release, using the mjalas/javafx Docker image by default and setting GRADLE_OPTS to -Dorg.gradle.daemon=false and a before_script that exports GRADLE_USER_HOME=`pwd`/.gradle. Add a version job in the versionBumpGradle stage that runs on releases but not tags, uses the registry.gitlab.com/juhani/go-semrel-gitlab:v0.13.1 image, executes `release next-version --allow-current > .next-version` and then `sed -i -e \"s/version '[0-9].[0-9].[0-9]'/version '$(sed 's:/:\\\\/:g' .next-version)'/g\" build.gradle`, and stores build.gradle as an artifact. Add a build job in the build stage that runs `./gradlew --build-cache assemble`, caches the build and .gradle directories keyed by $CI_COMMIT_REF_NAME with push policy, and uploads the build/libs/ directory as an artifact that expires in one day. Add a checkFormatting job in the checkFormatting stage that runs `./gradlew spotlessCheck` and pulls the same cache. Add a release job in the release stage that runs on releases but not tags, uses the same go-semrel image, and runs `release changelog` followed by `release commit-and-tag build.gradle CHANGELOG.md`.",
+  "tags": [
+    "gradle",
+    "javafx",
+    "go-semrel",
+    "docker",
+    "cache",
+    "release",
+    "version-bump",
+    "spotless"
+  ]
+}

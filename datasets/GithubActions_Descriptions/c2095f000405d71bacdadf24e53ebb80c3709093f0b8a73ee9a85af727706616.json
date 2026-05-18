@@ -1,0 +1,15 @@
+{
+  "sha": "c2095f000405d71bacdadf24e53ebb80c3709093f0b8a73ee9a85af727706616",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1860,
+  "description": "Create a GitHub Actions workflow named Windows that runs on push and pull request events to all branches except docs/ and ChangeLog* files, and specific tags. The workflow uses a matrix strategy to build wheels for multiple Python versions and architectures on Windows. It checks out the code, sets up Python, installs dependencies, builds wheels, archives them, and conditionally publishes to PyPI or test PyPI.",
+  "tags": [
+    "python",
+    "windows",
+    "ci",
+    "build",
+    "pypi",
+    "test-pypi"
+  ]
+}

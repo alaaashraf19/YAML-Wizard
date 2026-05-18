@@ -1,0 +1,14 @@
+{
+  "sha": "559eb7957089f432e3bd4b034486bb6d865fd801fa5b8badfd16403a9fe3a8bf",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1233,
+  "description": "Create a GitHub Actions workflow named wasm_docker that runs on push to the master branch and on workflow dispatch. Use an ubuntu-latest job that checks out the repository, caches Docker images, installs UV for Python, compiles fastled.js, fastled.wasm, and index.html, scans for wasm/js/html artifacts, generates a timestamp and random hex, and uploads wasm artifacts with a uniquely generated name.",
+  "tags": [
+    "wasm",
+    "docker",
+    "python",
+    "github-actions",
+    "artifacts"
+  ]
+}

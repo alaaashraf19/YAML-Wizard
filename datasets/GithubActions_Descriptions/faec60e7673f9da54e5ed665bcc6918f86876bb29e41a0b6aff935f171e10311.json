@@ -1,0 +1,16 @@
+{
+  "sha": "faec60e7673f9da54e5ed665bcc6918f86876bb29e41a0b6aff935f171e10311",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2602,
+  "description": "Create a GitHub Actions workflow named Test that runs on push to the master branch, on pull requests, and on a scheduled cron job. The workflow has two jobs: check and gpu. The check job runs on a matrix of ubuntu-18.04, macos-latest, and windows-latest, and performs steps to set up R, install dependencies, build and check a package, and run tests. The gpu job runs on a self-hosted runner and builds and runs a Docker image with GPU support.",
+  "tags": [
+    "r",
+    "github-actions",
+    "docker",
+    "gpu",
+    "tests",
+    "matrix",
+    "cron"
+  ]
+}

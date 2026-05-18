@@ -1,0 +1,147 @@
+.cache:
+  key: &id001
+    files:
+    - Gemfile.lock
+    - gitlab-qa.gemspec
+    prefix: $RUBY_VERSION
+  paths: &id002
+  - vendor/ruby
+.release-base:
+  rules:
+  - changes:
+    - lib/**/version.rb
+    if: $CI_PIPELINE_SOURCE == "push" && ($CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+      || $CI_COMMIT_REF_NAME =~ /^[\d-]+-stable$/)
+cache-gems:
+  cache:
+    key: *id001
+    paths: *id002
+    policy: pull-push
+    when: on_success
+  rules:
+  - changes:
+    - Gemfile.lock
+    - .gitlab/ci/versions.yml
+    if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  - changes:
+    - Gemfile.lock
+    - .gitlab/ci/versions.yml
+    if: $CI_MERGE_REQUEST_IID
+  script:
+  - echo "Cached gems!"
+  stage: .pre
+danger-review:
+  needs:
+  - job: cache-gems
+    optional: true
+default:
+  before_script:
+  - bundle install
+  cache:
+    key: *id001
+    paths: *id002
+    policy: pull
+  image: ${CI_REGISTRY}/gitlab-org/gitlab-build-images/ci/debian-${DEBIAN_VERSION}-slim-ruby-${RUBY_VERSION}:rubygems-${RUBYGEMS_VERSION}-git-${GIT_VERSION}
+  tags:
+  - gitlab-org
+include:
+- local: .gitlab/ci/versions.yml
+- component: ${CI_SERVER_FQDN}/gitlab-org/components/danger-review/danger-review@1.4.0
+  inputs:
+    job_image: ${CI_REGISTRY}/gitlab-org/gitlab-build-images/ci/debian-${DEBIAN_VERSION}-slim-ruby-${RUBY_VERSION}:rubygems-${RUBYGEMS_VERSION}-git-${GIT_VERSION}
+    job_stage: check
+- component: gitlab.com/gitlab-org/components/gem-release/gem-release@~latest
+rspec:
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage/coverage.xml
+  coverage: /LOC \((\d{1,3}\.\d{1,2})\%\)/
+  needs:
+  - job: cache-gems
+    optional: true
+  script:
+  - bundle exec rspec --force-color
+  stage: test
+rubocop:
+  needs:
+  - job: cache-gems
+    optional: true
+  script:
+  - bundle exec rubocop --color
+  stage: check
+stages:
+- check
+- test
+- qa
+- deploy
+test-on-omnibus:
+  inherit:
+    variables:
+    - RUBY_VERSION
+    - DEBIAN_VERSION
+  needs:
+  - test-on-omnibus-env
+  rules:
+  - allow_failure: true
+    if: $CI_MERGE_REQUEST_IID
+    when: manual
+  - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH || $CI_COMMIT_REF_NAME =~ /^[\d-]+-stable$/
+  stage: qa
+  trigger:
+    forward:
+      pipeline_variables: true
+      yaml_variables: true
+    include: .gitlab/ci/omnibus.gitlab-ci.yml
+    strategy: depend
+  variables:
+    GITLAB_QA_CACHE_KEY: $GITLAB_QA_CACHE_KEY
+    QA_EXPORT_TEST_METRICS: 'false'
+    QA_PATH: .
+    QA_RETRY_FAILED_SPECS: 'false'
+    QA_RUN_TYPE: gitlab-qa
+    RELEASE: EE
+    RUN_ALL_TESTS: 'true'
+    RUN_WITH_BUNDLE: 'true'
+    SKIP_OMNIBUS_TRIGGER: 'true'
+    SKIP_REPORT_IN_ISSUES: 'true'
+    UPDATE_QA_CACHE: $UPDATE_QA_CACHE
+test-on-omnibus-env:
+  artifacts:
+    reports:
+      dotenv: $BUILD_ENV
+  before_script: []
+  cache: []
+  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/alpine:latest
+  rules:
+  - changes:
+    - Gemfile.lock
+    - .gitlab/ci/versions.yml
+    if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    variables:
+      UPDATE_QA_CACHE: 'true'
+  - changes:
+    - Gemfile.lock
+    - .gitlab/ci/versions.yml
+    if: $CI_MERGE_REQUEST_IID
+    variables:
+      UPDATE_QA_CACHE: 'true'
+  - variables:
+      UPDATE_QA_CACHE: 'false'
+    when: always
+  script:
+  - scripts/build-package-and-test-env
+  stage: .pre
+  variables:
+    BUILD_ENV: build.env
+variables:
+  BUNDLE_PATH: vendor
+  BUNDLE_SILENCE_ROOT_WARNING: 'true'
+  BUNDLE_SUPPRESS_INSTALL_USING_MESSAGES: 'true'
+workflow:
+  rules:
+  - if: $CI_MERGE_REQUEST_IID
+  - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH || $CI_COMMIT_REF_NAME =~ /^[\d-]+-stable$/
+  - if: $CI_COMMIT_TAG
+  - if: $CI_PIPELINE_SOURCE == "web"

@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_17465",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 840,
+  "description": "Create a GitLab CI pipeline with two stages, test and release, and set the default Docker image to themattrix/tox for jobs that do not specify their own image. In the test stage add a docs job that uses the python:3.10-slim image, runs pip3.10 install --upgrade pip and pip3.10 install -r requirements_dev.txt in before_script, then executes pip3.10 install ., cd docs/, and sphinx-build -b html -d build/doctrees -W source build/html. Also in test add a static_check job using python:3.9 that installs pre-commit and gitchangelog, then runs pre-commit run -a --hook-stage=manual. Add a tests job that inherits the default themattrix/tox image and runs tox. In the release stage add a pypi job using python:3.9, depends on tests and static_check, triggers only on tags matching the pattern vX.Y.Z, sets TWINE_USERNAME to __token__, and runs pip install -U twine gitchangelog pystache flit, appends an empty line to README.md, generates a changelog with gitchangelog >> README.md, builds the distribution with flit build, and uploads it with twine upload --verbose dist/*.",
+  "tags": [
+    "python-3.10",
+    "python-3.9",
+    "sphinx",
+    "tox",
+    "pre-commit",
+    "flit",
+    "twine",
+    "release",
+    "test",
+    "gitlab-ci"
+  ]
+}

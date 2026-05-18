@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_19044",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1335,
+  "description": "Create a GitLab CI pipeline using the maven:latest Docker image with a Maven repository cache at $CI_PROJECT_DIR/.m2/repository and a target/ cache. Define two stages, build and test, and set global variables MAVEN_CLI_OPTS='' and MAVEN_OPTS='-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository -DargLine=\"-Djdk.net.URLClassPath.disableClassPathURLCheck=true\"'. In the build stage add four jobs—build:main, build:neighborhood, build:probe, and build:shop—each setting PROFILE to main, neighborhood, probe-station, and shop respectively and executing the command \"mvn $MAVEN_CLI_OPTS -P $PROFILE package\". In the test stage add matching four jobs—test:main, test:neighborhood, test:probe, and test:shop—each using the same PROFILE variable and running \"mvn $MAVEN_CLI_OPTS -P $PROFILE test\", while always collecting the artifact path ProbeStationAgent/target/surefire-reports. No special rules or deployment targets are defined, so all jobs run on every pipeline execution.",
+  "tags": [
+    "maven",
+    "java",
+    "cache",
+    "multi-profile",
+    "gitlab-ci"
+  ]
+}

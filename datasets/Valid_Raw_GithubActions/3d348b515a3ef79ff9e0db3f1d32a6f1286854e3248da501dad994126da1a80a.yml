@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 5    
+    env:
+      DISPLAY: ':99'
+    steps:
+    - uses: actions/checkout@v2
+    - name: install-dependencies
+      run: sudo apt-get install --no-install-recommends -y gdb
+    - name: setup-x11
+      run: |
+        Xvfb :99 -screen 0 1024x768x24 &
+        sleep 2
+    - name: build
+      run: extra_flags=-DUI_AUTOMATION_TESTS ./build.sh
+    - name: run-tests
+      run: ./gf2

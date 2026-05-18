@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_10566",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 977,
+  "description": "Create a GitLab CI pipeline using the golang:1.11-alpine Docker image and a before_script that installs gcc, musl-dev, git and curl via apk. Define three stages: prepare, build, and release. In the prepare stage add a test job that runs `go test ./... -coverprofile=coverage.out` and `go tool cover -func=coverage.out`. In the build stage add a build-linux job that executes `GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build`, and a build-macos job that runs `GOOS=darwin GOARCH=amd64 CGO_ENABLED=0 go build`; both jobs store the resulting `guild` binary as an artifact named `guild_$CI_JOB_ID` on success. In the release stage add a release-linux job that runs `GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags \"-w\"` and a release-macos job that runs `GOOS=darwin GOARCH=amd64 CGO_ENABLED=0 go build -ldflags \"-w\"`; both jobs publish the `guild` binary as an artifact named `guild` and are triggered only on tag pushes.",
+  "tags": [
+    "go",
+    "golang",
+    "alpine",
+    "cross-compile",
+    "release",
+    "gitlab-ci"
+  ]
+}

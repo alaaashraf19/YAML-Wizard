@@ -1,0 +1,16 @@
+{
+  "sha": "f73dcac86c620de605bf5469cdacefea927ae81439d029598017e6086705ca08",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2547,
+  "description": "Create a GitHub Actions workflow named Build and upload to PyPI that runs on every push and pull request. Use two separate jobs to build wheels on ubuntu-18.04 and a source distribution on ubuntu-latest, both using Python 3.7. Install necessary dependencies and build wheels or sdist. A third job uploads the artifacts to PyPI when a tag starting with 'v' is pushed.",
+  "tags": [
+    "python",
+    "pypi",
+    "cibuildwheel",
+    "github-actions",
+    "ubuntu",
+    "sdist",
+    "wheels"
+  ]
+}

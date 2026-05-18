@@ -1,0 +1,7 @@
+build:
+  artifacts:
+    paths:
+    - '*.pdf'
+  image: aergus/latex
+  script:
+  - latexmk -f -lualatex -interaction=nonstopmode

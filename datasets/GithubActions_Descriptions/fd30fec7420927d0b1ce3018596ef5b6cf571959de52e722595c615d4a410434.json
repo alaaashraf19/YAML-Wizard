@@ -1,0 +1,14 @@
+{
+  "sha": "fd30fec7420927d0b1ce3018596ef5b6cf571959de52e722595c615d4a410434",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1128,
+  "description": "Create a GitHub Actions workflow named CI that runs on push and pull request events to the master branch. The workflow should have two jobs, build_gcc and build_clang_san, both running on ubuntu-22.04. The build_gcc job checks out the repository with submodules, installs g++-12, and runs .travis-script.sh with gcc-12 and g++-12. The build_clang_san job checks out the repository with submodules, installs clang-16 and g++-12, and runs .travis-script.sh with clang-16.",
+  "tags": [
+    "ci",
+    "ubuntu",
+    "gcc",
+    "clang",
+    "travis"
+  ]
+}

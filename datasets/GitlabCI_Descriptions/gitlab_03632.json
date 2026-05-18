@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_03632",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 513,
+  "description": "Create a GitLab CI pipeline that uses the golang:1.19 Docker image. Define three jobs—build, lint, and test—each running in the default test stage. The build job runs the commands: make all, make, git clone https://gitlab.com/aquachain/bootstraps ../bootstraps, and ./bin/aquachain import ../bootstraps/latest.dat. The lint job is allowed to fail, runs a before_script that enables dotglob, sets GO_FILES=$(find . -iname '*.go' -type f | grep -v /vendor/ | grep -v /build/), and builds the linter with make bin/golangci-lint, then executes make linter. The test job runs echo $(go env GOPATH), CGO_ENABLED=0 go get -v -d -t ./..., and CGO_ENABLED=0 bash testing/test-short-only.bash, with no caches, artifacts, services, or deployment targets defined.",
+  "tags": [
+    "golang",
+    "make",
+    "lint",
+    "test",
+    "gitlab-ci"
+  ]
+}

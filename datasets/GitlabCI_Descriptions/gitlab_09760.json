@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_09760",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 440,
+  "description": "Create a GitLab CI pipeline with three stages: check_syntax, deploy, and test. Add a check_deploy_code job in the check_syntax stage that runs ansible-playbook -i hosts.ini deploy.yaml --check then ansible-playbook -i hosts.ini test.yaml --check, and restrict it to runners tagged desktop. Add a deploy_network_config job in the deploy stage that runs ansible-playbook -i hosts.ini deploy.yaml on desktop runners. Add a test_network_config job in the test stage that runs ansible-playbook -i hosts.ini test.yaml on desktop runners.",
+  "tags": [
+    "ansible",
+    "desktop",
+    "network-config",
+    "gitlab-ci"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_10545",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 253,
+  "description": "Create a GitLab CI pipeline that uses the node:4.2.3 Docker image. Define a before_script that runs `npm config set spin false`, installs global packages `bower`, `ember-cli`, and `phantomjs-prebuilt` via `npm install -g`, then runs `npm install` and `bower install --allow-root`. Add an `ember` job (which runs in the default test stage) whose script executes `COVERAGE=true ember test --test-port 4200`. No caches, artifacts, services, or special rules are defined.",
+  "tags": [
+    "node",
+    "npm",
+    "ember",
+    "bower",
+    "phantomjs",
+    "test"
+  ]
+}

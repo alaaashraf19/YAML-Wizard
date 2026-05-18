@@ -1,0 +1,55 @@
+.script: 'python .ci/adjust_version.py IGitt/VERSION -b `date --utc +%Y%m%d%H%M%S`
+
+  python setup.py sdist bdist_wheel
+
+  twine upload dist/* -u "$PYPIUSER" -p "$PYPIPW"
+
+  '
+before_script:
+- apk --update add build-base libffi-dev openssl-dev git
+- pip install -r docs-requirements.txt
+- pip install -r requirements.txt
+- pip install -r test-requirements.txt
+cache:
+  paths:
+  - /root/.cache/pip
+check_code:
+  except:
+  - master@gitmate/open-source/IGitt
+  script:
+  - pip install 'coala-bears[alldeps]'
+  - coala --ci
+image: python:3.5-alpine
+release:
+  before_script: &id001
+  - pip install 'twine<1.2'
+  only:
+  - /^release\/.*$/@gitmate/open-source/IGitt
+  script:
+  - 'python .ci/adjust_version.py IGitt/VERSION -b `date --utc +%Y%m%d%H%M%S`
+
+    python setup.py sdist bdist_wheel
+
+    twine upload dist/* -u "$PYPIUSER" -p "$PYPIPW"
+
+    '
+  - ./.ci/push_tags.sh
+release_master:
+  before_script: *id001
+  only:
+  - master@gitmate/open-source/IGitt
+  script:
+  - 'python .ci/adjust_version.py IGitt/VERSION -b `date --utc +%Y%m%d%H%M%S`
+
+    python setup.py sdist bdist_wheel
+
+    twine upload dist/* -u "$PYPIUSER" -p "$PYPIPW"
+
+    '
+run_tests:
+  except:
+  - master@gitmate/open-source/IGitt
+  script:
+  - python3 -m pytest
+  - sh .ci/no_yaml.sh
+  - python3 setup.py docs

@@ -1,0 +1,14 @@
+{
+  "sha": "0386d818c36aef583e9c7cb89fd7290bd8e8d0414173e9a16ccfe32b777075ae",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 9418,
+  "description": "Create a GitHub Actions workflow named Release that triggers on push of any tag. The workflow should run on multiple jobs across different operating systems (ubuntu-16.04, windows-latest, macos-latest) with different configurations (portable option on or off). For each job, check out the repository, install Python 3.7, set up Qt environment, build the project, and then package and release it in various formats (AppImage, deb, full source, dmg, installer, portable).",
+  "tags": [
+    "qt",
+    "release",
+    "multi-os",
+    "packaging",
+    "github-actions"
+  ]
+}

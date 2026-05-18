@@ -1,0 +1,15 @@
+{
+  "sha": "56d478b5af0f1fb090d03ae0eff96280d651d9e6f123d0be7fcf2b26f5fc079b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2706,
+  "description": "Create a GitHub Actions workflow named windows that runs on push to the master branch and on pull requests to master. Use a windows-latest job to check out the code, set up build variables, install Qt 5.15.2, and then build and install kColorPicker and kImageAnnotator. Build the project with cmake and nmake, run tests, and upload the build artifacts. Additionally, create a release job that runs on ubuntu-latest and uses the ncipollo release action to create a prerelease with a given body and name.",
+  "tags": [
+    "windows",
+    "qt",
+    "cmake",
+    "nmake",
+    "release",
+    "github-actions"
+  ]
+}

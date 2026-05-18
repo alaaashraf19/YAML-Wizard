@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_11828",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 361,
+  "description": "Create a GitLab CI pipeline with a single deploy-dists job in the deploy stage using the docker:git image and the docker:dind service. The job runs before_script commands: docker info, docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY, apk add make, and chmod +x ./ci/*. Then it executes ./ci/build.sh as its main script, and after_script runs ./ci/test.sh followed by ./ci/deploy.sh. The job is limited to tags matching the regex /^v[0-9]+[\\.0-9]*[\\.0-9]*$/ and does not define any caches or artifacts.",
+  "tags": [
+    "docker",
+    "dind",
+    "deploy",
+    "ci-scripts",
+    "version-tags"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_06839",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 719,
+  "description": "Create a GitLab CI pipeline with two stages, test and deploy. Add a UnitTest job in the test stage that uses the python:3.6 Docker image, runs before_script commands `pip install -r requirements.txt`, `python manage.py makemigrations`, `python manage.py migrate`, and `python manage.py collectstatic --no-input`, then executes `coverage run --include='fitur_*/*' manage.py test` followed by `coverage report -m`. Add a Deployment job in the deploy stage that uses the ruby:2.4 Docker image, runs before_script commands `gem install dpl` and `wget -qO- https://cli-assets.heroku.com/install-ubuntu.sh | sh`, then runs `dpl --provider=heroku --app=$HEROKU_APPNAME --api-key=$HEROKU_APIKEY`, `export HEROKU_API_KEY=$HEROKU_APIKEY`, and `heroku run --app $HEROKU_APPNAME migrate`. Configure the Deployment job with a production environment named production and URL $HEROKU_APP_HOST, and let both jobs use the default on_success trigger with no caches or artifacts.",
+  "tags": [
+    "python-3.6",
+    "ruby-2.4",
+    "heroku",
+    "coverage",
+    "gitlab-ci",
+    "deployment",
+    "unit-test"
+  ]
+}

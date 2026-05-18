@@ -1,0 +1,8 @@
+include:
+- /templates/job/.base.yml
+yamllint:
+  extends: .base_tpl
+  image: registry.gitlab.com/pipeline-components/yamllint:latest
+  script: "find . -type f \\( -name \"*.yml\" -and ! -name \"*vault*\" \\) | xargs\
+    \ -r yamllint\nfor file in $files_to_lint; do\n  yamllint $file\ndone\n"
+  stage: lint

@@ -1,0 +1,14 @@
+{
+  "sha": "4ddb8278b2a17002b15df11864d9915de6ed6ce8661695ace66dfe14aa6d5d78",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3059,
+  "description": "Create a GitHub Actions workflow named Deploy dev docker that runs on every push to the dev branch. The workflow should have two jobs: deploy_docker_addon_dev and deploy_docker_dev. Both jobs run on ubuntu-latest, set up QEMU and Docker Buildx, login to Docker Hub and GitHub Container Registry, and then build and push Docker images with specific tags to both registries.",
+  "tags": [
+    "docker",
+    "docker-hub",
+    "github-container-registry",
+    "multi-platform",
+    "dev-environment"
+  ]
+}

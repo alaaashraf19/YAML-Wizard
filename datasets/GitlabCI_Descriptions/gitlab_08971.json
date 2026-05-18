@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_08971",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 597,
+  "description": "Create a GitLab CI pipeline that defines a \"schedules-sync\" stage using the Ruby environment inherited from .ruby-before_script. Define a hidden base job .base-schedules-sync that retries twice and runs the exact command \"bundle exec bin/manage_schedules --token $GITLAB_BOT_API_TOKEN_ON_COM $EXTRA_ARGS\". Add a \"dry-run:schedules-sync\" job that extends the base, sets allow_failure to true, defines the variable EXTRA_ARGS as \"--dry-run\", and is triggered either by changes to pipeline-schedules.yml when $GITLAB_BOT_API_TOKEN_ON_COM and $CI_MERGE_REQUEST_IID are present or manually. Add a \"schedules-sync\" job that also extends the base and runs only when the commit ref name is \"master\", the pipeline source is not \"schedule\", and $GITLAB_BOT_API_TOKEN_ON_COM is set.",
+  "tags": [
+    "ruby",
+    "bundle",
+    "schedules-sync",
+    "dry-run",
+    "gitlab-ci"
+  ]
+}

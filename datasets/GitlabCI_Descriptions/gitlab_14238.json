@@ -1,0 +1,12 @@
+{
+  "sha": "gitlab_14238",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 232,
+  "description": "Create a GitLab CI pipeline with a single deploy stage containing a pages job. The pages job runs on the default Docker image, clones the documentation.wiki repository from https://gitlab.com/our-sci/documentation.wiki.git, creates a .public directory, copies all files from documentation.wiki into .public, moves .public to a public directory, and publishes the public directory as a Pages artifact. The job should only run on the master branch.",
+  "tags": [
+    "gitlab-pages",
+    "wiki-clone",
+    "deploy"
+  ]
+}

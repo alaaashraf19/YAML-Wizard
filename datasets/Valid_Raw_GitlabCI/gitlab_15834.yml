@@ -1,0 +1,24 @@
+build:
+  image: docker:latest
+  only:
+  - master
+  script:
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+  - docker build -t $IMAGE_TAG .
+  - docker push $IMAGE_TAG
+  services:
+  - docker:dind
+  stage: build
+  variables:
+    IMAGE_TAG: $CI_REGISTRY_IMAGE
+stages:
+- test
+- build
+test:
+  before_script:
+  - yarn
+  coverage: /All files[^|]*\|[^|]*\s+([\d\.]+)/
+  image: node:alpine
+  script:
+  - yarn coverage
+  stage: test

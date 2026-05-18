@@ -1,0 +1,44 @@
+cache:
+  key: ${CI_BUILD_REF_NAME}
+  paths:
+  - node_modules/
+  - dist/
+dev_check:
+  only:
+  - dev
+  script:
+  - echo "Start Check Eros Config ..."
+  - bash check.sh debug
+  stage: check
+dev_deploy:
+  only:
+  - dev
+  script:
+  - bash deploy.sh debug
+  stage: deploy
+init:
+  script:
+  - cnpm install
+  stage: init
+js_build:
+  script:
+  - eros build
+  stage: build
+master_check:
+  only:
+  - master
+  script:
+  - echo "Start Check Eros Config ..."
+  - bash check.sh release
+  stage: check
+master_deploy:
+  only:
+  - master
+  script:
+  - bash deploy.sh release
+  stage: deploy
+stages:
+- init
+- check
+- build
+- deploy

@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_03847",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1038,
+  "description": "Create a GitLab CI pipeline with stages css, web, final, and deploy, using python:alpine for Python jobs and node:alpine for Node jobs. In the css stage define a css job that runs apk add --update make, yarn add sass, creates a symlink to the sass binary, executes make css, and publishes the www/ directory as an untracked artifact. In the web stage define a web job that runs apk add --update make, pip3 install -r requirement.txt, touches www/assets/css/cv.css, runs make web, and stores www/ as an untracked artifact. In the final stage define a check job that runs apk add --update make openjdk8-jre, pip3 install html5validator, touches www/cv.html www/cv.fr.html www/assets/css/cv.css, runs make check, and saves www/ as an untracked artifact, and also a pdf job that runs apk add --update make chromium, sets PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true yarn add puppeteer, touches the same files, runs make pdf, and saves www/ as an untracked artifact. In the deploy stage add a pages job that moves www to a public directory, publishes public/ as the pages artifact, and runs only on the master branch.",
+  "tags": [
+    "python-alpine",
+    "node-alpine",
+    "make",
+    "sass",
+    "html5validator",
+    "puppeteer",
+    "gitlab-pages",
+    "css",
+    "pdf",
+    "web"
+  ]
+}

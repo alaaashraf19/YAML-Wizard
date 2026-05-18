@@ -1,0 +1,14 @@
+{
+  "sha": "717b694e5891acd45224eb51e83751d936a86498247e6da906d3a06361c40d16",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2014,
+  "description": "Create a GitHub Actions workflow named MacSrc that runs on push and pull request events. Use a matrix job strategy with a single macos-latest job that checks out the repository, then conditionally runs a release or daily build script. Depending on the build type and upload flag, perform a VirusTotal scan, create a GitHub release with uploaded files, or both.",
+  "tags": [
+    "macos",
+    "github-release",
+    "virustotal",
+    "matrix-job",
+    "conditional-steps"
+  ]
+}

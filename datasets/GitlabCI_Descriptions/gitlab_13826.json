@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_13826",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 118,
+  "description": "Create a GitLab CI pipeline that uses the openjdk:11-jdk Docker image and defines a single stage called test. Add a job named test that runs in the test stage, executes the command ./gradlew clean test --info, and is configured to run on all branches except prod using an except rule. No services, caches, artifacts, or deployment targets are specified.",
+  "tags": [
+    "java",
+    "gradle",
+    "openjdk",
+    "test"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "77cc644a55cf20f0e71e8d18bc838659cf5db84be5a41a91eccf1c2e5974a991",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 773,
+  "description": "Create a weekly GitHub Actions workflow named pyudev weekly that runs on a scheduled cron job and allows manual dispatch. The workflow uses a matrix strategy to run a single ubuntu-latest job in a fedora:35 container for multiple tasks: fmt-travis with black and python3-isort, yamllint, and package with python, python3-build, and twine. For each task, check out the repository, install dependencies using dnf, and run a specific make target.",
+  "tags": [
+    "python",
+    "fedora",
+    "make",
+    "cron",
+    "workflow-dispatch"
+  ]
+}

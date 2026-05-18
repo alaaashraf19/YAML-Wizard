@@ -1,0 +1,18 @@
+{
+  "sha": "b727e21f654af815c1945b978c69da0c5130f86a88d5b294992d37913830ecd6",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5694,
+  "description": "Create a GitHub Actions workflow named Package Builder that triggers on push of tags matching v*.* and on workflow dispatch. The workflow builds wheels for multiple platforms (manylinux2014, manylinux_2_28, musllinux, macOS, and Windows) using cibuildwheel and uploads the resulting artifacts. Additionally, it builds a source distribution and uploads it to PyPI if the workflow is triggered by a push event with a tag.",
+  "tags": [
+    "python",
+    "cibuildwheel",
+    "manylinux",
+    "musllinux",
+    "macos",
+    "windows",
+    "pypi",
+    "tags",
+    "workflow-dispatch"
+  ]
+}

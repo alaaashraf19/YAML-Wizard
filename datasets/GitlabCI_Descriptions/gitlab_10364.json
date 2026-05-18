@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_10364",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 161,
+  "description": "Create a GitLab CI pipeline using the node:latest Docker image. Define a global before_script that installs Elm globally via npm, prints the Elm version, and runs elm-package install --yes. Add a build job (which runs in the default test stage) that executes ./build.sh. Cache the elm-stuff directory between runs. No special rules, artifacts, or deployment targets are defined.",
+  "tags": [
+    "node",
+    "elm",
+    "cache",
+    "gitlab-ci"
+  ]
+}

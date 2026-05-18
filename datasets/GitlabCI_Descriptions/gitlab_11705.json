@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_11705",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 829,
+  "description": "Create a GitLab CI pipeline using the node:latest Docker image with a cache key \"always\" that caches the node_modules/ directory. Define three stages: build, release, and deploy. Add a job_build job in the build stage that runs npm prune, npm install, and npm run build --production, and stores the dist/ and coverage/ directories as artifacts. Add a job_deploy_demo job in the deploy stage that depends on job_build, runs only on the master branch and not on tags, and executes bash deploy-gitlab.sh in the demo environment. Add a job_deploy_testreport job in the deploy stage that also depends on job_build, runs on all branches except tags, and runs bash <(curl -s https://codecov.io/bash) to upload coverage. Add a job_release job in the release stage that depends on job_build, runs only on tags matching the semantic version regex, and runs npm prune, npm update, and npm run ci-publish to publish the package.",
+  "tags": [
+    "node",
+    "npm",
+    "build",
+    "deploy",
+    "release",
+    "coverage",
+    "ci-publish",
+    "cache"
+  ]
+}

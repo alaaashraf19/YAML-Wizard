@@ -1,0 +1,8 @@
+codespell:
+  before_script:
+  - apt update
+  - apt install -qy codespell
+  image:
+    name: debian:stable
+  script:
+  - codespell *

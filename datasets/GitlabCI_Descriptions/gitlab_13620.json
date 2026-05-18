@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_13620",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1158,
+  "description": "Create a GitLab CI pipeline using the nishtahir/openjfx:8-jdk Docker image for the build and test jobs and the docker:git image for the release job, with a docker:dind service for the release stage. Define three stages: build, test, and release. In the build stage add a build job that runs the before_script to set GRADLE_USER_HOME and BUILD_DIR, makes gradlew executable, then executes './gradlew -g $GRADLE_USER_HOME clean assemble', './gradlew -g $GRADLE_USER_HOME createDockerfile', and './gradlew -g $GRADLE_USER_HOME cacheVersion', and caches the $GRADLE_USER_HOME and $BUILD_DIR paths keyed by $CI_BUILD_REF_NAME with untracked files. In the test stage add a test job that runs './gradlew -g $GRADLE_USER_HOME check'. In the release stage add a release job that runs only on the master branch, sets BUILD_VER=$(cat .version), builds Docker images with 'docker build -t registry.gitlab.com/nishtahir/linkbait:$BUILD_VER $BUILD_DIR/linkbait-server/docker/' and 'docker build -t registry.gitlab.com/nishtahir/linkbait:latest $BUILD_DIR/linkbait-server/docker/', logs in to registry.gitlab.com using the CI token, and pushes both images.",
+  "tags": [
+    "gradle",
+    "docker",
+    "openjfx",
+    "java",
+    "gitlab-ci",
+    "release",
+    "test"
+  ]
+}

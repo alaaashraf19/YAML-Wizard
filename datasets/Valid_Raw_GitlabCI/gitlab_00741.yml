@@ -1,0 +1,23 @@
+before_script:
+- pip install nose yanc requests PyWebDAV3
+- pip install --editable .
+deploy:
+  only:
+  - tags
+  script:
+  - pip install -U twine setuptools wheel
+  - python setup.py sdist
+  - python setup.py bdist_wheel
+  - twine upload -u $PYPI_USER -p $PYPI_PASS dist/*
+  stage: deploy
+image: python:3
+stages:
+- test
+- deploy
+test:
+  allow_failure: true
+  script:
+  - nosetests -v --with-yanc --nologcapture --nocapture -w tests
+  stage: test
+  variables:
+    PYTHONASYNCIODEBUG: '1'

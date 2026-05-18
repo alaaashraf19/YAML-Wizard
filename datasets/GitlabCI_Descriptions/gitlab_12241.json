@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_12241",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 273,
+  "description": "Create a GitLab CI pipeline that uses the rust:latest Docker image. Add a pages job in the deploy stage that runs cargo doc and then moves the generated documentation with mv target/doc/ public/, publishes the public/ directory as a pages artifact, and is limited to the master branch. Add a test:cargo job in the test stage that runs rustc --version && cargo --version, then cargo build --all && cargo build --examples, and finally cargo test --all --verbose. No caches, services, or additional variables are required.",
+  "tags": [
+    "rust",
+    "cargo",
+    "gitlab-pages",
+    "documentation",
+    "test"
+  ]
+}

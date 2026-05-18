@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_19273",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1062,
+  "description": "Create a GitLab CI pipeline using the ruby:2.6 Docker image for Ruby jobs and the docker:stable image with a docker:stable-dind service for dependency scanning. Define four stages: build, test, codequality, and security. In the build stage add a job named build that runs gem install bundler --no-document then bundle update, and publishes Gemfile.lock as an artifact. In the test stage add a job named test that runs gem install bundler --no-document, bundle update, and rake test using ruby:2.6. In the codequality stage add a job named rubocop that installs rubocop rubocop-performance rubocop-rails --no-document and then runs rubocop. In the security stage add a job named dependency_scanning that sets SP_VERSION=$(echo \"$CI_SERVER_VERSION\" | sed 's/^\\([0-9]*\\)\\.\\([0-9]*\\).*/\\1-\\2-stable/') and executes docker run --env DEP_SCAN_DISABLE_REMOTE_CHECKS=\"${DEP_SCAN_DISABLE_REMOTE_CHECKS:-false}\" --volume \"$PWD:/code\" --volume /var/run/docker.sock:/var/run/docker.sock \"registry.gitlab.com/gitlab-org/security-products/dependency-scanning:$SP_VERSION\" /code, uses docker:stable image, docker:stable-dind service, defines DOCKER_DRIVER=overlay2 variable, and stores gl-dependency-scanning-report.json as an artifact.",
+  "tags": [
+    "ruby",
+    "bundler",
+    "rubocop",
+    "dependency-scanning",
+    "docker",
+    "dind",
+    "security",
+    "test",
+    "codequality",
+    "build"
+  ]
+}

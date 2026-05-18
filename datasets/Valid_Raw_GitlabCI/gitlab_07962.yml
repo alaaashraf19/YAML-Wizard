@@ -1,0 +1,44 @@
+.build:
+  retry: 2
+  script:
+  - ci/build.sh
+  stage: build
+before_script:
+- docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+image: docker:19.03.2
+nothing_to_build:
+  script: echo 'All versions are already built, skipping'
+  stage: build
+services:
+- docker:19.03.2-dind
+stages:
+- test
+- prepare
+- build
+test-ci-generator:
+  artifacts:
+    paths:
+    - ci-generator/htmlcov
+  before_script:
+  - cd ci-generator
+  - python -V
+  - pip install virtualenv
+  - virtualenv venv
+  - source venv/bin/activate
+  - pip install -r requirements.txt
+  cache:
+    paths:
+    - .cache/pip
+    - ci-generator/venv/
+  coverage: /^TOTAL.*\s+(\d+\%)$/
+  image: python:3.7-alpine
+  script:
+  - coverage run -m unittest tests/test*.py
+  - coverage report
+  - coverage html
+  stage: test
+  variables:
+    PIP_CACHE_DIR: $CI_PROJECT_DIR/.cache/pip
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: /certs

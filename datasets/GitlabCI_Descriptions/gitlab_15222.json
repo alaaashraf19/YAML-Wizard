@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_15222",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1487,
+  "description": "Create a GitLab CI pipeline that uses the queuecumber/acso-builder Docker image and sets DOCKER_DRIVER=overlay2. Define two stages, build and log. In the build stage add a kernel job that runs only on triggers, executes: python3.6 scripts/setup_patches.py \"$KERN_MSG_TITLE\"; source workspace; cp $KERNEL_WORKSPACE/kernel_config $KERNEL_WORKSPACE/linux/.config; pushd $KERNEL_WORKSPACE/linux; make olddefconfig; make -j `getconf _NPROCESSORS_ONLN` deb-pkg LOCALVERSION=-acso; popd; cp $KERNEL_WORKSPACE/*.deb .; cp $KERNEL_WORKSPACE/*.tar.gz .; cp $KERNEL_WORKSPACE/*.changes .; cp $KERNEL_WORKSPACE/*.dsc .; echo $CI_JOB_ID > BUILD_JOB_ID; and publishes the generated *.deb, *.tar.gz, *.changes, *.dsc files and BUILD_JOB_ID as artifacts. In the log stage add a log job that also runs only on triggers, runs: BUILD_JOB_ID=$(cat BUILD_JOB_ID); python3.6 scripts/log_build.py \"$KERN_MSG_TITLE\" $BUILD_JOB_ID; mkdir -p ~/.ssh; echo \"$CI_PUSH_KEY\" | tr -d '\\r' > ~/.ssh/id_rsa; chmod 600 ~/.ssh/id_rsa; ssh-keyscan -H 'gitlab.com' >> ~/.ssh/known_hosts; git config --global user.email max.ehr@gmail.com; git config --global user.name Queuecumber; git remote -v; git checkout $CI_COMMIT_REF_NAME; git add db/*; git commit -m \"[CI: $CI_PIPELINE_ID] Add $KERN_MSG_TITLE\"; git remote set-url origin git@gitlab.com:Queuecumber/linux-acs-override.git; git pull --rebase; git push; curl --request POST --form \"token=$CI_JOB_TOKEN\" https://gitlab.com/api/v4/projects/2887717/ref/pages/trigger/pipeline; which triggers a GitLab Pages pipeline.",
+  "tags": [
+    "acso-builder",
+    "kernel",
+    "gitlab-pages",
+    "docker",
+    "make",
+    "trigger"
+  ]
+}

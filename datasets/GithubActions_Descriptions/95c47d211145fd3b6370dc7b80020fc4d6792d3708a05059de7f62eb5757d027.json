@@ -1,0 +1,17 @@
+{
+  "sha": "95c47d211145fd3b6370dc7b80020fc4d6792d3708a05059de7f62eb5757d027",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 947,
+  "description": "Create a GitHub Actions workflow named Windows that triggers on push events. Run two jobs in parallel: one on a Windows environment with MSVC, and another on an Ubuntu environment with MinGW and SDL. The MSVC job checks out the code, configures with CMake, and builds in both Debug and Release configurations. The MinGW job installs dependencies in a Fedora container, checks out the code, and builds with CMake and GCC.",
+  "tags": [
+    "windows",
+    "msvc",
+    "mingw",
+    "sdl",
+    "cmake",
+    "gcc",
+    "ubuntu",
+    "fedora"
+  ]
+}

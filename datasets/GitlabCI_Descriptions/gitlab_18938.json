@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_18938",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1312,
+  "description": "Create a GitLab CI pipeline that uses the remote Drupal Composer template and defines a parallel composer job that runs two matrix entries: one with DRUPAL_CORE_CONSTRAINT ^9 and PHP_TAG 8.1, the other with DRUPAL_CORE_CONSTRAINT 10.0.x-dev and PHP_TAG 8.2, setting COMPOSER_PLUGIN_PREPARE to false. Add a hidden .phpunit-local job that runs before_script commands to export SIMPLETEST_DB based on the DB_DRIVER (sqlite, mysql, pgsql) and then executes \"composer si\" while defining DTT_BASE_URL, DTT_MINK_DRIVER_ARGS, SELENIUM_CHROME_TAG and SYMFONY_DEPRECATIONS_HELPER variables. Define a phpunit-d9 job that extends .phpunit-base and .phpunit-local, depends on the composer matrix entry for PHP 8.1, sets DCI_SKIP_PHPUNIT to 0 and PHP_TAG to 8.1, and runs the PHPUnit test suite. Define a phpunit-d10 job that similarly extends .phpunit-base and .phpunit-local, depends on the composer matrix entry for PHP 8.2, sets DCI_SKIP_PHPUNIT to 0, and runs the PHPUnit test suite for Drupal 10. Include global variables DCI_SKIP_ESLINT, DCI_SKIP_PHPUNIT and DCI_SKIP_STYLELINT set to 1, and rely on the stages, image and services provided by the included template.",
+  "tags": [
+    "drupal",
+    "phpunit",
+    "composer",
+    "parallel-matrix",
+    "php-8.1",
+    "php-8.2"
+  ]
+}

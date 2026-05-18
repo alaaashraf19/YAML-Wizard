@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_07911",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 944,
+  "description": "Create a GitLab CI pipeline using the ruby:2.4 Docker image with postgres:latest and justinribeiro/chrome-headless:latest services, and set POSTGRES_DB, POSTGRES_USER, POSTGRES_PASSWORD variables. Define a cache named bundler keyed by $CI_BUILD_REF_NAME that stores cache/bundler/. Add an rspec job in the default test stage that uses a custom before_script `bundle install --path=cache/bundler --without production --jobs $(nproc) \"${FLAGS[@]}\"`, applies the bundler cache, and runs the script `RAILS_ENV=test bundle exec rake test`. The pipeline also includes a global before_script that updates apt, installs postgresql, cmake, prints ruby and node versions, installs bundler gem, runs a full bundle install, copies configuration files, and prepares the test database, but the rspec job overrides it with its own before_script.",
+  "tags": [
+    "ruby",
+    "rspec",
+    "bundler",
+    "postgres",
+    "chrome-headless",
+    "cache",
+    "rails",
+    "test"
+  ]
+}

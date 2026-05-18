@@ -1,0 +1,15 @@
+before_script:
+- rustc --version && cargo --version
+rust-latest:
+  image: rust:latest
+  script:
+  - cargo build --verbose
+  stage: build
+rust-nightly:
+  allow_failure: true
+  image: rustlang/rust:nightly
+  script:
+  - cargo build --verbose
+  stage: build
+stages:
+- build

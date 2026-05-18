@@ -1,0 +1,18 @@
+{
+  "sha": "d429de6a4722ecf1809ccea31393e81c1d04fc340caa971f1449263209d8c1f6",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1996,
+  "description": "Create a GitHub Actions workflow named build that runs on push, pull request, and weekly at 4:00 AM UTC. The workflow has three jobs: ruff to lint with ruff, test-sdist to verify tests run from a packaged version, and test to run tests across multiple Python versions and operating systems.",
+  "tags": [
+    "python",
+    "tests",
+    "ruff",
+    "tox",
+    "ubuntu",
+    "windows",
+    "macos",
+    "schedule",
+    "ci"
+  ]
+}

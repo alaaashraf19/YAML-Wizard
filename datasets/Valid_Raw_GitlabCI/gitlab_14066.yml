@@ -1,0 +1,32 @@
+build:
+  before_script:
+  - uname -a
+  - apt update
+  - apt -y install gfortran-12
+  - update-alternatives --install /usr/bin/gfortran gfortran /usr/bin/gfortran-12
+    999
+  - apt -y install make autoconf automake libtool pkg-config git python3-dev
+  - apt -y install libboost-all-dev
+  - git clone https://gitlab.com/mdds/mdds.git /mdds
+  - pushd /mdds
+  - ./autogen.sh
+  - make install
+  - popd
+  - git clone https://gitlab.com/ixion/ixion.git /ixion
+  - pushd /ixion
+  - ./autogen.sh
+  - make -j $(nproc)
+  - make install
+  - popd
+  - ldconfig
+  script:
+  - ./autogen.sh --enable-debug-utils --with-doc-example
+  - make -j $(nproc) check
+  - make -j $(nproc) check-valgrind-memcheck
+  stage: build
+image: gcc
+workflow:
+  rules:
+  - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+  - if: $CI_COMMIT_TAG
+  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH

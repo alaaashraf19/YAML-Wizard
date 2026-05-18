@@ -1,0 +1,17 @@
+cypress-e2e:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - cypress/screenshots
+    - cypress/videos
+  before_script:
+  - npm install
+  - npm run build
+  script:
+  - echo 'Spec folder'
+  - ls cypress/integration
+  - cypress run
+  stage: test
+image: cypress/internal:cy-0.19.2
+variables:
+  npm_config_loglevel: warn

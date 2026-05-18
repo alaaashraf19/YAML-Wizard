@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_09928",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 329,
+  "description": "Create a GitLab CI pipeline that defines a single job called prometheus-check running in the default test stage. The job uses the default Docker image and executes the exact shell commands: mkdir -p roles/prometheus, mv $(ls --ignore roles) roles/prometheus/, cp roles/prometheus/tests/test.yml test.yml, cp roles/prometheus/tests/inventory inventory, ansible-playbook --syntax-check -i inventory test.yml --list-tasks, and ansible-playbook -i inventory test.yml --list-tasks. No services, caches, artifacts, or special rules are configured for this job. The pipeline is intended to perform Ansible syntax checking and task listing for the Prometheus role.",
+  "tags": [
+    "ansible",
+    "syntax-check",
+    "gitlab-ci",
+    "prometheus",
+    "inventory"
+  ]
+}

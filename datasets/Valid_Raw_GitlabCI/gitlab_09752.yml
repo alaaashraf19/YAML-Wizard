@@ -1,0 +1,26 @@
+deploy:
+  image: node:12
+  only:
+  - tags
+  script:
+  - yarn
+  - yarn build
+  - cp build/index.html build/200.html
+  - node_modules/.bin/surge build genar-radio.surge.sh
+  stage: deploy
+  variables:
+    PUBLIC_URL: https://genar-radio.surge.sh
+    REACT_APP_VERSION: $CI_COMMIT_TAG
+    SURGE_LOGIN: $SURGE_LOGIN
+    SURGE_TOKEN: $SURGE_TOKEN
+include:
+- template: Code-Quality.gitlab-ci.yml
+stages:
+- test
+- deploy
+test:
+  image: node:12
+  script:
+  - yarn
+  - yarn test
+  stage: test

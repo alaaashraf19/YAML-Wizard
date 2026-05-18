@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_19227",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1227,
+  "description": "Create a GitLab CI pipeline that runs with the default image and includes a before_script that creates a symlink `ln -s $PWD data/xonotic-data.pk3dir`, sets `MAKEFLAGS=-j$(nproc)` and echoes it, sets `CC=\"gcc -pipe\"`, attempts to download `gmqcc` from https://beta.xonotic.org/pipeline-bin/gmqcc and, if successful, exports `QCC=\"$PWD/gmqcc\"` and makes it executable, otherwise clones the gmqcc repo, builds it with `make -C gmqcc`, and exports `QCC=\"$PWD/gmqcc/gmqcc\"`, then sets `QCCFLAGS_WATERMARK=gitlab_pipeline` and `ZIP=/bin/true`. Define a single stage `test` with two jobs. The `test_compilation_units` job runs only when files under `qcsrc/**/*` change and executes `make test-diff` (failing with colored messages if changes are detected) followed by `make test-comp`. The `test_sv_game` job runs on every pipeline and executes `export EXPECT=5c34854fb0d99f06ffa76929f5008f1f`, `qcsrc/tools/sv_game-hashtest.sh` and exits with its status. Add a workflow that skips the pipeline when the commit message matches `/Transifex autosync/` and otherwise runs.",
+  "tags": [
+    "xonotic",
+    "make",
+    "gcc",
+    "gmqcc",
+    "gitlab-ci",
+    "test"
+  ]
+}

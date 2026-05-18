@@ -1,0 +1,50 @@
+docker-build:
+  before_script:
+  - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  except:
+  - master
+  image: docker:latest
+  script:
+  - docker build --pull -t "$CI_REGISTRY_IMAGE/toolkit:$CI_COMMIT_REF_SLUG" .
+  - docker push "$CI_REGISTRY_IMAGE/toolkit:$CI_COMMIT_REF_SLUG"
+  services:
+  - docker:dind
+  stage: package
+docker-build-master:
+  before_script:
+  - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  image: docker:latest
+  only:
+  - master
+  script:
+  - docker build --pull -t "$CI_REGISTRY_IMAGE/toolkit" .
+  - docker push "$CI_REGISTRY_IMAGE/toolkit"
+  stage: package
+image: docker:latest
+publish:
+  dependencies:
+  - unit-test-job
+  image: maven:3.3.9-jdk-8
+  only:
+  - master
+  script:
+  - curl -X DELETE -u$BINTRAY_API_USER:$BINTRAY_API_KEY https://api.bintray.com/content/librehealth/lh-radiology-omod/radiology-0.1.0-dev-SNAPSHOT.omod
+  - curl -T omod/target/radiology-0.1.0-dev-SNAPSHOT.omod -u$BINTRAY_API_USER:$BINTRAY_API_KEY
+    https://api.bintray.com/content/librehealth/lh-radiology-omod/lh-radiology-devbuilds/latest/radiology-0.1.0-dev-SNAPSHOT.omod
+  - curl -X POST -u$BINTRAY_API_USER:$BINTRAY_API_KEY https://api.bintray.com/content/librehealth/lh-radiology-omod/lh-radiology-devbuilds/latest/publish
+  stage: build
+services:
+- docker:dind
+stages:
+- test
+- build
+- package
+unit-test-job:
+  artifacts:
+    expire_in: 5 days
+    paths:
+    - omod/target/*.omod
+  image: maven:3.3.9-jdk-8
+  script:
+  - mvn package -B
+  stage: test

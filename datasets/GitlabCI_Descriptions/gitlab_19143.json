@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_19143",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 802,
+  "description": "Create a GitLab CI pipeline that defines a hidden .test_template with a script running two Julia commands: `julia -e 'using Pkg; Pkg.clone(pwd()); Pkg.build(\"MyPackage\"); Pkg.test(\"MyPackage\", coverage = true)'` and `julia -e 'using Pkg; Pkg.add(\"Coverage\"); import MyPackage; cd(joinpath(dirname(pathof(MyPackage)), \"..\")); using Coverage; cl, tl = get_summary(process_folder()); println(\"(\", cl/tl*100, \"% ) covered\")'`. Add a `test:0.7` job using the `julia:0.7` image that executes the template script, and a `test:1.0` job using the `julia:1.0` image that also executes the same script. Add a `pages` job in the `deploy` stage that runs only on the `master` branch, uses the `julia:0.7` image, runs `apt-get update -qq && apt-get install -y git`, then `julia -e 'using Pkg; Pkg.clone(pwd()); Pkg.build(\"MyPackage\");'`, then `julia -e 'using Pkg; import MyPackage; Pkg.add(\"Documenter\")'`, then `julia --color=yes docs/make.jl`, moves the generated site with `mv docs/build public`, and publishes the `public` directory as an artifact.",
+  "tags": [
+    "julia",
+    "coverage",
+    "documenter",
+    "gitlab-pages",
+    "deploy",
+    "test"
+  ]
+}

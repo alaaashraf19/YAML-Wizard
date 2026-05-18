@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_16167",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 4410,
+  "description": "Create a GitLab CI pipeline with a single stage called images, using the quay.io/podman/stable:latest Docker image and the saas-linux-small-amd64 tag. Define a .build_image_template job that runs a before_script installing diffutils, printing uname and /etc/os-release, echoing SAMBA_CI_CONTAINER_REGISTRY, SAMBA_CI_CONTAINER_TAG, SAMBA_CI_IS_BROKEN_IMAGE, SAMBA_CI_REBUILD_IMAGES, SAMBA_CI_REBUILD_BROKEN_IMAGES, GITLAB_USER_LOGIN, writing ${SAMBA_CI_CONTAINER_TAG} to /tmp/sha1sum-tag.txt and diffing it against bootstrap/sha1sum.txt, then executes a script (set -xueo pipefail) that builds a podman image named samba-ci-${CI_JOB_NAME} with platform ${SAMBA_CI_PLATFORM} and tag ${SAMBA_CI_CONTAINER_TAG}, runs several podman containers to verify the sha1sum, generate a template, perform a smoke test with ${SAMBA_CI_TEST_JOB}, tags the image with both ${SAMBA_CI_CONTAINER_TAG} and a timestamped tag, and pushes the images to ${SAMBA_CI_CONTAINER_REGISTRY} unless SAMBA_CI_IS_BROKEN_IMAGE is \"yes\", failing if it is marked broken. Add jobs centos9s, debian11, debian12, fedora42, opensuse155, rocky8, ubuntu2004, ubuntu2204, ubuntu2404 that extend this template, and a debian11-32bit job that overrides SAMBA_CI_PLATFORM to linux/i386 and SAMBA_CI_TEST_JOB to samba-32bit. The template jobs run only when the variable SAMBA_CI_REBUILD_IMAGES equals \"yes\", while a .build_image_template_force_broken variant runs only when SAMBA_CI_REBUILD_BROKEN_IMAGES equals \"yes\" and sets SAMBA_CI_IS_BROKEN_IMAGE to \"yes\".",
+  "tags": [
+    "podman",
+    "container-build",
+    "samba-ci",
+    "images-stage",
+    "linux",
+    "gitlab-ci"
+  ]
+}

@@ -1,0 +1,18 @@
+before_script:
+- apt-get update -qq && apt-get install -y -qq unzip
+- curl -sSL https://get.sdkman.io | bash
+- echo sdkman_auto_answer=true > /root/.sdkman/etc/config
+- source /root/.sdkman/bin/sdkman-init.sh
+- sdk install gradle $GRADLE_VERSION < /dev/null
+- sdk use gradle $GRADLE_VERSION
+- echo grailsVersion=$GRAILS_VERSION > gradle.properties
+- echo gradleWrapperVersion=2.14 >> gradle.properties
+- ./gradlew --refresh-dependencies
+- echo {\"allow_root\":true} > /root/.bowerrc
+build:
+  script:
+  - ./gradlew build
+image: java:8
+variables:
+  GRADLE_VERSION: '2.13'
+  GRAILS_VERSION: 3.1.9

@@ -1,0 +1,14 @@
+{
+  "sha": "0714b4f569726bdff51ad142053f5d1b29b03af257d19f95ff0635a9460c7ccf",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2952,
+  "description": "Create a GitHub Actions workflow named Build - Staging that runs on a workflow dispatch. The workflow should trigger on tag creation and build the project for multiple platforms (linux-x64, linux-aarch64, win-x64, osx-x64, osx-aarch64) using a Makefile. For each platform, populate the environment, build and package the project, then upload the resulting artifact.",
+  "tags": [
+    "makefile",
+    "multi-platform",
+    "github-actions",
+    "tag-create",
+    "artifact-upload"
+  ]
+}

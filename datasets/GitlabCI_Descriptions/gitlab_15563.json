@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_15563",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1564,
+  "description": "Create a GitLab CI pipeline using the debian:bullseye-slim Docker image. Define two stages: test and coverity. In the test stage add a test job that runs the before_script commands `apt update` and `apt install -y build-essential meson git git-lfs unzip clang-tools clang-tidy libfuzzer-11-dev libubsan1 zlib1g-dev libpng-dev pkg-config gcovr wget tar curl`, then executes the meson and ninja commands: `CC=clang-11 CXX=clang++-11 meson -Ddev_build=true -Duse_miniz=true -Db_sanitize=address,undefined -Db_lundef=false --wrap-mode=forcefallback -Doptimization=1 -Doss_fuzz=true clang_build`, `cd clang_build`, `ninja scan-build`, `ninja test`, `meson configure -Duse_miniz=false -Db_sanitize=memory`, `MSAN_OPTIONS=exitcode=100 ninja test`, `cd ..`, `CC=gcc CXX=g++ meson -Ddev_build=true -Db_sanitize=address,undefined -Db_coverage=true gcc_build`, `cd gcc_build`, `ninja`, `meson test info -v`, `ninja test`, `ninja coverage-text`, `cat meson-logs/coverage.txt`. The job stores the directories clang_build/ and gcc_build/ as artifacts. In the coverity stage add a coverity job that runs `wget https://scan.coverity.com/download/linux64 --post-data \"token=$COVERITY_TOKEN&project=randy408%2Flibspng\" -O coverity_tool.tgz`, `mkdir coverity_tool`, `tar -xvzf coverity_tool.tgz -C coverity_tool --strip-components=1`, `ninja -C gcc_build clean`, `./coverity_tool/bin/cov-build --dir cov-int ninja -C gcc_build`, `tar czvf spng.tgz cov-int`, `curl --form token=$COVERITY_TOKEN --form email=randy408@protonmail.com --form file=@spng.tgz --form version=\"master\" --form description=\"libspng\" https://scan.coverity.com/builds?project=randy408%2Flibspng`, `rm spng.tgz`, `rm -r cov-int`. No special rules; the pipeline runs on every commit.",
+  "tags": [
+    "debian",
+    "coverity",
+    "meson",
+    "ninja",
+    "clang",
+    "gcc",
+    "fuzzing",
+    "ci"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_12460",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 201,
+  "description": "Create a GitLab CI pipeline that uses the fedora:latest Docker image and applies a global before_script running `su`, `yum install -y sudo`, `ls`, and `./common.sh` for every job. Define three jobs—docker, vagrant, and virtualbox—each placed in the default stage (test) and each executing its own script file. The docker job runs `./docker.sh`, the vagrant job runs `./vagrant.sh`, and the virtualbox job runs `./VirtualBoxInstall.sh`. The pipeline does not define any caches, artifacts, variables, services, or conditional rules.",
+  "tags": [
+    "fedora",
+    "docker",
+    "vagrant",
+    "virtualbox",
+    "yum",
+    "ci"
+  ]
+}

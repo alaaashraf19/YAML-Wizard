@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_05743",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 832,
+  "description": "Create a GitLab CI pipeline that defines a before_script to create /var/log/snapcraft/dnf, sets a global cache at /var/cache/snapcraft/dnf, and declares a single build stage. Add a build_fedora job using the fedora:latest image that runs: dnf --assumeyes install python3 dnf distribution-gpg-keys tree; source /etc/os-release; ./mkrpmtree -d $ID -r $VERSION_ID; and tree /tmp/snapcraft/root. Add a build_mageia job using the mageia:latest image that runs the same three commands as build_fedora. Add a build_opensuse job using the opensuse:tumbleweed image that runs: zypper refresh; zypper --non-interactive install python3 dnf tree python3-six; ./mkrpmtree -d opensuse -r 42.3; and tree /tmp/snapcraft/root. All three jobs belong to the build stage and are tagged with the shared runner tag.",
+  "tags": [
+    "fedora",
+    "mageia",
+    "opensuse",
+    "dnf",
+    "zypper",
+    "snapcraft",
+    "build"
+  ]
+}

@@ -1,0 +1,55 @@
+name: Python package
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    env:
+      DATABASE_URL: "postgres://postgres:postgres@localhost:5432/djangosnippets"
+      PYTHONPATH: "."
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 4
+      matrix:
+        python-version: [3.11]
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: djangosnippets
+        ports:
+          - 5432:5432
+        # needed because the postgres container does not provide a healthcheck
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+    steps:
+      - name: Install system packages for Pillow and psycopg2
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-dev libpq-dev libjpeg-dev zlib1g-dev \
+            libfreetype6-dev liblcms2-dev libwebp-dev libtiff5-dev \
+            libopenjp2-7-dev tk-dev tcl-dev
+      - uses: actions/checkout@v1
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Lint with flake8
+        run: |
+          pip install flake8
+          flake8 .
+      - name: iSort
+        run: |
+          pip install isort
+          isort --check-only --diff cab comments_spamfighter djangosnippets ratings
+      - name: Run migrations
+        run: python manage.py migrate
+      - name: Collect static files
+        run: python manage.py collectstatic --no-input
+      - name: Run Tests
+        run: python manage.py test --settings=djangosnippets.settings.testing

@@ -1,0 +1,28 @@
+before_script:
+- export GOPATH=$(pwd)
+- export DEPLOY_PATH=$(readlink -f $(pwd)/../deploy)
+go-build-1.5:
+  image: golang:1.5
+  script:
+  - apt-get update
+  - apt-get -q -y install rsync
+  - if [ -d "$DEPLOY_PATH" ]; then rm -r $DEPLOY_PATH/*; fi
+  - mkdir -p $DEPLOY_PATH
+  - rsync -av --exclude='.git/' --exclude='.gitignore' --exclude='.gitlab-ci.yml'
+    ./ $DEPLOY_PATH
+  stage: deploy
+go-test-1.5:
+  image: golang:1.5
+  script:
+  - go test
+  stage: test
+stages:
+- build
+- test
+- deploy
+vet:
+  image: golang:1.5
+  script:
+  - for f in $(find ./ -name '*.go'); do go tool vet -composites=false -unusedresult=false
+    $f; done
+  stage: build

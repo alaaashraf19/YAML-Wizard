@@ -1,0 +1,14 @@
+{
+  "sha": "22b2acf9534da013229dcdb056b8015891d3cfd11c0f83d1f437b762a1e9626a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 881,
+  "description": "Create a GitHub Actions workflow named Check clang-tidy that runs on push events to all branches except master, staging.tmp, trying.tmp, and staging-squash-merge.tmp, and on pull requests. Use an ubuntu-20.04 job that checks out the repository with submodules, installs clang-tidy and its dependencies, and builds the project with clang-tidy enabled, treating warnings as errors.",
+  "tags": [
+    "clang-tidy",
+    "ubuntu",
+    "cmake",
+    "ninja",
+    "cpp"
+  ]
+}

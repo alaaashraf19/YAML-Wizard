@@ -1,0 +1,14 @@
+{
+  "sha": "c1baf0a5e53b44d4cef0a0ee971b97b77cf2f7c4257a0398e8da873c88939a17",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1489,
+  "description": "Create a GitHub Actions workflow named tox that runs on push and pull request to the master branch. The workflow should have two jobs: lint and build. The lint job should run in a matrix of linters (checkdoc, pylava, mypy) on an ubuntu-latest environment, checking out the code and running tox with the selected linter. The build job should run in a matrix of Python versions (py36 to py310 with and without uvloop) on an ubuntu-latest environment with a RabbitMQ service, checking out the code and running tox with the selected Python version.",
+  "tags": [
+    "python",
+    "tox",
+    "linting",
+    "testing",
+    "rabbitmq"
+  ]
+}

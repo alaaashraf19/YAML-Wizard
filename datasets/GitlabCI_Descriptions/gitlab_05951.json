@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_05951",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 517,
+  "description": "Create a GitLab CI pipeline with two stages: build and deploy. In the build stage add an update_readme job that runs a curl POST request using the $README_TOKEN variable to trigger the pipeline of project 7064305 with variable single_repo=hadockermon. In the deploy stage add a push_github job that first downloads and executes the init.sh script from ludeeus/toolbox with arguments github HA-Custom_components root /hadockermon, then downloads and runs push.sh with the Europe/Oslo argument. Use the default runner image (no explicit Docker image or services) and run on all branches without additional rules.",
+  "tags": [
+    "github",
+    "curl",
+    "readme-trigger",
+    "deploy",
+    "gitlab-ci"
+  ]
+}

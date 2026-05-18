@@ -1,0 +1,14 @@
+{
+  "sha": "cfafd7767c69377ac1dcb7f5275cb6ad3dcec9670076c95176f6c382208db4cc",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1047,
+  "description": "Create a daily GitHub Actions workflow named validate-p4c that runs at midnight UTC. The workflow validates P4C compilation of P4-16 programs in parallel with normal tests. It uses an ubuntu-20.04 environment, checks out the repository with submodules, sets up ccache, builds the project, and runs validation tests with ctest.",
+  "tags": [
+    "validation",
+    "p4c",
+    "ctest",
+    "ubuntu",
+    "schedule"
+  ]
+}

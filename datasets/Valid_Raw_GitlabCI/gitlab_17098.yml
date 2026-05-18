@@ -1,0 +1,135 @@
+build-ci-test-docker-image:
+  allow_failure: true
+  image: docker:latest
+  needs: []
+  script:
+  - docker build -t registry.gitlab.com/sila2/sila_java/ci_test:latest -f docker/Dockerfile-ci-test
+    .
+  - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin
+    registry.gitlab.com
+  - docker push registry.gitlab.com/sila2/sila_java/ci_test:latest
+  services:
+  - docker:23-dind
+  stage: build_ci_test_docker_image
+  variables:
+    DOCKER_DRIVER: overlay
+    SPRING_PROFILES_ACTIVE: gitlab-ci
+  when: manual
+build-docker-image:
+  image: docker:latest
+  needs:
+  - build_and_test
+  only:
+  - master
+  script:
+  - docker build -t registry.gitlab.com/sila2/sila_java/hello_sila_server:latest -f
+    docker/Dockerfile-hello-sila-server .
+  - docker build -t registry.gitlab.com/sila2/sila_java/metadata_server:latest -f
+    docker/Dockerfile-metadata-server .
+  - docker build -t registry.gitlab.com/sila2/sila_java/test_server_server:latest
+    -f docker/Dockerfile-test-server-server .
+  - docker build -t registry.gitlab.com/sila2/sila_java/thermostat_server:latest -f
+    docker/Dockerfile-thermostat-server .
+  - docker build -t registry.gitlab.com/sila2/sila_java/code_generator:latest -f docker/Dockerfile-code-generator
+    .
+  - docker build -t registry.gitlab.com/sila2/sila_java/broker:latest -f docker/Dockerfile-broker
+    .
+  - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin
+    registry.gitlab.com
+  - docker push registry.gitlab.com/sila2/sila_java/hello_sila_server:latest
+  - docker push registry.gitlab.com/sila2/sila_java/metadata_server:latest
+  - docker push registry.gitlab.com/sila2/sila_java/test_server_server:latest
+  - docker push registry.gitlab.com/sila2/sila_java/thermostat_server:latest
+  - docker push registry.gitlab.com/sila2/sila_java/code_generator:latest
+  - docker push registry.gitlab.com/sila2/sila_java/broker:latest
+  services:
+  - docker:23-dind
+  stage: deploy_docker
+  variables:
+    DOCKER_DRIVER: overlay
+    SPRING_PROFILES_ACTIVE: gitlab-ci
+build_and_test:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - examples/hello_sila/target/hello_sila-*.jar
+    - examples/test_server/target/test_server-*.jar
+    - examples/binary_transfer/target/binary_transfer-*.jar
+    - examples/metadata/target/metadata-*.jar
+    - examples/thermostat/target/thermostat-*.jar
+    - library/core/target/core-*.jar
+    - library/cloudier/target/cloudier-*.jar
+    - library/manager/target/manager-*.jar
+    - library/maven_plugin/target/maven_plugin-*.jar
+    - library/server_base/target/server_base-*.jar
+    - library/sila_base/target/sila_base-*.jar
+    - tools/broker/target/broker-*.jar
+    - tools/code_generator/target/code_generator-*.jar
+    - interoperability/client/target/client-*.jar
+    - interoperability/server/target/server-*.jar
+    - target/site/apidocs
+  image: maven:3.8.6-eclipse-temurin-11
+  script:
+  - mvn $MAVEN_CLI_OPTS install -f pom.xml
+  - mvn $MAVEN_CLI_OPTS javadoc:aggregate -pl "!interoperability" -f pom.xml
+  stage: build_and_test
+cache:
+  paths:
+  - .m2/repository
+image: maven:3.8.6-eclipse-temurin-11
+interoperability_test:
+  allow_failure: true
+  artifacts:
+    paths:
+    - server.log
+    - client.log
+    - interoperability/server-test-report.xml
+    - interoperability/client-test-report.xml
+    when: always
+  image: registry.gitlab.com/sila2/sila_java/ci_test:latest
+  needs:
+  - build_and_test
+  script:
+  - java -jar interoperability/server/target/server-exec.jar > server.log 2>&1 & server_pid=$!
+  - sleep 10
+  - cd interoperability/
+  - python3 -m pip install sila2-interop-communication-tester
+  - python3 -m sila2_interop_communication_tester.test_client --report-file server-test-report.xml
+    --testsuite-name "SiLA Java"
+  - python3 -m sila2_interop_communication_tester.test_server --report-file client-test-report.xml
+    --server-address 127.0.0.1:50053 --testsuite-name "SiLA Java" & client_test_pid=$!
+  - cd -
+  - java -jar interoperability/client/target/client-exec.jar > client.log 2>&1
+  - kill -INT $client_test_pid
+  - sleep 5
+  stage: interoperability_test
+pages:
+  artifacts:
+    paths:
+    - public/
+  needs:
+  - build_and_test
+  only:
+  - master
+  script:
+  - mv target/site/apidocs public
+  stage: deploy_doc
+stages:
+- manual
+- build_ci_test_docker_image
+- build_and_test
+- interoperability_test
+- deploy_doc
+- deploy_docker
+start:
+  allow_failure: false
+  except:
+  - master
+  script: echo "Starting to validate and verify"
+  stage: manual
+  when: manual
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+  MAVEN_CLI_OPTS: --batch-mode --errors --show-version -DinstallAtEnd=true -DdeployAtEnd=false
+  MAVEN_OPTS: -Dmaven.repo.local=.m2/repository -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN
+    -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_10833",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 369,
+  "description": "Create a GitLab CI pipeline that defines a single build stage and uses the Docker image registry.gitlab.com/jft/irrlicht_extended/clang:d091831e98b786768673ecc42dbf713eb5d47f9b for all jobs. Add a job named build:clang that runs in the build stage. In this job execute the commands `mkdir build && cd build`, then `cmake \"..\" && make -j $(nproc)`. No caches, artifacts, services, or special rules are required.",
+  "tags": [
+    "clang",
+    "cmake",
+    "make",
+    "docker",
+    "build"
+  ]
+}

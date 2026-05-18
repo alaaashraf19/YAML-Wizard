@@ -1,0 +1,241 @@
+.build:
+  cache: &id003
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+    - node_modules/
+    policy: pull
+  except: &id001
+  - tags
+  retry: 2
+  stage: build
+.defaults:
+  except: *id001
+  retry: 2
+.deploy:
+  cache: &id009
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+    - node_modules/
+    policy: pull
+  dependencies: &id010
+  - build:digest
+  - build:connect
+  - chrome
+  except: *id001
+  image: node:17
+  only: &id011
+  - master@wallzero/ui-router-react-digest
+  retry: 2
+  stage: deploy
+.e2e:
+  artifacts: &id006
+    expire_in: 2 hrs
+    paths:
+    - public/
+    - reports/screenshots/
+    when: always
+  cache: &id007
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+    - node_modules/
+    policy: pull
+  dependencies: &id008
+  - lint
+  - unit
+  - build:digest
+  - build:connect
+  - build:demo-simple
+  - build:demo-redux
+  except: *id001
+  image: registry.hub.docker.com/atlassianlabs/docker-node-jdk-chrome-firefox:latest
+  retry: 0
+  stage: e2e
+.test:
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+    - node_modules/
+    policy: pull
+  dependencies: &id002
+  - build:digest
+  - build:connect
+  except: *id001
+  retry: 2
+  stage: test
+.test_demo:
+  artifacts: &id004
+    expire_in: 2 hrs
+    paths:
+    - public/
+  cache: &id005
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+    - node_modules/
+    policy: pull
+  dependencies: *id002
+  except: *id001
+  retry: 2
+  stage: test
+before_script:
+- echo "CPU $(awk '/siblings/ {print $3}' /proc/cpuinfo | uniq)x$(awk '/cpu MHz/ {print
+  $4}' /proc/cpuinfo | sort -nrk 1 | head -1) MHz"
+- echo "Memory $(($(awk '/MemTotal/ {print $2}' /proc/meminfo)/1024)) gB"
+- node -v
+- npm -v
+- pwd
+- ls -alh --color | grep "^d" && ls -alh --color | grep -v "^d"
+build:connect:
+  artifacts:
+    expire_in: 2 hrs
+    paths:
+    - packages/connect/dist
+  cache: *id003
+  except: *id001
+  retry: 2
+  script:
+  - PARALLEL='off' npm run lerna -- run build --scope ui-router-react-connect --include-filtered-dependencies
+  stage: build
+build:demo-redux:
+  artifacts: *id004
+  cache: *id005
+  dependencies: *id002
+  except: *id001
+  retry: 2
+  script:
+  - PARALLEL='off' npm run lerna -- run build --scope ui-router-react-digest-redux-demo
+  - npm run copy:stats
+  stage: test
+build:demo-simple:
+  artifacts: *id004
+  cache: *id005
+  dependencies: *id002
+  except: *id001
+  retry: 2
+  script:
+  - PARALLEL='off' npm run lerna -- run build --scope ui-router-react-digest-simple-demo
+  - npm run copy:stats
+  stage: test
+build:digest:
+  artifacts:
+    expire_in: 2 hrs
+    paths:
+    - packages/digest/dist
+    - public
+  cache: *id003
+  except: *id001
+  retry: 2
+  script:
+  - PARALLEL='off' npm run lerna -- run build --scope ui-router-react-digest --include-filtered-dependencies
+  - mkdir public
+  - npm run copy:stats
+  stage: build
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+  - node_modules/
+  - package-lock.json
+  - packages/digest/node_modules/
+  - demo/redux/node_modules/
+  - demo/simple/node_modules/
+chrome:
+  artifacts: *id006
+  cache: *id007
+  dependencies: *id008
+  except: *id001
+  image: registry.hub.docker.com/atlassianlabs/docker-node-jdk-chrome-firefox:latest
+  retry: 0
+  script:
+  - ln -sf /opt/google/chrome/google-chrome /usr/bin/google-chrome
+  - google-chrome --version
+  - npm run e2e:chrome
+  stage: e2e
+firefox:
+  artifacts: *id006
+  cache: *id007
+  dependencies: *id008
+  except: *id001
+  image: registry.hub.docker.com/atlassianlabs/docker-node-jdk-chrome-firefox:latest
+  retry: 0
+  script:
+  - ln -sf /usr/lib/firefox-esr/firefox-esr /usr/bin/firefox
+  - /usr/bin/firefox --version
+  - npm run e2e:firefox
+  stage: e2e
+image: node:17-alpine
+install:
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+    - node_modules/
+    - package-lock.json
+    - packages/digest/node_modules/
+    - demo/redux/node_modules/
+    - demo/simple/node_modules/
+    policy: push
+  except: *id001
+  retry: 2
+  script:
+  - npm run bootstrap
+  stage: install
+lint:
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+    - node_modules/
+    policy: pull
+  dependencies: *id002
+  except: *id001
+  retry: 2
+  script:
+  - npm run lint
+  stage: test
+pages:
+  artifacts:
+    paths:
+    - public/
+  cache: *id009
+  dependencies: *id010
+  except: *id001
+  image: node:17
+  only: *id011
+  retry: 2
+  script:
+  - echo "deploying demo to gitlab pages"
+  stage: deploy
+release:
+  cache: *id009
+  dependencies: *id010
+  except: *id001
+  image: node:17
+  only: *id011
+  retry: 2
+  script:
+  - npm run semantic-release
+  - npm run release
+  stage: deploy
+stages:
+- install
+- build
+- test
+- e2e
+- deploy
+unit:
+  artifacts:
+    expire_in: 2 hrs
+    paths:
+    - public/
+    reports:
+      junit: reports/junit.xml
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+    - node_modules/
+    policy: pull
+  dependencies: *id002
+  except: *id001
+  retry: 2
+  script:
+  - npm run unit:ci
+  - npm run unit:merge
+  - npm run copy:stats
+  stage: test

@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_13690",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 601,
+  "description": "Create a GitLab CI pipeline using the rust:latest Docker image with a postgres:latest service and a global cache of .cargo/. Define a single build stage and a run-build job that runs in the build stage, sets the DATABASE_URL variable, uses the rust:latest image, caches .cargo/ and target/, and executes the script lines: echo $CARGO_HOME, cargo install diesel_cli, cargo install cargo-deb, diesel migration run, rustc --version && cargo --version, time cargo deb --verbose -- --jobs 1. The job collects any .deb files from target/debian/ as artifacts. No rules or only/except conditions are specified, so the job runs on all branches.",
+  "tags": [
+    "rust",
+    "cargo",
+    "diesel",
+    "postgres",
+    "deb",
+    "gitlab-ci",
+    "build"
+  ]
+}

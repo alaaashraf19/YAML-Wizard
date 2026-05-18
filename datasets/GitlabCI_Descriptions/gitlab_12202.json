@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_12202",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1111,
+  "description": "Create a GitLab CI pipeline using the blurri/meteor-node Docker image with a mongo service and set METEOR_ALLOW_SUPERUSER=true. Add a global before_script that exports PATH, installs Yarn 0.16.1 via curl, configures Yarn cache to .yarn, and runs yarn install, and cache the directories node_modules, ~/.npm, ~/.meteor, ~/meteor and .yarn. Define stages test and deploy. In the test stage add an integration_tests job that runs only on develop and master branches and executes `yarn run test:integration`. Also add a spec_tests job that runs `yarn run test` and captures coverage using the regex `^Statements\\s*:\\s*([^%]+)`. In the deploy stage add a deploy_dev job that runs only on the master branch, with a before_script that installs openssh-client if missing, starts ssh-agent, adds $SSH_PRIVATE_KEY, configures SSH to skip host checking, updates apt, installs build-essential, installs node-gyp globally, and runs `npm install --production`; then the script changes to ./.deploy-prod and runs `../node_modules/.bin/mup setup` and `../node_modules/.bin/mup deploy` to deploy the Meteor app.",
+  "tags": [
+    "meteor",
+    "yarn",
+    "mongo",
+    "integration-tests",
+    "spec-tests",
+    "deployment",
+    "ssh",
+    "node-gyp"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_04372",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 279,
+  "description": "Create a GitLab CI pipeline using the node:latest Docker image and two services: selenium/standalone-chrome:latest and appuio/example-spring-boot. Define a variable selenium_remote_url set to http://selenium__standalone-chrome:4444/wd/hub/. Add a global before_script that runs curl \"http://appuio__example-spring-boot:8080\". In the default stage add a cucumber job that executes the command cat /etc/hosts, with no artifacts, caches, or rules.",
+  "tags": [
+    "node",
+    "selenium",
+    "cucumber",
+    "spring-boot",
+    "e2e"
+  ]
+}

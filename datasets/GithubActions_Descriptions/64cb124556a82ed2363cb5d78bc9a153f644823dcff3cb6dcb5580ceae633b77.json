@@ -1,0 +1,17 @@
+{
+  "sha": "64cb124556a82ed2363cb5d78bc9a153f644823dcff3cb6dcb5580ceae633b77",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 8139,
+  "description": "Create a GitHub Actions workflow named Build App that triggers on push to the master branch. The workflow should run a Windows job with a matrix strategy for different configurations. It checks out the repository, sets up a development environment, caches wxWidgets config and build, configures and builds wxWidgets, builds the app, uploads it as a GitHub artifact, tests the app build, updates the bleeding-edge tag, creates a release, and cleans up.",
+  "tags": [
+    "windows",
+    "github-actions",
+    "ci",
+    "powershell",
+    "cmake",
+    "wxwidgets",
+    "release",
+    "artifacts"
+  ]
+}

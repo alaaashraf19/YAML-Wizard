@@ -1,0 +1,17 @@
+{
+  "sha": "38cdb5ae5c89dc51144a01f301bc1e48378d4d7049ce04bd9478943d123fe8c0",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5983,
+  "description": "Create a GitHub Actions workflow named build sakura that runs on push and pull request events for master, feature/*, and release/* branches, excluding certain paths. The workflow uses a matrix strategy to build on Windows 2019 and 2022 with Debug and Release configurations for Win32 and x64 platforms. It checks out the code, sets up MSBuild, and then runs a series of steps including setting environment variables, building with MSBuild, running unit tests, installing Locale Emulator, building HTML Help, updating Inno Setup, building an installer, and uploading various artifacts.",
+  "tags": [
+    "windows",
+    "msbuild",
+    "github-actions",
+    "ci",
+    "installer",
+    "html-help",
+    "locale-emulator",
+    "innosetup"
+  ]
+}

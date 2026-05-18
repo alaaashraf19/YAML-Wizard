@@ -1,0 +1,11 @@
+auto_build:timer:
+  extends:
+  - .with-bundle
+  - .common-ci-tokens
+  resource_group: auto-build-timer
+  rules:
+  - if: $AUTO_BUILD_TIMER == "true"
+    when: always
+  script:
+  - bundle exec rake 'auto_build:timer'
+  stage: automation

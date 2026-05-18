@@ -1,0 +1,14 @@
+{
+  "sha": "047da3d891bf4d6f349dcf0ffa17ef0cb11ceb3881cd3d10c254e8981fdff270",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2304,
+  "description": "Create a GitHub Actions workflow named Test and lint that runs on every push and pull request. The workflow should have read permission to repository contents and include three jobs: tests-27, tests, and linting. The tests-27 job runs on Python 2.7, the tests job runs on multiple Python versions (3.10-dev, 3.9, 3.8, 3.7, 3.6) with a matrix strategy, and the linting job runs on Python 3.9. Each job should check out the code, set up Python, install dependencies, and run specific tests or linting tasks.",
+  "tags": [
+    "python",
+    "tests",
+    "linting",
+    "github-actions",
+    "ci"
+  ]
+}

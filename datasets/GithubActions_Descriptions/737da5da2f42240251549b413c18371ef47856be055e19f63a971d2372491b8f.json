@@ -1,0 +1,19 @@
+{
+  "sha": "737da5da2f42240251549b413c18371ef47856be055e19f63a971d2372491b8f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3486,
+  "description": "Create a GitHub Actions workflow named CI that runs on every push to develop, master, main, and releases branches and on pull requests. The workflow has two jobs: test and lint. The test job runs on a matrix of Linux, macOS, and Windows environments with multiple Python versions, checks out the repository, sets up Python, determines the month number and venv path, restores cache, creates a virtual environment if necessary, and runs tests with tox. The lint job runs on ubuntu-latest, checks out the repository, sets up Python 3.12, determines the month number, restores cache, creates a virtual environment if necessary, builds documentation, and checks type annotations with tox and mypy.",
+  "tags": [
+    "python",
+    "ci",
+    "tox",
+    "ubuntu",
+    "macos",
+    "windows",
+    "tests",
+    "linting",
+    "documentation",
+    "type-annotations"
+  ]
+}

@@ -1,0 +1,131 @@
+.run_benchmark:
+  artifacts: &id003
+    paths:
+    - .benchmarks
+    - prof
+  script: &id004
+  - apt-get -qq update
+  - apt-get -y -qq install graphviz inxi > /dev/null
+  - inxi -c0 -v3
+  - pip install tox
+  - tox
+  stage: benchmark
+  tags: &id005
+  - docker
+.run_tox:
+  script: &id001
+  - pip install tox
+  - tox
+  stage: test
+  tags: &id002
+  - docker
+before_script:
+- test -f /usr/local/bin/pypy && ln -s pypy /usr/local/bin/python
+- test -f /usr/local/bin/pypy3 && ln -s pypy3 /usr/local/bin/python
+docs:
+  artifacts:
+    paths:
+    - docs/_build/html
+  image: python:3.6
+  script: *id001
+  stage: test
+  tags: *id002
+  variables:
+    TOXENV: docs
+lint:
+  image: python:3.6
+  script: *id001
+  stage: test
+  tags: *id002
+  variables:
+    TOXENV: lint
+pages:
+  artifacts:
+    paths:
+    - public
+  dependencies:
+  - docs
+  only:
+  - /^v[0-9]+.*/
+  script:
+  - mv docs/_build/html public
+  stage: deploy
+py34-benchmark:
+  artifacts: *id003
+  image: python:3.4
+  script: *id004
+  stage: benchmark
+  tags: *id005
+  variables:
+    TOXENV: py34-benchmark
+py34-test:
+  image: python:3.4
+  script: *id001
+  stage: test
+  tags: *id002
+  variables:
+    TOXENV: py34-test
+py35-benchmark:
+  artifacts: *id003
+  image: python:3.5
+  script: *id004
+  stage: benchmark
+  tags: *id005
+  variables:
+    TOXENV: py35-benchmark
+py35-test:
+  image: python:3.5
+  script: *id001
+  stage: test
+  tags: *id002
+  variables:
+    TOXENV: py35-test
+py36-benchmark:
+  artifacts: *id003
+  image: python:3.6
+  script: *id004
+  stage: benchmark
+  tags: *id005
+  variables:
+    TOXENV: py36-benchmark
+py36-test:
+  image: python:3.6
+  script: *id001
+  stage: test
+  tags: *id002
+  variables:
+    TOXENV: py36-test
+py37-benchmark:
+  artifacts: *id003
+  image: python:3.7
+  script: *id004
+  stage: benchmark
+  tags: *id005
+  variables:
+    TOXENV: py37-benchmark
+py37-test:
+  image: python:3.7
+  script: *id001
+  stage: test
+  tags: *id002
+  variables:
+    TOXENV: py37-test
+pypy3-benchmark:
+  artifacts: *id003
+  image: pypy:3
+  script: *id004
+  stage: benchmark
+  tags: *id005
+  variables:
+    TOXENV: pypy3-benchmark
+pypy3-test:
+  image: pypy:3
+  script: *id001
+  stage: test
+  tags: *id002
+  variables:
+    TOXENV: pypy3-test
+stages:
+- test
+- benchmark
+- deploy

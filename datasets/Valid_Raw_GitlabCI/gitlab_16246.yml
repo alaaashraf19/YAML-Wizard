@@ -1,0 +1,29 @@
+build_job:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - build
+  script:
+  - yarn install && yarn build
+  stage: build
+deploy_job:
+  dependencies:
+  - build_job
+  image: ruby:2.2
+  only:
+  - master
+  script:
+  - gem install dpl
+  - dpl --provider=heroku --app=saycle-web-live --api-key=$HEROKU_PRODUCTION_API_KEY
+  stage: deploy
+image: node:6.11.3
+stages:
+- build
+- test
+- deploy
+test_job:
+  artifacts:
+    expire_in: 1 week
+  script:
+  - echo "blablabla"
+  stage: test

@@ -1,0 +1,15 @@
+{
+  "sha": "9dddc3ad6791b1ebc4e7c4c67cd7f7e32cf5d384a598b79c72c10ae92e65b692",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 796,
+  "description": "Create a GitHub Actions workflow named gcc sanity checks that runs on push to feature/sanity-checks-for-github-ci and on pull requests to master. Use two ubuntu-22.04 jobs, one for GCC C++03 Linux STL and one for GCC C++03 Linux No STL. In each job, check out the repository, fetch the latest changes, configure cmake with STL or without STL, verify the GCC version, and build with make.",
+  "tags": [
+    "gcc",
+    "c++03",
+    "linux",
+    "cmake",
+    "ubuntu",
+    "sanity-checks"
+  ]
+}

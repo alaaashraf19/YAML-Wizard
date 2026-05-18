@@ -1,0 +1,30 @@
+name: 🔂 Surge PR Preview
+
+on: [push, pull_request]
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 3.1.300
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: "10.x"
+
+      - uses: afc163/surge-preview@v1
+        name: Deploy Preview 🚀
+        with:
+          surge_token: ${{ secrets.SURGE_TOKEN }}
+          github_token: ${{secrets.GH_PUSH_TOKEN}}
+          build: |
+            npm install
+            dotnet build
+            dotnet publish -c Release -o cargo
+          dist: cargo

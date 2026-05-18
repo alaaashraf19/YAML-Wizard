@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_14831",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 266,
+  "description": "Create a GitLab CI pipeline using the node:8 Docker image. Define two stages: lint and test, and a before_script that runs npm install -g react-native-cli, npm install, and react-native link for all jobs. Add a lint stage with an eslint job that runs npm run lint, and a flow job that runs npm run flow. Add a test stage with a jest job that runs npm run test-cov. No caches, artifacts, or special rules are needed.",
+  "tags": [
+    "node",
+    "react-native",
+    "eslint",
+    "flow",
+    "jest",
+    "lint",
+    "test"
+  ]
+}

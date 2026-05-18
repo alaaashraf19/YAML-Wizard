@@ -1,0 +1,14 @@
+{
+  "sha": "2f688d768a5db5a44eefd943a4f56e936e2c177f894de68a161accdaa46cbb9f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5291,
+  "description": "Create a GitHub Actions workflow named Visual Studio Build that runs on push and pull request events. Use a Windows job matrix to build with different configurations of Visual Studio, including architectures x64, amd64_x86, amd64_arm64, generators Ninja, build types release and debug, and build options default, link_off, and translations_only. For each job, delete and then install specific Visual Studio components, check out the repository, prepare the Visual Studio environment, configure CMake, build, and run tests if applicable.",
+  "tags": [
+    "visual-studio",
+    "windows",
+    "cmake",
+    "build-matrix",
+    "tests"
+  ]
+}

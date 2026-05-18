@@ -1,0 +1,20 @@
+{
+  "sha": "gitlab_15200",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1031,
+  "description": "Create a GitLab CI pipeline that uses the docker:latest image with a docker:dind service and sets DOCKER_DRIVER=overlay2, and includes a global before_script that runs docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY, installs python and docker-compose via apk, runs docker info, creates a webproxy network, checks docker-compose version, makes an apps directory and copies .env.dist to .env. Define stages build, release, deploy. Add a build job in the build stage that runs only on the master branch, is tagged with docker, and executes docker-compose build, docker-compose up -d, and docker-compose ps. Add a deploy:production job in the deploy stage that runs only on master, is manual, uses the ruby:latest image, runs a before_script that installs ssh-agent, starts the agent, adds the $DEPLOYMENT_PRIVATE_KEY, configures SSH to skip host key checking, runs bundle install, then runs cap production deploy, and sets the environment name to production with URL https://quentinrillet.fr.",
+  "tags": [
+    "docker",
+    "docker-compose",
+    "dind",
+    "ruby",
+    "capistrano",
+    "production",
+    "ssh",
+    "manual",
+    "pipeline",
+    "build",
+    "deploy"
+  ]
+}

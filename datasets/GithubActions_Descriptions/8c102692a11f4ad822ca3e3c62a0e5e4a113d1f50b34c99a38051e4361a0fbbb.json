@@ -1,0 +1,14 @@
+{
+  "sha": "8c102692a11f4ad822ca3e3c62a0e5e4a113d1f50b34c99a38051e4361a0fbbb",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2184,
+  "description": "Create a GitHub Actions workflow named AMR-Wind-Docs that runs on every push to main and on pull requests to main. Use a single ubuntu-latest job that cancels previous runs, checks out the repository, sets up Python 3.x, installs dependencies including doxygen, graphviz, sphinx, and sphinx_rtd_theme, builds documentation with sphinx-build and doxygen, reports warnings, and deploys to gh-pages if the event is a push.",
+  "tags": [
+    "python",
+    "docs",
+    "sphinx",
+    "doxygen",
+    "github-pages"
+  ]
+}

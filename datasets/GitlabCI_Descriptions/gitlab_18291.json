@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_18291",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 170,
+  "description": "Create a GitLab CI pipeline using the alpine:latest Docker image. Add a deploy stage with a job named pages that runs the commands `mkdir .public`, `cp -r * .public`, and `mv .public public`, then publishes the `public/` directory as an artifact, and configure it to run only on the master branch, deploying to GitLab Pages.",
+  "tags": [
+    "alpine",
+    "gitlab-pages",
+    "deploy",
+    "pages-job",
+    "artifact"
+  ]
+}

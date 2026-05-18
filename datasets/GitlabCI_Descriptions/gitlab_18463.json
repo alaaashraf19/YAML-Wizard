@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_18463",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 3192,
+  "description": "Create a GitLab CI pipeline that uses the alpine:edge Docker image and caches the _ccache directory for ccache. Define two stages, build and release. In the build stage add five jobs—build-applet-alpine, build-glib-translator-main, build-gtk-module-main, build-jayatana-main, and build-registrar-main—each running an apk add command to install required packages, optionally exporting VERSION=$(git describe --abbrev=0), then executing meson configure, meson compile, meson install --no-rebuild, and meson dist, and publishing the resulting *.tar.xz files from build/meson-dist as artifacts that expire in one week. In the release stage add a release-main job that runs only on tags, installs python3 and pip, installs the gitlab-release tool via pip, and runs gitlab-release --link-in-desc --link-artifact *.tar.xz to attach all built tarballs as release artifacts.",
+  "tags": [
+    "alpine",
+    "meson",
+    "ccache",
+    "build",
+    "release",
+    "gitlab-release"
+  ]
+}

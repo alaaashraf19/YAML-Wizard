@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_11054",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1017,
+  "description": "Create a GitLab CI pipeline that uses the python:3.11-slim Docker image and defines a single test stage with a pylint job. In the before_script step create the directories public/badges and public/lint, write an undefined placeholder to public/badges/$CI_JOB_NAME.score, and install pylint_gitlab, python-musicpd and requests via pip. In the script step run pylint --exit-zero --output-format=text sima | tee /tmp/pylint.txt, extract the rating with sed \"s/^Your code has been rated at \\([-0-9.]*\\)\\/.*$/\\1/\" and write it to public/badges/$CI_JOB_NAME.score, generate a Code Climate JSON report with pylint --exit-zero --output-format=pylint_gitlab.GitlabCodeClimateReporter sima > codeclimate.json, and produce an HTML lint report with pylint --exit-zero --output-format=pylint_gitlab.GitlabPagesHtmlReporter sima > public/lint/index.html. In the after_script step generate an SVG badge using anybadge with thresholds 4=red 6=orange 8=yellow 10=green, overwrite the badge file public/badges/$CI_JOB_NAME.svg, and echo the score, then always publish the public directory as an artifact, include codeclimate.json as a codequality report, keep artifacts for 30 days, and run on every pipeline.",
+  "tags": [
+    "python",
+    "pylint",
+    "anybadge",
+    "codequality",
+    "test"
+  ]
+}

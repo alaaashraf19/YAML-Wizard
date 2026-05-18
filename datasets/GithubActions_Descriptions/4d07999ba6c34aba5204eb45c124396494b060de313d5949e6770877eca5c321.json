@@ -1,0 +1,14 @@
+{
+  "sha": "4d07999ba6c34aba5204eb45c124396494b060de313d5949e6770877eca5c321",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1154,
+  "description": "Create a GitHub Actions workflow named Packaging that triggers on push and pull request events. The workflow has two jobs: build and publish. The build job runs on ubuntu-22.04, checks out the repository, sets up Python 3.11, installs dependencies, builds the package using tox, and uploads the package as an artifact. The publish job runs on ubuntu-22.04, depends on the build job, and is triggered on tag pushes. It downloads the package artifact, and publishes it to PyPI using the pypa/gh-action-pypi-publish action.",
+  "tags": [
+    "python",
+    "packaging",
+    "pypi",
+    "tox",
+    "github-actions"
+  ]
+}

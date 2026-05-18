@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_16457",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 208,
+  "description": "Create a GitLab CI pipeline that runs only on the master branch, using the default Docker image, and defines a job named linux-rv64imafd-build. The job runs in the default stage, uses the sw-runner tag, and sets the variable GIT_SUBMODULE_STRATEGY to recursive. In its script it first unsets LD_LIBRARY_PATH, then exports SHAKTI_LINUX=$PWD, and finally runs make -j16 ISA=rv64imafd. No caches, artifacts, or services are defined.",
+  "tags": [
+    "make",
+    "rv64imafd",
+    "linux",
+    "gitlab-ci",
+    "sw-runner"
+  ]
+}

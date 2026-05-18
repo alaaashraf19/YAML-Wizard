@@ -1,0 +1,18 @@
+{
+  "sha": "3c199b1a136b83c7b02205b64e35796943c846e39b8b69a04756743483ce6626",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1430,
+  "description": "Create a weekly GitHub Actions workflow named Weekly CEA builds that runs every Saturday at 2am UTC and can be manually triggered. The workflow should have a matrix job that builds and tests in both Release and Debug modes, across different backend configurations, using self-hosted runners. For each matrix combination, check out the repository, load specific modules, configure the build with CMake, build in parallel, and run tests with CTest.",
+  "tags": [
+    "cea",
+    "weekly",
+    "build",
+    "test",
+    "cuda",
+    "slurm",
+    "self-hosted",
+    "cmake",
+    "ctest"
+  ]
+}

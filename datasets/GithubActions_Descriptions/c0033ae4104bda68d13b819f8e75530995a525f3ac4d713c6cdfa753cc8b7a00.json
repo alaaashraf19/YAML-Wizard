@@ -1,0 +1,16 @@
+{
+  "sha": "c0033ae4104bda68d13b819f8e75530995a525f3ac4d713c6cdfa753cc8b7a00",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1931,
+  "description": "Create a GitHub Actions workflow named Python tests that runs on push to master and develop branches and on pull requests to these branches. The workflow should have read permissions to repository contents and include two jobs: one for testing Python code on multiple Python versions (3.11, 3.12, 3.13) in a container, and another for testing Debian packaging. For the Python job, set up Python, create a virtual environment, install dependencies (mypy, ruff, pytest), lint with ruff, check formatting, run tests with pytest, and run mypy. For the Debian packaging job, build Debian packages, install them, and verify examples.",
+  "tags": [
+    "python",
+    "tests",
+    "debian",
+    "packaging",
+    "ruff",
+    "mypy",
+    "pytest"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_11835",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1418,
+  "description": "Create a GitLab CI pipeline using the node:boron Docker image with a node_modules/ cache. Define three stages: build, test, and release. In the build stage add a build job that runs npm install, caches node_modules/, and publishes the node_modules/ directory as an artifact that expires in one week, tagged with docker and shared. Also in the build stage add a build-docker-test-image job that uses the docker:latest image, sets DOCKER_DRIVER=overlay2, runs docker info, logs in to $DOCKER_REGISTRY with the gitlab-ci-token, builds a Docker image named $DOCKER_TEST_IMAGE from Dockerfile, pushes it, and uses a docker:dind service with the --insecure-registry flag, tagged with docker and shared. In the test stage add a test-docker-image job that runs a series of host‑file manipulations and curl checks (cat /etc/hosts, echo to /etc/hosts, cp /etc/hosts, curl to services, npm run start-server-main-background, sleep, additional curls), uses a service alias some-server-from-service pointing to $IMAGE_FULL_NAME:$CI_COMMIT_REF_NAME, and is also tagged docker and shared. No explicit rules or deployment targets are defined, and the release stage is reserved for future jobs.",
+  "tags": [
+    "node",
+    "npm",
+    "docker",
+    "dind",
+    "build",
+    "test",
+    "cache",
+    "artifacts"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_10906",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 5194,
+  "description": "Create a GitLab CI pipeline with stages build, test, package, and packagetest using the jojoboulix/amc-build and debian:testing-slim Docker images. In the build stage add a build job (image jojoboulix/amc-build) that runs `make version_files` then `make` and publishes all untracked files as artifacts that expire in 4 days; also add a pack-sources job (image jojoboulix/amc-build) that runs `make sources`, moves the generated tarballs to an artifacts directory and stores the `artifacts/` path; add a pack-portable job (image jojoboulix/amc-build) that runs `make portable`, creates an artifacts directory, moves the portable tarball there and stores the `artifacts/` path. In the package stage add a pack-debian job (allow_failure, image debian:testing-slim) with a before_script that appends a Perl‑generated source list, runs `apt-get update` and installs `git git-buildpackage`; its script creates a `debian-package` directory, clones the upstream repo, builds build‑deps, sets GBP version variables from the changelog and CI timestamp, imports the source tarball, adjusts patches, creates a changelog entry and runs `gbp buildpackage`; it publishes the resulting `debian-package/auto-multiple-choice*_` files as artifacts while excluding the build‑deps files. Also add a pack-ppa job (image debian:testing-slim) with similar before_script, installs git‑buildpackage, builds build‑deps from `ppa/control`, sets GBP variables from the latest git tag and CI timestamp, initializes a new git repo, imports the source tarball, copies the `ppa` directory to `debian`, commits, creates a changelog entry and runs `gbp buildpackage`, publishing the `auto-multiple-choice*_` files as artifacts. In the test stage add a test-portable job (image jojoboulix/amc-build, needs pack‑portable) that extracts the portable tarball, runs `./blind-tests.sh simple` against the built binary; add a test-ppa job (image debian:testing-slim, needs pack‑ppa) that installs the generated .deb packages, runs a series of `./blind-tests.sh` commands with various arguments after installing required X11 and language packages; add a test-uninstall job (image jojoboulix/amc-build, needs pack‑sources) that extracts the source tarball, builds the project, records the file system state before and after `make install` and `make uninstall`, diffs the results and stores the `files/` directory as artifacts; finally add a tests job (image jojoboulix/amc-build, needs build) that runs `make install && texhash` then `make -C tests blind-test`.",
+  "tags": [
+    "amc",
+    "make",
+    "debian",
+    "docker",
+    "gitlab-ci",
+    "packaging",
+    "testing",
+    "gbp",
+    "perl"
+  ]
+}

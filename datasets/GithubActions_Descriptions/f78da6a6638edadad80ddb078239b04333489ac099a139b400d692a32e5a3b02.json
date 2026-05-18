@@ -1,0 +1,14 @@
+{
+  "sha": "f78da6a6638edadad80ddb078239b04333489ac099a139b400d692a32e5a3b02",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1406,
+  "description": "Create a GitHub Actions workflow named Tests that runs on every push and pull request. The workflow consists of two jobs: Linting and Linux. The Linting job runs on ubuntu-latest, sets up Python 3.10, installs pre-commit, and runs linting on all files. The Linux job depends on Linting, runs on ubuntu-latest with a matrix strategy for Python 3.10, installs dependencies, and tests with pytest.",
+  "tags": [
+    "python",
+    "tests",
+    "linting",
+    "ubuntu",
+    "pytest"
+  ]
+}

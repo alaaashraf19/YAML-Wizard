@@ -1,0 +1,165 @@
+build:
+  artifacts:
+    paths:
+    - '*.deb'
+  image: debian:unstable
+  script:
+  - apt-get -y update
+  - bash -c 'mkdir -p /usr/share/man/man{0..10}'
+  - apt-get -y install build-essential devscripts fakeroot dh-exec jdupes doxygen
+    graphviz php-cli phpunit rst2pdf
+  - mv debian/changelog debian/changelog.old
+  - 'cat <(echo "davical ($(cat VERSION)-99~git$(date +"%Y%m%d")-$(git rev-parse --short
+    $CI_COMMIT_SHA)) unstable; urgency=medium") <(echo "") <(echo "  * Build on CI")
+    <(echo "") <(echo " -- ${GITLAB_USER_NAME} <${GITLAB_USER_EMAIL}>  $(date -R)")
+    <(echo "") debian/changelog.old >debian/changelog
+
+    '
+  - rm debian/changelog.old
+  - curl 'https://gitlab.com/davical-project/awl/-/archive/master/awl-master.tar.gz'
+    | tar zxf -
+  - mv awl-master /usr/share/awl/
+  - debuild -us -uc -b -d
+  - mv ../davical_*_all.deb ./davical.deb
+  stage: build
+build_bullseye_latestphp:
+  artifacts:
+    paths:
+    - '*.deb'
+  image: php:apache-bullseye
+  script:
+  - apt-get -y update
+  - bash -c 'mkdir -p /usr/share/man/man{0..10}'
+  - apt-get -y install build-essential devscripts fakeroot dh-exec jdupes doxygen
+    graphviz rst2pdf
+  - mv debian/changelog debian/changelog.old
+  - 'cat <(echo "davical ($(cat VERSION)-99~git$(date +"%Y%m%d")-$(git rev-parse --short
+    $CI_COMMIT_SHA)) unstable; urgency=medium") <(echo "") <(echo "  * Build on CI")
+    <(echo "") <(echo " -- ${GITLAB_USER_NAME} <${GITLAB_USER_EMAIL}>  $(date -R)")
+    <(echo "") debian/changelog.old >debian/changelog
+
+    '
+  - rm debian/changelog.old
+  - curl 'https://gitlab.com/davical-project/awl/-/archive/master/awl-master.tar.gz'
+    | tar zxf -
+  - mv awl-master /usr/share/awl/
+  - curl -o /usr/bin/phpunit -L https://phar.phpunit.de/phpunit-9.phar
+  - chmod +x /usr/bin/phpunit
+  - debuild --prepend-path=/usr/local/bin -us -uc -b -d
+  - mv ../davical_*_all.deb ./davical.deb
+  stage: testall
+stages:
+- build
+- test
+- testall
+- testldap
+- testldapmemcache
+test:
+  after_script:
+  - testing/gitlab_ci_after_script.sh build
+  artifacts:
+    paths:
+    - testing/report.xml
+    - apache2_log/*
+    - davical_log/*
+    reports:
+      junit: testing/report.xml
+    when: always
+  image: debian:unstable
+  script:
+  - testing/gitlab_ci_script.sh
+  - cd testing && su testrunner -c 'IS_CI=yes ALLSUITES="regression-suite binding
+    carddav scheduling webui ischedule" ./run_regressions.sh all x'
+  stage: test
+test_bullseye_carddavclientinterop:
+  after_script:
+  - testing/gitlab_ci_after_script.sh
+  artifacts:
+    paths:
+    - testing/report.xml
+    - carddavclient-master/testreports/unit/results.html
+    - apache2_log/*
+    - davical_log/*
+    - carddavclient-master/testreports/interop/*
+    reports:
+      junit:
+      - testing/report.xml
+      - carddavclient-master/testreports/unit/results.html
+    when: always
+  image: debian:bullseye
+  script:
+  - testing/gitlab_ci_script.sh interop
+  - cd testing && su testrunner -c 'IS_CI=yes ./run_regressions.sh regression-suite
+    x'
+  - cd ../carddavclient-master && vendor/bin/phpunit -c tests/Interop/phpunit.xml
+    --no-coverage
+  stage: testall
+test_bullseye_latestphp:
+  after_script:
+  - testing/gitlab_ci_after_script.sh
+  artifacts:
+    paths:
+    - testing/report.xml
+    - apache2_log/*
+    - davical_log/*
+    reports:
+      junit: testing/report.xml
+    when: always
+  image: php:apache-bullseye
+  script:
+  - testing/gitlab_ci_script.sh
+  - cd testing && su testrunner -c 'IS_CI=yes ALLSUITES="regression-suite binding
+    carddav scheduling webui ischedule" ./run_regressions.sh all x'
+  stage: testall
+test_ldap:
+  after_script:
+  - testing/gitlab_ci_after_script.sh
+  artifacts:
+    paths:
+    - testing/report.xml
+    - apache2_log/*
+    - davical_log/*
+    reports:
+      junit: testing/report.xml
+    when: always
+  image: debian:unstable
+  script:
+  - testing/gitlab_ci_script.sh ldap
+  - cd testing && su testrunner -c 'IS_CI=yes ALLSUITES="ldap" ./run_regressions.sh
+    all x'
+  stage: testldap
+test_memcache:
+  after_script:
+  - testing/gitlab_ci_after_script.sh
+  artifacts:
+    paths:
+    - testing/report.xml
+    - apache2_log/*
+    - davical_log/*
+    reports:
+      junit: testing/report.xml
+    when: always
+  image: debian:unstable
+  script:
+  - testing/gitlab_ci_script.sh memcache
+  - cd testing && su testrunner -c 'IS_CI=yes ALLSUITES="regression-suite binding
+    carddav scheduling webui ischedule" ./run_regressions.sh all x'
+  stage: testall
+test_memcache_and_ldap:
+  after_script:
+  - testing/gitlab_ci_after_script.sh
+  artifacts:
+    paths:
+    - testing/report.xml
+    - apache2_log/*
+    - davical_log/*
+    - davical_conf/*
+    reports:
+      junit: testing/report.xml
+    when: always
+  image: debian:unstable
+  script:
+  - testing/gitlab_ci_script.sh ldap_memcache_auth
+  - cd testing && su testrunner -c 'IS_CI=yes ALLSUITES="ldap ldap_memcache" ./run_regressions.sh
+    all x'
+  stage: testldapmemcache

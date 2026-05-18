@@ -1,0 +1,270 @@
+.common_deps_script: 'export GOPATH=$HOME/go
+
+  export PATH=$PATH:$GOPATH/bin
+
+  export PATH=$PATH:$HOME/miniconda/bin
+
+  PYTHON=${PYTHON} .ci/deps.sh
+
+  '
+.common_script: &id001
+- $PYTHON -m pytest --cov-fail-under=100
+- codecov
+.test:freebsd_release:
+  before_script:
+  - .ci/freebsd_jail_start.sh
+  - COMMON_DEPS=${COMMON_DEPS/make/}
+  - COMMON_DEPS=${COMMON_DEPS/tar/}
+  - PACKAGE_MANAGERS=${DEBIAN_PACKAGE_MANAGERS}
+  - PACKAGE_MANAGERS=${PACKAGE_MANAGERS/golang/go}
+  - PACKAGE_MANAGERS=${PACKAGE_MANAGERS/luarocks/lua52-luarocks}
+  - PACKAGE_MANAGERS=${PACKAGE_MANAGERS/python3-pip/py36-pip}
+  - PACKAGE_MANAGERS=${PACKAGE_MANAGERS/composer/php56-composer}
+  - PACKAGE_MANAGERS=${PACKAGE_MANAGERS/cabal-install/hs-cabal-install}
+  - PACKAGE_MANAGERS=${PACKAGE_MANAGERS/r-base/R}
+  - PACKAGE_MANAGERS=${PACKAGE_MANAGERS/cargo/rust}
+  - PACKAGE_MANAGERS=${PACKAGE_MANAGERS/rubygems/ruby24-gems}
+  - PACKAGE_MANAGERS=${PACKAGE_MANAGERS/php-pear/php56-pear}
+  - COMMON_DEPS=${COMMON_DEPS/tar}
+  - rm dependency_management/requirements/CondaRequirement.py tests/CondaRequirementTest.py
+    dependency_management/requirements/HaskellRequirement.py tests/HaskellRequirementTest.py
+    dependency_management/requirements/CabalRequirement.py tests/CabalRequirementTest.py
+  - rm dependency_management/requirements/AptRequirement.py dependency_management/requirements/BrewRequirement.py
+    dependency_management/requirements/PacmanRequirement.py dependency_management/requirements/PortageRequirement.py
+    dependency_management/requirements/ZypperRequirement.py dependency_management/requirements/DnfRequirement.py
+    dependency_management/requirements/YumRequirement.py tests/AptRequirementTest.py
+    tests/BrewRequirementTest.py tests/PacmanRequirementTest.py tests/PortageRequirementTest.py
+    tests/ZypperRequirementTest.py tests/DnfRequirementTest.py tests/YumRequirementTest.py
+  - ${JEXEC_CMD} env ASSUME_ALWAYS_YES=yes pkg bootstrap
+  - ${JEXEC_CMD} pkg install --yes $PACKAGE_MANAGERS $FREEBSD_OTHER_DEPS $COMMON_DEPS
+  - ${JEXEC_CMD} ln -s /usr/local/bin/luarocks-5.2 /usr/local/bin/luarocks
+  - cp -r $CI_PROJECT_DIR/. /usr/jails/gitlab/
+  - ${JEXEC_CMD} env PYTHON=${PYTHON} .ci/freebsd_deps_wrapper.sh
+  script:
+  - ${JEXEC_CMD} env GOPATH=/root/go PATH=$PATH:/root/go/bin $PYTHON -m pytest --cov-fail-under=100
+  - ${JEXEC_CMD} codecov
+  tags:
+  - freebsd
+  variables:
+    JEXEC_CMD: jexec gitlab
+    PYTHON: python3.6
+.test:opensuse:
+  before_script: &id003
+  - zypper removerepo 'NON OSS' 'NON OSS Update' repo-non-oss repo-update-non-oss
+  - PACKAGE_MANAGERS=${DEBIAN_PACKAGE_MANAGERS}
+  - if [[ "${CI_JOB_NAME}" =~ 42\.3 ]]; then PACKAGE_MANAGERS=${PACKAGE_MANAGERS/luarocks/};
+    rm dependency_management/requirements/LuarocksRequirement.py tests/LuarocksRequirementTest.py;
+    fi
+  - 'if [[ "${CI_JOB_NAME}" =~ leap ]]; then OPENSUSE_OTHER_DEPS=${OPENSUSE_OTHER_DEPS/stack/};
+    rm dependency_management/requirements/HaskellRequirement.py dependency_management/requirements/CabalRequirement.py
+    tests/HaskellRequirementTest.py tests/CabalRequirementTest.py;
+
+    OPENSUSE_OTHER_DEPS=${OPENSUSE_OTHER_DEPS/java-1_8_0-openjdk/}; PACKAGE_MANAGERS=${PACKAGE_MANAGERS/maven/};
+    rm dependency_management/requirements/MavenRequirement.py tests/MavenRequirementTest.py;
+    fi'
+  - if [[ "${CI_JOB_NAME}" =~ opensuse ]]; then rm dependency_management/requirements/RscriptRequirement.py
+    tests/RscriptRequirementTest.py; fi
+  - PACKAGE_MANAGERS=${PACKAGE_MANAGERS/r-base/R-base}
+  - PACKAGE_MANAGERS=${PACKAGE_MANAGERS/golang/go}
+  - PACKAGE_MANAGERS=${PACKAGE_MANAGERS/composer/php-composer}
+  - PACKAGE_MANAGERS=${PACKAGE_MANAGERS/luarocks/lua53-luarocks lua53-devel}
+  - PACKAGE_MANAGERS=${PACKAGE_MANAGERS/php-pear/php7-pear}
+  - rm dependency_management/requirements/AptRequirement.py dependency_management/requirements/BrewRequirement.py
+    dependency_management/requirements/PacmanRequirement.py dependency_management/requirements/PkgRequirement.py
+    dependency_management/requirements/PortageRequirement.py dependency_management/requirements/DnfRequirement.py
+    dependency_management/requirements/YumRequirement.py tests/AptRequirementTest.py
+    tests/BrewRequirementTest.py tests/PacmanRequirementTest.py tests/PkgRequirementTest.py
+    tests/PortageRequirementTest.py tests/DnfRequirementTest.py tests/YumRequirementTest.py
+  - zypper --no-gpg-checks --non-interactive install $PACKAGE_MANAGERS $OPENSUSE_OTHER_DEPS
+    $COMMON_DEPS
+  - 'export GOPATH=$HOME/go
+
+    export PATH=$PATH:$GOPATH/bin
+
+    export PATH=$PATH:$HOME/miniconda/bin
+
+    PYTHON=${PYTHON} .ci/deps.sh
+
+    '
+  script: *id001
+cache:
+  paths:
+  - .cache/pip
+check_code:
+  before_script:
+  - pip3 install .
+  - pip3 install coala-bears
+  image: python:3.6
+  script:
+  - coala-ci
+moban:
+  before_script:
+  - pip install moban
+  - git clone https://gitlab.com/coala/mobans ../coala-mobans
+  - git clone https://github.com/moremoban/pypi-mobans ../pypi-mobans
+  image: python:3.6
+  script:
+  - moban
+  - git diff --exit-code
+test:arch:
+  before_script:
+  - echo "keyserver-options auto-key-retrieve" > /home/docker/gpg.conf
+  - PACKAGE_MANAGERS=${DEBIAN_PACKAGE_MANAGERS}
+  - PACKAGE_MANAGERS=${PACKAGE_MANAGERS/golang/go}
+  - PACKAGE_MANAGERS=${PACKAGE_MANAGERS/python3-pip/python-pip}
+  - PACKAGE_MANAGERS=${PACKAGE_MANAGERS/r-base/r}
+  - PACKAGE_MANAGERS=${PACKAGE_MANAGERS/php-pear/}
+  - pacman --noconfirm -Syu
+  - pacman --noconfirm -S ${ARCH_OTHER_DEPS}
+  - pacman --noconfirm -S ${PACKAGE_MANAGERS} ${COMMON_DEPS}
+  - export PATH=$PATH:$PERL_PATH
+  - su docker -c "git clone $PEAR_GIT $PEAR_PATH"
+  - sed -i 's/}\/usr\/share\/pear/}/g' $PEAR_PATH/PKGBUILD
+  - su docker -c "cd $PEAR_PATH && makepkg --skippgpcheck -si --noconfirm"
+  - cabal update
+  - rm dependency_management/requirements/AptRequirement.py dependency_management/requirements/BrewRequirement.py
+    dependency_management/requirements/PkgRequirement.py dependency_management/requirements/PortageRequirement.py
+    dependency_management/requirements/ZypperRequirement.py dependency_management/requirements/DnfRequirement.py
+    dependency_management/requirements/YumRequirement.py tests/AptRequirementTest.py
+    tests/BrewRequirementTest.py tests/PkgRequirementTest.py tests/PortageRequirementTest.py
+    tests/ZypperRequirementTest.py tests/DnfRequirementTest.py tests/YumRequirementTest.py
+  - 'export GOPATH=$HOME/go
+
+    export PATH=$PATH:$GOPATH/bin
+
+    export PATH=$PATH:$HOME/miniconda/bin
+
+    PYTHON=${PYTHON} .ci/deps.sh
+
+    '
+  image: greyltc/archlinux-aur:latest
+  script: *id001
+  variables:
+    GEM_INSTALLED_PACKAGE: cmath
+    GNUPGHOME: /home/docker
+    PEAR_GIT: https://aur.archlinux.org/php-pear.git
+    PEAR_PATH: /home/docker/php-pear
+    PERL_PATH: /usr/bin/core_perl:/usr/bin/site_perl:/usr/bin/vendor_perl
+test:fedora_25_py35:
+  before_script: &id002
+  - PACKAGE_MANAGERS=${DEBIAN_PACKAGE_MANAGERS}
+  - echo 'install_weak_deps=False' >> /etc/dnf/dnf.conf
+  - PACKAGE_MANAGERS=${PACKAGE_MANAGERS/r-base/R-base}
+  - PACKAGE_MANAGERS=${PACKAGE_MANAGERS/python3-pip/${PYTHON/./}}
+  - PACKAGE_MANAGERS=${PACKAGE_MANAGERS/maven/}
+  - rm dependency_management/requirements/MavenRequirement.py tests/MavenRequirementTest.py
+  - rm dependency_management/requirements/AptRequirement.py dependency_management/requirements/BrewRequirement.py
+    dependency_management/requirements/PacmanRequirement.py dependency_management/requirements/PkgRequirement.py
+    dependency_management/requirements/PortageRequirement.py dependency_management/requirements/ZypperRequirement.py
+    tests/AptRequirementTest.py tests/BrewRequirementTest.py tests/PacmanRequirementTest.py
+    tests/PkgRequirementTest.py tests/PortageRequirementTest.py tests/ZypperRequirementTest.py
+  - dnf install -y $PACKAGE_MANAGERS $FEDORA_OTHER_DEPS $COMMON_DEPS
+  - $PYTHON -m ensurepip
+  - 'export GOPATH=$HOME/go
+
+    export PATH=$PATH:$GOPATH/bin
+
+    export PATH=$PATH:$HOME/miniconda/bin
+
+    PYTHON=${PYTHON} .ci/deps.sh
+
+    '
+  image: fedora:25
+  script: *id001
+  variables:
+    PYTHON: python3.5
+test:fedora_28_py37:
+  before_script: *id002
+  image: fedora:28
+  script: *id001
+  variables:
+    PYTHON: python3.7
+test:opensuse_leap_15_1:
+  before_script: *id003
+  image: opensuse/leap:15.1
+  script: *id001
+  variables:
+    PYTHON: python3.6
+test:opensuse_leap_42.3:
+  before_script: *id003
+  image: opensuse/leap:42.3
+  script: *id001
+  variables:
+    PYTHON: python3.4
+test:opensuse_tumbleweed:
+  before_script: *id003
+  image: opensuse/tumbleweed
+  script: *id001
+  variables:
+    PYTHON: python3.7
+test:ubuntu_rolling:
+  before_script:
+  - PACKAGE_MANAGERS=${DEBIAN_PACKAGE_MANAGERS}
+  - PACKAGE_MANAGERS=${PACKAGE_MANAGERS/julia/}
+  - apt-get update -qq
+  - apt-get install -y -qq software-properties-common curl
+  - curl -fsSL -o Julia.tar.gz $JULIA
+  - tar -xf Julia.tar.gz
+  - rm Julia.tar.gz
+  - rm dependency_management/requirements/BrewRequirement.py dependency_management/requirements/PacmanRequirement.py
+    dependency_management/requirements/PkgRequirement.py dependency_management/requirements/PortageRequirement.py
+    dependency_management/requirements/ZypperRequirement.py dependency_management/requirements/DnfRequirement.py
+    dependency_management/requirements/YumRequirement.py tests/BrewRequirementTest.py
+    tests/PacmanRequirementTest.py tests/PkgRequirementTest.py tests/PortageRequirementTest.py
+    tests/ZypperRequirementTest.py tests/DnfRequirementTest.py tests/YumRequirementTest.py
+  - mv julia* julia
+  - ln -s $PWD/julia/bin/julia /usr/local/bin/julia
+  - echo 'oracle-java8-installer shared/accepted-oracle-license-v1-1 select true'
+    | /usr/bin/debconf-set-selections
+  - add-apt-repository -y ppa:webupd8team/java
+  - apt-get update -qq
+  - apt-get install -y $PACKAGE_MANAGERS $DEBIAN_OTHER_DEPS $COMMON_DEPS
+  - 'export GOPATH=$HOME/go
+
+    export PATH=$PATH:$GOPATH/bin
+
+    export PATH=$PATH:$HOME/miniconda/bin
+
+    PYTHON=${PYTHON} .ci/deps.sh
+
+    '
+  image: ubuntu:rolling
+  script: *id001
+  variables:
+    DEBIAN_OTHER_DEPS: openjdk-8-jdk perl-doc libcurl4-openssl-dev libgit2-dev
+    PYTHON: python3.7
+variables:
+  ARCH_OTHER_DEPS: 'jdk8-openjdk
+
+    '
+  CI_BUILD_ID: $CI_JOB_ID
+  CI_BUILD_REF: $CI_COMMIT_SHA
+  CI_BUILD_REF_NAME: $CI_COMMIT_REF_NAME
+  CI_BUILD_REPO: $CI_REPOSITORY_URL
+  COMMON_DEPS: 'bzip2 curl git make mercurial tar
+
+    '
+  DEBIAN_FRONTEND: noninteractive
+  DEBIAN_OTHER_DEPS: 'openjdk-8-jdk perl-doc libcurl4-openssl-dev libgit2-dev
+
+    '
+  DEBIAN_PACKAGE_MANAGERS: 'cabal-install ghc cargo composer golang julia luarocks
+    npm python3-pip r-base rubygems maven php-pear
+
+    '
+  FEDORA_OTHER_DEPS: 'lua-devel rubygem-rdoc perl-core R-core R-core-devel R-devel
+    libgit2-devel zlib-devel libcurl-devel R-digest
+
+    '
+  FREEBSD_OTHER_DEPS: 'rubygem-rdoc
+
+    '
+  JULIA: https://julialang-s3.julialang.org/bin/linux/x64/0.6/julia-0.6.2-linux-x86_64.tar.gz
+  OPENSUSE_OTHER_DEPS: 'gzip java-1_8_0-openjdk python2 rust-std stack xz
+
+    '
+  PYTHON: python3
+  R_COMPILE_AND_INSTALL_PACKAGES: never
+  R_REMOTES_NO_ERRORS_FROM_WARNINGS: 'true'
+  XDG_CACHE_HOME: $CI_PROJECT_DIR/.cache/
+  ZYPPER_FLAGS: --no-gpg-checks --non-interactive

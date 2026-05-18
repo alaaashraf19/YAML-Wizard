@@ -1,0 +1,22 @@
+before_script:
+- pip install pipenv
+- pipenv install -d --system
+image: python:3.6
+lint-code:
+  script: make lint
+  stage: test
+run-test:
+  script: make pytest
+  stage: test
+stages:
+- test
+- upload
+upload-to-pypi:
+  before_script:
+  - pip install twine
+  only:
+  - tags
+  script:
+  - python setup.py bdist_wheel
+  - twine upload dist/*
+  stage: upload

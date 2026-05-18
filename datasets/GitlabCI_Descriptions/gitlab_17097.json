@@ -1,0 +1,20 @@
+{
+  "sha": "gitlab_17097",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 6997,
+  "description": "Create a GitLab CI pipeline using the mcr.microsoft.com/dotnet/sdk:10.0 Docker image, include the SAST and Dependency‑Scanning templates, define the stages build, test, coverage, lint, and securityscan, and set the variables BUILD_TYPE, GITLAB_ADVANCED_SAST_ENABLED, GIT_SUBMODULE_STRATEGY and SECURE_LOG_LEVEL. In the build stage add a build-job that runs `cd src`, `dotnet restore`, echoes \"Compiling the code...\", runs `dotnet build`, and echoes \"Compile complete.\". In the coverage stage add a coverage-report job (allow_failure) that starts the SiLA2 server app in the background, installs the global tool `dotnet-reportgenerator-globaltool`, updates PATH, runs `dotnet test` on three test projects with `--collect:\"XPlat Code Coverage\"`, then runs `reportgenerator` with specific assembly filters to generate an HTML report stored under `/builds/SiLA2/sila_csharp/src/coverage/coverage-report` and publishes it as an artifact that expires in one week. In the securityscan stage add a create-sbom job (only on master, allow_failure) that `cd src`, installs Syft via a curl script, runs `./bin/syft scan . -o cyclonedx-json > sbom.json` and saves `sbom.json` as a 7‑day artifact, and a nuget-vulnerability-scan job (allow_failure) that `cd src`, runs `dotnet restore`, lists vulnerable packages with `dotnet list package --vulnerable --include-transitive`, writes output to `vulnerabilities.log`, fails the job if critical or high issues are found, and keeps the log as a 7‑day artifact. In the test stage add a unit-test-job that echoes a start message, `cd src`, runs `dotnet test` on several unit‑test projects and echoes completion, an integration-test-job-dotnet-client-dotnet-server that starts the server app in background and runs `dotnet test` on the server integration tests, an integration-test-job-python-client-dotnet-server (allow_failure) that starts the server app, installs Python 3 and the `sila2_interop_communication_tester` package, runs the Python client test suite with certificate and report options, and publishes XML and HTML reports as always‑on artifacts, and an integration-test-job-python-server-dotnet-client (allow_failure) that starts the server app, installs Python 3, runs the Python server test suite in background, then runs `dotnet test` on the .NET client integration tests. In the lint stage add a lint-job that `cd src`, creates a dotnet tool manifest, installs JetBrains.ReSharper.GlobalTools, restores tools, runs `dotnet jb inspectcode` for errors (XML output) and warnings (HTML output) excluding test files, and always publishes the two reports as artifacts.",
+  "tags": [
+    "dotnet",
+    "coverage",
+    "sbom",
+    "integration-tests",
+    "lint",
+    "security-scan",
+    "unit-tests",
+    "gitlab-ci",
+    "mcr-dotnet-sdk",
+    "python",
+    "reportgenerator"
+  ]
+}

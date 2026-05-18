@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_06047",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 3281,
+  "description": "Create a GitLab CI pipeline that runs nightly builds on Fedora images. Define four jobs—nightly-gcc-mpi, nightly-gcc-mpi-int64, nightly-gcc-serial (all using fedora:31) and nightly-intel (using fedora:32)—each marked allow_failure:true and triggered only by schedule pipelines (rules exclude merge_request_event). In nightly-gcc-mpi run: module load mpi/openmpi-x86_64, mpirun --version, export FFLAGS=\"-I/usr/lib64/gfortran/modules\", python setup --mpi --blas=none --lapack=none --explicit-libs=\"-lopenblas -llapack\" --type=release -DENABLE_PDE=ON -DSITE=GitLab -DBUILDNAME=$CI_COMMIT_REF_NAME-gcc-mpi, cd build, export CTEST_MAKE_NUM_PROCS=4, ctest --output-on-failure -L dalton -M Nightly -T Build -T Test -T Submit. In nightly-gcc-mpi-int64 run: dnf install -y -q lapack64 lapack64-devel, module load mpi/openmpi-x86_64, mpirun --version, python setup --int64 --mpi --blas=none --lapack=none --explicit-libs=\"-lopenblas64 -llapack64_\" --type=release -DSITE=GitLab -DBUILDNAME=$CI_COMMIT_REF_NAME-gcc-mpi-int64, cd build, export CTEST_MAKE_NUM_PROCS=4, ctest --output-on-failure -L dalton -M Nightly -T Build -T Test -T Submit. In nightly-gcc-serial run: export FFLAGS=\"-I/usr/lib64/gfortran/modules\", python setup --blas=none --lapack=none --explicit-libs=\"-lopenblas -llapack\" --type=release -DENABLE_PDE=ON -DSITE=GitLab -DBUILDNAME=$CI_COMMIT_REF_NAME-gcc-serial, cd build, export CTEST_MAKE_NUM_PROCS=4, ctest -j 4 --output-on-failure -L dalton -M Nightly -T Build -T Test -T Submit. In nightly-intel run a before_script that upgrades the system, installs gcc, g++, gfortran, git, make, cmake, python, redhat-rpm-config, findutils, which, procps-ng, coreutils, moves the oneAPI repo, installs intel-oneapi-compiler-fortran, intel-oneapi-compiler-dpcpp-cpp-and-cpp-classic, intel-oneapi-mkl, intel-oneapi-mpi, intel-oneapi-mpi-devel, sources /opt/intel/inteloneapi/setvars.sh, and prints version info; then script runs: python setup --fc=mpiifx --cc=mpiicc --cxx=mpiicpc --mpi --mkl=sequential --type=release -DSITE=GitLab -DBUILDNAME=$CI_COMMIT_REF_NAME-intel-mpi, cd build, export CTEST_MAKE_NUM_PROCS=4, ctest --output-on-failure -L dalton -M Nightly -T Build -T Test -T Submit. All jobs use the parallel tag and set DALTON_LAUNCHER and OMP_NUM_THREADS variables as specified.",
+  "tags": [
+    "fedora",
+    "gcc",
+    "intel-oneapi",
+    "mpi",
+    "nightly",
+    "ctest",
+    "python-setup"
+  ]
+}

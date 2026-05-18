@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_18841",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 174,
+  "description": "Create a GitLab CI pipeline that uses the node:latest Docker image and caches the node_modules/ directory. Add a before_script that runs `yarn global add codecov` and `yarn` to install the Codecov CLI and project dependencies. Define a single stage called test and a job named test in that stage that executes `yarn unit && codecov -t $CODECOV_TOKEN`. No artifacts, services, or conditional rules are defined.",
+  "tags": [
+    "node",
+    "yarn",
+    "codecov",
+    "test",
+    "gitlab-ci"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_18451",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1739,
+  "description": "Create a GitLab CI pipeline with stages image, build, check, archive, and image-latest, using the Docker image $CI_REGISTRY_IMAGE/sdk:$CI_COMMIT_REF_SLUG as the default and defining SDK_REGISTRY_IMAGE accordingly. Add a build job in the build stage that runs ./bootstrap, ./configure, and make, and always uploads all untracked files as artifacts that expire in one week. Add a check job in the check stage that runs make check, also uploads all untracked files as weekly artifacts, and uses a before_script that touches any untracked files (git ls-files -z --other | xargs -0 touch). Add an archive job in the archive stage that runs only on the master branch, executes make dist, and publishes the generated $CI_PROJECT_NAME-*.tar.gz files as artifacts. Add an image-branch job in the image stage that triggers on changes to .gitlab-ci.yml, .dockerignore, Dockerfile, or install-deps, uses the docker image with the docker:dind service, logs in to $CI_REGISTRY with CI credentials, pulls the SDK image tags, builds a new image with cache-from the SDK image, tags it as $CI_REGISTRY_IMAGE/sdk:$CI_COMMIT_REF_SLUG, and pushes it, setting DOCKER_TLS_CERTDIR=/certs; also add an image-latest job in the image-latest stage that runs on the same changes but only on master, builds and pushes the image tagged as $CI_REGISTRY_IMAGE/sdk, using the same docker setup and variables.",
+  "tags": [
+    "docker",
+    "dind",
+    "build",
+    "check",
+    "archive",
+    "image",
+    "ci-registry",
+    "make"
+  ]
+}

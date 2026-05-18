@@ -1,0 +1,10 @@
+build-distcheck:
+  script:
+  - apt update && apt -y install libpulse-dev
+  - autoreconf -i
+  - ./configure
+  - make
+  stage: build
+image: gcc:10.3.0
+stages:
+- build

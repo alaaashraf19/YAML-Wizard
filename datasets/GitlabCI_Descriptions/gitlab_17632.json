@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_17632",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 296,
+  "description": "Create a GitLab CI pipeline that defines two stages: build and test. In the build stage add a build job that uses the docker:latest image with the docker:dind service, logs in to the GitLab Container Registry with docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY, builds the image using docker build -t $CI_REGISTRY_IMAGE . and pushes it with docker push $CI_REGISTRY_IMAGE. In the test stage add a test job that runs using the image built in the previous stage ($CI_REGISTRY_IMAGE) and executes mvn test. No caches, artifacts, or special rules are defined.",
+  "tags": [
+    "docker",
+    "docker-dind",
+    "maven",
+    "ci-cd",
+    "build",
+    "test"
+  ]
+}

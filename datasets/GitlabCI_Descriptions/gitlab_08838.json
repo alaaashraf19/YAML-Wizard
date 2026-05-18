@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_08838",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 491,
+  "description": "Create a GitLab CI pipeline with a close-reports stage and two jobs that extend the .run template. Add a close-old-triage-reports job in the close-reports stage that runs only when the $TRIAGE_CLOSE_OLD_TRIAGE_REPORTS variable is true and sets the variable TRIAGE_POLICY_FILE to policies/stages/close-reports/close-old-triage-reports.yml. Add a close-reports-resources-moved-to-next-milestone job in the same stage that runs only when $TRIAGE_CLOSE_REPORTS_RESOURCES_MOVED_TO_NEXT_MILESTONE is true and sets TRIAGE_POLICY_FILE to policies/stages/close-reports/close-reports-resources-moved-to-next-milestone.yml. Both jobs inherit the script defined in the .run template.",
+  "tags": [
+    "triage",
+    "close-reports",
+    "gitlab-ci",
+    "rules",
+    "extends"
+  ]
+}

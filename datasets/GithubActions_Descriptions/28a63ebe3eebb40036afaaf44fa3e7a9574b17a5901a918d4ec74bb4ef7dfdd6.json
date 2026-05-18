@@ -1,0 +1,15 @@
+{
+  "sha": "28a63ebe3eebb40036afaaf44fa3e7a9574b17a5901a918d4ec74bb4ef7dfdd6",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1925,
+  "description": "Create a GitHub Actions workflow named Build RPM Packages that builds RPM packages for multiple distributions and architectures. The workflow can be triggered manually with an optional Ice version input or called by another workflow with an optional Ice version string input. For each distribution and architecture combination, set up a Docker environment, log in to GHCR, build RPM packages using a custom Docker image, and upload the resulting artifacts.",
+  "tags": [
+    "rpm",
+    "docker",
+    "ghcr",
+    "multi-arch",
+    "workflow-dispatch",
+    "workflow-call"
+  ]
+}

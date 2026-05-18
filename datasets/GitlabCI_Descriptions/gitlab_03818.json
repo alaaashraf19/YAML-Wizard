@@ -1,0 +1,12 @@
+{
+  "sha": "gitlab_03818",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 141,
+  "description": "Create a GitLab CI pipeline with two stages, build and test. In the build stage add a job named build that runs the shell command `touch touchme`. Enable a cache for the whole pipeline using the key `$CI_BUILD_REF` and set `untracked: true`. In the test stage add a job named test that runs the shell command `ls touchme`.",
+  "tags": [
+    "build",
+    "test",
+    "cache"
+  ]
+}

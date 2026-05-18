@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_10744",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 560,
+  "description": "Create a GitLab CI pipeline that uses the alpine:3.5 Docker image and runs a before_script that updates apk, installs openssl, downloads Hugo v0.18.1 tar.gz, verifies its MD5 checksum, extracts the binary, moves it to /usr/bin, and prints the Hugo version. Add a pages job that runs only on the master branch, executes `cd site`, `hugo`, and `mv ./public ../public`, and publishes the resulting public/ directory as a GitLab Pages artifact. Add a test job that runs on all branches except master, executes `cd site` and `hugo` to verify site generation. No services, caches, or additional stages are defined.",
+  "tags": [
+    "alpine",
+    "hugo",
+    "gitlab-pages",
+    "md5",
+    "ci"
+  ]
+}

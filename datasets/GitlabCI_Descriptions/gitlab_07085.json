@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_07085",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1261,
+  "description": "Create a GitLab CI pipeline using the python:3.7 Docker image with a pip cache at $CI_PROJECT_DIR/pip-cache keyed by $CI_PROJECT_ID and a PIP_CACHE_DIR variable. Define two stages, test and deploy, and apply a global before_script that runs pip install -U pip, pip install opencv-python-headless, make clean, pip install -r develop.txt, make build cython=1 debug=1, and pip install -e .[segmentation]. In the test stage add a lint job that runs `make lint`, and a test job that runs `make unittest number=3 marker=\"\"` and stores the .coverage file as an artifact for 1 hour. In the deploy stage add a coverage job that depends on test, runs `curl -Os https://uploader.codecov.io/latest/linux/codecov`, `chmod +x codecov`, `coverage xml`, `coverage report`, and `./codecov -t \"$CODECOV_TOKEN\"`, and is triggered only when $CI_SHOULD_DEPLOY == \"1\" and the branch is master or develop or a tag is present. Also add a pages job that runs `apt-get update --fix-missing && apt-get install -y pandoc`, `pip install IPython ipykernel matplotlib seaborn`, `make docs notebook=0`, and `mv docs/.build/html public/`, publishes the public/ directory as a pages artifact, and runs only when $CI_SHOULD_DEPLOY == \"1\" and a tag is present.",
+  "tags": [
+    "python-3.7",
+    "pip-cache",
+    "lint",
+    "unittest",
+    "coverage",
+    "pages",
+    "codecov",
+    "pandoc"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_00971",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 567,
+  "description": "Create a GitLab CI pipeline using the openjdk:8 Docker image. Add a global before_script that runs apt-get update -yqq, apt-get install apt-transport-https -yqq, adds the Scala SBT repository with echo \"deb https://repo.scala-sbt.org/scalasbt/debian /\" | tee -a /etc/apt/sources.list.d/sbt.list, creates /root/.gnupg, imports the SBT GPG key via gpg --recv-keys --no-default-keyring --keyring gnupg-ring:/etc/apt/trusted.gpg.d/scalasbt-release.gpg --keyserver hkp://keyserver.ubuntu.com:80 2EE0EA64E40A89B84B2DF73499E82A75642AC823, sets permissions with chmod 644 /etc/apt/trusted.gpg.d/scalasbt-release.gpg, updates apt again, installs sbt with apt-get install sbt -yqq, and verifies the sbt version using sbt sbtVersion. Define a single job named test that runs in the default test stage and executes sbt clean test. No caches, artifacts, services, or special rules are required.",
+  "tags": [
+    "openjdk-8",
+    "sbt",
+    "scala",
+    "apt",
+    "gitlab-ci"
+  ]
+}

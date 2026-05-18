@@ -1,0 +1,10 @@
+build:
+  artifacts:
+    paths:
+    - piebot/piebot
+    - piebot/config.txt
+  script:
+  - apk add --no-cache bash cmake make g++ linux-headers git openssl-dev libcurl
+  - sh build.sh
+  stage: build
+image: alpine:latest

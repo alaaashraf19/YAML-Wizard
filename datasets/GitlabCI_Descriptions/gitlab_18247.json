@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_18247",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 582,
+  "description": "Create a GitLab CI pipeline that uses the debian:unstable Docker image and runs a before_script that executes `apt update -qq` followed by `apt install -y -qq build-essential ca-certificates gobject-introspection gtk-doc-tools libgirepository1.0-dev libglib2.0-dev libsoup2.4-dev libxml2-utils meson pkg-config valac`. Define a single stage called build and add a job named build-check in this stage that runs the commands `meson -Dgtk_doc=true -Dintrospection=true -Dvapi=enabled --buildtype debug --wrap-mode=nodownload --fatal-meson-warnings --werror _build`, `ninja -C _build`, and `meson test -C _build`. Configure the build-check job to publish the artifacts located at `_build/config.h`, `_build/meson-logs/`, and `_build/docs/reference/`. No additional services, caches, or conditional rules are required.",
+  "tags": [
+    "debian",
+    "meson",
+    "ninja",
+    "build",
+    "gitlab-ci"
+  ]
+}

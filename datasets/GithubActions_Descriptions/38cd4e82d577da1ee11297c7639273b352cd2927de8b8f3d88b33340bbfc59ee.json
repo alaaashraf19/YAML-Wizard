@@ -1,0 +1,17 @@
+{
+  "sha": "38cd4e82d577da1ee11297c7639273b352cd2927de8b8f3d88b33340bbfc59ee",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 13021,
+  "description": "Create a GitHub Actions workflow named build that runs on every push to develop and master branches, on push to tags matching [0-9]*, on every pull request to any branch, and on workflow dispatch. The workflow has multiple jobs for building and testing on different platforms including ubuntu-20.04, ubuntu-latest, macos-11, and windows-2019. It checks out the repository, sets up dependencies, and performs various build and test operations using CMake, ninja, and other tools.",
+  "tags": [
+    "github-actions",
+    "cmake",
+    "ninja",
+    "ubuntu",
+    "macos",
+    "windows",
+    "testing",
+    "build"
+  ]
+}

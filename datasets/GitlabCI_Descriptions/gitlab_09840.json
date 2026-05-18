@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_09840",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 801,
+  "description": "Create a GitLab CI pipeline with three stages: build, test, and deploy, using the debian Docker image for all jobs. In the build stage add a build-package job that runs `apt update`, `apt -y upgrade`, `apt install -y curl`, then executes `curl -sL https://gitlab.com/hassbian/CI/raw/master/hassbian-scripts/build_and_test.sh | bash -s ${CI_COMMIT_REF_NAME}`. In the test stage add a test-package job that runs the same `apt update`, `apt -y upgrade`, `apt install -y curl`, executes the same build_and_test.sh script with `curl -sL https://gitlab.com/hassbian/CI/raw/master/hassbian-scripts/build_and_test.sh | bash -s ${CI_COMMIT_REF_NAME}`, and finally installs the built package using `apt -y install ${CI_PROJECT_DIR}/package.deb`. In the deploy stage add a deploy-to-repo job that runs `apt update`, `apt -y upgrade`, `apt install -y curl git`, and runs `curl -sL https://gitlab.com/hassbian/CI/raw/master/hassbian-scripts/distribute.sh | bash -s ${CI_COMMIT_REF_NAME}`. No caches, artifacts, or conditional rules are defined.",
+  "tags": [
+    "debian",
+    "apt",
+    "curl",
+    "hassbian",
+    "build",
+    "test",
+    "deploy"
+  ]
+}

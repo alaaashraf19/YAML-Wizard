@@ -1,0 +1,48 @@
+diagrams:
+  artifacts:
+    paths:
+    - public
+  script:
+  - dihaa safety/vehicle-control-diagram.md -p
+  - mkdir public
+  - cp */*.png public/
+  stage: validate
+image: zenhaskell/analysis:lts-12.9
+lint:
+  script:
+  - gem install mdl -v 0.4.0
+  - mdl -s <(echo "rule 'MD009', :br_spaces => 4") .
+  stage: validate
+policy:
+  except:
+  - master
+  - tags
+  only:
+    variables:
+    - $PROJECT_PATH == $CI_PROJECT_PATH
+  script:
+  - 'output=$(curl -k -H "Accept: application/json" -H "X-Gitect-Token: ${GITECT_HOST_TOKEN}"
+    -G --data-urlencode "target-branch=${TARGET_BRANCH}" "${GITECT_HOST}/api/v1/gitlab.com/${CI_PROJECT_PATH}/~/${CI_COMMIT_REF_NAME}/${CI_COMMIT_SHA}/policy-compliance")'
+  - echo $output
+  - if [[ "$output" == *"false"* ]];then
+  - if [[ "$output" == *"Merge request not found"* ]];then
+  - echo "No policy compliance check required."
+  - else
+  - echo "Policy compliance check failed."
+  - exit 1
+  - fi
+  - elif [[ "$output" == *"true"* ]];then
+  - echo "Policy compliance check succeeded."
+  - else
+  - echo "Policy compliance check could not be completed."
+  - fi
+  stage: policy
+  variables:
+    GIT_STRATEGY: none
+stages:
+- validate
+- policy
+variables:
+  GITECT_HOST: https://gitect2.codethink.co.uk
+  PROJECT_PATH: trustable/documents
+  TARGET_BRANCH: master

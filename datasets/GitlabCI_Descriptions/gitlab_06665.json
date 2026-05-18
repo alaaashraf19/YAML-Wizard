@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_06665",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 358,
+  "description": "Create a GitLab CI pipeline that uses the docker:latest image with a docker:dind service and defines an IMAGE_NAME variable pointing to registry.gitlab.com/deepset-ai/open-source/word2vec-embeddings-de. Add a single stage called build and a job named \"build docker\" that runs only on the master branch. In the before_script log in to the GitLab Container Registry with docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com. In the script build the Docker image with docker build -t $IMAGE_NAME . and push it with docker push $IMAGE_NAME.",
+  "tags": [
+    "docker",
+    "dind",
+    "docker-registry",
+    "build",
+    "gitlab-ci-token"
+  ]
+}

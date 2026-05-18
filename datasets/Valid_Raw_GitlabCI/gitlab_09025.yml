@@ -1,0 +1,24 @@
+chatops:
+  cache:
+    key:
+      files:
+      - .ruby-version
+    paths:
+    - vendor/ruby
+    policy: pull
+  extends:
+  - .with-bundle
+  - .common-ci-tokens
+  only:
+    refs:
+    - pipelines
+    - triggers
+    - web
+    variables:
+    - $TASK
+  script:
+  - source scripts/setup_ssh.sh
+  - source scripts/setup_git.sh
+  - ./bin/chatops $TASK
+  stage: chatops
+  timeout: 1h

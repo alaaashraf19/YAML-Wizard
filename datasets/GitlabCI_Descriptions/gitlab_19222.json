@@ -1,0 +1,22 @@
+{
+  "sha": "gitlab_19222",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2846,
+  "description": "Create a GitLab CI pipeline with stages lint, test, and bot and define variables CARGO_TERM_COLOR, DOCS_BASEURL, FEATURES, RUSTDOCFLAGS, RUSTFLAGS, and RUST_BACKTRACE. Add a .show-version template that runs apt-get update; apt-get install -y --no-install-recommends pkg-config libssl-dev and prints rustc and cargo versions in before_script. Define a .docs job (stage test) that echoes the target, builds Rust documentation with cargo +nightly doc --no-deps -Zrustdoc-map --all-features, installs rsync and openssh-client, configures SSH using $SECRET_DOCS_SSH_PRIVATE, and rsyncs target/doc/ to the remote docs server, with rules for merge_request_event and pushes to main. Define a .test job (stage test) that runs cargo test --verbose and cargo test --verbose --no-default-features, also gated by the same rules. Create a changelog-update job (stage lint, image alpine:latest) that installs python3 and git, verifies the merge‑request base SHA, and runs a Python script to validate the changelog. Add rustfmt (stage lint, image rust:slim) that installs rustfmt, shows its version, and runs cargo fmt --check, and typos (stage lint, image rust:slim) that installs typos-cli and runs typos, both with the same rules. Combine templates to create docs (extends .docs and .nightly, image rustlang/rust:nightly-slim), nightly-test (allow_failure, extends .test and .nightly), and stable-test (extends .test and .stable) jobs.",
+  "tags": [
+    "rust",
+    "cargo",
+    "nightly",
+    "stable",
+    "lint",
+    "test",
+    "docs",
+    "rsync",
+    "ssh",
+    "rustfmt",
+    "typos",
+    "changelog",
+    "alpine"
+  ]
+}

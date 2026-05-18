@@ -1,0 +1,30 @@
+build:
+  artifacts:
+    paths:
+    - $CI_PROJECT_DIR/lin*/*
+  before_script:
+  - dnf install -y gcc make dpkg rpm-build
+  image: fedora
+  script:
+  - ./configure && make && make install
+  - sed -i 's/NONE/\/usr/' epm.list
+  - epm -v -f deb epm-deb epm.list
+  - epm -v -f rpm epm-rpm epm.list
+  stage: build
+stages:
+- build
+- test
+test_deb:
+  image: ubuntu
+  script:
+  - cd lin*/ && tar zxvf epm-deb*.tgz
+  - dpkg -i epm-deb*.deb
+  - epm --version
+  stage: test
+test_rpm:
+  image: fedora
+  script:
+  - cd lin*/ && tar zxvf epm-rpm*.tgz
+  - dnf install -y epm-rpm*.rpm
+  - epm --version
+  stage: test

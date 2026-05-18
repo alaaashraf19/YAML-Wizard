@@ -1,0 +1,14 @@
+{
+  "sha": "f15dd6c1e6481167eea93f81fb637cf123abb88ec1964efdde4d083c70040612",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1229,
+  "description": "Create a GitHub Actions workflow for continuous integration tests of the decrypt oracle. The workflow should be callable and run on ubuntu-latest. It should have two jobs: one for tests and one for static analysis. The tests job should check out the repository, set up Python 3.9, install dependencies, and run tox with a local environment. The static analysis job should use a matrix strategy to run multiple static analysis tools (bandit, readme, flake8, pylint, flake8-tests, pylint-tests) with Python 3.9 and report results.",
+  "tags": [
+    "python",
+    "ci",
+    "tests",
+    "static-analysis",
+    "tox"
+  ]
+}

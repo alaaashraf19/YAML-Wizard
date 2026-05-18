@@ -1,0 +1,63 @@
+.python_template:
+  before_script: &id001
+  - apt-get update -q
+  - apt-get install -q -y software-properties-common
+  - add-apt-repository ppa:openjdk-r/ppa
+  - apt-get install -q -y openjdk-8-jdk
+  script: &id002
+  - pip install -q -r tests/requirements.txt
+  - python -m unittest discover
+  stage: test
+coverage:
+  artifacts:
+    paths:
+    - htmlcov
+  before_script: *id001
+  coverage: /TOTAL.+ ([0-9]{1,3}%)/
+  image: python:3.7
+  script:
+  - pip install -q -r tests/requirements.txt
+  - pip install -q coverage
+  - coverage run --source schemaflow -m unittest discover
+  - coverage html
+  - coverage report -m
+  stage: check
+lint:
+  image: python:3.7
+  script:
+  - pip install flake8 mypy
+  - flake8 --ignore E501
+  - mypy --ignore-missing-imports schemaflow
+  stage: check
+pages:
+  artifacts:
+    paths:
+    - public
+  image: python:3.7
+  only:
+  - master
+  script:
+  - pip install -r docs/requirements.txt
+  - cd docs && make html && cd ..
+  - mkdir -p public/documentation
+  - mv docs/build/html/ public/documentation/latest/
+  stage: deploy
+stages:
+- test
+- check
+- deploy
+test2.7:
+  before_script: *id001
+  image: python:2.7
+  script: *id002
+  stage: test
+test3.6:
+  before_script: *id001
+  image: python:3.6
+  script: *id002
+  stage: test
+test3.7:
+  before_script: *id001
+  image: python:3.7
+  script: *id002
+  stage: test

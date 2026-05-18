@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_03873",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 112,
+  "description": "Create a GitLab CI pipeline with a single job named ci_tests that runs in the test stage (default stage). The job uses the default Docker image (no explicit image) and executes the following shell commands: composer install --dev, vendor/bin/phpunit, and vendor/bin/phpcs --standard=PSR2 src/. No caches, artifacts, or special rules are defined.",
+  "tags": [
+    "php",
+    "composer",
+    "phpunit",
+    "phpcs",
+    "psr2"
+  ]
+}

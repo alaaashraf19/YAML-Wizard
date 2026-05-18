@@ -1,0 +1,40 @@
+before_script:
+- sudo apt-get update -qq && sudo apt-get install -y -qq nodejs
+- sudo npm -v
+- sudo npm install gulp-cli -g
+- sudo npm install gulp -D
+- sudo gulp -v
+build:
+  only:
+  - master
+  script:
+  - sudo npm install
+  - sudo gulp
+  - sudo rsync -av --delete dist /var/www/html/simple-use-ci
+  stage: build
+  tags:
+  - debian
+  - build
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+  - node_modules/
+stages:
+- build
+- test
+test-deb:
+  script:
+  - echo test debian
+  stage: test
+  tags:
+  - debian
+test-s1:
+  script:
+  - echo start test
+  stage: test
+test-win:
+  script:
+  - echo test win
+  stage: test
+  tags:
+  - windows

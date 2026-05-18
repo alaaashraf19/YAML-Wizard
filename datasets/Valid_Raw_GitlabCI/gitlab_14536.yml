@@ -1,0 +1,22 @@
+build_maven:
+  script:
+  - echo "build maven....."
+  - echo "mvn clean"
+  - echo "done"
+  stage: build
+deploy_springboot:
+  script:
+  - echo "deploy springboot...."
+  - echo "run mvn install"
+  - echo "done"
+  stage: deploy
+stages:
+- build
+- test
+- deploy
+test_springboot:
+  script:
+  - echo "run java test....."
+  - echo "java -test"
+  - echo "done"
+  stage: test

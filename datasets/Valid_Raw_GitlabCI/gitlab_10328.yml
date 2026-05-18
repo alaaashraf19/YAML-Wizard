@@ -1,0 +1,16 @@
+before_script:
+- npm install
+cache:
+  paths:
+  - node_modules/
+image: node:alpine
+publish:
+  except:
+  - triggers
+  only:
+  - master
+  - tags
+  script:
+  - echo "//registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN" > ~/.npmrc
+  - npm publish --tag latest
+  stage: deploy

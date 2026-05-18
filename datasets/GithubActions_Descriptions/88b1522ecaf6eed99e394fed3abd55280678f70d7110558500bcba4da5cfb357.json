@@ -1,0 +1,16 @@
+{
+  "sha": "88b1522ecaf6eed99e394fed3abd55280678f70d7110558500bcba4da5cfb357",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1339,
+  "description": "Create a GitHub Actions workflow named Run tests that runs on push to main, on pull requests, and on repository creation. Use a matrix job strategy to test across multiple Python versions and operating systems, including ubuntu-latest, windows-latest, and macos-latest. For each matrix combination, check out the repository, set up the specified Python version, install dependencies, build the project, and run tests in both C extension and pure Python fallback modes. Finally, build and upload packages as artifacts.",
+  "tags": [
+    "python",
+    "tests",
+    "matrix",
+    "multios",
+    "cython",
+    "pytest",
+    "github-actions"
+  ]
+}

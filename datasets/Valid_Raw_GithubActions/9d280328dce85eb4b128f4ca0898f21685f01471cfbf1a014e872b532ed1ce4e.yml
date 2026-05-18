@@ -1,0 +1,44 @@
+name: Docs
+
+on:
+  push:
+
+jobs:
+  build-check-upload:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+      - name: Install requirements
+        run: cd docs
+          && ./docs.sh install
+      - name: Pull in relevant images only
+        run: git lfs pull -I "docs/wiring/images/*.png"
+      - name: Build docs
+        run: ./docs/docs.sh build
+      - name: Check links
+        run: ./docs/docs.sh check
+#      - name: Link Checker
+#        uses: lycheeverse/lychee-action@v1.8.0
+#        with:
+#          fail: true
+#          # Check all markdown and html files
+#          args: -c docs/lychee.toml .
+#        env:
+#          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      - name: Deploy to Github Pages
+        if: ${{ github.ref == 'refs/heads/master' }}
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: gh-pages # The branch the action should deploy to.
+          folder: docs/_build/html # The folder the action should deploy.
+          single-commit: true

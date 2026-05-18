@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_16240",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 4992,
+  "description": "Create a GitLab CI pipeline using the docker:20 image with the docker:20.10-dind service, defining a single stage docker-image and several variables for tags and platform. Add a manual-release-scenic-core-build-docker-image-from-branch job in the docker-image stage that runs manually when the pipeline source is not a merge request, executes docker context create scenic_core_builder, docker buildx create scenic_core_builder, docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY, then docker buildx build --no-cache --progress plain --provenance false --push --platform $PLATFORM -t $IMAGE_PATH -f $DOCKERFILE_PATH with multiple --build-arg values, and finally docker manifest inspect $IMAGE_PATH; it uses the docker:20.10-dind service, tags ${RUNNER_HOSTNAME}, and a 4‑hour timeout. Add a manual-release-scenic-core-final-docker-image-from-branch job similarly configured but building from docker/scenic-core/Dockerfile with its own set of build arguments. Add a release-scenic-core-build-docker-image job that runs only on tags or the develop branch, performing the same steps as the first manual job but using $CI_COMMIT_REF_NAME for IMAGE_PATH. Add a release-scenic-core-final-docker-image job that needs the previous release build job, also runs only on tags or develop, and builds the final image from docker/scenic-core/Dockerfile with its specific build‑args. All jobs share the docker:20 image, docker:20.10-dind service, and the defined variables.",
+  "tags": [
+    "docker",
+    "dind",
+    "docker-buildx",
+    "manual",
+    "release",
+    "scenic-core",
+    "gitlab-ci"
+  ]
+}

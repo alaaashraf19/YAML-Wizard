@@ -1,0 +1,10 @@
+Phing:
+  script:
+  - ./gitlab-ci/bootstrap.sh
+  tags:
+  - php70
+  - composer
+cache:
+  paths:
+  - vendor/
+  untracked: true

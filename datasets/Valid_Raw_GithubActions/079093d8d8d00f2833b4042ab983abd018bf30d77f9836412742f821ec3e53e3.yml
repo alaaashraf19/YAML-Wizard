@@ -1,0 +1,18 @@
+name: "CI Builds"
+on: [push]
+jobs:
+  build-linux:
+    strategy:
+      matrix:
+        dist:
+          - debian.buster
+          - fedora.35
+          - opensuse.tumbleweed
+          - ubuntu.focal
+    runs-on: ubuntu-latest
+    container: veyon/ci.linux.${{matrix.dist}}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+      - run: .ci/linux.${{matrix.dist}}/script.sh $GITHUB_WORKSPACE /tmp

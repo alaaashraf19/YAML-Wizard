@@ -1,0 +1,17 @@
+{
+  "sha": "cf1e95871ab840d672350e221cbfc321bd77a5d1099b2a627a28de064d3b5403",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3545,
+  "description": "Create a GitHub Actions workflow named SSL Compatibility CI that runs on every push to the master branch and on pull requests to master. The workflow should have four jobs: openssl, openssl-no-deprecated, libressl, and wolfssl, each running on ubuntu-latest. The openssl job should use a matrix strategy to test multiple OpenSSL versions, while libressl and wolfssl jobs should also use matrix strategies to test different versions of their respective libraries. Each job should check out the repository, install necessary dependencies, configure and build the project, and run tests.",
+  "tags": [
+    "ssl",
+    "openssl",
+    "libressl",
+    "wolfssl",
+    "ci",
+    "ubuntu",
+    "cmake",
+    "gtest"
+  ]
+}

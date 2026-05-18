@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_04559",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 686,
+  "description": "Create a GitLab CI pipeline that uses the ruby:2.4 Docker image and caches the vendor/ruby directory. Include a global before_script that runs ruby -v, installs bundler without documentation, and runs bundle install -j $(nproc) --path vendor. Define a sast job (default stage) that allows failure, overrides the image to docker:stable, sets DOCKER_DRIVER=overlay2, uses the docker:stable-dind service, and executes: export SP_VERSION=$(echo \\\"$CI_SERVER_VERSION\\\" | sed 's/^\\\\([0-9]*\\\\)\\\\.\\\\([0-9]*\\\\).*/\\\\1-\\\\2-stable/') ; docker run --env SAST_CONFIDENCE_LEVEL=\\\"${SAST_CONFIDENCE_LEVEL:-3}\\\" --volume \\\"$PWD:/code\\\" --volume /var/run/docker.sock:/var/run/docker.sock \\\"registry.gitlab.com/gitlab-org/security-products/sast:$SP_VERSION\\\" /app/bin/run /code. Collect gl-sast-report.json as an artifact.",
+  "tags": [
+    "ruby",
+    "bundler",
+    "sast",
+    "docker",
+    "dind",
+    "cache",
+    "gitlab-ci"
+  ]
+}

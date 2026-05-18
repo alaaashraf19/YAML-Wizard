@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_14638",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 566,
+  "description": "Create a GitLab CI pipeline that uses the node:latest Docker image and caches the node_modules/ directory. Define the DB_DATABASE, DB_DIALECT, DB_HOST, DB_PASSWORD, DB_PORT, DB_SCHEMA, and DB_USERNAME variables for a PostgreSQL connection. In the test stage add a test job that runs npm install then npm run-script test, and saves the coverage/ directory as an artifact. In the deploy stage add a pages job (type deploy) that depends on the test job, runs only on the master branch, moves coverage/lcov-report/ into a public/ folder, and publishes the public/ folder as the GitLab Pages artifact. The pipeline follows the default stage ordering with test before deploy.",
+  "tags": [
+    "node",
+    "npm",
+    "gitlab-pages",
+    "coverage",
+    "cache",
+    "postgres"
+  ]
+}

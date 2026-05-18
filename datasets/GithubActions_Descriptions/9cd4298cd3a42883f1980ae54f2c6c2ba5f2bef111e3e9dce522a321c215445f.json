@@ -1,0 +1,15 @@
+{
+  "sha": "9cd4298cd3a42883f1980ae54f2c6c2ba5f2bef111e3e9dce522a321c215445f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1575,
+  "description": "Create a GitHub Actions workflow named continuous-integration that runs on push and pull request events. The workflow should have two jobs: one for linux-os and one for windows-os. The linux-os job should run on ubuntu-latest, update APT, install dependencies, check out the repository, pre-configure, configure, and build the project. The windows-os job should run on windows-latest with a matrix of platforms, clone a megasource repository, check out another repository, configure with cmake, install, and upload an artifact.",
+  "tags": [
+    "continuous-integration",
+    "multi-os",
+    "ubuntu",
+    "windows",
+    "cmake",
+    "make"
+  ]
+}

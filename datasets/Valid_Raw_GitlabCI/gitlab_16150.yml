@@ -1,0 +1,149 @@
+.default-template:
+  artifacts:
+    expire_in: 6 weeks
+    name: ${CI_BUILD_NAME}_${CI_BUILD_REF_NAME}
+    paths:
+    - build_artifacts
+  cache: &id001
+    key: $CI_BUILD_REF_NAME
+    paths:
+    - builddir/nodemcu-firmware
+  except: &id002
+  - /^.*-documentation$/
+  - /^docs-.*$/
+  image: jkarras/docker-nodemcu-build:spiffs-essential
+  script: &id003
+  - bash ci-scripts/preparelua.sh ${CI_BUILD_STAGE}
+  - bash ci-scripts/build-nodemcu-image.sh ${CI_BUILD_STAGE}
+  variables: &id004
+    GIT_DEPTH: '3'
+.deploy-template:
+  cache: &id005
+    key: $CI_BUILD_STAGE/$CI_BUILD_REF_NAME
+  image: jkarras/docker-nodemcu-build:spiffs-essential
+  script: &id006
+  - bash ci-scripts/preparelua.sh ${CI_BUILD_STAGE}
+  - bash ci-scripts/build-nodemcu-image.sh ${CI_BUILD_STAGE}
+  variables: &id007
+    GIT_DEPTH: '3'
+.image-template:
+  image: jkarras/docker-nodemcu-build:spiffs-essential
+build-images:
+  artifacts:
+    name: ${CI_BUILD_NAME}_${CI_BUILD_REF_NAME}
+    paths:
+    - build_artifacts
+  cache: *id001
+  dependencies:
+  - prepare-environment
+  except: *id002
+  image: jkarras/docker-nodemcu-build:spiffs-essential
+  script: *id003
+  stage: build
+  variables: *id004
+deploy-to-badger-dev:
+  artifacts:
+    untracked: true
+  cache: *id005
+  environment:
+    name: $CI_BUILD_REF_NAME
+    url: http://saintcon2016badge.karras.co/$CI_BUILD_REF_NAME
+  image: jkarras/docker-nodemcu-build:spiffs-essential
+  only:
+  - dev@saintcon/SaintCon2016Badge
+  script: *id006
+  stage: deploy
+  variables: *id007
+  when: manual
+deploy-to-badger-prod:
+  artifacts:
+    untracked: true
+  cache: *id005
+  environment:
+    name: Production
+    url: https://saintcon2016badge.karras.co/$CI_BUILD_REF_NAME
+  image: jkarras/docker-nodemcu-build:spiffs-essential
+  only:
+  - master@saintcon/SaintCon2016Badge
+  script: *id006
+  stage: deploy
+  variables: *id007
+  when: manual
+pages:
+  artifacts:
+    name: ${CI_BUILD_NAME}_${CI_BUILD_REF_NAME}
+    paths:
+    - public
+  before_script: []
+  dependencies: []
+  environment: documentation
+  image: jkarras/docker-nodemcu-build:mkdocs
+  only:
+  - master@saintcon/SaintCon2016Badge
+  - tags@saintcon/SaintCon2016Badge
+  script:
+  - export LC_ALL=C.UTF-8
+  - mkdocs build
+  stage: deploy
+  when: always
+prepare-environment:
+  artifacts:
+    expire_in: 1 weeks
+    name: ${CI_BUILD_NAME}_${CI_BUILD_REF_NAME}
+    paths:
+    - builddir/nodemcu-firmware
+    - build_artifacts
+  cache: *id001
+  except: *id002
+  image: jkarras/docker-nodemcu-build:spiffs-essential
+  script: *id003
+  stage: prepare
+  variables: *id004
+stages:
+- prepare
+- test
+- build
+- review
+- deploy
+start_review:
+  artifacts:
+    expire_in: 6 weeks
+    untracked: true
+  cache: *id005
+  environment:
+    name: review/$CI_BUILD_REF_NAME
+    on_stop: stop_review
+    url: http://saintcon2016badge.karras.co/$CI_BUILD_REF_NAME
+  except:
+  - master
+  - dev
+  image: jkarras/docker-nodemcu-build:spiffs-essential
+  only:
+  - branches
+  script: *id006
+  stage: review
+  variables: *id007
+stop_review:
+  environment:
+    action: stop
+    name: review/$CI_BUILD_REF_NAME
+  except:
+  - master
+  - dev
+  image: jkarras/docker-nodemcu-build:spiffs-essential
+  only:
+  - branches
+  script:
+  - s3cmd del -r s3://saintcon2016badge.karras.co/$CI_BUILD_REF_NAME
+  stage: review
+  variables:
+    GIT_STRATEGY: none
+  when: manual
+test-lua-syntax:
+  artifacts: null
+  cache: null
+  except: *id002
+  image: jkarras/docker-nodemcu-build:spiffs-essential
+  script: *id003
+  stage: test
+  variables: *id004

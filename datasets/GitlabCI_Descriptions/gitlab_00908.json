@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_00908",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 898,
+  "description": "Create a GitLab CI pipeline that uses the viraweb/mblowfish-angularjs-builder:1.0.0 Docker image as default and defines a cache for node_modules. Add a build-project job that runs in the default stage, uses the node:8 image, runs only on master and develop branches, and executes the following script steps in order: useradd -m -p 123 builder; apt-get update; apt-get -yq install chromium git; npm install -g bower grunt-cli; npm install; bower install --allow-root; chmod 777 -fR .; su builder -c \"grunt test\"; find . -name lcov.info | xargs -d '\\n' cat | node_modules/.bin/codacy-coverage -t $CODACY_PROJECT_TOKEN; su builder -c \"grunt release\". It stores coverage/, doc/ and dist/ as artifacts for 1 day and extracts line coverage using the regex /Lines\\s*:\\s*(\\d+\\.\\d+)%/. Then add a pages job in the deploy stage that depends on build-project, runs only on master, uses the default image, and runs: ls -l; mkdir .public; mv coverage/ .public/coverage/; mv doc/ .public/doc/; mv .public public, publishing the public/ directory as a GitLab Pages artifact retained for 90 days.",
+  "tags": [
+    "node8",
+    "angularjs",
+    "grunt",
+    "bower",
+    "codacy",
+    "gitlab-pages",
+    "coverage",
+    "cache"
+  ]
+}

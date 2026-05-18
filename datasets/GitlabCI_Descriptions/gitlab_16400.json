@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_16400",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2330,
+  "description": "Create a GitLab CI pipeline using the image registry.gitlab.com/serebit/strife with stages build and deploy. Define a global before_script that checks the Gradle binary checksum, clears caches if changed, creates $KONAN_DEPS_CACHE and $KONAN_DATA_DIR/dependencies, then for each dependency in $KONAN_DEPS downloads the tar.gz from JetBrains, extracts it, and records extraction; define an after_script that removes lock and gc files, deletes empty cache directories, and writes a new sha256sum of /usr/bin/gradle to gradle_checksum.txt. Add a build job in the build stage that uses a pull‑push cache keyed 'one-key-to-rule-them-all' with the specified Gradle and Konan paths, runs `gradle allTests`, and always runs the global before/after scripts. Add a manual deploy-release job in the deploy stage that runs only on the release ref, depends on build, sets environment deploy-release, and executes `gradle publishAllPublicationsToPublicRepository`. Add a deploy-snapshot job in the deploy stage that runs only on the master ref, depends on build, sets environment deploy-snapshot, defines variable SNAPSHOT_VERSION as dev-$CI_COMMIT_SHORT_SHA, and runs `gradle publishAllPublicationsToSnapshotRepository`. Add a manual pages job in the deploy stage that runs only on the release ref, depends on build, sets environment deploy-pages, runs `gradle dokkaHtml`, and publishes the generated public/ directory as a pages artifact.",
+  "tags": [
+    "gradle",
+    "kotlin-native",
+    "docker",
+    "gitlab-ci",
+    "cache",
+    "pages",
+    "release",
+    "snapshot"
+  ]
+}

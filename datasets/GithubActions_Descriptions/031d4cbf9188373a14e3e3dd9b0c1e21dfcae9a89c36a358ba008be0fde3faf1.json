@@ -1,0 +1,14 @@
+{
+  "sha": "031d4cbf9188373a14e3e3dd9b0c1e21dfcae9a89c36a358ba008be0fde3faf1",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1306,
+  "description": "Create a GitHub Actions workflow named Pull Request Checks that runs on pull requests to the master and feature branches. Use an ubuntu-latest job that checks out the repository, sets up .NET Core 3.1, .NET 5, and .NET 6.0, and Node.js 10.x. Then, install dependencies, build with dotnet and npm, run tests with coverage for both .NET and JavaScript, and upload the coverage report to Codecov using a token from secrets.",
+  "tags": [
+    "dotnet",
+    "nodejs",
+    "tests",
+    "coverage",
+    "codecov"
+  ]
+}

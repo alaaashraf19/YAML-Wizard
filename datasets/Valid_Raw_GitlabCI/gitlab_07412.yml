@@ -1,0 +1,130 @@
+.default_template:
+  before_script:
+  - npm install
+  retry:
+    max: 2
+    when: stuck_or_timeout_failure
+  stage: default
+.docker-image:
+  image: docker:19.03.5
+  services:
+  - docker:19.03.5-dind
+  variables:
+    DOCKER_DRIVER: overlay2
+.pages:
+  dependencies:
+  - docs
+  stage: pages
+.testpages:
+  after_script:
+  - docker cp $(docker ps -aqf ancestor=testpages):/testpages.adblockplus.org/test/screenshots
+    . 2> /dev/null
+  allow_failure: true
+  artifacts:
+    expire_in: 1 mo
+    paths:
+    - screenshots/
+    when: always
+  before_script:
+  - apk add git
+  - git clone https://gitlab.com/eyeo/developer-experience/testpages.adblockplus.org.git
+  - cp "extension/extension$MANIFEST.zip" testpages.adblockplus.org
+  extends: .docker-image
+  interruptible: true
+  needs:
+  - artifacts: true
+    job: build:testpages-extension
+  script:
+  - cd testpages.adblockplus.org && docker build -t testpages --build-arg EXTENSION_FILE="extension$MANIFEST.zip"
+    . && docker run --shm-size=512m -e SKIP_EXTENSION_DOWNLOAD="true" -e GREP="^.*$BROWSER((?!Snippets$SKIP).)*\$"
+    testpages
+  stage: testpages
+  variables:
+    MANIFEST: mv2
+.testpages:v3:
+  extends: .testpages
+  variables:
+    MANIFEST: mv3
+    SKIP: '|Header|Sitekey|Subscriptions'
+audit:
+  allow_failure: true
+  extends: .default_template
+  script:
+  - npm audit --production
+benchmark:
+  extends: .default_template
+  script:
+  - npm run benchmark
+  - npm run benchmark:save
+  - npm run benchmark:compare
+build:testpages-extension:
+  allow_failure: true
+  artifacts:
+    expire_in: 1 month
+    paths:
+    - extension
+  extends: .docker-image
+  script:
+  - docker build -t extensionforcore -f test/dockerfiles/extension.Dockerfile .
+  - docker run extensionforcore
+  - docker cp $(docker ps -aqf ancestor=extensionforcore):/extension .
+  stage: default
+docs:
+  artifacts:
+    expire_in: 3 mos
+    paths:
+    - build/docs/
+  extends: .default_template
+  script:
+  - npm run docs
+image: registry.gitlab.com/eyeo/docker/adblockplus-ci:node16-no-python
+include: .gitlab-pages.yml
+stages:
+- default
+- testpages
+- pages
+testpages:v2:chrome:beta:
+  allow_failure: true
+  extends: .testpages
+  variables:
+    BROWSER: chromium beta
+testpages:v2:chrome:latest:
+  extends: .testpages
+  variables:
+    BROWSER: chromium latest
+testpages:v2:chrome:oldest:
+  extends: .testpages
+  variables:
+    BROWSER: chromium 77.0.3865.0
+testpages:v2:firefox:beta:
+  allow_failure: true
+  extends: .testpages
+  variables:
+    BROWSER: firefox beta
+testpages:v2:firefox:latest:
+  extends: .testpages
+  variables:
+    BROWSER: firefox latest
+testpages:v2:firefox:oldest:
+  extends: .testpages
+  variables:
+    BROWSER: firefox 68.0
+testpages:v3:chrome:beta:
+  extends: .testpages:v3
+  variables:
+    BROWSER: chromium beta
+testpages:v3:chrome:latest:
+  extends: .testpages:v3
+  variables:
+    BROWSER: chromium latest
+tests:
+  cache:
+    key: global-cache
+    paths:
+    - browser-snapshots/*/cache/
+  extends: .default_template
+  script:
+  - npm test
+  - npm run test:dist
+variables:
+  npm_config_audit: 'false'

@@ -1,0 +1,16 @@
+{
+  "sha": "9f973030009059c1c514ae48d7fe4c86845393988a2f05d18c44749e4747a1e0",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3117,
+  "description": "Create a GitHub Actions workflow named CI - macOS that runs on every push to the master branch and on tags matching v[0-9]+\\.[0-9]+\\.[0-9]+, as well as on pull requests. Use a single macos-13 job that checks out the repository with submodules, restores and stores file mtimes, installs Qt 6.8.3 and the zstandard pip package, configures and builds a CMake project, runs tests, and packages and uploads the PokeFinder app as a release artifact.",
+  "tags": [
+    "macos",
+    "cmake",
+    "qt",
+    "python",
+    "release",
+    "packaging",
+    "tests"
+  ]
+}

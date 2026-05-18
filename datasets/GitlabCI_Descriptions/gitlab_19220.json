@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_19220",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 184,
+  "description": "Create a GitLab CI pipeline that uses the node:6.2.0 Docker image. Set a global before_script that runs `npm install --global gulp jspm`, then `npm install`, then `jspm install -y`. Cache the directories `node_modules/` and `jspm_modules/`. Define a job named generate in the default test stage that executes the shell command `gulp test`. No services, artifacts, or conditional rules are required.",
+  "tags": [
+    "node",
+    "gulp",
+    "jspm",
+    "npm",
+    "cache"
+  ]
+}

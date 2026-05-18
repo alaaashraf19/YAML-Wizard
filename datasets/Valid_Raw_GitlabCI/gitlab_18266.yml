@@ -1,0 +1,66 @@
+build:
+  artifacts:
+    paths:
+    - build/
+    - src/
+    - uni10_api_test/
+  before_script:
+  - apt update
+  - apt-get install -y cmake
+  - update-alternatives --install /usr/bin/gfortran gfortran /usr/local/bin/gfortran
+    999
+  - apt-get install -y libblas-dev liblapack-dev
+  - apt-get install -y doxygen
+  - apt-get install -y lcov
+  - apt-get install -y python python-pip
+  - pip install gcovr
+  script:
+  - mkdir build
+  - cd build
+  - cmake ../ -DCMAKE_BUILD_TYPE=Debug -DBUILD_DOC=True && make
+  stage: build
+deploy_pypi:
+  before_script:
+  - apt update
+  - apt-get install -y cmake
+  - apt-get install -y python python-pip
+  - apt-get install -y libblas-dev liblapack-dev
+  - pip install pybind11
+  - pip install twine
+  - python setup.py sdist
+  only:
+  - tags
+  script:
+  - echo $TWINE_USERNAME
+  - echo $TWINE_PASSWORD
+  - twine upload dist/*
+  stage: deploy
+image: gcc
+pages:
+  artifacts:
+    paths:
+    - public
+  dependencies:
+  - build
+  script:
+  - cp -rf build/doc/html public
+test:
+  artifacts:
+    paths:
+    - build/
+  before_script:
+  - apt update
+  - apt-get install -y cmake
+  - update-alternatives --install /usr/bin/gfortran gfortran /usr/local/bin/gfortran
+    999
+  - apt-get install -y libblas-dev liblapack-dev
+  - apt-get install -y doxygen
+  - apt-get install -y lcov
+  - apt-get install -y python python-pip
+  - pip install gcovr
+  dependencies:
+  - build
+  script:
+  - cd build
+  - cd uni10_api_test &&  ./runUni10Tests
+  stage: test

@@ -1,0 +1,15 @@
+{
+  "sha": "c4d399d53d8a982703741ac39786752ddd2d26b27660e1c563795db4e19eee24",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4244,
+  "description": "Create a GitHub Actions workflow named check-all-parts that runs on push and pull request events. The workflow has multiple jobs: python-scripts which runs on a matrix of ubuntu-latest, macos-latest, and windows-latest, checking ASCII in filenames, case in image filenames, and running various Python scripts; golang-scripts which runs on ubuntu-latest, installing Go and fzp tool; check_modified_files_pull_request and check_modified_files_default which run on ubuntu-latest, checking changed files and running fzp checker; and checker_unit_test which runs on ubuntu-latest, running pytest.",
+  "tags": [
+    "python",
+    "golang",
+    "github-actions",
+    "validation",
+    "testing",
+    "ci"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_10902",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 824,
+  "description": "Create a GitLab CI pipeline using the Docker image registry.gitlab.com/johnnyzz/dev-build:base and a single build stage. Define a build job that runs on the linux tag, first ensures openssh-client is installed, starts ssh-agent, adds the $SSH_PRIVATE_KEY, and disables strict host key checking. Then it SSHes to git@gitlab.com, clones the pharo-vm repository with the CI build token, initializes and updates submodules recursively, configures a build directory, runs cmake with -DST_SCRIPT=gen-pharo-nos-stack -DST_PLATFORM_NAME=PharoNOS, and finally runs make. The job stores the generated NOS.img and NOS.kernel files as artifacts from pharo-nos-build/build and pharo-nos-build/results. No additional caches or rules are defined.",
+  "tags": [
+    "pharo",
+    "cmake",
+    "make",
+    "ssh",
+    "gitlab-ci",
+    "docker-image",
+    "linux"
+  ]
+}

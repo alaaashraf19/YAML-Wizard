@@ -1,0 +1,12 @@
+cache:
+  paths:
+  - node_modules/
+image: node:18
+stages:
+- test
+test:
+  script:
+  - npm ci
+  - npm run lint
+  - npm test
+  stage: test

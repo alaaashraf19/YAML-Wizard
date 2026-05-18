@@ -1,0 +1,18 @@
+{
+  "sha": "835db847c8d00d1efadc0e091a503093a1e8f51e114bcb85b110dca4c8af2e6f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 7664,
+  "description": "Create a GitHub Actions workflow named Ubuntu that runs on a schedule, on push to release and develop branches, and on pull requests. The workflow has a matrix job with no permissions, running on various Ubuntu versions with different C++ versions, build types, exception types, and toolsets. For each matrix combination, check out the code, set up the environment, install dependencies, create a build directory, build dependencies with CMake, and run tests with ctest.",
+  "tags": [
+    "ubuntu",
+    "cpp",
+    "cmake",
+    "ctest",
+    "gcc",
+    "clang",
+    "matrix",
+    "scheduled",
+    "ci"
+  ]
+}

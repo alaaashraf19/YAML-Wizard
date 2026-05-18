@@ -1,0 +1,17 @@
+{
+  "sha": "fe04a5487b31838fa86ee70ac066ca817849ab2794464471f3b2f490da48f3b6",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5008,
+  "description": "Create a GitHub Actions workflow named Windows release build that runs daily at 6am. The workflow should have a build job running on windows-2019 that checks out the repository, sets up the environment, installs dependencies including boost, configures and builds the project with various optional defines in a matrix, and archives the build. Additionally, create an upload job that downloads the build artifacts and uploads them as a release using the automatic-releases action. Finally, create a notify job that sends a Discord notification on failure.",
+  "tags": [
+    "windows",
+    "cmake",
+    "boost",
+    "release",
+    "discord",
+    "notifications",
+    "artifacts",
+    "automatic-releases"
+  ]
+}

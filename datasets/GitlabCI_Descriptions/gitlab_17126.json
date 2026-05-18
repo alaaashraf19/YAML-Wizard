@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_17126",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 7256,
+  "description": "Create a GitLab CI pipeline that uses ruby:2.5 and ruby:2.7 Docker images and a shared before_script (printing SIMP‑relevant env vars, checking Ruby/RVM, installing bundler ${BUNDLER_VERSION:-2.2.6}, and running bundle install) with a cache keyed on ${CI_PROJECT_NAMESPACE}_ruby-${MATRIX_RUBY_VERSION}_bundler storing .vendor. Define stages validation, acceptance, compliance, deployment and set bundler‑related variables (BUNDLER_VERSION, BUNDLE_BIN, BUNDLE_CACHE_PATH, BUNDLE_NO_PRUNE, BUNDLE_PATH, GEM_HOME) plus puppet version variables. In the validation stage add unit_tests (script: bundle exec rake spec), lint_tests (script: bundle exec rake metadata_lint), and releng_checks (script: command -v rpm || apt-get install rpm; SIMP_RPM_dist=.el7 bundle exec rake check:dot_underscore; SIMP_RPM_dist=.el7 bundle exec rake check:test_file; bundle exec rake metadata_lint; bundle exec pdk build --force --target-dir=dist) all tagged with docker. In the acceptance stage add the pup6 and pup7 jobs (pup6.pe-default_el7, pup6.pe-default_el8, pup6.pe-forge_install_el7, pup6.pe-forge_install_el8, pup6.pe-ipa_el7, pup6.pe-rpm_el7, pup6.pe-rpm_el8, pup6.pe-simp_lite_el7, pup6.pe-simp_lite_el8, pup7.pe-default_el7) each using the appropriate ruby image, variables (BEAKER_PUPPET_COLLECTION, MATRIX_RUBY_VERSION, PUPPET_VERSION), retry:1, and running bundle exec rake beaker:suites[<suite>,<os>]; jobs are gated by only: variables such as $SIMP_FULL_MATRIX, $SIMP_IPA_TEST, $SIMP_RELEASE_TESTS, etc. In the compliance stage include compliance_base jobs that inherit the shared before_script and cache, tagged with beaker.",
+  "tags": [
+    "ruby",
+    "bundler",
+    "beaker",
+    "puppet6",
+    "puppet7",
+    "validation",
+    "acceptance",
+    "compliance",
+    "rvm",
+    "docker"
+  ]
+}

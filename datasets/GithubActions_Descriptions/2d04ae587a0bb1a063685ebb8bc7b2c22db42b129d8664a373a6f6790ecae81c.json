@@ -1,0 +1,16 @@
+{
+  "sha": "2d04ae587a0bb1a063685ebb8bc7b2c22db42b129d8664a373a6f6790ecae81c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 7577,
+  "description": "Create a GitHub Actions workflow named Release that automates the release process. Trigger on push to master branch or tags starting with 'v', on pull requests to master, and manually. The workflow checks version consistency, builds and publishes Docker images for multiple platforms, uploads digests, creates a manifest list, pushes to DockerHub and GitHub Container Registry, creates a Sentry release, and deploys to a remote server via SSH using Helm.",
+  "tags": [
+    "docker",
+    "release",
+    "github-actions",
+    "sentry",
+    "helm",
+    "ssh",
+    "deployment"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "a47c4cf79d10a3266e5314a7f8f4ec5c64e9001c56dee7c8488ae4ea7d439f0a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4298,
+  "description": "Create a GitHub Actions workflow named Release that triggers on push to master or tags matching v*, on pull requests to master, and manually. The workflow has three jobs: check-version, build, and deploy. The check-version job verifies that the version in the tag matches the version in the code. The build job builds and publishes Docker images to DockerHub and GitHub Container Registry if check-version succeeds or is skipped. The deploy job deploys the application to a remote server via SSH if the workflow is triggered by a tag.",
+  "tags": [
+    "docker",
+    "github-actions",
+    "release",
+    "ssh",
+    "deployment",
+    "helm"
+  ]
+}

@@ -1,0 +1,58 @@
+acceptance-tests:
+  only:
+  - master
+  script:
+  - npm install --only=dev
+  - npm run acceptance
+  stage: acceptance-testing
+code-coverage:
+  script:
+  - npm install
+  - npm run coverage
+  - npm run check-coverage
+  stage: code-testing
+code-duplication:
+  script:
+  - npm install
+  - npm run duplication
+  stage: code-testing
+coverage-report:
+  artifacts:
+    expire_in: 30 days
+    paths:
+    - docs
+  only:
+  - master
+  script:
+  - npm install
+  - npm run coverage
+  stage: staging-server
+dependency-checks:
+  script:
+  - npm install
+  - npm run dependency
+  stage: code-testing
+deploy-staging-server:
+  only:
+  - master
+  script:
+  - apt-get update -qy
+  - apt-get install -y ruby ruby-dev rubygems-integration
+  - gem install dpl
+  - dpl --provider=heroku --app=notes-api-test --api-key=95023c27-5a9d-4250-a3fd-d2e19e0dac02
+  stage: staging-server
+image: node:latest
+linting:
+  script:
+  - npm install
+  - npm run linter
+  stage: code-testing
+stages:
+- code-testing
+- staging-server
+- acceptance-testing
+unit-testing:
+  script:
+  - npm install
+  - npm test
+  stage: code-testing

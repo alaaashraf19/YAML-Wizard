@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_07090",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2493,
+  "description": "Create a GitLab CI pipeline using the jhipster/jhipster:v5.4.2 Docker image with a .maven/ cache keyed by the branch name and a global before_script that replaces JWT_SECRET and GMAIL_PASSWORD in the production config, exports MAVEN_USER_HOME, installs Node v8.12.0 and Yarn v1.10.1 via the frontend‑maven‑plugin, and runs a Yarn install. In the build stage add a maven-compile job that runs `cat src/main/resources/config/application-prod.yml` then `./mvnw compile -Dmaven.repo.local=$MAVEN_USER_HOME` and stores `target/classes/` and `target/generated-sources/` as artifacts for 1 day. In the test stage add a maven-test job executing `./mvnw test -Dmaven.repo.local=$MAVEN_USER_HOME` and a frontend-test job executing `./mvnw com.github.eirslett:frontend-maven-plugin:yarn -Dfrontend.yarn.arguments='test -u' -Dmaven.repo.local=$MAVEN_USER_HOME`; both jobs publish their test result directories as artifacts (target/test-results) with JUnit reports (`target/surefire-reports/TEST-*.xml` and `target/test-results/jest/TESTS-*.xml`) that expire in one day. In the package stage add a maven-package job that runs `./mvnw verify -Pprod -DskipTests -Dmaven.repo.local=$MAVEN_USER_HOME` and archives the WAR files from `target/*.war` as artifacts for one day. In the analyze stage add a sonar-analyze job (allowed to fail) that runs `./mvnw compile -Dmaven.repo.local=$MAVEN_USER_HOME` then `./mvnw org.jacoco:jacoco-maven-plugin:prepare-agent sonar:sonar -Dsonar.organization=timo69-github -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN -Dmaven.repo.local=$MAVEN_USER_HOME`. Finally, in the release stage add a docker-push job using the docker:latest image with the docker:dind service, a before_script of `docker info` and `cp target/*.war src/main/docker`, then logs in to $REGISTRY_URL with the CI token, builds the image via `docker build -f src/main/docker/Dockerfile -t $IMAGE_TAG src/main/docker` and pushes it to $IMAGE_TAG.",
+  "tags": [
+    "jhipster",
+    "maven",
+    "docker",
+    "sonar",
+    "frontend",
+    "yarn",
+    "node",
+    "cache",
+    "ci"
+  ]
+}

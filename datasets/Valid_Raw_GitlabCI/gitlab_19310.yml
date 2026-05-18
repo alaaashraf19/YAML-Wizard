@@ -1,0 +1,23 @@
+include:
+- component: $CI_SERVER_FQDN/ysb33rOrg/org/gitlab-pipeline-recipes/pipeline-publish-artifacts-and-docs@0.8.2
+  inputs:
+    build_params: -x gradleTest -x publishMavenCentralPublicationToSonatypeStagingRepository
+    jdk: 21
+- component: $CI_SERVER_FQDN/ysb33rOrg/org/gitlab-pipeline-recipes/gradleTest@0.8.2
+  inputs:
+    versions: 7.3.3,7.4.2,7.5.1,7.6.4
+- component: $CI_SERVER_FQDN/ysb33rOrg/org/gitlab-pipeline-recipes/gradleTest@0.8.2
+  inputs:
+    versions: 8.0.2,8.1.1,8.2.1,8.3
+- component: $CI_SERVER_FQDN/ysb33rOrg/org/gitlab-pipeline-recipes/gradleTest@0.8.2
+  inputs:
+    versions: 8.4,8.5,8.6,8.7
+- component: $CI_SERVER_FQDN/ysb33rOrg/org/gitlab-pipeline-recipes/gradleTest@0.8.2
+  inputs:
+    versions: 8.8,8.9,8.11.1
+- component: $CI_SERVER_FQDN/ysb33rOrg/org/gitlab-pipeline-recipes/gradleTest@0.8.2
+  inputs:
+    versions: 8.12.1,8.13,8.14.3
+- component: $CI_SERVER_FQDN/ysb33rOrg/org/gitlab-pipeline-recipes/gradleTest@0.8.2
+  inputs:
+    versions: 9.0.0,9.1.0,9.2.0

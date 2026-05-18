@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_14086",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1584,
+  "description": "Create a GitLab CI pipeline using the python:3-stretch Docker image and set variables ANSIBLE_FORCE_COLOR='true', ANS_DEPS='ansible>=4', DEBIAN_FRONTEND='noninteractive', LANG='en_US.UTF-8', LANGUAGE='en_US:en', LC_ALL='en_US.UTF-8'. Include a before_script that runs apt-get update, installs locales, generates the en_US.UTF-8 locale, installs python3-pip, and chmods the repository root to 0755. Define stages deps and check; in the deps stage add a roles-install job that runs pip3 install $ANS_DEPS, ansible-galaxy --version, ansible-galaxy install -r requirements.yml, and publishes the roles/** directory as an artifact named external-roles that expires in 1 hour. In the check stage add an ansible-lint job (depends on roles-install) that runs pip3 install $ANS_DEPS, pip3 install ansible-lint[community,yamllint], ansible-lint --version, yamllint --version, deletes *.vault.* files, builds EXT_ROLES_DIRS from .galaxy_install_info paths, and executes ansible-lint -p with dynamic --exclude flags on the playbooks directory; an ansible-syntax-check job (depends on roles-install) that runs pip3 install $ANS_DEPS, ansible --version, deletes *.vault.* files, and performs ansible-playbook --syntax-check on every .yml file in playbooks/ and playbooks/tenants/; and a python-lint job (no dependencies) that runs pip3 install flake8, flake8 --version, and flake8 --exclude=plugins/strategy/mitogen_linear.py .",
+  "tags": [
+    "ansible",
+    "ansible-lint",
+    "ansible-syntax-check",
+    "python-lint",
+    "flake8",
+    "gitlab-ci",
+    "docker-image-python"
+  ]
+}

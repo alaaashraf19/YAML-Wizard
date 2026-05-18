@@ -1,0 +1,115 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    container: ubuntu:22.04
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install required ubuntu packages
+        env:
+          DEBIAN_FRONTEND: noninteractive
+
+        run: |
+          apt-get update && apt-get install -y --no-install-recommends \
+            cmake \
+            build-essential \
+            libz-dev \
+            llvm-dev \
+            python3 \
+            python3-pip \
+            ninja-build \
+            git
+
+      - name: Install unit tests requirements
+        run: |
+          pip install -r tests/unit_tests/requirements.txt
+
+      - name: Build
+        run: |
+          cmake . \
+            -G Ninja \
+            -Bbuild \
+            -DCMAKE_BUILD_TYPE=Release
+
+          cmake --build build
+
+      - name: Test
+        working-directory: build
+        run: |
+          ctest --verbose
+
+  build-windows:
+    runs-on: windows-2022
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install unit tests requirements
+        run: |
+          pip install -r tests\unit_tests\requirements.txt
+
+      - name: Build
+        run: |
+          cmake . -Bbuild
+
+          cmake --build build --config Release
+
+      - name: Test
+        working-directory: build
+        run: |
+          ctest --verbose -C Release
+
+  build-emscripten:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build
+        working-directory: packages/cxx-frontend
+        run: |
+          npm ci
+          npm run build
+          npm pack
+
+      - name: Test
+        working-directory: packages/cxx-frontend/examples
+        run: |
+          node dump.mjs
+
+  build-macos:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install unit tests requirements
+        run: |
+          python3 -m venv .env
+          . .env/bin/activate
+          pip install -r tests/unit_tests/requirements.txt
+
+      - name: Build
+        run: |
+          . .env/bin/activate
+
+          cmake . \
+            -Bbuild \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DLLVM_ROOT=$(brew --prefix llvm)
+
+          cmake --build build
+
+      - name: Test
+        working-directory: build
+        run: |
+          ctest --verbose

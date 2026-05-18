@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_16772",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 306,
+  "description": "Create a GitLab CI pipeline with a single job named build_image that uses the docker:git Docker image and the docker:dind service. The job logs in to registry.gitlab.com with the gitlab-ci-token and $CI_BUILD_TOKEN, builds a Docker image tagged registry.gitlab.com/showcheap/android-ci:$CI_COMMIT_REF_NAME, and pushes it to the same registry. It runs in the default stage and has no caches, artifacts, or special rules.",
+  "tags": [
+    "docker",
+    "dind",
+    "android-ci",
+    "registry-gitlab",
+    "docker-build"
+  ]
+}

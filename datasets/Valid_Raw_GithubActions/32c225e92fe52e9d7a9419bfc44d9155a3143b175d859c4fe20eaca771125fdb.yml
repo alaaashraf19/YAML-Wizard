@@ -1,0 +1,17 @@
+---
+name: safety
+
+on: push  # yamllint disable-line rule:truthy
+
+jobs:
+  safety:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v5
+      - run: pip install -U pip-tools
+      - run: pip-compile setup.cfg
+      - run: pip install -U safety
+      - name: Check dependencies for known security vulnerabilities using Safety
+        run: safety check --file requirements.txt

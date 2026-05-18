@@ -1,0 +1,33 @@
+.py:
+  before_script: &id001
+  - echo "deb http://archive.debian.org/debian buster main contrib non-free" > /etc/apt/sources.list
+  - apt-get update -qy
+  - apt-get install -qy make git
+  - make debian-nosudo
+  - pip install -U pip
+  - make pip-nosudo
+  - make pip-dev
+  - make db
+  only: &id002
+  - master
+cache:
+  paths:
+  - node_modules/
+  - .yarn
+image: debian:buster
+py-qa:
+  allow_failure: true
+  before_script: *id001
+  only: *id002
+  script: make qa
+  stage: test
+stages:
+- test
+- release
+test:
+  before_script: *id001
+  only: *id002
+  script: make unit
+  stage: test
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive

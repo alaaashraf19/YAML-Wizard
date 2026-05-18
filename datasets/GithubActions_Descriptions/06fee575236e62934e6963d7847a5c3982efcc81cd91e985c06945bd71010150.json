@@ -1,0 +1,14 @@
+{
+  "sha": "06fee575236e62934e6963d7847a5c3982efcc81cd91e985c06945bd71010150",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 923,
+  "description": "Create a GitHub Actions workflow named Draft Release that triggers on push and pull request events for tags matching v*. Use a single windows-latest job that checks out the repository, sets up .NET 3.1.x, restores dependencies, publishes the RatScanner project, downloads and includes the RatUpdater executable, zips the publish directory, and drafts a new release with the zipped file attached.",
+  "tags": [
+    "dotnet",
+    "release",
+    "draft",
+    "windows",
+    "zip"
+  ]
+}

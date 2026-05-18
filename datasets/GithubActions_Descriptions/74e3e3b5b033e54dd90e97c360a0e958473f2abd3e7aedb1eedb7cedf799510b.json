@@ -1,0 +1,17 @@
+{
+  "sha": "74e3e3b5b033e54dd90e97c360a0e958473f2abd3e7aedb1eedb7cedf799510b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2729,
+  "description": "Create a GitHub Actions workflow named EVE - Documentation Tests that runs on every pull request to the main branch. Use two jobs, one on macOS and one on ubuntu-latest with a container, each with a matrix strategy for different compilers and architectures. For each job, print runner info, fetch the current branch, run CMake, compile documentation tests, and run documentation tests.",
+  "tags": [
+    "cmake",
+    "ctest",
+    "documentation",
+    "gcc",
+    "clang",
+    "ubuntu",
+    "macos",
+    "tests"
+  ]
+}

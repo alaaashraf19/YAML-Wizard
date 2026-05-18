@@ -1,0 +1,92 @@
+.android_job_template:
+  artifacts: &id001
+    paths:
+    - $CI_PROJECT_DIR/demos/kitchen_sink/bin/$CI_BUILD_NAME-$CI_BUILD_REF_NAME-${CI_BUILD_REF:0:8}.apk
+  before_script: &id002
+  - apt-get install debconf
+  - echo debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selections
+  - echo debconf shared/accepted-oracle-license-v1-1 seen true | debconf-set-selections
+  - dpkg --add-architecture i386
+  - apt-get update
+  - apt-get install -y build-essential ccache git zlib1g-dev python2.7 python2.7-dev
+    libncurses5:i386 libstdc++6:i386 zlib1g:i386 openjdk-7-jdk unzip ant ccache
+  - apt-get update -qy
+  - apt-get install -y python-dev python-pip
+  - python -v
+  - which python
+  - pip -V
+  - pip install https://github.com/kivy/buildozer/archive/master.zip colorama appdirs
+    sh jinja2 six cython --upgrade
+  - cd $CI_PROJECT_DIR/gitlab-ci
+  - python ./android_sdk_downloader.py
+  type: build
+android_kitchen_arm-v7a:
+  artifacts: *id001
+  before_script: *id002
+  script:
+  - echo "Building KitchenSink for armeabi-v7a"
+  - cd $CI_PROJECT_DIR/gitlab-ci
+  - python ./android_sdk_downloader.py --api 21
+  - cd $CI_PROJECT_DIR/demos/kitchen_sink
+  - export APP_ANDROID_ARCH=armeabi-v7a
+  - export APP_ANDROID_API=21
+  - buildozer android debug
+  - cd $CI_PROJECT_DIR/demos/kitchen_sink
+  - if [ ! "$(ls -A ./bin)" ]; then exit 1; fi
+  - cd bin
+  - mv *.apk $CI_BUILD_NAME-$CI_BUILD_REF_NAME-${CI_BUILD_REF:0:8}.apk
+  type: build
+android_kitchen_arm64-v8a:
+  artifacts: *id001
+  before_script: *id002
+  script:
+  - echo "Building KitchenSink for arm64-v8a"
+  - cd $CI_PROJECT_DIR/gitlab-ci
+  - python ./android_sdk_downloader.py --api 21
+  - cd $CI_PROJECT_DIR/demos/kitchen_sink
+  - export APP_ANDROID_ARCH=arm64-v8a
+  - export APP_ANDROID_API=21
+  - buildozer android debug
+  - cd $CI_PROJECT_DIR/demos/kitchen_sink
+  - if [ ! "$(ls -A ./bin)" ]; then exit 1; fi
+  - cd bin
+  - mv *.apk $CI_BUILD_NAME-$CI_BUILD_REF_NAME-${CI_BUILD_REF:0:8}.apk
+  type: build
+android_kitchen_armeabi:
+  artifacts: *id001
+  before_script: *id002
+  script:
+  - echo "Building KitchenSink for armeabi"
+  - cd $CI_PROJECT_DIR/gitlab-ci
+  - python ./android_sdk_downloader.py --api 19
+  - cd $CI_PROJECT_DIR/demos/kitchen_sink
+  - export APP_ANDROID_ARCH=armeabi
+  - export APP_ANDROID_API=19
+  - buildozer android debug
+  - cd $CI_PROJECT_DIR/demos/kitchen_sink
+  - if [ ! "$(ls -A ./bin)" ]; then exit 1; fi
+  - cd bin
+  - mv *.apk $CI_BUILD_NAME-$CI_BUILD_REF_NAME-${CI_BUILD_REF:0:8}.apk
+  type: build
+android_kitchen_x86:
+  artifacts: *id001
+  before_script: *id002
+  script:
+  - echo "Building KitchenSink for x86"
+  - cd $CI_PROJECT_DIR/gitlab-ci
+  - python ./android_sdk_downloader.py --api 21
+  - cd $CI_PROJECT_DIR/demos/kitchen_sink
+  - export APP_ANDROID_ARCH=x86
+  - export APP_ANDROID_API=21
+  - buildozer android debug
+  - cd $CI_PROJECT_DIR/demos/kitchen_sink
+  - if [ ! "$(ls -A ./bin)" ]; then exit 1; fi
+  - cd bin
+  - mv *.apk $CI_BUILD_NAME-$CI_BUILD_REF_NAME-${CI_BUILD_REF:0:8}.apk
+  type: build
+trigger_build_site:
+  only:
+  - master
+  script:
+  - curl -X POST -F token=$KIVYMD_DOC_BUILD_TOKEN -F ref=master https://gitlab.com/api/v3/projects/2719855/trigger/builds
+  stage: build

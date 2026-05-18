@@ -1,0 +1,36 @@
+build_docker_image:
+  dependencies:
+  - build_jar
+  image: maven:3.3.9-jdk-8
+  script:
+  - docker build --build-arg JAR_FILE=target/configuration-server-0.0.1-SNAPSHOT.jar
+    -t registry.gitlab.com/vrcca-examples/java/spring/configuration-server .
+  stage: generate_version
+build_jar:
+  artifacts:
+    expire_in: 1 day
+    name: build-$CI_COMMIT_REF_NAME
+    paths:
+    - target/
+  image: maven:3.3.9-jdk-8
+  script:
+  - mvn $MAVEN_CLI_OPTS clean package -DskipTests -Ddockerfile.skip
+  stage: build
+cache:
+  paths:
+  - .m2/repository
+stages:
+- test
+- build
+- generate_version
+test:
+  image: maven:3.3.9-jdk-8
+  script:
+  - mvn $MAVEN_CLI_OPTS clean test
+  stage: test
+variables:
+  MAVEN_CLI_OPTS: --batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true
+    -DdeployAtEnd=true
+  MAVEN_OPTS: -Dhttps.protocols=TLSv1.2 -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository
+    -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN
+    -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true

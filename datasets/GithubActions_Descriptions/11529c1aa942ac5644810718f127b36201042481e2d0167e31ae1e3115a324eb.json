@@ -1,0 +1,18 @@
+{
+  "sha": "11529c1aa942ac5644810718f127b36201042481e2d0167e31ae1e3115a324eb",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3295,
+  "description": "Create a GitHub Actions workflow named CI that runs on push to master and on pull requests to master. The workflow consists of three jobs: linting, docs, and tests. The linting and docs jobs run on ubuntu-latest with Python 3.12, install dependencies with pipx, and run tox. The tests job runs on ubuntu-latest with multiple Python versions, installs dependencies, and reports coverage to Coveralls.",
+  "tags": [
+    "python",
+    "tox",
+    "poetry",
+    "coveralls",
+    "ci",
+    "ubuntu",
+    "tests",
+    "linting",
+    "docs"
+  ]
+}

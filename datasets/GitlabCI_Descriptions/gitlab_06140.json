@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_06140",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 910,
+  "description": "Create a GitLab CI pipeline with three stages: build, dockerize, and deploy. In the build stage add a job named build that uses the ruby:2.3 image, runs before_script commands `apt-get update -yqqq`, `apt-get install -y nodejs`, and `bundle install --path vendor`, caches the vendor/ directory, executes `bundle exec middleman build`, and stores the resulting build/ directory as an artifact. In the dockerize stage add a job named dockerize that uses the docker:latest image with the docker:dind service, runs a before_script `docker login -u \\\"$CI_REGISTRY_USER\\\" -p \\\"$CI_REGISTRY_PASSWORD\\\" $CI_REGISTRY`, depends on the build job, and runs `docker build -t \\\"$CI_REGISTRY_IMAGE\\\" .` followed by `docker push \\\"$CI_REGISTRY_IMAGE\\\"`. In the deploy stage add a job named deploy that uses the sequenceiq/alpine-curl image, runs on runners tagged home and docker, defines variables CONTENT_TYPE and JSON_DATA, and executes `curl -X POST -H \\\"$CONTENT_TYPE\\\" -d \\\"$JSON_DATA\\\" \\\"$RANCHER_HOST\\\"` to trigger a Rancher deployment. No explicit rules are set, so jobs run on all branches.",
+  "tags": [
+    "ruby",
+    "middleman",
+    "docker",
+    "dind",
+    "rancher",
+    "curl",
+    "ci"
+  ]
+}

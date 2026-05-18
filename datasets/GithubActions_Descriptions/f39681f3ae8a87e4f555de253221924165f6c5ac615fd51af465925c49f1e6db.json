@@ -1,0 +1,14 @@
+{
+  "sha": "f39681f3ae8a87e4f555de253221924165f6c5ac615fd51af465925c49f1e6db",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 510,
+  "description": "Create a GitHub Actions workflow named GenAI Find Duplicate Issues that runs when an issue is opened or reopened. The workflow checks for duplicate issues using a GenAI model and allows concurrent runs per issue while cancelling any in-progress runs for the same issue. Use an ubuntu-latest job with read access to models and write access to issues, and run the action-genai-issue-dedup action with a GitHub token and the current issue number.",
+  "tags": [
+    "genai",
+    "issues",
+    "duplicate",
+    "deduplication",
+    "github-actions"
+  ]
+}

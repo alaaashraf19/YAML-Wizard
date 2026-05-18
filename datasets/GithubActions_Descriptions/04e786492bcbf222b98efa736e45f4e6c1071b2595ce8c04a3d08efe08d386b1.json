@@ -1,0 +1,14 @@
+{
+  "sha": "04e786492bcbf222b98efa736e45f4e6c1071b2595ce8c04a3d08efe08d386b1",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1726,
+  "description": "Create a GitHub Actions workflow named Release that triggers on published releases. Run two parallel jobs: update-autorevision and update-archive, both on ubuntu-latest. The update-autorevision job checks out the master branch, generates an AutoRevision.txt file with git information, and creates a pull request with the changes. The update-archive job checks out the master branch, generates an AutoRevision.txt file, creates a build directory, and archives the repository as tar.gz and zip files, then uploads them as a release asset if the workflow is triggered by a tag.",
+  "tags": [
+    "release",
+    "github-actions",
+    "archive",
+    "autorevision",
+    "pull-request"
+  ]
+}

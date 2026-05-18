@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_17443",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 612,
+  "description": "Create a GitLab CI pipeline that uses the rocker/verse:3.6.0 Docker image and a global before_script that runs apt-get update && apt-get -y install default-jdk curl netcdf-bin libnetcdf-dev libxml2-dev libssl-dev, creates a public directory, copies _images and custom.css into public, creates the packrat library directory at /builds/stanstrup-teaching/XCMS-course/packrat/lib/x86_64-pc-linux-gnu/3.6.0, installs BiocManager via R, installs the packrat package into that library via BiocManager, and restores the packrat environment. Add a deploy stage with a pages job that executes R -e 'source(\"build.R\")', publishes the public/ folder as a Pages artifact, and runs only on the master branch.",
+  "tags": [
+    "r",
+    "rocker",
+    "pages",
+    "packrat",
+    "biocmanager"
+  ]
+}

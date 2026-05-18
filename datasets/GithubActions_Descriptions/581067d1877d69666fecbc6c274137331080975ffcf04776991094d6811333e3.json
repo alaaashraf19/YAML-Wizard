@@ -1,0 +1,13 @@
+{
+  "sha": "581067d1877d69666fecbc6c274137331080975ffcf04776991094d6811333e3",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4862,
+  "description": "Create a reusable GitHub Actions workflow named Build Release that can be triggered manually or called by other workflows. It takes two inputs: build_number and channel. The workflow sets version variables based on the build number and channel, then uses these variables to build packages for multiple platforms (DEB, .NET, GEM, macOS, MATLAB, Maven, NPM, PIP, RPM, and Windows) in separate jobs. Finally, it publishes the release using a separate workflow.",
+  "tags": [
+    "release",
+    "packages",
+    "multi-platform",
+    "reusable-workflow"
+  ]
+}

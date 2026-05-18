@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_16594",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 734,
+  "description": "Create a GitLab CI pipeline using the ruby:2.1 Docker image and a before_script that runs bundle install --jobs $(nproc) --without system_tests --path=/var/cache/gitlab-runner/ \"${FLAGS[@]}\". Define four test jobs: test:puppet37, test:puppet38_future_parser, test:puppet45, and test:puppet4x, all in the default test stage, each executing the shared script bundle exec rake lint || /bin/true, bundle exec rake syntax, bundle exec rake validate, bundle exec rake spec. Set job-specific variables: for test:puppet37 set FACTER_VERSION to ~> 2.2.0 and PUPPET_VERSION to ~> 3.7.2; for test:puppet38_future_parser set FACTER_VERSION to ~> 2.2.0, FUTURE_PARSER to 'yes', and PUPPET_VERSION to ~> 3.8; for test:puppet45 set FACTER_VERSION to ~> 2.4.6 and PUPPET_VERSION to ~> 4.5.2; for test:puppet4x set FACTER_VERSION to '> 2' and PUPPET_VERSION to '> 4'. Ensure the pipeline runs these jobs on every commit.",
+  "tags": [
+    "ruby",
+    "puppet",
+    "bundler",
+    "rake",
+    "lint",
+    "spec",
+    "facter",
+    "future-parser"
+  ]
+}

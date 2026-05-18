@@ -1,0 +1,16 @@
+{
+  "sha": "2b941a306bf1b4a68b2ed63b29d3f54d243c68e35b549abd4262b588cb231282",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1952,
+  "description": "Create a GitHub Actions workflow named vs2019 that runs on every push to the master branch and on pull requests to master. The workflow should have three Windows VS2019 jobs: one with STL and debug build, one without STL and debug build, and one with STL, debug build, and forced C++03. Each job checks out the repository with submodules, adds msbuild to PATH, builds using cmake and MSBuild, and runs tests.",
+  "tags": [
+    "windows",
+    "vs2019",
+    "msbuild",
+    "cmake",
+    "tests",
+    "stl",
+    "cpp03"
+  ]
+}

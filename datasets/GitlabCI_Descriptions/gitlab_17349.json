@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_17349",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1296,
+  "description": "Create a GitLab CI pipeline using the java:8-jdk Docker image and a global before_script that sets GRADLE_USER_HOME to the .gradle directory. Define three stages: test, docs, and site. In the test stage add a test-backend job that runs ./gradlew backend:check, caches .gradle/wrapper and .gradle/caches with key $CI_COMMIT_REF_SLUG-java, always uploads backend/build/reports as an artifact named $CI_JOB_STAGE-$CI_COMMIT_REF_NAME-test, allows failure and runs on every pipeline. In the docs stage add a docs job that runs ./gradlew docs:asciidoctor, uses the same cache, always uploads docs/build/docs as an artifact named $CI_JOB_STAGE-$CI_COMMIT_REF_NAME-docs, allows failure and runs on every pipeline. In the site stage add a pages job that runs ./gradlew backend:test, then ./gradlew backend:schemaspy backend:dbDocToReports, then ./gradlew docs:docs, caches the same .gradle directories, always uploads the public directory as an artifact named $CI_JOB_STAGE-$CI_COMMIT_REF_NAME-gitlabpages, deploys to the gitlab-pages environment with the provided URL, and is limited to the master branch.",
+  "tags": [
+    "java",
+    "gradle",
+    "asciidoctor",
+    "gitlab-pages",
+    "cache",
+    "test-backend",
+    "docs",
+    "site"
+  ]
+}

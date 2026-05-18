@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_05904",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 183,
+  "description": "Create a GitLab CI pipeline that builds a Jekyll static site using the provided site configuration: define a collection called \"code\" with path \"/code/\" and permalink \"/code/index.html\", exclude files matching \"*.jinja2\", set the syntax highlighter to rouge, include the \"code\" directory, configure kramdown to use GFM input, set markdown to kramdown, and set the site name to \"CS 1331\". Add a single job in a \"build\" stage that runs on the ruby:3.2 Docker image, installs bundler, runs \"bundle install\" and then \"jekyll build\", and publishes the generated site directory (public/) as an artifact. No services, caches, or special rules are required.",
+  "tags": [
+    "jekyll",
+    "ruby",
+    "static-site",
+    "collections",
+    "rouge",
+    "kramdown"
+  ]
+}

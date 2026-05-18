@@ -1,0 +1,16 @@
+{
+  "sha": "3fce3f521626dbf9e12e91f8753b4b36cd563dac0504ea87fe0a39cae3b4c1ff",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2757,
+  "description": "Create a GitHub Actions workflow named Build and upload to PyPI that runs on push and pull request events. The workflow should have four jobs: build_wheels to build wheels for multiple Python versions and platforms, build_sdist to build a source distribution, upload_pypi to upload artifacts to PyPI on tag pushes, and pass to test the build wheels job status.",
+  "tags": [
+    "python",
+    "pypi",
+    "cibuildwheel",
+    "github-actions",
+    "multi-platform",
+    "wheels",
+    "sdist"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "sha": "a8e62f6bdb78b31bb2e3c193dfa3c2df9f75addbfc48d905c8b7686bdc495980",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1503,
+  "description": "Create a GitHub Actions workflow to generate and upload documentation on push to the master branch. The workflow should use an ubuntu-latest environment with a matrix strategy for Python 3.7 and 3.8. It should check out the repository, install Poetry, load cached virtual environments, install dependencies with Poetry if the cache misses, generate documentation using a bash script, and deploy the documentation to the gh-pages branch using the GitHub Pages Deploy action.",
+  "tags": [
+    "python",
+    "documentation",
+    "github-pages",
+    "poetry"
+  ]
+}

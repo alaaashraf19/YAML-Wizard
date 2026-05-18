@@ -1,0 +1,19 @@
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - mkdir -p public/.well-known/acme-challenge/
+  - cp -R acme-challenge public/.well-known/
+  - cp *.html public/
+  - cp robots.txt public/robots.txt
+  - cp favicon.ico  public/favicon.ico
+  - cp -r images/* public/images/
+  - cp -r css public/css
+  - gzip -k -6 -r public
+  stage: deploy
+stages:
+- build
+- deploy

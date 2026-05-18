@@ -1,0 +1,15 @@
+{
+  "sha": "5ad95286e7d49ab64dc320670cee685a99ad8f5ce295c86a0f386d668ef8a5e4",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 881,
+  "description": "Create a GitHub Actions workflow to test rosbag2 on pull requests, pushes to the master branch, and on a schedule every hour. Run a ubuntu-latest job in a container using the rostooling/setup-ros-docker image. Use the action-ros-ci action to build and test multiple ros2 packages with a target ROS 2 distribution of rolling, and upload colcon logs as an artifact.",
+  "tags": [
+    "ros2",
+    "rosbag2",
+    "ubuntu",
+    "docker",
+    "tests",
+    "scheduled"
+  ]
+}

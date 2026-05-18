@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_10809",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 390,
+  "description": "Create a GitLab CI pipeline that runs a single job named master using the python:3.13 Docker image. In the job script, first update apt and install libenchant-2-2, then install mypy, interrogate, pytest, coverage, and types-pygments via pip, install the current project in editable mode, list installed packages, run coverage run -m pytest -k \\\"not jj\\\", generate a coverage report with --fail-under=61, run mypy on the spelltinkle package, run flake8 on spelltinkle, and finally run interrogate with verbose, markdown, ignore‑missing, format 2.0 on spelltinkle excluding spelltinkle/test. No caches, artifacts, or special rules are defined.",
+  "tags": [
+    "python",
+    "mypy",
+    "pytest",
+    "coverage",
+    "flake8",
+    "interrogate",
+    "spelltinkle"
+  ]
+}

@@ -1,0 +1,124 @@
+android:
+  image: registry.gitlab.com/jhasse/android-ndk-docker:r27c
+  script:
+  - make -C android
+  stage: build
+cache:
+  key: cpm
+  paths:
+  - .cache/cpm
+linux:
+  image: fedora:$VERSION
+  parallel:
+    matrix:
+    - VERSION:
+      - '40'
+      - '41'
+      - latest
+  rules:
+  - allow_failure: true
+    if: $VERSION == "latest"
+  - allow_failure: false
+    if: $VERSION
+  script:
+  - dnf install -y cmake ninja-build gcc-c++ fontconfig-devel freetype-devel libvorbis-devel
+    libwebp-devel SDL2-devel libtheora-devel clang util-linux clang-tools-extra >/dev/null
+  - .github/ci.py
+  - cmake -Bbuild -G"Ninja Multi-Config" -DCMAKE_COMPILE_WARNING_AS_ERROR=1
+  - cd build
+  - ninja
+  - ninja -f build-Release.ninja
+  - dnf install -y mesa-dri-drivers xorg-x11-drivers >/dev/null
+  - Xorg -config ../data/xorg.conf &>/dev/null &
+  - sleep 1
+  - export DISPLAY=:0
+  - Debug/jngl-unittest
+  - ../src/test/integration/run.py Debug
+  - Release/jngl-unittest
+  - ../src/test/integration/run.py Release
+  - cd ..
+  - CC=clang CXX=clang++ CXXFLAGS=-fdiagnostics-color cmake -Bbuild-clang -GNinja
+    -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DJNGL_CLANG_TIDY=1
+  - cd build-clang
+  - ninja
+  stage: build
+mingw:
+  image: fedora:$VERSION
+  parallel:
+    matrix:
+    - VERSION:
+      - '40'
+      - '41'
+      - latest
+  rules:
+  - allow_failure: true
+    if: $VERSION == "latest"
+  - allow_failure: false
+    if: $VERSION
+  script:
+  - dnf install -y cmake ninja-build mingw64-pkg-config mingw64-libvorbis mingw64-SDL2
+    mingw64-fontconfig mingw64-libwebp mingw64-dlfcn mingw64-gcc-c++ > /dev/null
+  - mingw64-cmake -G"Ninja Multi-Config" -Bbuild-mingw -DJNGL_WINAPI=0
+  - cd build-mingw
+  - ninja
+  - ninja -f build-Release.ninja
+  - cd -
+  - mingw64-cmake -G"Ninja Multi-Config" -Bbuild-winapi -DJNGL_WINAPI=1
+  - cd build-winapi
+  - ninja
+  - ninja -f build-Release.ninja
+  stage: build
+steamos:
+  image: registry.gitlab.steamos.cloud/steamrt/sniper/sdk
+  script:
+  - apt-get update
+  - apt-get install -y libboost-dev libc++abi-16-dev libc++-16-dev clang-16
+  - export LDFLAGS=-static-libstdc++
+  - export CXXFLAGS=-stdlib=libc++
+  - export CC=clang-16
+  - export CXX=clang++-16
+  - cmake -Bbuild-steamos -GNinja -DCMAKE_BUILD_TYPE=Debug
+  - cd build-steamos
+  - ninja
+  - DEBIAN_FRONTEND=noninteractive apt-get install -y xserver-xorg-video-dummy >/dev/null
+  - Xorg -config ../data/xorg.conf &>/dev/null &
+  - sleep 1
+  - DISPLAY=:0 ./jngl-unittest
+  - cd -
+  - cmake -Bbuild-steamos-release -GNinja -DCMAKE_BUILD_TYPE=Release -DJNGL_VIDEO=0
+    -DJNGL_BUILD_WEBP_FROM_SOURCE=1 -DBUILD_SHARED_LIBS=0
+  - cd build-steamos-release
+  - ninja
+  - DISPLAY=:0 ./jngl-unittest
+  stage: build
+variables:
+  CLICOLOR_FORCE: '1'
+  CPM_SOURCE_CACHE: ${CI_PROJECT_DIR}/.cache/cpm
+  TERM: xterm
+web:
+  artifacts:
+    paths:
+    - public/demo
+  image: emscripten/emsdk:$VERSION
+  parallel:
+    matrix:
+    - VERSION:
+      - 3.1.61
+      - 3.1.74
+      - latest
+  rules:
+  - allow_failure: true
+    if: $VERSION == "latest"
+  - allow_failure: false
+    if: $VERSION
+  script:
+  - emcmake cmake -Bbuild-web -DCMAKE_COMPILE_WARNING_AS_ERROR=1
+  - cp -r data build-web/
+  - cd build-web
+  - make -j$(nproc)
+  - mkdir -p ../public/demo
+  - mv jngl-test.html ../public/demo
+  - mv jngl-test.wasm ../public/demo
+  - mv jngl-test.js ../public/demo
+  - mv jngl-test.data ../public/demo
+  stage: build

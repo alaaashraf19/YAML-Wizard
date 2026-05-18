@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_15628",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 165,
+  "description": "Create a GitLab CI pipeline that uses the gcc:10.3.0 Docker image and defines a single stage called build. Add a job named build-distcheck that runs in the build stage and executes the exact commands: apt update && apt -y install libpulse-dev, autoreconf -i, ./configure, and make. The pipeline does not require any services, caches, artifacts, or conditional rules.",
+  "tags": [
+    "gcc",
+    "build",
+    "make",
+    "autoreconf",
+    "apt"
+  ]
+}

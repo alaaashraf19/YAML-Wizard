@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_07939",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 150,
+  "description": "Create a GitLab CI pipeline that uses the monachus/hugo Docker image and sets the variable GIT_SUBMODULE_STRATEGY to recursive for recursive submodule fetching. Define a single job named pages (which runs in the default stage) that executes the shell command hugo to build the site. Configure the job to publish the generated public directory as an artifact. Make the job run only on the master branch and deploy the artifact to GitLab Pages.",
+  "tags": [
+    "hugo",
+    "gitlab-pages",
+    "monachus-hugo",
+    "submodule",
+    "master-only"
+  ]
+}

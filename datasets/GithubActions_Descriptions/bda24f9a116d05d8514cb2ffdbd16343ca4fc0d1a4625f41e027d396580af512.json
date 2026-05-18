@@ -1,0 +1,16 @@
+{
+  "sha": "bda24f9a116d05d8514cb2ffdbd16343ca4fc0d1a4625f41e027d396580af512",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1911,
+  "description": "Create a GitHub Actions workflow named unit tests that runs on push to specific files and branches, and on pull requests to the master branch. Use a matrix job strategy to run on ubuntu-latest, macos-latest, and windows-latest with the clang compiler. For each job, check out the repository, install Python 3.11 and uv, install dependencies, and run various tests including no namespace after headers, example Blink, unit test Json, all unit tests, and all examples.",
+  "tags": [
+    "unit-tests",
+    "clang",
+    "python",
+    "ci",
+    "ubuntu",
+    "macos",
+    "windows"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "51bde06bc2f8ba9a3812cb7a12e2b1c12058ccbbb9fa2185af0813e044b7859d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1608,
+  "description": "Create a GitHub Actions workflow named clang that runs on push to master and remove-autoconf branches and on pull requests to master. The workflow has two jobs: build and tidy. The build job uses a matrix strategy with multiple environments, runs on ubuntu-20.04, checks out the code, installs dependencies, prepares the CI environment, and runs tests with clang. The tidy job runs on ubuntu-20.04, checks out the code, installs dependencies, prepares the CI environment, runs tests, and performs clang-tidy checks.",
+  "tags": [
+    "clang",
+    "ubuntu",
+    "ci",
+    "tests",
+    "matrix",
+    "tidy"
+  ]
+}

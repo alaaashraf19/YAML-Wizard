@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_06847",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 342,
+  "description": "Create a GitLab CI pipeline using the rocker/tidyverse Docker image. Include a before_script that runs Rscript -e 'install.packages(c(\\\"xaringan\\\", \\\"DT\\\", \\\"anonymizer\\\"))'. Define a pages job (default test stage) that runs the following script commands in order: Rscript -e 'rmarkdown::render(\\\"index.Rmd\\\", output_file = \\\"index.html\\\", output_format = \\\"all\\\")', mkdir .public, cp -r * .public, mv .public public. The job should publish the public/ directory as a pages artifact and only run on the master branch.",
+  "tags": [
+    "r",
+    "rocker",
+    "tidyverse",
+    "gitlab-pages",
+    "rmarkdown"
+  ]
+}

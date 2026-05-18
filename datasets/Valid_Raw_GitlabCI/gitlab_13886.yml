@@ -1,0 +1,29 @@
+before_script:
+- export GRADLE_USER_HOME=`pwd`/.gradle
+build:
+  cache:
+    key: $CI_COMMIT_REF_NAME
+    paths:
+    - build
+    - .gradle
+    policy: push
+  script: ./gradlew --build-cache assemble
+  stage: build
+image: gradle:alpine
+services:
+- postgres:10
+test:
+  cache:
+    key: $CI_COMMIT_REF_NAME
+    paths:
+    - build
+    - .gradle
+    policy: pull
+  script: SPRING_APPLICATION_JSON='{"spring":{"datasource":{"url":"jdbc:postgresql://postgres:5432/openchessdb"}}}'
+    gradle check
+  stage: test
+variables:
+  GRADLE_OPTS: -Dorg.gradle.daemon=false
+  POSTGRES_DB: openchessdb
+  POSTGRES_PASSWORD: ''
+  POSTGRES_USER: postgres

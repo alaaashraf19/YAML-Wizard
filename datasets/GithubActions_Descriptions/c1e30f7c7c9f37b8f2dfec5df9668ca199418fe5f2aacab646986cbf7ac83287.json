@@ -1,0 +1,14 @@
+{
+  "sha": "c1e30f7c7c9f37b8f2dfec5df9668ca199418fe5f2aacab646986cbf7ac83287",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2383,
+  "description": "Create a GitHub Actions workflow named Main that runs on push events, excluding certain paths. Use a matrix strategy to run a job on macos-latest, ubuntu-latest, and windows-2019 with Node.js versions 21.x, 20.x, 18.x, and 16.x. The job checks out the code, sets up Node.js, and optionally sets up CSC for Windows. It also sets up .NET 8.0.x, removes Mono on macOS, and installs missing packages for macOS Node.js 16. The job then installs npm dependencies, runs tests for .NET 4.x on Windows, and runs .NET Core tests with coverage reports.",
+  "tags": [
+    "nodejs",
+    "dotnet",
+    "test-report",
+    "matrix",
+    "cross-platform"
+  ]
+}

@@ -1,0 +1,13 @@
+before_script:
+- apt-get update -yqqq; apt-get -o dir::cache::archives="vendor/apt" install -y -qq
+  --force-yes libicu-dev cmake
+- gem install bundler
+- bundle install -j $(nproc)
+image: ruby:2.3
+rspec:
+  script:
+  - rspec
+services:
+- elasticsearch:5.1
+variables:
+  ELASTICSEARCH_HOST: elasticsearch

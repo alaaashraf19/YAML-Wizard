@@ -1,0 +1,5 @@
+unit_test_py3:
+  image: python:3.10
+  script:
+  - pip install -r requirements.txt
+  - pytest test_*.py

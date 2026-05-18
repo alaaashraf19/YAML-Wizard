@@ -1,0 +1,18 @@
+{
+  "sha": "d72662c23a9ca5317a19b884217014100cf4bb47834fb141d6e68288fa7ae981",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 6066,
+  "description": "Create a GitHub Actions workflow named Deploy that triggers on push of tags matching 'v*'. In a single windows-latest job, check out the repository with submodules, set up MSBuild and .NET Core 5.0.100-rc.1.20452.10, restore dependencies, build and test Impostor.Server, then publish and zip it for multiple platforms (win-x64, linux-x64, linux-arm, linux-arm64, osx-x64). Create a draft release and upload the zipped assets to it.",
+  "tags": [
+    "dotnet",
+    "msbuild",
+    "release",
+    "windows",
+    "linux",
+    "arm",
+    "osx",
+    "zip",
+    "github-release"
+  ]
+}

@@ -1,0 +1,20 @@
+build-data:
+  before_script:
+  - npm ci
+  image: node:10
+  script:
+  - npm test
+  stage: build
+image: alpine:latest
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - exit 0
+  stage: deploy
+stages:
+- build
+- deploy

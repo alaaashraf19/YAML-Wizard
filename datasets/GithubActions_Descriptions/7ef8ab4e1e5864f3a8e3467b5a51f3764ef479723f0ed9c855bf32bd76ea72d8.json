@@ -1,0 +1,14 @@
+{
+  "sha": "7ef8ab4e1e5864f3a8e3467b5a51f3764ef479723f0ed9c855bf32bd76ea72d8",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2366,
+  "description": "Create a GitHub Actions workflow named Push to nuget pre-release that triggers on a workflow dispatch with a pre-release tag input. The workflow should run on an ubuntu-latest environment, check out the repository, determine the next version number based on existing tags, install .NET 8 preview, update the version number in a specific C# file, pack a .NET solution with a custom version, and push the resulting NuGet packages to NuGet.org using a provided API key.",
+  "tags": [
+    "dotnet",
+    "nuget",
+    "pre-release",
+    "manual-workflow",
+    "versioning"
+  ]
+}

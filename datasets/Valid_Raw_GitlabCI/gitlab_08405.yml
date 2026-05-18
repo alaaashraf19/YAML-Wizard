@@ -1,0 +1,80 @@
+cache-chrome-chromium:
+  extends: .cache-google-chrome
+default:
+  image: ${BASE_BUILD_REGISTRY_IMAGE}/debian-bookworm-slim:docker-${DOCKER_VERSION}
+  interruptible: true
+  services:
+  - alias: docker
+    entrypoint:
+    - sh
+    - -c
+    - dockerd-entrypoint.sh $DOCKER_OPTIONS
+    name: docker:${DOCKER_VERSION}-dind
+  tags:
+  - gitlab-org-docker
+dont-interrupt-me:
+  interruptible: false
+  rules:
+  - allow_failure: true
+    if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+  - allow_failure: true
+    if: $CI_MERGE_REQUEST_IID
+    when: manual
+  script:
+  - echo "This jobs makes sure this pipeline won't be interrupted! See https://docs.gitlab.com/ee/ci/yaml/#interruptible."
+  stage: .pre
+include:
+- local: .gitlab/ci/*.yml
+- component: ${CI_SERVER_FQDN}/gitlab-org/components/danger-review/danger-review@2.0.0
+  inputs:
+    job_stage: lint
+  rules:
+  - if: $CI_SERVER_HOST == "gitlab.com"
+stages:
+- lint
+- automation
+- comparator
+- custom
+- customers
+- docker
+- e2e
+- dx
+- ci
+- runtime
+- gitaly
+- gitlab
+- gitlab-assets
+- gitlab-chart
+- gitlab-cng
+- gitlab-kas
+- gitlab-workhorse
+- gitlab-workspaces
+- report
+variables:
+  ALPINE_IMAGE: ${DOCKERHUB_PREFIX}alpine:${ALPINE_VERSION}
+  ALPINE_VERSION: '3.21'
+  BASE_BUILD_REGISTRY_IMAGE: registry.gitlab.com/gitlab-org/gitlab-build-images
+  BUILD_ARG_DOCKERHUB_PREFIX: ${DOCKERHUB_PREFIX}
+  DEPENDENCY_PROXY_LOGIN: 'false'
+  DOCKERHUB_PREFIX: docker.io/
+  DOCKER_BUILDX_VERSION: 0.30.1
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_MIRROR: https://mirror.gcr.io
+  DOCKER_OPTIONS: --registry-mirror ${DOCKER_MIRROR}
+  DOCKER_VERSION: 28.5.2
+  FF_TIMESTAMPS: true
+  GOLANG_IMAGE: ${DOCKERHUB_PREFIX}golang:${GOLANG_VERSION}
+  GOLANG_VERSION: '1.24'
+  PLATFORM: linux/amd64
+  RUNNER_TAG: gitlab-org-docker
+workflow:
+  rules:
+  - if: $CI_MERGE_REQUEST_IID
+  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_SERVER_HOST == "gitlab.com"
+    variables:
+      PUSH_CUSTOM_IMAGE: 'true'
+  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_SERVER_HOST == "ops.gitlab.net"
+      || $CI_SERVER_HOST == "dev.gitlab.org")
+    variables:
+      BASE_BUILD_REGISTRY_IMAGE: $CI_REGISTRY_IMAGE
+      PUSH_CUSTOM_IMAGE: 'true'

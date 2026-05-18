@@ -1,0 +1,10 @@
+image: node:latest
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - npm install
+  - npm run build

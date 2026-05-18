@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_13699",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 3247,
+  "description": "Create a GitLab CI pipeline with a single \"build\" stage that runs on the docker image and uses the docker:dind service. For every job whose name starts with \"build-\" (e.g., build-alpine, build-alpine-edge, build-alpine-pages, build-alpine-seccomp, build-centos-latest, build-clang, build-coverity, build-cross-armhf, build-debian-oldstable, build-debian-stable, build-debian-stable-i386, build-debian-stable-mdns, build-debian-testing, build-debian-unstable, build-fedora-latest, build-gentoo, build-opensuse-leap, build-python2, build-python3, build-ubuntu-latest, build-ubuntu-rolling), each job runs in the build stage, uses the docker image, and has the rule \"if: $CI_PIPELINE_SOURCE == \\\"schedule\\\"\" so they only execute on scheduled pipelines. Each job sets IMAGE_NAME by stripping the \"build-\" prefix from its job name, logs in to the GitLab registry with $CI_REGISTRY_USER and $CI_REGISTRY_PASSWORD, attempts to pull the latest image from $CI_REGISTRY_IMAGE/$IMAGE_NAME:latest (ignoring failures), builds the Docker image with \"docker build --pull --cache-from $CI_REGISTRY_IMAGE/$IMAGE_NAME:latest --rm=false --tag $CI_REGISTRY_IMAGE/$IMAGE_NAME:latest . --file .dockerfiles/$IMAGE_NAME\", and pushes the new image. The variable GIT_DEPTH is set to 1 for all jobs, and the jobs build-alpine-edge, build-cross-armhf, and build-debian-unstable are marked allow_failure: true. No caches, artifacts, or deployment targets are defined.",
+  "tags": [
+    "docker",
+    "dind",
+    "scheduled-build",
+    "multiple-images",
+    "allow-failure"
+  ]
+}

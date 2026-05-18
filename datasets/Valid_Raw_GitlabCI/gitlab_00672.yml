@@ -1,0 +1,9 @@
+test:
+  before_script:
+  - rustup component add rustfmt clippy
+  image: rust:1.44.1
+  script:
+  - rustc --version && cargo --version
+  - cargo test --verbose --jobs 1
+  - cargo fmt --all -- --check
+  - cargo clippy --all

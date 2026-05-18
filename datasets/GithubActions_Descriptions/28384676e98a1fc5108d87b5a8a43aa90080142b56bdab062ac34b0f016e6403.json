@@ -1,0 +1,14 @@
+{
+  "sha": "28384676e98a1fc5108d87b5a8a43aa90080142b56bdab062ac34b0f016e6403",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 503,
+  "description": "Create a GitHub Actions workflow named clang that runs on push to hotfix/clang-ci-unit-test-crash branch and on pull requests to master. Use a matrix job that runs on macos-10.15, checks out the repository, sets up the build with clang, runs cmake with tests enabled, verifies clang version, builds with make, and then runs etl_tests.",
+  "tags": [
+    "clang",
+    "osx",
+    "cmake",
+    "tests",
+    "macos"
+  ]
+}

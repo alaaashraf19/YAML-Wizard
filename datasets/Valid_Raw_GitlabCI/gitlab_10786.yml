@@ -1,0 +1,6 @@
+test:
+  before_script:
+  - pip install -r dev_requirements.txt
+  image: python:3.6
+  script:
+  - ./test.sh

@@ -1,0 +1,16 @@
+{
+  "sha": "47958d7527f481bf255716d6a3264b1006fa00bea95900be7ca6167756c56dd2",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2418,
+  "description": "Create a GitHub Actions workflow that runs on push and pull request events for the main and vnext branches, as well as on page build and release created events. The workflow consists of two jobs: test and docs. The test job uses a matrix strategy to run on multiple operating systems and Python versions, setting up Mambaforge and a conda environment, installing the package and its dependencies, running tests with pytest, and uploading test results and code coverage. The docs job builds documentation using Sphinx and uploads it as an artifact.",
+  "tags": [
+    "python",
+    "conda",
+    "mambaforge",
+    "pytest",
+    "sphinx",
+    "codecov",
+    "github-actions"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_08598",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 282,
+  "description": "Create a GitLab CI pipeline that adds a preflight stage job named danger-review. The job should run always for pipelines whose $PIPELINE_TYPE matches the regex \"/CANONICAL_(PROTECTED_BRANCH|MERGE_REQUEST)_PIPELINE/\" and includes the external component danger-review version 1.4.1 from ${CI_SERVER_FQDN}/gitlab-org/components/danger-review/danger-review@1.4.1 with inputs job_allow_failure set to true and job_stage set to preflight. No image, services, caches, or artifacts are defined.",
+  "tags": [
+    "danger-review",
+    "preflight",
+    "gitlab-ci",
+    "include",
+    "pipeline-rules"
+  ]
+}

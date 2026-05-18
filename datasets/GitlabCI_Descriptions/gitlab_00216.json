@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_00216",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 912,
+  "description": "Create a GitLab CI pipeline using the node:alpine Docker image with a global before_script that runs `npm install @angular/cli -g` and `npm install --quiet --no-progress --unsafe-perm`. Cache the `node_modules/` directory with a key of `${CI_COMMIT_REF_SLUG}` and define the stages lint, test, build, and deploy. In the lint stage add an `npm:lint` job that runs `npm run lint`. In the test stage add an `npm:test` job that first executes `apk add --update --no-cache chromium` in its before_script, then runs `npm run test:ci`, and publishes the `coverage/` directory as a `Coverage` artifact. In the build stage add an `npm:build` job that depends on `npm:lint` and `npm:test`, runs `npm run build:prod`, and stores the `dist/` directory as an artifact. In the deploy stage add a `firebase` job that depends on `npm:lint`, `npm:test`, and `npm:build`, runs a before_script installing `firebase-tools` globally (`npm install -g firebase-tools`), runs `npm install --quiet --no-progress` and `npm run build`, then executes `firebase deploy --token \"$FIREBASE_TOKEN\"` to the Production environment at http://poc.adrianlemess.com, and is limited to the master branch only.",
+  "tags": [
+    "node-alpine",
+    "angular-cli",
+    "firebase",
+    "npm",
+    "lint",
+    "test",
+    "build",
+    "deploy",
+    "chromium",
+    "cache"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "sha": "fdcab4b784b4a48137aa65422f4648cd6caabb934f3bddea04e22b295a9fd652",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2364,
+  "description": "Create a CodeQL GitHub Actions workflow that analyzes code in C/C++ and C# on the main branch, ignoring certain files and directories. The workflow should run on push, pull request, and on a weekly schedule. For each language, use a windows-latest job to check out the repository, install required tools, initialize CodeQL, build the project, and perform CodeQL analysis.",
+  "tags": [
+    "codeql",
+    "c-cpp",
+    "csharp",
+    "windows",
+    "github-actions",
+    "security",
+    "analysis"
+  ]
+}

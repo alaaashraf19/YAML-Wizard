@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_07456",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 437,
+  "description": "Create a GitLab CI pipeline using the ruby:2.3 Docker image. Define a deploy stage with a pages job that runs only on the master branch. In the before_script run apt-get update >/dev/null, apt-get install -y locales >/dev/null, echo \"en_US UTF-8\" > /etc/locale.gen, locale-gen en_US.UTF-8, export LANG=en_US.UTF-8, export LANGUAGE=en_US:en, and export LC_ALL=en_US.UTF-8. In the script install rake version 10.0.2 with gem install rake --version=10.0.2, install jekyll with gem install jekyll, then build the site with jekyll build -d public. Publish the public directory as a pages artifact.",
+  "tags": [
+    "ruby",
+    "jekyll",
+    "pages",
+    "apt",
+    "locales",
+    "deploy",
+    "gitlab-pages"
+  ]
+}

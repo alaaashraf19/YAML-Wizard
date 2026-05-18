@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_07064",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 770,
+  "description": "Create a GitLab CI pipeline with two stages: test and build. Add a test job that uses the registry.gitlab.com/pages/hugo:0.102.0 Docker image, runs on any branch except master, and executes the commands: apk add git; git submodule init; git submodule update --init; hugo. Add a build job that runs only on the master branch, uses the default runner image, and runs the commands: wget https://github.com/gohugoio/hugo/releases/download/v0.105.0/hugo_0.105.0_linux-amd64.tar.gz -O hugo.tar.gz; tar -xvf hugo.tar.gz hugo; git submodule init; git submodule update --init; ./hugo; symlink_path=/home/gitlab-runner/dylangriffith-root; new_build=/home/gitlab-runner/www-dylangriffith-public-$CI_JOB_ID; mv public $new_build; previous_build=$(readlink -f $symlink_path); ln -sfn $new_build $symlink_path; rm -rf $previous_build. No caches, artifacts, services, or deployment targets are defined.",
+  "tags": [
+    "hugo",
+    "gitlab-ci",
+    "docker",
+    "pages",
+    "build",
+    "test"
+  ]
+}

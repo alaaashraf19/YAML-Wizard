@@ -1,0 +1,15 @@
+{
+  "sha": "e58e104dd060029c0ed51237c1567b478b988a7c93c442c35110be2658c68918",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 918,
+  "description": "Create a GitHub Actions workflow named ci that runs on push to the master branch and on pull requests to master. The workflow has two jobs, build and build-alpine, both running on ubuntu-22.04. The build job uses a matrix strategy to test with Node.js 14.x, 16.x, and 18.x, while the build-alpine job uses a similar matrix but runs in an alpine container with the corresponding Node.js version. In each job, check out the code, install dependencies, and run npm test.",
+  "tags": [
+    "nodejs",
+    "npm",
+    "ci",
+    "ubuntu",
+    "tests",
+    "alpine"
+  ]
+}

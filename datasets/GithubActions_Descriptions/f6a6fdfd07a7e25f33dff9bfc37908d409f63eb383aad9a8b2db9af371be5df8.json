@@ -1,0 +1,14 @@
+{
+  "sha": "f6a6fdfd07a7e25f33dff9bfc37908d409f63eb383aad9a8b2db9af371be5df8",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1896,
+  "description": "Create a GitHub Actions workflow named pull_request that runs on every pull request synchronization, reopening, and labeling on master, release, and ci-test branches, as well as on push to the workflow file itself. The workflow should also be manually triggerable. It consists of two ubuntu-latest jobs, lint and test, where lint checks code formatting using clang-format in a custom container and test job depends on lint, compiles and runs unit tests in another custom container.",
+  "tags": [
+    "github-actions",
+    "clang-format",
+    "ubuntu",
+    "tests",
+    "ci"
+  ]
+}

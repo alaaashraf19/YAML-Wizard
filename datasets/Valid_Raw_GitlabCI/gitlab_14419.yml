@@ -1,0 +1,13 @@
+cache:
+  paths:
+  - distfiles
+image: docker:1.12.6
+services:
+- docker:1.12.6-dind
+verify:
+  script:
+  - apk add --no-cache make
+  - make docker-build
+  - make check
+  - make verify
+  stage: test

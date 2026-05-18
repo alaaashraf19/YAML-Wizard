@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_10856",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 384,
+  "description": "Create a GitLab CI pipeline that uses the asciidoctor/docker-asciidoctor:latest Docker image and defines a single build stage. Add a build job (named build) that runs in the build stage, executes the command ./build -g && ./build -pekdf book.adoc, and after the script runs echo \"End CI\". The job is limited to the master branch (only: master) and publishes artifacts including book.pdf, book.epub, book.html, book.xml, book-kf8.epub, book.mobi, images/icons/*, images/*, and preview.html, with an expiration of 1 week.",
+  "tags": [
+    "asciidoctor",
+    "docker",
+    "build",
+    "artifacts",
+    "master-only"
+  ]
+}

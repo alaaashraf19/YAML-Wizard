@@ -1,0 +1,54 @@
+.review-docs:
+  before_script:
+  - apk add --update openssl
+  - wget $CI_PROJECT_URL/raw/$CI_COMMIT_SHA/scripts/trigger-build-docs
+  - chmod 755 trigger-build-docs
+  - gem install gitlab --no-document
+  dependencies: []
+  environment:
+    name: review-docs/$CI_COMMIT_REF_SLUG
+    on_stop: review-docs-cleanup
+    url: http://$CI_ENVIRONMENT_SLUG.$DOCS_REVIEW_APPS_DOMAIN/$DOCS_GITLAB_REPO_SUFFIX
+  extends:
+  - .default-tags
+  - .default-retry
+  - .only-docs-changes
+  image: ruby:2.6-alpine
+  only:
+    refs:
+    - merge_requests
+    variables:
+    - $CI_SERVER_HOST == "gitlab.com" && $CI_PROJECT_NAMESPACE == "gitlab-org"
+  stage: review
+  variables:
+    GIT_STRATEGY: none
+docs lint:
+  dependencies: []
+  extends:
+  - .default-tags
+  - .default-retry
+  - .default-only
+  - .only-docs-changes
+  image: registry.gitlab.com/gitlab-org/gitlab-build-images:gitlab-docs-lint
+  script:
+  - scripts/lint-doc.sh
+  - markdownlint --config .markdownlint.json 'doc/**/*.md'
+  - mv doc/ /tmp/gitlab-docs/content/$DOCS_GITLAB_REPO_SUFFIX
+  - cd /tmp/gitlab-docs
+  - bundle exec nanoc
+  - bundle exec nanoc check internal_links
+  - bundle exec nanoc check internal_anchors
+  stage: test
+review-docs-cleanup:
+  environment:
+    action: stop
+    name: review-docs/$CI_COMMIT_REF_SLUG
+  extends: .review-docs
+  script:
+  - ./trigger-build-docs cleanup
+  when: manual
+review-docs-deploy:
+  extends: .review-docs
+  script:
+  - ./trigger-build-docs deploy
+  when: manual

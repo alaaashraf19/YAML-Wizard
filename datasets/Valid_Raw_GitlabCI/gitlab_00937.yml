@@ -1,0 +1,124 @@
+.defs:
+- rules: &id004
+  - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME
+      =~ /^docs\//
+- &id001
+  if: $CI_PIPELINE_SOURCE == 'web' && $CI_PROJECT_PATH == 'antora/antora' && $CI_COMMIT_BRANCH
+    && $CI_COMMIT_REF_PROTECTED && $RELEASE_VERSION
+- &id002
+  if: $CI_PIPELINE_SOURCE == 'schedule' || ($CI_PIPELINE_SOURCE == 'web' && $CI_JOB_NAME
+    == 'test:windows' && $ENABLE_WINDOWS_JOB) || ($CI_COMMIT_TITLE =~ /[Ww]indows/)
+- rules: &id006
+  - *id001
+- rules: &id003
+  - *id001
+  - *id002
+- rules: &id005
+  - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME
+      =~ /^docs\//
+    when: never
+  - if: $CI_JOB_NAME == 'lint' && $CI_PIPELINE_SOURCE == 'push' && $CI_PROJECT_PATH
+      != 'antora/antora'
+    when: manual
+  - when: on_success
+- node -p '`${os.type()} ${os.release()}\nNode.js ${process.version}`'
+- artifacts: &id007
+    paths:
+    - reports/lcov-report
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: reports/cobertura-coverage.xml
+      junit: reports/tests-xunit.xml
+    when: always
+.npm:
+  before_script:
+  - node -p '`${os.type()} ${os.release()}\nNode.js ${process.version}`'
+  - npm ci --quiet
+  cache:
+    key: npm-cache
+    paths:
+    - .cache/npm
+    policy: pull
+  rules: *id003
+  script: npm test
+  stage: test
+default:
+  image: node:$DEFAULT_NODE_VERSION-$LINUX_DISTRO
+  interruptible: true
+  tags:
+  - saas-linux-small-amd64
+docs:
+  rules: *id004
+  script: echo 'we love docs!'
+  stage: test
+lint:
+  cache:
+    policy: pull-push
+  extends: .npm
+  rules: *id005
+  script:
+  - npm run tidy
+  - npm pkg fix --workspaces --include-workspace-root
+  - if [ -n "$(git --no-pager diff --name-only)" ]; then git --no-pager diff && false;
+    fi
+  - npm run coverage -- --version
+  stage: .pre
+  variables:
+    NPM_CONFIG_AUDIT: 'true'
+release:
+  environment: releases
+  interruptible: false
+  rules: *id006
+  script:
+  - curl -o npm/release.sh -sS https://gitlab.com/opendevise/oss/we-are-releasing/-/raw/main/npm-release-from-gitlab.sh
+  - bash npm/release.sh
+  - source releaserc
+  - curl -o /dev/null -sS -X POST -F "token=$CI_JOB_TOKEN" -F "ref=main" -F "variables[ANTORA_VERSION]=$RELEASE_VERSION"
+    $DOCKER_IMAGE_PIPELINE_TRIGGER
+  stage: deploy
+test:node-18-linux:
+  extends: .npm
+  image: node:18-$LINUX_DISTRO
+  rules: *id005
+test:node-22-linux:
+  artifacts: *id007
+  coverage: /^All files *[|] *([0-9.]+) *[|]/
+  extends: .npm
+  rules: *id005
+  script: npm run coverage
+test:windows:
+  artifacts: *id007
+  cache:
+    policy: pull-push
+  extends: .npm
+  script: npm run coverage
+  tags:
+  - opendevise-hq-windows
+variables:
+  DEFAULT_NODE_VERSION: '22'
+  ENABLE_WINDOWS_JOB:
+    description: Enter 1 to enable the Windows job. Note that the Windows job is automatically
+      enabled if RELEASE_VERSION is specified.
+    value: ''
+  GIT_DEPTH: '5'
+  LINUX_DISTRO: bullseye
+  NPM_CONFIG_AUDIT: 'false'
+  NPM_CONFIG_CACHE: .cache/npm
+  NPM_CONFIG_FUND: 'false'
+  NPM_CONFIG_PREFER_OFFLINE: 'true'
+  RELEASE_VERSION:
+    description: The version to release from the selected protected branch if the
+      build succeeds. To enable, specify an exact version or increment keyword.
+    value: ''
+workflow:
+  rules:
+  - if: $CI_PIPELINE_SOURCE == 'merge_request_event' || $CI_PIPELINE_SOURCE == 'schedule'
+      || $CI_PIPELINE_SOURCE == 'web'
+  - changes:
+    - .gitlab-ci.yml
+    - biome.json
+    - package{-lock,}.json
+    - packages/**/*
+    if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS == null && $CI_COMMIT_BRANCH
+      !~ /^docs\//

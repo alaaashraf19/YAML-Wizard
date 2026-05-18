@@ -1,0 +1,63 @@
+after_script:
+- rm -rf ci/destroy
+before_script:
+- mkdir -p ci/artifacts
+- mkdir -p ci/destroy
+- echo $DECRYPTOR | base64 -d > ci/destroy/encryption.key
+build-artifact:
+  artifacts:
+    paths:
+    - ci/artifacts
+  image: golang:1.6.2-wheezy
+  script:
+  - source ci/prepare
+  - source ci/build
+  - cp .semver ci/artifacts/
+  stage: build
+docker-deploy-dev:
+  dependencies:
+  - build-artifact
+  environment: development
+  image: docker:git
+  only:
+  - develop
+  script:
+  - source ci/dockerize dev
+  services:
+  - docker:dind
+  stage: deploy
+docker-deploy-prod:
+  dependencies:
+  - build-artifact
+  environment: production
+  image: docker:git
+  only:
+  - master
+  script:
+  - source ci/dockerize
+  services:
+  - docker:dind
+  stage: deploy
+stages:
+- test
+- build
+- deploy
+- finish
+test-and-cover:
+  image: golang:1.6.2-wheezy
+  script:
+  - source ci/prepare
+  - source ci/test
+  - source ci/cover
+  stage: test
+update-version:
+  image: docker:git
+  only:
+  - master
+  script:
+  - mkdir -p ~/.ssh
+  - echo "$GL_GIT_SSH_KEY" | base64 -d > ~/.ssh/id_rsa
+  - chmod 400 ~/.ssh/id_rsa
+  - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+  - source ci/update_version
+  stage: finish

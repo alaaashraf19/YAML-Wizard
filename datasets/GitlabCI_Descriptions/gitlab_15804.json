@@ -1,0 +1,20 @@
+{
+  "sha": "gitlab_15804",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2141,
+  "description": "Create a GitLab CI pipeline using the image registry.gitlab.com/rilis/docker-ci:ci-latest with three stages: stats, test, and docs. In the stats stage define a clang-format job that runs `find * -iname '*.hpp' -o -iname '*.cpp' | xargs clang-format -i -style=file`, then `git status --porcelain > ../status.log`, `git diff`, and `test ! -s ../status.log`; a cppcheck job that runs `find * -iname '*.cpp' -o -iname '*.hpp' | cppcheck --quiet --std=c++11 --enable=warning --enable=style --enable=performance --enable=portability --enable=information --suppress=missingIncludeSystem --inline-suppr --file-list=- &> cppcheck.log`, `cat cppcheck.log`, and `test ! -s cppcheck.log`; and a cpplint job that runs `find * -iname '*.cpp' -o -iname '*.hpp' | xargs cpplint.py --linelength=120 --extensions=hpp,cpp --filter=-legal/copyright,-build/include_order,-build/c++11,+build/c++14,-runtime/references`. In the test stage add a coverage job that runs `hell --install -r '=' -r \"RILI_PATTERN_COVERAGE=ON\" -r \"RILI_PATTERN_TESTS=ON\" -i \"CMAKE_CXX_STANDARD=11\" -G 'Ninja'`, `mkdir build`, `cd build`, `cmake ../ -G\"Ninja\" -DRILI_PATTERN_COVERAGE=ON -DRILI_PATTERN_TESTS=ON -DCMAKE_INSTALL_PREFIX=../.hell/install -DCMAKE_CXX_STANDARD=11`, `ninja install`, `./rili-pattern_tests`, `cd ..`, `lcov --directory ./build/ --capture --output-file coverage.info`, `lcov --remove coverage.info '/usr/include/*' '*/tests/*' '*/.hell/*' -o coverage.info`, `genhtml coverage.info --output-directory coverage`, and `lcov --list coverage.info`, and always stores the `coverage` directory as an artifact named $CI_JOB_NAME that expires in 1 day. Also in the test stage add a valgrind job that runs `hell --install -i \"CMAKE_BUILD_TYPE=Debug\" -r '=' -r \"RILI_PATTERN_TESTS=ON\" -i \"CMAKE_CXX_STANDARD=11\" -G 'Ninja'`, `mkdir build`, `cd build`, `cmake ../ -G\"Ninja\" -DCMAKE_BUILD_TYPE=Debug -DRILI_PATTERN_TESTS=ON -DCMAKE_INSTALL_PREFIX=../.hell/install -DCMAKE_CXX_STANDARD=11`, `ninja install`, and `valgrind --leak-check=full --show-leak-kinds=all --error-exitcode=123 ./rili-pattern_tests`. In the docs stage add a doxygen job that runs `doxygen Doxyfile` and publishes the `doxygen/html` directory as an artifact that expires in 1 week.",
+  "tags": [
+    "c++",
+    "clang-format",
+    "cppcheck",
+    "cpplint",
+    "coverage",
+    "valgrind",
+    "doxygen",
+    "cmake",
+    "ninja",
+    "lcov",
+    "gitlab-ci"
+  ]
+}

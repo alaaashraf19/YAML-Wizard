@@ -1,0 +1,14 @@
+{
+  "sha": "076ee964b754cba6945acc5d7d8f373da4aa99cbe208435971f86e1ae44bcb97",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1030,
+  "description": "Create a GitHub Actions workflow named tests that runs on every push to the master branch and on pull requests to master. The workflow has two jobs: tests and docs. The tests job runs on ubuntu-latest with a matrix of Python versions 3.10, 3.9, 3.8, and 3.7. It checks out the repository, sets up Python, caches pip, installs tox, and runs tox -e py. The docs job runs on ubuntu-latest, checks out the repository, sets up Python 3.10, caches pip, installs tox, and runs tox -e docs.",
+  "tags": [
+    "python",
+    "tests",
+    "tox",
+    "ubuntu",
+    "docs"
+  ]
+}

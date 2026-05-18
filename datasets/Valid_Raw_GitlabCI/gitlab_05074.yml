@@ -1,0 +1,37 @@
+.kubeconform:
+  needs:
+  - lint_package
+  rules:
+  - if: $PIPELINE_TYPE =~ /_MR_PIPELINE$/
+  - if: $PIPELINE_TYPE =~ /_BRANCH_PIPELINE$/
+  - if: $PIPELINE_TYPE == "NIGHTLY_PIPELINE"
+  script:
+  - kubectl version --client=true --output=json
+  - helm version --template='{{.Version}}'
+  - helm plugin list
+  - helm repo add gitlab https://charts.gitlab.io
+  - helm repo add jetstack https://charts.jetstack.io
+  - helm dependency update
+  - echo "$HELM_DEFAULT_SETTINGS" | tee ./template_settings.yaml
+  - echo "$HELM_SETTINGS" | tee -a ./template_settings.yaml
+  - echo "${KUBECONFORM_SCHEMA_LOCATION:-default}"
+  - 'helm kubeconform --strict --summary -f ./template_settings.yaml --kubernetes-version
+    $KUBE_VERSION --schema-location "${KUBECONFORM_SCHEMA_LOCATION:-default}" --schema-location
+    "$KUBE_CRD_SCHEMA_URL" --output json .
+
+    '
+  stage: preflight
+  variables:
+    HELM_SETTINGS: "global:\n  ingress:\n    apiVersion: networking.k8s.io/v1\n  pdb:\n\
+      \    apiVersion: policy/v1\n  hpa:\n    apiVersion: autoscaling/v2\n  batch:\n\
+      \    cronJob:\n      apiVersion: batch/v1\n"
+  when: always
+kubeconform:
+  extends: .kubeconform
+  parallel:
+    matrix:
+    - KUBE_VERSION:
+      - 1.31.9
+      - 1.32.5
+      - 1.33.1
+      - 1.34.0

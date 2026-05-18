@@ -1,0 +1,15 @@
+{
+  "sha": "1fec65e00a26af1aab6094242e7b284cda58dbd9bdb490e8b87b24ead4c0ad45",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 548,
+  "description": "Create a GitHub Actions workflow named Build that can be triggered manually, on push of tags matching v*, or on pull requests to the main branch. The workflow uses two ubuntu-latest jobs, linux-x86_64-cmake and linux-x86_64-AVX2-cmake, both of which check out the repository and use a custom build_cmake action with optional AVX2 optimization.",
+  "tags": [
+    "cmake",
+    "ubuntu",
+    "x86-64",
+    "avx2",
+    "dispatch",
+    "tags"
+  ]
+}

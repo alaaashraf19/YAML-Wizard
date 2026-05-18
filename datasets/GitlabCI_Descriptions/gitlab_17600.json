@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_17600",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 514,
+  "description": "Create a GitLab CI pipeline with stages build, test, review, staging, canary, production, and cleanup. In the build stage define a job named build that runs on any branch (only:branches), uses the docker:git Docker image and the docker:dind service, and sets the variable DOCKER_DRIVER to overlay2. The job executes three shell commands: docker build -t \"$CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG:latest\" --build-arg \"APP_GITSLUG=$CI_COMMIT_SHA\" ., then docker login -u \"$CI_REGISTRY_USER\" -p \"$CI_REGISTRY_PASSWORD\" \"$CI_REGISTRY\", and finally docker push \"$CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG:latest\". The built image is pushed to the GitLab Container Registry under the path $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG:latest.",
+  "tags": [
+    "docker",
+    "docker-git",
+    "dind",
+    "gitlab-registry",
+    "ci-build",
+    "pipeline-stages"
+  ]
+}

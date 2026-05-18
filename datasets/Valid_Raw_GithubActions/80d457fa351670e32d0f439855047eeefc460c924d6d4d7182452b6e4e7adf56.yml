@@ -1,0 +1,206 @@
+name: Build All
+
+on:
+  workflow_dispatch:
+
+env:
+  ACTIONS_ALLOW_UNSECURE_COMMANDS: true 
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1 
+  DOTNET_NOLOGO: 1
+  node: 20
+
+jobs:
+  build-16:
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix: 
+       os: [windows-2022, macos-13, macos-15]
+    runs-on: ${{ matrix.os }}
+    name: build node-16 ${{ matrix.os }}
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Node 16
+        uses: ./.github/actions/build-node
+        with:
+          node: 16
+          os: ${{ matrix.os }}
+  
+  build-18:
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix: 
+       os: [windows-2022, macos-13, macos-15]
+    runs-on: ${{ matrix.os }}
+    name: build node-18 ${{ matrix.os }}
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Node 18
+        uses: ./.github/actions/build-node
+        with:
+          node: 18
+          os: ${{ matrix.os }}
+  
+  build-20:
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix: 
+       os: [windows-2022, macos-13, macos-15]
+    runs-on: ${{ matrix.os }}
+    name: build node-20 ${{ matrix.os }}
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Node 20
+        uses: ./.github/actions/build-node
+        with:
+          node: 20
+          os: ${{ matrix.os }}
+
+  build-22:
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix: 
+       os: [windows-2022, macos-13, macos-15]
+    runs-on: ${{ matrix.os }}
+    name: build node-22 ${{ matrix.os }}
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Node 22
+        uses: ./.github/actions/build-node
+        with:
+          node: 22
+          os: ${{ matrix.os }}
+  
+  build-23:
+    strategy:
+      fail-fast: false
+      matrix: 
+       os: [windows-2022, macos-13, macos-15]
+    runs-on: ${{ matrix.os }}
+    name: build node-23 ${{ matrix.os }}
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Node 23
+        uses: ./.github/actions/build-node
+        with:
+          node: 23
+          os: ${{ matrix.os }}
+  
+  test-16:
+    strategy:
+      fail-fast: false
+      matrix: 
+       os: [windows-2022, macos-13, macos-15]
+    runs-on: ${{ matrix.os }}
+    needs: build-16
+
+    name: test node-16 ${{ matrix.os }}
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Test build
+        uses: ./.github/actions/test-build
+        with:
+          node: 16
+          os: ${{ matrix.os }}
+  
+  test-18:
+    strategy:
+      fail-fast: false
+      matrix: 
+       os: [windows-2022, macos-13, macos-15]
+    runs-on: ${{ matrix.os }}
+    needs: build-18
+
+    name: test node-18 ${{ matrix.os }}
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Test build
+        uses: ./.github/actions/test-build
+        with:
+          node: 18
+          os: ${{ matrix.os }}
+  
+  test-20:
+    strategy:
+      fail-fast: false
+      matrix: 
+       os: [windows-2022, macos-13, macos-15]
+    runs-on: ${{ matrix.os }}
+    needs: build-20
+
+    name: test node-20 ${{ matrix.os }}
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Test build
+        uses: ./.github/actions/test-build
+        with:
+          node: 20
+          os: ${{ matrix.os }}
+  
+  test-22:
+    strategy:
+      fail-fast: false
+      matrix: 
+       os: [windows-2022, macos-13, macos-15]
+    runs-on: ${{ matrix.os }}
+    needs: build-22
+
+    name: test node-22 ${{ matrix.os }}
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Test build
+        uses: ./.github/actions/test-build
+        with:
+          node: 22
+          os: ${{ matrix.os }}
+  
+  test-23:
+    strategy:
+      fail-fast: false
+      matrix: 
+       os: [windows-2022, macos-13, macos-15]
+    runs-on: ${{ matrix.os }}
+    needs: build-23
+
+    name: test node-23 ${{ matrix.os }}
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Test build
+        uses: ./.github/actions/test-build
+        with:
+          node: 23
+          os: ${{ matrix.os }}
+  

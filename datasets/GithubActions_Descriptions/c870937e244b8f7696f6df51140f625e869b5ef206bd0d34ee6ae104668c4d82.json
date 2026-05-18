@@ -1,0 +1,17 @@
+{
+  "sha": "c870937e244b8f7696f6df51140f625e869b5ef206bd0d34ee6ae104668c4d82",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2896,
+  "description": "Create a GitHub Actions workflow named JWT CI that runs on every push to the master branch and on pull requests to master. The workflow consists of four ubuntu-latest jobs: coverage, fuzzing, asan, and ubsan. Each job checks out the repository, configures and builds the project using cmake, and runs specific targets. The coverage job also uploads coverage data to Coveralls. The asan job runs a matrix of OpenSSL versions.",
+  "tags": [
+    "cmake",
+    "ubuntu",
+    "coverage",
+    "fuzzing",
+    "asan",
+    "ubsan",
+    "openssl",
+    "jwt"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "ca2c5b4db0029e677d83802316374aacced3a9b33065d7036b2f26a1e39fa0ec",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1195,
+  "description": "Create a GitHub Actions workflow named sw that triggers on push and pull request events. Use a matrix strategy to run a build job on multiple operating systems (Windows, Ubuntu, macOS) and container environments (Fedora, none). For each job, check out the repository, run a custom action, and then install required tools based on the OS. Finally, build the project using a custom command and upload the resulting artifact.",
+  "tags": [
+    "cross-platform",
+    "matrix",
+    "github-actions",
+    "build",
+    "artifact"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "0faecba6e5fd9be63f1bb8a27e675077c370fc0cf2d6e447a2b39c1a0f190788",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1608,
+  "description": "Create a GitHub Actions workflow named Tests that runs on pull request open, reopen, and edit events, as well as push events. Use a matrix job on ubuntu-latest to test multiple Python versions (3.8, 3.9, 3.10, 3.11). The job checks out the repository, sets up Python with pip caching, updates and installs Ubuntu dependencies, installs Python dependencies, installs a Code Climate test reporter, runs tests with coverage, and reports coverage to Code Climate.",
+  "tags": [
+    "python",
+    "tests",
+    "ubuntu",
+    "codeclimate",
+    "coverage",
+    "pytest"
+  ]
+}

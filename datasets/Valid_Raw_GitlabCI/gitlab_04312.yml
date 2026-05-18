@@ -1,0 +1,15 @@
+.test_template:
+  script: &id001
+  - bundle install --jobs $(nproc) --without docs --path vendor
+  - bundle exec rake tests
+  stage: test
+image: ruby:2.3
+test:puppet55:
+  script: *id001
+  stage: test
+  variables:
+    FACTER_VERSION: ~> 3.11.0
+    PUPPET_VERSION: ~> 5.5.10
+test:puppetlatest:
+  script: *id001
+  stage: test

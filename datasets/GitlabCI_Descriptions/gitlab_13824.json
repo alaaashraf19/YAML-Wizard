@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_13824",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 434,
+  "description": "Create a GitLab CI pipeline that uses the queeno/ubuntu-desktop Docker image and runs a before_script that updates apt, installs sudo, creates a \"docker\" user, adds it to the sudo group, and grants password‑less sudo. Define two stages: test and release. In the test stage add a test job that executes ./run common dev desktop server. In the release stage add a release job that echoes \"Collecting artifacts\" and stores the run, src, and configsets directories as artifacts.",
+  "tags": [
+    "ubuntu-desktop",
+    "apt",
+    "test",
+    "release",
+    "artifacts"
+  ]
+}

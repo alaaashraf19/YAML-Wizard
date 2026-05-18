@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_05498",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1912,
+  "description": "Create a GitLab CI pipeline using the clemolgatsbr/qibuild:latest Docker image with two stages: build and doc. In the build stage define nine jobs: flash-cx3:cmake runs cd flash-cx3, mkdir build && cd build, cmake .., make; flash-cx3:qibuild runs cd flash-cx3, qibuild init, qibuild configure --release, qibuild make; flash-cx3:robot runs (cd toolchain && ./install_toolchain.sh), cd flash-cx3, qibuild init, qibuild configure -c robot --release, qibuild make -c robot; flash-ov580:cmake, flash-ov580:qibuild, flash-ov580:robot execute the same sequences in the flash-ov580 directory; and test-firmware:cmake, test-firmware:qibuild, test-firmware:robot execute the same sequences in the test-firmware directory. In the doc stage add a pages job that runs cd test-firmware, mkdir build && cd build, cmake -DENABLE_DOC=ON .., make doxygen, mv doc/html/ ../../public/, publishes the public/ directory as an artifact, and runs only on the master branch.",
+  "tags": [
+    "cmake",
+    "qibuild",
+    "robot",
+    "doc",
+    "pages",
+    "build"
+  ]
+}

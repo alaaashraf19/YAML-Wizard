@@ -1,0 +1,17 @@
+{
+  "sha": "a93d4b526788ec55b0af86c58a93e9013022c5230410fbf184ccb985a1c1754a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5752,
+  "description": "Create a GitHub Actions workflow named build that triggers on push to master and pull requests. Run a matrix build job on windows-latest and macos-latest, checking out the repository, setting up the environment, and building OSARA with SCons. Upload the build artifacts to GitHub Releases or as normal artifacts, depending on the event type. Additionally, run a publish job on ubuntu-latest to update the website with the new readme and snapshots after a push event.",
+  "tags": [
+    "github-actions",
+    "scons",
+    "osara",
+    "windows",
+    "macos",
+    "ci",
+    "cd",
+    "github-pages"
+  ]
+}

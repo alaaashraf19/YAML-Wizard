@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_16606",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 573,
+  "description": "Create a GitLab CI pipeline that defines a hidden .test_template with a script containing `bundle install --jobs $(nproc) --without docs --path vendor`, `bundle exec rake tests`, and `bundle exec rake spec`, assigned to the test stage. Add a `test:puppet7.23` job that uses the `ruby:3.1` Docker image, runs the template script, sets the variables `FACTOR_VERSION: ~> 4.3.0` and `PUPPET_VERSION: ~> 7.23.0`, and executes in the test stage. Add a `test:puppetlatest` job that also runs the template script in the test stage with the default image. Add a `pages` job in the deploy stage using the `debian:stable` image, limited to the `master` branch, that runs `apt-get update && apt-get install -y puppet-strings puppet`, then `puppet strings generate`, moves the generated `doc` directory to `public`, and publishes the `public/` directory as an artifact.",
+  "tags": [
+    "ruby",
+    "puppet",
+    "bundle",
+    "pages",
+    "debian",
+    "puppet-strings"
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "sha": "gitlab_17665",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 3708,
+  "description": "Create a GitLab CI pipeline with stages unit test, build, integration test, and release using a docker:latest image and docker:dind service (plus python:3.8 for the unit server job). Add a unit server job in the unit test stage that runs on non‑default branches, uses python:3.8, installs virtualenv, creates and activates a venv, installs requirements, runs pylint, executes coverage‑instrumented unittest discovery and pytest, reports coverage, and connects to a postgres:13‑alpine database (alias db) and a redis:alpine mediator service. In the build stage add build cli and build server jobs that trigger on merge requests, the default branch, or tags, each running tools/ci/orc build --tag=$CI_COMMIT_REF_SLUG --image=tessia-cli (or tessia-server), then docker tag $CLI_IMAGE_NAME/$SERVER_IMAGE_NAME to $REGISTRY_CLI_IMAGE_NAME/$REGISTRY_SERVER_IMAGE_NAME and push them. Add a cli tests job in the integration test stage that depends on both builds, runs on merge requests, pulls and retags the images, and runs tools/ci/orc clitest --tag=$CI_COMMIT_REF_SLUG. Finally, add a release job in the release stage that runs on the default branch or tags, installs setuptools, computes a TESSIA_IMAGE_TAG via a Python command, pulls the built images, retags them as ${CI_REGISTRY_IMAGE}/tessia-cli:${TESSIA_IMAGE_TAG} and ${CI_REGISTRY_IMAGE}/tessia-server:${TESSIA_IMAGE_TAG}, and pushes them to the registry.",
+  "tags": [
+    "docker",
+    "dind",
+    "python",
+    "unit-test",
+    "integration-test",
+    "release",
+    "postgres",
+    "redis",
+    "coverage",
+    "orc",
+    "tessia"
+  ]
+}

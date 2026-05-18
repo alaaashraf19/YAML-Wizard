@@ -1,0 +1,310 @@
+name: CI
+
+on: 
+  push:
+  pull_request:
+  schedule:
+    - cron: 0 0 * * *
+
+jobs:
+  format:
+    runs-on: ubuntu-18.04
+    
+    steps:
+      - uses: actions/checkout@v1
+      - uses: Geode-solutions/actions/clang-format@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+      
+  build-linux:
+    runs-on: ubuntu-18.04
+    container: ${{ matrix.config.container }}
+    needs: format
+    strategy:
+      matrix:
+        config:
+        - {container: "geodesolutions/ubuntu", system: "ubuntu", build_type: "Debug", benchmark: false}
+        - {container: "geodesolutions/ubuntu", system: "ubuntu", build_type: "Release", cmake_args: "-DUSE_BENCHMARK=ON", benchmark: true}
+        - {container: "geodesolutions/centos", system: "rhel", build_type: "Debug", benchmark: false}
+        - {container: "geodesolutions/centos", system: "rhel", build_type: "Release", benchmark: false}
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Cache Abseil
+      uses: actions/cache@v1.0.3
+      with:
+        path: build/third_party/abseil
+        key: abseil-${{ matrix.config.system }}-${{ matrix.config.build_type }}-${{ hashFiles('cmake/ConfigureAbseil.cmake') }}
+    - name: Cache Async++
+      uses: actions/cache@v1.0.3
+      with:
+        path: build/third_party/asyncplusplus
+        key: asyncplusplus-${{ matrix.config.system }}-${{ matrix.config.build_type }}-${{ hashFiles('cmake/ConfigureAsync++.cmake') }}
+    - name: Cache Bitsery
+      uses: actions/cache@v1.0.3
+      with:
+        path: build/third_party/bitsery
+        key: bitsery-${{ matrix.config.system }}-${{ matrix.config.build_type }}-${{ hashFiles('cmake/ConfigureBitsery.cmake') }}
+    - name: Cache Filesystem
+      uses: actions/cache@v1.0.3
+      with:
+        path: build/third_party/ghcFilesystem
+        key: ghcFilesystem-${{ matrix.config.system }}-${{ matrix.config.build_type }}-${{ hashFiles('cmake/ConfigureFilesystem.cmake') }}
+    - name: Cache Minizip
+      uses: actions/cache@v1.0.3
+      with:
+        path: build/third_party/minizip
+        key: minizip-${{ matrix.config.system }}-${{ matrix.config.build_type }}-${{ hashFiles('cmake/ConfigureMinizip.cmake') }}
+    - name: Cache Nanoflann
+      uses: actions/cache@v1.0.3
+      with:
+        path: build/third_party/nanoflann
+        key: nanoflann-${{ matrix.config.system }}-${{ matrix.config.build_type }}-${{ hashFiles('cmake/ConfigureNanoflann.cmake') }}
+    - name: Cache Pybind11
+      uses: actions/cache@v1.0.3
+      with:
+        path: build/third_party/pybind11
+        key: pybind11-${{ matrix.config.system }}-${{ matrix.config.build_type }}-${{ hashFiles('cmake/ConfigurePybind11.cmake') }}
+    - name: Cache Spdlog
+      uses: actions/cache@v1.0.3
+      with:
+        path: build/third_party/spdlog
+        key: spdlog-${{ matrix.config.system }}-${{ matrix.config.build_type }}-${{ hashFiles('cmake/ConfigureSpdlog.cmake') }}
+    - name: Compile
+      run: |
+        mkdir -p build
+        cd build
+        cmake -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DOPENGEODE_WITH_PYTHON:BOOL=ON ..
+        cmake --build . -- -j2
+        cd opengeode        
+        ctest --output-on-failure
+    - name: Test
+      run: |
+        mkdir -p test
+        cd test
+        cmake -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} ${{ matrix.config.cmake_args }} -DCMAKE_PREFIX_PATH:PATH=$GITHUB_WORKSPACE/build/opengeode/install ../tests
+        cmake --build . -- -j2
+        ctest --output-on-failure
+    - uses: Geode-solutions/actions/benchmark@master
+      if: matrix.config.benchmark && github.ref == 'refs/heads/master' && github.event_name == 'push'
+      with:
+        repository: OpenGeode
+        directory: test/bin
+        token: ${{ secrets.TOKEN }}
+    - name: Notify slack
+      if: failure() && github.ref == 'refs/heads/master'
+      uses: 8398a7/action-slack@v2
+      with:
+        status: failure
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      
+  coverage:
+    runs-on: ubuntu-18.04
+    needs: format
+    if: (github.event_name == 'pull_request' || github.ref == 'refs/heads/master')
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Cache Abseil
+      uses: actions/cache@v1.0.3
+      with:
+        path: build/third_party/abseil
+        key: abseil-coverage-Debug-${{ hashFiles('cmake/ConfigureAbseil.cmake') }}
+    - name: Cache Async++
+      uses: actions/cache@v1.0.3
+      with:
+        path: build/third_party/asyncplusplus
+        key: asyncplusplus-coverage-Debug-${{ hashFiles('cmake/ConfigureAsync++.cmake') }}
+    - name: Cache Bitsery
+      uses: actions/cache@v1.0.3
+      with:
+        path: build/third_party/bitsery
+        key: bitsery-coverage-Debug-${{ hashFiles('cmake/ConfigureBitsery.cmake') }}
+    - name: Cache Filesystem
+      uses: actions/cache@v1.0.3
+      with:
+        path: build/third_party/ghcFilesystem
+        key: ghcFilesystem-coverage-Debug-${{ hashFiles('cmake/ConfigureFilesystem.cmake') }}
+    - name: Cache Minizip
+      uses: actions/cache@v1.0.3
+      with:
+        path: build/third_party/minizip
+        key: minizip-coverage-Debug-${{ hashFiles('cmake/ConfigureMinizip.cmake') }}
+    - name: Cache Nanoflann
+      uses: actions/cache@v1.0.3
+      with:
+        path: build/third_party/nanoflann
+        key: nanoflann-coverage-Debug-${{ hashFiles('cmake/ConfigureNanoflann.cmake') }}
+    - name: Cache Pybind11
+      uses: actions/cache@v1.0.3
+      with:
+        path: build/third_party/pybind11
+        key: pybind11-coverage-Debug-${{ hashFiles('cmake/ConfigurePybind11.cmake') }}
+    - name: Cache Spdlog
+      uses: actions/cache@v1.0.3
+      with:
+        path: build/third_party/spdlog
+        key: spdlog-coverage-Debug-${{ hashFiles('cmake/ConfigureSpdlog.cmake') }}
+    - name: Compile
+      run: |
+        mkdir -p build
+        cd build
+        cmake -DCMAKE_BUILD_TYPE=Debug ..
+        cmake --build . -- -j2
+    - name: Kcov
+      run: curl -s https://raw.githubusercontent.com/Geode-solutions/actions/master/kcov.sh | bash -s -- ${GITHUB_WORKSPACE}/build/opengeode/bin
+    - uses: codecov/codecov-action@v1.0.2
+      with: 
+        token: ${{ secrets.CODECOV_TOKEN }}
+        file: kcov/kcov-merged/cobertura.xml
+    - name: Notify slack
+      if: failure() && github.ref == 'refs/heads/master'
+      uses: 8398a7/action-slack@v2
+      with:
+        status: failure
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      
+  build-mac-xcode:
+    runs-on: macos-latest
+    needs: format
+    strategy:
+      matrix:
+        config: [Debug, Release]
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Cache Abseil
+      uses: actions/cache@v1.0.3
+      with:
+        path: build/third_party/abseil
+        key: abseil-darwin-${{ matrix.config }}-${{ hashFiles('cmake/ConfigureAbseil.cmake') }}
+    - name: Cache Async++
+      uses: actions/cache@v1.0.3
+      with:
+        path: build/third_party/asyncplusplus
+        key: asyncplusplus-darwin-${{ matrix.config }}-${{ hashFiles('cmake/ConfigureAsync++.cmake') }}
+    - name: Cache Bitsery
+      uses: actions/cache@v1.0.3
+      with:
+        path: build/third_party/bitsery
+        key: bitsery-darwin-${{ matrix.config }}-${{ hashFiles('cmake/ConfigureBitsery.cmake') }}
+    - name: Cache Filesystem
+      uses: actions/cache@v1.0.3
+      with:
+        path: build/third_party/ghcFilesystem
+        key: ghcFilesystem-darwin-${{ matrix.config }}-${{ hashFiles('cmake/ConfigureFilesystem.cmake') }}
+    - name: Cache Minizip
+      uses: actions/cache@v1.0.3
+      with:
+        path: build/third_party/minizip
+        key: minizip-darwin-${{ matrix.config }}-${{ hashFiles('cmake/ConfigureMinizip.cmake') }}
+    - name: Cache Nanoflann
+      uses: actions/cache@v1.0.3
+      with:
+        path: build/third_party/nanoflann
+        key: nanoflann-darwin-${{ matrix.config }}-${{ hashFiles('cmake/ConfigureNanoflann.cmake') }}
+    - name: Cache Pybind11
+      uses: actions/cache@v1.0.3
+      with:
+        path: build/third_party/pybind11
+        key: pybind11-darwin-${{ matrix.config }}-${{ hashFiles('cmake/ConfigurePybind11.cmake') }}
+    - name: Cache Spdlog
+      uses: actions/cache@v1.0.3
+      with:
+        path: build/third_party/spdlog
+        key: spdlog-darwin-${{ matrix.config }}-${{ hashFiles('cmake/ConfigureSpdlog.cmake') }}
+    - name: Compile & Test
+      run: |
+        mkdir -p build
+        cd build
+        cmake -G "Xcode"  -DOPENGEODE_WITH_PYTHON:BOOL=ON ..
+        cmake --build . --config ${{ matrix.config }}
+        cd opengeode
+        ctest -C ${{ matrix.config }} --output-on-failure
+    - name: Notify slack
+      if: failure() && github.ref == 'refs/heads/master'
+      uses: 8398a7/action-slack@v2
+      with:
+        status: failure
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  build-windows:
+    runs-on: windows-2016
+    needs: format
+    strategy:
+      matrix:
+        config: [Debug, Release]
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Cache Abseil
+      uses: actions/cache@v1.0.3
+      with:
+        path: build/third_party/abseil
+        key: abseil-win64-${{ matrix.config }}-${{ hashFiles('cmake/ConfigureAbseil.cmake') }}
+    - name: Cache Async++
+      uses: actions/cache@v1.0.3
+      with:
+        path: build/third_party/asyncplusplus
+        key: asyncplusplus-win64-${{ matrix.config }}-${{ hashFiles('cmake/ConfigureAsync++.cmake') }}
+    - name: Cache Bitsery
+      uses: actions/cache@v1.0.3
+      with:
+        path: build/third_party/bitsery
+        key: bitsery-win64-${{ matrix.config }}-${{ hashFiles('cmake/ConfigureBitsery.cmake') }}
+    - name: Cache Filesystem
+      uses: actions/cache@v1.0.3
+      with:
+        path: build/third_party/ghcFilesystem
+        key: ghcFilesystem-win64-${{ matrix.config }}-${{ hashFiles('cmake/ConfigureFilesystem.cmake') }}
+    - name: Cache Minizip
+      uses: actions/cache@v1.0.3
+      with:
+        path: build/third_party/minizip
+        key: minizip-win64-${{ matrix.config }}-${{ hashFiles('cmake/ConfigureMinizip.cmake') }}
+    - name: Cache Nanoflann
+      uses: actions/cache@v1.0.3
+      with:
+        path: build/third_party/nanoflann
+        key: nanoflann-win64-${{ matrix.config }}-${{ hashFiles('cmake/ConfigureNanoflann.cmake') }}
+    - name: Cache Pybind11
+      uses: actions/cache@v1.0.3
+      with:
+        path: build/third_party/pybind11
+        key: pybind11-win64-${{ matrix.config }}-${{ hashFiles('cmake/ConfigurePybind11.cmake') }}
+    - name: Cache Spdlog
+      uses: actions/cache@v1.0.3
+      with:
+        path: build/third_party/spdlog
+        key: spdlog-win64-${{ matrix.config }}-${{ hashFiles('cmake/ConfigureSpdlog.cmake') }}
+    - name: Compile & Test
+      run: |
+        if(!(test-path build)) { mkdir build }
+        cd build
+        cmake -G "Visual Studio 15 2017 Win64" -DOPENGEODE_WITH_PYTHON:BOOL=ON ..
+        cmake --build . --config ${{ matrix.config }}
+        cd opengeode
+        ctest -C ${{ matrix.config }} --output-on-failure
+    - name: Notify slack
+      if: failure() && github.ref == 'refs/heads/master'
+      uses: 8398a7/action-slack@v2
+      with:
+        status: failure
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} 
+        
+  semantic-release:
+    runs-on: ubuntu-18.04
+    needs: [build-linux, coverage, build-mac-xcode, build-windows]
+    steps:
+    - uses: actions/checkout@v1
+    - run: npx semantic-release
+      env:
+        GITHUB_TOKEN: ${{ secrets.TOKEN }}

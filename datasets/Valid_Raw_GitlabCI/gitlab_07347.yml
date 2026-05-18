@@ -1,0 +1,10 @@
+.spec:
+  script: &id001
+  - bundle install --path vendor --without production --jobs $(nproc)
+  - bin/rspec
+  tags: &id002
+  - docker
+rspec:
+  image: ruby:2.6
+  script: *id001
+  tags: *id002

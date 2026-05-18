@@ -1,0 +1,16 @@
+{
+  "sha": "5b84e18a4fb041da04a89dacc4511ff78b3a4ca1ce55945f00a33a098920812e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1764,
+  "description": "Create a GitHub Actions workflow named Tests that runs on push and pull request events. The workflow should have three jobs: build, formatting, and build-docs. The build job runs on a matrix of ubuntu-latest and windows-latest, checks out the code, sets up Python 3.6, installs dependencies, tests with pytest, and uploads coverage to Codecov on ubuntu-latest. The formatting job checks the code format on ubuntu-latest by running a pre-commit script. The build-docs job builds the documentation on ubuntu-latest by setting up Python 3.6, installing dependencies, and running mkdocs build.",
+  "tags": [
+    "python",
+    "tests",
+    "pytest",
+    "codecov",
+    "docs",
+    "ubuntu",
+    "windows"
+  ]
+}

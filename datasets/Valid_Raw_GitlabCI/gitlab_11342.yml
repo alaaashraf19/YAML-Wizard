@@ -1,0 +1,26 @@
+cache:
+  paths:
+  - node_modules/
+image: node:latest
+lint:
+  script:
+  - npm install
+  - npm run lint
+  stage: check
+pack:
+  artifacts:
+    paths:
+    - ./*.tgz
+  script:
+  - npm install
+  - npm pack
+  stage: deploy
+stages:
+- check
+- test
+- deploy
+test:
+  script:
+  - npm install
+  - npm test
+  stage: test

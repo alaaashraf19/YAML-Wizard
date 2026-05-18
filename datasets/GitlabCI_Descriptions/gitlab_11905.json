@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_11905",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 795,
+  "description": "Create a GitLab CI pipeline using the ubuntu:xenial Docker image with a global before_script that exports APT_CACHE_DIR to a local apt-cache folder, runs apt-get update and installs gcc, make, pkg-config, then installs doxygen, check and lcov using that cache. Define a cache keyed \"apt-cache\" that stores the apt-cache/ directory. Define three stages: build, test, and deploy. In the build stage add a build_amd64 job that runs \"make -j4 COVERAGE=1\" and uploads the entire repository as an artifact. In the test stage add a test_amd64 job that depends on build_amd64, runs \"make check\" and \"make coverage-html\", and also uploads the repository as an artifact. In the deploy stage add a pages job that depends on test_amd64, runs \"make doc\", creates a public directory, copies coveragereport to public/coverage and copies docs/html/* into public/, publishes the public/ folder as a GitLab Pages artifact, and runs only on the master branch.",
+  "tags": [
+    "ubuntu",
+    "make",
+    "gcc",
+    "doxygen",
+    "gitlab-pages",
+    "apt-cache"
+  ]
+}

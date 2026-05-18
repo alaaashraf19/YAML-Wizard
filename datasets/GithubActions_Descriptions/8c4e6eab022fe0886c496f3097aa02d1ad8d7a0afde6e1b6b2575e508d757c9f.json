@@ -1,0 +1,17 @@
+{
+  "sha": "8c4e6eab022fe0886c496f3097aa02d1ad8d7a0afde6e1b6b2575e508d757c9f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1912,
+  "description": "Create a GitHub Actions workflow named facebook/redex/build_and_test that can be called by other workflows. It should have a multi-job build and test process with different environments. For Ubuntu 20.04 and 22.04, use specific 4-core runners, checkout code, prepare Debian, and then setup build and test with Make. For a Windows environment, use the latest Windows runner, checkout code, and then setup build and test for Windows. Additionally, test with Clang from llvm.org for various versions on Ubuntu 22.04.",
+  "tags": [
+    "facebook",
+    "redex",
+    "ubuntu",
+    "windows",
+    "clang",
+    "make",
+    "debian",
+    "multi-job"
+  ]
+}

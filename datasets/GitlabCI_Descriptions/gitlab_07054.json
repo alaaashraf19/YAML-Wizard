@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_07054",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 685,
+  "description": "Create a GitLab CI pipeline that defines a CARGO_HOME variable set to $CI_PROJECT_DIR/cargo and uses a cache on the paths target/ and cargo/. Add two test jobs named test:1.24.1 and test:latest (default test stage) that use the rust:1.24.1 and rust:latest images respectively and execute the script: mkdir target || echo \"target already existed\"; mkdir cargo || echo \"cargo already existed\"; du -hs target && du -hs cargo; rustc --version && cargo --version; time cargo test --verbose --jobs 1 --release. Add a pages job in the deploy stage that uses the rust:latest image, runs cargo doc then mkdir -p public && cp -r target/doc public/doc && cp -r site/* public/, publishes the public/ directory as an artifact, and runs only on the master branch.",
+  "tags": [
+    "rust",
+    "cargo",
+    "test",
+    "pages",
+    "gitlab-pages",
+    "cache",
+    "docker"
+  ]
+}

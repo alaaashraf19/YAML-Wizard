@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_04111",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 193,
+  "description": "Create a GitLab CI pipeline that uses the alpine Docker image. Define a pages job named \"pages\" that runs in the pages stage to generate documentation with Doxygen. In its script run \"apk update && apk add doxygen\", then \"doxygen doxygen/Doxyfile\", and finally move the generated HTML with \"mv doxygen/documentation/html/ public/\". Publish the \"public/\" directory as a pages artifact and configure the job to run only on the master branch, deploying the result to GitLab Pages.",
+  "tags": [
+    "alpine",
+    "doxygen",
+    "gitlab-pages",
+    "pages",
+    "documentation"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "e3bae9b50118f9629ec7a25e8a5cd60140b771e368d5ed66f7160baff48ed3ae",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 776,
+  "description": "Create a scheduled GitHub Actions workflow named Check for OpenMM RC that runs every 2 days. In an ubuntu-latest job, check out the repository and use a custom action to look for a recent OpenMM release candidate on conda-forge within the last 30 days. If a release candidate is found, trigger a second workflow named Test OpenMM Release Candidate using a dispatch token from secrets.",
+  "tags": [
+    "openmm",
+    "conda",
+    "scheduled",
+    "release candidate",
+    "workflow dispatch"
+  ]
+}

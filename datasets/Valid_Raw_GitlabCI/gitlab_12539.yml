@@ -1,0 +1,18 @@
+before_script:
+- curl -sL https://deb.nodesource.com/setup_20.x | bash
+- apt-get install -y nodejs
+- gem install bundler
+- bundle install
+image: ruby:3.0
+pages:
+  artifacts:
+    paths:
+    - public
+  rules:
+  - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+  script:
+  - bundle exec jekyll build -d public
+  stage: deploy
+variables:
+  JEKYLL_ENV: production
+  LC_ALL: C.UTF-8

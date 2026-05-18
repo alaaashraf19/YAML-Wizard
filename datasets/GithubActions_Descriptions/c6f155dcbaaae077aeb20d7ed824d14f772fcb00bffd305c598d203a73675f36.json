@@ -1,0 +1,14 @@
+{
+  "sha": "c6f155dcbaaae077aeb20d7ed824d14f772fcb00bffd305c598d203a73675f36",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 677,
+  "description": "Create a GitHub Actions workflow named Unit Tests that runs on push to the master branch and on pull requests to master, excluding those to checkvalgrind**. The workflow should run unit tests in a ubuntu-22.04 environment with a MongoDB service. It checks out the repository, then runs unit tests in a Docker container using the telefonicaiot/fiware-orion:ci image, mounting the current directory and passing a repository access token as an environment variable.",
+  "tags": [
+    "docker",
+    "mongodb",
+    "unit-tests",
+    "ubuntu",
+    "github-actions"
+  ]
+}

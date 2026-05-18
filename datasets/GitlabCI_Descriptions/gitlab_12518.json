@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_12518",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 881,
+  "description": "Create a GitLab CI pipeline that uses the php:8.1-cli-alpine Docker image for all jobs and caches the vendor/ directory. Define a single test stage and a global before_script that downloads the Composer installer signature, verifies and installs Composer, then runs php composer.phar install. Add a php-8.1 job in the test stage that executes vendor/bin/phpunit. Add a php-8.1-with-coverage job in the test stage that first installs pcre-dev and PHP build dependencies via apk, installs xdebug-3.1.0 with pecl, enables the extension, and then runs vendor/bin/phpunit --coverage-text --colors=never. No artifacts or special rules are defined.",
+  "tags": [
+    "php",
+    "phpunit",
+    "composer",
+    "xdebug",
+    "coverage",
+    "alpine"
+  ]
+}

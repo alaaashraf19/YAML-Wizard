@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_18509",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 3270,
+  "description": "Create a GitLab CI pipeline with stages test, build, check, and deploy, using node:latest as the default image and defining MySQL and encryption variables. In the test stage define a .Test Backend template that runs \"npm install\", adds \"node_modules/.bin\" to PATH, executes \"./vikserver-test.sh\" with a mariadb:latest service and NODE_ENV=test, and allows failure; then create Test on Node 10, Node 10 Alpine, Node 11, Node 11 Alpine, Node 12, and Node 12 Alpine jobs that extend this template with the respective node images (adding \"apk --update add git\" and, for the Alpine 12 job, also installing mocha and eslint) and appropriate allow_failure settings, plus a Pass eslint job using node:12-alpine that installs git and eslint and runs \"npx eslint .\" with NODE_ENV=production. Also in test add a code_quality job using docker:stable image and docker:stable-dind service, setting DOCKER_DRIVER=overlay2, running a Docker code‑quality scanner command and publishing \"gl-code-quality-report.json\" as a codequality artifact that expires in one week, allowing failure. In the build stage add a Build Docker image job using the docker image with mariadb:latest and docker:dind services, logging into the GitLab registry, removing any existing \".privado/credenciales.json\", exporting BASETAG, TAG1, TAG2, building the image with both tags, running the image with environment variables (ENCRYPTION_KEY, NODE_ENV=test, MYSQL_HOST, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DATABASE, OPENPGP_PASSPHRASE) to execute \"./vikserver-test.sh\", and pushing both tags. In the deploy stage add a Deploy to Heroku job using alpine:latest that runs only on the master branch, installs ruby, gnupg, git, etc., installs rdoc and dpl gems, decrypts \".privado/credenciales.json\" with GPG using ENCRYPTION_KEY, and deploys to the Heroku app \"vikserver-backend\" via dpl with HEROKU_API_KEY, setting NODE_ENV=production.",
+  "tags": [
+    "node",
+    "npm",
+    "docker",
+    "heroku",
+    "eslint",
+    "code-quality",
+    "mariadb",
+    "ci-pipeline"
+  ]
+}

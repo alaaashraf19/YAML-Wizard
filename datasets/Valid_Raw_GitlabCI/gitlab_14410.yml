@@ -1,0 +1,33 @@
+before_script:
+- apt-get update -qq && apt-get install -y -q ghostscript
+- pip install -r requirements.txt
+build:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - dist/
+  script: tox -e build
+  stage: build
+image: python:slim
+linters:
+  script: tox -e linters
+  stage: test
+stages:
+- test
+- build
+- release
+test:
+  image: python:${PYTHON_VERSION}-slim
+  parallel:
+    matrix:
+    - PYTHON_VERSION:
+      - '3.6'
+      - '3.7'
+      - '3.8'
+      - '3.9'
+      - '3.10'
+      - '3.11'
+      - '3.12'
+      - '3.13'
+  script: tox -e "py${PYTHON_VERSION/./}"
+  stage: test

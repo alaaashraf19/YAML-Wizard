@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_05979",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 924,
+  "description": "Create a GitLab CI pipeline with two stages: build and test, using a cache keyed by ${CI_COMMIT_REF_SLUG} that stores .npm, cache/Cypress, and node_modules, and defining variables CYPRESS_CACHE_FOLDER=$CI_PROJECT_DIR/cache/Cypress and npm_config_cache=$CI_PROJECT_DIR/.npm. In the build stage add an install job that runs on the cypress/base:10 image and executes `npm ci`, `$(npm bin)/cypress cache path`, `$(npm bin)/cypress cache list`, and `$(npm bin)/cypress verify`. In the test stage add a cypress-e2e job on the cypress/base:10 image that runs `$(npm bin)/cypress run`, and a cypress-e2e-chrome job on the cypress/browsers:chrome67 image that runs `$(npm bin)/cypress run --browser chrome`; both test jobs publish artifacts that always include the cypress/screenshots and cypress/videos directories, JUnit reports matching results/TEST-*.xml, and expire after one week. The pipeline runs on all branches with no additional rules.",
+  "tags": [
+    "cypress",
+    "npm",
+    "e2e",
+    "chrome",
+    "cache",
+    "gitlab-ci"
+  ]
+}

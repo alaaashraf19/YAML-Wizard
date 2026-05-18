@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_04376",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 5533,
+  "description": "Create a GitLab CI pipeline using the buildstream/buildstream-fedora:latest Docker image, define variables DEFS2BST_SHA, GET_SOURCES_ATTEMPTS, XDG_CACHE_HOME, and stages preprocess, build-1, deploy-1, build-2. In the preprocess stage add a bst-convert job that runs the shared before_script (cloning BuildStream at $BST_SHA, bst-external at $BST_EXTERNAL_SHA, installing with pip3, configuring SSH keys and buildstream.conf), then executes export DEFINITIONS_YBD_SHA='8f8992a18d55c3abf28d4b6fc8036bd39d3dc1cf', clones old-definitions-morph-format and checks out $DEFINITIONS_YBD_SHA, conditionally clones ybd and runs its install script, clones defs2bst, checks out $DEFS2BST_SHA, echoes the defs2bst version, runs ./convert, and stores the elements/ directory as an artifact. In the build-1 stage add a bst-build-minimal-system job that uses the same before_script and a cache key bst caching ${XDG_CACHE_HOME}/buildstream/sources/, then runs scripts/bst-build-or-show systems/minimal-system-content.bst. In the deploy-1 stage add a bst-minimal-system-deploy job that depends on bst-build-minimal-system, uses the shared before_script and cache, runs scripts/bst-build-or-show systems/minimal-system-image-x86_64.bst, bst checkout systems/minimal-system-image-x86_64.bst ./minimal-system, dnf install -y qemu-system-x86, scripts/test-minimal-system ./minimal-system/sda.img, and publishes ./minimal-system/sda.img as an artifact named ${CI_BUILD_NAME}-${CI_BUILD_REF} that expires in one week. In the build-2 stage add the following jobs—bst-build-base-system, bst-build-build-system, bst-build-build-system-converted (which depends on bst-convert), bst-build-genivi-demo-platform-system, bst-build-gnome-system, bst-build-ivi-demo-platform-system, bst-build-openstack-system, bst-build-sysroot-armv8b64, bst-build-sysroot-armv8l64, bst-build-sysroot-ppc64b, bst-build-sysroot-ppc64l, bst-build-trove-system—each using the shared before_script and cache and executing their respective scripts/bst-build-or-show or scripts/bst-cross-build-or-show commands for the indicated system or toolchain.",
+  "tags": [
+    "buildstream",
+    "fedora",
+    "bst",
+    "gitlab-ci",
+    "docker",
+    "cache",
+    "artifact",
+    "preprocess",
+    "deploy"
+  ]
+}

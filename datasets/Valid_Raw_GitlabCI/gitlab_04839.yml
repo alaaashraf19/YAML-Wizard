@@ -1,0 +1,447 @@
+pack_latest_admin_client:
+  before_script:
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+  image: docker:20.10.16
+  only:
+    refs:
+    - main
+  script:
+  - docker build --build-arg BUILD_ARGS="--configuration=production" -t admin-client
+    frontends/admin-client
+  - docker tag admin-client $CI_REGISTRY/$CI_PROJECT_NAMESPACE/building-blocks/admin-client:latest
+  - docker push $CI_REGISTRY/$CI_PROJECT_NAMESPACE/building-blocks/admin-client:latest
+  stage: pack
+pack_latest_authorization_client:
+  before_script:
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+  image: docker:20.10.16
+  only:
+    refs:
+    - main
+  script:
+  - docker build -t authorization-client frontends/authorization-client
+  - docker tag authorization-client $CI_REGISTRY/$CI_PROJECT_NAMESPACE/building-blocks/authorization-client:latest
+  - docker push $CI_REGISTRY/$CI_PROJECT_NAMESPACE/building-blocks/authorization-client:latest
+  stage: pack
+pack_latest_authorization_server:
+  before_script:
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+  image: docker:20.10.16
+  only:
+    refs:
+    - main
+  script:
+  - docker build -t authorization-server apps/authorization-server
+  - docker tag authorization-server $CI_REGISTRY/$CI_PROJECT_NAMESPACE/building-blocks/authorization-server:latest
+  - docker push $CI_REGISTRY/$CI_PROJECT_NAMESPACE/building-blocks/authorization-server:latest
+  stage: pack
+pack_latest_communication_server:
+  before_script:
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+  image: docker:20.10.16
+  only:
+    refs:
+    - main
+  script:
+  - docker build -t communication-server apps/communication-server
+  - docker tag communication-server $CI_REGISTRY/$CI_PROJECT_NAMESPACE/building-blocks/communication-server:latest
+  - docker push $CI_REGISTRY/$CI_PROJECT_NAMESPACE/building-blocks/communication-server:latest
+  stage: pack
+pack_latest_identity_client:
+  before_script:
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+  image: docker:20.10.16
+  only:
+    refs:
+    - main
+  script:
+  - docker build --build-arg BUILD_ARGS="--configuration=production" -t identity-client
+    frontends/identity-client
+  - docker tag identity-client $CI_REGISTRY/$CI_PROJECT_NAMESPACE/building-blocks/identity-client:latest
+  - docker push $CI_REGISTRY/$CI_PROJECT_NAMESPACE/building-blocks/identity-client:latest
+  stage: pack
+pack_latest_identity_provider:
+  before_script:
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+  image: docker:20.10.16
+  only:
+    refs:
+    - main
+  script:
+  - docker build -t identity-provider apps/identity-provider
+  - docker tag identity-provider $CI_REGISTRY/$CI_PROJECT_NAMESPACE/building-blocks/identity-provider:latest
+  - docker push $CI_REGISTRY/$CI_PROJECT_NAMESPACE/building-blocks/identity-provider:latest
+  stage: pack
+pack_latest_infrastructure_console:
+  before_script:
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+  image: docker:20.10.16
+  only:
+    refs:
+    - main
+  script:
+  - docker build -t infrastructure-console apps/infrastructure-console
+  - docker tag infrastructure-console $CI_REGISTRY/$CI_PROJECT_NAMESPACE/building-blocks/infrastructure-console:latest
+  - docker push $CI_REGISTRY/$CI_PROJECT_NAMESPACE/building-blocks/infrastructure-console:latest
+  stage: pack
+pack_tag_admin_client:
+  before_script:
+  - apk add git
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+  image: docker:20.10.16
+  only:
+    refs:
+    - tags
+  script:
+  - export VERSION=$(git tag --list --sort=-version:refname | sed -n 1p | sed 's/[^0-9.]*\([0-9.]*\).*/\1/')
+  - docker build -t admin-client frontends/admin-client
+  - docker tag admin-client $CI_REGISTRY/$CI_PROJECT_NAMESPACE/building-blocks/admin-client:$VERSION
+  - docker push $CI_REGISTRY/$CI_PROJECT_NAMESPACE/building-blocks/admin-client:$VERSION
+  stage: pack
+pack_tag_authorization_client:
+  before_script:
+  - apk add git
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+  image: docker:20.10.16
+  only:
+    refs:
+    - tags
+  script:
+  - export VERSION=$(git tag --list --sort=-version:refname | sed -n 1p | sed 's/[^0-9.]*\([0-9.]*\).*/\1/')
+  - docker build -t authorization-client frontends/authorization-client
+  - docker tag authorization-client $CI_REGISTRY/$CI_PROJECT_NAMESPACE/building-blocks/authorization-client:$VERSION
+  - docker push $CI_REGISTRY/$CI_PROJECT_NAMESPACE/building-blocks/authorization-client:$VERSION
+  stage: pack
+pack_tag_authorization_server:
+  before_script:
+  - apk add git
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+  image: docker:20.10.16
+  only:
+    refs:
+    - tags
+  script:
+  - export VERSION=$(git tag --list --sort=-version:refname | sed -n 1p | sed 's/[^0-9.]*\([0-9.]*\).*/\1/')
+  - docker build -t authorization-server apps/authorization-server
+  - docker tag authorization-server $CI_REGISTRY/$CI_PROJECT_NAMESPACE/building-blocks/authorization-server:$VERSION
+  - docker push $CI_REGISTRY/$CI_PROJECT_NAMESPACE/building-blocks/authorization-server:$VERSION
+  stage: pack
+pack_tag_communication_server:
+  before_script:
+  - apk add git
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+  image: docker:20.10.16
+  only:
+    refs:
+    - tags
+  script:
+  - export VERSION=$(git tag --list --sort=-version:refname | sed -n 1p | sed 's/[^0-9.]*\([0-9.]*\).*/\1/')
+  - docker build -t communication-server apps/communication-server
+  - docker tag communication-server $CI_REGISTRY/$CI_PROJECT_NAMESPACE/building-blocks/communication-server:$VERSION
+  - docker push $CI_REGISTRY/$CI_PROJECT_NAMESPACE/building-blocks/communication-server:$VERSION
+  stage: pack
+pack_tag_identity_client:
+  before_script:
+  - apk add git
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+  image: docker:20.10.16
+  only:
+    refs:
+    - tags
+  script:
+  - export VERSION=$(git tag --list --sort=-version:refname | sed -n 1p | sed 's/[^0-9.]*\([0-9.]*\).*/\1/')
+  - docker build -t identity-client frontends/identity-client
+  - docker tag identity-client $CI_REGISTRY/$CI_PROJECT_NAMESPACE/building-blocks/identity-client:$VERSION
+  - docker push $CI_REGISTRY/$CI_PROJECT_NAMESPACE/building-blocks/identity-client:$VERSION
+  stage: pack
+pack_tag_identity_provider:
+  before_script:
+  - apk add git
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+  image: docker:20.10.16
+  only:
+    refs:
+    - tags
+  script:
+  - export VERSION=$(git tag --list --sort=-version:refname | sed -n 1p | sed 's/[^0-9.]*\([0-9.]*\).*/\1/')
+  - docker build -t identity-provider apps/identity-provider
+  - docker tag identity-provider $CI_REGISTRY/$CI_PROJECT_NAMESPACE/building-blocks/identity-provider:$VERSION
+  - docker push $CI_REGISTRY/$CI_PROJECT_NAMESPACE/building-blocks/identity-provider:$VERSION
+  stage: pack
+pack_tag_infrastructure_console:
+  before_script:
+  - apk add git
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+  image: docker:20.10.16
+  only:
+    refs:
+    - tags
+  script:
+  - export VERSION=$(git tag --list --sort=-version:refname | sed -n 1p | sed 's/[^0-9.]*\([0-9.]*\).*/\1/')
+  - docker build -t infrastructure-console apps/infrastructure-console
+  - docker tag infrastructure-console $CI_REGISTRY/$CI_PROJECT_NAMESPACE/building-blocks/infrastructure-console:$VERSION
+  - docker push $CI_REGISTRY/$CI_PROJECT_NAMESPACE/building-blocks/infrastructure-console:$VERSION
+  stage: pack
+pages:
+  artifacts:
+    paths:
+    - public
+  before_script:
+  - apk add -U curl bash git openssh-client openssl yq
+  - curl -fsSL https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+    | bash
+  - 'mkdir -p "${HOME}"/.ssh
+
+    echo "$(ssh-keyscan gitlab.com)" > "${HOME}"/.ssh/known_hosts
+
+    echo "${SSH_PUSH_KEY}" > "${HOME}"/.ssh/id_rsa
+
+    chmod 0700 "${HOME}"/.ssh
+
+    chmod 600 "${HOME}"/.ssh/id_rsa
+
+    '
+  - 'git config --global user.name "Gitlab Runner"
+
+    git config --global user.email "support@castlecraft.in"
+
+    git remote remove ssh_origin || true
+
+    git remote add ssh_origin ssh://git@gitlab.com/$CI_PROJECT_PATH
+
+    '
+  - npm i -g lerna docpress
+  - yarn
+  - rm -fr apps/**/node_modules && rm -fr frontends/**/node_modules
+  - yarn --cwd apps/authorization-server
+  - yarn --cwd apps/communication-server
+  - yarn --cwd apps/identity-provider
+  - yarn --cwd apps/infrastructure-console
+  - yarn --cwd frontends/admin-client
+  - yarn --cwd frontends/authorization-client
+  - yarn --cwd frontends/identity-client
+  image: node:alpine
+  only:
+  - main
+  script:
+  - docpress b
+  - yarn docs
+  - export CURRENT_CHART_VERSION=$(yq ".entries.blocks.[0].version" helm-repo/index.yaml)
+  - "helm package kubernetes/helm-chart --destination helm-repo\nhelm repo index helm-repo\
+    \ --url https://castlecraft.gitlab.io/building-blocks\nexport GENERATED_CHART_VERSION=$(yq\
+    \ \".entries.blocks.[0].version\" helm-repo/index.yaml)\nif [ \"${CURRENT_CHART_VERSION}\"\
+    \ != \"${GENERATED_CHART_VERSION}\" ]; then\n  git add helm-repo\n  git commit\
+    \ -m \"chore: archive helm chart\"\n  git pull ssh_origin main --rebase\n  git\
+    \ push ssh_origin HEAD:main -o ci.skip\nelse\n  git checkout helm-repo\nfi\n"
+  - cp -f helm-repo/* public
+  stage: docs
+services:
+- alias: mongo
+  name: bitnami/mongodb:latest
+- alias: docker
+  name: docker:20.10.16-dind
+- alias: events
+  name: emqx/emqx:latest
+stages:
+- tests
+- pack
+- docs
+test_admin_client:
+  before_script:
+  - "apt update && apt install -y \\\n  libnss3 \\\n  libnspr4 \\\n  libatk1.0-0 \\\
+    \n  libatk-bridge2.0-0 \\\n  libcups2 \\\n  libdrm2 \\\n  libxkbcommon0 \\\n \
+    \ libxcomposite1 \\\n  libxdamage1 \\\n  libxfixes3 \\\n  libxrandr2 \\\n  libgbm1\
+    \ \\\n  libasound2 \\\n  libgtk2.0-0 \\\n  libgtk-3-0 \\\n  libgbm-dev \\\n  libnotify-dev\
+    \ \\\n  libgconf-2-4 \\\n  libxss1 \\\n  libxtst6 \\\n  xauth \\\n  xvfb && \\\
+    \nwget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb\
+    \ -O /tmp/chrome.deb && \\\napt install -y /tmp/chrome.deb && rm /tmp/chrome.deb\n"
+  - cd frontends/admin-client
+  - yarn
+  cache:
+    key: $CI_JOB_NAME-$CI_COMMIT_REF_SLUG
+  image: node:latest
+  only:
+    changes:
+    - frontends/admin-client/**/*
+    refs:
+    - merge_requests
+  script:
+  - yarn lint
+  - yarn format:check
+  - NODE_ENV=test yarn test
+  - NODE_ENV=test yarn e2e
+  stage: tests
+  tags:
+  - docker
+test_authorization_client:
+  before_script:
+  - "apt update && apt install -y \\\n  libnss3 \\\n  libnspr4 \\\n  libatk1.0-0 \\\
+    \n  libatk-bridge2.0-0 \\\n  libcups2 \\\n  libdrm2 \\\n  libxkbcommon0 \\\n \
+    \ libxcomposite1 \\\n  libxdamage1 \\\n  libxfixes3 \\\n  libxrandr2 \\\n  libgbm1\
+    \ \\\n  libasound2 \\\n  libgtk2.0-0 \\\n  libgtk-3-0 \\\n  libgbm-dev \\\n  libnotify-dev\
+    \ \\\n  libgconf-2-4 \\\n  libxss1 \\\n  libxtst6 \\\n  xauth \\\n  xvfb && \\\
+    \nwget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb\
+    \ -O /tmp/chrome.deb && \\\napt install -y /tmp/chrome.deb && rm /tmp/chrome.deb\n"
+  - cd frontends/authorization-client
+  - yarn
+  cache:
+    key: $CI_JOB_NAME-$CI_COMMIT_REF_SLUG
+  image: node:latest
+  only:
+    changes:
+    - frontends/authorization-client/**/*
+    refs:
+    - merge_requests
+  script:
+  - yarn lint
+  - yarn format:check
+  - NODE_ENV=test yarn test
+  - NODE_ENV=test yarn e2e
+  stage: tests
+  tags:
+  - docker
+test_authorization_server:
+  before_script:
+  - apt-get update && apt-get install -y gettext-base
+  - cd apps/authorization-server
+  - yarn
+  cache:
+    key: $CI_JOB_NAME-$CI_COMMIT_REF_SLUG
+    paths:
+    - apps/authorization-server/node_modules/
+  image: node:latest
+  only:
+    changes:
+    - apps/authorization-server/**/*
+    refs:
+    - merge_requests
+  script:
+  - yarn lint
+  - yarn format:check
+  - yarn test:server
+  - envsubst '${NODE_ENV} ${SESSION_SECRET} ${COOKIE_MAX_AGE} ${SESSION_NAME} ${TOKEN_VALIDITY}
+    ${DB_HOST} ${DB_NAME} ${DB_USER} ${DB_PASSWORD}' < docker/env.tmpl > .env
+  - envsubst '${EVENTS_PROTO} ${EVENTS_HOST} ${EVENTS_PORT} ${EVENTS_USER} ${EVENTS_PASSWORD}'
+    < docker/env-events.tmpl >> .env
+  - export NODE_ENV=test
+  - yarn test:e2e
+  stage: tests
+  tags:
+  - docker
+  variables:
+    COOKIE_MAX_AGE: '43200'
+    DB_HOST: mongo
+    DB_NAME: authorization-server
+    DB_PASSWORD: admin
+    DB_USER: admin
+    EVENTS_HOST: events
+    EVENTS_PASSWORD: changeit
+    EVENTS_PORT: '1883'
+    EVENTS_PROTO: mqtt
+    EVENTS_USER: user
+    NODE_ENV: development
+    SESSION_NAME: E2E_SESSION
+    SESSION_SECRET: secret
+    TOKEN_VALIDITY: '3600'
+test_communication_server:
+  before_script:
+  - cd apps/communication-server
+  - yarn
+  cache:
+    key: $CI_JOB_NAME-$CI_COMMIT_REF_SLUG
+    paths:
+    - apps/communication-server/node_modules/
+  image: node:latest
+  only:
+    changes:
+    - apps/communication-server/**/*
+    refs:
+    - merge_requests
+  script:
+  - export NODE_ENV=test
+  - yarn lint
+  - yarn format:check
+  - yarn test:server
+  - yarn test:e2e
+  stage: tests
+  tags:
+  - docker
+test_identity_client:
+  before_script:
+  - "apt update && apt install -y \\\n  libnss3 \\\n  libnspr4 \\\n  libatk1.0-0 \\\
+    \n  libatk-bridge2.0-0 \\\n  libcups2 \\\n  libdrm2 \\\n  libxkbcommon0 \\\n \
+    \ libxcomposite1 \\\n  libxdamage1 \\\n  libxfixes3 \\\n  libxrandr2 \\\n  libgbm1\
+    \ \\\n  libasound2 \\\n  libgtk2.0-0 \\\n  libgtk-3-0 \\\n  libgbm-dev \\\n  libnotify-dev\
+    \ \\\n  libgconf-2-4 \\\n  libxss1 \\\n  libxtst6 \\\n  xauth \\\n  xvfb && \\\
+    \nwget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb\
+    \ -O /tmp/chrome.deb && \\\napt install -y /tmp/chrome.deb && rm /tmp/chrome.deb\n"
+  - cd frontends/identity-client
+  - yarn
+  cache:
+    key: $CI_JOB_NAME-$CI_COMMIT_REF_SLUG
+  image: node:latest
+  only:
+    changes:
+    - frontends/identity-client/**/*
+    refs:
+    - merge_requests
+  script:
+  - yarn lint
+  - yarn format:check
+  - NODE_ENV=test yarn test
+  - NODE_ENV=test yarn e2e
+  stage: tests
+  tags:
+  - docker
+test_identity_provider:
+  before_script:
+  - cd apps/identity-provider
+  - yarn
+  cache:
+    key: $CI_JOB_NAME-$CI_COMMIT_REF_SLUG
+    paths:
+    - apps/identity-provider/node_modules/
+  image: node:latest
+  only:
+    changes:
+    - apps/identity-provider/**/*
+    refs:
+    - merge_requests
+  script:
+  - export NODE_ENV=test
+  - yarn lint
+  - yarn format:check
+  - yarn test:server
+  - yarn test:e2e
+  stage: tests
+  tags:
+  - docker
+test_infrastructure_console:
+  before_script:
+  - cd apps/infrastructure-console
+  - yarn
+  cache:
+    key: $CI_JOB_NAME-$CI_COMMIT_REF_SLUG
+    paths:
+    - apps/infrastructure-console/node_modules/
+  image: node:latest
+  only:
+    changes:
+    - apps/infrastructure-console/**/*
+    refs:
+    - merge_requests
+  script:
+  - export NODE_ENV=test
+  - yarn lint
+  - yarn format:check
+  - yarn test:server
+  - yarn test:e2e
+  stage: tests
+  tags:
+  - docker
+variables:
+  EMQX_ALLOW_ANONYMOUS: 'true'
+  MONGODB_DATABASE: test_authorization-server
+  MONGODB_PASSWORD: admin
+  MONGODB_ROOT_PASSWORD: admin
+  MONGODB_USERNAME: admin

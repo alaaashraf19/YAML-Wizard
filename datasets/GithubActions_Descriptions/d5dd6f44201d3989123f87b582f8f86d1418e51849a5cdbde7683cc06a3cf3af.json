@@ -1,0 +1,14 @@
+{
+  "sha": "d5dd6f44201d3989123f87b582f8f86d1418e51849a5cdbde7683cc06a3cf3af",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4010,
+  "description": "Create a GitHub Actions workflow that builds and publishes a Docker image for PyNE-CI. The workflow should trigger on manual dispatch, pull requests to docker/* and .github/workflows/docker_publish.yml, and pushes to these paths. It should build a multistage Docker image with various stages, run tests on the images, and promote the tested images to stable tags on the develop branch of the main repository.",
+  "tags": [
+    "docker",
+    "multistage",
+    "github-actions",
+    "pyne-ci",
+    "ghcr"
+  ]
+}

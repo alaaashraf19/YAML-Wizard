@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_04837",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1665,
+  "description": "Create a GitLab CI pipeline with stages build, test, alpha, and deploy. In the build stage add a fedora job using the image registry.gitlab.com/caspermeijn/docker-images/fedora-build-onvifviewer:latest that runs `mkdir build-onvifviewer/`, `cd build-onvifviewer/`, `cmake ..`, `make`, `xvfb-run -a -s \"-screen 0 1024x768x24\" make test`, and `make install`. Also in the build stage add a flatpak job using the image registry.gitlab.com/caspermeijn/docker-images/flatpak-kde:latest, caches the path .flatpak-builder/cache, runs `flatpak-builder --repo=flatpak/repo flatpak/build --keep-build-dirs flatpak/net.meijn.onvifviewer.yaml`, `flatpak build-bundle flatpak/repo onvifviewer.flatpak net.meijn.onvifviewer`, and `xvfb-run -a -s \"-screen 0 1024x768x24\" flatpak-builder --run flatpak/build flatpak/net.meijn.onvifviewer.yaml ninja -C .flatpak-builder/build/onvifviewer/_flatpak_build test`, and stores onvifviewer.flatpak as an artifact. In the test stage add a reuse job using the image fsfe/reuse:latest with an empty entrypoint that runs `reuse lint || echo \"Always report as successful. For now this is a informational test\"`. Also in the test stage add a test-translations job using the same fedora image that runs `git config diff.podiff.textconv \"msgcat --no-location --sort-output\"`, creates .git/info/attributes for *.po and *.pot, `cd po && ./update_translation.sh`, `mkdir build && cmake .. && cmake --build . --target fastlane-metadata`, and `git diff --ignore-space-change --exit-code`, and publishes the files po/onvifviewer.pot and po/*.po as artifacts. No special rules or only/except conditions are defined.",
+  "tags": [
+    "fedora",
+    "cmake",
+    "make",
+    "flatpak",
+    "reuse",
+    "translation",
+    "gitlab-ci"
+  ]
+}

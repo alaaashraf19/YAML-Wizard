@@ -1,0 +1,14 @@
+image: rraghur/hugo-asciidoctor:latest
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - hugo
+test:
+  except:
+  - master
+  script:
+  - hugo

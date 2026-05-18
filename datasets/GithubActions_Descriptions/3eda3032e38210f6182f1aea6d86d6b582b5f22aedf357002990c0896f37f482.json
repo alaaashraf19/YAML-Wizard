@@ -1,0 +1,15 @@
+{
+  "sha": "3eda3032e38210f6182f1aea6d86d6b582b5f22aedf357002990c0896f37f482",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2087,
+  "description": "Create a GitHub Actions workflow that runs on push to main and on pull requests to main. The workflow has three jobs: pre-commit, test, and test-aarch64. The pre-commit job checks out the code, sets up Python, installs dependencies, and runs pre-commit checks. The test job runs on a matrix of OS and Python versions, checks out the code, sets up Python, installs dependencies, and runs tests with pytest. The test-aarch64 job runs on a matrix of Python versions, sets up QEMU, checks out the code, and runs tests in a Docker container with manylinux2014_aarch64.",
+  "tags": [
+    "python",
+    "pre-commit",
+    "tests",
+    "matrix",
+    "qemu",
+    "docker"
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "sha": "gitlab_12036",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2899,
+  "description": "Create a GitLab CI pipeline with test and build stages, define a global POSTGRES_DB variable and set DATABASE_URL and REDIS_URL in the test job. In the test stage add an audit job using ruby:2.5.1-alpine that runs `gem install bundle-audit` and `bundle audit check --update`. Also in the test stage add code_quality and sast jobs both using docker:stable with a docker:dind service, set DOCKER_DRIVER to overlay2, export SP_VERSION from CI_SERVER_VERSION, run the respective security Docker images with environment variables and volume mounts, allow failure, and publish gl-code-quality-report.json and gl-sast-report.json as artifacts respectively. Add a test job using registry.gitlab.com/prismosuite/base-images:test, cache vendor/ruby and node_modules, artifact tmp/capybara, services redis:latest and postgres:latest, and run `export RAILS_ENV=test`, `export SECRET_KEY_BASE=test`, `yarn install`, `bundle install -j $(nproc) --path vendor`, `bundle exec rails db:create || true`, `bundle exec rake db:structure:load`, `bundle exec rspec --exclude-pattern \"spec/features/**/*\"`, `bundle exec rspec --pattern \"spec/features/**/*.rb\"`, and `cat log/bullet.log`. In the build stage add build-latest (only on dev), build-latest-stable (only on master), and build-release (only on tags matching /^v.*$/ and except branches) jobs all using docker:stable with a docker:dind service, each logging into $CI_REGISTRY, building with `docker build --pull` and tagging $CI_REGISTRY_IMAGE:latest, $CI_REGISTRY_IMAGE:latest-stable, or $CI_BUILD_REF_NAME respectively, and pushing the image.",
+  "tags": [
+    "ruby",
+    "docker",
+    "dind",
+    "code-quality",
+    "sast",
+    "rspec",
+    "rails",
+    "postgres",
+    "redis",
+    "ci-registry",
+    "build",
+    "test"
+  ]
+}

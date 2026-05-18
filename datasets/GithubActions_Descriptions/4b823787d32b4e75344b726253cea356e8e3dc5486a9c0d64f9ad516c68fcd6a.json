@@ -1,0 +1,18 @@
+{
+  "sha": "4b823787d32b4e75344b726253cea356e8e3dc5486a9c0d64f9ad516c68fcd6a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 14917,
+  "description": "Create a complex GitHub Actions workflow named windows that triggers on push to master and tags, pull requests, and workflow dispatch. The workflow has two jobs: build and packaging. The build job uses a matrix strategy to run on multiple architectures and operating systems, checking out the code, setting up the environment, restoring timestamps, handling build cache, downloading dependencies, installing MinGW, and building the project. The packaging job needs the build job, runs on windows-2022, and handles packaging and uploading artifacts.",
+  "tags": [
+    "windows",
+    "mingw",
+    "msvc",
+    "cmake",
+    "github-actions",
+    "matrix",
+    "build",
+    "packaging",
+    "artifacts"
+  ]
+}

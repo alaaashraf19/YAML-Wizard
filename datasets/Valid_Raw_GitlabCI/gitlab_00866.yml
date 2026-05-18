@@ -1,0 +1,202 @@
+Wiki2PDF:
+  artifacts:
+    untracked: true
+  before_script:
+  - 'printf -- "\n\n\n"
+
+    printf -- " ___________________________________________________\n"
+
+    printf -- "/                                                   \\ \n"
+
+    printf -- "|                  Wiki2PDF v${SCRIPT_VERSION}                  |\n"
+
+    printf -- "|                                                   |\n"
+
+    printf -- "#===================================================#\n"
+
+    printf -- "|                                                   |\n"
+
+    printf -- "|         Turns GitLab''s Wiki pages into PDF        |\n"
+
+    printf -- "|                                                   |\n"
+
+    printf -- "|                                                   |\n"
+
+    printf -- "|                                                   |\n"
+
+    printf -- "|             Created by Andrea Ligios              |\n"
+
+    printf -- "|            Released under MIT License             |\n"
+
+    printf -- "|                                                   |\n"
+
+    printf -- "|    https://gitlab.com/Andrea.Ligios/Wiki2PDF/     |\n"
+
+    printf -- "\\___________________________________________________/\n\n\n\n"'
+  image: registry.gitlab.com/andrea.ligios/wiki2pdf
+  only:
+  - triggers
+  - web
+  script:
+  - git clone ${GITLAB_SCHEME}://gitlab-ci-token:${CI_BUILD_TOKEN}@${GITLAB_DOMAIN}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}.wiki.git
+  - mkdir -p wiki/source/uploads
+  - cd ${CI_PROJECT_NAME}.wiki
+  - mkdir tmp
+  - mkdir http
+  - "if [ \"$(grep -Roh --include '*.md' '!\\[.*](/uploads/[^\\)]*' .)\" == \"\" ];\
+    \ then \n   echo \"No Wiki resources to download\"\nelse\n  # Matching only markdown\
+    \ images \"![]()\" (not markdown URLs like \"[]()\")\n  #grep -Roh --include '*.md'\
+    \ '!\\[.*](/uploads/[^\\)]*' . > tmp/tmp-wiki-md-1.txt\n  grep -PRoh --include\
+    \ '*.md' '\\!\\[.*?\\]\\(/uploads\\/[^\\)]*' . > tmp/tmp-wiki-md-1.txt\n  \n \
+    \ # Printing all the Wiki images crawled in all the files.\n  # Using printf because\
+    \ \"echo -e\" is inconsistent between different echo implementations\n  printf\
+    \ \"\\n-------------------------------------\\nDETECTING WIKI IMAGES:\\n-------------------------------------\\\
+    n\"\n  cat tmp/tmp-wiki-md-1.txt\n  # Using -- is necessary to explicit that options\
+    \ are over (since the row is starting with \"--... and gets interpreted as an\
+    \ unrecognized option)\n  printf -- \"-------------------------------------\\\
+    n\\n\"\n\n  # Removing the textual part so that subsequent greps won't get false\
+    \ positive with \"uploads/\" in textual part, eg. [foo uploads/bar](/uploads/...)\n\
+    \  grep -oh '\\](/uploads/.*' tmp/tmp-wiki-md-1.txt > tmp/tmp-wiki-md-2.txt\n\
+    \  # Extracting the files to download\n  grep -oh 'uploads\\/[^\\)]*' tmp/tmp-wiki-md-2.txt\
+    \ > tmp/wiki-resources-md-files-to-download.txt\n  # Extracting the folders to\
+    \ create\n  grep -oh 'upload.*[\\\\\\/]' tmp/wiki-resources-md-files-to-download.txt\
+    \ > tmp/wiki-resources-md-folders-to-create.txt\n\n  # Renaming all the base ![*](/uploads/*)\
+    \ into relative to currentp path ![*](uploads/*)     \n  find . -name '*.md' -type\
+    \ f -print0 | xargs -0 sed -E -i 's,(!\\[.*])\\(/uploads/,\\1(uploads/,g'\n  #\
+    \ Thanks to Wiktor Stribi\u017Cew for the help with the Regex (https://stackoverflow.com/q/52662006/1654265)\n\
+    \  \n  # Creating /uploads subfolders\n  printf \"\\n-------------------------------------\\\
+    nCREATING FOLDERS STRUCTURE:\\n-------------------------------------\\n\"\n  while\
+    \ IFS='' read -r line || [[ -n \"$line\" ]]; do\n    if [ ! -d ${line} ]; then\n\
+    \      mkdir -p ../wiki/source/${line}\n      printf \"NEW FOLDER ========> Folder\
+    \ ${line} has been created\\n\"\n    else\n      printf \"DUPLICATE FOLDER ==>\
+    \ Folder ${line} exists, safely skipping it...\\n\"\n    fi\n  done < \"tmp/wiki-resources-md-folders-to-create.txt\"\
+    \n  printf -- \"-------------------------------------\\n\\n\"\n\n  # Filling those\
+    \ subfolders with the resources\n  printf \"\\n-------------------------------------\\\
+    nDOWNLOADING WIKI IMAGES:\\n-------------------------------------\\n\"\n  while\
+    \ IFS='' read -r line || [[ -n \"$line\" ]]; do\n    if [ ! -f ${line} ]; then\n\
+    \      wget -O ../wiki/source/${line} ${GITLAB_SCHEME}://${GITLAB_DOMAIN}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}/${line}\n\
+    \    else\n      printf \"DUPLICATE FILE ====> File ${line} exists, safely skipping\
+    \ it...\\n\\n\"\n    fi \n  done < \"tmp/wiki-resources-md-files-to-download.txt\"\
+    \nfi\n"
+  - "if [ \"$(grep -Roh --include '*.md' '!\\[.*](http[s]\\?://[^\\)]*' .)\" == \"\
+    \" ]; then \n  echo \"No HTTP/HTTPS resources to download\"\nelse\n\n  # Matching\
+    \ only markdown images \"![]()\" (not markdown URLs like \"[]()\")\n  #grep -Roh\
+    \ --include '*.md' '!\\[.*](http[s]\\?://[^\\)]*' . > tmp/tmp-http-md-1.txt\n\
+    \  grep -PRoh --include '*.md' '\\!\\[.*?\\]\\(http[s]?:\\/\\/[^\\)]*' . > tmp/tmp-http-md-1.txt\n\
+    \  \n  # Printing all the HTTP/HTTPS images crawled in all the files.\n  printf\
+    \ \"\\n-------------------------------------\\nDETECTING HTTP/HTTPS IMAGES:\\\
+    n-------------------------------------\\n\"\n  cat tmp/tmp-http-md-1.txt\n  printf\
+    \ -- \"-------------------------------------\\n\\n\"\n\n  # Removing the textual\
+    \ part so that subsequent greps won't get false positive with \"uploads/\" in\
+    \ textual part, eg. [foo http://bar](http://foobar/...)\n  grep -oh '\\](http[s]\\\
+    ?://.*' tmp/tmp-http-md-1.txt > tmp/tmp-http-md-2.txt\n  \n  # Extracting the\
+    \ files to download\n  grep -oh 'http[s]\\?://.*[^\\)]*' tmp/tmp-http-md-2.txt\
+    \ > tmp/http-resources-md-files-to-download.txt\n  \n  # Extracting the folders\
+    \ to create\n  grep -oh 'http[s]\\?://.*[\\\\\\/]' tmp/http-resources-md-files-to-download.txt\
+    \ > tmp/http-resources-md-folders-to-create.txt\n  \n  # Renaming all the URLS\
+    \ except the downloading ones into real folders paths\n  \n  find . -name '*.md'\
+    \ -type f -print0 | xargs -0 sed -E -i 's/http:\\//http/g'\n  sed -i -E 's;http:/;http;g'\
+    \  tmp/http-resources-md-folders-to-create.txt\n  find . -name '*.md' -type f\
+    \ -print0 | xargs -0 sed -E -i 's/https:\\//http/g'\n  sed -i -E 's;https:/;http;g'\
+    \ tmp/http-resources-md-folders-to-create.txt\n\n  # Creating /http subfolders\n\
+    \  printf \"\\n-------------------------------------\\nCREATING FOLDERS STRUCTURE:\\\
+    n-------------------------------------\\n\"\n  while IFS='' read -r line || [[\
+    \ -n \"$line\" ]]; do\n    if [ ! -d ${line} ]; then\n      mkdir -p ${line}\n\
+    \      printf \"NEW FOLDER ========> Folder ${line} has been created\\n\"\n  \
+    \  else\n      printf \"DUPLICATE FOLDER ==> Folder ${line} exists, safely skipping\
+    \ it...\\n\"\n    fi\n  done < \"tmp/http-resources-md-folders-to-create.txt\"\
+    \n  printf -- \"-------------------------------------\\n\\n\"\n\n  # Filling those\
+    \ subfolders with the resources\n  printf \"\\n-------------------------------------\\\
+    nDOWNLOADING HTTP/HTTPS IMAGES:\\n-------------------------------------\\n\"\n\
+    \  while IFS='' read -r line || [[ -n \"$line\" ]]; do\n    echo ${line}\n   \
+    \ declare localPath\n    localPath=$(sed 's/http[s]\\?:\\//http/' <<< ${line})\n\
+    \    if [ ! -f ${localPath} ]; then\n      wget -O ${localPath} ${line}\n    else\n\
+    \      printf \"DUPLICATE FILE ====> File ${localPath} exists, safely skipping\
+    \ it...\\n\\n\"\n    fi \n  done < \"tmp/http-resources-md-files-to-download.txt\"\
+    \n  printf -- \"-------------------------------------\\n\\n\"\nfi\n"
+  - "if [ \"$(grep -Roh --include '*.asciidoc' 'image:\\{1,2\\}/uploads/[^(\\[|$|[:space:])]*'\
+    \ .)\" == \"\" ]; then \n  echo \"No Wiki resources to download\"\nelse\n  \n\
+    \  grep -Roh --include '*.asciidoc' 'image:\\{1,2\\}/uploads/[^(\\[|$|[:space:])]*'\
+    \ . > tmp/tmp-wiki-adoc-1.txt\n  \n  # Printing all the Wiki images crawled in\
+    \ all the files.        \n  printf \"\\n-------------------------------------\\\
+    nDETECTING WIKI IMAGES:\\n-------------------------------------\\n\"\n  cat tmp/tmp-wiki-adoc-1.txt\n\
+    \  # Using -- is necessary to explicit that options are over (since the row is\
+    \ starting with \"--... and gets interpreted as an unrecognized option)\n  printf\
+    \ -- \"-------------------------------------\\n\\n\"\n\n  \n  grep -oh ':\\{1,2\\\
+    }/uploads/.*' tmp/tmp-wiki-adoc-1.txt > tmp/tmp-wiki-adoc-2.txt\n  # Extracting\
+    \ the files to download\n  grep -oh 'uploads\\/[^(\\[|$|[:space:])]*' tmp/tmp-wiki-adoc-2.txt\
+    \ > tmp/wiki-resources-adoc-files-to-download.txt\n  # Extracting the folders\
+    \ to create\n  grep -oh 'upload.*[\\\\\\/]' tmp/wiki-resources-adoc-files-to-download.txt\
+    \ > tmp/wiki-resources-adoc-folders-to-create.txt\n\n  # removing leading slash\
+    \ to make url relative tu current dir\n  find . -name '*.asciidoc' -type f -print0\
+    \ | xargs -0 sed -E -i 's/\\/uploads\\//uploads\\//g'  \n\n  # Creating /uploads\
+    \ subfolders\n  printf \"\\n-------------------------------------\\nCREATING FOLDERS\
+    \ STRUCTURE:\\n-------------------------------------\\n\"\n  while IFS='' read\
+    \ -r line || [[ -n \"$line\" ]]; do\n    if [ ! -d ${line} ]; then\n      mkdir\
+    \ -p ../wiki/source/${line}\n      printf \"NEW FOLDER ========> Folder ${line}\
+    \ has been created\\n\"\n    else\n      printf \"DUPLICATE FOLDER ==> Folder\
+    \ ${line} exists, safely skipping it...\\n\"\n    fi\n  done < \"tmp/wiki-resources-adoc-folders-to-create.txt\"\
+    \n  printf -- \"-------------------------------------\\n\\n\"\n\n  # Filling those\
+    \ subfolders with the resources\n  printf \"\\n-------------------------------------\\\
+    nDOWNLOADING WIKI IMAGES:\\n-------------------------------------\\n\"\n  while\
+    \ IFS='' read -r line || [[ -n \"$line\" ]]; do\n    if [ ! -f ${line} ]; then\n\
+    \      wget -O ../wiki/source/${line} ${GITLAB_SCHEME}://${GITLAB_DOMAIN}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}/${line}\n\
+    \    else\n      printf \"DUPLICATE FILE ====> File ${line} exists, safely skipping\
+    \ it...\\n\\n\"\n    fi \n  done < \"tmp/wiki-resources-adoc-files-to-download.txt\"\
+    \nfi\n"
+  - "if [ \"$(grep -Roh --include '*.asciidoc' 'image:\\{1,2\\}http[s]\\?://[^(\\\
+    [|$|[:space:])]*' .)\" == \"\" ]; then \n  echo \"No HTTP/HTTPS resources to download\"\
+    \nelse\n\n  # Matching only markdown images \"![]()\" (not markdown URLs like\
+    \ \"[]()\")\n  grep -Roh --include '*.asciidoc' 'image:\\{1,2\\}http[s]\\?://[^(\\\
+    [|$|[:space:])]*' . > tmp/tmp-http-adoc-1.txt\n  \n  # Printing all the HTTP/HTTPS\
+    \ images crawled in all the files.\n  printf \"\\n-------------------------------------\\\
+    nDETECTING HTTP/HTTPS IMAGES:\\n-------------------------------------\\n\"\n \
+    \ cat tmp/tmp-http-adoc-1.txt\n  printf -- \"-------------------------------------\\\
+    n\\n\"\n\n  \n  grep -oh ':\\{1,2\\}http[s]\\?://.*' tmp/tmp-http-adoc-1.txt >\
+    \ tmp/tmp-http-adoc-2.txt\n  \n  # Extracting the files to download\n  grep -oh\
+    \ 'http[s]\\?://.*[^(\\[|$|[:space:])]*' tmp/tmp-http-adoc-2.txt > tmp/http-resources-adoc-files-to-download.txt\n\
+    \  \n  # Extracting the folders to create\n  grep -oh 'http[s]\\?://.*[\\\\\\\
+    /]' tmp/http-resources-adoc-files-to-download.txt > tmp/http-resources-adoc-folders-to-create.txt\n\
+    \  \n  # Renaming all the URLS except the downloading ones into real folders paths\n\
+    \  find . -name '*.asciidoc' -type f -print0 | xargs -0 sed -E -i 's/http:\\//http/g'\n\
+    \  sed -i 's/http:\\//http/g'  tmp/http-resources-adoc-folders-to-create.txt\n\
+    \  find . -name '*.asciidoc' -type f -print0 | xargs -0 sed -E -i 's/https:\\\
+    //http/g'\n  sed -i 's/https:\\//http/g' tmp/http-resources-adoc-folders-to-create.txt\n\
+    \n  # Creating /http subfolders\n  printf \"\\n-------------------------------------\\\
+    nCREATING FOLDERS STRUCTURE:\\n-------------------------------------\\n\"\n  while\
+    \ IFS='' read -r line || [[ -n \"$line\" ]]; do\n    if [ ! -d ${line} ]; then\n\
+    \      mkdir -p ${line}\n      printf \"NEW FOLDER ========> Folder ${line} has\
+    \ been created\\n\"\n    else\n      printf \"DUPLICATE FOLDER ==> Folder ${line}\
+    \ exists, safely skipping it...\\n\"\n    fi\n  done < \"tmp/http-resources-adoc-folders-to-create.txt\"\
+    \n  printf -- \"-------------------------------------\\n\\n\"\n\n  # Filling those\
+    \ subfolders with the resources\n  printf \"\\n-------------------------------------\\\
+    nDOWNLOADING HTTP/HTTPS IMAGES:\\n-------------------------------------\\n\"\n\
+    \  while IFS='' read -r line || [[ -n \"$line\" ]]; do\n    echo ${line}\n   \
+    \ declare localPath\n    localPath=$(sed 's/http[s]\\?:\\//http/' <<< ${line})\n\
+    \    if [ ! -f ${localPath} ]; then\n      wget -O ${localPath} ${line}\n    else\n\
+    \      printf \"DUPLICATE FILE ====> File ${localPath} exists, safely skipping\
+    \ it...\\n\\n\"\n    fi \n  done < \"tmp/http-resources-adoc-files-to-download.txt\"\
+    \n  printf -- \"-------------------------------------\\n\\n\"\nfi\n"
+  - tar cf - * | (cd ../wiki/source; tar xf -)
+  - ls -l
+  - ls -l ../wiki/source
+  - cd ..
+  - rm -rf ${CI_PROJECT_NAME}.wiki
+  - cd wiki/source
+  - "find */ -name '*.md' | while read file; do\n  mv \"$file\" \"$(tr / ${SEPARATOR}\
+    \ <<< \"$file\")\"\ndone\n"
+  - "find */ -name '*.asciidoc' | while read file; do\n  mv \"$file\" \"$(tr / ${SEPARATOR}\
+    \ <<< \"$file\")\"\ndone\n"
+  - printf "\n-------------------------------------\nSTARTING MARKDOWN CONVERSION:\n-------------------------------------\n"
+  - find . -name '*.md' -exec sh -c 'echo "Processing $0" && kramdown $0 --output
+    pdf > "${0%.*}".pdf && echo "Done.\n"' {} \;
+  - printf "\n-------------------------------------\nSTARTING ASCIIDOC CONVERSION:\n-------------------------------------\n"
+  - find . -name '*.asciidoc' -exec sh -c 'echo "Processing $0" && asciidoctor-pdf
+    -a icons=font $0 && echo "Done.\n"' {} \;
+  - cd ../..
+  - find ./wiki/source -name "*.pdf" -type f -exec mv {} ./wiki \;
+  variables:
+    GITLAB_DOMAIN: gitlab.com
+    GITLAB_SCHEME: https
+    SCRIPT_VERSION: 2.0.0
+    SEPARATOR: '@'

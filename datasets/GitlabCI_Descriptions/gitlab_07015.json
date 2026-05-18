@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_07015",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 267,
+  "description": "Create a GitLab CI pipeline that defines a hidden job template .test_node_template using the job name as the Docker image, runs a before_script that prints system information with uname -a and installs libudev-dev and libusb-1.0-0-dev via apt-get, and defines two jobs named node:10 and node:8 that inherit this template. Each job uses its respective Docker image (node:10 or node:8), then executes node --version, npm install --build-from-source=usb, and npm test. The pipeline has no explicit stages, artifacts, caches, or rules, and runs on every pipeline execution.",
+  "tags": [
+    "node",
+    "npm",
+    "usb",
+    "apt",
+    "libudev-dev",
+    "libusb",
+    "gitlab-ci"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_13122",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 249,
+  "description": "Create a GitLab CI pipeline using the registry.gitlab.com/ognarb/docugen:latest Docker image for the default jobs and an alpine:latest image for the pages job. Define two stages: build and deploy. In the build stage add a buildhtml job that runs the command make, stores the generated public/ directory as an artifact, and has no special triggers. In the deploy stage add a pages job that uses the alpine:latest image, runs echo 'Nothing to do...' and publishes the public directory as the GitLab Pages artifact. The pipeline does not define caches or rules.",
+  "tags": [
+    "docugen",
+    "make",
+    "alpine",
+    "gitlab-pages",
+    "pages"
+  ]
+}

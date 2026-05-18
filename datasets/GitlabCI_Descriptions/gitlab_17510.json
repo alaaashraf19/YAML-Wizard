@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_17510",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 189,
+  "description": "Create a GitLab CI pipeline that uses the registry.gitlab.com/pages/hugo/hugo_extended:0.139.4 Docker image and sets GIT_SUBMODULE_STRATEGY to recursive. Define a single job named pages in the deploy stage that runs the command hugo to generate the site, stores the generated public/ directory as an artifact, and only runs on the master branch. Publish the artifact to GitLab Pages.",
+  "tags": [
+    "hugo",
+    "gitlab-pages",
+    "static-site",
+    "submodule",
+    "pages"
+  ]
+}

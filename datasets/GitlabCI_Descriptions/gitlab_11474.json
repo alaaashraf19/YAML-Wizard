@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_11474",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 5512,
+  "description": "Create a GitLab CI pipeline that builds the LibreML project with BuildStream on both aarch64 and x86_64 architectures, using the ARM64_IMAGE and X86_IMAGE variables for the build containers and a global before_script that creates ~/.config and writes a basic buildstream.conf with logging settings. In the build stage define two jobs, build_libreml_openblas_aarch64 and build_libreml_openblas_x86-64, each running on their respective images, executing a script that sets up optional CAS TLS certificates, configures buildstream artifact push settings, then runs `${BST} -o target_arch ${ARCH} -o blas_impl ${BLAS_IMPL} build ${BST_ARTIFACT}` and, unless NO_CHECKOUT is set, checks out the artifact with `${BST} -o target_arch ${ARCH} -o blas_impl ${BLAS_IMPL} checkout ${BST_ARTIFACT} ${OUTPUT_DIR}`, and always storing `${BST_LOGS}` and `${OUTPUT_DIR}` as artifacts. In the package stage add docker_deploy_aarch64 and docker_deploy_x86-64 jobs that depend on the corresponding build jobs, use the docker:stable image with the docker:dind service, export DOCKER_HOST and DOCKER_IMAGE, load the built libreml.tar with `docker load -i ${OUTPUT_DIR}/libreml.tar ${DOCKER_IMAGE}`, log in to the GitLab Container Registry, echo the image name and push it. Also in the package stage add a docker_test job that depends on the x86 build, loads the image similarly, and runs the test suite with `docker run -w /examples -v $(pwd)/examples:/examples ${DOCKER_IMAGE} ./run_examples.sh`. Finally, in the update stage define a track_libreml_deps job that runs only on scheduled pipelines, sets the git remote using LIBREML_GIT_KEY, configures git user, checks out master, and invokes `auto_updater` with the BST artifact to push updates to the LibreML repository.",
+  "tags": [
+    "buildstream",
+    "docker",
+    "dind",
+    "arm64",
+    "x86_64",
+    "ci",
+    "libreml",
+    "artifact-push",
+    "schedule"
+  ]
+}

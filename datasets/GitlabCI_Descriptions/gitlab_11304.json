@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_11304",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 888,
+  "description": "Create a GitLab CI pipeline that uses the python:3.4 Docker image, defines variables HYPERSHOT_DEBUG=1, LANG=en_US.UTF-8, PYTHONIOENCODING=utf-8, caches pip files in /root/.cache/pip/, and runs python3 -V in a global before_script. Define two stages: test and deploy. In the test stage add a tox job that executes apt-get -qq update && apt-get -q install -y locales mediainfo, locale-gen \"$LANG\", locale, then runs python3 setup.py --version, pip3 install -r requirements-dev.txt, tox -e lint -- --reports=y, tox -e py34, and hypershot --config-dir=docs/examples templates, and stores the build/cov_html directory as an artifact that expires in 3 days. In the deploy stage add a docs job that installs tox with pip3 and runs tox -e docs. Also add a pages job that depends on the tox job, runs only on the master branch, moves build/cov_html to a public/ folder, and publishes the public/ directory as a pages artifact that expires in 30 days.",
+  "tags": [
+    "python-3.4",
+    "tox",
+    "docs",
+    "pages",
+    "hypershot",
+    "apt",
+    "locales",
+    "gitlab-ci"
+  ]
+}

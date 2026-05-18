@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_12201",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 5447,
+  "description": "Create a GitLab CI pipeline with stages analyse, test, package, and deploy for a C++ project using custom Docker images from git.mel.vin. In the analyse stage define clang_format, clang_tidy, doxygen, line_limit, and regex_check jobs (using clang_tools, doxygen, or coreutils images) that each create a build directory, run cmake with specific flags (e.g., -DCODE:BOOL=OFF -DFORMAT:BOOL=ON, -DCLANG_TIDY:BOOL=ON, -DDOC:STRING=doxygen, -DLINE_LIMIT:BOOL=ON, -DREGEX_CHECK:BOOL=ON) and invoke make targets like format_check, doc, line_limit, regex_check, allowing failures where indicated. In the test stage add gcc_coverage (runs cmake with -DCOVERAGE:BOOL=ON, builds, runs ctest, generates coverage_report, and stores build/coverage_report as an artifact with a coverage regex) and sphinx_html (builds HTML docs with cmake -DDOC:STRING=html, runs make doc, and archives build/doc/html). In the package stage create appimage_x86_64 (using the appimage_x86_64 image, builds, installs to a temporary AppDir, copies AppRun and desktop/icon files, runs appimagetool, and saves cpp_template-x86_64.appimage as an artifact), mingw_x86_64 (cross‑compiles with a mingw toolchain file, installs and packages binaries as cpp_template_mingw_x86_64) and osxcross_x86_64 (cross‑compiles with an osxcross toolchain file, installs and packages binaries as cpp_template_osxcross_x86_64), each limited to the master branch or tags. In the deploy stage add pages (runs only on tags, moves generated docs and coverage into public, publishes the public/ directory as GitLab Pages), review (runs on branches, sets up SSH, syncs docs and coverage to a remote server, creates a review environment) and review_stop (manual job that stops the review environment). All jobs use the specified custom images, respect the only/except rules, and set GIT_STRATEGY:none for deployment jobs.",
+  "tags": [
+    "c++",
+    "cmake",
+    "clang-tools",
+    "gcc-coverage",
+    "appimage",
+    "mingw",
+    "osxcross",
+    "sphinx",
+    "gitlab-pages",
+    "review-deployment"
+  ]
+}

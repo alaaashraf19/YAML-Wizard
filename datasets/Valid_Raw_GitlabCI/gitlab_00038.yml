@@ -1,0 +1,132 @@
+.before_git: &id001
+- apt-get update -yqq
+- apt-get install -yqq git openssh-client
+- git --version
+- git config --global user.email "${GITLAB_USER_EMAIL}"
+- git config --global user.name "${GITLAB_USER_NAME}"
+- git remote set-url origin --push "git@${CI_SERVER_HOST}:${CI_PROJECT_PATH}"
+- git remote -v
+- eval $(ssh-agent -s)
+- chmod 700 "${CI_DEPLOY_KEY}"
+- ssh-add "${CI_DEPLOY_KEY}"
+- mkdir -p ~/.ssh
+- echo -e "Host ${CI_SERVER_HOST}\n\tStrictHostKeyChecking no" >> ~/.ssh/config
+- chmod 700 ~/.ssh
+.before_npm: &id002
+- apt-get update -yqq
+- apt-get install -yqq build-essential curl default-jdk
+- curl -sL https://deb.nodesource.com/setup_10.x | bash -
+- apt-get install -yqq nodejs
+- npm --version
+- npm install --unsafe-perm=true
+.script_checkout_branch: &id004
+- git checkout ${CI_COMMIT_BRANCH}
+- git reset --hard ${CI_COMMIT_SHA}
+.script_merge_master: &id005
+- git merge origin/master
+- git push origin HEAD:master
+- git push --tags
+.script_npm_publish: &id003
+- npm config set //registry.npmjs.org/:_authToken ${NPM_TOKEN}
+- npm publish
+backmerge:
+  before_script:
+  - *id001
+  only:
+    refs:
+    - master
+    variables:
+    - $CI_COMMIT_MESSAGE =~ /\[ci\]/
+  script:
+  - git checkout develop
+  - git pull origin develop
+  - git merge origin/${CI_COMMIT_BRANCH} --no-ff -m "[ci] Backmerge ${CI_COMMIT_BRANCH}
+    -> develop"
+  - git push origin develop
+  stage: backmerge
+image: ubuntu:bionic
+include:
+- template: Code-Quality.gitlab-ci.yml
+- template: Dependency-Scanning.gitlab-ci.yml
+- template: License-Scanning.gitlab-ci.yml
+patch:
+  allow_failure: true
+  before_script:
+  - *id002
+  - *id001
+  only:
+    refs:
+    - master
+    variables:
+    - $CI_COMMIT_MESSAGE !~ /\[ci\]/
+  script:
+  - npm version patch --unsafe-perm=true -m "[ci] Patch version %s"
+  - git push origin HEAD:${CI_COMMIT_BRANCH}
+  - git push --tags
+  - *id003
+  stage: version
+promote_major:
+  before_script:
+  - *id002
+  - *id001
+  environment: major
+  only:
+    refs:
+    - develop
+    variables:
+    - $CI_COMMIT_MESSAGE !~ /\[ci\]/
+  script:
+  - *id004
+  - npm version major --unsafe-perm=true -m "Major version %s"
+  - *id005
+  - *id003
+  stage: promotion
+  when: manual
+promote_minor:
+  before_script:
+  - *id002
+  - *id001
+  environment: minor
+  only:
+    refs:
+    - develop
+    variables:
+    - $CI_COMMIT_MESSAGE !~ /\[ci\]/
+  script:
+  - *id004
+  - npm version minor --unsafe-perm=true -m "Minor version %s"
+  - *id005
+  - *id003
+  stage: promotion
+  when: manual
+promote_patch:
+  before_script:
+  - *id002
+  - *id001
+  environment: patch
+  only:
+    refs:
+    - develop
+    variables:
+    - $CI_COMMIT_MESSAGE !~ /\[ci\]/
+  script:
+  - *id004
+  - *id005
+  stage: promotion
+  when: manual
+stages:
+- test
+- promotion
+- version
+- backmerge
+test:
+  artifacts:
+    expire_in: 1 month
+    paths:
+    - npm-debug.log
+  before_script:
+  - *id002
+  script:
+  - npm run lint:pkg
+  - npm run unit
+  stage: test

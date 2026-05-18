@@ -1,0 +1,79 @@
+elixir:build:
+  artifacts:
+    paths:
+    - mix.lock
+    - _build
+    - deps
+  before_script:
+  - mix local.hex --force
+  - mix local.rebar --force
+  dependencies:
+  - elixir:deps
+  image: elixir:1.7
+  script:
+  - mix compile
+  stage: build
+  tags:
+  - docker
+elixir:coverage:coveralls:
+  artifacts:
+    paths:
+    - cover
+  before_script:
+  - mix local.hex --force
+  - mix local.rebar --force
+  dependencies:
+  - elixir:build
+  image: elixir:1.7
+  script:
+  - mix coveralls.html
+  stage: coverage
+  tags:
+  - docker
+  - postgres
+elixir:deps:
+  artifacts:
+    paths:
+    - mix.lock
+    - deps
+  before_script:
+  - apt-get update && apt-get -y install postgresql-client
+  - mix local.hex --force
+  - mix local.rebar --force
+  cache:
+    paths:
+    - ~/.hex/
+  dependencies: []
+  image: elixir:1.7
+  script:
+  - mix deps.get --only test
+  stage: deps
+  tags:
+  - docker
+elixir:test:credo:
+  before_script:
+  - mix local.hex --force
+  - mix local.rebar --force
+  dependencies:
+  - elixir:build
+  image: elixir:1.7
+  script:
+  - mix credo --strict
+  stage: test
+  tags:
+  - docker
+  - postgres
+services:
+- postgres:latest
+stages:
+- deps
+- build
+- test
+- coverage
+variables:
+  MIX_ENV: test
+  POSTGRES_DB: lunch_with_me_test
+  POSTGRES_HOST: postgres
+  POSTGRES_PASSWORD: postgres
+  POSTGRES_USER: postgres
+  REBAR_CACHE_DIR: $CI_PROJECT_DIR/.rebar3

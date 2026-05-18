@@ -1,0 +1,15 @@
+{
+  "sha": "7773a90147b07a2c6358b9a09ec6ce2a52a799288c268572ff9465bfe472585a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 6002,
+  "description": "Create a GitHub Actions workflow named Windows that runs on push and pull request events. The workflow has three jobs: build-win10, build-win10-dev, and build-win8, each running on windows-latest and using a matrix strategy to test different toolsets and configurations. Each job checks out the repository, validates code format, configures CMake, builds the project, runs tests, and uploads artifacts to GitHub.",
+  "tags": [
+    "windows",
+    "cmake",
+    "visual-studio",
+    "github-actions",
+    "ci",
+    "testing"
+  ]
+}

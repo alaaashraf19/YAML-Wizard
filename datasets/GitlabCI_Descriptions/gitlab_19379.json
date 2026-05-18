@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_19379",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 683,
+  "description": "Create a GitLab CI pipeline using the r-base Docker image and a before_script that runs apt-get update -qq and installs git, pandoc, libxml2-dev, libcurl4-openssl-dev, libssl-dev, libgit2-dev, libfontconfig1-dev, libharfbuzz-dev, libfribidi-dev, libfreetype6-dev, libpng-dev, libtiff5-dev, libjpeg-dev. Define a single test job that executes the following script steps: Rscript -e 'install.packages(c(\\\"xml2\\\", \\\"openxlsx\\\", \\\"devtools\\\", \\\"roxygen2\\\", \\\"testthat\\\", \\\"covr\\\"))', Rscript -e 'devtools::install_dev_deps()', R CMD build . --no-build-vignettes --no-manual, PKG_FILE_NAME=$(ls -1t *.tar.gz | head -n 1), R CMD check \"${PKG_FILE_NAME}\" --no-build-vignettes --no-manual, and Rscript -e 'covr::codecov(token = \\\"bd5cfa37-91c5-4f29-a8f5-bf942ae22f55\\\")'. The job runs in the default stage with no additional rules or artifacts.",
+  "tags": [
+    "r",
+    "r-base",
+    "pandoc",
+    "codecov",
+    "covr",
+    "apt-get"
+  ]
+}

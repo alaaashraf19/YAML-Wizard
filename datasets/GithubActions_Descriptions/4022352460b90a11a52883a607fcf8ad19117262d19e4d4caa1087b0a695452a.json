@@ -1,0 +1,15 @@
+{
+  "sha": "4022352460b90a11a52883a607fcf8ad19117262d19e4d4caa1087b0a695452a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1669,
+  "description": "Create a GitHub Actions workflow named linux that runs on push and pull request events to the master branch. The workflow has two jobs, build and build_shared, each running on a matrix of ubuntu-18.04 and ubuntu-latest environments. Both jobs check out the repository with submodules, install required packages, configure the build with cmake, build the project with make, and run tests with specific options.",
+  "tags": [
+    "linux",
+    "cmake",
+    "make",
+    "tests",
+    "ubuntu",
+    "matrix-build"
+  ]
+}

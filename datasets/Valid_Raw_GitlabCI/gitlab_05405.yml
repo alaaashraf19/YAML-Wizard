@@ -1,0 +1,38 @@
+pages:
+  artifacts:
+    paths:
+    - public
+  dependencies:
+  - pytest
+  image: alpine:latest
+  only:
+  - master
+  script:
+  - mv htmlcov public
+  stage: deploy
+pypi_production:
+  except:
+  - branches
+  only:
+  - /^\d+\.\d+\.\d+?$/
+  script:
+  - apt-get update -qy
+  - apt-get install -y ruby-dev
+  - gem install dpl
+  - dpl --provider=pypi --distributions='sdist bdist_wheel'
+  stage: deploy
+pytest:
+  artifacts:
+    paths:
+    - htmlcov/
+  image: rootproject/root-ubuntu16
+  script:
+  - sudo apt-get update -q
+  - sudo apt-get install python-pip -yqq
+  - pip install -r requirements_test.txt
+  - export PYTHONPATH=/usr/local/lib/root:$PYTHONPATH
+  - python -m pytest -v
+  stage: test
+stages:
+- test
+- deploy

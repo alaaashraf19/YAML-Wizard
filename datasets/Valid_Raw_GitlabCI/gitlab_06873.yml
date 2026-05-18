@@ -1,0 +1,32 @@
+build:
+  cache:
+    paths:
+    - bin/
+  image: golang:1.8
+  script:
+  - export GOPATH=$PWD
+  - go install -v $APPNAME
+  stage: build
+deploy:
+  cache:
+    paths:
+    - bin/
+  image: pivotalpa/cf-cli-resource
+  script:
+  - sh deployToCloudFoundry.sh
+  stage: deploy
+stages:
+- build
+- test
+- deploy
+test:
+  cache:
+    paths:
+    - bin/
+  image: golang:1.8
+  script:
+  - export GOPATH=$PWD
+  - go test -v $APPNAME
+  stage: test
+variables:
+  APPNAME: myFirstGoAppOnSCP

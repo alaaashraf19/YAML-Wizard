@@ -1,0 +1,12 @@
+before_script:
+- apt-get update -y
+- apt-get -y install g++-4.9
+- export CXX=g++-4.9
+image: erlang:19.3
+test:
+  artifacts:
+    paths:
+    - _build/test/logs
+    when: always
+  script:
+  - rebar3 ct

@@ -1,0 +1,21 @@
+{
+  "sha": "gitlab_14577",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 9422,
+  "description": "Create a GitLab CI pipeline that uses the registry.gitlab.com/plasticity/ubuntu-dind:16.04 Docker image with a docker:dind service and a shared before_script that updates apt and installs curl, wget, git, BLAS/LAPACK libraries, Python 2 and 3 toolchains, OpenSSH server and configures strict host checking off. Define three stages: Test, Deploy to PyPI, Deploy Linux Wheels. In the Test stage add a Lint job that runs apt-get install python3, apt-get install python3-pip, pip3 install flake8, pip3 install pep8-naming, flake8 --version and flake8. Also in the Test stage add a Test Python 2 job that runs apt-get install python-pip, pip2 install torch>=0.4.1, pip2 install -U pip setuptools, python2 setup.py install, pip install gensim, download three magnitude files with wget, and execute a long series of python2 -m pymagnitude.converter commands on various test models followed by python2 -m tests.tests with the downloaded magnitude files. Also in the Test stage add a Test Python 3 job that installs build-essential and development libraries, downloads and builds Python 3.7.1 from source, installs pip via get-pip.py, uses python3.7 -m pip to install torch>=0.4.1, wheel and setuptools, runs python3.7 setup.py install, installs gensim, downloads the same three magnitude files, runs the same set of python3.7 -m pymagnitude.converter commands on the test models, and finally runs python3.7 -m tests.tests with the magnitude files. In the Deploy to PyPI stage add a Deploy to PyPI job that only runs on the master branch, starts an ssh-agent, writes the SSH_PRIVATE_KEY to a temporary file and adds it, clones the repository, configures git user, creates an annotated tag using the version from python setup.py -V, pushes the tags, creates a GitHub release via curl using GITHUB_TOKEN, substitutes deployment/.pypirc into ~/.pypirc, sets its permissions, installs setuptools wheel twine for both pip2 and pip3, uploads the source distribution to the PyPI test and production repositories, and triggers downstream builds on Travis CI and AppVeyor using TRAVIS_CI_TOKEN and APPVEYOR_CI_TOKEN.",
+  "tags": [
+    "ubuntu-dind",
+    "docker-dind",
+    "python2",
+    "python3",
+    "pymagnitude",
+    "pypi",
+    "lint",
+    "ci-deploy",
+    "ssh",
+    "github-release",
+    "travis",
+    "appveyor"
+  ]
+}

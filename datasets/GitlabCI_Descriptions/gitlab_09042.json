@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_09042",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 3530,
+  "description": "Create a GitLab CI pipeline that runs only when CI_PIPELINE_SOURCE matches pipeline, web, or api and the variable SECURITY_RELEASE_PIPELINE is set to \"finalize\" or \"true\". Define a stage called security_release:finalize and a sub‑stage security_release:finalize:start, and add a manual job security_release_finalize:start in the start sub‑stage that executes `bundle exec rake 'security:finalize:start'`. In the main security_release:finalize stage add the jobs security_release_finalize:check_canonical_tags_synced (`bundle exec rake 'security:finalize:check_canonical_tags_synced'`), security_release_finalize:close_issues (`bundle exec rake 'security:finalize:close_issues'`), security_release_finalize:close_security_tracking_issue (needs close_issues, runs `bundle exec rake 'security:finalize:update_tracking_issue'`), security_release_finalize:create_release_status_metric (needs close_security_tracking_issue, runs `bundle exec rake 'security:finalize:create_release_status_metric'`), security_release_finalize:enable_components_update_task (runs `bundle exec rake 'security:enable_components_update_task'`), security_release_finalize:enable_security_target_processor (needs start and close_security_tracking_issue, runs `bundle exec rake 'security:finalize:enable_security_target_processor'`), security_release_finalize:sync_remotes (runs `source scripts/setup_ssh.sh`, `source scripts/setup_git.sh`, `bundle exec rake 'security:sync_remotes'`), security_release_finalize:sync_security_to_canonical (runs `bundle exec rake 'security:finalize:sync_security_to_canonical'`), security_release_finalize:mirror_status (needs sync_remotes and sync_security_to_canonical, runs `bundle exec rake 'mirror:status'`), security_release_finalize:notify_release (runs `bundle exec rake 'security:finalize:notify_release'`), security_release_finalize:notify_upcoming_release_managers (needs close_security_tracking_issue, runs `bundle exec rake 'security:finalize:notify_upcoming_release_managers'`), and security_release_finalize:update_slack_bookmark (needs close_security_tracking_issue, runs `bundle exec rake 'security:finalize:update_slack_bookmark'`). No explicit Docker image or services are declared, so the pipeline uses the project's default image.",
+  "tags": [
+    "ruby",
+    "rake",
+    "security-release",
+    "gitlab-ci",
+    "manual",
+    "pipeline-rules"
+  ]
+}

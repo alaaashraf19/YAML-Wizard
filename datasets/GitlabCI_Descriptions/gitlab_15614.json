@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_15614",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 795,
+  "description": "Create a GitLab CI pipeline with stages build and test. In the build stage add a build_linux job using the arwash.rdi:5000/lumos:latest Docker image and the docker tag that runs cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release then cmake --build build --parallel $(nproc) and uploads the file build/linux/Release/test/test as an artifact. Also add a build_windows job with the windows_10_builder tag that runs cmake -S. -Bbuild then cmake --build build --config Release --parallel $(nproc) and uploads build/windows/test/Release/test.exe as an artifact. In the test stage add a test_linux job that depends on build_linux, uses the same Docker image and docker tag, and executes build/linux/Release/test/test. Finally add a test_windows job that depends on build_windows, uses the windows_10_builder tag, and runs ./build/windows/test/Release/test.exe. No additional rules, caches, services or deployment targets are defined.",
+  "tags": [
+    "cmake",
+    "linux",
+    "windows",
+    "docker",
+    "build",
+    "test"
+  ]
+}

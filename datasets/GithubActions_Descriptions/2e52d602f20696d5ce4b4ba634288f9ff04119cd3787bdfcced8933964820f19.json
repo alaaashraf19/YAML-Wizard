@@ -1,0 +1,14 @@
+{
+  "sha": "2e52d602f20696d5ce4b4ba634288f9ff04119cd3787bdfcced8933964820f19",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4227,
+  "description": "Create a GitHub Actions workflow named ClangFormat that runs on every pull request to the dev branch. Use an ubuntu-latest job to run ClangFormat on C++ files, generating a patch if formatting changes are needed, and upload the patch as an artifact if changes are made. If the pull request comes from the same repository, push the formatted changes; otherwise, provide instructions for manual application.",
+  "tags": [
+    "clang-format",
+    "c++",
+    "github-actions",
+    "ubuntu",
+    "patch"
+  ]
+}

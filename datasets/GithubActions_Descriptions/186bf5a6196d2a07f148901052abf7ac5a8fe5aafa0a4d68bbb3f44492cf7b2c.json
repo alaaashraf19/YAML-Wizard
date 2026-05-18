@@ -1,0 +1,14 @@
+{
+  "sha": "186bf5a6196d2a07f148901052abf7ac5a8fe5aafa0a4d68bbb3f44492cf7b2c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2021,
+  "description": "Create a GitHub Actions workflow named CodeQL that analyzes code on push to the master branch, on pull requests to the master branch, and on a scheduled basis every Friday at 15:00 UTC. Use an ubuntu-latest job with a matrix strategy to analyze C++ code with CodeQL, checking out the repository, optionally adjusting the checkout for pull requests, initializing CodeQL, building the project with cmake, and then performing the CodeQL analysis.",
+  "tags": [
+    "codeql",
+    "cpp",
+    "ubuntu",
+    "scheduled",
+    "analysis"
+  ]
+}

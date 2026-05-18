@@ -1,0 +1,11 @@
+before_script:
+- R --vanilla -f install.R
+build:rocker/ropensci:
+  artifacts:
+    paths:
+    - rcheck/
+  image: rocker/ropensci
+  script:
+  - make install roxygen check
+  - mv ../rkeos.Rcheck rcheck
+  - export

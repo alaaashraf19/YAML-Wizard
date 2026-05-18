@@ -1,0 +1,27 @@
+name: tests
+
+on: [push, pull_request]
+
+jobs:
+  tests:
+    name: Tests
+    runs-on: macos-12
+
+    steps:
+    - name: Checkout poptimizer
+      uses: actions/checkout@v3
+
+    - name: Del dividends dump
+      run:
+        rm -r dump
+
+    - name: Install dependencies
+      run:
+        make new
+
+    - name: Test with pytest
+      run:
+        make test
+
+    - name: Upload coverage reports to Codecov with GitHub Action
+      uses: codecov/codecov-action@v3

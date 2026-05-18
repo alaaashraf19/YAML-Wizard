@@ -1,0 +1,32 @@
+build-package:
+  image: debian
+  script:
+  - apt update
+  - apt -y upgrade
+  - apt install -y curl
+  - curl -sL https://gitlab.com/hassbian/CI/raw/master/hassbian-scripts/build_and_test.sh
+    | bash -s ${CI_COMMIT_REF_NAME}
+  stage: build
+deploy-to-repo:
+  image: debian
+  script:
+  - apt update
+  - apt -y upgrade
+  - apt install -y curl git
+  - curl -sL https://gitlab.com/hassbian/CI/raw/master/hassbian-scripts/distribute.sh
+    | bash -s ${CI_COMMIT_REF_NAME}
+  stage: deploy
+stages:
+- build
+- test
+- deploy
+test-package:
+  image: debian
+  script:
+  - apt update
+  - apt -y upgrade
+  - apt install -y curl
+  - curl -sL https://gitlab.com/hassbian/CI/raw/master/hassbian-scripts/build_and_test.sh
+    | bash -s ${CI_COMMIT_REF_NAME}
+  - apt -y install ${CI_PROJECT_DIR}/package.deb
+  stage: test

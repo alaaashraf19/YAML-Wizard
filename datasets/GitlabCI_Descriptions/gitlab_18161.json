@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_18161",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 225,
+  "description": "Create a GitLab CI pipeline that uses the nixos/nix Docker image for all jobs. Add a job called tests (default stage) with a before_script that updates Nix and installs git, wget, and bash via nix-env -u and nix-env -i commands. In the script step install cabal-install with nix-env -i and then run the test suite using nix-shell -A env --command 'cabal v1-test --show-details=direct'. The pipeline does not define any caches, artifacts, or special rules, so the job runs on every pipeline execution.",
+  "tags": [
+    "nix",
+    "cabal",
+    "gitlab-ci",
+    "tests",
+    "nix-shell"
+  ]
+}

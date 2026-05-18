@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_09862",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 295,
+  "description": "Create a GitLab CI pipeline that caches the Maven local repository at .m2/, defines the MAVEN_OPTS variable as -Dmaven.repo.local=.m2, and sets a single build stage. Add a job called melakukan-build-dan-package in the build stage that uses the maven:3-eclipse-temurin-21-alpine Docker image, runs the command mvn clean package -DskipTests -Dspring.profiles.active=heroku, and publishes any target/*.jar files as artifacts. The pipeline has no additional rules or deployment targets.",
+  "tags": [
+    "maven",
+    "java",
+    "spring",
+    "heroku",
+    "docker",
+    "cache"
+  ]
+}

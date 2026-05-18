@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_10815",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 414,
+  "description": "Create a GitLab CI pipeline with three jobs using the default test stage. The build-android job uses the nitlang/nit:latest-full image and runs the command `GITLAB_USER_NAME=`echo $GITLAB_USER_NAME | tr \\\\xE8 e` make bin/dawn_arrival.apk`, then saves bin/dawn_arrival.apk as an artifact. The build-linux job also uses nitlang/nit:latest-full, runs `NO_STACKTRACE=True make bin/dawn_arrival`, and saves bin/dawn_arrival and the assets/ directory as artifacts. The unit-tests job uses nitlang/nit:latest and runs `make check`. No caches, services, variables, or rules are defined.",
+  "tags": [
+    "nitlang",
+    "android",
+    "linux",
+    "make",
+    "artifacts"
+  ]
+}

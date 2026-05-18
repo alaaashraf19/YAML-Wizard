@@ -1,0 +1,12 @@
+{
+  "sha": "gitlab_11233",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 105,
+  "description": "Create a GitLab CI pipeline that uses the rust:latest Docker image. Add a job named test:cargo in the default test stage that runs the commands rustc --version && cargo --version followed by cargo test --verbose. The job has no additional caches, artifacts, services, or rules.",
+  "tags": [
+    "rust",
+    "cargo",
+    "test"
+  ]
+}

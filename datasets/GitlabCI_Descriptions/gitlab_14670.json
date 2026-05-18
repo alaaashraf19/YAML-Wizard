@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_14670",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2178,
+  "description": "Create a GitLab CI pipeline with two stages: test and deploy. In the test stage add a unitTest:API job that uses the ruby:2.3.0 image, runs a before_script installing Ruby, adding the MongoDB repo, installing mongodb-org, starting mongod, installing bundler and the gems from API/Gemfile into vendor/, caches the vendor/ directory, then executes `RAILS_ENV=test rspec API/spec` and `RAILS_ENV=test rubocop API`, and stores the coverage/ directory as an artifact; also add a unitTest:app job that uses the openjdk:8-jdk image, runs a before_script that makes CI/android_sdk.sh executable, runs it, sets ANDROID_HOME, makes gradlew executable, then runs `./gradlew jacocoTestReport`, `cat app/build/reports/jacoco/jacocoTestDebugUnitTestReport/html/index.html`, and `./gradlew lint`, captures app/build/reports/ as an artifact, and defines a coverage regex `/Total.*?([0-9]{1,3})%/`. In the deploy stage add a build job using the openjdk:8-jdk image with tags linux and docker, runs a before_script identical to the Android SDK setup, then runs `./gradlew assembleDebug` and publishes app/build/outputs/ as an artifact. Also add deploy_coba, staging, and production jobs that each run a before_script `cd API`, are limited to the branches coba_coba, sit_uat, and master respectively via only rules, install the dpl gem, and deploy to Heroku with `dpl --provider=heroku --app=exhibisi-cobacoba|exhibisi-staging|exhibisi-prod --api-key=68b12c2b-cfbc-4478-b943-f26552fb907e`. Finally add a pages job that moves the coverage/ directory to public/, stores the public/ folder as an artifact that expires in 30 days, and runs in the deploy stage.",
+  "tags": [
+    "ruby",
+    "android",
+    "gradle",
+    "heroku",
+    "gitlab-ci",
+    "coverage",
+    "pages"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_12060",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 582,
+  "description": "Create a GitLab CI pipeline with a single test stage. Add a docs job that uses the python:3.6 image and runs: pip install sphinx; cd docs; sphinx-build -M singlehtml . _build; sphinx-build -M linkcheck . _build | tee linkcheck.log; if grep 'ok.*- unauthorized' linkcheck.log; then false; fi. Add a flake8 job that also uses python:3.6 and runs: pip install tox; tox -e flake8. Add a py27 job using python:2.7 that runs: pip install tox; tox -e 'py27-sphinx_{oldest,latest}'. Add a py36 job using python:3.6 that runs: pip install tox; tox -e 'py36-sphinx_{oldest,fedora,latest}'. All jobs are assigned to the test stage.",
+  "tags": [
+    "python-3.6",
+    "python-2.7",
+    "sphinx",
+    "tox",
+    "flake8",
+    "linkcheck",
+    "gitlab-ci"
+  ]
+}

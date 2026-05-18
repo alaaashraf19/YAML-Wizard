@@ -1,0 +1,95 @@
+.novel-build-job:
+  extends:
+  - .docker:build-docker-in-docker
+  - .rules:novel
+  needs: []
+  script:
+  - ./support/docker ci-build-novel-image "${BUILD_OS_VERSION}"
+  stage: novel
+novel:linux-amd64:
+  extends: .novel-build-job
+  parallel:
+    matrix:
+    - BUILD_OS_VERSION:
+      - arch
+      - ubuntu
+novel:macos:
+  extends:
+  - .installation:mac-os-job
+  - .rules:installation-changes
+  script:
+  - export GDK_REPO_URL="${CI_MERGE_REQUEST_SOURCE_PROJECT_URL:-${CI_PROJECT_URL}}"
+  - echo "installing GDK from ${GDK_REPO_URL}/-/raw/${CI_COMMIT_REF_NAME}/support/install"
+  - curl --fail "${GDK_REPO_URL}/-/raw/${CI_COMMIT_REF_NAME}/support/install" | bash
+    -s - gdk "${CI_COMMIT_REF_NAME}" "true" 2>&1 | ts -s -m > gdk-install.log
+  stage: novel
+  variables:
+    GIT_STRATEGY: none
+    RUBY_OPENSSL_VERIFY_MODE: none
+    SSL_CERT_FILE: /etc/ssl/cert.pem
+postgres-upgrade:macos:
+  artifacts:
+    paths:
+    - gdk-install.log
+    - gitlab_log/
+    - gdk_log/
+  extends:
+  - .installation:mac-os-job
+  - .verification:mac-os-job
+  - .rules:postgres-upgrade
+  script:
+  - "CURRENT_POSTGRES_VERSION=$(grep '^postgres ' .tool-versions | awk '{print $2}')\n\
+    echo \"Current version: $CURRENT_POSTGRES_VERSION\"\necho \"Target version: $TARGET_POSTGRES_VERSION\"\
+    \nif [ \"$CURRENT_POSTGRES_VERSION\" = \"$TARGET_POSTGRES_VERSION\" ]; then\n\
+    \  echo \"Skipping job since the current is the same as the target version ($TARGET_POSTGRES_VERSION).\"\
+    \n  exit 0\nfi\n"
+  - ./support/install . "${CI_COMMIT_REF_NAME}" "true" 2>&1 | ts -s -m > gdk-install.log
+  - mkdir -p gitlab_log gdk_log
+  - eval "$(mise activate bash)"
+  - "CURRENT_POSTGRES_VERSION=$(grep '^postgres ' .tool-versions | awk '{print $2}')\n\
+    CURRENT_RUNNING_POSTGRES_VERSION=$(gdk psql -t -c \"SHOW server_version;\" | tr\
+    \ -d ' ')\necho \"Current running version: $CURRENT_RUNNING_POSTGRES_VERSION\"\
+    \nif [[ \"$CURRENT_POSTGRES_VERSION\" != \"$CURRENT_RUNNING_POSTGRES_VERSION\"\
+    \ ]]; then\n  echo \"Skipping job because psql is running version $CURRENT_RUNNING_POSTGRES_VERSION\
+    \ instead of defined version $CURRENT_POSTGRES_VERSION\";\n  exit 0\nfi\n"
+  - source support/ci/functions.sh
+  - init
+  - cd_into_checkout_path "gitlab"
+  - sed -i '' -E "s/(postgres) ([0-9]+\.[0-9]+) ([0-9]+\.[0-9]+)/\1 $TARGET_POSTGRES_VERSION
+    \2/" .tool-versions
+  - cd_into_checkout_path
+  - sed -i '' -E "s/(postgres) ([0-9]+\.[0-9]+) ([0-9]+\.[0-9]+)/\1 $TARGET_POSTGRES_VERSION
+    \2/" .tool-versions
+  - . support/ci/utils.sh;
+  - run_timed_command "gdk config set pgvector.enabled true"
+  - run_timed_command "GDK_SELF_UPDATE=0 gdk update"
+  - run_timed_command "gdk start"
+  - run_timed_command "gdk restart postgresql"
+  - run_timed_command "gdk stop webpack rails-web"
+  - run_timed_command "gdk config set webpack.enabled false"
+  - run_timed_command "gdk config set vite.enabled true"
+  - run_timed_command "gdk reconfigure"
+  - run_timed_command "gdk restart vite rails-web"
+  - run_timed_command "test_url"
+  - "CURRENT_RUNNING_POSTGRES_VERSION=$(gdk psql -t -c \"SHOW server_version;\" |\
+    \ tr -d ' ')\necho \"Now running on version $CURRENT_RUNNING_POSTGRES_VERSION\"\
+    \nif [[ \"$CURRENT_RUNNING_POSTGRES_VERSION\" != \"$TARGET_POSTGRES_VERSION\"\
+    \ ]]; then\n  echo \"Upgrade failed: psql is running version $CURRENT_RUNNING_POSTGRES_VERSION\
+    \ instead of desired version $TARGET_POSTGRES_VERSION\";\n  exit 0\nfi\n"
+  stage: novel
+update:macos:
+  artifacts:
+    paths:
+    - gitlab_log/
+    - gdk_log/
+  extends:
+  - .installation:mac-os-job
+  - .verification:mac-os-job
+  - .rules:installation-changes
+  script:
+  - ./support/install . "${CI_COMMIT_REF_NAME}" "true" 2>&1 | ts -s -m > gdk-install.log
+  - mkdir -p gitlab_log gdk_log
+  - eval "$(mise activate bash)"
+  - . support/ci/utils.sh;
+  - run_timed_command "support/ci/verify-update"
+  stage: novel

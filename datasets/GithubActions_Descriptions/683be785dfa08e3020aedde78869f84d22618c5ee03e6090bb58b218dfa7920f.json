@@ -1,0 +1,17 @@
+{
+  "sha": "683be785dfa08e3020aedde78869f84d22618c5ee03e6090bb58b218dfa7920f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3190,
+  "description": "Create a GitHub Actions workflow named Android CI that runs on push and pull request events. Use an ubuntu-latest job to set up a build environment, check out the repository with submodules, set up Java 17, and then build and release an Android APK using Gradle. Upload the APK as an artifact and to S3 if credentials are provided. Also, build and upload symbols to Sentry if a token is available.",
+  "tags": [
+    "android",
+    "java",
+    "gradle",
+    "sentry",
+    "s3",
+    "aws",
+    "apk",
+    "symbols"
+  ]
+}

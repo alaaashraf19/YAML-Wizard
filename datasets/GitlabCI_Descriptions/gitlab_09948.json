@@ -1,0 +1,12 @@
+{
+  "sha": "gitlab_09948",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 290,
+  "description": "Create a GitLab CI pipeline that installs NVM in the before_script, sets NVM_DIR, sources nvm.sh, installs Node.js version 5 and sets it as the default. Define a single job named node-5 that runs in the default stage and executes npm install followed by npm test using the installed Node 5. No explicit Docker image, services, caches, artifacts, or rules are specified.",
+  "tags": [
+    "node",
+    "npm",
+    "nvm"
+  ]
+}

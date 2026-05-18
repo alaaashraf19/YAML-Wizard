@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_08071",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1444,
+  "description": "Create a GitLab CI pipeline using the liuchong/rustup:1.22.0 Docker image and defining the stages build, test, and deploy. Add a build:i686-unknown-linux-gnu job in the build stage that runs the global before_script (dpkg --add-architecture i386, apt-get update -yqq && apt-get install -yqq libudev-dev pkg-config git gcc-multilib libudev1:i386 libudev-dev:i386, git submodule sync, git submodule update --init, rustc -Vv && cargo -Vv) followed by rustup target add i686-unknown-linux-gnu and then executes cargo test --no-run --verbose --target=i686-unknown-linux-gnu, with PKG_CONFIG_ALLOW_CROSS=1. Add a build:x86_64-unknown-linux-gnu job in the build stage that runs cargo test --no-run --verbose. Add test:i686-unknown-linux-gnu and test:x86_64-unknown-linux-gnu jobs in the test stage; the i686 job repeats the same before_script and runs cargo test --verbose --target=i686-unknown-linux-gnu with PKG_CONFIG_ALLOW_CROSS=1, while the x86_64 job runs cargo test --verbose. Add a pages job in the deploy stage that runs cargo doc, removes target/doc/libc and target/doc/src/libc, creates public and public/img directories, moves target/doc to public, and publishes the public directory as an artifact that expires in one week, only on the master branch and not on schedules. Cache the cargo and target directories and set the CARGO_HOME variable to $CI_PROJECT_DIR/cargo.",
+  "tags": [
+    "rust",
+    "cargo",
+    "gitlab-ci",
+    "pages",
+    "cross-compilation",
+    "docker-image"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_12555",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1594,
+  "description": "Create a GitLab CI pipeline using the docker:latest image with a docker:dind service. Define a before_script that logs into the GitLab Container Registry with $CI_REGISTRY_USER and $CI_REGISTRY_PASSWORD. Add a build job in the build stage that runs only on the master branch, executing `docker build --pull -t \\\"$CI_REGISTRY_IMAGE\\\" .` and `docker push \\\"$CI_REGISTRY_IMAGE\\\"`. Add a container_scanning job (default test stage) that also runs only on master, uses the docker:stable image with a docker:stable-dind service, sets CI_APPLICATION_REPOSITORY to $CI_REGISTRY_IMAGE, CI_APPLICATION_TAG to $CI_COMMIT_SHA and DOCKER_DRIVER to overlay2, allows failure, and runs a series of commands to start Clair DB and scanner containers, install wget, pull the built image, download and prepare clair-scanner, wait for the Clair daemon, and finally execute `./clair-scanner -c http://docker:6060 --ip $(hostname -i) -r gl-container-scanning-report.json -l clair.log -w clair-whitelist.yml ${CI_APPLICATION_REPOSITORY} || true`, storing gl-container-scanning-report.json as an artifact.",
+  "tags": [
+    "docker",
+    "container-scanning",
+    "clair",
+    "dind",
+    "gitlab-ci",
+    "master-only"
+  ]
+}

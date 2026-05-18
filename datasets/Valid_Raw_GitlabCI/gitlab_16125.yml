@@ -1,0 +1,12 @@
+image: pksadiq/emacs:alpine-amd64
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - emacs --batch -l /root/.config/emacs/init.el -l src/my-web.el -f org-publish-all
+  - ./src/blog-atom.sh
+  - find public -type f -regex '.*\.\(html\|txt\|xml\|css\)$' -exec gzip -f -k {}
+    \;

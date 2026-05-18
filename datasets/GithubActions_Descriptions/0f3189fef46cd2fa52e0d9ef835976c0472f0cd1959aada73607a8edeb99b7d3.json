@@ -1,0 +1,19 @@
+{
+  "sha": "0f3189fef46cd2fa52e0d9ef835976c0472f0cd1959aada73607a8edeb99b7d3",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3302,
+  "description": "Create a GitHub Actions workflow named C/C++ CI that runs on push events with concurrency control. The workflow has three jobs: build-linux, build-macos-current, and a commented-out build-windows job. The build-linux and build-macos-current jobs check out two repositories, install dependencies using apt or brew, and then build the project using make. The build-macos-current job uploads a build artifact. The build-windows job is currently commented out but appears to set up an MSYS2 environment, install dependencies, build the project, and create an installer.",
+  "tags": [
+    "c",
+    "cpp",
+    "ci",
+    "ubuntu",
+    "macos",
+    "make",
+    "gcc",
+    "clang",
+    "build",
+    "artifacts"
+  ]
+}

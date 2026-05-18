@@ -1,0 +1,16 @@
+{
+  "sha": "65bd18d6726539d8421dc372c1ee243560af078984e9f61905bbc2a9adb8e910",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4144,
+  "description": "Create a GitHub Actions workflow named Hypertrace that runs on push and pull request events. The workflow has two ubuntu-latest jobs: sRTMnet and libradtran. Both jobs check out the repository, set up Python 3.8, install GDAL and Isofit, and perform specific tasks to download and process data for Hypertrace. The sRTMnet job downloads and compiles 6Sv, downloads sRTMnet, runs Hypertrace with sRTMnet, and uploads a summary. The libradtran job installs libradtran dependencies, downloads and installs libradtran, runs a continuous integration workflow with libradtran, and uploads a summary.",
+  "tags": [
+    "python",
+    "github-actions",
+    "hypertrace",
+    "srtmnet",
+    "libradtran",
+    "ubuntu",
+    "ci"
+  ]
+}

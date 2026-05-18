@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_10451",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 113,
+  "description": "Create a GitLab CI pipeline that uses the rikorose/gcc-cmake Docker image. Define a single stage called build and add a job named build that runs in this stage. The job's script must execute: mkdir build, cd build, cmake .., and make -j2. No services, caches, artifacts, or special rules are required.",
+  "tags": [
+    "gcc",
+    "cmake",
+    "make",
+    "c++",
+    "gitlab-ci"
+  ]
+}

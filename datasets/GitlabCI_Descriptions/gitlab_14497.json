@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_14497",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2085,
+  "description": "Create a GitLab CI pipeline with a single stage named containers. Define multiple jobs that all extend the .container_job_template and set a NAME variable to specify the target cross‑compilation image. Add jobs: amd64-debian-cross-container (NAME=debian-amd64-cross), amd64-debian-legacy-cross-container (NAME=debian-legacy-test-cross), amd64-debian-user-cross-container (NAME=debian-all-test-cross), arm64-debian-cross-container (NAME=debian-arm64-cross), armhf-debian-cross-container (NAME=debian-armhf-cross), hexagon-cross-container (NAME=debian-hexagon-cross), i686-debian-cross-container (NAME=debian-i686-cross), loongarch-debian-cross-container (NAME=debian-loongarch-cross), mips64el-debian-cross-container (NAME=debian-mips64el-cross), mipsel-debian-cross-container (NAME=debian-mipsel-cross), ppc64el-debian-cross-container (NAME=debian-ppc64el-cross), riscv64-debian-cross-container (NAME=debian-riscv64-cross, QEMU_JOB_OPTIONAL=1, allow_failure=true), s390x-debian-cross-container (NAME=debian-s390x-cross), tricore-debian-cross-container (NAME=debian-tricore-cross), win64-fedora-cross-container (NAME=fedora-win64-cross), xtensa-debian-cross-container (NAME=debian-xtensa-cross). No additional scripts, caches, artifacts, or rules are defined.",
+  "tags": [
+    "containers",
+    "cross-compilation",
+    "debian",
+    "template",
+    "riscv64",
+    "allow-failure"
+  ]
+}

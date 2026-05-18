@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_09749",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 169,
+  "description": "Create a GitLab CI pipeline with a single job named centos_gcc that runs in the default test stage on a CentOS runner (no specific Docker image). The job should execute the following shell commands in order: source ~/prepare_build_gcc.sh, mkdir build, cd build, and cmake -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ .. . Assign the runner tags gcc and centos to the job. No caches, artifacts, services, or special rules are required.",
+  "tags": [
+    "gcc",
+    "centos",
+    "cmake",
+    "build"
+  ]
+}

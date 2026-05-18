@@ -1,0 +1,16 @@
+{
+  "sha": "f45ec3f8c314c25977341112b22e32c8e8ac8cb2faddbd6a22f856609d10c03e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 6794,
+  "description": "Create a GitHub Actions workflow named Linux Builds that runs on every push to master and github_actions branches and on pull requests to master. Use a matrix strategy with multiple jobs on an ubuntu-20.04 environment to build Godot engine with various configurations, including different Godot versions, targets, and precision settings. For each job, check out the Godot repository and a custom module, set up a custom buildroot, load and upload a .scons_cache directory, and compile the engine with scons. Upload the resulting binaries as artifacts if production is enabled.",
+  "tags": [
+    "godot",
+    "linux",
+    "build",
+    "scons",
+    "matrix",
+    "ubuntu",
+    "c++"
+  ]
+}

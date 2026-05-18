@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_17394",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 506,
+  "description": "Create a GitLab CI pipeline using the fedora:latest Docker image and a before_script that installs dnf-command(copr), git, libtool, make, libasan, python3, python3-six, python3-pyparsing, glib-networking, enables the @spice/nightly COPR repository, and installs build dependencies for spice. Define a single job named makecheck (default stage) that runs the following commands: set CFLAGS='-O2 -pipe -g -fsanitize=address -fno-omit-frame-pointer -Wframe-larger-than=40920' and LDFLAGS='-fsanitize=address -lasan' then execute ./autogen.sh --enable-extra-checks --enable-celt051, then run make, then run make check || (cat tests/test-suite.log && exit 1). The pipeline has no caches, artifacts, services, or special rules.",
+  "tags": [
+    "fedora",
+    "spice",
+    "make",
+    "autotools",
+    "sanitizer"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "sha": "5a6916d4a27b96cc33333b98e5ee4c8e6ffe47ff6b6990c4c9757a10ea62b699",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 9567,
+  "description": "Create a nightly GitHub Actions workflow that triggers on a schedule and on workflow dispatch. The workflow should have three jobs: build-win, build-mac, and publish_packages. The build jobs should setup Python 3.12, install dependencies, download AI weights based on a matrix parameter, and generate InVesalius packages for Windows and macOS. The publish job should download artifacts from the build jobs, and create a nightly release with the collected files.",
+  "tags": [
+    "invesalius",
+    "python",
+    "pyinstaller",
+    "ai",
+    "github-actions",
+    "nightly-build",
+    "macos",
+    "windows"
+  ]
+}

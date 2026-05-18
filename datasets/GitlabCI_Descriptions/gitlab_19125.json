@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_19125",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 5204,
+  "description": "Create a GitLab CI pipeline with prepare and test stages using the dev.gitlab.org:5005/gitlab/gitlab-build-images:ruby-2.6.3-git-2.22-chrome-73.0-node-12.x-yarn-1.16-graphicsmagick-1.3.33-docker-18.06.1 image (and Docker‑in‑Docker service) for asset compilation and node:* images for frontend jobs. In the prepare stage add a compile‑assets job (and a compile‑assets pull‑cache variant) that runs `node --version`, `retry yarn install --frozen-lockfile --cache-folder .yarn-cache --prefer-offline`, `free -m`, `retry bundle exec rake gitlab:assets:compile`, and `scripts/clean-old-cached-assets`, caches vendor/ruby, .yarn-cache and tmp/cache/assets/sprockets, stores node_modules and public/assets as 7‑day artifacts, and runs only on the master branch (the pull‑cache variant runs on other refs). In the test stage add a gitlab:assets:compile job (and a pull‑cache variant) that runs `node --version`, `retry yarn install --frozen-lockfile --production --cache-folder .yarn-cache --prefer-offline`, `free -m`, `retry bundle exec rake gitlab:assets:compile`, `time scripts/build_assets_image`, `scripts/clean-old-cached-assets`, and `rm -f /etc/apt/sources.list.d/google*.list`, uses the same Docker‑in‑Docker service, caches the same paths, uploads webpack‑report and public/assets as 31‑day artifacts, and is limited to the master branch (pull‑cache runs elsewhere) with production environment variables (DOCKER_DRIVER, DOCKER_HOST, NODE_ENV, NODE_OPTIONS, RAILS_ENV, SETUP_DB, SKIP_STORAGE_VALIDATION, WEBPACK_REPORT). Also in test add a jest job that runs `scripts/gitaly-test-spawn`, `date`, `bundle exec rake frontend:fixtures`, `date`, and `yarn jest --ci --coverage`, caches .yarn-cache, and publishes coverage‑frontend, junit_jest.xml and test files as 31‑day artifacts always, and a karma job that sets `BABEL_ENV=coverage CHROME_LOG_FILE=chrome_debug.log`, runs `date`, `scripts/gitaly-test-spawn`, `date`, `bundle exec rake karma`, caches .yarn-cache, and stores coverage‑javascript, chrome_debug.log and junit_karma.xml as artifacts with coverage regex extraction. Add QA jobs: qa:internal and qa:selectors that `cd qa/`, `bundle install`, then run `bundle exec rspec` or `bundle exec bin/qa Test::Sanity::Selectors`; add frontend node jobs qa-frontend-node:10, :8, and :latest using node:dubnium, node:carbon, node:latest images that run `date`, `yarn install --frozen-lockfile --cache-folder .yarn-cache --prefer-offline`, `date`, `yarn run webpack-prod` with pull‑push cache policy, and a webpack-dev-server job that depends on setup-test-env and compiled assets, runs `node --version` and starts `node --expose-gc node_modules/.bin/webpack-dev-server --config config/webpack.config.js` with a WEBPACK_MEMORY_TEST variable.",
+  "tags": [
+    "ruby",
+    "node",
+    "yarn",
+    "docker",
+    "dind",
+    "jest",
+    "karma",
+    "qa",
+    "webpack",
+    "assets-compile"
+  ]
+}

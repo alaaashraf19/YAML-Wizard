@@ -1,0 +1,15 @@
+{
+  "sha": "d65fb7c29e00f0e0eef69ecc4cbefb4b87353b74f9813da46b27a26efb463830",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1080,
+  "description": "Create a GitHub Actions workflow named test that runs on push to main and test-me-* branches and on pull requests. The workflow builds and checks a Python package, then tests it across multiple Python versions and operating systems in parallel, cancelling any in-progress runs for the same workflow and reference. Ensure the package build completes successfully before starting tests.",
+  "tags": [
+    "python",
+    "tests",
+    "package",
+    "tox",
+    "ubuntu",
+    "windows"
+  ]
+}

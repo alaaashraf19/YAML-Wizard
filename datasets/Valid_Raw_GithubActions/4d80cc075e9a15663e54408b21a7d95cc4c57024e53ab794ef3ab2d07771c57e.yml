@@ -1,0 +1,21 @@
+name: Indigo CI
+
+on:
+  push:
+
+jobs:
+  publish:
+    if: startsWith(github.ref, 'refs/tags/indigo-')
+    runs-on: ubuntu-latest
+    container: epmlsop/indigo-tester:latest
+    steps:
+      - name: Check gpg key import
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.TEST_PRIVATE_KEY }}
+        run: |
+          apt install -y gnupg
+          echo -e ${GPG_PRIVATE_KEY} > gpg.key
+          cat gpg.key
+          gpg --batch --import --verbose gpg.key
+          rm gpg.key
+          gpg --list-keys

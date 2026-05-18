@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_00123",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 973,
+  "description": "Create a GitLab CI pipeline that uses the docker:latest Docker image with a docker:dind service and sets the DOCKER_DRIVER variable to overlay. Define a before_script that runs: apk add --no-cache py-pip; pip install docker-compose; docker-compose --version; export IMG_TAG=`if [ \"$CI_BUILD_REF_NAME\" == \"master\" ]; then echo \"latest\"; else echo $CI_BUILD_REF_NAME | sed -e 's/[\\/]/-/g' | sed -e 's/[\\#]//g'; fi`; export DOCKER_IMAGE_PROD=$CI_REGISTRY_IMAGE:$IMG_TAG; docker login -u \"gitlab-ci-token\" -p \"$CI_BUILD_TOKEN\" $CI_REGISTRY; export CI_BUILD_TIME=$(date -u +\"%Y-%m-%dT%H:%M:%SZ\"); export CI_BUILDER=gitlab-ci; cp .env.example .env. Add a single build stage with a build-verify job that runs the following script commands: docker-compose run --rm dev yarn; docker-compose run --rm dev yarn run lint; docker-compose run --rm dev ng test --browsers Chrome_no_sandbox -w false; docker-compose run --rm dev yarn run e2e; docker-compose run --rm dev ng build --prod; docker-compose -f docker-compose.prod.yml build prod; docker push $DOCKER_IMAGE_PROD. The build-verify job runs in the build stage and does not define any artifacts, caches, or conditional rules.",
+  "tags": [
+    "docker",
+    "docker-compose",
+    "yarn",
+    "angular",
+    "ng",
+    "gitlab-ci",
+    "dind"
+  ]
+}

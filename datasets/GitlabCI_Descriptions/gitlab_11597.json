@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_11597",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1723,
+  "description": "Create a GitLab CI pipeline with stages setup, test, build, and deploy and define the variables APP_NAME set to notset, JEKYLL_ENV set to production, and NODE_ENV set to test. In the setup stage add a prepare job that runs `echo 'Prepare jobs'`. In the test stage add a test:jekyll job that runs `cd UI-coming-soon`, `bundle install`, and `bundle exec jekyll build -d test`, uploads the UI-coming-soon/test directory as an artifact, and is excluded from the master branch; also add a test:node job that runs `echo 'Run tests job'`. In the build stage add three jobs—build-api-image, build-service-image, and build-ui-image—each using the docker:latest image with the docker:dind service, executing `docker login -u gitlab-ci-token -p \"$CI_BUILD_TOKEN\" \"$CI_REGISTRY\"`, changing into their respective directories (ask-jocko-api, twit-service, UI-node), building an image tagged `$CI_REGISTRY_IMAGE/<name>:$CI_COMMIT_REF_NAME` with `docker build -t \"$CI_REGISTRY_IMAGE/<name>:$CI_COMMIT_REF_NAME\" .` and pushing it with `docker push \"$CI_REGISTRY_IMAGE/<name>:$CI_COMMIT_REF_NAME\"`. In the deploy stage add a pages job using the starefossen/ruby-node:latest image that creates a public folder, runs `bundle install` and `bundle exec jekyll build -d public` inside UI-coming-soon, moves the built files to the public directory, publishes the public folder as a Pages artifact, and runs only on the master branch; also add a start-deploy job that runs `echo 'Deploy started'` and sets the variable GIT_CHECKOUT to false.",
+  "tags": [
+    "docker",
+    "dind",
+    "jekyll",
+    "pages",
+    "ruby-node",
+    "gitlab-ci",
+    "build",
+    "deploy"
+  ]
+}

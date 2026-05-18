@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_13777",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 192,
+  "description": "Create a GitLab CI pipeline that uses the node:latest Docker image. Define a pages job in the deploy stage that caches the node_modules/ directory, runs the commands npm install hexo-cli -g, npm install, and hexo deploy, and publishes the public/ directory as a GitLab Pages artifact. The job should only run on the master branch.",
+  "tags": [
+    "node",
+    "hexo",
+    "gitlab-pages",
+    "npm",
+    "cache"
+  ]
+}

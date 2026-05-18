@@ -1,0 +1,14 @@
+{
+  "sha": "235402244bb7735e4d8f128e5d375c5087f2bd68081619adf4579bc27d2df54a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1324,
+  "description": "Create a GitHub Actions workflow named CI that runs on push and pull request events for specific paths. Use an ubuntu-latest job to check out code with submodules, restore NuGet packages from cache, set up .NET 6.x, run a Cake script with diagnostic verbosity, and create a draft GitHub release with specific files when a tag is pushed. Additionally, push NuGet packages to a source with a provided API key when a tag is pushed.",
+  "tags": [
+    "dotnet",
+    "nuget",
+    "cake",
+    "github-release",
+    "ci"
+  ]
+}

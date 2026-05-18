@@ -1,0 +1,212 @@
+.docker_tag:
+  dependencies:
+  - go build
+  image: docker:stable
+  script:
+  - docker info
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+  - export SOURCE_IMAGE=$TMP_IMAGE
+  - export TARGET_IMAGE=$CI_REGISTRY_IMAGE:${IMAGE_TAG:-$CI_JOB_NAME}
+  - docker pull $SOURCE_IMAGE
+  - docker tag $SOURCE_IMAGE $TARGET_IMAGE
+  - docker push $TARGET_IMAGE
+  stage: tag
+.go:
+  image: golang:1.13.6
+  stage: go
+.qa-downstream-ds:
+  stage: downstream
+  trigger:
+    branch: master
+    project: ''
+    strategy: depend
+  variables:
+    CONTAINER_SCANNING_DISABLED: 'true'
+    DAST_DISABLED: 'true'
+    DS_DISABLE_DIND: 'false'
+    LICENSE_MANAGEMENT_DISABLED: 'true'
+    SAST_DISABLED: 'true'
+    SP_VERSION: tmp.$CI_COMMIT_SHA
+.release:
+  extends: .docker_tag
+  only:
+  - tags
+  stage: deploy
+11-10-stable:
+  extends: .release
+11-11-stable:
+  extends: .release
+11-7-stable:
+  extends: .release
+11-8-stable:
+  extends: .release
+11-9-stable:
+  extends: .release
+12-0-stable:
+  extends: .release
+12-1-stable:
+  extends: .release
+12-10-stable:
+  extends: .release
+12-2-stable:
+  extends: .release
+12-3-stable:
+  extends: .release
+12-4-stable:
+  extends: .release
+12-5-stable:
+  extends: .release
+12-6-stable:
+  extends: .release
+12-7-stable:
+  extends: .release
+12-8-stable:
+  extends: .release
+12-9-stable:
+  extends: .release
+13-0-stable:
+  extends: .release
+build commit:
+  image: docker:stable
+  script:
+  - docker info
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+  - docker build -t $TMP_IMAGE --build-arg DS_ANALYZER_IMAGE_TAG=$MAJOR .
+  - docker push $TMP_IMAGE
+  stage: build
+container_scanning:
+  variables:
+    CI_APPLICATION_REPOSITORY: $CI_REGISTRY_IMAGE
+    CI_APPLICATION_TAG: tmp.$CI_COMMIT_SHA
+go build:
+  artifacts:
+    paths:
+    - dependency-scanning
+  extends: .go
+  script:
+  - go get ./...
+  - go build -o ${CI_PROJECT_DIR}/dependency-scanning
+  variables:
+    CGO_ENABLED: 0
+go lint:
+  extends: .go
+  script:
+  - go get -u golang.org/x/lint/golint
+  - golint -set_exit_status
+go test:
+  extends: .go
+  script:
+  - go get ./...
+  - go test -race -cover -v ./...
+go-modules-qa:
+  extends: .qa-downstream-ds
+  trigger:
+    project: gitlab-org/security-products/tests/go-modules
+include:
+- template: SAST.gitlab-ci.yml
+- template: Container-Scanning.gitlab-ci.yml
+- template: License-Management.gitlab-ci.yml
+integration test:
+  dependencies:
+  - go build
+  image: docker:stable
+  script:
+  - ./test.sh
+  stage: test
+  variables:
+    DS_ANALYZER_IMAGE_TAG: $MAJOR
+java-gradle-multimodules-qa:
+  extends: .qa-downstream-ds
+  trigger:
+    project: gitlab-org/security-products/tests/java-gradle-multimodules
+java-gradle-qa:
+  extends: .qa-downstream-ds
+  trigger:
+    project: gitlab-org/security-products/tests/java-gradle
+java-maven-multimodule-qa:
+  extends: .qa-downstream-ds
+  trigger:
+    project: gitlab-org/security-products/tests/java-maven-multimodules
+java-maven-qa:
+  extends: .qa-downstream-ds
+  trigger:
+    project: gitlab-org/security-products/tests/java-maven
+js-npm-qa:
+  extends: .qa-downstream-ds
+  trigger:
+    project: gitlab-org/security-products/tests/js-npm
+js-yarn-qa:
+  extends: .qa-downstream-ds
+  trigger:
+    project: gitlab-org/security-products/tests/js-yarn
+latest:
+  extends: .release
+major:
+  extends: .release
+  variables:
+    IMAGE_TAG: $MAJOR
+php-composer-qa:
+  extends: .qa-downstream-ds
+  trigger:
+    project: gitlab-org/security-products/tests/php-composer
+python-pip-qa:
+  extends: .qa-downstream-ds
+  trigger:
+    project: gitlab-org/security-products/tests/python-pip
+python-pipenv-qa:
+  extends: .qa-downstream-ds
+  trigger:
+    project: gitlab-org/security-products/tests/python-pipenv
+ruby-bundler-qa:
+  extends: .qa-downstream-ds
+  trigger:
+    project: gitlab-org/security-products/tests/ruby-bundler
+ruby-bundler-rails-qa:
+  extends: .qa-downstream-ds
+  trigger:
+    project: gitlab-org/security-products/tests/ruby-bundler-rails
+ruby-bundler_js-yarn-qa:
+  extends: .qa-downstream-ds
+  trigger:
+    project: gitlab-org/security-products/tests/ruby-bundler_js-yarn
+scala-sbt-qa:
+  extends: .qa-downstream-ds
+  trigger:
+    project: gitlab-org/security-products/tests/scala-sbt
+services:
+- docker:stable-dind
+stages:
+- go
+- build
+- test
+- downstream
+- tag
+- deploy
+tag branch:
+  except:
+  - master
+  extends: .docker_tag
+  only:
+  - branches
+  variables:
+    IMAGE_TAG: $CI_COMMIT_REF_NAME
+tag edge:
+  extends: .docker_tag
+  only:
+  - master
+  variables:
+    IMAGE_TAG: edge
+tag version:
+  before_script:
+  - export IMAGE_TAG=${CI_COMMIT_TAG/v/}
+  - echo "Checking that $CI_COMMIT_TAG is last in the changelog"
+  - test "$(grep '^## v' CHANGELOG.md |head -n 1)" = "## $CI_COMMIT_TAG"
+  extends: .docker_tag
+  only:
+  - tags
+  when: manual
+variables:
+  DOCKER_DRIVER: overlay2
+  DS_DEFAULT_ANALYZERS: bundler-audit,retire.js,gemnasium,gemnasium-maven,gemnasium-python
+  MAJOR: 2
+  TMP_IMAGE: $CI_REGISTRY_IMAGE:tmp.$CI_COMMIT_SHA

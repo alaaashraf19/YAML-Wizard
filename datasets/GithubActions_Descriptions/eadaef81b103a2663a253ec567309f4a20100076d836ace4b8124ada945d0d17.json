@@ -1,0 +1,15 @@
+{
+  "sha": "eadaef81b103a2663a253ec567309f4a20100076d836ace4b8124ada945d0d17",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2615,
+  "description": "Create a GitHub Actions workflow named GitHub Release that runs concurrently with a cancel-in-progress policy. Trigger on pull requests, pushes to maint and master branches and version tags, and workflow dispatch. The workflow consists of two jobs: one to build a release tarball in an ubuntu-latest container and another to publish the release to GitHub, downloading artifacts and sending a Slack notification on failure or cancellation.",
+  "tags": [
+    "github-release",
+    "ubuntu",
+    "container",
+    "slack",
+    "tarball",
+    "changelog"
+  ]
+}

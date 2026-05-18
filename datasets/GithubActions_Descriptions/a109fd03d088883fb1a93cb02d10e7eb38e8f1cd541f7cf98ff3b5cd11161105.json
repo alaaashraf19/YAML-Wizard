@@ -1,0 +1,15 @@
+{
+  "sha": "a109fd03d088883fb1a93cb02d10e7eb38e8f1cd541f7cf98ff3b5cd11161105",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2211,
+  "description": "Create a GitHub Actions workflow named Publish documentation that triggers on push to the master branch. The workflow consists of two jobs: update-cli-screenshots and publish-documentation. The first job checks out the repository, sets up Python 3.x, installs dependencies with poetry, updates CLI screenshots, and commits the changes back to the repository. The second job depends on the first job, checks out the repository again, pulls the latest changes, sets up Python 3.x, installs mkdocs dependencies, builds the documentation, generates a sponsors section, and publishes the documentation to a GitHub Pages site.",
+  "tags": [
+    "python",
+    "documentation",
+    "github-pages",
+    "poetry",
+    "mkdocs",
+    "cli"
+  ]
+}

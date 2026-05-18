@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_14534",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1265,
+  "description": "Create a GitLab CI pipeline that uses the openjdk:8-jdk Docker image and defines the variables ANDROID_BUILD_TOOLS=28.0.0, ANDROID_COMPILE_SDK=27, and ANDROID_SDK_TOOLS=26.1.1. In a global before_script install required packages with `apt-get --quiet update --yes` and `apt-get --quiet install --yes wget tar unzip lib32stdc++6 lib32z1`, download the Android SDK tools via `wget --quiet --output-document=android-sdk.zip https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip`, unzip it, create the licenses directory, and write the license hashes using two `printf` commands to android-sdk-linux/licenses/android-sdk-license and android-sdk-linux/licenses/android-sdk-preview-license. Then run `android-sdk-linux/tools/bin/sdkmanager --update > update.log` and install the specified platform and build tools with `android-sdk-linux/tools/bin/sdkmanager 'platforms;android-${ANDROID_COMPILE_SDK}' 'build-tools;${ANDROID_BUILD_TOOLS}' 'extras;google;m2repository' 'extras;android;m2repository' > installPlatform.log`, export ANDROID_HOME and extend PATH, change into the github-jobs-android directory and make gradlew executable. Define a single stage named build and a job called build that runs the script `./gradlew assembleDebug`, publishes the app/build/outputs/ directory as artifacts, is tagged with the docker runner, and is configured to run only manually. No additional services, caches, or deployment targets are required.",
+  "tags": [
+    "android",
+    "gradle",
+    "openjdk-8",
+    "docker",
+    "manual"
+  ]
+}

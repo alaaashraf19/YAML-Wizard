@@ -1,0 +1,16 @@
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - mkdir .public
+  - cp -r * .public
+  - cp -r .well-known/ .public
+  - mkdir .gzipped
+  - cp -r * .gzipped
+  - gzip -r .gzipped
+  - cp -r .gzipped/* .public
+  - mv .public public
+  stage: deploy

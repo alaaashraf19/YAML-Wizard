@@ -1,0 +1,38 @@
+deploy to development:
+  environment:
+    name: development
+    url: http://dev.siasar.org
+  only:
+  - develop
+  script:
+  - sudo /opt/scripts/backup_db.sh $DB_NAME
+  - sudo rsync -ah --delete --exclude-from=".rsync-exclude" . $DRUPAL_PATH
+  - sudo chown -R apache:apache $DRUPAL_PATH
+  - sudo su apache -c "drush updb -y --root=$DRUPAL_PATH"
+  - sudo su apache -c "drush cc all --root=$DRUPAL_PATH"
+  stage: deploy
+  tags:
+  - develop
+  variables:
+    DB_NAME: drupal_development
+    DRUPAL_PATH: /var/www/drupal_development
+deploy to staging:
+  environment:
+    name: staging
+    url: http://staging.siasar.org
+  only:
+  - master
+  script:
+  - sudo /opt/scripts/backup_db.sh $DB_NAME
+  - sudo rsync -ah --delete --exclude-from=".rsync-exclude" . $DRUPAL_PATH
+  - sudo chown -R apache:apache $DRUPAL_PATH
+  - sudo su apache -c "drush updb -y --root=$DRUPAL_PATH"
+  - sudo su apache -c "drush cc all --root=$DRUPAL_PATH"
+  stage: deploy
+  tags:
+  - staging
+  variables:
+    DB_NAME: drupal
+    DRUPAL_PATH: /var/www/drupal
+stages:
+- deploy

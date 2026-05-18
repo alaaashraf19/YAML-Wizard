@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_13703",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 570,
+  "description": "Create a GitLab CI pipeline that defines two jobs in the build stage, named build_image and pages. The build_image job runs on the docker image with a docker:dind service, is allowed to fail, and is limited to scheduled pipelines (only: schedules); it logs in to the GitLab Container Registry using $CI_REGISTRY_USER and $CI_REGISTRY_PASSWORD, builds the image with tag $CI_REGISTRY_IMAGE, and pushes it. The pages job uses the image built in the previous job ($CI_REGISTRY_IMAGE), runs on runners tagged gitlab-org, executes `python3 ./waf configure --prefix=`pwd`/public/ build install` followed by a find‑gzip command that compresses HTML, text, JS and CSS files under the public directory, and then publishes the public/ folder as a GitLab Pages artifact. No caches or additional artifacts are defined beyond the pages artifact.",
+  "tags": [
+    "docker",
+    "dind",
+    "gitlab-pages",
+    "waf",
+    "schedule",
+    "allow-failure"
+  ]
+}

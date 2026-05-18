@@ -1,0 +1,49 @@
+before_script:
+- which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )
+- eval $(ssh-agent -s)
+- ssh-add <(echo "$SSH_PRIVATE_KEY")
+- mkdir -p ~/.ssh
+- '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+- PATH=/miniconda/bin:$PATH
+salvus-seismo:
+  dependencies:
+  - upstream-dependencies
+  image: registry.gitlab.com/salvus/salvus:latest
+  script:
+  - source activate salvus
+  - cd ${CI_PROJECT_DIR}/UpstreamDependencies/pyexodus
+  - pip install -v -e .
+  - cd ${CI_PROJECT_DIR}/UpstreamDependencies/salvus_wave/src/py
+  - CFLAGS="-I/usr/include/eigen3" pip install -v -e .
+  - pip install flake8 toml
+  - cd ${CI_PROJECT_DIR}/py
+  - pip install -v -e .
+  - py.test
+  stage: install-and-test
+stages:
+- upstream
+- install-and-test
+- deploy
+update_meta_repo:
+  except:
+  - triggers
+  only:
+  - master
+  script:
+  - python ./conf/run_dependencies.py 3238505 ${SALVUS_META_TOKEN} $PRIV_TOKEN $SRC_BRANCH
+    $CI_COMMIT_REF_NAME
+  stage: deploy
+  tags:
+  - shared
+upstream-dependencies:
+  artifacts:
+    paths:
+    - ${CI_PROJECT_DIR}/UpstreamDependencies/
+  image: registry.gitlab.com/salvus/salvus:latest
+  script:
+  - source activate salvus
+  - mkdir ${CI_PROJECT_DIR}/UpstreamDependencies/
+  - cd ${CI_PROJECT_DIR}/UpstreamDependencies
+  - git clone https://github.com/SalvusHub/pyexodus.git
+  - eval $(git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.com/${CI_PROJECT_NAMESPACE}/salvus_wave.git)
+  stage: upstream

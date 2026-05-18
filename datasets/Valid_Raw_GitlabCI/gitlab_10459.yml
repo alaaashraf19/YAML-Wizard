@@ -1,0 +1,64 @@
+before_script:
+- docker info
+image: docker:latest
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - pwd
+  - mkdir public
+  - ls -al
+  - ls -al /
+  - docker run -v "/builds/INTER-Mediator/INTER-Mediator/public:/public" -e "container=docker"
+    --privileged -d --name php82-alpine php:8.2-fpm-alpine /sbin/init
+  - docker exec --privileged -i php82-alpine sh -c "apk update"
+  - docker exec --privileged -i php82-alpine sh -c "apk add --no-cache git bash zip
+    nodejs npm zlib-dev libpng-dev icu-dev"
+  - docker exec --privileged -i php82-alpine sh -c "docker-php-ext-install bcmath
+    exif gd intl"
+  - docker exec --privileged -i php82-alpine sh -c "apk add --no-cache curl"
+  - docker exec --privileged -i php82-alpine sh -c "curl -sS https://getcomposer.org/installer
+    | php && mv composer.phar /usr/local/bin/composer && chmod +x /usr/local/bin/composer"
+  - docker exec --privileged -i php82-alpine sh -c "ls minify || git clone https://github.com/matthiasmullie/minify"
+  - docker exec --privileged -i php82-alpine sh -c "git clone https://github.com/INTER-Mediator/INTER-Mediator
+    && cd INTER-Mediator && npm ci && rm -f __Did_you_run_composer_update.txt && ./dist-docs/buildup.sh
+    --core && cd ../im_build/ && zip -r INTER-Mediator-master.zip ./INTER-Mediator/
+    && mv INTER-Mediator-master.zip /public/"
+  - docker exec --privileged -i php82-alpine sh -c "ls -al; ls -al /; ls -al /public/"
+  - ls -al
+  - ls -al public
+  stage: deploy
+services:
+- docker:dind
+stages:
+- test
+- deploy
+test:
+  script:
+  - docker run -e "container=docker" --privileged -d --name almalinux8 almalinux:8
+    /sbin/init
+  - docker exec -e --privileged -i almalinux8 sh -c "dnf install -y git curl sudo
+    zip unzip && git clone https://github.com/INTER-Mediator/INTER-Mediator && sleep
+    5 && cd INTER-Mediator && git checkout master && curl -L https://github.com/itamae-kitchen/mitamae/releases/download/v1.12.0/mitamae-x86_64-linux.tar.gz
+    | tar xvz && mv mitamae-x86_64-linux mitamae && ./mitamae local --log-level=debug
+    dist-docs/vm-for-trial/recipe.rb; dist-docs/installfiles.sh -2"
+  - docker exec --privileged -i almalinux8 sh -c "dnf module enable -y ruby:3.1 &&
+    dnf install -y ruby && gem install --no-doc rake && gem install --no-doc serverspec"
+  - docker exec --privileged -i almalinux8 sh -c "cd /INTER-Mediator/dist-docs/vm-for-trial/
+    && echo \"require 'serverspec'\" > spec/spec_helper.rb; echo \"\" >> spec/spec_helper;
+    echo \"set :backend, :exec\" >> spec/spec_helper.rb; rspec /INTER-Mediator/dist-docs/vm-for-trial/spec/192.168.56.101/sample_spec.rb
+    -f doc -c"
+  - docker exec -e --privileged -i almalinux8 sh -c "php -v; curl -sS https://getcomposer.org/installer
+    | php; mv composer.phar /usr/local/bin/composer; chmod +x /usr/local/bin/composer;
+    cd /INTER-Mediator/; /usr/local/bin/composer require --dev phpunit/phpunit ^9;
+    /usr/local/bin/composer update --with-all-dependencies; localedef -f UTF-8 -i
+    en_GB en_GB; composer test"
+  - docker exec -e DISPLAY=:99.0 --privileged -i almalinux8 sh -c "cd /INTER-Mediator/
+    && composer jest"
+  - docker stop almalinux8
+  - docker rm almalinux8
+variables:
+  DOCKER_DRIVER: overlay2

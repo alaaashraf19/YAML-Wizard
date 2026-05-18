@@ -1,0 +1,124 @@
+.test_template:
+  artifacts:
+    name: artifacts-${CI_JOB_NAME}-${CI_COMMIT_SHA}
+    paths:
+    - junit.xml
+    reports:
+      junit:
+      - junit.xml
+    when: always
+  before_script:
+  - bin/wait-for-chrome.sh
+  - php --version
+  - 'curl --silent --show-error --header "Host: localhost" http://chrome:9222/json/version
+    | tee chrome-version.json
+
+    '
+  - composer install -o --prefer-dist --ansi --no-progress
+  - test -z "${AUTOSTART_XVFB}" || sed -i '27s#^#//#' vendor/mink/driver-testsuite/tests/Basic/BasicAuthTest.php
+  - cp .gitlab-ci/phpunit.xml.dist phpunit.xml
+  needs: []
+  script:
+  - vendor/bin/phpunit --colors=always --log-junit junit.xml
+  services:
+  - alias: chrome
+    command:
+    - --remote-debugging-address=0.0.0.0
+    - --remote-debugging-port=9222
+    - --no-sandbox
+    - --use-gl=swiftshader
+    - --disable-software-rasterizer
+    - --disable-dev-shm-usage
+    name: zenika/alpine-chrome:latest
+  stage: test
+  variables:
+    CHROME_DEBUG_URL: http://chrome:9222
+    CHROME_WAIT_TIME: 3
+    FF_NETWORK_PER_BUILD: 1
+Changelog:
+  allow_failure: true
+  image: registry.gitlab.com/behat-chrome/docker-chrome-headless
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  script:
+  - git fetch
+  - FILES_CHANGED=$(git diff --name-only $CI_MERGE_REQUEST_DIFF_BASE_SHA...HEAD)
+  - "for i in $FILES_CHANGED\ndo\n  if [[ \"$i\" == \"CHANGELOG.md\" ]]\n  then\n\
+    \    exit 0\n  fi\ndone\necho -e \"\u26A0\uFE0F\\e[93m CHANGELOG.md is not updated\
+    \ in this MR, please add a CHANGELOG entry\"\necho -e \"\u26A0\uFE0F\\e[93m (or\
+    \ an explanatory comment in MR if it's not CHANGELOG-worthy)\"\nexit 1\n\n"
+  stage: lint
+GrumPHP:
+  image: registry.gitlab.com/behat-chrome/docker-chrome-headless
+  script:
+  - composer require --dev --prefer-dist --ansi --no-progress --sort-packages phpro/grumphp-shim
+    ergebnis/composer-normalize enlightn/security-checker
+  - vendor/bin/grumphp run -n
+  stage: lint
+Makefile:
+  image: registry.gitlab.com/behat-chrome/docker-chrome-headless
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  script:
+  - make --dry-run test_make
+  stage: lint
+PHP 8.1:
+  extends: .test_template
+  image: registry.gitlab.com/behat-chrome/docker-chrome-headless:8.1
+PHP 8.2:
+  extends: .test_template
+  image: registry.gitlab.com/behat-chrome/docker-chrome-headless:8.2
+PHP 8.3:
+  extends: .test_template
+  image: registry.gitlab.com/behat-chrome/docker-chrome-headless:8.3
+Renovate:
+  image: renovate/renovate
+  needs: []
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "schedule"
+  - if: $CI_PIPELINE_SOURCE == "web"
+    when: manual
+  script:
+  - renovate $RENOVATE_EXTRA_FLAGS
+  variables:
+    RENOVATE_ENDPOINT: ${CI_API_V4_URL}
+    RENOVATE_GIT_AUTHOR: Renovate Bot <renovate@example.org>
+    RENOVATE_PLATFORM: gitlab
+    RENOVATE_TOKEN: ${GITLAB_ACCESS_TOKEN}
+Report PHPUnit coverage:
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: phpunit-coverage.xml
+    when: always
+  coverage: /^\s*Lines:\s*\d+.\d+\%/
+  extends: .test_template
+  image: registry.gitlab.com/behat-chrome/docker-chrome-headless
+  script:
+  - vendor/bin/phpunit --colors=never --log-junit junit.xml --coverage-cobertura phpunit-coverage.xml
+    --coverage-text
+  stage: report
+  variables:
+    XDEBUG_MODE: coverage
+Validate Renovate config:
+  image: renovate/renovate
+  needs: []
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  script:
+  - renovate-config-validator $RENOVATE_EXTRA_FLAGS
+  stage: lint
+stages:
+- lint
+- test
+- report
+variables:
+  CHROME_DEBUG_URL: http://localhost:9222
+  DOCROOT: ${CI_PROJECT_DIR}/vendor/mink/driver-testsuite/web-fixtures
+workflow:
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  - if: $CI_PIPELINE_SOURCE == "schedule"
+  - if: $CI_PIPELINE_SOURCE == "web"
+  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH

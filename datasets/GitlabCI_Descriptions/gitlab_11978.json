@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_11978",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 420,
+  "description": "Create a GitLab CI pipeline that uses the Docker image registry.gitlab.com/materials-modeling/vcsgc-lammps:latest. Define a deploy stage with a job named pages that runs on the master branch only. In the pages job execute the following script commands in order: mkdir public; mkdir USER-VCSGC; mv src/fix_semigrandcanonical_mc.* src/CMakeLists.txt.patch USER-VCSGC/; mv examples USER-VCSGC/; tar cfz public/vcsgc-lammps.tgz USER-VCSGC; sphinx-build doc/ public/; chmod go-rwX -R public/; ls -l public/. Publish the public/ directory as a GitLab Pages artifact.",
+  "tags": [
+    "vcsgc-lammps",
+    "sphinx",
+    "gitlab-pages",
+    "docker-image",
+    "deploy"
+  ]
+}

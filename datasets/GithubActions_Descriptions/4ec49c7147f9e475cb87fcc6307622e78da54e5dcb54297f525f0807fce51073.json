@@ -1,0 +1,15 @@
+{
+  "sha": "4ec49c7147f9e475cb87fcc6307622e78da54e5dcb54297f525f0807fce51073",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 950,
+  "description": "Create a GitHub Actions workflow named Test that runs on every pull request to the master branch and on push events to all branches except master and tags not matching v*. Run three jobs in parallel: test_ubuntu on ubuntu-18.04, test_windows on windows-2019, and test_macos on macos-latest. Each job checks out the repository, installs dependencies using a script, and then builds and tests using another script.",
+  "tags": [
+    "multi-os",
+    "tests",
+    "ci",
+    "ubuntu",
+    "windows",
+    "macos"
+  ]
+}

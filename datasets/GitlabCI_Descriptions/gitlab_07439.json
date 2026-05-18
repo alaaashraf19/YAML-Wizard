@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_07439",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1105,
+  "description": "Create a GitLab CI pipeline using the continuumio/miniconda3 Docker image. Define a deploy stage with a pages job that runs apt update, installs python3-pip python3-sphinx python3-sphinx-rtd-theme build-essential, installs the project via pip3 install ., builds the Sphinx documentation with make html, moves the output to a public directory, publishes the public/ artifact, and only runs when $CI_COMMIT_REF_NAME is \"release\" (deploying to GitLab Pages). Add a pages_development job in the same deploy stage that performs the same steps but moves the docs to public_development, publishes that artifact, and triggers only on the \"master\" branch. Include a run_style_and_lint_check job that installs ruff and black via conda, then runs python3 -m ruff check merlin_interface/ and python3 -m black merlin_interface/ --diff --check --quiet. Include a run_tests job that installs pytest via conda, installs the package in editable mode with pip3 install -e ., and runs python3 -m pytest --doctest-modules merlin_interface/.",
+  "tags": [
+    "miniconda",
+    "gitlab-pages",
+    "sphinx",
+    "ruff",
+    "black",
+    "pytest",
+    "conda"
+  ]
+}

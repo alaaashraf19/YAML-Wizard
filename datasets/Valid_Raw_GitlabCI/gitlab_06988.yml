@@ -1,0 +1,12 @@
+before_script:
+- npm install
+cache:
+  paths:
+  - node_modules/
+image: node:8.9.3
+linting:
+  script:
+  - npm run lint:js
+tests:
+  script:
+  - npm test

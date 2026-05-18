@@ -1,0 +1,14 @@
+{
+  "sha": "0b442624eeb0cd77e8451fce7e4eb667b93851dae954f30ed0050714608e013d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3923,
+  "description": "Create a GitHub Actions workflow named CMake (Windows) that runs on push and pull request events to the main branch, ignoring certain paths. The workflow should have read-only permissions to repository contents. It should use a matrix strategy to run a build job on different Windows environments (windows-2019 and windows-2022) with various build configurations (x64 and x86, Debug and Release, amd64 and arm64 architectures). For each job, check out the repository, install Ninja, set up the MSVC development environment, configure and build with CMake, and perform cleanup.",
+  "tags": [
+    "cmake",
+    "windows",
+    "build",
+    "msvc",
+    "ninja"
+  ]
+}

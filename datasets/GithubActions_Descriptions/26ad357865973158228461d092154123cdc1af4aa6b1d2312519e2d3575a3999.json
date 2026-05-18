@@ -1,0 +1,15 @@
+{
+  "sha": "26ad357865973158228461d092154123cdc1af4aa6b1d2312519e2d3575a3999",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3466,
+  "description": "Create a GitHub Actions workflow named rcc dev that runs on push to main and master branches, on pull requests to main and master, and on a scheduled cron job. Use a matrix job strategy to run R CMD check on different Ubuntu OS configurations with various R versions, setting up R, Pandoc, and required system dependencies. Install R packages, create a Postgres database, and run R CMD check with custom settings, uploading check results as an artifact on failure.",
+  "tags": [
+    "r",
+    "github-actions",
+    "ubuntu",
+    "postgres",
+    "r-cmd-check",
+    "scheduled"
+  ]
+}

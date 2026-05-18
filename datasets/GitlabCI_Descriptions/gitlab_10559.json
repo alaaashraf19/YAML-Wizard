@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_10559",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1092,
+  "description": "Create a GitLab CI pipeline with two stages: build and deploy, using the node:alpine Docker image for both jobs. In the build stage add a build job that runs only on tags or pipeline triggers, retries once, and executes the following script steps in order: echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}' > .npmrc; use sed to replace the version field in package.json with the current tag (${CI_COMMIT_TAG-0.0.1}); npm install; npm install babel-cli; npm run build; npm run minify; mkdir build || ls build; cp index.d.ts ./build/index.d.ts; cp index.js ./build/index.js; cp index.js.map ./build/index.js.map; cp package.json ./build/package.json; cp tsconfig.json ./build/tsconfig.json; cp typedoc.json ./build/typedoc.json; cp package-lock.json ./build/package-lock.json; cp README.md ./build/README.md; cp LICENSE ./build/LICENSE. The job stores the build/ directory as an artifact that expires in 3 hours. In the deploy stage add a publish job that also runs only on tags or triggers, retries once, changes into the build directory, writes the npm auth token with echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}' > .npmrc, and runs npm run publish to publish the package to the npm registry. Both jobs run on_success.",
+  "tags": [
+    "node",
+    "npm",
+    "build",
+    "deploy",
+    "artifact",
+    "tags",
+    "triggers",
+    "npm-publish"
+  ]
+}

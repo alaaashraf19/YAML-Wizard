@@ -1,0 +1,10 @@
+image: jonzelner/rstan:latest
+pages:
+  artifacts:
+    paths:
+    - public
+    - output
+  script:
+  - make pdf
+  - mkdir public
+  - cp output/results.pdf public/results.pdf

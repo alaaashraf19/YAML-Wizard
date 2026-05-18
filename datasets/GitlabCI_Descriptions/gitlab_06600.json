@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_06600",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1553,
+  "description": "Create a GitLab CI pipeline that uses the Docker image registry.gitlab.com/debtcollective/debtcollective/ci:latest, defines a node_modules cache with key node_modules, path node_modules/, and untracked files, sets stages test and deploy, and declares variables POSTGRES_HOST, POSTGRES_USER, and REDIS_HOST. Add a test job in the test stage that runs a before_script to wget the Ghostscript 9.23 tarball, copies config/config.sample.js to config/config.js and config/knexfile.sample.js to knexfile.js, then executes yarn, yarn build, yarn test, and yarn report; it uses redis:3.0.6 and postgres:9.6.2 services. Add a deploy_staging job in the deploy stage that runs only on the master branch, performs a before_script to install openssh-client if needed, start ssh-agent, add the $SSH_PRIVATE_KEY, create $HOME/.ssh, set permissions, add known hosts for the staging server at 34.212.243.114 on port 12345 and for gitlab.com, then runs pm2 deploy ecosystem.json staging. Add a deploy_production job in the deploy stage that also runs only on master, is manual, uses the same SSH setup but adds the production server at 34.209.207.52, and runs pm2 deploy ecosystem.json production.",
+  "tags": [
+    "node",
+    "pm2",
+    "ssh",
+    "redis",
+    "postgres",
+    "yarn",
+    "gitlab-ci"
+  ]
+}

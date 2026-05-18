@@ -1,0 +1,13 @@
+{
+  "sha": "29fbb572f5e3bebc1151b4e4b8f33719dc5149e3b659382fedeb57ab06c3bd1e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1959,
+  "description": "Create a GitHub Actions workflow named docker that triggers on push to the ros2 branch. The workflow uses an ubuntu-latest job with a matrix strategy to build and push Docker images for various ROS2 versions and platforms. For each matrix entry, check out the code, set up QEMU, Docker Buildx, and login to DockerHub. Then, build and push the Docker image using the specified Dockerfile and tags.",
+  "tags": [
+    "docker",
+    "ros2",
+    "github-actions",
+    "multi-platform"
+  ]
+}

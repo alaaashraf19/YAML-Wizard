@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_11851",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 450,
+  "description": "Create a GitLab CI pipeline that runs a before_script to sync and update git submodules recursively, echoes a message, and restores NuGet packages using src\\\\nuget\\\\NuGet.exe on the solution GitLabVS.sln. Define a single stage buildGitLabForVS with a job buildGitLabForVS that runs rebuildself.cmd GitLabVS.sln. The job should publish artifacts named %CI_PROJECT_NAME%_%CI_COMMIT_REF_NAME% containing build/Release/GitLab.VisualStudio.vsix and README.md, kept for 2 months.",
+  "tags": [
+    "nuget",
+    "visualstudio",
+    "vsix",
+    "gitlab-ci",
+    "dotnet"
+  ]
+}

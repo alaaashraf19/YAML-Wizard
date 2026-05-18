@@ -1,0 +1,30 @@
+image: node:carbon
+pages:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - public
+  before_script:
+  - npm install gitbook-cli -g
+  - gitbook fetch 3.2.3
+  - gitbook install
+  cache:
+    paths:
+    - node_modules/
+  only:
+  - master
+  script:
+  - gitbook build . public
+  stage: deploy
+test_code:
+  before_script:
+  - wget -qO- "https://cmake.org/files/v3.13/cmake-3.13.4-Linux-x86_64.tar.gz" | tar
+    --strip-components=1 -xz -C /usr/local
+  script:
+  - mkdir build
+  - cd build
+  - cmake ../code
+  - cmake --build .
+  - ctest
+  - cd ..
+  stage: test

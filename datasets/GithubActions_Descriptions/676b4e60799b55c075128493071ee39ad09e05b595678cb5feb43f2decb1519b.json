@@ -1,0 +1,14 @@
+{
+  "sha": "676b4e60799b55c075128493071ee39ad09e05b595678cb5feb43f2decb1519b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1994,
+  "description": "Create a GitHub Actions workflow named Release Ubuntu 18.04 that triggers on release creation. Run a job in an ubuntu-latest container with ubuntu:18.04, checking out the repository with submodules, detecting the Mull version, installing required software with pip and Ansible, running a CI task with ansible-playbook, and publishing a package to Bintray using curl with authentication from secrets.",
+  "tags": [
+    "ubuntu",
+    "release",
+    "ansible",
+    "bintray",
+    "package-publishing"
+  ]
+}

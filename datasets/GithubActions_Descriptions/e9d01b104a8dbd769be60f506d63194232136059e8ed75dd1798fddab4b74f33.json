@@ -1,0 +1,16 @@
+{
+  "sha": "e9d01b104a8dbd769be60f506d63194232136059e8ed75dd1798fddab4b74f33",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5006,
+  "description": "Create a GitHub Actions workflow named Build that triggers on push to src/* paths. The workflow should have two jobs: build_linux on ubuntu-16.04 and build_windows on windows-latest. The build_linux job should check out code, generate versions, configure CMake, build, test, and upload a Linux library artifact. The build_windows job depends on build_linux, prepares the environment, generates versions, tests, downloads the Linux library, builds, and releases a package.",
+  "tags": [
+    "cmake",
+    "msbuild",
+    "ubuntu",
+    "windows",
+    "tests",
+    "release",
+    "artifacts"
+  ]
+}

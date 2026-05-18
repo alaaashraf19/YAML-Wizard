@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_09977",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1249,
+  "description": "Create a GitLab CI pipeline that uses the ruby:2.7 Docker image with a before_script running ruby -v, apt update, apt install git build-essential -y, gem install bundler --no-document, and bundle install -j $(nproc) --path vendor, and caches the vendor/ruby directory. Define default test stage and a deploy stage, include the Dependency-Scanning template, and set JRUBY_OPTS variable to --debug. In the test stage add a rspec job that runs bundle exec rspec spec and publishes the coverage/ directory as a 30‑day artifact, plus parallel rspec jobs for ruby:2.5, ruby:2.6, ruby:2.7, ruby:3.0 (allow_failure) and jruby:9.2 each executing bundle exec rspec spec, and also add rubocop (allow_failure) running bundle exec rubocop --version and bundle exec rubocop --extra-details --display-style-guide --format clang, reek (allow_failure) running bundle exec reek --version and bundle exec reek, and fasterer (allow_failure) running bundle exec fasterer. In the deploy stage add a pages job that runs mkdir -p public/ and mv coverage/ public/, depends on the rspec job, stores the public/ directory as an artifact for 30 days, and runs only on the master branch.",
+  "tags": [
+    "ruby",
+    "rspec",
+    "rubocop",
+    "reek",
+    "fasterer",
+    "pages",
+    "dependency-scanning",
+    "jruby",
+    "cache",
+    "deploy"
+  ]
+}

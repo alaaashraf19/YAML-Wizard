@@ -1,0 +1,15 @@
+{
+  "sha": "eaf7cac9098fde11a9d393721f494f05101e03d0744aff2724e7726a2119c493",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1101,
+  "description": "Create a GitHub Actions workflow named coverage that runs on push and pull request events. Use an ubuntu-latest job with a 5-minute timeout to check out the repository, reattach the HEAD, compile tests with coverage in a build directory, run tests with CTest, set up Python 3.7, and then update Coveralls with coverage data using the GITHUB_TOKEN and COVERALLS_REPO_TOKEN from secrets.",
+  "tags": [
+    "coverage",
+    "cpp",
+    "ctest",
+    "python",
+    "ubuntu",
+    "tests"
+  ]
+}

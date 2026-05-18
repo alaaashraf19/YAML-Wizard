@@ -1,0 +1,15 @@
+{
+  "sha": "a1d8fe3e0d24f62d2a67d852614380906614de9bb892ec6b17f0bdaf266d5233",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2697,
+  "description": "Create a nightly GitHub Actions workflow named Nightly CEA builds that runs every weekday at 2am UTC. The workflow should only run on the kokkos/kokkos repository and perform a matrix build and test job on a self-hosted cuda runner. The job should checkout the repository, initialize a build tree with specific cmake flags, start, update and configure, build, test, and submit the build.",
+  "tags": [
+    "cuda",
+    "cmake",
+    "ctest",
+    "nightly",
+    "self-hosted",
+    "matrix-build"
+  ]
+}

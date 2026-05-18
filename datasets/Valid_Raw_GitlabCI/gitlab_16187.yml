@@ -1,0 +1,18 @@
+before_script:
+- lein deps
+compilar:
+  artifacts:
+    name: $CI_COMMIT_REF_SLUG
+    paths:
+    - target/uberjar/*.jar
+  script:
+  - lein uberjar
+  stage: build
+image: clojure:lein-2.8.1
+stages:
+- test
+- build
+testar:
+  script:
+  - lein test
+  stage: test

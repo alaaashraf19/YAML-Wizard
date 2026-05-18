@@ -1,0 +1,127 @@
+.test:
+  image: ImageStream:$CI_PIPELINE_ID
+  script: &id001
+  - id -u
+  - fakeroot -- id -u
+  - export FAKE_ARCH=funny
+  - test "$(LD_PRELOAD=libfakearch.so uname -m | tr -d '\n')" == "$FAKE_ARCH"
+  - unset FAKE_ARCH
+  - mkdir test
+  - 'export FAKECHROOT_EXCLUDE_PATH="/dev:/proc:/sys:/tmp:/etc:/usr/bin:/usr/sbin:/bin:/sbin"
+
+    [ "$(fakechroot --use-system-libs -- chroot $PWD/test bash -c pwd)" == "/" ] &&
+    echo -e "\n\033[32;1m *** Success ***\033[0;m\n" || [ "1" == "0" ]
+
+    '
+  - yum --version
+  - rpm --version
+  - '[ -d "/usr/sbin/glibc-fake" ]'
+  - ls -la /usr/sbin/glibc-fake
+  stage: test
+  tags: &id002
+  - odagrun
+  variables: &id003
+    GIT_STRATEGY: none
+build_rootfs:pass_one:
+  image: centos:7.5.1804
+  retry: 1
+  script:
+  - export target="${CI_PROJECT_DIR}/rootfs"
+  - export BASE="${CI_PROJECT_DIR}"
+  - export OS_CONFIG=pass_one.conf
+  - mkdir -pv "$target"
+  - ./make_rootfs
+  - export ODAGRUN_IMAGE_REFNAME="imagebuilder-c${DISTRO_RELEASE}-passone"
+  - registry_push --rootfs=$target --name=pass-one --ISR --reference=$CI_PIPELINE_ID
+  stage: pass_one
+  tags:
+  - odagrun
+  variables:
+    GIT_CACHE_STRATEGY: push-pull
+    ODAGRUN_POD_SIZE: medium
+    WORK_SPACES: "- name: repocache C$DISTRO_RELEASE\n  key: x86_64\n  scope: global\n\
+      \  path:\n    - cache/yum/x86_64/$DISTRO_RELEASE/base\n    - cache/yum/x86_64/$DISTRO_RELEASE/updates\n\
+      \  strategy: push-pull\n  threshold:\n    path:\n      - cache/yum/x86_64/$DISTRO_RELEASE/base/packages/*.rpm\n\
+      \      - cache/yum/x86_64/$DISTRO_RELEASE/updates/packages/*.rpm\n"
+build_rootfs:pass_two:
+  image: ImageStream/pass-one:$CI_PIPELINE_ID
+  retry: 1
+  script:
+  - export target="${CI_PROJECT_DIR}/rootfs"
+  - export BASE="${CI_PROJECT_DIR}"
+  - export OS_CONFIG=pass_two.conf
+  - ./build_fake
+  - ./make_rootfs
+  - copy --from_text="imagebuilder-c${DISTRO_RELEASE}" --to_var=ODAGRUN_IMAGE_REFNAME
+  - copy --from_text="${ODAGRUN_SHORT_DATE}-${ODAGRUN_GITVERSION}" --to_var=ODAGRUN_IMAGE_VERSION
+  - copy --from_file=./README.md --to_var=README_MD
+  - copy --from_file=./docker_config.yml --to_var=DOCKER_CONFIG_YML
+  - copy --from_file=./image_description.md --to_var=ODAGRUN_IMAGE_DESCRIPTION --substitute
+  - registry_push --rootfs=$target --reference=$CI_PIPELINE_ID --ISR --config
+  stage: pass_two
+  tags:
+  - odagrun
+  variables:
+    ODAGRUN_POD_SIZE: medium
+    WORK_SPACES: "- name: dock_info\n  strategy: push\n  environment: ODAGRUN_IMAGE_VERSION,ODAGRUN_IMAGE_DESCRIPTION,ODAGRUN_IMAGE_REFNAME\n\
+      - name: repocache C$DISTRO_RELEASE\n  key: x86_64\n  scope: global\n  path:\n\
+      \    - cache/yum/x86_64/$DISTRO_RELEASE/base\n    - cache/yum/x86_64/$DISTRO_RELEASE/updates\n\
+      \  strategy: push-pull\n  threshold:\n    path:\n      - cache/yum/x86_64/$DISTRO_RELEASE/base/packages/*.rpm\n\
+      \      - cache/yum/x86_64/$DISTRO_RELEASE/updates/packages/*.rpm\n"
+cleanup:
+  allow_failure: true
+  image: scratch
+  script:
+  - ImageStream_delete --name=pass_one --allow_failure
+  - ImageStream_delete --allow_failure
+  stage: cleanup
+  tags:
+  - odagrun
+  variables:
+    GIT_STRATEGY: none
+    WORK_SPACES: "- name: dock_info\n  strategy: clean\n"
+  when: always
+push-image-tags:
+  environment: production
+  image: scratch
+  script:
+  - registry_push --from_ISR  --from_reference=$CI_PIPELINE_ID --reference=${ODAGRUN_IMAGE_VERSION}
+    --name="c${DISTRO_RELEASE}" --GLR --skip_label
+  - registry_push --from_ISR  --from_reference=$CI_PIPELINE_ID --image="${DOCKER_NAMESPACE}/${ODAGRUN_IMAGE_REFNAME}:${ODAGRUN_IMAGE_VERSION}"
+    --skip_label
+  - registry_tag_image --image="${DOCKER_NAMESPACE}/${ODAGRUN_IMAGE_REFNAME}:${ODAGRUN_IMAGE_VERSION}"
+    --tag=latest
+  - registry_tag_image  --GLR  --reference=${ODAGRUN_IMAGE_VERSION} --name="c${DISTRO_RELEASE}"
+    --tag=latest
+  - DockerHub_set_description --allow-fail --image="${DOCKER_NAMESPACE}/${ODAGRUN_IMAGE_REFNAME}"
+    --set-private=no
+  - MicroBadger_update --allow-fail --image="${DOCKER_NAMESPACE}/${ODAGRUN_IMAGE_REFNAME}"
+  stage: deploy
+  tags:
+  - odagrun
+  variables:
+    GIT_STRATEGY: none
+    WORK_SPACES: "- name: dock_info\n  strategy: pull\n"
+stages:
+- pass_one
+- pass_two
+- test
+- deploy
+- deploy_test
+- tag_latest
+- cleanup
+test_build-image-IS-registry:
+  image: ImageStream:$CI_PIPELINE_ID
+  script: *id001
+  stage: test
+  tags: *id002
+  variables: *id003
+variables:
+  DISTRO_RELEASE: 7.5.180
+  DOCKER_NAMESPACE: gioxa
+  GIT_CACHE_STRATEGY: pull
+  ODAGRUN_IMAGE_LICENSES: MIT
+  ODAGRUN_IMAGE_TITLE: Building images from RPM non-root with fake(ch)root on openshift
+    from GitLab with odagrun.
+  ODAGRUN_IMAGE_VENDOR: Gioxa Ltd
+  ODAGRUN_POD_SIZE: micro

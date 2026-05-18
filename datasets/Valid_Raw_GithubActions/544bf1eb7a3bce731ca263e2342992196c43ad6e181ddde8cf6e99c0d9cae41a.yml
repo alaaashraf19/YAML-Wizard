@@ -1,0 +1,58 @@
+# SPDX-License-Identifier: MIT-0
+
+---
+name: ci
+on:
+  workflow_call:
+
+jobs:
+  macos_sonoma_arm_cmake_installed:
+    name: macos sonoma 14 arm
+    runs-on: macos-14
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      # See issue https://github.com/actions/setup-python/issues/577.  There is
+      # some kind of environment conflict between the symlinks found in the
+      # GitHub Actions runner and `brew upgrade python` where `brew` detects and
+      # refuses to overwrite symlinks.  The cause for our runs is not clear,
+      # we do not use that action, but if that issue is closed this section
+      # can be removed.
+      - name: sanitize GHA / brew python environment
+        run: |
+          # Remove the symlinks that cause issues.
+          find /usr/local/bin -lname '*/Library/Frameworks/Python.framework/*' -delete
+          sudo rm -rf /Library/Frameworks/Python.framework/
+      - name: setup
+        working-directory: drake_cmake_installed
+        run: |
+          args=()
+          if [[ '${{ github.event.inputs.mac_arm_sonoma_package_tar }}' != '' ]]; then
+            args+=(--package-url ${{ github.event.inputs.mac_arm_sonoma_package_tar }})
+          fi
+          setup/install_prereqs "${args[@]}"
+        shell: zsh -efuo pipefail {0}
+      - name: cmake_installed build and test
+        working-directory: drake_cmake_installed
+        run: .github/ci_build_test
+        shell: zsh -efuo pipefail {0}
+  ubuntu_noble_cmake_installed:
+    name: ubuntu 24.04 noble
+    runs-on: ubuntu-latest
+    container: ubuntu:noble
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: setup
+        working-directory: drake_cmake_installed
+        run: |
+          args=()
+          if [[ '${{ github.event.inputs.linux_noble_package_tar }}' != '' ]]; then
+            args+=(--package-url ${{ github.event.inputs.linux_noble_package_tar }})
+          fi
+          .github/ubuntu_setup "${args[@]}"
+        shell: bash
+      - name: cmake_installed build and test
+        working-directory: drake_cmake_installed
+        run: .github/ci_build_test
+        shell: bash

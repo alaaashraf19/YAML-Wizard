@@ -1,0 +1,32 @@
+{
+  "sha": "gitlab_00796",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 6384,
+  "description": "Create a GitLab CI pipeline with stages \"📦 build\", \"✅ unit-test\", \"🔐 security-test\", \"💻 integration-test\", \"📄 docs\", and \"🚀 deploy\" using a variety of Docker images and services. In the build stage add a .suse job (tags: suse) that echoes \"Hello SUSE\", a FORTRAN job (image: alpine) that installs gfortran and musl-dev then compiles fortran/helloworld.f to fortran/helloworld and stores it as an artifact, an ada job (image: alpine) that installs gcc-gnat and musl-dev then builds ada/helloworld, an asm job (image: alpine) that installs nasm and binutils, assembles asm/helloworld.asm and links it to asm/helloworld, a \"c++\" job (image: alpine) that installs make and g++, runs make Hello in the c++ directory and executes ./Hello, a freeBASIC job (image: alpine) that installs build tools, downloads and installs FreeBASIC then compiles freebasic/helloworld.bas, a java:gradle job (image: gradle:latest) that runs ./gradlew build and ./gradlew run, a java:maven job (image: maven:latest) that runs mvn package and executes the resulting jar, a java:spring-boot job (image: maven:3.5-jdk-8-slim) that runs mvn package, an msbuild job (tags: windows) that invokes the Windows msbuild.exe on helloworld.csproj, a nodejs job (image: node:latest) that runs npm install, a docker job (image: docker:stable with service docker:dind) that logs in, builds and pushes a Docker image, a ruby job (image: docker:latest with service docker:dind) that logs in, builds and pushes a Ruby Docker image, an it:spring-boot job (image: maven:3.5-jdk-8-slim) that runs mvn integration-test, and a pages job (image: alpine:latest) that echoes a placeholder message, each publishing the specified artifact paths. In the security-test stage add a dast job (image: registry.gitlab.com/gitlab-org/security-products/zaproxy) that creates /zap/wrk, runs zap-baseline.py against the $website variable and copies gl-dast-report.json, a dependency_scanning job (image: docker:latest with service docker:dind) that computes SP_VERSION from CI_SERVER_VERSION and runs the dependency‑scanning Docker image, and a sast job (image: registry.gitlab.com/allthethings/allthethings.gitlab.io/docker-maven:$CI_COMMIT_REF_NAME with service docker:dind) that computes SAST_VERSION and runs the SAST Docker image, each storing their JSON reports as artifacts and allowing failure. In the deploy stage add a deploy-maven job (image: maven:3.3.9-jdk-8) that copies CI settings, substitutes CI_JOB_TOKEN and PROJECT_ID into settings and pom.xml, then runs mvn deploy; a deploy-node job (environment: nodeprod) that currently echoes a placeholder, and a trigger-downstream job that POSTs to a downstream pipeline via curl. In the unit-test stage add a test job that echoes \"Foo\" and a ut:spring-boot job (image: maven:3.5-jdk-8-slim) that runs mvn test. All jobs declare their artifact paths, allow_failure where noted, and use the defined variables and tags as shown.",
+  "tags": [
+    "alpine",
+    "maven",
+    "gradle",
+    "node",
+    "docker",
+    "ruby",
+    "fortran",
+    "ada",
+    "asm",
+    "c++",
+    "freebasic",
+    "msbuild",
+    "windows",
+    "security",
+    "dast",
+    "dependency-scanning",
+    "sast",
+    "pages",
+    "docs",
+    "deploy",
+    "integration-test",
+    "unit-test",
+    "ci-pipeline"
+  ]
+}

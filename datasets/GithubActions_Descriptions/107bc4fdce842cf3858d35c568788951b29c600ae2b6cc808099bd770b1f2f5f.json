@@ -1,0 +1,14 @@
+{
+  "sha": "107bc4fdce842cf3858d35c568788951b29c600ae2b6cc808099bd770b1f2f5f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1161,
+  "description": "Create a GitHub Actions workflow named Release Configurator that runs on push events with tags matching v* and on workflow calls. The workflow consists of two jobs: Build and Release. The Release job depends on Build, runs on ubuntu-latest, checks out the repository, downloads artifacts, zips them, and creates a release with the zipped artifacts and changelog.",
+  "tags": [
+    "release",
+    "github-actions",
+    "workflow-call",
+    "artifacts",
+    "zip"
+  ]
+}

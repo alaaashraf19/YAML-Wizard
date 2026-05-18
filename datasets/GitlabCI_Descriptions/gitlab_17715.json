@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_17715",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2847,
+  "description": "Create a GitLab CI pipeline using the Docker image registry.gitlab.com/thegamecraft/c-cms:latest with a mysql:5.7 service and set DB_HOST, DB_USERNAME, MYSQL_DATABASE, and MYSQL_ROOT_PASSWORD variables. Define three stages: build, test, and deploy. In the build stage add a build job that runs `cp .env.example .env`, `composer install`, and `php artisan key:generate`. In the test stage add a unit_test job that runs `cp .env.example .env`, `composer install`, `php artisan key:generate`, `php artisan migrate`, `php artisan db:seed`, and `vendor/bin/phpunit`. In the deploy stage add manual deploy_117, deploy_227, deploy_697, deploy_736 jobs (triggered only on the master branch) and a deploy_dev job (triggered only on the dev branch), each of which installs openssh-client if missing, starts ssh-agent, adds the $SSH_PRIVATE_KEY, creates an SSH config disabling strict host checking, and executes `~/.composer/vendor/bin/envoy run <job-name> --commit=\"$CI_COMMIT_SHA\"` targeting the respective environment URLs.",
+  "tags": [
+    "php",
+    "composer",
+    "laravel",
+    "mysql",
+    "envoy",
+    "ssh",
+    "gitlab-ci"
+  ]
+}

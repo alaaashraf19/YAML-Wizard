@@ -1,0 +1,16 @@
+{
+  "sha": "5acec68b63aec4d6eeb36a797632ab55fec51b7b5c5cc43fef4fc2cf1d00f282",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1019,
+  "description": "Create a GitHub Actions workflow named CI that runs on tag creation, push to master, and pull requests. The workflow has two jobs: Lint and Build. The Lint job runs on ubuntu-latest, sets up Python 3.x, checks out the code, installs flake8, and runs it. The Build job runs on a matrix of ubuntu-16.04, macos-latest, and windows-latest, sets up Python 3.x, checks out the code with submodules, creates a directory, runs cmake and builds the project, and executes unit tests, C-API tests, and tests.",
+  "tags": [
+    "python",
+    "cmake",
+    "ci",
+    "ubuntu",
+    "macos",
+    "windows",
+    "tests"
+  ]
+}

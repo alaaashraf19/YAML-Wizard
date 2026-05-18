@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_07647",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 151,
+  "description": "Create a GitLab CI pipeline that defines a single stage called build. Add a job named createpdf in the build stage that uses the tianon/latex Docker image. The job should execute the shell commands `rm -rf output/ && ./build.sh`. After the script runs, archive the file `output/drills.pdf` as a job artifact, and the pipeline has no services, caches, or special rules.",
+  "tags": [
+    "latex",
+    "pdf",
+    "gitlab-ci",
+    "build"
+  ]
+}

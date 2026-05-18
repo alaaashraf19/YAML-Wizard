@@ -1,0 +1,14 @@
+{
+  "sha": "ba1b05442d1e7f12d8527d6b400fd2b7614f1e21263e7c5265735a2e72c741c9",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3281,
+  "description": "Create a GitHub Actions workflow named Build that runs on push to main and develop branches, on pull requests to those branches, on a scheduled cron job, and on workflow dispatch and call. The workflow has a concurrency group named pyngrok-singleton. It consists of four jobs: init to initialize test resources, validate using a reusable workflow, build with a matrix strategy across multiple OS and Python versions, and cleanup to prune test resources after the validate and build jobs.",
+  "tags": [
+    "python",
+    "ngrok",
+    "test-resources",
+    "concurrency",
+    "reusable-workflow"
+  ]
+}

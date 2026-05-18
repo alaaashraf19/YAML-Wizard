@@ -1,0 +1,14 @@
+{
+  "sha": "8d8c3b1e1640866f783803337207b8f2ff2dd1fb544ac6b0678fe7dbc7211f61",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 801,
+  "description": "Create a GitHub Actions workflow named Format Python that runs on push to devel and release/* branches and on pull requests to those branches. The workflow should cancel in-progress runs if a newer run starts on a given PR, except for devel and release/* branches. Use an ubuntu-22.04 job to check Python code formatting with black 21.6b0 after setting up Python 3.11.",
+  "tags": [
+    "python",
+    "format",
+    "black",
+    "ubuntu",
+    "github-actions"
+  ]
+}

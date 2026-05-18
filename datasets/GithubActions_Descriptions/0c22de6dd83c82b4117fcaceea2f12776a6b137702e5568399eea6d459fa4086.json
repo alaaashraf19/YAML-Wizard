@@ -1,0 +1,14 @@
+{
+  "sha": "0c22de6dd83c82b4117fcaceea2f12776a6b137702e5568399eea6d459fa4086",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5104,
+  "description": "Create a GitHub Actions workflow named Weekly Tests that runs on a workflow dispatch. The workflow has multiple jobs: build-gem5, testlib-very-long-tests, gpu-tests, dramsys-tests, and weekly-tests. The build-gem5 job builds gem5 on a self-hosted Linux runner and uploads the artifact. The testlib-very-long-tests job runs very-long tests on multiple test types in parallel. The gpu-tests and dramsys-tests jobs run GPU and DRAMSys tests respectively. The weekly-tests job indicates whether the weekly tests have passed or not.",
+  "tags": [
+    "gem5",
+    "self-hosted",
+    "linux",
+    "tests",
+    "workflow-dispatch"
+  ]
+}

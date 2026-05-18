@@ -1,0 +1,16 @@
+{
+  "sha": "b81848892b14056a89c87d69ebcc7ab0331d4e944b931dae098c8c826e2fbe55",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4109,
+  "description": "Create a GitHub Actions workflow named Linux that runs on a schedule, on push to the master branch, on pull requests to the master branch, and on published releases. The workflow builds and tests a C++ project with a matrix strategy across different operating systems, compilers, SSL configurations, and dependencies. It checks out the repository, installs dependencies, configures the project with CMake, builds the project, starts a ClickHouse server in the background, and runs tests.",
+  "tags": [
+    "cpp",
+    "cmake",
+    "clickhouse",
+    "ubuntu",
+    "tests",
+    "scheduled",
+    "release"
+  ]
+}

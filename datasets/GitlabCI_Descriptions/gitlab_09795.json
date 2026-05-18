@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_09795",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 538,
+  "description": "Create a GitLab CI pipeline with two stages: test and build, using the weboaks/node-karma-protractor-chrome Docker image as the default and defining a VERSION_ID variable set to '0.8'. Add a test job in the test stage that runs the commands 'yarn', 'yarn lint', and 'yarn test' on the default image. Add a build job in the build stage that uses the electronuserland/builder:wine image, runs only on the master branch, and executes: export DATE=$(date +%Y%m%d%H%M); sed \"s/0.0.0/${VERSION_ID}.${DATE}/g\" package.json > _package.json && mv _package.json package.json; yarn && yarn electron:windows && yarn electron:linux. The build job should publish all files matching $CI_PROJECT_DIR/release/*.* as artifacts that never expire (expire_in: 1000 yrs).",
+  "tags": [
+    "electron",
+    "yarn",
+    "node",
+    "karma",
+    "protractor",
+    "windows-build",
+    "linux-build"
+  ]
+}

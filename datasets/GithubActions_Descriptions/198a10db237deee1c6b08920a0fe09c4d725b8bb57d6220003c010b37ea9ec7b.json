@@ -1,0 +1,17 @@
+{
+  "sha": "198a10db237deee1c6b08920a0fe09c4d725b8bb57d6220003c010b37ea9ec7b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3467,
+  "description": "Create a GitHub Actions workflow named Test that runs on a scheduled cron job, on push to specific branches and tags, and on pull requests. The workflow uses a matrix strategy to test on multiple operating systems (ubuntu-latest, macos-latest, windows-latest) and Python versions (3.11, 3.12, 3.13). For each job, check out the source code, cache pip, npm, and mypy dependencies, set up Python and Node.js, install OS-specific dependencies, build the development environment, run tests, and upload code coverage to Codecov.",
+  "tags": [
+    "python",
+    "nodejs",
+    "tests",
+    "codecov",
+    "ubuntu",
+    "macos",
+    "windows",
+    "cron"
+  ]
+}

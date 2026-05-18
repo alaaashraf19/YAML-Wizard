@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_03772",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 453,
+  "description": "Create a GitLab CI pipeline that uses the node:latest Docker image and caches the node_modules/ and .yarn directories. Define a single deploy stage containing a job named pages that runs only for the pages pipeline. In the pages job execute the exact script commands in order: mkdir .public; ls -la; yarn config set cache-folder .yarn; yarn install; ./node_modules/@angular/cli/bin/ng build --progress false --prod --base-href /ci-wallboard/; ls -la; cp -r ./dist/* .public; cp .public/index.html .public/404.html; mv .public public; ls -la public. Publish the resulting public/ directory as a GitLab Pages artifact.",
+  "tags": [
+    "node",
+    "yarn",
+    "angular",
+    "gitlab-pages",
+    "cache"
+  ]
+}

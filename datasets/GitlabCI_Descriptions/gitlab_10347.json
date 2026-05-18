@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_10347",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1516,
+  "description": "Create a GitLab CI pipeline using the archlinux:latest Docker image, defining CARGO_HOME as ${CI_PROJECT_DIR}/.cargo and PACMAN_CACHE as ${CI_PROJECT_DIR}/.pacman/pkg, and configuring a per‑job cache keyed by ${CI_JOB_NAME} that stores .cargo/, target/ and .pacman/pkg. Define three stages (build, docs, test) and a global before_script that creates the pacman cache directory, installs rust, gcc, pkg-config, make and scdoc via pacman with the custom cache, and prints rustc and cargo versions. In the build stage add a build job that runs \"cargo build --release\", stores the target directory as an artifact for 1 day, and has no dependencies. In the test stage add an audit job that runs \"pacman -Syu --needed --noconfirm --cachedir \"${PACMAN_CACHE}\" cargo-audit\" then \"cargo audit\", a check job that runs \"cargo check --all --verbose --release\", a clippy job that runs \"find . -name '*.rs' -exec touch {} +\" and \"cargo clippy --all -- -D warnings\", a format job that runs \"cargo fmt --all -- --check\", an install job that runs \"install -d destdir\" and \"make DESTDIR=destdir PREFIX=/usr install\", and a test job that runs \"cargo test --all --verbose --release\", each depending on the build job where indicated. In the docs stage add a completions job that runs \"make completions\" and publishes the target/completion/ directory as an artifact for 1 day, and a man job that runs \"make docs\" and publishes contrib/man/arch-audit.1 as an artifact for 1 day.",
+  "tags": [
+    "archlinux",
+    "rust",
+    "cargo",
+    "audit",
+    "clippy",
+    "format",
+    "docs",
+    "cache",
+    "ci"
+  ]
+}

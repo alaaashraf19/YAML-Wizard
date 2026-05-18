@@ -1,0 +1,28 @@
+{
+  "sha": "gitlab_16000",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 7502,
+  "description": "Create a GitLab CI pipeline with stages prepare, build and deploy, defining variables for Android, Ubuntu, Flatpak, Docker and WebDAV test servers. Add a .android-build template that uses the $ANDROID_IMAGE Docker image, runs \"df -h\", \"ci/android-cmake-build.sh\" and \"df -h\", produces APK and AAB artifacts, and is extended by android_arm64_v8a, android_armv7, android_x64 and android_x86 jobs each setting ANDROID_ABIS accordingly. Add a .fedora template that uses the fedora image, runs \"./ci/fedora-build.sh\", provides nextcloud and owncloud services, sets OPENTODOLIST_WEBDAV_TEST_SERVERS, and is extended by fedora-cmake and fedora-cmake-system-libs (the latter adds SYSTEM_LIBS=1); define appimage, ios, macos, windows-mingw-w64, clang-format, cppcheck, cpplint, flatpak (with its own cache), archlinux-pkgbuild, aur_release_check, aur_release, download_translations, upload_translations, export-sources and other utility jobs with their specific scripts, caches, artifacts and rules. Define snap::build using $DOCKER_IMAGE, pulls $SNAPCRAFT_IMAGE, runs a Docker container to build a snap, stores the snap artifact, needs appimage, and snap::edge extends .snap::upload with SNAPCRAFT_CHANNEL=edge; define deploy jobs appstore, appstore-macos, playstore, github (manual on tag), and set appropriate when, manual, allow_failure and needs relationships. Ensure all jobs reference the correct Docker images, services, variables, caches (e.g., $CCACHE_DIR, .flatpak-builder/ccache), artifacts expiration, and deployment targets such as Google Play, Apple App Store, AUR, GitHub releases and GitLab Pages.",
+  "tags": [
+    "android",
+    "fedora",
+    "ubuntu",
+    "macos",
+    "windows",
+    "snap",
+    "flatpak",
+    "archlinux",
+    "aur",
+    "github",
+    "ios",
+    "playstore",
+    "appstore",
+    "ccache",
+    "clang-format",
+    "cppcheck",
+    "cpplint",
+    "download-translations",
+    "upload-translations"
+  ]
+}

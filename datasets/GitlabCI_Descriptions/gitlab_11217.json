@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_11217",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 366,
+  "description": "Create a GitLab CI pipeline using the ruby:2.3 Docker image. Define two stages: test and deploy. In the test stage add an rspec job that runs gem install bundler --no-ri --no-rdoc, then bundle install --jobs $(nproc) \"${FLAGS[@]}\", then bundle exec rspec, and stores the coverage/ directory as an artifact. In the deploy stage add a pages job that depends on rspec, runs mkdir public and mv coverage/ public/coverage, publishes the public/ directory as a pages artifact, and only runs on the master branch.",
+  "tags": [
+    "ruby",
+    "rspec",
+    "bundler",
+    "gitlab-pages",
+    "coverage"
+  ]
+}

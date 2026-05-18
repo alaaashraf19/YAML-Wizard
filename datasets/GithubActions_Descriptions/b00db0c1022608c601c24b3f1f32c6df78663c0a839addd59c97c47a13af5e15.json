@@ -1,0 +1,13 @@
+{
+  "sha": "b00db0c1022608c601c24b3f1f32c6df78663c0a839addd59c97c47a13af5e15",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 508,
+  "description": "Create a GitHub Actions workflow named Check code style that runs on push to master and tags matching v*, as well as on pull requests, but only for changes to .clang-format and files in src/. Use an ubuntu-20.04 job that checks out the code, installs clang-format via apt-get, and then checks the code style of src/*.cpp and src/*.h files with clang-format.",
+  "tags": [
+    "clang-format",
+    "code-style",
+    "ubuntu",
+    "c++"
+  ]
+}

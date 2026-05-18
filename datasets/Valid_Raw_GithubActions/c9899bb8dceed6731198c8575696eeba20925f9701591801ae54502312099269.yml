@@ -1,0 +1,92 @@
+name: Linux
+
+on:
+  push:
+    #branches: [ master ]
+    paths-ignore:
+        - docs/**
+        - ChangeLog*
+  pull_request:
+    #branches: [ master ]
+    paths-ignore:
+        - docs/**
+        - ChangeLog*
+
+jobs:
+
+  build:
+
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        python-version: [2, 3.6, 3.7, 3.8]
+        os: [ubuntu-latest]
+
+    services:
+      SQLServer:
+        image: mcr.microsoft.com/mssql/server:2017-latest
+        env:
+          ACCEPT_EULA: Y
+          SA_PASSWORD: sqlServerPassw0rd
+        ports:
+          - 1433:1433
+
+    steps:
+
+    - uses: actions/checkout@v2
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get install freetds-dev
+        python -m pip install --upgrade pip
+        pip install -r requirements-dev.txt
+
+    - name: build & install
+      run: |
+        python setup.py build install
+
+    - name: Test with pytest
+      run: |
+        pytest
+
+  wheels:
+
+    services:
+      SQLServer:
+        image: mcr.microsoft.com/mssql/server:2017-latest
+        env:
+          ACCEPT_EULA: Y
+          SA_PASSWORD: sqlServerPassw0rd
+        ports:
+          - 1433:1433
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: [i686, x86_64]
+
+    steps:
+
+    - uses: actions/checkout@v2
+
+    - name: Build and test wheels
+      env:
+        DOCKER_IMAGE: quay.io/pypa/manylinux1_${{ matrix.arch }}
+      run: |
+        docker pull $DOCKER_IMAGE
+        docker run --rm --net="host" -w=/io -v `pwd`:/io $DOCKER_IMAGE /io/dev/build_manylinux_wheels.sh
+
+    - name: Archive wheels and sdist
+      uses: actions/upload-artifact@v2
+      with:
+        name: wheels
+        path: dist
+
+    - name: copy wheels
+      run: |
+        ls -la dist

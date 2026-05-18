@@ -1,0 +1,127 @@
+name: Release
+on:
+  release:
+    types: [published]
+  workflow_dispatch: {}
+
+jobs:
+  update-autorevision:
+    name: "Update AutoRevision"
+    runs-on: ubuntu-latest
+    container:
+      image: ubuntu:24.10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - # Make sure there are no unstaged changes
+        # Was reporting changes to eol=crlf files in .gitattributes
+        run: git checkout -- .
+      - run: git rev-parse --short=5 HEAD > cmake/AutoRevision.txt
+      - run: git describe --tags `git rev-list --tags --max-count=1` >> cmake/AutoRevision.txt
+      - run: cat cmake/AutoRevision.txt
+      - name: Find target branch
+        id: branch
+        # We're running on a tag so have no direct access to the branch. Find it.
+        # Strip the first 3 components (ref/remotes/username)
+        run: |
+          branch=$(git branch -r --contains HEAD --format '%(refname:strip=3)')
+          echo Target branch is $branch
+          echo branch=$branch >> $GITHUB_OUTPUT
+      - name: Problem file cleanup
+        # We have this problematic file that we need to remove
+        run: |
+          rm -f dist/windows/freeciv21-server.cmd
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          base: ${{ steps.branch.outputs.branch }}
+          commit-message: "Release update of AutoRevision.txt"
+          branch: release/autorevision/${{ steps.branch.outputs.branch }}
+          # Ensure we only add the changed cmake/AutoRevision.txt file in the commit
+          add-paths: |
+            cmake/AutoRevision.txt
+          title: "Release update of AutoRevision.txt"
+          body: >
+            Automatic changes triggered by a new release.
+
+            This PR updates `${{ steps.branch.outputs.branch }}`.
+            Close and reopen this pull request to start the CI.
+          delete-branch: true
+
+  update-archive:
+    name: "Update Source Archive"
+    runs-on: ubuntu-latest
+    container:
+      image: ubuntu:24.10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - # Make sure there are no unstaged changes
+        # Was reporting changes to eol=crlf files in .gitattributes
+        run: git checkout -- .
+      - run: git rev-parse --short=5 HEAD > cmake/AutoRevision.txt
+      - run: git describe --tags `git rev-list --tags --max-count=1` >> cmake/AutoRevision.txt
+      - run: cat cmake/AutoRevision.txt
+      - name: Make build directory
+        run: mkdir -p -v $PWD/build
+      - name: Create tar.gz
+        run: |
+          tar --exclude='build' --exclude='data/graphics' -cvzf Freeciv21-${{github.ref_name}}.tar.gz ../freeciv21/*
+          sha256sum --binary Freeciv21-${{github.ref_name}}.tar.gz > Freeciv21-${{github.ref_name}}.tar.gz.sha256
+      - name: Create zip
+        run: |
+          cd ..
+          zip -r freeciv21/Freeciv21-${{github.ref_name}}.zip freeciv21/* -x \*/build/* \*.gz \*.sha256 \*/data/graphics/* \*/.*
+          cd freeciv21
+          sha256sum --binary Freeciv21-${{github.ref_name}}.zip > Freeciv21-${{github.ref_name}}.zip.sha256
+      - name: Upload package
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            Freeciv21-${{github.ref_name}}.tar.gz
+            Freeciv21-${{github.ref_name}}.tar.gz.sha256
+            Freeciv21-${{github.ref_name}}.zip
+            Freeciv21-${{github.ref_name}}.zip.sha256
+
+  snapcraft:
+    name: "Snap Package"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install dependencies
+        run: |
+          apt-get update
+          apt-get install -y \
+            git \
+            cmake \
+            ninja-build \
+            g++ \
+            gettext \
+            qt6-base-dev \
+            qt6-multimedia-dev \
+            qt6-svg-dev \
+            libkf6archive-dev \
+            liblua5.3-dev \
+            libsqlite3-dev \
+            libsdl2-mixer-dev \
+            sudo
+      - name: Configure
+        run: |
+          mkdir -p build/snap/local
+          cmake . -B build -G Ninja
+          cp data/icons/128x128/freeciv21-client.png build/snap/local
+      - uses: snapcore/action-build@v1
+        id: snapcraft
+        with:
+          path: build
+      - uses: snapcore/action-publish@v1
+        env:
+          SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.STORE_LOGIN }}
+        with:
+          snap: ${{ steps.snapcraft.outputs.snap }}
+          release: beta

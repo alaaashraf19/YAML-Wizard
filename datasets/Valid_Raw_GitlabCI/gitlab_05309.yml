@@ -1,0 +1,48 @@
+build:
+  script:
+  - npm run build
+  stage: build
+build:doc:
+  script:
+  - npm run build:doc
+  stage: build
+cache:
+  paths:
+  - node_modules/
+image: node:8
+lint:
+  script:
+  - npm install
+  - npm run lint
+  stage: lint
+stages:
+- lint
+- test
+- build
+test:node:7:
+  image: node:7
+  only:
+  - $NIGHLTY
+  script:
+  - npm install
+  - npm run build
+  - npm test
+  stage: test
+test:node:8:
+  image: node:8
+  script:
+  - npm install
+  - npm run build
+  - npm test
+  stage: test
+test:node:9:
+  image: node:9
+  only:
+  - $NIGHLTY
+  script:
+  - npm install
+  - npm run build
+  - npm test
+  stage: test
+variables:
+  ANSWER: 42

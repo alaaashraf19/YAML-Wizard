@@ -1,0 +1,16 @@
+{
+  "sha": "e679accb9e752e831af403296ed3292d1ede81e2fc5ffec2653dceaaac6f3af5",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1005,
+  "description": "Create a GitHub Actions workflow named Build that runs on push and pull request events. Use a matrix strategy on an ubuntu-20.04 environment to compile and test with different combinations of g++-10 and clang++-12 compilers and Release and Debug build types, with address and undefined sanitization flags. Install dependencies, checkout code, compile using a build script, and run tests with ninja.",
+  "tags": [
+    "c++",
+    "ubuntu",
+    "gcc",
+    "clang",
+    "ninja",
+    "tests",
+    "matrix"
+  ]
+}

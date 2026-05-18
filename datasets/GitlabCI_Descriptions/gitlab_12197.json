@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_12197",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2565,
+  "description": "Create a GitLab CI pipeline with a single test stage that runs on Python images. Define a lint_eslint job using the $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA-python${PYTHON_IMAGE_VERSION} image (PYTHON_IMAGE_VERSION=3.8) that executes `make show_lint_eslint`. Define a lint_python job using the python:${PYTHON_IMAGE_VERSION} image (3.8) with no before_script, which adds a meltano remote, fetches the default branch, computes changed .py files, and if any runs `pip install poetry`, `poetry install --no-root`, and `make show_lint_python` on those files. Define pytest_fast, pytest_sqlite, pytest_sqlite_concurrent, pytest_postgres, and pytest_postgres_concurrent jobs that extend a base pytest configuration: they run `poetry run pytest -v --cov-report= --cov meltano -m \"$PYTEST_MARKERS\"`, `poetry run coverage combine .coverage`, `poetry run coverage report`, and `poetry run coverage html`, store the htmlcov/ directory as an artifact on success, use the python:${PYTHON_IMAGE_VERSION} image (3.8) for fast jobs and the registry image for others, set PYTEST_MARKERS to \"not concurrent\" for non‑concurrent jobs and to \"concurrent\" for the manual concurrent variants, and the postgres‑based jobs also start a postgres:11 service with appropriate environment variables. The concurrent pytest jobs are tagged `concurrent` and are manual triggers, and all jobs run in the test stage.",
+  "tags": [
+    "python",
+    "pytest",
+    "poetry",
+    "postgres",
+    "sqlite",
+    "eslint",
+    "make",
+    "gitlab-ci",
+    "coverage",
+    "manual"
+  ]
+}

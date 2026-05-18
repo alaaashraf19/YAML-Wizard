@@ -1,0 +1,14 @@
+{
+  "sha": "142d2477d0309eea2081378b89eebd3bc6ab712bff962df4b2413f8e9cb24a7d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 985,
+  "description": "Create a GitHub Actions workflow named Build that runs on every push and pull request. Use a matrix job on ubuntu-latest that runs in parallel up to 4 times with different combinations of Python and Django versions, excluding certain incompatible pairs. For each combination, check out the repository, set up the corresponding Python version, install dependencies including the specified Django version and the current package, and run tests with manage.py.",
+  "tags": [
+    "python",
+    "django",
+    "tests",
+    "matrix",
+    "ci"
+  ]
+}

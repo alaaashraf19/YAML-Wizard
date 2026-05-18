@@ -1,0 +1,41 @@
+.only-code-memory-job-base:
+  extends:
+  - .default-tags
+  - .default-retry
+  - .default-cache
+  - .default-only
+  - .default-before_script
+  - .only-code-changes
+memory-on-boot:
+  artifacts:
+    paths:
+    - tmp/memory_*.txt
+    reports:
+      metrics: tmp/memory_on_boot_metrics.txt
+  extends:
+  - .only-code-memory-job-base
+  - .use-pg-10
+  script:
+  - ENABLE_BOOTSNAP=false PATH_TO_HIT="/users/sign_in" CUT_OFF=0.3 bundle exec derailed
+    exec perf:mem >> 'tmp/memory_on_boot.txt'
+  - scripts/generate-memory-metrics-on-boot tmp/memory_on_boot.txt >> 'tmp/memory_on_boot_metrics.txt'
+  variables:
+    NODE_ENV: production
+    NODE_OPTIONS: --max_old_space_size=3584
+    RAILS_ENV: production
+    SETUP_DB: 'true'
+    SKIP_STORAGE_VALIDATION: 'true'
+memory-static:
+  artifacts:
+    paths:
+    - tmp/memory_*.txt
+    reports:
+      metrics: tmp/memory_metrics.txt
+  extends: .only-code-memory-job-base
+  script:
+  - bundle exec derailed bundle:mem > tmp/memory_bundle_mem.txt
+  - scripts/generate-gems-size-metrics-static tmp/memory_bundle_mem.txt >> 'tmp/memory_metrics.txt'
+  - bundle exec derailed bundle:objects > tmp/memory_bundle_objects.txt
+  - scripts/generate-gems-memory-metrics-static tmp/memory_bundle_objects.txt >> 'tmp/memory_metrics.txt'
+  variables:
+    SETUP_DB: 'false'

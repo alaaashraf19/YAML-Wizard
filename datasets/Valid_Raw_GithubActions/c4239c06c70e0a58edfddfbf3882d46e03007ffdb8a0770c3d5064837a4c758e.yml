@@ -1,0 +1,33 @@
+name: manual deploy
+
+on:
+  workflow_dispatch
+
+jobs:
+
+  ghpages:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip setuptools
+          python -m pip install .[docs]
+      - name: Build
+        run: |
+          python -m mkdocs build --clean --verbose
+      - name: Publish
+        if: success()
+        uses: cpina/github-action-push-to-another-repository@main
+        env:
+          SSH_DEPLOY_KEY: ${{ secrets.PAGES_DEPLOY_KEY }}
+        with:
+          source-directory: 'site'
+          destination-github-username: 'Python-Markdown'
+          destination-repository-name: 'Python-Markdown.github.io'
+          user-name: ${{ github.actor }}
+          target-branch: master

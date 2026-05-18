@@ -1,0 +1,17 @@
+{
+  "sha": "e9796b5448d8ac6b15701d9c0b7d82d8429db6abb61ec2e2e9125458fcfe7df5",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 7093,
+  "description": "Create a GitHub Actions workflow named Create MacOS Build & Installer that triggers on push events with tags matching a semantic version pattern. The workflow should run on a macos-10.15 environment, checking out the code, setting up CMake, determining the version from the git tag, and then updating version information in specific files. It should also cache and install Qt and GStreamer, download and install GStreamer if caching misses, install the OSX relocator, create a build directory, configure CMake, build the project, sign the app bundle, create an installer package, and upload it to a Google Cloud Storage bucket and release it on GitHub if the version is a valid semantic version.",
+  "tags": [
+    "macos",
+    "installer",
+    "cmake",
+    "qt",
+    "gstreamer",
+    "semantic-release",
+    "github-release",
+    "gcp"
+  ]
+}

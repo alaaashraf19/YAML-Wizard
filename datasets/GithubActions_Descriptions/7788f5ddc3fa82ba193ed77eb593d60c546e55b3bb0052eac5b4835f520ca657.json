@@ -1,0 +1,14 @@
+{
+  "sha": "7788f5ddc3fa82ba193ed77eb593d60c546e55b3bb0052eac5b4835f520ca657",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1684,
+  "description": "Create a GitHub Actions workflow named PS4 that runs on push to the master branch, on pull requests to master, and on published releases, ignoring changes to markdown files and docs. The workflow should run on an ubuntu-24.04 environment with a concurrency group that cancels in-progress jobs. It should check out the repository, create a build environment with pacman, install packages, build the project, and upload the package as an artifact or to a release.",
+  "tags": [
+    "ps4",
+    "pacman",
+    "ubuntu",
+    "github-actions",
+    "release-workflow"
+  ]
+}

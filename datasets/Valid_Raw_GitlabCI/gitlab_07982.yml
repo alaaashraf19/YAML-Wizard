@@ -1,0 +1,17 @@
+before_script:
+- npm install gitbook-cli -g
+- gitbook fetch latest
+- gitbook install
+cache:
+  paths:
+  - node_modules/
+image: node:8.9
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - gitbook build . public
+  stage: deploy

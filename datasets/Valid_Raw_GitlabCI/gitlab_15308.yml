@@ -1,0 +1,59 @@
+build:
+  script:
+  - npm ci
+  - npm run build
+  stage: build
+docker-next:
+  image: docker:latest
+  only:
+  - master
+  script:
+  - docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY
+  - docker build -t $CI_REGISTRY_IMAGE:next .
+  - docker push $CI_REGISTRY_IMAGE:next
+  services:
+  - docker:dind
+  stage: deploy
+docker-tag:
+  image: docker:latest
+  only:
+  - tags
+  script:
+  - VERSION=$CI_COMMIT_TAG
+  - echo $VERSION
+  - docker info
+  - docker login -u $DOCKER_HUB_USER -p $DOCKER_HUB_PASSWORD
+  - docker build -t ramielcreations/caravaggio:$VERSION .
+  - docker tag ramielcreations/caravaggio:$VERSION ramielcreations/caravaggio:latest
+  - docker images
+  - docker push ramielcreations/caravaggio:$VERSION
+  - docker push ramielcreations/caravaggio:latest
+  services:
+  - docker:dind
+  stage: deploy
+image: node:20
+include:
+  template: Dependency-Scanning.gitlab-ci.yml
+npm:
+  only:
+  - tags
+  script:
+  - npm config set "//registry.npmjs.org/:_authToken" $NPM_TOKEN
+  - npm install --unsafe-perm
+  - npm publish --unsafe-perm
+  stage: deploy
+stages:
+- test
+- build
+- deploy
+test:
+  coverage: /^Statements\s*:\s*([^%]+)/
+  script:
+  - npm ci
+  - npm run test
+  stage: test
+workflow:
+  rules:
+  - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+  - if: $CI_COMMIT_BRANCH
+  - if: $CI_COMMIT_TAG

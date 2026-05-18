@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_00798",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2801,
+  "description": "Create a GitLab CI pipeline with a default test stage and an explicit deploy stage, assigning each job a specific Docker image. In the test stage add job_javascript_node (image almarklein/nodejs) that cd javascript, pip3 install invoke, print python and node versions, list invoke tasks, then invoke lint, test-unit and test-shared; job_matlab_octave (image almarklein/octave) that cd matlab, pip3 install invoke, print python and octave versions, list tasks, then invoke test-unit --octave and invoke test-shared --octave; three job_python_lite_* jobs (images python:3.13, python:3.6, python:3.9) that cd python_lite, pip install invoke (plus flake8 for 3.6/3.9), pytest, pytest-cov, numpy, print python version, list tasks, then invoke test-unit and test-shared, with the 3.13 variant also setting BSDF_TEST_EXCLUDES; several job_python_* jobs (images python:2.7, 3.11, 3.13, 3.9, pypy:3) that cd python, pip install invoke (plus flake8, setuptools where listed), pytest, pytest-cov, numpy, print python version, list tasks, run invoke lint where defined, then invoke test-unit and test-shared, with the 3.13 job also running python setup.py install and bsdf commands, and setting BSDF_TEST_EXCLUDES where needed. In the deploy stage add a pages job (image python:3.13) that pip install invoke markdown pygments, print python version, list tasks, run invoke python.update-readme, python-lite.update-readme, build-pages, move _docs/_pages to public, and publish the public directory as an artifact, running only on the main or website branches. Also in deploy add a validation job (image python:3.13) that pip install invoke, print python version, list tasks, then invoke check-whitespace and check-versions.",
+  "tags": [
+    "python",
+    "nodejs",
+    "octave",
+    "invoke",
+    "pytest",
+    "gitlab-pages",
+    "validation"
+  ]
+}

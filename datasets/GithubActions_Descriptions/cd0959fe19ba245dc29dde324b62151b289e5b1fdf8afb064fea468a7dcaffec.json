@@ -1,0 +1,16 @@
+{
+  "sha": "cd0959fe19ba245dc29dde324b62151b289e5b1fdf8afb064fea468a7dcaffec",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3814,
+  "description": "Create a GitHub Actions workflow named build that runs on push to master, pull requests to master, and tag creation matching v*. The workflow has multiple jobs for testing, building wheels on Linux and macOS, building Windows wheels and source distribution, building Linux wheels for ARM, and publishing to PyPI. Each job has specific dependencies, environment variables, and steps for setup, testing, building, and uploading artifacts.",
+  "tags": [
+    "python",
+    "pypi",
+    "cibuildwheel",
+    "tox",
+    "codecov",
+    "qemu",
+    "github-actions"
+  ]
+}

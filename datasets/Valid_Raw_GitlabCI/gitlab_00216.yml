@@ -1,0 +1,54 @@
+before_script:
+- npm install @angular/cli -g
+- npm install --quiet --no-progress --unsafe-perm
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+  - node_modules/
+firebase:
+  before_script:
+  - npm install -g firebase-tools
+  - npm install --quiet --no-progress
+  - npm run build
+  dependencies:
+  - npm:lint
+  - npm:test
+  - npm:build
+  environment:
+    name: Production
+    url: http://poc.adrianlemess.com
+  only:
+  - master
+  script:
+  - firebase deploy --token "$FIREBASE_TOKEN"
+  stage: deploy
+image: node:alpine
+npm:build:
+  artifacts:
+    paths:
+    - dist/
+  dependencies:
+  - npm:lint
+  - npm:test
+  script:
+  - npm run build:prod
+  stage: build
+npm:lint:
+  script:
+  - npm run lint
+  stage: lint
+npm:test:
+  artifacts:
+    name: Coverage
+    paths:
+    - coverage/
+  before_script:
+  - apk add --update --no-cache chromium
+  script:
+  - npm run test:ci
+  stage: test
+stages:
+- lint
+- test
+- build
+- deploy

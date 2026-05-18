@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_07717",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 973,
+  "description": "Create a GitLab CI pipeline using the ruby:latest Docker image, with a before_script that runs `gem install bundler` and `bundle install`, and caches the vendor/ directory. Define three stages: test, deploy. Add a test job in the test stage that runs `bundle exec jekyll build -d test`, stores the `test` directory as an artifact, and runs on all branches except `master` and `work-in-progress`. Add a live-deploy job in the deploy stage that runs on the `master` branch only, executes `which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )`, `which rsync || ( apt-get update -y && apt-get install rsync -y )`, `eval $(ssh-agent -s)`, `ssh-add <(echo \"$DEPLOY_SSH_KEY\")`, `bundle exec jekyll build -d public/ --future`, and `rsync --delete -e \"ssh -o StrictHostKeyChecking=no\" -a public/ $DEPLOY_URL`, publishes the `public` directory as an artifact, and uses tags `non-shared` and `foodsharing`. Add a pages job in the deploy stage that runs on the `work-in-progress` branch only, runs `bundle exec jekyll build -d public/ --future` and `cp public/index.de.html public/index.html`, stores `public` as an artifact, and also uses tags `non-shared` and `foodsharing`.",
+  "tags": [
+    "ruby",
+    "jekyll",
+    "bundler",
+    "deploy",
+    "pages",
+    "test",
+    "ssh",
+    "rsync",
+    "cache",
+    "artifact"
+  ]
+}

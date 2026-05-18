@@ -1,0 +1,71 @@
+name: macOS
+
+on:
+  push:
+    paths:
+      - '.github/workflows/macos.yml'
+      - 'CMakeLists.txt'
+      - 'src/**'
+      - 'test/**'
+      - 'modules/**'
+      - '3rdparty/**'
+  pull_request:
+    paths:
+      - '.github/workflows/macos.yml'
+      - 'CMakeLists.txt'
+      - 'src/**'
+      - 'test/**'
+      - 'modules/**'
+      - '3rdparty/**'
+  release:
+    types: published
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        config: [Release, Debug]
+        image: [macos-12, macos-13, macos-14]
+
+    runs-on: ${{ matrix.image }}
+
+    env:
+      CMAKE_C_COMPILER_LAUNCHER: ccache
+      CMAKE_CXX_COMPILER_LAUNCHER: ccache
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+        submodules: recursive
+
+    - uses: hendrikmuhs/ccache-action@v1
+      with:
+        key: macos-${{ matrix.image }}-${{ matrix.image}}-${{ matrix.config }}
+
+    - name: Configure
+      shell: bash
+      run: |
+        cmake -B build -DCMAKE_BUILD_TYPE=Release
+
+    - name: Compile Dependencies
+      shell: bash
+      run: |
+        cmake --build build --parallel --config ${{ matrix.config }} --target compile-osp-magnum-deps compile-test-deps
+
+    - name: Compile OSP-Magnum
+      shell: bash
+      run: |
+        cmake --build build --parallel --config ${{ matrix.config }} --target osp-magnum
+
+    - name: Compile Unit Tests
+      shell: bash
+      run: |
+        cmake --build build --parallel --config ${{ matrix.config }} --target compile-tests
+
+    # TODO: Why doesn't the "test" target execute tests?
+    - name: Run Unit Tests
+      shell: bash
+      run: |
+        ctest --schedule-random --progress --output-on-failure --parallel --no-tests error --build-config ${{ matrix.config }} --test-dir build

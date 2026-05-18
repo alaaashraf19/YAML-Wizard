@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_14568",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 520,
+  "description": "Create a GitLab CI pipeline using the golang:1.9.2 Docker image. Set a before_script that creates /go/src/gitlab.com/pkuyken and /go/src/_/builds directories, copies the project into /go/src/gitlab.com/pkuyken/hexmap-generator, creates a symlink from /go/src/_/builds/pkuyken to the project path, and runs make dep for all jobs. Define two stages: test and build, with a cache of /apt-cache and Go module directories under /go/src. In the test stage add a lint_code job that runs make lint and a unit_tests job that runs make test. In the build stage add a build job that runs make.",
+  "tags": [
+    "golang",
+    "make",
+    "lint",
+    "unit-tests",
+    "cache",
+    "gitlab-ci"
+  ]
+}

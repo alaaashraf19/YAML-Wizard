@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_06675",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 331,
+  "description": "Create a GitLab CI pipeline that defines a single stage called clickbuild and a job named click:armhf. Use the clickable/ubuntu-sdk:16.04-armhf Docker image, set the variable GIT_SUBMODULE_STRATEGY to normal, and run the command `sh ./scripts/ci-click-build.sh` in the clickbuild stage. Cache the Qt/ and .build/ directories, and configure the job to produce artifacts matching `*.click` that expire after one week and are kept on success. Tag the runner with docker. No additional rules or deployment targets are required.",
+  "tags": [
+    "clickable",
+    "armhf",
+    "ubuntu-sdk",
+    "qt",
+    "cache",
+    "artifacts"
+  ]
+}

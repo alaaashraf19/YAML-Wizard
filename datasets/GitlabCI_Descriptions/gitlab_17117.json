@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_17117",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 589,
+  "description": "Create a GitLab CI pipeline with two stages: build and test, using the node:17-alpine3.12 Docker image. In the build stage add a build job that sets NODE_OPTIONS to --openssl-legacy-provider, runs npm install then npm run build, and stores the dist directory as an artifact. Include the Code-Quality.gitlab-ci.yml template. In the test stage add a test job that also uses node:17-alpine3.12, sets NODE_OPTIONS to --openssl-legacy-provider along with API_PORT=3000, ENV=dev, JWT_SECRET=secret, MONGODB_HOST=mongo, MONGO_INITDB_ROOT_USERNAME=myuser, MONGO_INITDB_ROOT_PASSWORD=example, runs npm install then npm run test, and uses a mongo:5.0 service.",
+  "tags": [
+    "node",
+    "npm",
+    "build",
+    "test",
+    "mongo",
+    "code-quality",
+    "alpine"
+  ]
+}

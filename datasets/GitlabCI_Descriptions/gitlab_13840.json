@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_13840",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 232,
+  "description": "Create a GitLab CI pipeline that uses the node:latest Docker image and defines two stages: test and build. In the test stage add a run-tests job that executes `yarn` then `yarn test`. In the build stage add a build-artifact job that runs `yarn` followed by `yarn build` and publishes the `build/` directory as an artifact named `$CI_COMMIT_REF_NAME`. No services, caches, or special rules are required.",
+  "tags": [
+    "node",
+    "yarn",
+    "test",
+    "build",
+    "artifact"
+  ]
+}

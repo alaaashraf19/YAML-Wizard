@@ -1,0 +1,14 @@
+{
+  "sha": "2a96758baa9b4e4f88621a345ad14e5b817f6c265cacf53a4fc48ccd2c0e42af",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4040,
+  "description": "Create a GitHub Actions workflow named Windows that runs on push events. The workflow has three jobs: clang-cl, msvc, and mingw-sdl. The clang-cl and msvc jobs run on a Windows 2022 environment, while the mingw-sdl job runs in a Fedora container on an ubuntu-latest environment. Each job checks out the code, caches CPM.cmake packages, and performs various build and test steps using CMake, Ninja, and MSVC or MinGW compilers.",
+  "tags": [
+    "windows",
+    "cmake",
+    "mingw",
+    "msvc",
+    "github-actions"
+  ]
+}

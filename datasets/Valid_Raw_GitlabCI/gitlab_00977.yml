@@ -1,0 +1,63 @@
+build_push:
+  only:
+  - master
+  script:
+  - docker login -u ${REGISTRY_USER} -p ${REGISTRY_PASSWORD}
+  - docker build --build-arg REACT_APP_SENTRY_DSN --build-arg REACT_APP_AUTH0_DOMAIN
+    --build-arg REACT_APP_AUTH0_CLIENT_ID --build-arg REACT_APP_AUTH0_CALLBACK_URL
+    --build-arg REACT_APP_AUTH0_TOKEN_ENDPOINT --build-arg REACT_APP_AUTH0_API_ENDPOINT
+    --build-arg REACT_APP_GOOGLE_CLIENT_ID --build-arg REACT_APP_GOOGLE_FIT_SCOPES
+    . -t aossie/carbonfootprint-api:production
+  - docker push aossie/carbonfootprint-api:production
+  services:
+  - command:
+    - dockerd-entrypoint.sh
+    entrypoint:
+    - env
+    - -u
+    - DOCKER_HOST
+    name: docker:dind
+  stage: build
+  variables:
+    DOCKER_DRIVER: overlay2
+    DOCKER_HOST: tcp://docker:2375/
+    DOCKER_TLS_CERTDIR: ''
+deploy_application:
+  before_script:
+  - apk add --no-cache openssh-client
+  - mkdir -p ~/.ssh
+  - echo "$DEPLOY_SERVER_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+  - chmod 600 ~/.ssh/id_rsa
+  - eval "$(ssh-agent -s)"
+  - ssh-add ~/.ssh/id_rsa
+  - ssh-keyscan -H $DEPLOYMENT_SERVER_IP >> ~/.ssh/known_hosts
+  only:
+  - master
+  script:
+  - printf "API_TEST_KEY=${API_TEST_KEY}\nDB_HOST=${DB_HOST}\nDB_PORT=${DB_PORT}\nDB_USER=${DB_USER}\nDB_PASS=${DB_PASS}\nDB_NAME=${DB_NAME}\nMICROSOFT_MAPS_KEY=${MICROSOFT_MAPS_KEY}\nAUTH0_JWKS_URI=${AUTH0_JWKS_URI}\nAUTH0_ISSUER=${AUTH0_ISSUER}\nREDIS_HOST=${REDIS_HOST}\nREDIS_PORT=${REDIS_PORT}\nWHITELISTED_DOMAINS=${WHITELISTED_DOMAINS}\nSENTRY_DSN=${SENTRY_DSN}\nAUTH0_CLIENT_ID=${AUTH0_CLIENT_ID}\nAUTH0_CLIENT_SECRET=${AUTH0_CLIENT_SECRET}\nGOOGLE_FIT_API_ENDPOINT=${GOOGLE_FIT_API_ENDPOINT}"
+    > .env
+  - scp -r ./.env ./docker-compose.yml carbonfootprintapi_gmail_com@${DEPLOYMENT_SERVER_IP}:~/
+  - ssh carbonfootprintapi_gmail_com@${DEPLOYMENT_SERVER_IP} "docker-compose stop;docker-compose
+    rm web --force;docker pull aossie/carbonfootprint-api:production;docker-compose
+    up -d;"
+  stage: deploy
+  when: manual
+image: docker:latest
+stages:
+- test
+- build
+- deploy
+test_validation:
+  before_script:
+  - npm ci
+  - npm ci --prefix client
+  cache:
+    paths:
+    - node_modules/
+  image: node:latest
+  script:
+  - npm test
+  - npm run lint:test
+  services:
+  - redis:4.0.0
+  stage: test

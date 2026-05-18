@@ -1,0 +1,21 @@
+before_script:
+- apk --update --upgrade add gcc musl-dev jpeg-dev zlib-dev libffi-dev cairo-dev pango-dev
+  gdk-pixbuf
+- pip install mkdocs
+- pip install mkdocs-material
+- pip install pymdown-extensions
+- pip install markdown-blockdiag
+- pip install markdown-include
+- pip install mkdocs-pdf-export-plugin
+image: python:alpine
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - ENABLE_PDF_EXPORT=0 mkdocs build
+  - rm -r public
+  - mv site public
+  stage: deploy

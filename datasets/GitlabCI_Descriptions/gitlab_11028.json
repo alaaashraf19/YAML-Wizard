@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_11028",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 172,
+  "description": "Create a GitLab CI pipeline that uses the jonzelner/rstan:latest Docker image. Define a pages job that runs in the default stage, executes the shell commands `make pdf`, `mkdir public`, and `cp output/results.pdf public/results.pdf`. The job should collect the `public` and `output` directories as artifacts and deploy them as a GitLab Pages site. No additional services, caches, variables, or rules are required.",
+  "tags": [
+    "rstan",
+    "make",
+    "gitlab-pages",
+    "pdf",
+    "latex"
+  ]
+}

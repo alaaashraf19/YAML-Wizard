@@ -1,0 +1,12 @@
+{
+  "sha": "gitlab_03654",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 41,
+  "description": "Create a GitLab CI pipeline that runs a single job named nixos_build_job in the default test stage. The job uses the runner's default Docker image (no explicit image) and executes the shell command `nix-build`. No caches, artifacts, or special rules are defined, so the job runs on every pipeline.",
+  "tags": [
+    "nix",
+    "nix-build",
+    "gitlab-ci"
+  ]
+}

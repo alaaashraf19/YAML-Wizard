@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_16151",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2064,
+  "description": "Create a GitLab CI pipeline with three stages: test, package, and deploy, using the default Debian runner and tagging the test and package jobs with debian and the deploy job with docker. In the test stage add a test:debian job that runs apt-get update -qy, apt-get install -y python3-dev python3-pip tox, pip3 install ., and tox -e py39. In the package stage add a package:debian job that runs apt-get update -qy, apt-get install -y curl gnupg apt-transport-https wget, downloads the Salamek GPG key and adds its repository, updates apt, installs a long list of development packages (nodejs dh-python npm python3-python-gitlab python3-paramiko python3-git python3-flask-celery-tools python3-dev redis-server python3-pip python3-stdeb python3-celery nodejs git python3-markupsafe python3-psycopg2 python3-dateutil python3-docopt python3-yaml python3-wtforms python3-raven python3-flask-migrate python3-flask-babel python3-flask-navigation python3-cron-descriptor python3-flask-login python3-kombu rabbitmq-server), removes ./deb_dist, runs npm install in gitlab_tools/static, sets DEB_BUILD_OPTIONS=nocheck, builds Debian packages with python3 setup.py --command-packages=stdeb.command bdist_deb, and publishes the resulting .deb files as artifacts that expire in one day. In the deploy stage add a repoupdate job that runs a before_script to install openssh-client if needed, start ssh-agent, add the $SSH_PRIVATE_KEY, configure SSH to skip host checking, depends on package:debian, runs only on tags with GIT_STRATEGY set to none, and its script removes old .deb files from the remote repository, copies the new .deb files via scp, and triggers the remote deb-pub-update.sh script.",
+  "tags": [
+    "debian",
+    "apt",
+    "npm",
+    "python",
+    "stdeb",
+    "ssh",
+    "tox",
+    "gitlab-ci"
+  ]
+}

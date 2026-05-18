@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_00968",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 3936,
+  "description": "Create a GitLab CI pipeline that uses the docker:27 image with the docker:27-dind service and defines CI_REGISTRY_IMAGE, CI_REGISTRY_IMAGE_PLATFORM and CI_REGISTRY_TAGS_RESOURCE variables. Define two stages, build and deploy, and a global before_script that installs curl, git and jq via apk. In the build stage add a job named build that runs on_success (unless the project path is antora/docker-antora and the branch is main, in which case it never runs) and executes the exact commands: `ANTORA_VERSION=${ANTORA_VERSION:-$(curl -s 'https://gitlab.com/api/v4/projects/4180516/repository/tags?order_by=updated&sort=desc&per_page=1' | jq -rM '.[].name[1:]')}`, `sed -i \"s/@latest/@$ANTORA_VERSION/g\" Dockerfile`, `[[ $ANTORA_VERSION == \"3.2.\"* ]] && sed -i \"s/^FROM node:16-/FROM node:18-/\" Dockerfile`, `if [ -z \"${ANTORA_VERSION/*-*}\" ]; then CI_REGISTRY_IMAGE_TAG=testing; else CI_REGISTRY_IMAGE_TAG=latest; fi`, `docker buildx install && docker buildx create --name docker-antora --use`, and `docker build --pull --platform \"$CI_REGISTRY_IMAGE_PLATFORM\" -t \"$CI_REGISTRY_IMAGE:$ANTORA_VERSION\" -t \"$CI_REGISTRY_IMAGE:$CI_REGISTRY_IMAGE_TAG\" .`. In the deploy stage add a job named deploy that runs only when the project path is antora/docker-antora and the branch is main, echoes the requested and resolved Antora version, repeats the same version‑resolution, Dockerfile edits and tag determination steps, installs the buildx builder, then checks the Docker Hub tags API in a while‑loop to skip publishing if the version already exists, logs into the registry with `echo \"$CI_REGISTRY_PASSWORD\" | docker login -u \"$CI_REGISTRY_USER\" --password-stdin \"$CI_REGISTRY\"`, pushes the multi‑platform image with `docker build --push --platform \"$CI_REGISTRY_IMAGE_PLATFORM\" -t \"$CI_REGISTRY_IMAGE:$ANTORA_VERSION\" -t \"$CI_REGISTRY_IMAGE:$CI_REGISTRY_IMAGE_TAG\" .`, and finally runs `docker buildx imagetools inspect \"$CI_REGISTRY_IMAGE:$ANTORA_VERSION\"` to inspect the published image.",
+  "tags": [
+    "docker",
+    "docker-in-docker",
+    "buildx",
+    "antora",
+    "multiarch",
+    "ci-registry"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_10883",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 393,
+  "description": "Create a GitLab CI pipeline that uses the ruby:2.3 Docker image and caches the vendor directory. Add a pages job that runs only on the master branch, executes apt-get update -yqqq, apt-get install -y nodejs, bundle install --path vendor, and bundle exec middleman build, then publishes the public/ folder as a GitLab Pages artifact. Add a test job that runs on all branches except master, runs the same apt-get update -yqqq, apt-get install -y nodejs, bundle install --path vendor, and bundle exec middleman build commands, without any artifacts. Both jobs run in the default test stage and share the vendor cache.",
+  "tags": [
+    "ruby",
+    "middleman",
+    "pages",
+    "cache",
+    "nodejs",
+    "bundle"
+  ]
+}

@@ -1,0 +1,11 @@
+build:
+  script:
+  - docker login -u $DOCKER_USER -p $DOCKER_PASS registry.gitlab.com
+  - docker build -t registry.gitlab.com/brus46/mediawiki:latest .
+  - docker push registry.gitlab.com/brus46/mediawiki:latest
+  stage: build
+image: docker:latest
+services:
+- docker:dind
+stages:
+- build

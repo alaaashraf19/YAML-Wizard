@@ -1,0 +1,49 @@
+branch-docker_hub:
+  except:
+  - master
+  script:
+  - docker login -u nicosingh -p $DOCKERHUB_NICOSINGH_PASSWORD $DOCKERHUB_REGISTRY
+  - docker build -t $DOCKERHUB_IMAGE_NAME:$CI_COMMIT_REF_NAME .
+  - docker push $DOCKERHUB_IMAGE_NAME:$CI_COMMIT_REF_NAME
+  stage: build-branch
+  tags:
+  - rpi
+branch-gitlab:
+  except:
+  - master
+  script:
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $GITLAB_REGISTRY
+  - docker build -t $GITLAB_IMAGE_NAME:$CI_COMMIT_REF_NAME .
+  - docker push $GITLAB_IMAGE_NAME:$CI_COMMIT_REF_NAME
+  stage: build-branch
+  tags:
+  - rpi
+image: nicosingh/rpi-dind:latest
+master-docker_hub:
+  only:
+  - master
+  script:
+  - docker login -u nicosingh -p $DOCKERHUB_NICOSINGH_PASSWORD $DOCKERHUB_REGISTRY
+  - docker build -t $DOCKERHUB_IMAGE_NAME:latest .
+  - docker push $DOCKERHUB_IMAGE_NAME:latest
+  stage: build-master
+  tags:
+  - rpi
+master-gitlab:
+  only:
+  - master
+  script:
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $GITLAB_REGISTRY
+  - docker build -t $GITLAB_IMAGE_NAME:latest .
+  - docker push $GITLAB_IMAGE_NAME:latest
+  stage: build-master
+  tags:
+  - rpi
+stages:
+- build-branch
+- build-master
+variables:
+  DOCKERHUB_IMAGE_NAME: nicosingh/rpi-openvpn-server
+  DOCKERHUB_REGISTRY: docker.io
+  GITLAB_IMAGE_NAME: $GITLAB_REGISTRY/nicosingh/rpi-openvpn-server
+  GITLAB_REGISTRY: registry.gitlab.com

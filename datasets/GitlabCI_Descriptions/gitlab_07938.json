@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_07938",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 663,
+  "description": "Create a GitLab CI pipeline that uses the blang/latex Docker image and runs a global before_script that updates apt, installs biber and wget, downloads the LinLibertine 5.3.0 font archive and the Fira 4.202 font archive, extracts them into /usr/share/fonts/truetype and /usr/share/fonts/opentype/fira-sans respectively, and refreshes the font cache with fc-cache. Define a single stage named build. In the build stage add a latex job that executes the script command docs/build.sh. Configure the latex job to publish the contents of docs/build/* as build artifacts.",
+  "tags": [
+    "latex",
+    "blang-latex",
+    "fonts",
+    "apt",
+    "build"
+  ]
+}

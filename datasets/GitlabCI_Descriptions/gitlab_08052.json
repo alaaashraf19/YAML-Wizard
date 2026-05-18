@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_08052",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 645,
+  "description": "Create a GitLab CI pipeline using the docker:latest image with a docker:dind service. Define a global variable EXTERNAL_REGISTRY=docker.io and a cache keyed by ${CI_COMMIT_REF_SLUG} that stores the image/ directory. Include a before_script that runs: apk add bash curl git; mkdir -p /builds/$CI_PROJECT_PATH/mnt; mkdir -p ${CI_PROJECT_DIR}/image; mkdir ~/.docker; chmod 700 ~/.docker; cp ${CONFIG_JSON} ~/.docker/config.json. Define three stages: build, test, deploy. Add a build job in the build stage that runs only on branches and executes \"bash -x pipeline/pipeline-entry.sh\". Add a test job in the test stage that also runs only on branches and executes the same script. Add a deploy job in the deploy stage that runs only on the master branch and executes the same script.",
+  "tags": [
+    "docker",
+    "dind",
+    "bash",
+    "pipeline",
+    "cache",
+    "build",
+    "test",
+    "deploy",
+    "variables"
+  ]
+}

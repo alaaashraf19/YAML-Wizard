@@ -1,0 +1,14 @@
+{
+  "sha": "439aab7d01ec8e1dd8b889fadabe51d5af0a9c0cb19e6ffe8877c897ae68fae4",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1527,
+  "description": "Create a CodeQL GitHub Actions workflow that analyzes code for security vulnerabilities on every push to any branch, on pull requests to any branch except certain file paths, and on a weekly schedule. The workflow should use an ubuntu-22.04 environment, checkout the repository with a fetch depth of 2, install necessary dependencies, initialize CodeQL for C++ with security and quality queries, build the project with Ninja, and then perform a CodeQL analysis.",
+  "tags": [
+    "codeql",
+    "security",
+    "cpp",
+    "ubuntu",
+    "analysis"
+  ]
+}

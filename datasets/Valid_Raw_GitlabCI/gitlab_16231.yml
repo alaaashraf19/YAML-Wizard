@@ -1,0 +1,37 @@
+pages:
+  artifacts:
+    paths:
+    - public
+  image: ubuntu:20.04
+  rules:
+  - if: $CI_COMMIT_BRANCH =~ "master|website"
+  script:
+  - apt update -qq
+  - DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends git ca-certificates
+    python3-pip build-essential
+  - git clone https://gitlab.com/sat-mtl/documentation/satie satie-doc
+  - pushd satie-doc
+  - git pull origin main
+  - pip install -U sphinx
+  - pip install -r requirements.txt
+  - make htmlgitlab
+  - popd
+  - mv satie-doc/public public
+  stage: deploy
+test:
+  image:
+    entrypoint:
+    - ''
+    name: metalabsat/supercollider:3.11.1
+  rules:
+  - if: $CI_COMMIT_BRANCH == "website"
+    when: never
+  script:
+  - echo installing quarks
+  - sclang ci/install_quarks.scd $CI_PROJECT_DIR
+  - echo SATIE Test Debugging is "$DEBUG_TESTS"
+  - jackd --no-realtime -d dummy -r 48000 -p 1024 &
+  - sleep 10
+  - sclang ci/run_tests.scd "$DEBUG_TESTS"
+  variables:
+    DEBUG_TESTS: 'false'

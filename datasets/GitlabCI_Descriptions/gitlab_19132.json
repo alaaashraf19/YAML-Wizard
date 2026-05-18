@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_19132",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 181,
+  "description": "Create a GitLab CI pipeline that uses the node:4.2.2 Docker image. Define a pages job that runs in the deploy stage for GitLab Pages and is limited to the master branch. The job caches the node_modules directory, executes \"npm install -g harp\" followed by \"harp compile ./ public\", and publishes the resulting public/ folder as a pages artifact. No extra services are needed.",
+  "tags": [
+    "node",
+    "harp",
+    "gitlab-pages",
+    "npm",
+    "cache"
+  ]
+}

@@ -1,0 +1,81 @@
+build-artifacts:
+  artifacts:
+    paths:
+    - target
+  except:
+  - tags
+  image: registry.gitlab.com/opentracing-workshop/build-mvn-jdk11:latest
+  script:
+  - mvn clean
+  - mvn install -Dnet.bytebuddy.experimental=true
+  - chmod a+x ./scripts/prepare.sh && ./scripts/prepare.sh
+  stage: build
+cache:
+  paths:
+  - .m2/repository
+deploy-dependencies:
+  allow_failure: true
+  cache: {}
+  environment:
+    name: prod
+  except:
+  - tags
+  image: registry.gitlab.com/opentracing-workshop/build-tools:latest
+  only:
+  - master
+  script:
+  - chmod a+x ./scripts/deploy_backend.sh && ./scripts/deploy_backend.sh
+  stage: deploy
+  when: manual
+deploy-services:
+  allow_failure: true
+  cache: {}
+  environment:
+    name: prod
+  except:
+  - tags
+  image: registry.gitlab.com/opentracing-workshop/build-tools:latest
+  only:
+  - master
+  script:
+  - chmod a+x ./scripts/deploy_services.sh && ./scripts/deploy_services.sh
+  stage: deploy
+  when: manual
+image: docker:stable-git
+push-images:
+  cache: {}
+  except:
+  - tags
+  only:
+  - master
+  script:
+  - apk add --no-cache bash
+  - echo ${CI_BUILD_TOKEN} | docker login -u gitlab-ci-token --password-stdin ${CI_REGISTRY}
+  - chmod a+x ./scripts/image_build.sh && ./scripts/image_build.sh
+  stage: push
+services:
+- docker:dind
+stages:
+- manual
+- build
+- push
+- deploy
+validate-k8s:
+  allow_failure: true
+  cache: {}
+  environment:
+    name: prod
+  except:
+  - tags
+  image:
+    name: registry.gitlab.com/opentracing-workshop/build-tools:latest
+  script:
+  - kubectl get pods
+  - chmod a+x scripts/check_vars.sh && ./scripts/check_vars.sh
+  stage: manual
+  when: manual
+variables:
+  MAVEN_CLI_OPTS: --batch-mode --errors --fail-at-end --show-version
+  MAVEN_OPTS: -Dhttps.protocols=TLSv1.2 -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository
+    -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN
+    -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_11062",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 587,
+  "description": "Create a GitLab CI pipeline that uses the gcc Docker image and defines a single stage called build. Add a build job that runs before_script commands: apt-get -qq update 1>/dev/null, apt-get -qq install make autoconf libgtest-dev cmake libusb-1.0-0-dev libgoogle-glog-dev 1>/dev/null, then builds Google Test with cd /usr/src/gtest && cmake . && make && mv libg* /usr/lib/ && cd -, and then executes the script command make test. Add a lint job also in the build stage that runs before_script commands: apt-get -qq update 1>/dev/null, apt-get -qq upgrade 1>/dev/null, apt-get -qq install python-pip 1>/dev/null, pip -q install cpplint, and then runs cpplint --quiet --counting=detailed $(find . -name *.h -or -name *.cpp | grep -vE '^./build/') . No caches, artifacts, or conditional rules are defined.",
+  "tags": [
+    "gcc",
+    "make",
+    "cmake",
+    "cpplint",
+    "c++",
+    "lint"
+  ]
+}

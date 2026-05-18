@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_11709",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 661,
+  "description": "Create a GitLab CI pipeline that uses the node:carbon Docker image and defines a global before_script executing `which node`, `node -v`, `npm -v`, and `npm install`. Add a single stage named deploy and a job called deploy that runs in this stage. The deploy job has its own before_script which installs `openssh-client` if `ssh-agent` is missing, creates `~/.ssh`, starts the ssh-agent, and writes a config disabling StrictHostKeyChecking when running inside Docker. It is limited to the master branch via `only: - master` and its script adds the private key from the $PRIVATE_KEY variable with `ssh-add <(echo \"$PRIVATE_KEY\")`, copies the repository contents to `deploy@vaslyn.epi.codes:/srv/vaslyn.epi.codes/spotify-lyrics/` using `scp -P22 -r *`, then SSHs to the server to source nvm, run `npm install`, and restart the app with `pm2 restart spotify-lyrics`. No caches, artifacts, services, or additional variables are defined.",
+  "tags": [
+    "node",
+    "ssh",
+    "deploy",
+    "pm2",
+    "npm",
+    "gitlab-ci"
+  ]
+}

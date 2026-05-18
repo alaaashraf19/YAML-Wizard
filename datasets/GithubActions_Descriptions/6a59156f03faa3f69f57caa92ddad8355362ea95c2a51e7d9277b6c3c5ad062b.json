@@ -1,0 +1,15 @@
+{
+  "sha": "6a59156f03faa3f69f57caa92ddad8355362ea95c2a51e7d9277b6c3c5ad062b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1412,
+  "description": "Create a GitHub Actions workflow named pytest that runs on push to master and dev-gha branches and on pull requests to master. Use an ubuntu-latest job matrix to test with multiple Python versions, installing dependencies, running tests with pytest and coverage, and reporting to Coveralls. The workflow consists of two jobs: test and coveralls_finish, where the latter depends on the former.",
+  "tags": [
+    "python",
+    "pytest",
+    "coveralls",
+    "tests",
+    "ubuntu",
+    "matrix"
+  ]
+}

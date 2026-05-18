@@ -1,0 +1,33 @@
+before_script:
+- npm install
+cache:
+  paths:
+  - node_modules/
+dist:
+  artifacts:
+    paths:
+    - dist/
+  only:
+  - tags
+  script:
+  - npm run build
+  stage: build
+image: node:latest
+lint:
+  script:
+  - npm run lint
+  stage: test
+publish:
+  dependencies:
+  - dist
+  only:
+  - tags
+  script:
+  - echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}' > .npmrc
+  - cp src/proxy.js .
+  - npm publish
+  stage: deploy
+stages:
+- test
+- build
+- deploy

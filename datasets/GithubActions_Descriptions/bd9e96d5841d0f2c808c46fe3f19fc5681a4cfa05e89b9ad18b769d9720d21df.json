@@ -1,0 +1,16 @@
+{
+  "sha": "bd9e96d5841d0f2c808c46fe3f19fc5681a4cfa05e89b9ad18b769d9720d21df",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2205,
+  "description": "Create a GitHub Actions workflow named OSW-OS-test that runs on workflow dispatch, push, and pull requests to master and develop branches. The workflow consists of two jobs: Find-packages and build-OSW. The Find-packages job checks out the repository and submodules, and outputs languages and models matrices. The build-OSW job depends on Find-packages, uses the matrices to compile firmware for different languages and models, and uploads the firmware artifacts.",
+  "tags": [
+    "github-actions",
+    "firmware",
+    "python",
+    "platformio",
+    "ubuntu",
+    "tests",
+    "ci"
+  ]
+}

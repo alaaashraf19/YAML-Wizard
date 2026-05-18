@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_18973",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 280,
+  "description": "Create a GitLab CI pipeline using the rust:1.31 Docker image with two stages: build and test. In the build stage add a build-examples job that runs cargo build --examples, and a build-lib job that runs cargo build --lib --features strict. In the test stage add a test job that runs cargo test followed by cargo test --no-default-features --lib --tests. No caches, artifacts, services, variables, or rules are defined.",
+  "tags": [
+    "rust",
+    "cargo",
+    "build",
+    "test"
+  ]
+}

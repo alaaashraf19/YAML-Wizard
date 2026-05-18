@@ -1,0 +1,17 @@
+{
+  "sha": "9d982d8109805fcdfdb29dd95e31c20cb3981a063856de5a81a771f7a001a860",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 10031,
+  "description": "Create a GitHub Actions workflow named Build and Test that runs on push and pull request events with a concurrency group that cancels in-progress jobs. The workflow uses a matrix strategy to test on multiple operating systems (ubuntu-18.04, ubuntu-20.04, macos-10.15) and etcd versions (v3.2.26, v3.3.11, v3.4.13). For each job, check out the repository, install dependencies, build and install cpprestsdk and the project, and run various tests including etcd sync, etcd, memory leak, watcher, transaction, election, lock, and authentication tests.",
+  "tags": [
+    "cpp",
+    "etcd",
+    "github-actions",
+    "ubuntu",
+    "macos",
+    "testing",
+    "ci",
+    "cd"
+  ]
+}

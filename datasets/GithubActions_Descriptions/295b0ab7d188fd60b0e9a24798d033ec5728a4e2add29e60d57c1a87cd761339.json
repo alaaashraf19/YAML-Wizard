@@ -1,0 +1,15 @@
+{
+  "sha": "295b0ab7d188fd60b0e9a24798d033ec5728a4e2add29e60d57c1a87cd761339",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 688,
+  "description": "Create a GitHub Actions workflow named linux that runs on push and pull request events. Use a matrix job strategy to build and test on multiple Linux distributions (alpine, archlinux, debian, fedora, opensuse, gentoo) with different C++ standards (c++17, c++20 for fedora). For each job, run on an ubuntu-latest environment with a container based on the current distribution, check out the code, configure the build with meson, build with ninja, and run tests with meson test.",
+  "tags": [
+    "linux",
+    "meson",
+    "ninja",
+    "c++",
+    "matrix",
+    "container"
+  ]
+}

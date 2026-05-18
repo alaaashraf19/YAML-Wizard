@@ -1,0 +1,77 @@
+.test:
+  script: &id001
+  - tox -e $CI_JOB_NAME
+  stage: test
+before_script:
+- ci/apt install -y -qqq --no-install-recommends xvfb ffmpeg libmpv1 libmediainfo0v5
+  pyqt5-dev-tools x11-utils
+- pip3 install "tox<4"
+cache:
+  key: $CI_JOB_NAME
+  paths:
+  - $XDG_CACHE_HOME/pip/
+  - $XDG_CACHE_HOME/apt/
+coverage:
+  artifacts:
+    expire_in: 14 days
+    name: coverage
+    paths:
+    - coverage.xml
+    - htmlcov/
+  script: *id001
+  stage: test
+dist:
+  artifacts:
+    name: ${CI_PROJECT_NAME}-{$CI_BUILD_REF_NAME}
+    paths:
+    - dist/
+  before_script:
+  - ci/apt install -y -qqq --no-install-recommends pyqt5-dev-tools asciidoctor make
+  - pip3 install -rreqs/requirements-deploy.txt
+  only:
+  - tags
+  - triggers
+  script:
+  - python3 setup.py sdist
+  - python3 setup.py bdist_wheel
+  - twine upload dist/* -u "$PYPI_USER" -p "$PYPI_PASS"
+  stage: deploy
+image: python:3.8-bullseye
+pages:
+  artifacts:
+    paths:
+    - public
+  before_script:
+  - ci/apt install -y -qq --no-install-recommends asciidoctor
+  only:
+  - master
+  - tags
+  - triggers
+  script:
+  - ci/gen-pages
+  stage: deploy
+py36:
+  image: python:3.6-bullseye
+  script: *id001
+  stage: test
+py37:
+  image: python:3.7-bullseye
+  script: *id001
+  stage: test
+py38:
+  image: python:3.8-bullseye
+  script: *id001
+  stage: test
+stages:
+- test
+- deploy
+test-dist:
+  before_script:
+  - ci/apt install -y -qqq --no-install-recommends pyqt5-dev-tools
+  script:
+  - ci/dist_test sdist
+  - ci/dist_test bdist
+  - ci/dist_test bdist_wheel
+  stage: test
+variables:
+  XDG_CACHE_HOME: $CI_PROJECT_DIR/.cache

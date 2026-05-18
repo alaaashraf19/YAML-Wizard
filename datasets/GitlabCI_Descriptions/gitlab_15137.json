@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_15137",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 502,
+  "description": "Create a GitLab CI pipeline using the rust:latest Docker image, define APT_CACHE_DIR and CARGO_HOME variables pointing to $CI_PROJECT_DIR/apt and $CI_PROJECT_DIR/cargo, and cache the apt/, cargo/, and target/ directories. Define three stages: test, doc, and build. In the test stage add a test job that runs rustc --version, cargo --version, and cargo test --verbose. In the doc stage add a pages job that runs cargo doc --no-deps, moves target/doc to a public directory, creates an index.html redirect with echo '<meta http-equiv=\\\"refresh\\\" content=\\\"0; url=soup/index.html\\\">' > public/index.html, publishes the public/ folder as a Pages artifact, and only runs on the master branch. The build stage is reserved for future jobs but has no jobs defined currently.",
+  "tags": [
+    "rust",
+    "cargo",
+    "gitlab-pages",
+    "documentation",
+    "test",
+    "apt-cache"
+  ]
+}

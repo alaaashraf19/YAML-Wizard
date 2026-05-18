@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_17205",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 176,
+  "description": "Create a GitLab CI pipeline that uses the maven:3-jdk-10 Docker image. Define a single job named build that runs in the default test stage and executes the exact command mvn install -B. Configure the build job to archive artifacts from /builds/Slyso/AdventureGame/target/*.jar and the /builds/Slyso/AdventureGame/target/resources directory after the script finishes. No additional services, caches, variables, or rules are required.",
+  "tags": [
+    "maven",
+    "java",
+    "jar",
+    "gitlab-ci"
+  ]
+}

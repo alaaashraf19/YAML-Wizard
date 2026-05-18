@@ -1,0 +1,14 @@
+{
+  "sha": "e3b8f904a1635a0930ed172b63b31333b77532971c7926cee17846a023c616c5",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1948,
+  "description": "Create a GitHub Actions workflow named Build documentation that triggers on push events. In an ubuntu-latest job, check out the code, install Python 3.12 with pip caching, then install project dependencies and the package itself. Build the documentation using make html, and if the push is to the main branch, deploy the documentation to a GitHub Pages site by cloning the site repository, replacing its content with the newly built documentation, and pushing the changes.",
+  "tags": [
+    "python",
+    "documentation",
+    "github-pages",
+    "sphinx",
+    "deploy"
+  ]
+}

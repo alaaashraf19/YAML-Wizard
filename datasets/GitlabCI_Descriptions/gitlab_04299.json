@@ -1,0 +1,22 @@
+{
+  "sha": "gitlab_04299",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 6603,
+  "description": "Create a GitLab CI pipeline that uses the docker:24.0.5 Docker image with a docker:24.0.5-dind service (TLS disabled) and sets DOCKER_BUILDKIT, DOCKER_DRIVER, DOCKER_HOST, and DOCKER_TLS_CERTDIR variables. Define two stages, build and test, and in the build stage add jobs build:back, build:ci_test_back, build:ci_test_front, build:front, build:imposm, build:imposm-watcher, build:postgis, build:tiles, and build:tiles-cleaner, each running a before_script that logs in to the registry with echo \"$CI_JOB_TOKEN\" | docker login -u gitlab-ci-token --password-stdin \"$CI_REGISTRY\", then executing docker buildx build --platform linux/amd64 -t registry.gitlab.com/bagage/batimap/$CONTAINER:$CI_COMMIT_REF_SLUG -f ${BASE_DIR:-$CONTAINER}/$DOCKERFILE ${BASE_DIR:-$CONTAINER} and, if the branch is master, tagging the image as latest and pushing both tags. All build jobs trigger only on changes to .gitlab-ci.yml and their respective directories and on merge_requests or the master branch, and they set job‑specific variables CONTAINER, DOCKERFILE and optionally BASE_DIR. In the test stage add a test:back job using image registry.gitlab.com/bagage/batimap/ci-test-back, with before_script cd back/ and pip install uv==0.8.11, script that replaces psycopg2 with psycopg2-binary, runs uv sync --dev, uv run pre‑commit run --all-files --show-diff-on-failure, and uv run pytest --color=yes -v -rf, services postgis (custom image) and redis:5-alpine, and PostgreSQL/Redis environment variables. Also add test:front and test:front:buildprod jobs using image registry.gitlab.com/bagage/batimap/ci-test-front, each with before_script yarn config set cache-folder cache-ci, cache path cache-ci/, scripts that cd front/ then run yarn, yarn lint, yarn prettier --check, yarn test --karma-config karma-ci.conf.js (with JUnit report artifact for test:front) or yarn build --prod for test:front:buildprod, and they run on merge_requests when relevant files change.",
+  "tags": [
+    "docker",
+    "dind",
+    "buildx",
+    "gitlab-ci",
+    "ci-test-back",
+    "ci-test-front",
+    "uv",
+    "pytest",
+    "yarn",
+    "pre-commit",
+    "postgres",
+    "redis",
+    "docker-registry"
+  ]
+}

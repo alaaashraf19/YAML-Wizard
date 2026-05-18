@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_05701",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 536,
+  "description": "Create a GitLab CI pipeline that runs a before_script to ensure ssh-agent is available, installs openssh-client if missing, starts the agent, adds the $SSH_PRIVATE_KEY, creates ~/.ssh, and writes $SSH_SERVER_HOSTKEYS to known_hosts when inside a Docker container. Define a deploy job in the deploy stage that only runs on the develop and master branches. In the deploy job execute `ssh -p 2222 s225088@se.ifmo.ru \"[[ ! -d public_html/$CI_COMMIT_REF_NAME ]] || rm -R public_html/$CI_COMMIT_REF_NAME\"` followed by `scp -P 2222 -r public_html s225088@se.ifmo.ru:/home/s225088/public_html/$CI_COMMIT_REF_NAME`. No Docker image, services, caches, or artifacts are specified.",
+  "tags": [
+    "ssh",
+    "deploy",
+    "gitlab-ci",
+    "scp",
+    "ssh-agent"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_08001",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1511,
+  "description": "Create a GitLab CI pipeline that uses the docker:git Docker image with a docker:dind service. Include a before_script that logs into registry.gitlab.com with the gitlab-ci-token and $CI_BUILD_TOKEN, then logs into Docker Hub with username gbraad and $DOCKER_PASSWORD. Define four jobs—build_alpine, build_centos, build_fedora, and build_ubuntu—each restricted to the master branch. In each job run: docker build -t registry.gitlab.com/gbraad/openstack-client:<distro> ./<distro>, docker push registry.gitlab.com/gbraad/openstack-client:<distro>, docker tag registry.gitlab.com/gbraad/openstack-client:<distro> gbraad/openstack-client:<distro>, and docker push gbraad/openstack-client:<distro>. No caches, artifacts, or additional stages are defined.",
+  "tags": [
+    "docker",
+    "dind",
+    "gitlab-registry",
+    "docker-hub",
+    "multi-distro",
+    "ci-build"
+  ]
+}

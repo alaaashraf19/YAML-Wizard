@@ -1,0 +1,14 @@
+{
+  "sha": "07c6bfcd58c967bbcf9c8a87fdfc633cf05803445c77a1f63ca09a364435aa29",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1449,
+  "description": "Create a GitHub Actions workflow named test-p4c-fedora that runs on push to main, on pull requests to main, and on merge groups to main. The workflow should cancel any in-progress runs for the same pull request or reference, except for the main branch. Use a job that runs in a Fedora container on an ubuntu-latest VM, installing git, checking out the repository with submodules, installing dependencies, setting up ccache, building p4c, and running tests with ctest.",
+  "tags": [
+    "fedora",
+    "linux",
+    "p4c",
+    "tests",
+    "github-actions"
+  ]
+}

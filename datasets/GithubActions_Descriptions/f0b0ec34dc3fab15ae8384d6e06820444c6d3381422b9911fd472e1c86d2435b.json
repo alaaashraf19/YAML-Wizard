@@ -1,0 +1,15 @@
+{
+  "sha": "f0b0ec34dc3fab15ae8384d6e06820444c6d3381422b9911fd472e1c86d2435b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2960,
+  "description": "Create a GitHub Actions workflow named build that runs on push and pull request events. The workflow should have four jobs: Linux, MacOS, iOS, and Windows. Each job should check out the repository, initialize submodules, and then perform platform-specific build steps. The Linux job should use ubuntu-18.04, install dependencies, and build with GCC 8. The MacOS and iOS jobs should use macOS-latest, build with Xcode, and upload artifacts. The Windows job should use windows-2019, generate a project, and build with MSBuild.",
+  "tags": [
+    "multi-os",
+    "build",
+    "gcc",
+    "xcode",
+    "msbuild",
+    "submodules"
+  ]
+}

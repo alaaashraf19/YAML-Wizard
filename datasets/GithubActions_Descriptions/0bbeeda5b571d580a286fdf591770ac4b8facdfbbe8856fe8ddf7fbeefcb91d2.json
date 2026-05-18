@@ -1,0 +1,14 @@
+{
+  "sha": "0bbeeda5b571d580a286fdf591770ac4b8facdfbbe8856fe8ddf7fbeefcb91d2",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2736,
+  "description": "Create a GitHub Actions workflow named lint-and-test that runs on push to main and on pull requests to main. The workflow should have multiple jobs: lint-docs, lint-style, lint-typing, test, coverage, and package. Each job runs on ubuntu-latest and checks out the repository. The test job runs on multiple Python versions, testing and uploading coverage data. The coverage job combines and exports coverage reports and uploads to Codecov. The package job builds and verifies the package.",
+  "tags": [
+    "python",
+    "linting",
+    "testing",
+    "coverage",
+    "package"
+  ]
+}

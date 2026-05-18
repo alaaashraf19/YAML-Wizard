@@ -1,0 +1,14 @@
+{
+  "sha": "e15cb6e25dadce818761fd1083afaaa19c8190d314281a5c9cfe41adda3b35d6",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2140,
+  "description": "Create a GitHub Actions workflow that compiles XCSoar for KOBO targets. The workflow should trigger on workflow dispatch, push to master branch (excluding certain paths), and pull requests to master (excluding certain paths). Use an ubuntu-latest job that checks out the repository with submodules, caches ccache and third-party libraries, and then uses a Docker image to compile XCSoar for KOBO and run checks.",
+  "tags": [
+    "xcsoar",
+    "kobo",
+    "docker",
+    "github-actions",
+    "compilation"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_12360",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 653,
+  "description": "Create a GitLab CI pipeline using the registry.gitlab.com/mindroot/baseimage:latest Docker image with a postgres:10.1 service and the variables BUNDLE_APP_CONFIG, BUNDLE_PATH, DB_HOST, DB_PASSWORD, DB_USER, DOCKER_DRIVER, DOCKER_HOST, GEM_HOME, and GEM_PATH. Define two stages: test and deploy. In the test stage add a test job that runs \"bundle check || bundle install\", then \"bundle exec rake db:create RAILS_ENV=test\", then \"bundle exec rspec\". In the deploy stage add a production job that only runs on the master branch, executes \"export PATH=$PATH:/gembox/bin\", then \"gem install dpl\", then \"dpl --provider=heroku --app=mind-quests --api-key=$HEROKU_PRODUCTION_API_KEY\" to deploy to Heroku. No caches or artifacts are defined.",
+  "tags": [
+    "ruby",
+    "rails",
+    "bundler",
+    "postgres",
+    "heroku",
+    "dpl"
+  ]
+}

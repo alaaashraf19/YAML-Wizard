@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_07181",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1210,
+  "description": "Create a GitLab CI pipeline that uses the pointsofinterest/gitlabr:latest Docker image and defines the stages document, test, build, check, and push. Add a document job (stage: document) that runs the exact command `R --vanilla -e 'library(devtools);  devtools::document(); devtools::document()'` and publishes the `man/` directory and `NAMESPACE` file as artifacts. Add a test job (stage: test) that depends on document and runs `R --vanilla -e 'library(devtools); library(testthat); devtools::test(reporter = StopReporter)'`. Add a build job (stage: build) that depends on document, runs `R --vanilla -e 'library(devtools); devtools::build(path = \"./\")'` and stores any `*.tar.gz` files as artifacts. Add a check job (stage: check) that depends on build and runs `R --vanilla -e 'library(devtools);  tar_file <- file.path(getwd(), list.files(\".\", pattern = \".tar.gz\")); results <- devtools::check_built(tar_file); stopifnot(sum(sapply(results, length)) <= 0)'`. Finally, add two push jobs (stage: push) named push_to_github and push_to_gitlab_com, each limited to the master branch, that execute `git push https://${GITHUB_USERNAME}:${GITHUB_PASSWORD}@github.com/jirkalewandowski/gitlabr.git master` and `git push https://${GITLAB_COM_USERNAME}:${GITLAB_COM_PASSWORD}@gitlab.com/jirkalewandowski/gitlabr.git master` respectively to deploy the repository to GitHub and GitLab.com.",
+  "tags": [
+    "r",
+    "devtools",
+    "gitlab-ci",
+    "docker",
+    "github-push",
+    "gitlab-push",
+    "documentation",
+    "testing"
+  ]
+}

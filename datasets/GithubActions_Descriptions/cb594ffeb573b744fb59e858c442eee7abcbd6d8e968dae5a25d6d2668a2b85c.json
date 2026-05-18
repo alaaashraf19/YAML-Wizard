@@ -1,0 +1,14 @@
+{
+  "sha": "cb594ffeb573b744fb59e858c442eee7abcbd6d8e968dae5a25d6d2668a2b85c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 586,
+  "description": "Create a GitHub Actions workflow that triggers on push and pull request events. Define a job named Build C++ running on ubuntu-20.04 with a matrix strategy for cpu and cuda variants. In this job, check out the repository with submodules, install g++-7 and optionally the NVIDIA CUDA toolkit, then run the build_cc.sh script with environment variables set for the variant, compiler, and CUDA version.",
+  "tags": [
+    "cpp",
+    "cuda",
+    "ubuntu",
+    "github-actions",
+    "matrix-build"
+  ]
+}

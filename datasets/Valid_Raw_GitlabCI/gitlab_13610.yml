@@ -1,0 +1,87 @@
+before_script:
+- which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )
+- eval $(ssh-agent -s)
+- ssh-add <(echo "$SSH_PRIVATE_KEY")
+- mkdir -p ~/.ssh
+- '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+build_desktop_app:
+  artifacts:
+    paths:
+    - $MM_DESKTOP_DIR/release
+  cache:
+    paths:
+    - node_modules
+  image: electronuserland/builder:wine-mono
+  only:
+  - master
+  script:
+  - apt-get update
+  - apt-get install -y icnsutils graphicsmagick
+  - git clone https://github.com/mattermost/desktop.git
+  - bin/rebrand-desktop-app
+  - cd $MM_DESKTOP_DIR
+  - yarn
+  - CSC_IDENTITY_AUTO_DISCOVERY=false npm run build
+  - CSC_IDENTITY_AUTO_DISCOVERY=false npm run package:all
+  stage: build_client
+build_server:
+  artifacts:
+    paths:
+    - mattermost
+  dependencies:
+  - build_webapp
+  image: golang:1.9
+  only:
+  - master
+  script:
+  - echo $MM_ARCHIVE_FILE
+  - wget https://releases.mattermost.com/$MM_VERSION/mattermost-team-$MM_VERSION-linux-amd64.tar.gz
+  - tar -xzvf mattermost-team-$MM_VERSION-linux-amd64.tar.gz
+  - MM_SERVER_DIR=mattermost bin/rebrand-server
+  - cp -R $MM_WEBAPP_DIR/dist/** mattermost/client
+  - cp -R mattermost-email-templates/*.html mattermost/templates/
+  stage: build_server
+build_webapp:
+  artifacts:
+    paths:
+    - $MM_WEBAPP_DIR
+  cache:
+    paths:
+    - node_modules
+  image: kkarczmarczyk/node-yarn
+  only:
+  - master
+  script:
+  - git clone --branch v${MM_VERSION} https://github.com/mattermost/mattermost-webapp.git
+  - bin/rebrand-webapp
+  - cd $MM_WEBAPP_DIR
+  - make clean
+  - make build > /dev/null 2>&1
+  stage: build_client
+push_to_s3:
+  dependencies:
+  - build_server
+  image: python:latest
+  only:
+  - master
+  script:
+  - pip install awscli
+  - tar -zcvf mattermost-${CI_COMMIT_SHA:0:8}.tar.gz ./mattermost
+  - aws s3 cp mattermost-${CI_COMMIT_SHA:0:8}.tar.gz s3://${S3_BUCKET_NAME}
+  stage: push_to_s3
+stages:
+- build_client
+- build_server
+- push_to_s3
+variables:
+  ANDROID_RELEASE: alpha
+  ASSETS_DIR: ${CI_PROJECT_DIR}/assets
+  MM_DESKTOP_DIR: ${CI_PROJECT_DIR}/desktop
+  MM_MOBILE_DIR: ${CI_PROJECT_DIR}/mattermost-mobile
+  MM_SERVER_DIR: ${CI_PROJECT_DIR}/mattermost-server
+  MM_VERSION: 4.7.2
+  MM_WEBAPP_DIR: ${CI_PROJECT_DIR}/mattermost-webapp
+  S3_BUCKET_NAME: assets.relay
+  SECRETS_DIR: ${CI_PROJECT_DIR}/secrets
+  STANDALONE_LOGO: assets/logo.png
+  VAULT_DIR: ${CI_PROJECT_DIR}/relay-vault

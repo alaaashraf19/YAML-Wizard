@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_06074",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1056,
+  "description": "Create a GitLab CI pipeline using the python:latest Docker image, defining a PIP_CACHE_DIR variable and caching both .cache/pip and the venv/ directory. Include a before_script that prints the Python version, installs virtualenv, creates and activates a virtualenv, installs the current package, and creates a public directory. Define two stages, test and quality and deploy. In the test and quality stage add a pylint job that runs pip install pylint pylint-exit anybadge, runs pylint on pytemplate/ and tests/*.py piping output to pylint.txt, extracts the rating with sed, echoes the score, generates a badge with anybadge, and stores public/pylint.svg as an artifact; also add a test job that runs python setup.py test. In the deploy stage add a wheel job that runs python setup.py bdist_wheel and publishes dist/*.whl as an artifact, and a pages job that runs pip install sphinx sphinx-rtd-theme recommonmark, builds the docs with make html in the doc directory, copies the generated HTML to the public folder, publishes the public directory as a GitLab Pages artifact, and runs only on the master branch.",
+  "tags": [
+    "python",
+    "sphinx",
+    "pylint",
+    "anybadge",
+    "gitlab-pages",
+    "wheel",
+    "pip-cache",
+    "docker-image",
+    "deploy",
+    "test-quality"
+  ]
+}

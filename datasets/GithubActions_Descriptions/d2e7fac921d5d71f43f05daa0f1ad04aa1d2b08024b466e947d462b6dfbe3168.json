@@ -1,0 +1,13 @@
+{
+  "sha": "d2e7fac921d5d71f43f05daa0f1ad04aa1d2b08024b466e947d462b6dfbe3168",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 573,
+  "description": "Create a GitHub Actions workflow named Style Check that runs on every push to all branches except those matching release-* and on all pull requests. Use a single ubuntu-latest job with a 60-minute timeout that checks out the repository, installs Lua, finds all .cpp and .h files in the src directory, checks basic style with CheckBasicStyle.lua, and verifies bindings and dependencies with CheckBindingsDependencies.lua in the src/Bindings directory.",
+  "tags": [
+    "lua",
+    "style-check",
+    "c++",
+    "github-actions"
+  ]
+}

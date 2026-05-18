@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_08687",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2418,
+  "description": "Create a GitLab CI pipeline with two stages, test and deploy, using the node:14 image for the test job, busybox:latest for a version check job, and a custom deploy-build-image for deployment jobs, tagging the deploy jobs with the internal runner and the test job with docker and shared tags. In the test stage add a test job that runs `node --version`, `npm --version`, `npm install`, and `npm test` using the node:14 image. In the test stage also add a check_version job that runs only on branches matching the regex /^release/.*$/ and executes the three shell commands: `PACKAGE_VERSION=$(grep -m1 version package.json | sed \"s/[\\\", ]//g\" | cut -d \":\" -f2)`, `BRANCH_VERSION=$(echo $CI_COMMIT_REF_NAME | sed -n -e 's/release\\/\\(.*\\)/\\1/p')`, and an if statement that compares the two versions and exits 0 on match or 1 on mismatch, using the busybox:latest image. In the deploy stage add a deploy_beta job that runs on the master branch, uses a before_script to start ssh-agent, add the $DEPLOY_KEY_ANSIBLE_REPO and $INTERNAL_GITTER_NETWORK_SSH_KEY keys, configure SSH, clone the gitter-infrastructure repo, set ANSIBLE_DIR, write the Ansible vault password to /root/.vault_pass, then runs `cd $ANSIBLE_DIR && ansible-playbook -i beta --vault-password-file \"/root/.vault_pass\" playbooks/gitter/irc-servers.yml`, targeting the beta environment at https://irc-beta.gitter.im with GIT_STRATEGY set to none. Also add a manual deploy_beta_manual job identical to deploy_beta but requiring manual trigger, and a manual deploy_prod_manual job that runs on tags, uses the same before_script and runs the ansible-playbook against the prod inventory (`-i prod`) targeting the prod environment at https://irc.gitter.im.",
+  "tags": [
+    "node",
+    "npm",
+    "busybox",
+    "ansible",
+    "deploy",
+    "beta",
+    "prod",
+    "gitlab-ci"
+  ]
+}

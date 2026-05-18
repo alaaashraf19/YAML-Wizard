@@ -1,0 +1,73 @@
+build:
+  artifacts:
+    expire_in: 2 hrs
+    paths:
+    - build/
+  before_script:
+  - apk update && apk add --no-cache make cmake g++ git autoconf gcovr sdl2-dev linux-headers
+    util-linux-dev zlib
+  script:
+  - mkdir build
+  - cd build
+  - cmake -DCMAKE_BUILD_TYPE=Debug ..
+  - cmake --build . --config Debug --target all -- -j 12
+  - cd ..
+  stage: build
+  tags:
+  - linux
+deploy:
+  artifacts:
+    expire_in: 1 day
+    paths:
+    - public/
+  before_script:
+  - apk update && apk add --no-cache make cmake g++ git autoconf gcovr sdl2-dev linux-headers
+    valgrind
+  dependencies:
+  - build
+  only:
+  - tags
+  script:
+  - cd /builds/bitingbytes/onion-engine/build
+  - cpack
+  - cd ..
+  - mkdir public
+  - mv ./build/onionengine*.deb public/
+  stage: deploy
+  tags:
+  - linux
+image: alpine:latest
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  - develop
+  script:
+  - apk update && apk add --no-cache doxygen
+  - mkdir docs
+  - doxygen Doxyfile
+  - mv docs/html/ public/
+  stage: deploy
+  tags:
+  - linux
+test:
+  artifacts:
+    expire_in: 2 hrs
+    paths:
+    - build/
+  before_script:
+  - apk update && apk add --no-cache make cmake g++ git autoconf gcovr sdl2-dev linux-headers
+    valgrind
+  script:
+  - cd build
+  - ctest -j12
+  - gcovr -r .. -e /builds/bitingbytes/onion-engine/build* -e /builds/bitingbytes/onion-engine/test*
+    -e /builds/bitingbytes/onion-engine/include/subsystem/configuration/json.h
+  - gcovr -r .. --html --html-details -o index.html -e /builds/bitingbytes/onion-engine/build*
+    -e /builds/bitingbytes/onion-engine/test* -e /builds/bitingbytes/onion-engine/include/subsystem/configuration/json.h
+  - cd ../
+  stage: test
+  tags:
+  - linux

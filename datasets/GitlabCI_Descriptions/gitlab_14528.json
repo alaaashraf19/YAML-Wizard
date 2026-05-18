@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_14528",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 233,
+  "description": "Create a GitLab CI pipeline using the phunehehe/nix:16.09 Docker image. Define the default test stage and four jobs: cabal, casperjs, eslint, and hlint. Each job runs the shell command ./test/test.sh <job-name> (cabal, casperjs, eslint, hlint respectively). The cabal job also uploads ./foomail.cabal as an artifact. No caches, variables, services, or rules are defined.",
+  "tags": [
+    "nix",
+    "cabal",
+    "casperjs",
+    "eslint",
+    "hlint"
+  ]
+}

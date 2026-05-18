@@ -1,0 +1,72 @@
+.build-template:
+  before_script: &id001
+  - sudo pip install --upgrade conan_package_tools
+  - conan user
+  script: &id002
+  - python build.py
+clang-3.9:
+  before_script: *id001
+  image: conanio/clang39
+  script: *id002
+  variables:
+    CONAN_CLANG_VERSIONS: '3.9'
+clang-4.0:
+  before_script: *id001
+  image: conanio/clang40
+  script: *id002
+  variables:
+    CONAN_CLANG_VERSIONS: '4.0'
+clang-5.0:
+  before_script: *id001
+  image: conanio/clang50
+  script: *id002
+  variables:
+    CONAN_CLANG_VERSIONS: '5.0'
+clang-6.0:
+  before_script: *id001
+  image: conanio/clang60
+  script: *id002
+  variables:
+    CONAN_CLANG_VERSIONS: '6.0'
+clang-7:
+  before_script: *id001
+  image: conanio/clang7
+  script: *id002
+  variables:
+    CONAN_CLANG_VERSIONS: '7.0'
+gcc-4.9:
+  before_script: *id001
+  image: conanio/gcc49
+  script: *id002
+  variables:
+    CONAN_GCC_VERSIONS: '4.9'
+gcc-5:
+  before_script: *id001
+  image: conanio/gcc5
+  script: *id002
+  variables:
+    CONAN_GCC_VERSIONS: '5'
+gcc-6:
+  before_script: *id001
+  image: conanio/gcc6
+  script: *id002
+  variables:
+    CONAN_GCC_VERSIONS: '6'
+gcc-7:
+  before_script: *id001
+  image: conanio/gcc7
+  script: *id002
+  variables:
+    CONAN_GCC_VERSIONS: '7'
+gcc-8:
+  before_script: *id001
+  image: conanio/gcc8
+  script: *id002
+  variables:
+    CONAN_GCC_VERSIONS: '8'
+variables:
+  CONAN_CHANNEL: testing
+  CONAN_LOGIN_USERNAME: bryceschober
+  CONAN_REFERENCE: CppUTest/master
+  CONAN_UPLOAD: https://api.bintray.com/conan/bryceschober/bks-conan
+  CONAN_USERNAME: bryceschober

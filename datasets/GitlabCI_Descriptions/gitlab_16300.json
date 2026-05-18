@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_16300",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 687,
+  "description": "Create a GitLab CI pipeline using the node:latest Docker image, caching node_modules/, and a global before_script that runs yarn install for every job. Define three stages (build, test, deploy) and a build job in the build stage that executes yarn clean then yarn build, and publishes the lib/, src/*.bs.js and __tests__/*.bs.js directories as artifacts. Add a test job in the test stage that depends on the build job, uses the mariadb:latest service, sets JEST_MYSQL_HOST=mariadb, MYSQL_ALLOW_EMPTY_PASSWORD=1, MYSQL_DATABASE=test, runs yarn test followed by yarn coverage, and stores the coverage/ directory as an artifact. Include a pages job in the deploy stage that depends on the test job, runs only on the master branch, moves coverage/lcov-report into a public/ folder, and publishes the public/ directory as a pages artifact that expires after 30 days. Ensure the pipeline respects the defined stages and artifacts as described.",
+  "tags": [
+    "node",
+    "yarn",
+    "mariadb",
+    "gitlab-pages",
+    "coverage",
+    "build",
+    "test"
+  ]
+}

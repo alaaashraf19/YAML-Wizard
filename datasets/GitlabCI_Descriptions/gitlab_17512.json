@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_17512",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 806,
+  "description": "Create a GitLab CI pipeline using the rust:latest Docker image with a before_script that runs apt-get update -yqq and apt-get install -yqq --no-install-recommends build-essential libsodium-dev. Define variables APT_CACHE_DIR=$CI_PROJECT_DIR/apt and CARGO_HOME=$CI_PROJECT_DIR/cargo, and cache the apt/, cargo/, and target/ directories. Define three stages: test, benchmark, and build. In the test stage add a cargo build job that runs \"rustc --version && cargo --version\", then \"cargo build --release\", then \"strip target/release/iridium\", and publishes the binary as an artifact named iridium from target/release/iridium. Also in the test stage add a cargo test job (allow_failure:true) that runs \"rustc --version && cargo --version\" and \"cargo test --all --verbose\". In the benchmark stage add a cargo bench job that runs \"rustc --version && cargo --version\" and \"cargo bench\", and stores the benchmark results as an artifact named benchmark_results from target/criterion. No special rules or deployment targets are defined.",
+  "tags": [
+    "rust",
+    "cargo",
+    "benchmark",
+    "ci",
+    "docker"
+  ]
+}

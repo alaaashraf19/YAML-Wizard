@@ -1,0 +1,15 @@
+{
+  "sha": "3f7c79257fbf549661ee75aae5ddfaf0d4ef8c9ac84b5a716ead30590d545bdf",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1621,
+  "description": "Create a GitHub Actions workflow named release that triggers on push events with any tag. The workflow should have two jobs: create_release on ubuntu-latest to create a new release with a version name, and build_release on windows-latest in a matrix of mingw64 and mingw32 environments. The build_release job should set up MSYS2, checkout the code, configure and build the project with CMake and Ninja, package it with CPack, and then upload the package to the release created by create_release.",
+  "tags": [
+    "release",
+    "windows",
+    "msys2",
+    "mingw",
+    "cmake",
+    "github-release"
+  ]
+}

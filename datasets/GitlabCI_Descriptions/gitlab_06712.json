@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_06712",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 680,
+  "description": "Create a GitLab CI pipeline using the ubuntu:xenial Docker image and a single build stage. In the global before_script, update apt, install build-essential, pkg-config, cmake, libusb-1.0-0-dev, git, libboost-dev, libboost-filesystem-dev, and libboost-program-options-dev, then clone the scraw repository, run cmake -DBUILD_DOCS=OFF -DCMAKE_INSTALL_PREFIX=/usr, make, and make install; repeat the same steps for the scrawpp repository with cmake -DCMAKE_INSTALL_PREFIX=/usr and make install. Add a build_job in the build stage that creates a build directory, runs cmake .. and make to compile the project. No caches, artifacts, services, or rules are defined.",
+  "tags": [
+    "ubuntu",
+    "cmake",
+    "make",
+    "c++",
+    "scraw",
+    "scrawpp"
+  ]
+}

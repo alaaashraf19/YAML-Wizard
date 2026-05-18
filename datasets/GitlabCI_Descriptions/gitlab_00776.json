@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_00776",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1824,
+  "description": "Create a GitLab CI pipeline that uses the Docker image registry.gitlab.com/build-images/docker:latest with a docker:dind service and defines the stages check, build, test, deploy, and stop. Add a Check PWD job in the check stage that exports DOCKER_HOST from $DOCKER_HOST_VAR, echoes the value, and runs docker info. Add a Build & Push to Registry job in the build stage that runs on all non-tag commits, sets COLON_TAG=:1.0.0 and REGISTRY_SLASH=$CI_REGISTRY_IMAGE/, echoes the registry information, logs in to the GitLab registry with CI_BUILD_TOKEN, then builds and pushes images using docker-compose -f docker-compose-gitlab.yml build and docker-compose -f docker-compose-gitlab.yml push. Add a Deploy to Swarm job in the deploy stage that sets SHELL=/bin/bash, initializes a Docker Swarm, deploys the traefik stack with docker stack deploy -c traefik.yml traefik, logs in to the registry, and deploys the vote stack with docker stack deploy vote --with-registry-auth -c docker-stack-traefik.yml. Finally, add a Pull & deploy & test locally job in the test stage that runs on non-tag commits, echoes the registry variables, shows docker version, ensures a Swarm is initialized, deploys the traefik stack, pulls images with docker-compose -f docker-stack-traefik.yml pull, deploys the vote stack, and then removes it with docker stack rm vote.",
+  "tags": [
+    "docker",
+    "docker-compose",
+    "docker-swarm",
+    "gitlab-ci",
+    "dind",
+    "registry"
+  ]
+}

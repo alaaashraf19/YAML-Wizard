@@ -1,0 +1,14 @@
+{
+  "sha": "1bd73c629c7f89850c5b19c1383c2090a8b9a0e8060dc9ccf9002e54f58bcaca",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1269,
+  "description": "Create a GitHub Actions workflow named Tests on OSX that runs on push, pull request, and workflow dispatch events. Use a macos-latest job with a matrix strategy to test multiple Python versions (3.6, 3.7, 3.8, 3.9). In each job, check out the repository, set up the corresponding Python version, and install various dependencies including Boost, Z3, Capstone, Unicorn, LIEF, and Triton. Finally, run unittests with ctest.",
+  "tags": [
+    "osx",
+    "python",
+    "tests",
+    "ci",
+    "macos"
+  ]
+}

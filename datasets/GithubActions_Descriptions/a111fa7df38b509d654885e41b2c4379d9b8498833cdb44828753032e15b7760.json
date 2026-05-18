@@ -1,0 +1,15 @@
+{
+  "sha": "a111fa7df38b509d654885e41b2c4379d9b8498833cdb44828753032e15b7760",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2536,
+  "description": "Create a GitHub Actions workflow named Build Wheels that runs on push to master and tags starting with 'v', and on pull requests to master. Use a matrix strategy to build wheels on macOS-10.15. For each job, check out the code, set up Python 3.x, and then build wheels using cibuildwheel for various architectures. Upload the resulting wheels as artifacts and, if the workflow is triggered by a tag, upload them as release assets.",
+  "tags": [
+    "python",
+    "cibuildwheel",
+    "wheels",
+    "macos",
+    "github-actions",
+    "release-assets"
+  ]
+}

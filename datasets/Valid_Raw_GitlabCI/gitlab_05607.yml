@@ -1,0 +1,14 @@
+image: beevelop/ionic:latest
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - cd /builds/cn-ds/ionic-app
+  - npm install
+  - npm run build
+  - mkdir public
+  - mv www/* public
+  stage: deploy

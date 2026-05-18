@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_18863",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 29578,
+  "description": "Create a GitLab CI pipeline that uses the docker:24 image with the docker:24-dind service and defines the IMAGE_TAG variable as $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA. Define stages: build, test, security, deploy. In the build stage add a `build` job that runs `registry_login` then, if a Dockerfile exists, executes `docker build --build-arg HTTP_PROXY=\"$HTTP_PROXY\" --build-arg http_proxy=\"$http_proxy\" --build-arg HTTPS_PROXY=\"$HTTPS_PROXY\" --build-arg https_proxy=\"$https_proxy\" --build-arg FTP_PROXY=\"$FTP_PROXY\" --build-arg ftp_proxy=\"$ftp_proxy\" --build-arg NO_PROXY=\"$NO_PROXY\" --build-arg no_proxy=\"$no_proxy\" -t \"$CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG\" .` and finally `docker push \"$CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG\"`; otherwise it runs the Herokuish build sequence (`docker run -i -e BUILDPACK_URL -e HTTP_PROXY … gliderlabs/herokuish /bin/herokuish buildpack build`, `docker commit`, `docker create … /bin/herokuish procfile start web`, `docker commit`). In the test stage add a `setup_test_db` job that sets `DATABASE_URL` to a PostgreSQL URL based on `$POSTGRES_USER`, `$POSTGRES_PASSWORD`, `$POSTGRES_DB` and either `postgres` or `localhost`. In the security stage add a `container_scanning` job that runs `registry_login`, starts a Clair DB container, starts the Clair scanner container, installs wget, pulls the built image, downloads `clair-scanner_linux_amd64`, makes it executable, waits for the Clair daemon, then runs `./clair-scanner -c http://docker:6060 --ip $(hostname -i) -r gl-container-scanning-report.json -l clair.log -w clair-whitelist.yml $CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG || true` and saves `gl-container-scanning-report.json` as an artifact. Also add a `code_quality` job that runs `docker run --env SOURCE_CODE=\"$PWD\" --volume \"$PWD\":/code --volume /var/run/docker.sock:/var/run/docker.sock \"registry.gitlab.com/gitlab-org/security-products/codequality:$SP_VERSION\" /code` and stores the code quality report. Add a `license_management` job that runs `/run.sh analyze .` and stores its output. In the deploy stage add a `deploy` job that runs `install_dependencies`, `ensure_namespace`, `download_chart`, then executes a Helm upgrade/install with many `--set` flags to configure image repository/tag, database URL, replica count (computed by `get_replicas`), PostgreSQL settings, and application track, followed by `kubectl rollout status -n \"$KUBE_NAMESPACE\" -w \"deployment/$name\"`. The `deploy` job runs only on protected branches or tags and publishes the Helm release as the deployment target.",
+  "tags": [
+    "docker",
+    "dind",
+    "helm",
+    "kubernetes",
+    "auto-devops",
+    "container-scanning",
+    "code-quality",
+    "license-management",
+    "build",
+    "deploy"
+  ]
+}

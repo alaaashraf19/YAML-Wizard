@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_15938",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 668,
+  "description": "Create a GitLab CI pipeline with two jobs, both in the default test stage. The first job named build uses the image registry.gitlab.com/robigalia/runner:latest and runs the commands: git submodule update --init --recursive; for config in configs/*_defconfig; do make $(basename $config) || exit; echo $config; make V=2 || exit; make clean || exit; done. The second job named verify_signatures uses the image ubuntu:17.04 and runs: apt update; apt install --assume-yes python-pexpect gnupg2 git; git clone --depth=1 https://gitlab.com/robigalia/meta; gpg2 --list-keys; (gpg2 --export --no-default-keyring --keyring ./meta/.gnupg/pubring.kbx || true) | gpg2 --import; gpg2 --list-keys --fingerprint --fingerprint --verbose; ./meta/verify-signatures.py HEAD ./meta/.mailmap. No caches, artifacts, or conditional rules are defined.",
+  "tags": [
+    "custom-runner",
+    "ubuntu",
+    "make",
+    "gpg",
+    "git-submodule",
+    "verify-signatures"
+  ]
+}

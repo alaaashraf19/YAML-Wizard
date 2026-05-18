@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_11064",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 243,
+  "description": "Create a GitLab CI pipeline that uses the scorpil/rust:nightly Docker image and runs a before_script to update apt and install libsdl2-2.0-0 and libsdl2-dev. Define a single job named test:cargo in the default test stage that first executes rustc --version && cargo --version, then runs cargo test --verbose --jobs 1 --release. No caches, artifacts, services, or special rules are required.",
+  "tags": [
+    "rust",
+    "cargo",
+    "apt",
+    "libsdl2",
+    "nightly"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "sha": "1ef9f717de6a22bc54b917f5dbce7b5df512ab218e4f1f7034185588d7e074a2",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2392,
+  "description": "Create a GitHub Actions workflow named CI for general build that runs on push to master and tags matching v*, on pull requests to master, and on release creation. The workflow uses a matrix strategy to build on ubuntu-latest, macos-latest, and windows-latest for different architectures. For each job, check out the code, set up Python 3.x, configure and build with CMake, run tests with ctest, package with cpack, build a Python wrapper, and upload artifacts and release assets.",
+  "tags": [
+    "cmake",
+    "python",
+    "ci",
+    "release",
+    "packaging",
+    "testing",
+    "multi-os",
+    "multi-arch"
+  ]
+}

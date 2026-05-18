@@ -1,0 +1,15 @@
+{
+  "sha": "5a7b85c3b759f4629a1e23e6c5826750d6d939122f49c37a9e53177ded59aee7",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 971,
+  "description": "Create a GitHub Actions workflow named macOS CI that runs on push, pull request, and workflow dispatch events. Use a macos-latest job that checks out the repository, installs Qt 6.9.0 with qtimageformats module, installs Conan and dependencies including exiv2/0.28.3, builds the project using CMake with Conan presets, and deploys it as a macOS bundle using macdeployqt. Upload the resulting .dmg file as an artifact.",
+  "tags": [
+    "macos",
+    "qt",
+    "conan",
+    "cmake",
+    "ci",
+    "deployment"
+  ]
+}

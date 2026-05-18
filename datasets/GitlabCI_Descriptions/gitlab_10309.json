@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_10309",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 152,
+  "description": "Create a GitLab CI pipeline using the python:3.5.9-alpine3.10 Docker image. Define a single job named pages that runs in the default stage, executes \"pip install -r requirements.txt\" followed by \"pelican -s publishconf.py\", and stores the generated \"public/\" directory as a Pages artifact to be published to GitLab Pages. No additional services, caches, or rules are required.",
+  "tags": [
+    "python",
+    "pelican",
+    "gitlab-pages",
+    "alpine"
+  ]
+}

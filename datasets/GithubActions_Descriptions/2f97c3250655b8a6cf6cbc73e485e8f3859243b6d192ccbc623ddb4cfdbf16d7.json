@@ -1,0 +1,15 @@
+{
+  "sha": "2f97c3250655b8a6cf6cbc73e485e8f3859243b6d192ccbc623ddb4cfdbf16d7",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4104,
+  "description": "Create a GitHub Actions workflow named Weekly Tests (GPU) that runs every Sunday at 7AM UTC and allows manual dispatch. The workflow consists of three jobs: build-gem5, LULESH-tests, and HACC-tests, all running on self-hosted Linux x64 environments with specific containers. The build-gem5 job builds gem5, uploads the artifact, and prints the job status. The LULESH-tests and HACC-tests jobs download the gem5 build, perform tests, and run benchmarks.",
+  "tags": [
+    "gpu",
+    "weekly-tests",
+    "gem5",
+    "linux",
+    "self-hosted",
+    "scheduled-workflow"
+  ]
+}

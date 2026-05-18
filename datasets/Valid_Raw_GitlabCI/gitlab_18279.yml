@@ -1,0 +1,9 @@
+before_script:
+- ruby -v
+build:
+  artifacts:
+    paths:
+    - '*.gem'
+  script:
+  - gem build oauth2-checker.gemspec
+image: ruby:2.2

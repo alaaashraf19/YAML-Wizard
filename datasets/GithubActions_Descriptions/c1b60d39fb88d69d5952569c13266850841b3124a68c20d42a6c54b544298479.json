@@ -1,0 +1,15 @@
+{
+  "sha": "c1b60d39fb88d69d5952569c13266850841b3124a68c20d42a6c54b544298479",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1596,
+  "description": "Create a scheduled GitHub Actions workflow named Test: feature that runs every Saturday at 16:00 and can be manually triggered. The workflow uses an ubuntu-latest job matrix to run feature tests in parallel across 16 splits. For each split, it checks out the repository, installs required packages, builds OMNeT++ and INET, runs feature tests, and uploads the test log as an artifact.",
+  "tags": [
+    "ubuntu",
+    "tests",
+    "scheduled",
+    "parallel",
+    "omnetpp",
+    "inet"
+  ]
+}

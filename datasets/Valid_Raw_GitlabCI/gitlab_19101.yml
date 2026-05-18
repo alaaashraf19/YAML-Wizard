@@ -1,0 +1,26 @@
+code_quality:
+  allow_failure: true
+  artifacts:
+    expire_in: 1 week
+    reports:
+      codequality: gl-code-quality-report.json
+  dependencies: []
+  except:
+    variables:
+    - $CODE_QUALITY_DISABLED
+  image: docker:stable
+  only:
+    refs:
+    - branches
+    - tags
+  script:
+  - "if ! docker info &>/dev/null; then\n  if [ -z \"$DOCKER_HOST\" -a \"$KUBERNETES_PORT\"\
+    \ ]; then\n    export DOCKER_HOST='tcp://localhost:2375'\n  fi\nfi\n"
+  - docker run --env SOURCE_CODE="$PWD" --volume "$PWD":/code --volume /var/run/docker.sock:/var/run/docker.sock
+    "registry.gitlab.com/gitlab-org/security-products/codequality:12-0-stable" /code
+  services:
+  - docker:stable-dind
+  stage: test
+  variables:
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: ''

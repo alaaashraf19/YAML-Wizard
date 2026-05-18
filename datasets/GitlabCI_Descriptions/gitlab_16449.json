@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_16449",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 32767,
+  "description": "Create a GitLab CI pipeline that uses the docker:latest Docker image with a docker:latest-dind service and defines stages test, build, review, and production. In the test stage add a test job that runs the functions dependency_scanning, container_scanning, sast, code_quality and license_management, which each invoke Docker containers to perform security scans (e.g., docker run ... arminc/clair-local-scan, docker run ... gitlab-org/security-products/sast, etc.) and always uploads the generated reports as artifacts. In the build stage add a build job that installs required tools (apk add openssl curl tar gzip bash ca-certificates git, download and install Helm and kubectl), logs in to the GitLab Container Registry, builds the Docker image (docker build -t $CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG . or uses gliderlabs/herokuish for Heroku apps), pushes the image to the registry, and caches the Helm chart directory. In the review stage add a review job that calls the deploy function with track=review, setting replica counts via get_replicas, configuring Helm values (image.repository, image.tag, service.enabled, postgresql settings, etc.) and deploying to the Kubernetes namespace. In the production stage add a production job that calls the same deploy function with track=stable, then runs the scale function to adjust replicas, and finally publishes the deployment to the environment. All jobs use the defined variables (POSTGRES_USER, POSTGRES_PASSWORD, CI_APPLICATION_REPOSITORY, CI_APPLICATION_TAG, KUBE_NAMESPACE, etc.) and only run on appropriate branches or tags as per Auto DevOps rules.",
+  "tags": [
+    "docker",
+    "dind",
+    "helm",
+    "kubernetes",
+    "auto-devops",
+    "security-scanning",
+    "container-registry",
+    "deployment",
+    "review-apps"
+  ]
+}

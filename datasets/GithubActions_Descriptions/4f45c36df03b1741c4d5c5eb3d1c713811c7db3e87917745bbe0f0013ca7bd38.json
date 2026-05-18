@@ -1,0 +1,15 @@
+{
+  "sha": "4f45c36df03b1741c4d5c5eb3d1c713811c7db3e87917745bbe0f0013ca7bd38",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4629,
+  "description": "Create a GitHub Actions workflow named Windows that runs on every push and pull request. Use a windows-2022 job with a matrix strategy to build and test DiligentCore across multiple configurations, including different Windows versions, toolsets, build types, and CMake generators. Clone the repository, configure CMake, build the project, and run various tests for each matrix combination. Upload artifacts for non-debug builds with specific generators.",
+  "tags": [
+    "windows",
+    "cmake",
+    "visual-studio",
+    "testing",
+    "github-actions",
+    "matrix-build"
+  ]
+}

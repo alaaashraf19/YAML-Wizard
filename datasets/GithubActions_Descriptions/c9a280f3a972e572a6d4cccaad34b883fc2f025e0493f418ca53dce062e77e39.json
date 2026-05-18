@@ -1,0 +1,14 @@
+{
+  "sha": "c9a280f3a972e572a6d4cccaad34b883fc2f025e0493f418ca53dce062e77e39",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 450,
+  "description": "Create a GitHub Actions workflow named Mac that runs on push events, excluding changes to specific Linux and Windows workflow files, .gitignore, and Windows-specific files. Use a macos-latest job that checks out the repository with submodules, runs a build script in the mac directory, and uploads a zipped artifact named amsynth-macos-<commit SHA> from the mac directory.",
+  "tags": [
+    "macos",
+    "build",
+    "artifact",
+    "upload",
+    "github-actions"
+  ]
+}

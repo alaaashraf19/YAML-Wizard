@@ -1,0 +1,19 @@
+before_script:
+- yarn
+cache:
+  paths:
+  - node_modules/
+image: node:latest
+pages:
+  artifacts:
+    paths:
+    - public
+  script:
+  - yarn build
+  - rm -rf public
+  - mv build public
+  stage: deploy
+test:
+  script:
+  - yarn test
+  stage: test

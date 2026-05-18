@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_10745",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 600,
+  "description": "Create a GitLab CI pipeline using the java:8 Docker image and a global before_script that runs apt-get update -yqq, apt-get install apt-transport-https -yqq, adds the sbt repository via echo \"deb http://dl.bintray.com/sbt/debian /\" | tee -a /etc/apt/sources.list.d/sbt.list, imports the sbt key with apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 642AC823, updates apt again, installs sbt -yqq, and executes sbt sbt-version. Define two stages: test and deploy. In the test stage add a test job that runs sbt clean test. In the deploy stage add a deploy job that runs apt-get update -yq, apt-get install rubygems ruby-dev -y, gem install dpl, and dpl --provider=heroku --app=lunatech-demo-cd-play-scala --api-key=$HEROKU_API_KEY to deploy to Heroku.",
+  "tags": [
+    "java8",
+    "sbt",
+    "heroku",
+    "dpl",
+    "scala",
+    "gitlab-ci"
+  ]
+}

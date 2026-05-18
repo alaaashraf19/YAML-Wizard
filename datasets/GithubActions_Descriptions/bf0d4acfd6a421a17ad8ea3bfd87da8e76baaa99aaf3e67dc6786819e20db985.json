@@ -1,0 +1,14 @@
+{
+  "sha": "bf0d4acfd6a421a17ad8ea3bfd87da8e76baaa99aaf3e67dc6786819e20db985",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2072,
+  "description": "Create a GitHub Actions workflow named UnitTests that runs on push to master and develop branches and on pull requests to these branches. The workflow should have four jobs: build_linux, build_linux_no_boost, build_windows, and build_windows_no_boost. Each job runs on a different environment (ubuntu-latest or windows-latest), checks out the code, configures the environment using custom actions, and then builds and tests the code using another custom action with different parameters.",
+  "tags": [
+    "unit-tests",
+    "multi-platform",
+    "custom-actions",
+    "ubuntu",
+    "windows"
+  ]
+}

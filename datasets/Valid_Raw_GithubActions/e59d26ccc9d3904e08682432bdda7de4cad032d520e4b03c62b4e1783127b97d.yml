@@ -1,0 +1,38 @@
+name: Publish
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 7.0.*
+    - name: Install dependencies
+      run: |
+        dotnet clean Synthesis.Bethesda.sln -c Release && dotnet nuget locals all --clear
+        dotnet restore Synthesis.Bethesda.sln
+    - name: Build
+      run: dotnet build Synthesis.Bethesda.sln -c Release --no-restore /p:Version=${{ github.event.release.tag_name }} -p:PackageReleaseNotes="See https://github.com/Mutagen-Modding/Synthesis/releases/tag/${{ github.event.release.tag_name }}"
+    - name: Test
+      run: dotnet test Synthesis.Bethesda.sln --no-build -c Release
+    - name: Pack GUI
+      run: dotnet publish "Synthesis.Bethesda.GUI/Synthesis.Bethesda.GUI.csproj" --configuration Release -p:PublishSingleFile=true -p:EnableCompressionInSingleFile=true
+    - name: Archive Release
+      run: |
+        powershell Compress-Archive Synthesis.Bethesda.GUI/bin/Release/net6.0/win-x64/publish/* Synthesis.zip
+    - name: Publish Synthesis GUI to Github
+      uses: svenstaro/upload-release-action@v2
+      with:
+        file: Synthesis.zip
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        tag: ${{ github.event.release.tag_name }}
+    - name: Publish x64 Nugets to Nuget.org
+      run: dotnet nuget push **bin/x64/Release/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --no-symbols
+    - name: Publish Nugets to Nuget.org
+      run: dotnet nuget push **bin/Release/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --no-symbols

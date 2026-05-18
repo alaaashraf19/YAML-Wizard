@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_04526",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 617,
+  "description": "Create a GitLab CI pipeline that uses the docker:stable Docker image with a docker:dind service and sets the variables DOCKER_DRIVER=overlay2, DOCKER_HOST=tcp://docker:2375/, GIT_SUBMODULE_STRATEGY=recursive, MOUNT_POINT=/builds/$CI_PROJECT_PATH/mnt. Define a single stage called tests. In the tests stage add a job named bats that runs the following script commands in order: set -e; apk update && apk add --no-cache bash curl py-pip tzdata git; pip install docker-compose==1.21.2; adduser pipeline_user --gecos \"\" --disabled-password; mkdir app_dir; chown pipeline_user -R app_dir; '# ###########################', '# #####TESTS#################', '# ###########################'; su -c \"./tests/run.sh\" pipeline_user. The job has no artifacts, caches, or conditional rules.",
+  "tags": [
+    "docker",
+    "dind",
+    "bats",
+    "apk",
+    "docker-compose",
+    "gitlab-ci"
+  ]
+}

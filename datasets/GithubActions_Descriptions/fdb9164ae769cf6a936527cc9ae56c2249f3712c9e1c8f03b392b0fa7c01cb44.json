@@ -1,0 +1,17 @@
+{
+  "sha": "fdb9164ae769cf6a936527cc9ae56c2249f3712c9e1c8f03b392b0fa7c01cb44",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3315,
+  "description": "Create a GitHub Actions CI workflow that runs on push to master and pull requests to master. The workflow has two jobs, iOS and Android, both running on macos-latest. The iOS job checks out the repository, creates a build directory, configures and builds the project with cmake for iOS, starts a simulator, and runs tests. The Android job checks out the repository, creates a build directory, starts an emulator, configures and builds the project with cmake for Android, waits for the emulator to be ready, deploys tests, and runs them.",
+  "tags": [
+    "ci",
+    "ios",
+    "android",
+    "cmake",
+    "macos",
+    "simulator",
+    "emulator",
+    "tests"
+  ]
+}

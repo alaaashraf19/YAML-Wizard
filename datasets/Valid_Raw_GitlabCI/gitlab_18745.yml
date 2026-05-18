@@ -1,0 +1,22 @@
+deploy:
+  only:
+  - master
+  script:
+  - clojure -T:build jar
+  - clojure -T:build deploy
+  stage: deploy
+image: clojure:latest
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - clojure -X:codox
+  - mv ./target/doc ./public
+  stage: deploy
+test:
+  script:
+  - clojure -M:test
+  stage: test

@@ -1,0 +1,14 @@
+{
+  "sha": "12925248c4d965dcb2ba28f71926600155c5ceed059941215cd1dfb6a24d989d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2141,
+  "description": "Create a GitHub Actions workflow named Build wheels that runs on push to main and tags starting with v*, and on pull requests to main that modify C files or build system files. The workflow should have three jobs: build wheels on multiple OS and architectures, build a source distribution, and upload to PyPI on version tags. For wheel building, set up Python 3.8, use QEMU for aarch64, and utilize cibuildwheel. For source distribution, check the manifest, build with setup.py, and upload the artifacts.",
+  "tags": [
+    "python",
+    "pypi",
+    "wheels",
+    "sdist",
+    "github-actions"
+  ]
+}

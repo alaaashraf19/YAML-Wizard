@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_07218",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2231,
+  "description": "Create a GitLab CI pipeline using the docker:latest image with the docker:dind service. Define stages build, release, latest and set the GIT_STRATEGY variable to none. Add a before_script that logs into the GitLab registry with CI_JOB_TOKEN, computes VERSION from the branch name (using release- prefix logic) and echoes the version, and an after_script that logs out from Docker registries. In the build stage add a Build job that runs `docker build --pull -t $CI_REGISTRY_IMAGE:$VERSION .` then `docker push $CI_REGISTRY_IMAGE:$VERSION`. In the latest stage add DockerHubLatest, GitLabLatest, and QuayIOLatest jobs that each run only on branches matching `/^release-.*$/` and execute: export the target image variable, docker login with the appropriate credentials, docker pull $CI_REGISTRY_IMAGE:$VERSION, docker tag $CI_REGISTRY_IMAGE:$VERSION to the target registry with the `latest` tag, and docker push the latest tag. In the release stage add DockerHubRelease and QuayIORelease jobs (also only on `/^release-.*$/`, with QuayIORelease also allowed on a test branch) that perform the same steps but tag with `$VERSION` instead of `latest` before pushing to Docker Hub or Quay.io.",
+  "tags": [
+    "docker",
+    "dind",
+    "docker-hub",
+    "quay-io",
+    "gitlab-registry",
+    "release",
+    "latest",
+    "version-tagging"
+  ]
+}

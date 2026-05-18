@@ -1,0 +1,23 @@
+image: ruby:alpine
+markdown_lint:
+  allow_failure: true
+  script:
+  - gem install mdl
+  - mdl docs/
+  stage: test
+pages:
+  artifacts:
+    paths:
+    - public
+  environment:
+    name: production
+    url: https://nllgg.gitlab.io/dustpuppy
+  only:
+  - master
+  script:
+  - cp -r docs/. public
+  - echo "deploying to pages for production"
+  stage: deploy
+stages:
+- test
+- deploy

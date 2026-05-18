@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_04306",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 366,
+  "description": "Create a GitLab CI pipeline that uses the node:6 Docker image and defines two stages: test and deploy. In the test stage add a test job that runs the command npm test. In the deploy stage add a publish job that first runs npm install --quiet https://gitlab.com/bahmutov/semantic-release-gitlab.git#8f519e9 and then executes NODE_DEBUG=request DEBUG=semantic-release-*,conventional-* $(npm bin)/semantic-release-gitlab to perform a semantic-release to GitLab. Configure the publish job to run only for branches matching the regex ^release- and to be excluded from normal branches (except: branches).",
+  "tags": [
+    "node",
+    "npm",
+    "semantic-release",
+    "gitlab",
+    "deploy",
+    "test"
+  ]
+}

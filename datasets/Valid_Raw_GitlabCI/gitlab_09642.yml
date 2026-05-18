@@ -1,0 +1,22 @@
+build-commit:
+  artifacts:
+    name: $CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA
+    paths:
+    - dist/
+  script:
+  - yarn install
+  - yarn run build
+build-tag:
+  artifacts:
+    name: $CI_PROJECT_NAME-$CI_COMMIT_TAG
+    paths:
+    - dist/
+  only:
+  - tags
+  script:
+  - yarn install
+  - yarn run build
+cache:
+  paths:
+  - node_modules/
+image: node:lts-alpine

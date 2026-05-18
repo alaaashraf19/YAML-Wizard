@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_10681",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 3410,
+  "description": "Create a GitLab CI pipeline with all jobs in the default test stage. Add a testjruby9_2_0_0 job using the jruby:9.2.0.0 image, with a before_script that writes a Debian stretch source list, runs apt-get update, installs locales and git, generates the en_US.UTF-8 locale, sets LANG, LANGUAGE and LC_ALL to en_US.UTF-8, exports JRUBY_OPTS=--dev, prints ruby version, installs bundler '< 2', runs bundle install -j $(nproc) --path vendor, caches the vendor/ruby directory, and then runs bin/rspec. Add testjruby_9_2, testjruby_9_3 and testjruby_9_4 jobs using jruby:9.2, jruby:9.3 and jruby:9.4 images respectively, each with a before_script that updates apt, installs git, sets JRUBY_OPTS=--dev, prints ruby version (testjruby_9_2 also uninstalls any existing bundler and reinstalls bundler '< 2'), runs bundle install -j $(nproc) --path vendor, caches vendor/ruby, and runs bin/rspec. Add testruby_2_4 through testruby_3_3 jobs for ruby:2.4, 2.5, 2.6, 2.7, 3.0, 3.1, 3.2 and 3.3 images, each with a before_script that (for 2.4) installs locales and sets the en_US.UTF-8 locale, then prints ruby version and runs bundle install -j $(nproc) --path vendor, caches vendor/ruby, and runs bin/rspec. Finally add a testtruffleruby_23_1_2 job using the ghcr.io/graalvm/truffleruby-community:23.1.2-debian image, with a before_script that updates apt, installs git, prints ruby version, runs bundle install -j $(nproc) --path vendor, caches vendor/ruby, and runs bin/rspec.",
+  "tags": [
+    "ruby",
+    "jruby",
+    "rspec",
+    "bundler",
+    "cache",
+    "docker"
+  ]
+}

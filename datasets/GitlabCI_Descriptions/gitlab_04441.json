@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_04441",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 719,
+  "description": "Create a GitLab CI pipeline that uses the python Docker image with a .cache/ cache and defines variables DEBIAN_FRONTEND=noninteractive, XDG_CACHE_HOME=${CI_PROJECT_DIR}/.cache, and _APT_PACKAGE_NAMES='graphviz\\n\\n    libgl1-mesa-glx\\n\\n    '. Define a single stage test and a hidden .test_common template that runs apt-get update --quiet --quiet --yes, apt-get install --quiet --quiet --yes ${_APT_PACKAGE_NAMES}, and python3 -m pip --quiet install tox. Add three jobs: test_python35 using the python:3.5 image, test_python36 using the python:3.6 image, and test_python37 using the python:3.7 image; each inherits the before_script and runs python3 -m tox -e py35, python3 -m tox -e py36, and python3 -m tox -e py37 respectively. All jobs belong to the test stage and use the defined cache.",
+  "tags": [
+    "python",
+    "tox",
+    "apt",
+    "cache",
+    "test"
+  ]
+}

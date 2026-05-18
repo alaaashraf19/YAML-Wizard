@@ -1,0 +1,33 @@
+image: node:6.11.2
+lint css:
+  before_script:
+  - npm install
+  cache:
+    untracked: true
+  only:
+  - master
+  script:
+  - ./node_modules/gulp/bin/gulp.js lint-css
+  stage: lint-css
+lint js:
+  cache:
+    policy: pull
+    untracked: true
+  only:
+  - master
+  script:
+  - ./node_modules/gulp/bin/gulp.js lint-js
+  stage: lint-js
+run unit test:
+  cache:
+    policy: pull
+    untracked: true
+  only:
+  - master
+  script:
+  - ./node_modules/gulp/bin/gulp.js test
+  stage: unit-test
+stages:
+- lint-css
+- lint-js
+- unit-test

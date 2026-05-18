@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_10677",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 149,
+  "description": "Create a GitLab CI pipeline with a single deploy stage job named pages. The job runs the script commands: mkdir .public, cp -r * .public, and mv .public public. It publishes the public/ directory as an artifact (paths: public) and is configured to run only on the master branch. Use the default Docker image (no custom image or services).",
+  "tags": [
+    "pages",
+    "deploy",
+    "artifact",
+    "master",
+    "gitlab-pages"
+  ]
+}

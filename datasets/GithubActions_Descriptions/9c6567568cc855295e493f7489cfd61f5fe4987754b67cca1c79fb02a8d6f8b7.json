@@ -1,0 +1,14 @@
+{
+  "sha": "9c6567568cc855295e493f7489cfd61f5fe4987754b67cca1c79fb02a8d6f8b7",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 929,
+  "description": "Create a GitHub Actions workflow named CI for general build that runs on push to master and on pull requests to master. Use a matrix job that builds on ubuntu-latest, ubuntu-18.04, windows-latest, and macos-latest. For each job, check out the repository, configure the build with cmake based on the operating system, build the project, and run tests with ctest.",
+  "tags": [
+    "cmake",
+    "ci",
+    "matrix",
+    "multios",
+    "tests"
+  ]
+}

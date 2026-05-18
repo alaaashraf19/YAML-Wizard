@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_06698",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 394,
+  "description": "Create a GitLab CI pipeline that runs a before_script with `haxe -version` and `make prepare` for all jobs. Define a single stage called test. Add two jobs, `test-3.1` and `test-3.4`, both in the test stage, each using the Docker image `demurgos/haxe` pinned to the SHA256 digests `d032db4b811a984291011f556a6a17d3807a879e9ff50295a0fb3013814e269a` and `674a9005e88da195e6c4dd8d6e783463ec4b2824b23235d579349e209a6debf6` respectively, and each runs the script `make test`. No caches, artifacts, or special rules are defined.",
+  "tags": [
+    "haxe",
+    "make",
+    "test",
+    "docker",
+    "gitlab-ci"
+  ]
+}

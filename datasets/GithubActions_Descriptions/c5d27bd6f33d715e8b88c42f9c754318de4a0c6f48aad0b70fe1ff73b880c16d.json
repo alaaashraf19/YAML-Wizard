@@ -1,0 +1,15 @@
+{
+  "sha": "c5d27bd6f33d715e8b88c42f9c754318de4a0c6f48aad0b70fe1ff73b880c16d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 749,
+  "description": "Create a GitHub Actions workflow named Tests that runs on every push and pull request. Use a matrix strategy to test on multiple OS and Python versions, including ubuntu-18.04 and macOS-10.14 with Python 3.5, 3.6, and 3.7. For each job, check out the repository, set up the specified Python version, install test dependencies with pipenv, run tests with pytest, and report coverage to Codecov using a token from secrets.",
+  "tags": [
+    "python",
+    "tests",
+    "matrix",
+    "codecov",
+    "pytest",
+    "pipenv"
+  ]
+}

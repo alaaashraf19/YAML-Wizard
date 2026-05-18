@@ -1,0 +1,14 @@
+{
+  "sha": "003d0e61f3cb877154d79d0d04d0bc531f13644f103ad30d7a8d302a377f62fe",
+  "provider": "groq",
+  "model": "llama-3.3-70b-versatile",
+  "yaml_bytes": 4987,
+  "description": "Create a GitHub Actions CI workflow that builds and tests a library and apps on different platforms. The workflow should trigger on push to master or main branches, on pull requests, and on workflow dispatch with an optional debug input. It should use a matrix strategy to run on various OS and Python versions, skipping the build if no code changes are detected. The workflow should install dependencies, set up Python and Bazel, and run build and test scripts with optional verbose mode.",
+  "tags": [
+    "python",
+    "ci",
+    "bazel",
+    "matrix",
+    "debug"
+  ]
+}

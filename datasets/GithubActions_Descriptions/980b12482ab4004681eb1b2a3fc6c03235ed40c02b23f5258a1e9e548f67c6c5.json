@@ -1,0 +1,14 @@
+{
+  "sha": "980b12482ab4004681eb1b2a3fc6c03235ed40c02b23f5258a1e9e548f67c6c5",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 15355,
+  "description": "Create a GitHub Actions workflow named Debian that runs on push and pull request events. The workflow should have two jobs: build and multiarch. The build job runs on ubuntu-latest, uses a matrix strategy to run on different compilers and Docker images, and performs a release build, daily build, VirusTotal scan, and release upload. The multiarch job runs on ubuntu-24.04-arm, uses a matrix strategy to run on different architectures, compilers, and Docker images, and performs a release build, daily build, and release upload.",
+  "tags": [
+    "debian",
+    "docker",
+    "github-actions",
+    "multiarch",
+    "ubuntu"
+  ]
+}

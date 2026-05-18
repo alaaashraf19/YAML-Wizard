@@ -1,0 +1,60 @@
+before_script:
+- export PATH=$JAVA_HOME/bin:$PATH
+build:
+  script:
+  - ./gradlew jar
+  stage: build
+check:
+  artifacts:
+    expire_in: 1d
+    paths:
+    - build/reports
+    reports:
+      junit: build/test-results/test/TEST-*.xml
+  script:
+  - ./gradlew check
+  stage: test
+coverage-report:
+  only:
+  - master
+  script:
+  - ./gradlew jacocoTestReportUpload
+  stage: deploy
+deploy:
+  only:
+  - master
+  - tags
+  script:
+  - ./gradlew publish
+  stage: deploy
+image: openjdk:10
+integration-test:
+  artifacts:
+    expire_in: 1d
+    paths:
+    - build/reports
+    reports:
+      junit: build/test-results/integrationTest/TEST-*.xml
+  script:
+  - ./gradlew integrationTest
+  services:
+  - winsent/geoserver
+  stage: test
+javadoc:
+  artifacts:
+    expire_in: 1d
+    paths:
+    - build/docs
+  script:
+  - ./gradlew javadoc
+  stage: build
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - mv build public
+  stage: deploy
+  when: always

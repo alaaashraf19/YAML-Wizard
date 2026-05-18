@@ -1,0 +1,14 @@
+{
+  "sha": "da125bd652ecf1e7f1040d65f034454c798232affd68b9585c701d5578346473",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2953,
+  "description": "Create a GitHub Actions workflow named macOS that runs on push to the master branch and tags matching v*. It has two jobs: test-macos and package-dmg. The package-dmg job depends on test-macos, runs on macOS, checks out the code, sets up build variables, installs Qt, sets up dependencies, builds the project, adds an OSX certificate, packages a dmg, notarizes it, and uploads the artifact and release.",
+  "tags": [
+    "macos",
+    "qt",
+    "dmg",
+    "notarize",
+    "release"
+  ]
+}

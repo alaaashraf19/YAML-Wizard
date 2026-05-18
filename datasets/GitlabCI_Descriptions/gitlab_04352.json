@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_04352",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 995,
+  "description": "Create a GitLab CI pipeline using the ubuntu:19.10 Docker image and set GIT_SUBMODULE_STRATEGY to recursive. Define a before_script that adds i386 architecture, installs zip unzip wget libglib2.0-0, exports LOVE_VERSION=\"11.2\", GAME_NAME=\"ATaleAboutTail\", GAME_PROVIDER=\"tailtail-ld40\", ICON_FILE=\"icon.png\", HERE=$(pwd), SOURCE_DIR=\"$HERE/src\", BUILD_DIR=\"$HERE/build\", TEMP_DIR=\"$HERE/build/.temp\", CACHE_DIR=\"$HERE/build/.cache\", LOVE_FILE=\"$TEMP_DIR/archived.love\", and runs /bin/bash .buildscript/preparations.sh. Add a build:linux job that runs dpkg --add-architecture i386, apt-get install -y -qq gcc-multilib:i386, then executes /bin/bash .buildscript/linux.sh, and publishes all files under build/linux/* as artifacts. Add a build:macos job that runs /bin/bash .buildscript/osx.sh and stores build/macos/ATaleAboutTail_osx.zip as an artifact. Add a build:windows job that runs /bin/bash .buildscript/windows.sh and stores build/win32/ATaleAboutTail_win.zip as an artifact.",
+  "tags": [
+    "ubuntu",
+    "linux-build",
+    "macos-build",
+    "windows-build",
+    "love2d",
+    "game-ci"
+  ]
+}

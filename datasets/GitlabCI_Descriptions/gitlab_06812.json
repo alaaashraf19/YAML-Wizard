@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_06812",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 347,
+  "description": "Create a GitLab CI pipeline that uses the tmaier/docker-compose:latest Docker image with a docker:dind service. Define a single stage called test and a job named test that runs in this stage. The test job should execute the following shell commands in order: `docker-compose -f docker-compose.yml up --build -d`, `docker-compose -f docker-compose.yml run consensus npm run build`, `docker-compose -f docker-compose.yml run consensus npm run test-all`, and finally `docker-compose -f docker-compose.yml down`. No caches, artifacts, or special rules are required.",
+  "tags": [
+    "docker-compose",
+    "docker",
+    "npm",
+    "test"
+  ]
+}

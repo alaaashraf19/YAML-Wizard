@@ -1,0 +1,14 @@
+{
+  "sha": "c35f3f7d49dbc0734fd3100afdbde09a1a3cc0531d018da23518384a9dc5e17a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 597,
+  "description": "Create a GitHub Actions workflow named linux that runs on push and pull request events to the master branch. Use a matrix job strategy to build on both ubuntu-16.04 and ubuntu-latest, skipping workflows with '[ci skip]' in any commit message. For each job, check out the repository with submodules, configure the build environment with cmake, build with make, and run the geometry-central-test.",
+  "tags": [
+    "cmake",
+    "make",
+    "ubuntu",
+    "tests",
+    "ci"
+  ]
+}

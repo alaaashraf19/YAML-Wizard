@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_11771",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 146,
+  "description": "Create a GitLab CI pipeline that uses the maven:3.3.3-jdk-8-onbuild Docker image. Add a job named build (running in the default stage) that runs the shell commands 'mvn clean package -B' followed by 'cp target/XWeb.jar XWeb.jar' and publishes the resulting XWeb.jar as an artifact. The pipeline has no additional services, caches, variables, or conditional rules.",
+  "tags": [
+    "maven",
+    "java",
+    "jar",
+    "gitlab-ci"
+  ]
+}

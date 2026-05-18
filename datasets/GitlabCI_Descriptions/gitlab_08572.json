@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_08572",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 581,
+  "description": "Create a GitLab CI pipeline that runs on a macOS runner using the macos-15-xcode-16 Docker image and the saas-macos-large-m2pro tag. Define a hidden job named .installation:mac-os-job (no explicit stage) that runs a before_script installing make and moreutils via brew, sets GDK_DIR, MISE_FETCH_REMOTE_VERSIONS_TIMEOUT and MISE_HTTP_TIMEOUT variables, has an empty needs list, extends the .rules:novel rule, and after the job finishes tails the last 100 lines of gdk-install.log and stores gdk-install.log as an artifact that expires after 2 days and is always uploaded. Also define a hidden job named .verification:mac-os-job that runs an after_script moving all *.log files from ${GDK_DIR}/gitlab/log/ to a gitlab_log/ directory and moving the entire ${GDK_DIR}/log/ directory to a gdk_log/ directory.",
+  "tags": [
+    "macos",
+    "brew",
+    "make",
+    "moreutils",
+    "gdk-install",
+    "gitlab-development-kit"
+  ]
+}

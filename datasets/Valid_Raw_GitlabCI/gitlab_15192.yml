@@ -1,0 +1,66 @@
+default:
+  tags:
+  - docker
+pages:
+  artifacts:
+    paths:
+    - public
+  dependencies:
+  - test
+  image: registry.gitlab.com/qosenergy/squalus/ci:2020-01-07
+  only:
+  - master
+  script:
+  - mkdir -p "public/coverage/$CI_COMMIT_REF_NAME"
+  - go tool cover -html=coverage.out -o=public/coverage/$CI_COMMIT_REF_NAME/index.html
+  stage: publish
+stages:
+- test
+- publish
+test:
+  artifacts:
+    paths:
+    - coverage.out
+  image: registry.gitlab.com/qosenergy/squalus/ci:2020-01-07
+  script:
+  - test/test.sh --main
+  services:
+  - mysql:8.0
+  - postgres:15.1
+  - alias: mssql
+    name: mcr.microsoft.com/mssql/server:2022-CU5-ubuntu-20.04
+  stage: test
+test-old-db-versions:
+  image: registry.gitlab.com/qosenergy/squalus/ci:2020-01-07
+  script:
+  - test/test.sh
+  services:
+  - mysql:5.7
+  - postgres:11.6
+  - alias: mssql
+    name: mcr.microsoft.com/mssql/server:2017-CU18-ubuntu-16.04
+  stage: test
+test-previous-db-versions:
+  artifacts:
+    paths:
+    - coverage.out
+  image: registry.gitlab.com/qosenergy/squalus/ci:2020-01-07
+  script:
+  - test/test.sh --main
+  services:
+  - mysql:8.0
+  - postgres:12.1
+  - alias: mssql
+    name: mcr.microsoft.com/mssql/server:2019-GDR1-ubuntu-16.04
+  stage: test
+variables:
+  ACCEPT_EULA: Y
+  MSSQL_PID: Express
+  MYSQL_DATABASE: db
+  MYSQL_PASSWORD: p
+  MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
+  MYSQL_USER: u
+  POSTGRES_DB: db
+  POSTGRES_PASSWORD: p
+  POSTGRES_USER: u
+  SA_PASSWORD: abcDEF12

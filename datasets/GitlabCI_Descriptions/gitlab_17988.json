@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_17988",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 572,
+  "description": "Create a GitLab CI pipeline that uses the alpine:latest Docker image globally and defines a single stage called build_images. Add an images job that runs in the build_images stage, uses the docker:latest image, runs only on the master branch, and uses the docker:dind service. The job executes the exact script steps: apk add --no-cache --update bash; mkdir .docker; echo \"{\\\"experimental\\\": \\\"enabled\\\"}\" > .docker/config.json; docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com; docker --config .docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com; ./build_images.sh keepalived alpine 1.3.5; ./build_images.sh syncthing debian 0.14.52; ./build-grafana.sh 5.4.2 latest. No caches or artifacts are defined.",
+  "tags": [
+    "alpine",
+    "docker",
+    "dind",
+    "build-images",
+    "master-only",
+    "bash"
+  ]
+}

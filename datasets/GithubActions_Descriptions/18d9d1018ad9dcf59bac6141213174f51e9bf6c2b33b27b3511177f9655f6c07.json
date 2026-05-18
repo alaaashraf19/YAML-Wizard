@@ -1,0 +1,18 @@
+{
+  "sha": "18d9d1018ad9dcf59bac6141213174f51e9bf6c2b33b27b3511177f9655f6c07",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3487,
+  "description": "Create a GitHub Actions workflow named Continuous Integration v2 that runs on a schedule, on workflow dispatch, and on pull requests. The workflow has two jobs: CI and Formatting. The CI job runs on a matrix of operating systems, configurations, and containers, checking out the code, installing Vulkan SDK, preparing the build environment, generating the build system, building and testing NovelRT, and installing it. The Formatting job runs on ubuntu-latest, checks code formatting with clang-format, and uploads a patch if formatting fails.",
+  "tags": [
+    "ci",
+    "vulkan",
+    "cpp",
+    "clang-format",
+    "conan",
+    "cmake",
+    "ubuntu",
+    "windows",
+    "macos"
+  ]
+}

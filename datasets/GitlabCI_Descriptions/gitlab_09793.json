@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_09793",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 468,
+  "description": "Create a GitLab CI pipeline using the python:alpine Docker image with a global before_script that runs \"apk update && apk add git\" and \"pip3 install '.[dev]'\". Define two stages: test and deploy. In the test stage add a docs job that executes \"sphinx-build docs/sphinx public\" and saves the public/ directory as an artifact, a lint job that runs \"pylint src\", a test job that runs \"pytest\", and a typecheck job that runs \"mypy src\". In the deploy stage add a pages job that reuses the same \"sphinx-build docs/sphinx public\" command, publishes the public artifact to GitLab Pages, and only runs when $CI_COMMIT_BRANCH is \"main\".",
+  "tags": [
+    "python-alpine",
+    "sphinx",
+    "pylint",
+    "pytest",
+    "mypy",
+    "gitlab-pages",
+    "docs",
+    "lint",
+    "test",
+    "typecheck"
+  ]
+}

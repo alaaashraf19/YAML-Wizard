@@ -1,0 +1,16 @@
+{
+  "sha": "414cb81fab7dd39a62a79b08b2b3e931ae914f44b197e9b45967d9c37cdaed9c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1525,
+  "description": "Create a GitHub Actions workflow named tests that runs on push to the master branch and on pull requests to master. The workflow has three jobs: tests, docs, and style, each running on ubuntu-latest. The tests job uses a matrix strategy to test with Python 3.7 through 3.12, checking out the code, setting up Python, caching pip and tox, installing tox, and running tox -e py. The docs and style jobs check out the code, set up Python 3.12, cache pip and tox, install tox, and run tox -e docs and tox -e style respectively.",
+  "tags": [
+    "python",
+    "tests",
+    "tox",
+    "ubuntu",
+    "matrix",
+    "docs",
+    "style"
+  ]
+}

@@ -1,0 +1,22 @@
+on:
+  pull_request:
+  push:
+    branches: ["master"]
+  workflow_dispatch: # Allows you to run this workflow manually from the Actions tab
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [ "3.9", "3.12" ] # Lowest and highest.
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
+      with:
+          python-version: ${{ matrix.python-version }}
+          cache: "pip" # caching pip dependencies
+    - run: pip install .
+    - run: pip install .[dev]
+    - uses: pre-commit/action@v3.0.1

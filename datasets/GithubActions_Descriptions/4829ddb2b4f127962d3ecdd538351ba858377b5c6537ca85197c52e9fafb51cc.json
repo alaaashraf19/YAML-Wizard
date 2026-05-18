@@ -1,0 +1,15 @@
+{
+  "sha": "4829ddb2b4f127962d3ecdd538351ba858377b5c6537ca85197c52e9fafb51cc",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2741,
+  "description": "Create a GitHub Actions workflow named CI that runs on push to all branches and tags matching v*.*.*, on pull requests, and on workflow dispatch with an optional force-rebuild input. The workflow has three jobs: build, CI, and release. The build job runs on ubuntu-22.04, generates a cache key, and builds a Docker image if the cache is missed. The CI job runs on multiple OSes with Node.js 16, restores the cache, installs dependencies, and runs tests. The release job runs on ubuntu-22.04, publishes to npm, and creates a GitHub release if the workflow is triggered on a tag.",
+  "tags": [
+    "nodejs",
+    "docker",
+    "github-actions",
+    "ci",
+    "release",
+    "npm"
+  ]
+}

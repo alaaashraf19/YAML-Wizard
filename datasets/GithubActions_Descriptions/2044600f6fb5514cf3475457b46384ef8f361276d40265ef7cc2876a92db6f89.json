@@ -1,0 +1,14 @@
+{
+  "sha": "2044600f6fb5514cf3475457b46384ef8f361276d40265ef7cc2876a92db6f89",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3268,
+  "description": "Create a GitHub Actions workflow named CI that runs on every push and pull request. The workflow consists of two jobs: build-kernel and build-system, both running on ubuntu-20.04. Each job checks out the Managarm repository and its bootstrap, builds a Docker container, prepares the workspace, and then uses the container to build a package (managarm-kernel or managarm-system) using xbstrap.",
+  "tags": [
+    "managarm",
+    "docker",
+    "github-actions",
+    "ci",
+    "xbstrap"
+  ]
+}

@@ -1,0 +1,156 @@
+.base_ansible:
+  before_script:
+  - cd ${working_directory}
+  - test -z ${ANSIBLE_VAULT_PASSWORD} || echo ${ANSIBLE_VAULT_PASSWORD} > ${ANSIBLE_VAULT_PASSWORD_FILE}
+  - test -d ansible && chmod 750 ansible
+  extends: .base_tpl
+  variables:
+    ANSIBLE_VAULT_PASSWORD_FILE: .vault_pass
+.base_deploy:
+  before_script:
+  - eval $(ssh-agent -s)
+  - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+  - cd ${working_directory}
+  extends: .base_tpl
+.base_node:
+  extends:
+  - .base_tpl
+  - .node-cache-pull
+  image: node:lts-slim
+.base_tpl:
+  before_script:
+  - cd ${working_directory}
+  variables:
+    working_directory: ${CI_PROJECT_DIR}
+.container:build:
+  extends: .base_tpl
+  image:
+    entrypoint:
+    - ''
+    name: gcr.io/kaniko-project/executor:debug
+  script:
+  - mkdir -p /kaniko/.docker
+  - "delivery_cr=0\nif [[ \"${CI_JOB_STAGE}\" != \"delivery\" ]]; then\n  DELIVERY_REGISTRY=\"\
+    \"\nelif [[ -n \"${DELIVERY_REGISTRY}\" ]]; then\n  if [[ -z \"${DELIVERY_REGISTRY_USER}\"\
+    \ ]]; then\n    echo \"DELIVERY_REGISTRY=${DELIVERY_REGISTRY} you must declare\
+    \ DELIVERY_REGISTRY_USER !\"\n    delivery_cr=1\n  fi\n  if [[ -z \"${DELIVERY_REGISTRY_PASSWORD}\"\
+    \ ]]; then\n    echo \"DELIVERY_REGISTRY=${DELIVERY_REGISTRY} you must declare\
+    \ DELIVERY_REGISTRY_PASSWORD !\"\n    delivery_cr=1\n  fi\n  if [[ ${delivery_cr}\
+    \ -ne 0 ]]; then\n    false\n  fi\nfi"
+  - "if [[ \"x${http_proxy}\" != \"x\" -o \"x${https_proxy}\" != \"x\" ]]; then\n\
+    \  KANIKOCFG=\"${KANIKOCFG}, ${KANIKOPROXYCFG}\"\n  KANIKOPROXYBUILDARGS=\"--build-arg\
+    \ http_proxy=${http_proxy} \\\n    --build-arg https_proxy=${https_proxy} \\\n\
+    \    --build-arg no_proxy=${no_proxy}\"\nfi\nKANIKOCFG=\"{ ${KANIKOCFG} }\"\n\
+    echo \"${KANIKOCFG}\" > /kaniko/.docker/config.json"
+  - "if [[ \"${CI_JOB_STAGE}\" == \"delivery\" ]]; then\n  container_namespace=\"\
+    ${CI_PROJECT_PATH}\"\nelse\n  container_namespace=\"${CI_PROJECT_PATH}/${tpl_tmp_image_namespaces}\"\
+    \nfi"
+  - "if [[ -n \"${IMAGE_NAME}\" ]]; then\n  container_image_name=\"/${IMAGE_NAME}\"\
+    \nelse\n  container_image_name=\"\"\nfi"
+  - "container_default_tag=\"tmp-branch-${CI_COMMIT_REF_NAME//\\//_}-$(echo ${CI_COMMIT_SHA}\
+    \ | cut -c1-8)\"\nif [[ \"${CI_JOB_STAGE}\" != \"delivery\" ]]; then\n  container_tags=\"\
+    ${container_default_tag}\"\nelse\n  container_tags=\"${CI_COMMIT_TAG:-${container_default_tag}}\
+    \ latest\"\nfi"
+  - "full_image_name=${container_namespace}${container_image_name}\necho \"\u2699\uFE0F\
+    \ Build image\"\necho \"  \U0001F4BE    cache : ${CONTAINER_CACHE_NAME}\"\necho\
+    \ \"  \U0001F3ED registry : ${CI_REGISTRY}\"\necho \"  \U0001F4E6     name : ${full_image_name}\"\
+    \nfor tag in ${container_tags}; do\n  echo \"       \U0001F3F7\uFE0F tag : ${tag}\"\
+    \n  destinations=\"${destinations} --destination=${CI_REGISTRY}/${full_image_name}:${tag}\"\
+    \ndone\n\nif [[ -n \"${CI_COMMIT_TAG}\" ]] && [[ -n \"${DELIVERY_REGISTRY}\" ]];\
+    \ then\n  full_image_name=${DELIVERY_REGISTRY_NAMESPACE:-${container_namespace}}${container_image_name}\n\
+    \  echo \"  \U0001F3ED registry : ${DELIVERY_REGISTRY}\"\n  echo \"  \U0001F4E6\
+    \     name : ${full_image_name}\"\n  for tag in ${container_tags}; do\n    echo\
+    \ \"       \U0001F3F7\uFE0F tag : ${tag}\"\n    destinations=\"${destinations}\
+    \ --destination=${DELIVERY_REGISTRY}/${full_image_name}:${tag}\"\n  done\nfi"
+  - "/kaniko/executor --skip-tls-verify \\\n  --context \".\" \\\n  --cache=true \\\
+    \n  --cache-ttl=${CONTAINER_CACHE_TTL} \\\n  --cache-repo=${CONTAINER_CACHE_NAME}\
+    \ \\\n  ${KANIKOPROXYBUILDARGS} \\\n  ${destinations}"
+  variables:
+    CONTAINER_CACHE_NAME: ${CI_REGISTRY_IMAGE}/cache
+    KANIKOCFG: "\"auths\": {\n  \"${CI_REGISTRY}\": {\n    \"username\": \"${CI_REGISTRY_USER}\"\
+      ,\n    \"password\": \"${CI_REGISTRY_PASSWORD}\"\n  },\n  \"${DELIVERY_REGISTRY}\"\
+      : {\n    \"username\": \"${DELIVERY_REGISTRY_USER}\",\n    \"password\": \"\
+      ${DELIVERY_REGISTRY_PASSWORD}\"\n  }\n}\n"
+    KANIKOPROXYBUILDARGS: ''
+    KANIKOPROXYCFG: "\"proxies\": {\n  \"default\": {\n    \"httpProxy\": \"${http_proxy}\"\
+      ,\n    \"httpsProxy\": \"${https_proxy}\"\n  }\n}\n"
+.error:
+  extends: .info
+  variables:
+    message: /!\ This job must fail /!\
+    success: 'false'
+.info:
+  script: 'docker run mbentley/figlet -tf $font $message
+
+    eval $success
+
+    '
+  stage: info
+  variables:
+    font: big
+    message: This is only a base information stage
+    success: 'true'
+.java:
+  extends:
+  - .base_tpl
+  - .java-cache-pull
+  image: maven:${MAVEN_VERSION}-${JDK_TYPE}-${JAVA_VERSION}
+  script:
+  - mvn ${MAVEN_CLI_OPTS} ${MAVEN_ACTION} ${MAVEN_SETTINGS}
+  variables:
+    MAVEN_ACTION: -version
+.java-cache-pull:
+  cache:
+    key: java-$CI_COMMIT_REF_SLUG
+    paths:
+    - ${working_directory}/target/*.jar
+    policy: pull
+.java-cache-push:
+  cache:
+    key: java-$CI_COMMIT_REF_SLUG
+    paths:
+    - ${working_directory}/target/*.jar
+    policy: push
+.node-cache-pull:
+  cache:
+    key: node-$CI_COMMIT_REF_SLUG
+    paths:
+    - node_modules
+    policy: pull
+.node-cache-push:
+  cache:
+    key: node-$CI_COMMIT_REF_SLUG
+    paths:
+    - node_modules
+    policy: push
+.warning:
+  allow_failure: true
+  extends: .error
+  variables:
+    message: This is only a warning !
+stages:
+- info
+- lint
+- build
+- package
+- test
+- delivery
+- deploy
+- clean
+variables:
+  CI_DEBUG_TRACE: 'false'
+  CONTAINER_CACHE_TTL: 6h
+  JAVA_VERSION: '11'
+  JDK_TYPE: openjdk
+  MAVEN_CLI_OPTS: ''
+  MAVEN_OPTS: ''
+  MAVEN_SETTINGS: ''
+  MAVEN_VERSION: '3'
+  tpl_directory: gci-templates
+  tpl_tmp_image_namespaces: tmp
+  working_directory: ${CI_PROJECT_DIR}
+warning move job templates:
+  extends: .warning
+  variables:
+    message: All jobs templates in ${tpl_directory}/job will soon be moved into a
+      type sub-directory

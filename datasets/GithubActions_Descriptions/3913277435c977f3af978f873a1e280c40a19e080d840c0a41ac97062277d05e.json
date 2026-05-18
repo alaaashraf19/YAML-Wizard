@@ -1,0 +1,17 @@
+{
+  "sha": "3913277435c977f3af978f873a1e280c40a19e080d840c0a41ac97062277d05e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2503,
+  "description": "Create a GitHub Actions workflow named Build that runs on push to main and on pull requests to main. Use a matrix strategy with multiple jobs for different compiler and OS configurations, including Ubuntu with gcc-8, gcc-9, clang-6, and clang-9, and MacOS with gcc-9 and clang. For each job, check out the repository, display compiler information, compile the library and tests, run unit tests and examples, and upload code coverage to Codecov if enabled.",
+  "tags": [
+    "gcc",
+    "clang",
+    "ubuntu",
+    "macos",
+    "codecov",
+    "make",
+    "tests",
+    "coverage"
+  ]
+}

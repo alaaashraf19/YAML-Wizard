@@ -1,0 +1,16 @@
+{
+  "sha": "13a84099b90067f084c3505ee79f427f80f71b881ebbac5a1948e5204caffded",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1314,
+  "description": "Create a GitHub Actions workflow named C/C++ CI that runs on every push to the master branch and on pull requests to master. The workflow should have two jobs: build and test. The build job checks out the repository, runs make commands to build binaries, and uploads the binaries as artifacts. The test job depends on the build job, uses a matrix strategy to test with different Rust versions, downloads the build artifacts, and runs make test.",
+  "tags": [
+    "c",
+    "cpp",
+    "ci",
+    "make",
+    "rust",
+    "tests",
+    "ubuntu"
+  ]
+}

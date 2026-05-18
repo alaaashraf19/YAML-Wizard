@@ -1,0 +1,15 @@
+{
+  "sha": "954f7e9def3ec2d108e581b8ca50bbb5ae4d0b42039bf7a9c7c092c81663d8cc",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1290,
+  "description": "Create a GitHub Actions workflow named Arma that runs on push to the master branch and on pull requests. The workflow should have two ubuntu-latest jobs: validate and lint. The validate job checks out the code, then runs several Python scripts to validate SQF, config style, headers, strings, and checks for BOM. The lint job checks out the code and runs sqflint with a continue-on-error flag.",
+  "tags": [
+    "arma",
+    "ubuntu",
+    "python",
+    "validation",
+    "linting",
+    "sqf"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_10929",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1942,
+  "description": "Create a GitLab CI pipeline using the golang:1.11-alpine Docker image, defining variables LDFLAGS_GITVERSION and LDFLAGS_WEBHOOK, and a before_script that clears LDFLAGS_WEBHOOK if BUILD_WEBHOOK_URL is empty. Define stages test and build. In the test stage add a Syntax Check job that runs gofmt -e *.go, a Test Call to Version Command job that runs go run slackr.go -version and go run -ldflags=\\\"${LDFLAGS_GITVERSION}\\\" slackr.go -version, and a Test Message to Slackbot job that runs go run slackr.go -target @slackbot -message \\\"Test\\\" -verbose. In the build stage add a Golang Compile - Native job that runs go build -ldflags=\\\"${LDFLAGS_GITVERSION} ${LDFLAGS_WEBHOOK}\\\" -o slackr and stores the slackr binary as a 1-year artifact, plus four cross-compile jobs (darwin_amd64, linux_amd64, linux_armv7l, linux_mips64) each with appropriate GOARCH/GOOS (and GOARM for armv7l), the same build command, artifacts, and limited to the master branch.",
+  "tags": [
+    "golang",
+    "go-build",
+    "cross-compile",
+    "gitlab-ci",
+    "docker-alpine",
+    "ci-variables"
+  ]
+}

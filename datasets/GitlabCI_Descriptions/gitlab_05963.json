@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_05963",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 103,
+  "description": "Create a GitLab CI pipeline that uses the python:3.6 Docker image. Define a single job named all_tests that runs in the default test stage, executes the shell commands `sh ./sh_scripts/install.sh` followed by `pytest -v`, and is triggered on successful pipeline execution (when: on_success). No services, caches, artifacts, or deployment targets are required.",
+  "tags": [
+    "python-3.6",
+    "pytest",
+    "install-script",
+    "gitlab-ci"
+  ]
+}

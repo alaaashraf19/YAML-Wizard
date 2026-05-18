@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_05432",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 353,
+  "description": "Create a GitLab CI pipeline that uses the docker:latest image with the docker:dind service and sets DOCKER_DRIVER to overlay2. Define a single stage named build_base and include a before_script that runs docker info. Add a build_laravel-ci job in the build_base stage that runs docker build -t claystation/laravel-gitlab-ci-docker ., then docker login -u ${docker_username} -p ${docker_password}, and finally docker push claystation/laravel-gitlab-ci-docker. The job has no caches, artifacts, or conditional rules.",
+  "tags": [
+    "docker",
+    "laravel",
+    "ci",
+    "dind",
+    "docker-build",
+    "gitlab-ci"
+  ]
+}

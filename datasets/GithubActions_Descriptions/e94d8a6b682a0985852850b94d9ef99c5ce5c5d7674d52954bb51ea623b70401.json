@@ -1,0 +1,15 @@
+{
+  "sha": "e94d8a6b682a0985852850b94d9ef99c5ce5c5d7674d52954bb51ea623b70401",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2197,
+  "description": "Create a GitHub Actions workflow named Build Release that triggers on pull requests to the test branch. In a single windows-latest job, check out the code, set up Python 3.12, install requirements, build game config and cache, run PyInstaller, copy and pack game files, and upload a Windows artifact. Then, read the version from package.json, create a release with a tag based on the version, and upload the artifact as a release asset.",
+  "tags": [
+    "python",
+    "windows",
+    "release",
+    "github-actions",
+    "pyinstaller",
+    "artifact"
+  ]
+}

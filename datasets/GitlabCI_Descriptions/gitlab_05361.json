@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_05361",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 567,
+  "description": "Create a GitLab CI pipeline that uses the docker:17.05.0-ce Docker image with a docker:17.09.0-ce-dind service and defines variables APP_NAME=demo, REPO_PATH=chvanikoff/mnesia-demo, VERSION=0.0.1. Define a single stage called build and a job named build that runs in this stage. In the before_script, log in to the GitLab Container Registry with `docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com`. In the script, execute `docker build --build-arg VERSION=$VERSION --build-arg APP=$APP_NAME -t registry.gitlab.com/$REPO_PATH:latest -t registry.gitlab.com/$REPO_PATH:$VERSION .`, then push both tags with `docker push registry.gitlab.com/$REPO_PATH:$VERSION` and `docker push registry.gitlab.com/$REPO_PATH:latest`. The pipeline has no caches, artifacts, or conditional rules.",
+  "tags": [
+    "docker",
+    "dind",
+    "docker-build",
+    "gitlab-registry",
+    "ci-build"
+  ]
+}

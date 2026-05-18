@@ -1,0 +1,14 @@
+{
+  "sha": "57e63845ab6161e0bfdd95fb7eb06bb8d3738a0024d1772fe11a56d1713822a6",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1941,
+  "description": "Create a GitHub Actions workflow named RPI-CI that runs on push and pull request events for the master, devel, and release/v3.0.0 branches. The workflow consists of two jobs: RPI and RPI-Integration. The RPI job runs on ubuntu-latest, checks out the repository, sets up the environment, installs the RPI toolchain, runs F prime CI tests, copies tests, builds artifacts, and uploads them. The RPI-Integration job runs on a self-hosted runner, depends on the RPI job, downloads artifacts, runs integration tests, archives logs, and cleans up.",
+  "tags": [
+    "rpi",
+    "ci",
+    "ubuntu",
+    "self-hosted",
+    "github-actions"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "sha": "83d782c0774029ba3c3cc6fd670359742f36ecb6819d4e9d5681fb4af37aed19",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1919,
+  "description": "Create a GitHub Actions workflow named CI that runs on push, pull request, and a monthly schedule. The workflow should have two jobs: build-linux and build-windows, each running on a different environment and building with different configurations. For build-linux, use ubuntu-latest, install dependencies, install Rust, generate a build system with CMake, build, and upload a Linux artifact. For build-windows, use windows-latest, install Rust, generate a build system with CMake, build, and upload a Windows artifact.",
+  "tags": [
+    "ci",
+    "cmake",
+    "rust",
+    "linux",
+    "windows",
+    "matrix",
+    "artifacts"
+  ]
+}

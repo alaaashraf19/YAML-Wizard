@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_19310",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 995,
+  "description": "Create a GitLab CI pipeline that includes the component `pipeline-publish-artifacts-and-docs` version 0.8.2 with inputs `build_params: -x gradleTest -x publishMavenCentralPublicationToSonatypeStagingRepository` and `jdk: 21`, which runs a job in the publish stage that builds the project with Gradle using JDK 21, excludes the `gradleTest` task and the Maven Central publishing task, and then publishes the built artifacts and generated documentation. Also include six `gradleTest` component jobs (version 0.8.2) each targeting a different set of Gradle versions: the first tests versions 7.3.3,7.4.2,7.5.1,7.6.4; the second tests 8.0.2,8.1.1,8.2.1,8.3; the third tests 8.4,8.5,8.6,8.7; the fourth tests 8.8,8.9,8.11.1; the fifth tests 8.12.1,8.13,8.14.3; and the sixth tests 9.0.0,9.1.0,9.2.0. Each of these jobs runs `gradle test` with the specified Gradle version and reports the test results as artifacts. The pipeline therefore defines a publish stage for artifact and documentation deployment and a test stage that validates the project across multiple Gradle releases.",
+  "tags": [
+    "gradle",
+    "jdk21",
+    "publish-artifacts",
+    "docs",
+    "gradle-versions",
+    "ci-include"
+  ]
+}

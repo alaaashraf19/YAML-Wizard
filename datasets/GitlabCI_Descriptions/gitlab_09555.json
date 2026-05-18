@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_09555",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 910,
+  "description": "Create a GitLab CI pipeline with three stages test, build, and release, using the docker:1.10.3 image globally and a docker:dind service, and set the DOCKER_DRIVER variable to overlay. Define a before_script that exports TEST_IMAGE_NAME=registry.gitlab.com/$CI_PROJECT_PATH:${CI_COMMIT_REF_NAME/\\//-}-$CI_COMMIT_SHA and IMAGE_NAME=registry.gitlab.com/$CI_PROJECT_PATH:latest. Add a build_image job in the build stage that runs docker build -t $TEST_IMAGE_NAME ., docker login -e gitlab-ci@gitlab.com -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com, and docker push $TEST_IMAGE_NAME. Add a release_image job in the release stage that only runs on the master branch, runs docker login -e gitlab-ci@gitlab.com -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com, docker pull $TEST_IMAGE_NAME, docker tag $TEST_IMAGE_NAME $IMAGE_NAME, and docker push $IMAGE_NAME. Add a run_tests job in the test stage using the python:3 image that installs coala with pip3 and executes python3 bouncer.py < test-input.json | diff test-output.json -.",
+  "tags": [
+    "docker",
+    "docker-dind",
+    "python",
+    "coala",
+    "test",
+    "build",
+    "release",
+    "gitlab-ci"
+  ]
+}

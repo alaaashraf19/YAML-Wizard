@@ -1,0 +1,16 @@
+{
+  "sha": "84c7bd9d8b3a380bce13d5fa6c132e44f7aac0b9505fa212bc658d5e4a17a674",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4443,
+  "description": "Create a GitHub Actions workflow named ci that runs on push to main, on pull requests to main, and on a scheduled cron job. The workflow has multiple jobs for different environments: macos ventura 13, ros 2 humble on ubuntu-latest with a container, and ubuntu 22.04 jammy with and without apt. Each job checks out the code, performs environment-specific setup, and then builds and tests.",
+  "tags": [
+    "ci",
+    "macos",
+    "ubuntu",
+    "ros",
+    "scheduled",
+    "cron",
+    "multi-job"
+  ]
+}

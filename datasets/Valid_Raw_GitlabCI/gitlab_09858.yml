@@ -1,0 +1,8 @@
+before_script:
+- python --version
+build:
+  script: python setup.py sdist bdist_wheel
+  stage: build
+image: python:latest
+stages:
+- build

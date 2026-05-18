@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_19331",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 5238,
+  "description": "Create a GitLab CI pipeline with stages check, build, test, deploy, and Release, using the default image ${BUILDER_CONTAINER}:master and variables for audit exclusions, build credentials, and container URLs. In the check stage add Audit frontend/client and Audit frontend/frontend jobs that use the node:latest image and run `cd client && npx improved-yarn-audit --min-severity high --exclude ${AUDIT_ANGULAR},${AUDIT_WEBPACK_DEV_SERVER}` (or `cd frontend && ...` respectively), plus an OpenAPI Lint job using the wework/speccy image (entrypoint disabled) that runs `speccy lint share/apidocs/v1/swagger/index.yaml`; all three run only on merge‑request target branches master, production, preprod, development, matching commit branches, or tags matching ^release/. In the build stage add Build API, Build API2CSV, and Build Frontend jobs (tagged mintlab) that first execute `docker login -u \"${BUILD_USERNAME}\" -p \"${BUILD_PASSWORD}\" $CI_REGISTRY`, then `docker build --pull -f docker/Dockerfile.backend -t \"${CONTAINER_URL_API}:${CI_COMMIT_REF_SLUG}\" --target production .` (or the corresponding Dockerfile for api2csv or frontend), followed by `docker push \"${CONTAINER_URL_API}:${CI_COMMIT_REF_SLUG}\"` (or its counterpart), and a Prepare Build Frontend job using node:erbium that caches ./node_modules/.cache, runs `npm install` and `node_modules/@cyclonedx/bom/bin/make-bom.js --output cyclonedx.json`, publishing cyclonedx.json as a CycloneDX artifact; these jobs run only on allowed branches or release tags and are skipped for other namespaces or merge requests. In the test stage define a Test API job (mintlab) that logs in, pulls the API image with `docker pull \"${CONTAINER_URL_API}:${CI_COMMIT_REF_SLUG}\"`, and runs `docker run --rm \"${CONTAINER_URL_API}:${CI_COMMIT_REF_SLUG}\" prove -l -It/lib --formatter TAP::Formatter::Console`. In the deploy stage add a Push container images job (mintlab) that logs in and uses `skopeo copy --all \"docker://${CONTAINER_URL_API}:${CI_COMMIT_REF_SLUG}\" \"docker://${CONTAINER_URL_API}:${CI_COMMIT_REF_SLUG}-ci-${CI_PIPELINE_IID}\"` (and similar commands for the frontend and api2csv images) to create CI‑tagged copies. In the Release stage add three Push to AWS ECR jobs (API, API2CSV, Frontend) that run only on release tags, verify the respective ECR repository variable is set, obtain AWS credentials via `$(aws ecr get-login --no-include-email --region \"$AWS_ECR_REGION\")`, and copy the images to the ECR repositories with `skopeo copy --all` commands, all respecting the defined rules and using mintlab tags.",
+  "tags": [
+    "node",
+    "docker",
+    "skopeo",
+    "audit",
+    "openapi",
+    "cyclonedx",
+    "aws-ecr",
+    "release",
+    "mintlab",
+    "ci"
+  ]
+}

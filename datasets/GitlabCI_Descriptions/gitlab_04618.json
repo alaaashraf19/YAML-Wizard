@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_04618",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1918,
+  "description": "Create a GitLab CI pipeline with three stages: pre, build, and test. Use a docker:stable image with a docker:dind service for the build job, set DOCKER_DRIVER=overlay2 and DOCKER_HOST=tcp://docker:2375/, run a before_script of \"docker info\", then in the build stage add a job named build that executes \"docker build -t buildbox-fuse .\" followed by \"docker run --cap-add SYS_ADMIN --device /dev/fuse buildbox-fuse ./integration-test/scripts/test-stage-empty-file.sh\". Also in the build stage add a job named check_formatting that uses the ubuntu:bionic image, runs a before_script \"apt-get update && apt-get install -y clang-format-6.0 git-core\", then runs the script steps: \"echo `which clang-format-6.0`\", \"ln -s `which clang-format-6.0` /usr/bin/clang-format\", \"cd \\\"$CI_PROJECT_DIR\\\"\", \"export CLANG_FORMAT_SINCE_COMMIT=\\\"4b825dc642cb6eb9a060e54bf8d69288fbee4904\\\"\", \"linter_errors=$(git-clang-format-6.0 --commit \\\"$CLANG_FORMAT_SINCE_COMMIT\\\" -q --diff --style file --extensions c,cc,cpp,cxx,h | grep -v --color=never \\\"no modified files to format\\\" || true)\", \"echo \\\"$linter_errors\\\"\", and a conditional that exits with error if formatting issues are found. In the test stage add a job named test that uses the image registry.gitlab.com/buildgrid/buildbox/buildbox-common:latest and runs: \"apt-get update\", \"apt-get install -y attr cmake fuse3 gcc g++ git grpc++ libfuse3-dev libssl-dev net-tools pkg-config socat sudo uuid-dev\", \"apt-get clean\", \"git clone https://gitlab.com/BuildGrid/buildbox/buildbox-casd.git\", \"mkdir buildbox-casd/build && cd buildbox-casd/build && cmake .. && make -j4 && cd -\", \"export PATH=\\\"$PWD/buildbox-casd/build/buildboxcasd:$PATH\\\"\", \"export CTEST_OUTPUT_ON_FAILURE=1\", \"useradd -s /bin/bash -m testeruser && chown -R testeruser:testeruser $(pwd)\", and \"sudo -u testeruser PATH=\\\"$PATH\\\" sh -c 'mkdir build && cd build && cmake .. && make && make test'\". Finally, add a pre‑stage job named trigger_integration_test that runs only on the master branch and triggers the pipeline buildgrid/buildbox/buildbox-integration.",
+  "tags": [
+    "docker",
+    "dind",
+    "clang-format",
+    "cmake",
+    "make",
+    "integration-test",
+    "trigger",
+    "buildbox",
+    "ubuntu",
+    "pre-build-test"
+  ]
+}

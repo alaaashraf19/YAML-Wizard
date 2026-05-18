@@ -1,0 +1,14 @@
+{
+  "sha": "2ffa3066b064701383218e6bf615506b8fd8b07f183a6fcff3cc3179e288f980",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1925,
+  "description": "Create a GitHub Actions workflow named CI that runs on push, pull request, and manual dispatch. The workflow has two jobs: unit-test and complete. The unit-test job runs on ubuntu-latest with a matrix of Python versions from 3.7 to 3.11, checks out the code, sets up Python, caches PIP packages, installs dependencies, runs tests with pytest and coverage, and uploads coverage data to Coveralls. The complete job finalizes the Coveralls report if the repository is proxmoxer/proxmoxer and the unit-test job has completed.",
+  "tags": [
+    "python",
+    "ci",
+    "tests",
+    "coverage",
+    "coveralls"
+  ]
+}

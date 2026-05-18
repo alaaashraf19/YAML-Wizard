@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_10801",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 249,
+  "description": "Create a GitLab CI pipeline that uses the ruby:2.1 Docker image, runs apt-get update -qy, apt-get install -y nodejs, and bundle install --path vendor in a global before_script, caches the vendor/ directory, defines a deploy stage with a pages job that executes bundle exec jekyll build -d public/, and publishes the public/ folder as a GitLab Pages artifact.",
+  "tags": [
+    "ruby",
+    "jekyll",
+    "gitlab-pages",
+    "bundler",
+    "nodejs",
+    "cache"
+  ]
+}

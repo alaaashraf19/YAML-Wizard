@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_15783",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 442,
+  "description": "Create a GitLab CI pipeline using the Docker image registry.gitlab.com/rili/docker-ci:ci-latest with a single deploy stage. Define a deploy job that runs only on the master branch, is tagged with deploy and rilis.io, and sets the environment named rilis.io with URL https://rilis.io. In the job script, execute: mkdir build, cd build, cmake ../ -DCMAKE_INSTALL_PREFIX=~/rilis.io/ -G \"Ninja\", ninja, rm -rf ~/rilis.io/, ninja install, chmod -R o=rx ~/rilis.io/. Publish the public/ directory as an artifact that expires in 1 day.",
+  "tags": [
+    "cmake",
+    "ninja",
+    "docker-ci",
+    "deploy",
+    "rilis.io"
+  ]
+}

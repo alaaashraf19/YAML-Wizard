@@ -1,0 +1,21 @@
+build_all:
+  image: ${DOCKER_IMG}/$COMPILER-$VERSION:latest
+  parallel:
+    matrix:
+    - COMPILER: gcc
+      VERSION:
+      - 10
+      - 9
+      - 8
+      - 7
+    - COMPILER: clang
+      VERSION:
+      - 10
+      - 9
+      - 8
+      - 7
+  script:
+  - echo $COMPILER $VERSION
+  - $CC --version
+variables:
+  DOCKER_IMG: registry.gitlab.com/offa/plug/ci

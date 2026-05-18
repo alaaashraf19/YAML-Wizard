@@ -1,0 +1,21 @@
+{
+  "sha": "e14f8a2ea2a509dd620fe863d1219901939d848c2f5157e48849b0fd329dc2b7",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 7014,
+  "description": "Create a GitHub Actions workflow named ci that runs on every push to the master branch and on every pull request to the master branch. The workflow uses a matrix strategy to run a build_cpu job on different operating systems (ubuntu-18.04, ubuntu-20.04, macos-latest), with different BLAS backends (Atlas, MKL, OpenBLAS), and compilers (gcc, clang, icx). For each matrix combination, the job checks out the repository, downloads and installs Ninja and CMake, installs dependencies, configures CMake, and builds and tests the project using CTest.",
+  "tags": [
+    "ci",
+    "ubuntu",
+    "macos",
+    "cmake",
+    "ninja",
+    "blas",
+    "atlas",
+    "mkl",
+    "openblas",
+    "gcc",
+    "clang",
+    "icx"
+  ]
+}

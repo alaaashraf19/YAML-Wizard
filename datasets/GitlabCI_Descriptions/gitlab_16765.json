@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_16765",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 258,
+  "description": "Create a GitLab CI pipeline that uses the monachus/hugo:latest Docker image and sets GIT_SUBMODULE_STRATEGY to recursive. Add a pages job that runs the shell command 'hugo --minify && gzip -k -6 $(find public -type f)', publishes the generated public/ directory as an artifact, and is limited to the master branch. Add a test job that runs the command 'hugo --minify' on all branches except master. Both jobs run in the default stage and no additional services, caches, or deployment targets are defined.",
+  "tags": [
+    "hugo",
+    "gitlab-pages",
+    "gzip",
+    "static-site",
+    "monachus"
+  ]
+}

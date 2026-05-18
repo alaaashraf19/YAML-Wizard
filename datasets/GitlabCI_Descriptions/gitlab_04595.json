@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_04595",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 820,
+  "description": "Create a GitLab CI pipeline using the registry.gitlab.com/fdroid/ci-images-client:latest Docker image and a global before_script that removes any existing fdroidserver directory, creates a fresh one, fetches the latest commit hash from the fdroidserver repository, downloads and extracts that archive into fdroidserver, and prepends its bin to PATH. In the default test stage add a fdroid:build job that changes into the fdroidrepo directory, runs PYTHONPATH=. fdroid gencibuild eu.bubu1.fdroidclassic, then runs fdroid build --stop -v -l eu.bubu1.fdroidclassic. Also in the default stage add a lint+test+build job that modifies app/build.gradle to enable textReport, then runs gradlew-fdroid lint, gradlew-fdroid testReleaseUnitTest, and gradlew-fdroid assembleDebug, and publishes the generated app/build/reports/ directory as an artifact. No services, caches, or conditional rules are defined.",
+  "tags": [
+    "fdroid",
+    "gradle",
+    "android",
+    "ci-images-client",
+    "lint",
+    "test",
+    "build"
+  ]
+}

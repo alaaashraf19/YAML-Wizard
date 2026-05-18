@@ -1,0 +1,15 @@
+{
+  "sha": "d21523a2fd010506426e12754ba96c19980355ae07d7bb9ac6489c5df50c8e63",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2367,
+  "description": "Create a GitHub Actions workflow named CI that runs on push and pull request events for the master branch. Use a macos-latest job to check out the repository, force a compatible Xcode version, print the Xcode version, and then run a series of scripts to install wxWidgets, generate xcconfigs, build pwsafe, install dependencies for creating a dmg, get the Xcode build output location, move the app to another folder, create a dmg, and upload it as an artifact.",
+  "tags": [
+    "macos",
+    "xcode",
+    "ci",
+    "build",
+    "dmg",
+    "artifacts"
+  ]
+}

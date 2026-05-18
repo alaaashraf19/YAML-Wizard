@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_17766",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 600,
+  "description": "Create a GitLab CI pipeline that uses the docker:latest image with a docker:dind service. Define a single stage called build and a job named job1 that runs in this stage on runners tagged docker. In job1 execute the following script commands in order: docker build -f ./Dockerfile.go -t taisun/dev_cloud9:Go ., docker build -f ./Dockerfile.node -t taisun/dev_cloud9:Node.js ., docker build -f ./Dockerfile.python -t taisun/dev_cloud9:Python ., docker build -f ./Dockerfile.ruby -t taisun/dev_cloud9:Ruby ., echo $DOCKERPASS | docker login -u taisun --password-stdin, docker push taisun/dev_cloud9:Go, docker push taisun/dev_cloud9:Node.js, docker push taisun/dev_cloud9:Python, docker push taisun/dev_cloud9:Ruby. No caches, artifacts, or conditional rules are defined.",
+  "tags": [
+    "docker",
+    "dind",
+    "multi-image",
+    "go",
+    "nodejs",
+    "python",
+    "ruby"
+  ]
+}

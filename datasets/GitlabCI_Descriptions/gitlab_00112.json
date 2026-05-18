@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_00112",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1208,
+  "description": "Create a GitLab CI pipeline using the fedora:38 Docker image. Install build dependencies via a before_script that runs dnf with cachedir set to ./dnf-cache and installs $BUILDTOOLS_PKGS $GLIB2_PKGS $SQLITE_PKG $DOCGEN_PKGS $GIR_PKGS $CI_PKGS $LOCALE_PKGS, and cache the dnf-cache directory. Define three stages: build, test, deploy. In the build stage add a build_x86-64 job that runs meson build -Ddebug=true -Ddocumentation=true -Db_coverage=true, then cd build, then ninja, and archives the whole repository as an artifact. In the test stage add a test_x86-64 job that depends on build_x86-64, runs cd build, ninja test, ninja coverage-html, and also archives the repository as an artifact. In the deploy stage add a pages job that runs only on the master branch of the accounts-sso/gsignond project, depends on test_x86-64, runs cd build, ninja install, cd .., mkdir public, copies build/meson-logs/coveragereport to public/coverage and copies build/docs/reference/html/* to public, and publishes the public/ directory as a GitLab Pages artifact.",
+  "tags": [
+    "fedora",
+    "meson",
+    "ninja",
+    "dnf",
+    "gitlab-pages",
+    "coverage",
+    "gsignond"
+  ]
+}

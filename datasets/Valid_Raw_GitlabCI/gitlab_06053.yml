@@ -1,0 +1,15 @@
+build:
+  only:
+  - master
+  script:
+  - npm install
+  - npm run build
+  - npm run deploy $USER_PASS
+  stage: build
+cache:
+  paths:
+  - node_modules/
+image: node:latest
+services: null
+stages:
+- build

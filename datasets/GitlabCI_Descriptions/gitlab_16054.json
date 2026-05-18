@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_16054",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 424,
+  "description": "Create a GitLab CI pipeline that uses the condaforge/mambaforge:latest Docker image and runs a global before_script `conda update --quiet --yes --name base conda`. Define a single stage named test and include two jobs in it. Add a resolve_env job that runs in the test stage, is allowed to fail, and executes `mamba env create --name prophane --file environment.yaml`. Add a test job that also runs in the test stage, runs a job‑specific before_script `conda install --name base --channel conda-forge mamba --yes`, then runs `./test.sh`, and on failure uploads the `prophane_test-` directory as an artifact. No caches, services, or additional rules are defined.",
+  "tags": [
+    "conda",
+    "mamba",
+    "test",
+    "environment",
+    "gitlab-ci"
+  ]
+}

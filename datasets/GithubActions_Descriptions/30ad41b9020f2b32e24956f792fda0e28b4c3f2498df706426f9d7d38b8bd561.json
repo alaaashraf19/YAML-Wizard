@@ -1,0 +1,16 @@
+{
+  "sha": "30ad41b9020f2b32e24956f792fda0e28b4c3f2498df706426f9d7d38b8bd561",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2224,
+  "description": "Create a GitHub Actions workflow named Linux that runs on pull requests, pushes, and published releases. Use an ubuntu-latest job matrix with gcc and clang compilers and Release and Debug configurations. Check if a workflow run can be skipped due to duplicate actions, then for each matrix combination, check out the repository, set up ccache, install dependencies, configure CMake, compile dependencies and the OSP-Magnum project, run unit tests, and upload the build artifacts.",
+  "tags": [
+    "linux",
+    "cmake",
+    "gcc",
+    "clang",
+    "ubuntu",
+    "tests",
+    "ccache"
+  ]
+}

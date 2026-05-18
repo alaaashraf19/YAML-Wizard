@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_13118",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1068,
+  "description": "Create a GitLab CI pipeline using python:3.7 as the default Docker image and defining test and deploy stages with a GA_TOKEN variable. Add an internal_link_check job in the test stage that uses the lycheeverse/lychee:0.14.3-alpine image (entrypoint /bin/sh -c $0) and runs lychee --offline --exclude mathbf -n docs/. Add a markdown_lint job in the test stage that uses the node image and runs npm install -g markdownlint-cli followed by /usr/local/bin/markdownlint docs. Add a mkdocs_build job in the test stage that runs apt-get update, apt-get install --yes nodejs, mkdir -p .build_cache, pip install --upgrade --cache-dir=.build_cache -r requirements.txt, and mkdocs --verbose build; cache the .build_cache directory keyed by the job name, and publish the public directory as an artifact that expires in one week, while passing the GA_TOKEN variable. Finally, add a pages job in the deploy stage that runs only on the main branch of NERSC/nersc.gitlab.io, gzips the public/search, public/assets/stylesheets, and public/assets/javascripts directories with -k -6 -r, gzips all HTML files in public using find … -exec gzip --keep --verbose {}, and publishes the public folder as the GitLab Pages artifact.",
+  "tags": [
+    "python",
+    "lychee",
+    "markdownlint",
+    "node",
+    "mkdocs",
+    "gitlab-pages",
+    "gzip",
+    "cache",
+    "artifact",
+    "deploy"
+  ]
+}

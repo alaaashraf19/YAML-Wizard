@@ -1,0 +1,26 @@
+review:
+  environment:
+    name: review/$CI_COMMIT_REF_NAME
+    on_stop: stop_review
+  except:
+  - master
+  only:
+  - branches
+  script:
+  - echo start review
+  stage: deploy
+stop_review:
+  allow_failure: true
+  before_script:
+  - apk add --update curl jq
+  environment:
+    action: stop
+    name: review/$CI_COMMIT_REF_NAME
+  except:
+  - master
+  only:
+  - branches
+  script:
+  - ./build/src/remove_registry_tag.sh
+  stage: cleanup
+  when: manual

@@ -1,0 +1,14 @@
+{
+  "sha": "8d18d4c9c03ae5b8ba98d62f423a484d67709438765953dcffa9ee3f11145335",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3376,
+  "description": "Create a GitHub Actions workflow named Push to nuget manual that allows manual dispatch with a version number input. The workflow runs on ubuntu-latest, checks out the repository, gets the current version, sets up .NET 6, replaces the version number in a specific file, packs several .NET projects with the specified version, and pushes the resulting NuGet packages to NuGet.org using the NUGET_API_KEY from secrets.",
+  "tags": [
+    "dotnet",
+    "nuget",
+    "manual",
+    "publish",
+    "github-actions"
+  ]
+}

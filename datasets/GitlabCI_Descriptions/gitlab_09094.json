@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_09094",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 186,
+  "description": "Create a GitLab CI pipeline that defines hidden jobs (templates) for CI token handling. Define a .common-ci-tokens job that extends the .tokens-for-all-branches template. The .tokens-for-all-branches template itself extends four other hidden jobs: .id-tokens, .delivery-metrics-token, .grafana-api-key, and .chef-api-private-key. No stages, images, scripts, caches, artifacts, or deployment targets are specified; these templates are intended solely for inheritance of token variables.",
+  "tags": [
+    "ci-templates",
+    "tokens",
+    "extends",
+    "hidden-jobs"
+  ]
+}

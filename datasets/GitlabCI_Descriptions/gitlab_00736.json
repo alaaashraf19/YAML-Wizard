@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_00736",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2481,
+  "description": "Create a GitLab CI pipeline using the maven:3-eclipse-temurin-21 Docker image, caching the Maven repository at .m2/repository keyed by pom.xml, and defining build and deploy stages. In the build stage add a build job that runs apt-get update -y, installs ghostscript, imagemagick and webp, clones the avalanche-warning-maps repository, exports GIT_VERSION=$(git describe --tags), updates the project version with mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$GIT_VERSION, runs mvn install, renames the produced jar to target/albina.jar, and always publishes target/albina.jar, target/test-results/ and JUnit XML reports as artifacts; the job triggers on merge‑request events, tags, or the default branch. Define a hidden .deploy template whose before_script starts ssh-agent, adds $SSH_PRIVATE_KEY, creates ~/.ssh with proper permissions, copies $SSH_KNOWN_HOSTS to known_hosts, and whose script updates apt, installs rsync, exports GIT_VERSION, sets the Maven version, runs mvn install -Dmaven.test.skip=true, rsyncs target/albina-$GIT_VERSION.jar to $SSH_SERVER:$JAR_PATH over port 2201, and restarts $SYSTEMD_SERVICE via ssh. Add a deploy to development job extending .deploy, running in the deploy stage, targeting the development environment, setting JAR_PATH and SYSTEMD_SERVICE for the dev server, and executing only on the default branch with a manual, allowed‑failure trigger. Add a deploy to production job extending .deploy, running in the deploy stage, targeting the production environment, with its own JAR_PATH and SYSTEMD_SERVICE, and executing only on tag pushes as a manual, allowed‑failure step.",
+  "tags": [
+    "maven",
+    "java",
+    "ssh-deploy",
+    "cache-m2",
+    "gitlab-ci",
+    "docker-image",
+    "artifact",
+    "systemd"
+  ]
+}

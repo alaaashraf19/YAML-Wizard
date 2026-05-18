@@ -1,0 +1,16 @@
+{
+  "sha": "5bdc6154e41de144573f7fbb67f1922dce56fbd0f2cfd76f3d22272a5ebffc14",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4042,
+  "description": "Create a GitHub Actions workflow for integration tests that runs on merge groups and pull requests. The workflow consists of multiple jobs: build firmware, formatting check, cppcheck, cppcheck in Docker, and hardware testing. Each job runs on an ubuntu-latest environment, sets up Python 3.10, and installs PlatformIO. The build job compiles firmware, the formatting check job runs clang-format style check, the cppcheck jobs run static analysis, and the hardware testing job runs PlatformIO tests on self-hosted runners.",
+  "tags": [
+    "python",
+    "platformio",
+    "cppcheck",
+    "clang-format",
+    "integration-tests",
+    "firmware",
+    "hardware-testing"
+  ]
+}

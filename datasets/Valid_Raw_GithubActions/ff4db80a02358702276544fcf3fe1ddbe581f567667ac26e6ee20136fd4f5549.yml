@@ -1,0 +1,112 @@
+name: Integration Tests
+
+on:
+  merge_group:
+  pull_request:
+
+jobs:
+  build:
+    name: Compile Firmware
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.platformio/.cache
+          key: compile-cache
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install PlatformIO
+        shell: bash
+        run: |
+          python -m pip install --upgrade pip
+          pip install --upgrade platformio
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Build PlatformIO Project
+        run: pio run
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: firmware
+          path: .pio/build/lora_board/firmware.bin
+
+  formatting-check:
+    name: Formatting Check
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        path:
+          - 'src'
+          - 'lib/BoardFinder'
+          - 'lib/ConfigurationManagement'
+          #- 'lib/Display'
+          - 'lib/NTPClient'
+          - 'lib/PowerManagement'
+          - 'lib/System'
+          - 'lib/TimeLib'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Run clang-format style check for C/C++ programs.
+        uses: jidicula/clang-format-action@v4.10.2
+        with:
+          clang-format-version: '14'
+          check-path: ${{ matrix.path }}
+
+  cppcheck:
+    name: Run cppcheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.platformio/.cache
+          key: check-cache
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install PlatformIO
+        shell: bash
+        run: |
+          python -m pip install --upgrade pip
+          pip install --upgrade platformio
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Run PlatformIO Check
+        run: pio check --fail-on-defect high -e lora_board
+
+  hw_testing:
+    name: Hardware Testing
+    strategy:
+      matrix:
+        usb_port: [ttyUSB0]
+    runs-on: [self-hosted, "${{ matrix.usb_port }}"]
+    steps:
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.platformio/.cache
+          key: hw-cache
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install PlatformIO
+        shell: bash
+        run: |
+          python -m pip install --upgrade pip
+          pip install --upgrade platformio
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: List Devices
+        run: pio device list 
+      - name: PlatformIO Test
+        if: always()
+        run: flock -w 600 --verbose /locks/pio-${{ matrix.usb_port }} -c "pio test -vvv --upload-port /dev/${{ matrix.usb_port }} --test-port /dev/${{ matrix.usb_port }}"
+          

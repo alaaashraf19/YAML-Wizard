@@ -1,0 +1,33 @@
+after_script:
+- eval $(ssh-agent -s)
+- ssh-add <(echo "$SSH_PRIVATE_KEY")
+- find ubuntu-iso-customization/ -name *ucr*.iso || exit 1
+- scp $(find ubuntu-iso-customization/ -name *ucr*.iso) $SSH_USER@$SSH_SERVER:$SSH_RPATH
+- 'rm -r ubuntu-iso-customization/ '
+before_script:
+- apt-get update -qq && apt-get install -y -qq zip wget sudo rsync squashfs-tools
+  xorriso openssh-client
+- eval $(ssh-agent -s)
+- ssh-add <(echo "$SSH_PRIVATE_KEY")
+- mkdir -p ~/.ssh
+- echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+cache:
+  paths:
+  - cache/
+image: ubuntu
+job_mate:
+  only:
+  - estable
+  script:
+  - mkdir -p cache/apt/
+  - test -f  cache/ubuntu-18.04.3-desktop-amd64.iso || wget -q -O cache/ubuntu-mate-18.04-desktop-amd64.iso
+    http://cdimage.ubuntu.com/ubuntu-mate/releases/18.04/release/ubuntu-mate-18.04-desktop-amd64.iso
+  - bash ./ubuntu-iso-customization.sh -d -c cache/apt/ cache/ubuntu-mate-18.04-desktop-amd64.iso
+job_ubuntu:
+  only:
+  - estable
+  script:
+  - mkdir -p cache/apt/
+  - test -f  cache/ubuntu-18.04.3-desktop-amd64.iso || wget -q -O cache/ubuntu-18.04.3-desktop-amd64.iso
+    http://espejos.ucr.ac.cr/ubuntu-cd/18.04/ubuntu-18.04.3-desktop-amd64.iso
+  - bash ./ubuntu-iso-customization.sh -d -c cache/apt/ cache/ubuntu-18.04.3-desktop-amd64.iso

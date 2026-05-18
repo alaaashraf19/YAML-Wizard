@@ -1,0 +1,96 @@
+build:
+  image: maven:3.3.9-jdk-8
+  script:
+  - mvn clean package
+  stage: build
+  tags:
+  - docker
+  - shared
+deploy_dev:
+  environment:
+    name: dev
+    url: https://vel-ci-api-dev.herokuapp.com
+  image: ruby:2.3
+  only:
+  - master
+  script:
+  - apt-get update -qy
+  - apt-get install -y ruby-dev
+  - gem install dpl
+  - dpl --provider=heroku --app=vel-ci-api-dev --api-key=$HEROKU_API_KEY
+  stage: deploy
+  tags:
+  - docker
+  - shared
+deploy_local:
+  environment:
+    name: local-vm
+    url: http://dev.mock-labs.com
+  only:
+  - master
+  script:
+  - curl -s https://raw.githubusercontent.com/velmuruganvelayutham/shell-scripts/master/deploy.sh
+    | bash -s
+  stage: deploy
+  tags:
+  - shell-osboxes
+  when: manual
+deploy_staging:
+  environment:
+    name: staging
+    url: https://vel-ci-api-stg.herokuapp.com
+  image: ruby:2.3
+  only:
+  - master
+  script:
+  - apt-get update -qy
+  - apt-get install -y ruby-dev
+  - gem install dpl
+  - dpl --provider=heroku --app=vel-ci-api-stg --api-key=$HEROKU_API_KEY
+  stage: deploy
+  tags:
+  - docker
+  - shared
+review:
+  environment:
+    name: review/$CI_COMMIT_REF_NAME
+    on_stop: stop_review
+    url: https://$CI_COMMIT_REF_SLUG-$CI_PROJECT_NAME.herokuapp.com
+  except:
+  - master
+  image: ruby:2.3
+  only:
+  - branches
+  script:
+  - apt-get update -qy
+  - apt-get install -y ruby-dev curl
+  - gem install dpl
+  - echo "$REVIEW_APP_NAME " $REVIEW_APP_NAME
+  - 'curl  -n  -X POST https://api.heroku.com/apps -d '' { "name":  "''"$REVIEW_APP_NAME"''",
+    "region": "us", "stack": "heroku-16" } '' -H "Content-Type: application/json"
+    -H "Accept: application/vnd.heroku+json; version=3" -H "Authorization: Bearer
+    $HEROKU_API_KEY"'
+  - dpl --provider=heroku --app=$REVIEW_APP_NAME --api-key=$HEROKU_API_KEY
+  stage: review
+  tags:
+  - docker
+  - shared
+stages:
+- build
+- review
+- deploy
+stop_review:
+  environment:
+    action: stop
+    name: review/$CI_COMMIT_REF_NAME
+  script:
+  - echo "environment is getting deployed !"
+  - 'curl -n -X DELETE https://api.heroku.com/apps/$REVIEW_APP_NAME -H "Content-Type:
+    application/json" -H "Accept: application/vnd.heroku+json; version=3" -H "Authorization:
+    Bearer $HEROKU_API_KEY"'
+  stage: review
+  variables:
+    GIT_STRATEGY: none
+  when: manual
+variables:
+  REVIEW_APP_NAME: $CI_COMMIT_REF_SLUG-$CI_PROJECT_NAME

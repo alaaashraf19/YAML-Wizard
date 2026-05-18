@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_06694",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2408,
+  "description": "Create a GitLab CI pipeline that uses the registry.gitlab.com/demo-clusters/gcloud-kubectl-helm Docker image and defines two stages: deploy and cleanup. In the deploy stage add a helm-upgrade job that runs a before_script to set pipefail, export HELM_RELEASE_NAME from CI_PROJECT_NAME, export GCLOUD_CLUSTER from CI_PROJECT_NAME, decode $GCLOUD_SERVICE_KEY to a JSON file, activate the service account, obtain GKE credentials (creating the cluster with gcloud alpha if it does not exist), initialize Helm with force‑upgrade, wait for the tiller deployment rollout, add the GitLab Helm repo, and then executes `helm upgrade -i $HELM_RELEASE_NAME -f values.yaml --set gitlabEELicense=$GITLAB_LICENSE --set baseDomain=$CI_PROJECT_NAME gitlab/kubernetes-gitlab-demo`. In the cleanup stage add a delete-cluster job that runs a before_script to set pipefail, export GCLOUD_CLUSTER, decode the service key, activate the account, get cluster credentials, and then runs `gcloud container clusters delete $GCLOUD_CLUSTER`; this job is manual. Also in the cleanup stage add a helm-delete job with a before_script that sets pipefail, exports HELM_RELEASE_NAME and GCLOUD_CLUSTER, decodes the service key, authenticates, gets credentials, runs `helm init --upgrade`, waits for the tiller rollout, and finally runs `helm delete $HELM_RELEASE_NAME`; this job is also manual.",
+  "tags": [
+    "gcloud",
+    "helm",
+    "kubectl",
+    "gitlab-ci",
+    "cleanup",
+    "deploy"
+  ]
+}

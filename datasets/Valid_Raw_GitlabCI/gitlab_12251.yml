@@ -1,0 +1,44 @@
+build:cargo:nightly:
+  artifacts:
+    paths:
+    - target/release/aurum-cli
+  script:
+  - rustup toolchain add nightly
+  - cargo +nightly build --verbose
+  stage: build
+build:cargo:stable:
+  artifacts:
+    paths:
+    - target/release/aurum-cli
+  script:
+  - rustup toolchain add stable
+  - cargo +stable build --verbose
+  stage: build
+image: mggmuggins/manjaro-rustup
+package:
+  allow_failure: true
+  artifacts:
+    paths:
+    - build/*.pkg.tar.xz
+  script:
+  - mkdir build
+  - cp PKGBUILD build/
+  - cd build
+  - makepkg
+  stage: package
+stages:
+- build
+- test
+- package
+test:cargo:nightly:
+  allow_failure: true
+  script:
+  - rustup toolchain add nightly
+  - cargo +nightly test
+  stage: test
+test:cargo:stable:
+  allow_failure: true
+  script:
+  - rustup toolchain add stable
+  - cargo +stable test
+  stage: test

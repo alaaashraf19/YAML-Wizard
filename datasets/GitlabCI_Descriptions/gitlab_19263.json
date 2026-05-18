@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_19263",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 923,
+  "description": "Create a GitLab CI pipeline with three stages: build, codequality, and security. In the build stage add a build job that uses the ruby:2.6 image, runs `gem install bundler --no-document` then `bundle update`, and publishes the generated Gemfile.lock as an artifact. In the codequality stage add a rubocop job that also uses ruby:2.6, runs `gem install rubocop rubocop-performance --no-document` followed by `rubocop`, with no artifacts. In the security stage add a dependency_scanning job that depends on the build job, uses the docker:stable image with a docker:stable-dind service, sets the variable DOCKER_DRIVER to overlay2, runs `export SP_VERSION=$(echo \"$CI_SERVER_VERSION\" | sed 's/^\\([0-9]*\\)\\.\\([0-9]*\\).*/\\1-\\2-stable/')` and then executes a Docker run of the GitLab dependency‑scanning image using the computed $SP_VERSION, mounting the repository and Docker socket, and stores gl-dependency-scanning-report.json as an artifact. No special rules or deployment targets are defined.",
+  "tags": [
+    "ruby-2.6",
+    "bundler",
+    "rubocop",
+    "dependency-scanning",
+    "docker",
+    "dind",
+    "security",
+    "codequality",
+    "build"
+  ]
+}

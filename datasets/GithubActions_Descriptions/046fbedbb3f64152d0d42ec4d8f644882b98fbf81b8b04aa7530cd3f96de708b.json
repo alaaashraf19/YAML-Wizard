@@ -1,0 +1,15 @@
+{
+  "sha": "046fbedbb3f64152d0d42ec4d8f644882b98fbf81b8b04aa7530cd3f96de708b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 12596,
+  "description": "Create a GitHub Actions workflow named Build Packages that builds and packages ThunderEngine for multiple platforms. The workflow should trigger on push and pull request events, excluding certain paths. It should determine the Thunder version, then build and upload packages for Linux, Android, macOS, iOS, tvOS, and Windows, and finally upload the packages to GitHub releases if the workflow is for the main repository and the version is a release.",
+  "tags": [
+    "thunderengine",
+    "qbs",
+    "qt",
+    "github-releases",
+    "cross-platform",
+    "ci"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_05873",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 460,
+  "description": "Create a GitLab CI pipeline using the node:6.11.0 Docker image. Define a single job named build (default stage) that caches the node_modules/ directory, runs the following commands in order: npm prune, npm install, npm run build, npm prune --production, npm install archiver, node ci/zip $CI_COMMIT_REF_SLUG, node ci/s3 lambda-data-collection $CI_COMMIT_REF_SLUG, node ci/lambda lambda-data-collection $CI_COMMIT_REF_SLUG, node ci/gateway lambda-data-collection $CI_COMMIT_REF_SLUG $CI_COMMIT_SHA, and stores the generated ./$CI_COMMIT_REF_SLUG.zip as an artifact. The pipeline has no explicit stage definitions or rules, so the job runs on all branches and uploads the built Lambda package to S3 via the node ci/s3 script.",
+  "tags": [
+    "node",
+    "npm",
+    "lambda",
+    "s3",
+    "zip",
+    "ci"
+  ]
+}

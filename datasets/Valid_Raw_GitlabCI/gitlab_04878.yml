@@ -1,0 +1,17 @@
+image: node:lts-alpine
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - yarn install
+  - npm run build
+  - cp -R www/ccrpc-charts public
+test:
+  except:
+  - master
+  script:
+  - yarn install
+  - npx stencil test --spec

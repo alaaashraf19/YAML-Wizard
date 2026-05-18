@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_09804",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 316,
+  "description": "Create a GitLab CI pipeline that uses the docker Docker image with a docker:dind service. Define a single stage called build and a job named build that runs in this stage. In the build job run the exact commands: docker login -u harbottle -p $docker_hub_password, docker pull harbottle/rpm:latest || true, docker build --pull --cache-from harbottle/rpm:latest -t harbottle/rpm:latest ., and docker push harbottle/rpm:latest. No caches, artifacts, or conditional rules are defined.",
+  "tags": [
+    "docker",
+    "dind",
+    "docker-hub",
+    "rpm",
+    "ci"
+  ]
+}

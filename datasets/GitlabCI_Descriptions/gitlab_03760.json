@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_03760",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 404,
+  "description": "Create a GitLab CI pipeline using the python:latest Docker image. Include a global before_script that runs python -V and a global after_script that also runs python -V. Define stages before_script, test, run, after_script and add a test job in the test stage that executes apt-get update -qy, apt-get install -y python3-dev python3-pip, pip3 install -r req.txt, pip3 install pylint, pip3 install pytest pytest-cov, then runs python3 -m pytest -s tests/test.py and python3 -m pytest -s --cov-report term --cov=. tests/test.py. No caches, artifacts, or special rules are needed.",
+  "tags": [
+    "python",
+    "apt",
+    "pytest",
+    "pylint",
+    "coverage",
+    "gitlab-ci"
+  ]
+}

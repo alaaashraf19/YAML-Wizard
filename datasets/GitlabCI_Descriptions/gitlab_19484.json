@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_19484",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 511,
+  "description": "Create a GitLab CI pipeline using the tmaier/docker-compose:18 Docker image with a docker:18.04.0-dind service. Define two stages: test and build. In the test stage add a test:container job that runs docker-compose -f docker-compose.test.yml run api, with a before_script that runs docker version and docker-compose version and logs in to $CI_REGISTRY using the CI job token, and an after_script that lists docker images and logs out of $CI_REGISTRY. In the build stage add a build:image job that runs docker-compose -f docker-compose.build.yml build --pull then docker-compose -f docker-compose.build.yml push, also using the same before_script and after_script. No caches, artifacts, or conditional rules are defined.",
+  "tags": [
+    "docker-compose",
+    "docker",
+    "dind",
+    "ci",
+    "build",
+    "test"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_13129",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2659,
+  "description": "Create a GitLab CI pipeline that uses the node:10-alpine Docker image (node:8-alpine for LTS jobs) with stages install, test, analysis, external, build, and deploy, and runs all jobs only on the master branch. In the install stage add an install:latest job that runs npm run install:ci, caches the node_modules/ directory (key $CI_COMMIT_REF_SLUG-$CI_JOB_NAME), and stores node_modules/ as a 1‑day artifact; also add an install:lts job identical to install:latest but using node:8-alpine. In the test stage add test:chrome:latest and test:chrome:lts jobs that first apk add --no-cache udev ttf-freefont chromium, then run npm run test:ci, produce a coverage/ artifact (1‑day expiry), and depend on the matching install job. In the analysis stage add a coverage job that depends on install:latest and test:chrome:latest and runs npx coverage-average coverage/text-summary.txt, a tslint job that runs npm run lint:ci, and a docs:prod job that runs npm run docs:ci:prod. Add a sonarqube job in the external stage using the electrostar/sonar-scanner:latest image that runs sonar-scanner -X -D sonar.host.url=$SONAR_URL -D sonar.login=$SONAR_TOKEN and depends on install:latest and test:chrome:latest. In the build stage add a build:prod job that depends on install:latest, runs npm run build:prod and then sed '/\"devDependencies\"/,/}/ d; /^$/d' -i dist/package.json, and stores the dist/ directory as a 1‑day artifact, and a documentation job that runs npm run docs and stores documentation/ as a 1‑day artifact. In the deploy stage add a deploy:npm job that installs git (apk add --no-cache git), depends on install:latest and build:prod, and runs npx semantic-release, and a pages job that depends on test:chrome:latest and documentation, copies documentation/ to public/, copies coverage/ to public/coverage/, and publishes the public/ directory as an artifact.",
+  "tags": [
+    "node",
+    "npm",
+    "coverage",
+    "sonarqube",
+    "semantic-release",
+    "pages",
+    "lint"
+  ]
+}

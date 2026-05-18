@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_09745",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1015,
+  "description": "Create a GitLab CI pipeline using the elixir:latest Docker image and define the stages setup, compile, test, build, publish, and deploy. In the setup stage add a get-dependencies job that runs `make deps`, stores the `deps` directory and `mix.lock` as artifacts for 30 minutes, and makes them available to downstream jobs. In the compile stage add compile-for-production and compile-for-test jobs, both depending on get-dependencies, each executing `make compile` with `MIX_ENV` set to `prod` and `test` respectively, and each publishing untracked artifacts for 30 minutes. In the test stage add a lint job that allows failure, depends on get-dependencies and compile-for-test, runs `make lint` with `MIX_ENV=test`, and a tests job that also depends on get-dependencies and compile-for-test, runs `export $(cat .env | xargs)` then `make test`, uses an `elasticsearch:5` service, sets `MIX_ENV=test`, and captures coverage using the regex `/\\[TOTAL\\]\\s+(\\d+\\.\\d+)%/`. Apply a global `before_script` of `make init` to all jobs.",
+  "tags": [
+    "elixir",
+    "make",
+    "elixir-ci",
+    "elasticsearch",
+    "test",
+    "lint",
+    "dependencies"
+  ]
+}

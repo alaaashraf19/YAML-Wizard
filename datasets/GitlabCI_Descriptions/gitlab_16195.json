@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_16195",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 269,
+  "description": "Create a GitLab CI pipeline using the ruby:2.3.3 Docker image. Define a single job named test that runs in the default test stage on runners tagged \"shared\". In its before_script execute: apt-get update, apt-get upgrade -y, apt-get -y install nodejs sqlite3, gem install bundler, bundle install, export RAILS_ENV=test, rails db:create and rails db:migrate; then in the script run rake. No caches, artifacts, services, or conditional rules are required.",
+  "tags": [
+    "ruby",
+    "rails",
+    "bundler",
+    "sqlite",
+    "nodejs",
+    "gitlab-ci",
+    "test"
+  ]
+}

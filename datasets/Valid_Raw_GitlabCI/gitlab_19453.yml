@@ -1,0 +1,47 @@
+image: node:11
+npm_canary:
+  environment:
+    name: npm_canary
+    url: https://www.npmjs.com/package/@effector/canary
+  only:
+  - master
+  script:
+  - yarn
+  - npm config set //registry.npmjs.org/:_authToken ${NPM_TOKEN}
+  - yarn build
+  - VERSION_HASH=${CI_COMMIT_SHA:0:8} node tools/versionHash
+  - cd npm/effector && npm publish
+  stage: deploy
+npm_latest:
+  environment:
+    name: npm
+    url: https://www.npmjs.com/package/effector
+  only:
+  - master
+  script:
+  - echo "publish npm latest"
+  - yarn
+  - npm config set //registry.npmjs.org/:_authToken ${NPM_TOKEN}
+  - node tools/build publish latest
+  stage: deploy
+npm_next:
+  environment:
+    name: npm
+    url: https://www.npmjs.com/package/effector
+  only:
+  - master
+  script:
+  - echo "publish npm next"
+  - yarn
+  - npm config set //registry.npmjs.org/:_authToken ${NPM_TOKEN}
+  - node tools/build publish next
+  stage: deploy
+  when: manual
+stages:
+- test
+- deploy
+test_all:
+  script:
+  - yarn
+  - yarn test
+  stage: test

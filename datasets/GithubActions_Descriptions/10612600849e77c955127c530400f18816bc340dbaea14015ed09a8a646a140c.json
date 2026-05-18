@@ -1,0 +1,14 @@
+{
+  "sha": "10612600849e77c955127c530400f18816bc340dbaea14015ed09a8a646a140c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 997,
+  "description": "Create a GitHub Actions workflow for validating and publishing a DigitalOcean template to the marketplace. The workflow should trigger on released events and run two jobs sequentially: one for validation and one for publishing, both on ubuntu-latest. The validation job checks out the repository and uses the packer-github-actions to fix and validate the template, while the publish job builds the template if validation succeeds.",
+  "tags": [
+    "marketplace",
+    "digitalocean",
+    "packer",
+    "validation",
+    "publishing"
+  ]
+}

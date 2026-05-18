@@ -1,0 +1,242 @@
+.suse:
+  script:
+  - echo "Hello SUSE"
+  stage: "\U0001F4E6 build"
+  tags:
+  - suse
+FORTRAN:
+  artifacts:
+    paths:
+    - fortran/helloworld
+  image: alpine
+  script:
+  - apk add --update gfortran musl-dev
+  - gfortran -o fortran/helloworld fortran/helloworld.f
+  stage: "\U0001F4E6 build"
+ada:
+  artifacts:
+    paths:
+    - ada/helloworld
+  image: alpine
+  script:
+  - apk add --update gcc-gnat musl-dev
+  - gnatmake -o ada/helloworld ada/helloworld.ada
+  stage: "\U0001F4E6 build"
+asm:
+  artifacts:
+    paths:
+    - asm/helloworld
+  image: alpine
+  script:
+  - apk add --update nasm binutils
+  - nasm -f elf asm/helloworld.asm
+  - ld -m elf_i386 -s -o asm/helloworld asm/helloworld.o
+  stage: "\U0001F4E6 build"
+"c\u2795\u2795":
+  artifacts:
+    paths:
+    - c++/Hello
+  image: alpine
+  script:
+  - apk add --update make
+  - apk add --update g++
+  - cd c++
+  - make Hello
+  - ./Hello
+  stage: "\U0001F4E6 build"
+dast:
+  artifacts:
+    paths:
+    - gl-dast-report.json
+  image: registry.gitlab.com/gitlab-org/security-products/zaproxy
+  script:
+  - mkdir /zap/wrk/
+  - /zap/zap-baseline.py -J gl-dast-report.json -t $website || true
+  - cp /zap/wrk/gl-dast-report.json .
+  stage: "\U0001F510 security-test"
+  variables:
+    website: http://brendanoleary.com
+dependency_scanning:
+  allow_failure: true
+  artifacts:
+    paths:
+    - gl-dependency-scanning-report.json
+  image: docker:latest
+  script:
+  - cd java
+  - cd maven
+  - export SP_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
+  - docker run --env DEP_SCAN_DISABLE_REMOTE_CHECKS="${DEP_SCAN_DISABLE_REMOTE_CHECKS:-false}"
+    \ --volume "$PWD:/code" \ --volume /var/run/docker.sock:/var/run/docker.sock \
+    "registry.gitlab.com/gitlab-org/security-products/dependency-scanning:$SP_VERSION"
+    /code
+  services:
+  - docker:dind
+  stage: "\U0001F510 security-test"
+  variables:
+    DOCKER_DRIVER: overlay2
+deploy-maven:
+  image: maven:3.3.9-jdk-8
+  script:
+  - cd java
+  - cd maven
+  - cp ci_settings.xml /root/.m2/settings.xml
+  - sed -i "s/CI_JOB_TOKEN/${CI_JOB_TOKEN}/g" /root/.m2/settings.xml
+  - sed -i "s/PROJECT_ID/${CI_PROJECT_ID}/g" pom.xml
+  - mvn deploy
+  stage: "\U0001F680 deploy"
+deploy-node:
+  environment:
+    name: nodeprod
+    url: http://node.$KUBE_DOMAIN
+  script:
+  - echo "Not yet"
+  stage: "\U0001F680 deploy"
+docker:
+  image: docker:stable
+  script:
+  - cd build-images
+  - cd docker-maven
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+  - docker build -t registry.gitlab.com/allthethings/allthethings.gitlab.io/docker-maven:$CI_COMMIT_REF_NAME
+    .
+  - docker push registry.gitlab.com/allthethings/allthethings.gitlab.io/docker-maven:$CI_COMMIT_REF_NAME
+  services:
+  - docker:dind
+  stage: "\U0001F4E6 build"
+freeBASIC:
+  artifacts:
+    paths:
+    - freebasic/helloworld
+  image: alpine
+  script:
+  - apk add --update wget ncurses5-libs libc6-compat make gcc ncurses-libs musl-dev
+    ncurses-dev
+  - ln -s /usr/lib/libncurses.so.5 /usr/lib/libtinfo.so.5
+  - wget --quiet https://sourceforge.net/projects/fbc/files/Binaries%20-%20Linux/FreeBASIC-1.05.0-linux-x86_64.tar.gz
+  - tar xvfz FreeBASIC-1.05.0-linux-x86_64.tar.gz
+  - cd FreeBASIC-1.05.0-linux-x86_64
+  - ./install.sh -i
+  - cd ..
+  - /usr/local/bin/fbc freebasic/helloworld.bas
+  stage: "\U0001F4E6 build"
+image: registry.gitlab.com/gitlab-examples/kubernetes-deploy
+it:spring-boot:
+  image: maven:3.5-jdk-8-slim
+  script:
+  - cd java
+  - cd spring-boot
+  - mvn integration-test
+  stage: "\U0001F4BB integration-test"
+java:gradle:
+  artifacts:
+    paths:
+    - java/gradle/build/libs/*
+  image: gradle:latest
+  script:
+  - cd java
+  - cd gradle
+  - ./gradlew build
+  - ./gradlew run
+  stage: "\U0001F4E6 build"
+java:maven:
+  artifacts:
+    paths:
+    - java/maven/target/*
+  image: maven:latest
+  script:
+  - cd java
+  - cd maven
+  - mvn package
+  - cd target
+  - java -jar example-app-1.0-SNAPSHOT.jar
+  stage: "\U0001F4E6 build"
+java:spring-boot:
+  artifacts:
+    paths:
+    - java/spring-boot/target/*
+  image: maven:3.5-jdk-8-slim
+  script:
+  - cd java
+  - cd spring-boot
+  - mvn package
+  stage: "\U0001F4E6 build"
+msbuild:
+  artifacts:
+    paths:
+    - HelloWorld.exe
+  script:
+  - cd csharp-msbuild
+  - echo %username%
+  - echo %path%
+  - '"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\msbuild.exe" /consoleloggerparameters:ErrorsOnly
+    /maxcpucount /nologo /property:Configuration=Release /verbosity:quiet "helloworld.csproj"'
+  stage: "\U0001F4E6 build"
+  tags:
+  - windows
+nodejs:
+  artifacts:
+    paths:
+    - node/node_modules
+  image: node:latest
+  script:
+  - cd node
+  - npm install
+  stage: "\U0001F4E6 build"
+pages:
+  artifacts:
+    paths:
+    - public
+  image: alpine:latest
+  script:
+  - echo "Lolz I don't do anything"
+  stage: "\U0001F4C4 docs"
+ruby:
+  image: docker:latest
+  script:
+  - docker login -u gitlab-ci-token -p "$CI_BUILD_TOKEN" "$CI_REGISTRY"
+  - cd ruby
+  - docker build -t "$CI_REGISTRY_IMAGE/ruby:$CI_COMMIT_REF_NAME" .
+  - docker push "$CI_REGISTRY_IMAGE/ruby:$CI_COMMIT_REF_NAME"
+  services:
+  - docker:dind
+  stage: "\U0001F4E6 build"
+sast:
+  allow_failure: true
+  artifacts:
+    paths:
+    - gl-sast-report.json
+  image: registry.gitlab.com/allthethings/allthethings.gitlab.io/docker-maven:$CI_COMMIT_REF_NAME
+  script:
+  - cd ruby
+  - export SAST_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
+  - docker run --env SAST_CONFIDENCE_LEVEL="${SAST_CONFIDENCE_LEVEL:-3}" --env SAST_DISABLE_REMOTE_CHECKS="${SAST_DISABLE_REMOTE_CHECKS:-false}"
+    --volume "$PWD:/code" --volume /var/run/docker.sock:/var/run/docker.sock "registry.gitlab.com/gitlab-org/security-products/sast:$SAST_VERSION"
+    /app/bin/run /code
+  services:
+  - docker:dind
+  stage: "\U0001F510 security-test"
+  variables:
+    DOCKER_DRIVER: overlay2
+stages:
+- "\U0001F4E6 build"
+- "\u2705 unit-test"
+- "\U0001F510 security-test"
+- "\U0001F4BB integration-test"
+- "\U0001F4C4 docs"
+- "\U0001F680 deploy"
+test:
+  script:
+  - echo "Foo"
+  stage: "\u2705 unit-test"
+trigger-downstream:
+  script:
+  - curl --request POST --form "token=$CI_JOB_TOKEN" --form ref=master https://gitlab.com/api/v4/projects/gitlab-com%2Fcustomer-success%2Fdemos%2Fkitchen-trap/trigger/pipeline
+  stage: "\U0001F680 deploy"
+ut:spring-boot:
+  image: maven:3.5-jdk-8-slim
+  script:
+  - cd java
+  - cd spring-boot
+  - mvn test
+  stage: "\u2705 unit-test"

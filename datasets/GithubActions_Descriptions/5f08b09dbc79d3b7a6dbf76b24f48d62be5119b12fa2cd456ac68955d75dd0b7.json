@@ -1,0 +1,18 @@
+{
+  "sha": "5f08b09dbc79d3b7a6dbf76b24f48d62be5119b12fa2cd456ac68955d75dd0b7",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2549,
+  "description": "Create a GitHub Actions workflow named C/C++ CI windows that runs on push events. Use a windows-latest job with a matrix strategy for Debug and Release build types. Check out the repository, install Visual Studio 2022 build tools, configure Git, clone depot tools, fetch WebRTC, build with CMake and Ninja, create a package with CPack, and upload the artifact. If the workflow is triggered by a tag, create a GitHub release with the artifact.",
+  "tags": [
+    "c",
+    "cpp",
+    "windows",
+    "ci",
+    "cmake",
+    "ninja",
+    "webrtc",
+    "visual-studio",
+    "github-release"
+  ]
+}

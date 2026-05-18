@@ -1,0 +1,52 @@
+name: "Build DEB Packages"
+
+on:
+  workflow_dispatch:
+    inputs:
+      ice_version:
+        description: "The Ice version to build"
+        required: true
+        default: "3.8.0~alpha0"
+      deb_build_options:
+        description: "DEB_BUILD_OPTIONS for the build"
+        required: false
+        default: "nocheck parallel=4"
+
+jobs:
+  build:
+    name: "Build for ${{ matrix.os }}"
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-24.04
+            runner: ubuntu-24.04
+            dockerfile_path: ice/packaging/dpkg/docker/ubuntu-24.04/Dockerfile
+
+          - os: ubuntu-24.04-arm64
+            runner: ubuntu-24.04-arm
+            dockerfile_path: ice/packaging/dpkg/docker/ubuntu-24.04/Dockerfile
+
+          - os: debian-12
+            runner: ubuntu-24.04
+            dockerfile_path: ice/packaging/dpkg/docker/debian-12/Dockerfile
+            build_profiles: "no-python312"
+
+          - os: debian12-arm64
+            runner: ubuntu-24.04-arm
+            dockerfile_path: ice/packaging/dpkg/docker/debian-12/Dockerfile
+            build_profiles: "no-python312"
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          path: ice
+
+      - name: Call Build Debian Package Action
+        uses: ./ice/.github/actions/build-deb-package
+        with:
+          ice_version: ${{ inputs.ice_version }}
+          deb_build_options: ${{ inputs.deb_build_options }}
+          os: ${{ matrix.os }}
+          dockerfile_path: ${{ matrix.dockerfile_path }}

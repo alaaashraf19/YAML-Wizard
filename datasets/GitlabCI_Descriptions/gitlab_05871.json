@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_05871",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 461,
+  "description": "Create a GitLab CI pipeline that uses the scorpil/rust:stable Docker image and defines two stages: test and deploy. Add a test job that runs `rustc --version && cargo --version` then `time cargo test --verbose --release`. Add a pages job in the deploy stage that runs `time cargo doc --verbose`, `cat .docs-vc-link.js >> target/doc/main.js`, `mv target/doc public`, and `echo '<!doctype html><html><head><meta charset=\"UTF-8\"><meta http-equiv=\"refresh\" content=\"0;url=pub_sub\"></head></html>' > public/index.html`, then publishes the `public/` directory as a GitLab Pages artifact and only runs on the master branch.",
+  "tags": [
+    "rust",
+    "cargo",
+    "gitlab-pages",
+    "documentation",
+    "test"
+  ]
+}

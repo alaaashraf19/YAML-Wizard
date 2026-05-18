@@ -1,0 +1,14 @@
+{
+  "sha": "8c276283f3d07d3f9aab2f95d9afc7e422451f302d01e0d95f3ecd43de4eb9e8",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1029,
+  "description": "Create a GitHub Actions workflow named build appimage that triggers on push, pull request, and workflow dispatch events. Run an initial job to check if the workflow should be skipped, then if not, run a second job in a privileged container with kdesrc-build to checkout the repository, build an AppImage with a script, and upload the resulting artifact.",
+  "tags": [
+    "appimage",
+    "ubuntu",
+    "container",
+    "workflow-dispatch",
+    "actions"
+  ]
+}

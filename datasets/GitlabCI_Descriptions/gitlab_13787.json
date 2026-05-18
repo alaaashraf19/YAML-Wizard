@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_13787",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 964,
+  "description": "Create a GitLab CI pipeline with stages lint, test, build, and deploy. Use the thht-ci-components/python/test component version 1.4.1 to add a lint job named lint in the lint stage that runs `pixi run lint_ci`, and a check_types job in the same stage that runs `pixi run check_types`. Add a test job named test in the test stage that runs `pixi run test` across the environments testpy39np1, testpy310np1, testpy311np1, testpy312np1, testpy39np2, testpy310np2, testpy311np2, testpy312np2, and testpy313np2, and a test_docs job that executes `apt-get update && apt-get install -y make` before running `pixi run build_docs`. Include the thht-ci-components/python/build_distribute component version 1.4.1 to provide a build job in the build stage that builds and distributes the package and a deploy job in the deploy stage.",
+  "tags": [
+    "python",
+    "pixi",
+    "lint",
+    "type-check",
+    "test",
+    "docs",
+    "build",
+    "deploy",
+    "ci-components"
+  ]
+}

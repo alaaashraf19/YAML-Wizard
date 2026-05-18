@@ -1,0 +1,20 @@
+{
+  "sha": "004cb876a655ee9f28b86bc11f7bbd30c87855147ced0bf70c1ba6334bba0521",
+  "provider": "groq",
+  "model": "llama-3.3-70b-versatile",
+  "yaml_bytes": 4744,
+  "description": "Create a GitHub Actions CI workflow named ci that runs on push to main, pull requests to main, and on a scheduled cron job at 12:00 daily. The workflow has four jobs: macos sonoma 14 arm on macos-14, ros 2 humble on ubuntu-latest in an ubuntu:jammy container, ubuntu 22.04 jammy on ubuntu-latest in an ubuntu:jammy container, and ubuntu 22.04 jammy apt on ubuntu-latest in an ubuntu:jammy container. Each job checks out the repository, sets up the environment, and runs various build and test scripts. The workflow also cancels any in-progress runs when a new commit is added to a pull request.",
+  "tags": [
+    "ci",
+    "macos",
+    "ubuntu",
+    "ros",
+    "cron",
+    "github-actions",
+    "python",
+    "brew",
+    "cmake",
+    "bazel",
+    "catkin"
+  ]
+}

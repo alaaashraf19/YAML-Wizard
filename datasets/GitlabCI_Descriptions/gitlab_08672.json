@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_08672",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 360,
+  "description": "Create a GitLab CI pipeline that uses the default Docker image (e.g., ruby:latest) and defines a global before_script which runs: apt-get update -qqqy && apt-get install -y locales; echo \"en_US UTF-8\" > /etc/locale.gen; locale-gen en_US.UTF-8; export LANG=en_US.UTF-8; export LANGUAGE=en_US:en; export LC_ALL=en_US.UTF-8; which ruby; ruby -v; gem install bundler --no-ri --no-rdoc; and bundle install --jobs $(nproc) \"${FLAGS[@]}\". Add a job named spec in the default test stage that runs the command \"bundle exec rake\". No caches, artifacts, or conditional rules are defined.",
+  "tags": [
+    "ruby",
+    "bundler",
+    "rake",
+    "locales",
+    "apt-get"
+  ]
+}

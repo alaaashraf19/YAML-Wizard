@@ -1,0 +1,16 @@
+{
+  "sha": "9ea11a0c8ef2767b1ad6800101475fe00d6c5d58dc5e0f4ac0ec8baf11da8205",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3186,
+  "description": "Create a nightly GitHub Actions workflow that triggers on push to the master branch. Run a Windows job that checks out the repository, sets up environment variables with git describe and date information, updates version files, downloads dependencies, compiles the source code for x86 and x64 architectures, pulls translations and a data patch, copies data to the bin directory, generates a build log, and archives the log and artifacts.",
+  "tags": [
+    "windows",
+    "nightly",
+    "build",
+    "msbuild",
+    "translations",
+    "data-patch",
+    "archive"
+  ]
+}

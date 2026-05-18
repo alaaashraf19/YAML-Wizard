@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_07124",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1369,
+  "description": "Create a GitLab CI pipeline that runs a global before_script installing apt packages (apt-get update -yqq, apt-get install -yqq wget git zlib1g-dev), the PHP zip extension, Xdebug via pecl, configuring Xdebug, downloading and verifying the Composer installer, installing Composer, and running composer install, while caching the vendor/ directory. Define three jobs named php:7.2, php:7.3, and php:7.4, each using the corresponding php:7.2, php:7.3, php:7.4 Docker images and inheriting the before_script. In each job's script execute php vendor/bin/phpstan analyse --no-progress -l 8 src, then echo \"Running PHPUnit Tests\", and run php vendor/bin/phpunit --colors=\"never\" --coverage-text. All jobs run in the default test stage with no additional rules, artifacts, or deployment targets.",
+  "tags": [
+    "php",
+    "phpstan",
+    "phpunit",
+    "composer",
+    "docker",
+    "cache"
+  ]
+}

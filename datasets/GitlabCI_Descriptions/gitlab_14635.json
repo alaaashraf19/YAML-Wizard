@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_14635",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2109,
+  "description": "Create a GitLab CI pipeline with a default Docker image and four jobs: a test job, a pages job, a production deploy job, and a staging deploy job. In the test stage add a test job that runs: apt-get install -f; apt-get update -qy; apt-get install -y python-dev python-pip sudo postgresql postgresql-client libpq-dev libxss1 libappindicator1 libindicator7; wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -; sudo sh -c 'echo \"deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main\" >> /etc/apt/sources.list.d/google.list'; apt-get update; apt-get install -y google-chrome-stable; export CHROME_BIN=/usr/bin/google-chrome; curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -; sudo apt-get install -y nodejs; sudo apt-get install -y build-essential; npm install npm -g; npm install; npm run build-production; service postgresql start; sudo -u postgres psql -c \"CREATE USER kape WITH PASSWORD 'kape' CREATEDB\"; sudo -u postgres psql -c \"CREATE DATABASE kape OWNER kape\"; pip install -r requirements.txt; python manage.py migrate; python manage.py test; npm run karma, and stores the test/ directory as an artifact. In the deploy stage add a pages job that runs mv test/ public/, declares public/ as a pages artifact that expires in 30 days and depends on the test job. Also in the deploy stage add a production job that only runs on the master branch and executes: apt-get update -qy; apt-get install sshpass; git clone https://gitlab.com/PPL2017csui/PPLA1.git; cd PPLA1; git checkout master; git pull; git remote add deployment ssh://kape@bot.recruit.id:8022/home/kape.git; mkdir ~/.ssh; echo -e \"Host bot.recruit.id\\n\\tStrictHostKeyChecking no\\n\" >> ~/.ssh/config; sshpass -p yukcarikape git push deployment master:master --force. Add a staging job that only runs on the develop branch and performs the same steps but checks out develop, uses port 8023 in the SSH remote, and pushes develop:master --force.",
+  "tags": [
+    "gitlab-ci",
+    "deploy",
+    "pages",
+    "ssh-deploy",
+    "apt",
+    "npm",
+    "python",
+    "postgresql",
+    "karma"
+  ]
+}

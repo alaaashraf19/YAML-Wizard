@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_00052",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 672,
+  "description": "Create a GitLab CI pipeline that uses the docker:git Docker image with a docker:dind service and defines two stages: test and deploy. Add a global before_script that starts ssh-agent, adds the $SSH_PRIVATE_KEY, creates and secures the ~/.ssh directory, runs ssh-keyscan on $REMOTE_IP, and configures the Git user email to darth@empire.com and name to Darth Vader. In the test stage, add a test job that runs apk add --no-cache py-pip, pip install docker-compose, docker-compose up -d, and then ssh antil@$REMOTE_IP date. In the deploy stage, add a deploy job that runs ssh antil@$REMOTE_IP 'cd /containers/drupal-8-docker; git pull --no-edit; docker-compose up -d --build' to update the remote Drupal container.",
+  "tags": [
+    "docker",
+    "docker-compose",
+    "ssh",
+    "dind",
+    "deployment",
+    "gitlab-ci"
+  ]
+}

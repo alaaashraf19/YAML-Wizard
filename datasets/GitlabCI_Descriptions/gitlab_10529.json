@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_10529",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 460,
+  "description": "Create a GitLab CI pipeline that uses the ruby:2.3 Docker image with a postgres:latest service and sets the POSTGRES_DB, POSTGRES_USER, and POSTGRES_PASSWORD variables for the test database. Add a global before_script that copies config/database-ci.yml to config/database.yml, prints the Ruby version and its location, installs bundler without documentation, runs bundle check or bundle install, and creates and migrates the test database with RAILS_ENV=test bundle exec rake db:create and db:migrate. Define an rspec job in the default test stage that executes bundle exec rspec. Do not configure any caches, artifacts, or conditional rules.",
+  "tags": [
+    "ruby",
+    "rspec",
+    "postgres",
+    "bundler",
+    "rails",
+    "gitlab-ci"
+  ]
+}

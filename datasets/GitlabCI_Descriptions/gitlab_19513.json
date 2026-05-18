@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_19513",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 642,
+  "description": "Create a GitLab CI pipeline using the debian:latest Docker image. Define a single stage called test and a before_script that runs `apt-get update -qq > /dev/null`, installs `git-core sbcl cl-quicklisp` with `apt-get install -qq git-core sbcl cl-quicklisp > /dev/null`, executes SBCL to load Quicklisp (`sbcl --noinform --non-interactive --eval '(load \"/usr/share/common-lisp/source/quicklisp/quicklisp.lisp\")' --eval '(quicklisp-quickstart:install)' --eval '(ql-util:without-prompting (ql:add-to-init-file))'`), clones the zr-utils repository into `~/quicklisp/local-projects/zr-utils`, and creates a symlink from the project directory to `~/quicklisp/local-projects/zombie-raptor`. Add a test job in the test stage that runs `sbcl --non-interactive --load ~/quicklisp/local-projects/zombie-raptor/tests/test-script.lisp`. The job runs on every pipeline without additional rules, and no artifacts, caches, services, or deployment targets are defined.",
+  "tags": [
+    "debian",
+    "sbcl",
+    "quicklisp",
+    "lisp",
+    "test"
+  ]
+}

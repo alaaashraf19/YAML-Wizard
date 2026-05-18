@@ -1,0 +1,14 @@
+{
+  "sha": "c502b1e1e32a63e96a10e9dfb1644ca2ca6077d34861c51982942d4bd2120e55",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2550,
+  "description": "Create a GitHub Actions workflow named PyPI Packages that triggers on push with tags matching v*.* and on workflow dispatch. The workflow should have four jobs: build_wheels on ubuntu-latest and macos-latest, build_windows on windows-latest with multiple Python versions, build_sdist on ubuntu-latest, and upload_pypi that depends on the previous three jobs and uploads to PyPI if triggered by a tag push.",
+  "tags": [
+    "python",
+    "pypi",
+    "wheel",
+    "sdist",
+    "github-actions"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_13816",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 3098,
+  "description": "Create a GitLab CI pipeline that uses the docker:stable image with a docker:dind service and defines two stages: build and test. In the build stage add a dmd job (COMPILER=dmd, STATIC=false) that runs docker run -v$(pwd):/source ohboi/mini$COMPILER bash -c \" apt update -qq 2>&1 > /dev/null && apt install -qq -y --no-install-recommends make git && dub fetch reggae && dub run reggae -- --dc=$(if [[ \\\"$COMPILER\\\" = \\\"ldc\\\" ]]; then echo ldmd2; else echo $COMPILER; fi) --backend=make -d STATIC=$STATIC && make && ./goinsu\" and stores the goinsu directory as an artifact, a dmd-dub job (COMPILER=dmd) that runs docker run -v$(pwd):/source ohboi/mini$COMPILER bash -c \" dub -b debug && dub -b release && dub -b debug -c static && dub -b release -c static\", and a dmd-static job (COMPILER=dmd, STATIC=true) with the same script as dmd but STATIC=true and the same artifact. Also in the build stage add analogous ldc, ldc-dub, and ldc-static jobs where COMPILER=ldc (STATIC false for ldc, true for ldc-static) using the identical docker‑run command and artifact for the static variant. In the test stage add dmd-test and dmd-static-test jobs that depend on dmd and dmd-static respectively and each run docker build -f .ci/Dockerfile.test ., and similarly add ldc-test and ldc-static-test jobs that depend on ldc and ldc-static and run the same docker build command. No additional caches, rules, or deployment targets are defined, so all jobs run on every pipeline execution.",
+  "tags": [
+    "docker",
+    "docker-in-docker",
+    "dlang",
+    "dmd",
+    "ldc",
+    "dub",
+    "make",
+    "ci"
+  ]
+}

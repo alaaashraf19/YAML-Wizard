@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_19028",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2060,
+  "description": "Create a GitLab CI pipeline with stages pre, compile, package, deploy, using a cache of .m2/repository/, ljprojectbuilder/target/, tomee/target/, and global variables CONTAINER_IMAGE, DOCKER_DRIVER, DOCKER_HOST, LICENSE_MANAGEMENT_SETUP_CMD, plus a docker:dind service. In the pre stage add a license_management job that runs on all branches when $GITLAB_FEATURES enables license_management, skips when $LICENSE_MANAGEMENT_DISABLED, uses the registry.gitlab.com/gitlab-org/security-products/license-management:$CI_SERVER_VERSION_MAJOR-$CI_SERVER_VERSION_MINOR-stable image with an empty entrypoint, runs `/run.sh analyze .`, allows failure, and uploads gl-license-management-report.json as a license_management artifact. In the compile stage add a compile_java job (only on master) using maven:3.3.9-jdk-8, executing `echo \"building war\"`, `cd ljprojectbuilder`, `mvn clean package`, and publishing ljprojectbuilder/target/ljprojectbuilder.war as an artifact; also add an export_drawio job (only on master) using fjudith/draw.io:latest that runs `/opt/draw.io/drawio -x -f png -o documentation/diagrams/lirejarpTemplate_G.png documentation/diagrams/lirejarpTemplate.drawio`. Also in compile add a package_tomee job (only on master) using the same Maven image, running `echo \"building tomee\"`, `cd tomee`, `mvn tomee:build -Pmysql-kubernetes`, then changing permissions on the apache-tomee directory and its subfolders, and storing tomee/target/apache-tomee as an artifact. In the package stage add a package_docker job that uses the docker:stable image, logs in to the GitLab registry with `$REG_TOKEN`, builds the image `ljprojectbuilder` tagging it with `$CONTAINER_IMAGE:$CI_COMMIT_SHA` and `latest`, and pushes both tags.",
+  "tags": [
+    "maven",
+    "docker",
+    "drawio",
+    "license-management",
+    "cache",
+    "gitlab-ci"
+  ]
+}

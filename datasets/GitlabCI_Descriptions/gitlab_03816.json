@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_03816",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 430,
+  "description": "Create a GitLab CI pipeline with three stages: build, test, and deploy. In the build stage add a my_build_job_1 job that runs `/bin/echo This is a mock build job`. In the test stage add three jobs—my_build_job_2, my_build_job_2b, and my_build_job_2c—each executing `/bin/echo This is a mock test job`. In the deploy stage add a my_build_job_3 job that runs `/bin/echo This is a mock deploy job` followed by `ls -lh /tmp/build /tmp/test`. No specific Docker image, services, caches, artifacts, or conditional rules are required.",
+  "tags": [
+    "mock",
+    "build",
+    "test",
+    "deploy"
+  ]
+}

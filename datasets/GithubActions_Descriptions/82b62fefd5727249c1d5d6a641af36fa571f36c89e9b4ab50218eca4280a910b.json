@@ -1,0 +1,15 @@
+{
+  "sha": "82b62fefd5727249c1d5d6a641af36fa571f36c89e9b4ab50218eca4280a910b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2031,
+  "description": "Create a GitHub Actions workflow named Phasar CI that runs on push to master and development branches and on pull requests to those branches. Use an ubuntu-20.04 job with a matrix strategy to build Phasar with different compilers and build types. The job should check out the repository, install basic and Phasar-specific dependencies, install strategy-specific dependencies, build Phasar, and run unit tests.",
+  "tags": [
+    "cpp",
+    "cmake",
+    "ubuntu",
+    "clang",
+    "tests",
+    "ci"
+  ]
+}

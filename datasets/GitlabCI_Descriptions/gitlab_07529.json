@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_07529",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 5987,
+  "description": "Create a GitLab CI pipeline using the registry.gitlab.com/fdroid/ci-images-client:latest Docker image (with a .gradle cache at .gradle/wrapper and .gradle/caches) and a separate build_on_debian job that runs on debian:stretch. Define stages test and deploy. In the test stage add a build_on_debian job that runs apt configuration commands, installs android-sdk and gradle, runs sdkmanager to install platforms;android-25 and extras;android;m2repository, sets the Android license, patches build.gradle, runs gradle assembleDebug, and publishes the resulting *-debug.apk as a weekly artifact on success; also add a no-accel 22 default x86 job that runs ./gradlew assembleDebug, extracts AVD parameters from the job name, starts the emulator, installs the debug build, runs ./gradlew connectedCheck, and uploads debug logs, kernel.log, and other files as a failure artifact; finally add a test job that runs ./gradlew checkstyle, ./gradlew assembleDebug, creates OTA debug and release builds, builds the project with ./gradlew build capturing failing reports, fetches the latest versionCode from F-Droid index-v1.jar via jq, updates AndroidManifest.xml, builds OTA release binaries, and stores the generated zip files as a two‑month artifact. In the deploy stage add a deploy_nightly job that runs only on the master branch when $DEBUG_KEYSTORE is present, modifies string resources, computes a new versionCode, patches ClientWhitelist.java, builds the debug APK, and executes fdroid nightly -v to publish a nightly build. All jobs inherit the common before_script that sets GRADLE_USER_HOME, extracts Android SDK versions from app/build.gradle, installs gnupg, python3-argcomplete, python3-requests, clones the fdroid/sdkmanager repository, and runs sdkmanager to install the required build‑tools and platforms.",
+  "tags": [
+    "fdroid",
+    "android",
+    "gradle",
+    "docker",
+    "debian",
+    "ci",
+    "nightly",
+    "emulator",
+    "apk"
+  ]
+}

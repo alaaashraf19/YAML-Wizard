@@ -1,0 +1,64 @@
+create-html:
+  artifacts:
+    expire_in: 4 weeks
+    paths:
+    - public
+  before_script:
+  - git restore-mtime
+  - git submodule sync --recursive
+  - git submodule update --init --recursive
+  image: registry.gitlab.com/oer/emacs-reveal/emacs-reveal:9.44.0
+  only:
+  - main
+  script:
+  - "curl -f -L \"$CI_PROJECT_URL/-/jobs/artifacts/main/download?job=pages\" -o artifacts.zip\
+    \ || echo \"curl failed\"\nif [ -f artifacts.zip ]; then\n  unzip -n artifacts.zip\
+    \ -d old-artifacts\nfi\nif [ -f .old-artifacts-dirs-for-removal ]; then\n  xargs\
+    \ rm -rf < .old-artifacts-dirs-for-removal\nfi\nmv old-artifacts/public/.org-timestamps\
+    \ ~ || true\ncp -r old-artifacts/public . || true\nrm -f public/.org-re-reveal.log\n\
+    emacs --batch --load elisp/publish.el\nfind public -type f -regex '.*\\.\\(html\\\
+    |js\\|css\\)$' -exec gzip -f -k {} \\;\ncp -r ~/.org-timestamps public\nmkdir\
+    \ -p public/pdfs public/audio\nchmod -R 777 public\n"
+  stage: build
+generate-pdf:
+  artifacts:
+    expire_in: 4 weeks
+    paths:
+    - public
+  image: registry.gitlab.com/oer/emacs-reveal/selenium-chrome
+  only:
+  - main
+  script:
+  - "if [ -f public/.org-re-reveal.log ]; then\n  mkdir new-pdfs\n  chmod 777 new-pdfs\n\
+    \  python3 \"/root/selenium-print-pdf.py\" \"$(pwd -P)/public/.org-re-reveal.log\"\
+    \ selenium__standalone-chrome \"$(pwd -P)/new-pdfs\"\n  mv new-pdfs/* public/pdfs\n\
+    else\n  echo \"No new presentations.\"\nfi\n"
+  services:
+  - selenium/standalone-chrome
+  stage: secondary
+pages:
+  artifacts:
+    expire_in: 4 weeks
+    paths:
+    - public
+  only:
+  - main
+  script:
+  - echo "Dummy"
+  stage: deploy
+stages:
+- build
+- secondary
+- deploy
+tts:
+  artifacts:
+    expire_in: 4 weeks
+    paths:
+    - public
+  image: registry.gitlab.com/oer/emacs-reveal/tts
+  only:
+  - main
+  script:
+  - if [ -d public/tts ]; then python3 /tts/tts.py public/tts public/audio; fi
+  - rm -f "public/audio/*wav"
+  stage: secondary

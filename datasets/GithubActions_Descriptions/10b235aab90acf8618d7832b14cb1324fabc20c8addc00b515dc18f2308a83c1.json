@@ -1,0 +1,15 @@
+{
+  "sha": "10b235aab90acf8618d7832b14cb1324fabc20c8addc00b515dc18f2308a83c1",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1613,
+  "description": "Create a GitHub Actions workflow named Build that runs on push and pull request events to the master branch. Configure a matrix build job to run on ubuntu-24.04, macos-14-large, and macos-14 environments. For each job, check out the repository, configure CMake with the Release build type in a build subdirectory, build the program using the configured build type, and execute tests defined by the CMake configuration.",
+  "tags": [
+    "cmake",
+    "build",
+    "test",
+    "matrix",
+    "ubuntu",
+    "macos"
+  ]
+}

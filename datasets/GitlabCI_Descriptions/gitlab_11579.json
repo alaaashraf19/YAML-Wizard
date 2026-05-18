@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_11579",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 549,
+  "description": "Create a GitLab CI pipeline that uses the registry.gitlab.com/limitland/flatbedcursors/xcursorgen Docker image and defines two stages: build and deploy. In the build stage add a build-distribution job that runs echo \"Building...\", mkdir -p /root/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS,RPMS/noarch}, export RPMDIR=/root/rpmbuild, ./build-distribution, and cp ./deployment/index.html ./dist, then stores the dist directory as an artifact. In the deploy stage add a pages job that runs echo \"Deploying to public pages...\", mkdir -p ./public, rm -rf ./public/FlatbedCursors-*, cp ./dist/* ./public/, publishes the public directory as a pages artifact, and only runs on the master branch.",
+  "tags": [
+    "xcursorgen",
+    "rpm",
+    "gitlab-pages",
+    "build-distribution",
+    "docker-image"
+  ]
+}

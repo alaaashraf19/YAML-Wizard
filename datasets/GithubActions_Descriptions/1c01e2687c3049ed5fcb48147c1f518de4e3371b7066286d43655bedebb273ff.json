@@ -1,0 +1,16 @@
+{
+  "sha": "1c01e2687c3049ed5fcb48147c1f518de4e3371b7066286d43655bedebb273ff",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1556,
+  "description": "Create a GitHub Actions workflow named Linux that runs on every push, pull request, and published release. Use a single ubuntu-latest job that checks out the repository with submodules, installs dependencies, configures the build with scan-build and cmake, compiles dependencies and the OSP-Magnum project, runs unit tests with ctest, prepares artifacts, and uploads them.",
+  "tags": [
+    "linux",
+    "ubuntu",
+    "cmake",
+    "scan-build",
+    "clang-tidy",
+    "tests",
+    "artifacts"
+  ]
+}

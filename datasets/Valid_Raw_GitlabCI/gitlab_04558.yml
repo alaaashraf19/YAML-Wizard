@@ -1,0 +1,44 @@
+check-links:
+  image: node:latest
+  only:
+    refs:
+    - master
+  script:
+  - npm install broken-link-checker -g
+  - blc --help
+  - blc https://hnsuite.com -rog --filter-level 3
+  stage: post-deploy
+image: alpine:latest
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+    changes:
+    - website/*
+    refs:
+    - master
+  script:
+  - cd website
+  - mkdir .public
+  - cp -r * .public
+  - mv .public ../public
+  stage: deploy
+publish:
+  artifacts:
+    paths:
+    - /
+  only:
+    refs:
+    - tags
+  script:
+  - rm -rf website
+  - rm -rf .git
+  - rm .gitignore
+  - rm .gitlab-ci.yml
+  stage: deploy
+stages:
+- build
+- test
+- deploy
+- post-deploy

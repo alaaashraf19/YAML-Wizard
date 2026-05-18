@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_19242",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1207,
+  "description": "Create a GitLab CI pipeline using the ruby:2.6.5-stretch Docker image with a postgres:latest service, defining POSTGRES_DB, POSTGRES_HOST_AUTH_METHOD and POSTGRES_USER variables, and a cache keyed by ${CI_COMMIT_REF_SLUG} that stores the vendor/ruby directory. Define a single test stage and three jobs—audit, spec, and style—each running on the yale tag and inheriting a before_script that runs apt-get update -q, installs Node.js 10 via curl, prints ruby version, locates ruby, installs bundler with gem, runs bundle install -j $(nproc) --path vendor/ruby, and copies config/database.yml.gitlab to config/database.yml. The audit job executes the command \"bundle exec rake bundler:audit\". The spec job executes the command \"bundle exec rspec\". The style job executes the command \"bundle exec rake check_style 'git diff origin/master --name-status'\".",
+  "tags": [
+    "ruby",
+    "bundler-audit",
+    "rspec",
+    "style-check",
+    "postgres",
+    "nodejs",
+    "cache"
+  ]
+}

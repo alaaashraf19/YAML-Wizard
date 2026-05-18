@@ -1,0 +1,20 @@
+{
+  "sha": "gitlab_07660",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2991,
+  "description": "Create a GitLab CI pipeline using the docker:latest image with a docker:dind service and a global before_script that logs in to registry.gitlab.com. Define stages build, test, release, and deploy and set variables for artisan, nginx and phpfpm image tags. In the build stage add a build job that runs: docker run --entrypoint composer -v`pwd`:/var/www/app flaxandteal/docker-laravel-artisan install; docker build -f containers/artisan/Dockerfile -t $CONTAINER_ARTISAN_IMAGE .; docker build -f containers/nginx/Dockerfile -t $CONTAINER_NGINX_IMAGE .; docker build -f containers/phpfpm/Dockerfile -t $CONTAINER_PHPFPM_IMAGE .; docker push $CONTAINER_ARTISAN_IMAGE; docker push $CONTAINER_NGINX_IMAGE; docker push $CONTAINER_PHPFPM_IMAGE. In the test stage add a test job that runs docker run --entrypoint php $CONTAINER_ARTISAN_IMAGE vendor/phpunit/phpunit/phpunit. In the release stage add a release-image job that runs only on master and pulls each built image, tags them as latest and as $AWS_ECR_URI:<service>-$CI_BUILD_REF, pushes the release tags, logs into AWS ECR via garland/aws-cli-docker, and pushes the $AWS_ECR_URI images. In the deploy stage add a deploy job using the lwolf/kubectl_deployer:latest image, runs only on master, sets up kubeconfig from variables, and updates the artisan, nginx and phpfpm deployments with kubectl set image to the new ECR images.",
+  "tags": [
+    "docker",
+    "dind",
+    "laravel",
+    "composer",
+    "phpunit",
+    "kubernetes",
+    "aws-ecr",
+    "release",
+    "build",
+    "test",
+    "deploy"
+  ]
+}

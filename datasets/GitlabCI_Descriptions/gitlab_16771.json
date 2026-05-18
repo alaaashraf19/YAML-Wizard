@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_16771",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 250,
+  "description": "Create a GitLab CI pipeline that uses the zenato/puppeteer Docker image and runs a before_script that verifies google-chrome-unstable is available. Define a single job named test in the default test stage that sets PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true, sets CHROMIUM_PATH to the path of google-chrome-unstable, installs npm dependencies, copies .env.example to .env, and executes the test suite with node ace test. No caches, artifacts, or special rules are required.",
+  "tags": [
+    "puppeteer",
+    "node",
+    "npm",
+    "chrome",
+    "zenato"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "sha": "beb8b454c9e84baeaa75a826299b0d1d8188b75a9e21e8149b32b82b007b6d59",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3003,
+  "description": "Create a GitHub Actions workflow named linux that runs on push to main branch and tags, and on pull requests to main. The workflow has read permissions to repository contents. It uses two ubuntu-24.04 jobs: build and release. The build job checks out the code, sets up ccache, installs dependencies, sets up Python 3.12, installs Python dependencies, sets up Meson, builds, tests, and generates documentation. The release job creates and populates a release if the workflow is triggered by a tag, downloading and extracting artifacts, checking for a release, and uploading artifacts.",
+  "tags": [
+    "linux",
+    "meson",
+    "python",
+    "ubuntu",
+    "harfbuzz",
+    "documentation",
+    "release",
+    "artifacts"
+  ]
+}

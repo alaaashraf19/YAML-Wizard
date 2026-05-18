@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_18304",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1368,
+  "description": "Create a GitLab CI pipeline using the node:boron-alpine Docker image, with a global before_script that runs `npm install --ignore-scripts` and caches the `node_modules` directory keyed by the project ID. Define the stages lint, test, build, and deploy. In the lint stage add a `lint` job that runs `npm run lint`. In the test stage add a `test:coverage` job that runs `npm run test:coverage`, stores the `coverage` folder as a 30‑minute artifact and extracts coverage using the regex `/Statements\\s+:\\s(\\d+(?:\\.\\d+)?%)/`, plus three node version jobs (`test:node:4` using `node:argon-alpine` with `allow_failure:true`, `test:node:6` using the default image, and `test:node:7` using `node:alpine`) each running `npm run test`. In the build stage add `build` and `build:api` jobs that run `npm run build` and `npm run build:api` respectively, each publishing `dist` or `api` as a 30‑minute artifact and only triggering on tag names matching the regex `^v\\d\\.\\d\\.\\d$`. In the deploy stage add a `pages` job that depends on the two build jobs and `test:coverage`, creates `public/coverage` and `public/api` directories, copies the respective outputs into them, and publishes the `public` folder as an artifact, and a `publish` job that also depends on the build jobs, writes the npm auth token from the `NPM_TOKEN` secret to `.npmrc`, and runs `npm publish --access public`, both only on the same tag pattern.",
+  "tags": [
+    "node",
+    "npm",
+    "lint",
+    "test",
+    "coverage",
+    "build",
+    "pages",
+    "publish",
+    "cache"
+  ]
+}

@@ -1,0 +1,40 @@
+name: Build SCons
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-11.0, ubuntu-20.04]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install APT dependencies
+      if: runner.os == 'Linux'
+      run: |
+        sudo apt-get update
+        sudo apt-get install scons libsdl2-dev
+    - name: Install Brew dependencies
+      if: runner.os == 'macOS'
+      run: |
+        brew install scons sdl2
+    - name: Build package.
+      working-directory: buildsys/scons
+      run: |
+        scons develop_all dist -j 3 -s CPPDEFINES=NDEBUG ARCH=x86_64 MODE=DEBUG_RELEASE
+    - name: Unit tests
+      env:
+        LD_LIBRARY_PATH: ${{github.workspace}}
+      run: |
+        ./unittest ~[!nonportable]
+    - name: Archive distribution
+      uses: actions/upload-artifact@v2
+      with:
+        name: scons-dist
+        path: |
+          buildsys/scons/*.zip
+          buildsys/scons/*.tar.*
+        retention-days: 3

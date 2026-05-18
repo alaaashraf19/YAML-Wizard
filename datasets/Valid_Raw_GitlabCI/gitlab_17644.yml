@@ -1,0 +1,30 @@
+build_image:
+  only:
+  - tags
+  script:
+  - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+  - docker build -t $IMAGE_TAG .
+  - docker push $IMAGE_TAG
+  stage: build
+  tags:
+  - docker
+image: docker
+pip_register:
+  image: python:3.6
+  only:
+  - tags
+  script:
+  - pip install setuptools
+  - echo -e "[distutils]\nindex-servers =\n pypi\n\n[pypi]\nrepository:https://pypi.python.org/pypi\nusername:${PYPI_USERNAME}\npassword:${PYPI_PASSWORD}"
+    > ~/.pypirc
+  - python setup.py register -r pypi sdist upload -r pypi
+  stage: pip
+  tags:
+  - docker
+services:
+- docker:dind
+stages:
+- build
+- pip
+variables:
+  IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME

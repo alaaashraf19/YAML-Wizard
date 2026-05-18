@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_17451",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2702,
+  "description": "Create a GitLab CI pipeline with stages build, test, docs, and deploy. In the build stage add three jobs (build:beta:cargo, build:nightly:cargo, build:stable:cargo) that use the images registry.gitlab.com/iron-oxide/docker/rust-codecov:beta, registry.gitlab.com/iron-oxide/docker/rust-codecov:nightly, and rust respectively, each runs `cargo build --release --all`, caches with a key matching the channel (beta, nightly, stable), and stores the `target/release` directory as an artifact. In the test stage add three jobs (test:beta:cargo, test:nightly:cargo, test:stable:cargo) using the same images, each runs `cargo test --verbose --jobs 1 --all`; the stable job also runs an after_script that generates coverage with kcov for each test binary, uploads to Codecov via the bash uploader using $CODECOV_TOKEN, and echoes a confirmation. Also in the test stage add three rustfmt jobs (rustfmt:beta:cargo, rustfmt:nightly:cargo, rustfmt:stable:cargo) that allow failure, run a before_script `rustup component add rustfmt-preview`, then `cargo fmt --all -- --write-mode=diff`, cache with the same key and pull policy. Add a pages job in the docs stage that runs `cargo doc --all --no-deps`, clears and recreates the public directory, copies the generated docs, uses the rust image, caches the stable key with pull policy, and publishes the public/ folder as a pages artifact only on master or tags. Finally, add a release job in the deploy stage that runs `cargo login $CRATES_IO_TOKEN` and `cargo publish` using the rust image, and runs only on tag pushes.",
+  "tags": [
+    "rust",
+    "cargo",
+    "rustfmt",
+    "codecov",
+    "docs",
+    "pages",
+    "release",
+    "beta",
+    "nightly",
+    "stable"
+  ]
+}

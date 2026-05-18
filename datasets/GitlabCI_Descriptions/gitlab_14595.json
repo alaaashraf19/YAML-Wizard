@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_14595",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 654,
+  "description": "Create a GitLab CI pipeline that uses the stronglytyped/arm-none-eabi-gcc Docker image and runs on linux runners. Define a single stage called build and a job named qmk_pok3r in that stage. The job sets GIT_SUBMODULE_STRATEGY to recursive, executes the command 'make vortex/pok3r:default vortex/pok3r_rgb:default vortex/core:default', and publishes artifacts named $CI_JOB_NAME-$CI_COMMIT_REF_SLUG containing qmk_pok3r.md5, vortex_pok3r_default.bin, vortex_pok3r_rgb_default.bin, vortex_core_default.bin and the corresponding .elf and .map files from the .build directory. No additional services, caches, or rules are required.",
+  "tags": [
+    "arm-none-eabi-gcc",
+    "make",
+    "qmk",
+    "firmware",
+    "gitlab-ci"
+  ]
+}

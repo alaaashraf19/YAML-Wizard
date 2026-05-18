@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_18109",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 443,
+  "description": "Create a GitLab CI pipeline using the opensuse:latest Docker image, define a variable MAIN_CATALOG set to /etc/xml/catalog, and configure a cache keyed 'zypper' that stores /var/cache/zypper/** and /var/cache/zypp/**. Define a single stage called build. Add a job named \"Build Output\" in the build stage that runs a before_script of ./.gitlab/opensuse-install.sh and copies .gitlab/jing.conf to /etc/java/, then executes the script ./.gitlab/build.sh. Configure the job to publish artifacts named DocBook-Tutorial, including build/docbook-tutorial.pdf and build/docbook-tutorial.html, when the job succeeds.",
+  "tags": [
+    "opensuse",
+    "docbook",
+    "build",
+    "zypper",
+    "cache",
+    "pdf",
+    "html"
+  ]
+}

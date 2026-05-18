@@ -1,0 +1,347 @@
+.db-job-base:
+  dependencies:
+  - setup-test-env
+  extends:
+  - .only-code-rails-job-base
+  - .use-pg
+  needs:
+  - setup-test-env
+  stage: test
+.only-code-qa-rails-job-base:
+  extends:
+  - .default-tags
+  - .default-retry
+  - .default-cache
+  - .default-only
+  - .default-before_script
+  - .only-code-qa-changes
+.only-code-rails-job-base:
+  extends:
+  - .default-tags
+  - .default-retry
+  - .default-cache
+  - .default-only
+  - .default-before_script
+  - .only-code-changes
+.only-master:
+  only:
+    refs:
+    - master
+.rake-exec:
+  extends:
+  - .default-tags
+  - .default-retry
+  - .default-cache
+  - .default-only
+  - .default-before_script
+  script:
+  - bundle exec rake $CI_JOB_NAME
+  variables:
+    SETUP_DB: 'false'
+.rspec-base:
+  artifacts:
+    expire_in: 31d
+    paths:
+    - coverage/
+    - knapsack/
+    - rspec_flaky/
+    - rspec_profiling/
+    - tmp/capybara/
+    - tmp/memory_test/
+    reports:
+      junit: junit_rspec.xml
+    when: always
+  extends: .only-code-rails-job-base
+  script:
+  - JOB_NAME=( $CI_JOB_NAME )
+  - TEST_TOOL=${JOB_NAME[0]}
+  - TEST_LEVEL=${JOB_NAME[1]}
+  - DATABASE=${JOB_NAME[2]}
+  - export KNAPSACK_REPORT_PATH=knapsack/${CI_PROJECT_NAME}/${TEST_TOOL}_${TEST_LEVEL}_${DATABASE}_node_${CI_NODE_INDEX}_${CI_NODE_TOTAL}_report.json
+  - export KNAPSACK_GENERATE_REPORT=true KNAPSACK_LOG_LEVEL=debug KNAPSACK_TEST_DIR=spec
+  - export SUITE_FLAKY_RSPEC_REPORT_PATH=${FLAKY_RSPEC_SUITE_REPORT_PATH}
+  - export FLAKY_RSPEC_REPORT_PATH=rspec_flaky/all_${TEST_TOOL}_${CI_NODE_INDEX}_${CI_NODE_TOTAL}_report.json
+  - export NEW_FLAKY_RSPEC_REPORT_PATH=rspec_flaky/new_${TEST_TOOL}_${CI_NODE_INDEX}_${CI_NODE_TOTAL}_report.json
+  - export FLAKY_RSPEC_GENERATE_REPORT=true
+  - export CACHE_CLASSES=true
+  - cp ${KNAPSACK_RSPEC_SUITE_REPORT_PATH} ${KNAPSACK_REPORT_PATH}
+  - '[[ -f $FLAKY_RSPEC_REPORT_PATH ]] || echo "{}" > ${FLAKY_RSPEC_REPORT_PATH}'
+  - '[[ -f $NEW_FLAKY_RSPEC_REPORT_PATH ]] || echo "{}" > ${NEW_FLAKY_RSPEC_REPORT_PATH}'
+  - scripts/gitaly-test-spawn
+  - date
+  - export KNAPSACK_TEST_FILE_PATTERN=$(ruby -r./lib/quality/test_level.rb -e "puts
+    Quality::TestLevel.new.pattern(:${TEST_LEVEL})")
+  - mkdir -p tmp/memory_test
+  - export MEMORY_TEST_PATH="tmp/memory_test/${TEST_TOOL}_${TEST_LEVEL}_${DATABASE}_node_${CI_NODE_INDEX}_${CI_NODE_TOTAL}_memory.csv"
+  - knapsack rspec "--color --format documentation --format RspecJunitFormatter --out
+    junit_rspec.xml --tag level:${TEST_LEVEL} --tag ~geo"
+  - date
+  stage: test
+.rspec-base-ee:
+  extends:
+  - .rspec-base
+  - .only-ee
+  script:
+  - JOB_NAME=( $CI_JOB_NAME )
+  - TEST_TOOL=${JOB_NAME[0]}
+  - TEST_LEVEL=${JOB_NAME[1]}
+  - DATABASE=${JOB_NAME[2]}
+  - export KNAPSACK_REPORT_PATH=knapsack/${CI_PROJECT_NAME}/${TEST_TOOL}_${TEST_LEVEL}_${DATABASE}_ee_node_${CI_NODE_INDEX}_${CI_NODE_TOTAL}_report.json
+  - export KNAPSACK_GENERATE_REPORT=true KNAPSACK_LOG_LEVEL=debug KNAPSACK_TEST_DIR=spec
+  - export CACHE_CLASSES=true
+  - cp ${EE_KNAPSACK_RSPEC_SUITE_REPORT_PATH} ${KNAPSACK_REPORT_PATH}
+  - scripts/gitaly-test-spawn
+  - date
+  - export KNAPSACK_TEST_FILE_PATTERN=$(ruby -r./lib/quality/test_level.rb -e "puts
+    Quality::TestLevel.new(%(ee/)).pattern(:${TEST_LEVEL})")
+  - mkdir -p tmp/memory_test
+  - export MEMORY_TEST_PATH="tmp/memory_test/ee_${TEST_TOOL}_${TEST_LEVEL}_${DATABASE}_node_${CI_NODE_INDEX}_${CI_NODE_TOTAL}_memory.csv"
+  - knapsack rspec "--color --format documentation --format RspecJunitFormatter --out
+    junit_rspec.xml --tag level:${TEST_LEVEL} --tag ~geo"
+  - date
+.rspec-base-geo:
+  extends: .rspec-base-ee
+  parallel: 3
+  script:
+  - JOB_NAME=( $CI_JOB_NAME )
+  - TEST_TOOL=${JOB_NAME[0]}
+  - TEST_LEVEL=${JOB_NAME[1]}
+  - DATABASE=${JOB_NAME[2]}
+  - export KNAPSACK_TEST_FILE_PATTERN="ee/spec/**{,/*/**}/*_spec.rb" KNAPSACK_GENERATE_REPORT=true
+    CACHE_CLASSES=true
+  - export KNAPSACK_REPORT_PATH=knapsack/${CI_PROJECT_NAME}/${TEST_TOOL}_node_${CI_NODE_INDEX}_${CI_NODE_TOTAL}_report.json
+  - cp ${EE_KNAPSACK_RSPEC_SUITE_REPORT_PATH} ${KNAPSACK_REPORT_PATH}
+  - source scripts/prepare_postgres_fdw.sh
+  - scripts/gitaly-test-spawn
+  - mkdir -p tmp/memory_test
+  - export MEMORY_TEST_PATH="tmp/memory_test/ee_${TEST_TOOL}_${TEST_LEVEL}_${DATABASE}_node_${CI_NODE_INDEX}_${CI_NODE_TOTAL}_memory.csv"
+  - knapsack rspec "-Ispec --color --format documentation --format RspecJunitFormatter
+    --out junit_rspec.xml --tag geo"
+.rspec-base-pg:
+  extends:
+  - .rspec-base
+  - .use-pg
+.rspec-base-pg-10:
+  extends:
+  - .rspec-base
+  - .use-pg-10
+.rspec-base-pg-ee:
+  extends: .rspec-base-ee
+  services:
+  - command:
+    - postgres
+    - -c
+    - fsync=off
+    - -c
+    - synchronous_commit=off
+    - -c
+    - full_page_writes=off
+    name: postgres:9.6
+  - name: redis:alpine
+  - name: docker.elastic.co/elasticsearch/elasticsearch:5.6.12
+coverage:
+  artifacts:
+    expire_in: 31d
+    name: coverage
+    paths:
+    - coverage/index.html
+    - coverage/assets/
+    - tmp/memory_test/
+  cache:
+    policy: pull
+  coverage: /LOC \((\d+\.\d+%)\) covered.$/
+  extends: .only-code-rails-job-base
+  script:
+  - bundle exec scripts/merge-simplecov
+  - bundle exec scripts/gather-test-memory-data
+  stage: post-test
+  variables:
+    SETUP_DB: 'false'
+db:check-schema:
+  extends: .db-job-base
+  script:
+  - source scripts/schema_changed.sh
+db:migrate-from-v11.11.0:
+  extends: .db-job-base
+  script:
+  - export PROJECT_TO_CHECKOUT="gitlab-foss"
+  - export TAG_TO_CHECKOUT="v11.11.0"
+  - '[[ ! -d "ee/" ]] || export PROJECT_TO_CHECKOUT="gitlab"'
+  - '[[ ! -d "ee/" ]] || export TAG_TO_CHECKOUT="v11.11.0-ee"'
+  - git fetch https://gitlab.com/gitlab-org/$PROJECT_TO_CHECKOUT.git $TAG_TO_CHECKOUT
+  - git checkout -f FETCH_HEAD
+  - sed -i "s/gem 'oj', '~> 2.17.4'//" Gemfile
+  - sed -i "s/gem 'bootsnap', '~> 1.0.0'/gem 'bootsnap'/" Gemfile
+  - bundle update google-protobuf grpc bootsnap
+  - bundle install $BUNDLE_INSTALL_FLAGS
+  - date
+  - cp config/gitlab.yml.example config/gitlab.yml
+  - bundle exec rake db:drop db:create db:schema:load db:seed_fu
+  - date
+  - git checkout -f $CI_COMMIT_SHA
+  - bundle install $BUNDLE_INSTALL_FLAGS
+  - date
+  - . scripts/prepare_build.sh
+  - date
+  - bundle exec rake db:migrate
+  variables:
+    SETUP_DB: 'false'
+db:migrate:reset:
+  extends: .db-job-base
+  script:
+  - bundle exec rake db:migrate:reset
+db:rollback:
+  extends: .db-job-base
+  script:
+  - bundle exec rake db:migrate VERSION=20180101160629
+  - bundle exec rake db:migrate SKIP_SCHEMA_VERSION_CHECK=true
+db:rollback geo:
+  extends:
+  - db:rollback
+  - .only-ee
+  script:
+  - bundle exec rake geo:db:migrate VERSION=20170627195211
+  - bundle exec rake geo:db:migrate
+downtime_check:
+  dependencies:
+  - setup-test-env
+  except:
+    refs:
+    - master
+    - tags
+    variables:
+    - $CI_COMMIT_REF_NAME =~ /^[\d-]+-stable(-ee)?$/
+  extends:
+  - .rake-exec
+  - .only-code-changes
+  needs:
+  - setup-test-env
+  stage: test
+gitlab:setup:
+  artifacts:
+    expire_in: 1d
+    paths:
+    - log/development.log
+    when: on_failure
+  extends: .db-job-base
+  script:
+  - git clone https://gitlab.com/gitlab-org/gitlab-test.git /home/git/repositories/gitlab-org/gitlab-test.git
+  - scripts/gitaly-test-spawn
+  - force=yes SIZE=1 FIXTURE_PATH="db/fixtures/development" bundle exec rake gitlab:setup
+  variables:
+    SETUP_DB: 'false'
+quick-rspec geo pg ee:
+  extends:
+  - .rspec-base-geo
+  - .use-pg
+  only:
+    variables:
+    - $CI_COMMIT_REF_NAME =~ /(^geo[\/-].*|.*-geo$)/
+  stage: quick-test
+quick-rspec geo pg-10 ee:
+  extends:
+  - .rspec-base-geo
+  - .use-pg-10
+  only:
+    variables:
+    - $CI_COMMIT_REF_NAME =~ /(^geo[\/-].*|.*-geo$)/
+  stage: quick-test
+rspec geo pg ee:
+  except:
+    variables:
+    - $CI_COMMIT_REF_NAME =~ /(^geo[\/-].*|.*-geo$)/
+  extends:
+  - .rspec-base-geo
+  - .use-pg
+rspec geo pg-10 ee:
+  except:
+    variables:
+    - $CI_COMMIT_REF_NAME =~ /(^geo[\/-].*|.*-geo$)/
+  extends:
+  - .rspec-base-geo
+  - .use-pg-10
+rspec integration pg:
+  extends: .rspec-base-pg
+  parallel: 6
+rspec integration pg ee:
+  extends: .rspec-base-pg-ee
+  parallel: 3
+rspec integration pg-10:
+  extends:
+  - .rspec-base-pg-10
+  - .only-master
+  parallel: 6
+rspec quarantine pg:
+  allow_failure: true
+  extends:
+  - .rspec-base-pg
+  - .only-master
+  script:
+  - export NO_KNAPSACK=1 CACHE_CLASSES=true
+  - scripts/gitaly-test-spawn
+  - bin/rspec --color --format documentation --tag quarantine -- spec/
+rspec quarantine pg ee:
+  extends:
+  - rspec quarantine pg
+  - .only-ee
+  script:
+  - export NO_KNAPSACK=1 CACHE_CLASSES=true
+  - scripts/gitaly-test-spawn
+  - bin/rspec --color --format documentation --format RspecJunitFormatter --out junit_rspec.xml
+    --tag quarantine -- ee/spec/
+rspec system pg:
+  extends: .rspec-base-pg
+  parallel: 24
+rspec system pg ee:
+  extends: .rspec-base-pg-ee
+  parallel: 5
+rspec system pg-10:
+  extends:
+  - .rspec-base-pg-10
+  - .only-master
+  parallel: 24
+rspec unit pg:
+  extends: .rspec-base-pg
+  parallel: 20
+rspec unit pg ee:
+  extends: .rspec-base-pg-ee
+  parallel: 7
+rspec unit pg-10:
+  extends:
+  - .rspec-base-pg-10
+  - .only-master
+  parallel: 20
+rspec-fast-spec-helper:
+  extends: .rspec-base-pg
+  script:
+  - bundle exec rspec spec/fast_spec_helper.rb
+setup-test-env:
+  artifacts:
+    expire_in: 7d
+    paths:
+    - tmp/tests
+    - config/secrets.yml
+    - vendor/gitaly-ruby
+  extends:
+  - .only-code-qa-rails-job-base
+  - .use-pg
+  script:
+  - bundle exec ruby -Ispec -e 'require "spec_helper" ; TestEnv.init'
+  - scripts/gitaly-test-build
+  stage: prepare
+static-analysis:
+  cache:
+    key: debian-stretch-ruby-2.6.3-and-rubocop
+    paths:
+    - vendor/ruby
+    - tmp/rubocop_cache
+    policy: pull-push
+  dependencies:
+  - setup-test-env
+  - compile-assets
+  - compile-assets pull-cache
+  extends: .only-code-qa-rails-job-base
+  script:
+  - scripts/static-analysis
+  variables:
+    SETUP_DB: 'false'

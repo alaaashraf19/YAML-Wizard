@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_17915",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 659,
+  "description": "Create a GitLab CI pipeline with three stages: build, test, and deploy. Use the node:8.11.2-alpine Docker image for the build, build-example, and test jobs, and the alpine image for the pages job. In the build stage add a build job that runs 'yarn install --progress=false' then 'yarn build' and stores the 'dist' directory as an artifact that expires in one week. In the test stage add a test job that runs 'yarn install --progress=false' then 'yarn test', and a build-example job that runs 'yarn install --progress=false' then 'yarn build-example', each publishing their respective 'example' or test artifacts for one week. In the deploy stage add a pages job that runs only on the master branch, executes 'mkdir .public', 'cp -r example .public', and 'mv .public public', and publishes the 'public' directory as the pages artifact.",
+  "tags": [
+    "node",
+    "yarn",
+    "alpine",
+    "pages",
+    "build",
+    "test",
+    "ci"
+  ]
+}

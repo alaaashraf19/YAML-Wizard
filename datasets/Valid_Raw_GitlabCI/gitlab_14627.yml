@@ -1,0 +1,164 @@
+.build:
+  after_script:
+  - cp -r /home/pmos/.local/var/pmbootstrap/packages/ packages/ || true
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - packages/
+  before_script:
+  - &id001
+    - apk upgrade -U
+  - .ci/lib/gitlab_prepare_ci.sh
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event" || $CI_COMMIT_REF_PROTECTED ==
+      "false"
+  stage: build
+  timeout: 10 h
+after_script:
+- .ci/lib/move_logs.sh $CI_PROJECT_DIR
+aport-lint:
+  allow_failure: true
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event" || $CI_COMMIT_REF_PROTECTED ==
+      "false"
+  script:
+  - .ci/lib/gitlab_prepare_ci.sh
+  - .ci/apkbuild-lint.sh
+  stage: lint
+auto-update:
+  after_script:
+  - .ci/lib/move_logs.sh $CI_PROJECT_DIR
+  artifacts:
+    paths:
+    - log.txt
+    - log_testsuite_pmaports.txt
+    - pmbootstrap.cfg
+    when: on_failure
+  before_script:
+  - .ci/lib/gitlab_prepare_ci.sh
+  rules:
+  - if: $AUTOUPDATE_PACKAGES != null && $CI_PIPELINE_SOURCE == "schedule" || $CI_PIPELINE_SOURCE
+      == "web"
+  script:
+  - .ci/autoupdate.sh "$AUTOUPDATE_PACKAGES"
+  stage: autoupdate
+before_script: *id001
+build-aarch64:
+  extends: .build
+  script:
+  - .ci/build-aarch64.sh
+build-armhf:
+  extends: .build
+  script:
+  - .ci/build-armhf.sh
+build-armv7:
+  extends: .build
+  script:
+  - .ci/build-armv7.sh
+build-riscv64:
+  extends: .build
+  script:
+  - .ci/build-riscv64.sh
+build-x86:
+  extends: .build
+  script:
+  - .ci/build-x86.sh
+build-x86_64:
+  extends: .build
+  script:
+  - .ci/build-x86_64.sh
+editor-config:
+  image: alpine:edge
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event" || $CI_COMMIT_REF_PROTECTED ==
+      "false"
+  script:
+  - .ci/lib/gitlab_prepare_ci.sh
+  - .ci/ec.sh
+  stage: lint
+image: alpine:latest
+kernel-kconfig:
+  rules:
+  - changes:
+    - kconfigcheck.toml
+    - device/*/linux-*/config-*
+    - main/linux-*/config-*
+    if: $CI_PIPELINE_SOURCE == "merge_request_event" || $CI_COMMIT_REF_PROTECTED ==
+      "false"
+  script:
+  - .ci/lib/gitlab_prepare_ci.sh
+  - .ci/kconfig.sh
+  stage: lint
+mr-settings:
+  before_script:
+  - *id001
+  - apk -q add python3
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  script:
+  - wget -q "https://gitlab.postmarketos.org/postmarketOS/ci-common/-/raw/master/check_mr_settings.py"
+  - python3 ./check_mr_settings.py
+  stage: lint
+pytest-commits:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - log.txt
+    - log_testsuite_pmaports.txt
+    - pmbootstrap.cfg
+    when: on_failure
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event" || $CI_COMMIT_REF_PROTECTED ==
+      "false"
+  script:
+  - .ci/lib/gitlab_prepare_ci.sh
+  - .ci/pytest.sh
+  - .ci/commits.sh
+  stage: lint
+ruff:
+  rules:
+  - changes:
+    - .ci/*
+    - .ci/*/*
+    - .gitlab-ci.yml
+    if: $CI_PIPELINE_SOURCE == "merge_request_event" || $CI_COMMIT_REF_PROTECTED ==
+      "false"
+  script:
+  - .ci/lib/gitlab_prepare_ci.sh
+  - .ci/ruff.sh
+  stage: lint
+shellcheck-grep:
+  image: alpine:edge
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event" || $CI_COMMIT_REF_PROTECTED ==
+      "false"
+  script:
+  - .ci/lib/gitlab_prepare_ci.sh
+  - .ci/shellcheck.sh
+  - .ci/grep.sh
+  - .ci/codeowners.sh
+  stage: lint
+stages:
+- lint
+- build
+- autoupdate
+variables:
+  GIT_DEPTH: 100
+wiki:
+  rules:
+  - changes:
+    - .ci/**/*
+    - .gitlab-ci.yml
+    - device/*/device-*/*
+    if: $CI_PIPELINE_SOURCE == "merge_request_event" || $CI_COMMIT_REF_PROTECTED ==
+      "false"
+  script:
+  - .ci/lib/gitlab_prepare_ci.sh
+  - .ci/wiki.sh
+  stage: lint
+workflow:
+  rules:
+  - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS && $CI_PIPELINE_SOURCE == "push"
+    when: never
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  - if: $CI_PIPELINE_SOURCE == "schedule" || $CI_PIPELINE_SOURCE == "web"

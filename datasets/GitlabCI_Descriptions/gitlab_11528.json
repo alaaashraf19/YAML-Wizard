@@ -1,0 +1,20 @@
+{
+  "sha": "gitlab_11528",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 4169,
+  "description": "Create a GitLab CI pipeline that defines the stages static, build, test, deploy, sentry_release, and security, uses the variable GITLAB_CI_IMAGE_GNURADIO (librespace/gnuradio:3.10.5.1-satnogs) as the Docker image for most jobs and runs a shared before_script that updates apt, installs git python3-pip python3-venv from packages.debian, and installs tox via pip. In the static stage add a static job that runs `tox run -e \"flake8,isort,yapf,pylint,robot-lint\"` and a lint job that never runs (rule when: never). In the build stage add a build job that executes `rm -rf dist` then `tox run -e \"build\"`, stores the resulting dist directory as an artifact for 1 week, and always runs; also add a docs job (no script shown) and a docker job that builds and tags a Docker image using variables GITLAB_CI_DOCKER_IMAGE_NAME and GITLAB_CI_DOCKER_IMAGE_VERSION, with an extended docker_unstable variant that adds unstable tag variables. In the test stage add a test job that runs `rm -rf robot/output` followed by `tox run-parallel -e \"pytest,deps,robot\"`, and archives the robot/output directory as an artifact for 1 week. In the deploy stage add a deploy job that runs `rm -rf dist` then `tox run -e \"upload\"` only when a Git tag, PYPI_USERNAME and PYPI_PASSWORD are present, a pages job that publishes the site only on the default branch tag, and a sentry_release job using the getsentry/sentry-cli image that runs `sentry-cli releases new --finalize -p ${CI_PROJECT_NAME} ${CI_PROJECT_NAME}@${CI_COMMIT_TAG}` and `sentry-cli releases set-commits --auto ${CI_PROJECT_NAME}@${CI_COMMIT_TAG}` when the same tag conditions are met. Finally, add container_scanning and dependency_scanning jobs in the security stage that run only on the default branch when CI_REGISTRY_IMAGE is set, with appropriate variables for CI_APPLICATION_REPOSITORY and DS_EXCLUDED_ANALYZERS.",
+  "tags": [
+    "gnuradio",
+    "tox",
+    "python",
+    "pypi",
+    "sentry",
+    "pages",
+    "docker",
+    "security-scanning",
+    "static-analysis",
+    "test",
+    "build"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_11273",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 268,
+  "description": "Create a GitLab CI pipeline that defines a global variable project set to search-ux-4-selenium-tests-chrome-headless and a before_script that runs dotnet restore for every job. Define two stages: build and test. Add a test job that runs in the test stage, uses the Docker image ksheerasagar17/dotnet-selenium-chrome, sets a variable test_path to $project, changes directory to $test_path, and executes dotnet test. The pipeline has no caches, artifacts, services, or conditional rules.",
+  "tags": [
+    "dotnet",
+    "selenium",
+    "chrome",
+    "gitlab-ci",
+    "test"
+  ]
+}

@@ -1,0 +1,48 @@
+deploy-pypi:
+  except:
+  - branches
+  image: python:3.8
+  only:
+  - /^v\d+\.\d+\.\d+([abc]\d*)?$/
+  script:
+  - pip install twine
+  - twine upload dist/* -u ${PYPI_USER} -p ${PYPI_PASS}
+  stage: deploy
+lint:
+  image: python:3.8
+  script:
+  - pip install tox
+  - tox -e lint
+  stage: test
+pages:
+  artifacts:
+    paths:
+    - public
+  dependencies:
+  - test-coverage
+  script:
+  - mkdir -p public/coverage
+  - mv htmlcov/* public/coverage
+  stage: deploy
+stages:
+- test
+- build
+- deploy
+test-coverage:
+  artifacts:
+    paths:
+    - htmlcov
+  image: python:3.8
+  script:
+  - pip install tox
+  - tox -e cov
+  stage: test
+wheel:
+  artifacts:
+    paths:
+    - dist
+  image: python:3.8
+  script:
+  - pip install tox
+  - tox -e wheel
+  stage: build

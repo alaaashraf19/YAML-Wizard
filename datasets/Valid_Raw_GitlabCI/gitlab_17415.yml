@@ -1,0 +1,38 @@
+before_script:
+- mkdir -p "/root/workspace/src"
+- cd "/root/workspace/src/"
+- git clone "https://gitlab.com/srrg-software/srrg_cmake_modules.git"
+- export SRRG_SCRIPT_PATH="/root/workspace/src/srrg_cmake_modules/ci_scripts"
+- ls -al "$SRRG_SCRIPT_PATH"
+- source ${SRRG_SCRIPT_PATH}/install_environment.sh "$CI_PROJECT_DIR" "$CI_PROJECT_NAME"
+- eval $(ssh-agent -s)
+- echo "$SSH_PRIVATE_KEY_FULL" | tr -d '\r' | ssh-add - > /dev/null
+- mkdir -p ~/.ssh
+- chmod 700 ~/.ssh
+- ssh-keyscan gitlab.com >> ~/.ssh/known_hosts
+- chmod 644 ~/.ssh/known_hosts
+- cd "/root/source/srrg2"
+- source srrg2_integration/gitlab-ci.bash
+build_ubuntu1604_kinetic_debug:
+  image: osrf/ros:kinetic-desktop-full-xenial
+  script:
+  - catkin build -j4 -DCMAKE_BUILD_TYPE=Debug --summarize --no-status --force-color
+  stage: build
+build_ubuntu1604_kinetic_release:
+  image: osrf/ros:kinetic-desktop-full-xenial
+  script:
+  - catkin build -j4 --summarize --no-status --force-color
+  - catkin run_tests -j4
+  stage: build
+build_ubuntu1804_melodic_debug:
+  image: osrf/ros:melodic-desktop-full-bionic
+  script:
+  - catkin build -j4 -DCMAKE_BUILD_TYPE=Debug --summarize --no-status --force-color
+  stage: build
+build_ubuntu1804_melodic_release:
+  image: osrf/ros:melodic-desktop-full-bionic
+  script:
+  - catkin build -j4 --summarize --no-status --force-color
+  - catkin run_tests -j4
+  stage: build
+variables: null

@@ -1,0 +1,17 @@
+{
+  "sha": "81c56fb44b20382626c341c28cb115831b4ecd38a443f0e47c46a46bdad8b0f1",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5814,
+  "description": "Create a GitHub Actions workflow named CI that runs on every push and on pull requests. The workflow consists of two jobs: 'cache' and 'build-package'. The 'cache' job runs on ubuntu-24.04, gets the HEAD of the bootstrap-managarm repository, and caches the rootfs. The 'build-package' job uses a matrix strategy to build different packages on various architectures, installing prerequisites, restoring the cache, checking out the bootstrap-managarm and Managarm repositories, and building and testing the packages.",
+  "tags": [
+    "managarm",
+    "bootstrap",
+    "cache",
+    "matrix",
+    "build",
+    "test",
+    "clang-tidy",
+    "ubuntu"
+  ]
+}

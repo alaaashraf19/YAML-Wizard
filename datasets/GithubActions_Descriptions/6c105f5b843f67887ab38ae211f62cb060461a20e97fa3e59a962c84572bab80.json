@@ -1,0 +1,16 @@
+{
+  "sha": "6c105f5b843f67887ab38ae211f62cb060461a20e97fa3e59a962c84572bab80",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1702,
+  "description": "Create a GitHub Actions workflow named release that triggers on push with any tag, on pull requests to devel and master branches, and on workflow dispatch. The workflow should have two ubuntu-latest jobs: build-sdist to checkout, install Python 3.7, setup apt and dependencies, then build source distribution and wheel artifacts; and upload_pypi that depends on build-sdist, downloads the artifacts, and uploads them to PyPI using a token from secrets.",
+  "tags": [
+    "python",
+    "release",
+    "pypi",
+    "ubuntu",
+    "sdist",
+    "wheel",
+    "artifacts"
+  ]
+}

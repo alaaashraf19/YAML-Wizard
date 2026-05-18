@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_06072",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 873,
+  "description": "Create a GitLab CI pipeline with stages build and deploy, using rust:latest as the default image and defining CARGO_HOME as $CI_PROJECT_DIR/.cargo. In the build stage add a build job that runs only on the master branch, caches $CARGO_HOME, target/, ratscrew-client/node_modules/ and ratscrew-client/dist/, and after a week expires its artifacts containing target/release/actix-ratscrew and ratscrew-client/dist/. The build job executes the script commands: apt update; curl -sL https://deb.nodesource.com/setup_10.x | bash -; apt update && apt install nodejs; node -v && npm -v; cd ratscrew-client; touch .env; echo $WS_URL > .env; npm install; npm run build; cd ..; rustc --version && cargo --version; cargo build --release --jobs 1. In the deploy stage add a deploy job that also runs only on master, depends on the build job, uses the alpine:latest image, and runs: apk add --update openssh-client bash; bash deploy/deploy.sh.",
+  "tags": [
+    "rust",
+    "cargo",
+    "nodejs",
+    "npm",
+    "alpine",
+    "deploy",
+    "gitlab-ci"
+  ]
+}

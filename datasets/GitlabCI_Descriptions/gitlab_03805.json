@@ -1,0 +1,12 @@
+{
+  "sha": "gitlab_03805",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 222,
+  "description": "Create a GitLab CI pipeline that defines a deploy stage and a job named deploy_to_production. The job runs in the deploy stage, targets the production environment, and executes the exact shell command GIT_SSH_COMMAND=\"ssh -i ~gitlab-runner/.ssh/push_to_prod\" git push --force git@gitlab.gitlabtutorial.org:root/example4.git +HEAD:production. Use the default Docker image provided by GitLab Runner. No additional variables, caches, or artifacts are required.",
+  "tags": [
+    "deploy",
+    "production",
+    "ssh-git-push"
+  ]
+}

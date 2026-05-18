@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_07983",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 251,
+  "description": "Create a GitLab CI pipeline that runs a global before_script \"bash .gitlab-ci.sh\", defines MYSQL_DATABASE and MYSQL_ROOT_PASSWORD variables, and uses the woohuiren/php-laravel-env:latest Docker image with a mysql:latest service. Add a phpunit job named phpunit:php-laravel-env:mysql in the default test stage that inherits the before_script and variables and executes \"php vendor/bin/phpunit --colors\". The job should run with the specified image and service.",
+  "tags": [
+    "php",
+    "laravel",
+    "phpunit",
+    "mysql",
+    "docker-image"
+  ]
+}

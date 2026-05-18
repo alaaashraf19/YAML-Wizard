@@ -1,0 +1,9 @@
+before_script:
+- pip install -U platformio
+- touch src/settings.h
+build:
+  cache:
+    paths:
+    - ~/.platformio
+  script: platformio run
+image: python:2

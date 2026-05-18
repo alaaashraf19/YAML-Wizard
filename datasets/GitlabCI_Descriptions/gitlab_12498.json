@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_12498",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 206,
+  "description": "Create a GitLab CI pipeline that uses the node:12.14.1 Docker image and caches the node_modules/ directory. Include a global before_script that runs npm install. Add a release job (default test stage) that executes npm run build, saves the dist/ directory as an artifact, and runs only for tag pipelines. Add a test job (default test stage) that executes npm run test.",
+  "tags": [
+    "node-12",
+    "npm",
+    "cache-node-modules",
+    "release",
+    "tags",
+    "artifacts"
+  ]
+}

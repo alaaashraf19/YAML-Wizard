@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_11970",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 3609,
+  "description": "Create a GitLab CI pipeline using the custom Docker image $CI_REGISTRY/materials-modeling/$CI_PROJECT_NAME/cicd with a global before_script that exports PYTHONPATH to the local installation directory. Define stages test, build, and deploy. In the build stage add a build:linux job that runs `pip3 install --target=$INSTDIR .` and publishes the local_installation/ directory as a 2‑day artifact. In the test stage add basic_tests:linux (runs xdoctest hiphive, `coverage run -m pytest --verbose --junitxml=report.xml tests/`, `coverage report -m --omit=hiphive/calculators/numba_calc.py`, and `coverage html --omit=hiphive/calculators/numba_calc.py`), style_check (runs `flake8 doc/ examples/ hiphive/ tests/`), test_examples (loops over each example .py file, echoes the directory and file names, and executes them with `python3`), test_notebooks (runs `pytest --nbmake --nbmake-timeout=3600` on all notebooks), test_documentation (creates a public folder and runs `sphinx-build -b doctest -W doc/ public/` then `sphinx-build -W doc/ public/`), and the included code_quality job, each uploading their defined artifacts. In the deploy stage add a pages job that builds Sphinx docs, zips tutorial and advanced topics, copies coverage reports, and publishes the public/ directory as a GitLab Pages artifact only on master or tags (excluding schedules), and a pypi job that checks out the latest tag, builds the package with `python3 -m build`, verifies with `twine check`, and uploads to PyPI with `twine upload` using the PYPI_TOKEN, running manually on tag pushes.",
+  "tags": [
+    "python",
+    "coverage",
+    "pytest",
+    "flake8",
+    "sphinx",
+    "gitlab-pages",
+    "pypi",
+    "code-quality",
+    "docker-image"
+  ]
+}

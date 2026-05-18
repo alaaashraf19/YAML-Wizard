@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_08027",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 259,
+  "description": "Create a GitLab CI pipeline that defines a single job named py36_tests running in the default test stage, using the python:3.6 Docker image. The job should execute the exact shell commands: apt-get update -q -y, pip install -r requirements.txt, pip install coverage, ./manage.py makemigrations --check, coverage run --branch manage.py test, and coverage report --omit=.virt/* --fail-under=97. No services, caches, artifacts, or conditional rules are required, and the pipeline does not deploy anywhere.",
+  "tags": [
+    "python",
+    "python-3-6",
+    "coverage",
+    "django",
+    "tests"
+  ]
+}

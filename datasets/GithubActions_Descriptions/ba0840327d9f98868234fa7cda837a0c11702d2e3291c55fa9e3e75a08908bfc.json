@@ -1,0 +1,17 @@
+{
+  "sha": "ba0840327d9f98868234fa7cda837a0c11702d2e3291c55fa9e3e75a08908bfc",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3037,
+  "description": "Create a GitHub Actions workflow named ubuntu that runs on push and pull request events with read-all permissions. Use a matrix job on ubuntu-20.04 to test with multiple compilers (gcc-9 to gcc-11 and clang-9 to clang-16), checking out the repository, configuring the compiler and bazel, then building and testing the project in both release and debug modes.",
+  "tags": [
+    "ubuntu",
+    "gcc",
+    "clang",
+    "bazel",
+    "cmake",
+    "ctest",
+    "matrix",
+    "ci"
+  ]
+}

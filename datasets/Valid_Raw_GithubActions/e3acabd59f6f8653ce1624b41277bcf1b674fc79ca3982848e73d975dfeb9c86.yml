@@ -1,0 +1,32 @@
+name: ci build                                                                  
+
+on:                                                                             
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:                                                                           
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: install deps
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libprotobuf-dev protobuf-compiler
+
+    - name: update submodules
+      run: git submodule update --init --recursive
+
+    - name: make
+      run: make -j4
+
+    - name: make tutorial
+      run: make tutorial -j4
+
+    - name: make install
+      run: sudo make install

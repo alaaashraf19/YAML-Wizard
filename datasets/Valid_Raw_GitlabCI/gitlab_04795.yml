@@ -1,0 +1,7 @@
+tests:
+  image: python:3.12
+  script:
+  - pip install flake8 mypy
+  - pip install -e .
+  - flake8 cmr docs
+  - mypy

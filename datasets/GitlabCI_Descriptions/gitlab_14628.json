@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_14628",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1844,
+  "description": "Create a GitLab CI pipeline using the alpine:latest Docker image with three stages: lint, deploy, and test. In the lint stage add a codespell job that runs `.ci/codespell.sh`; a docs job that runs `apk add py3-sphinx py3-sphinx_rtd_theme` then `.ci/docs.sh` and publishes the `public` directory as an artifact; a mr-settings job that first executes the shared before_script (`.ci/note.sh`, `apk upgrade -U`, `adduser -D build`), then `apk -q add python3`, downloads `check_mr_settings.py` with `wget -q …`, and runs `python3 ./check_mr_settings.py` only on merge‑request events; plus mypy, ruff, shellcheck, and vermin jobs each running their respective `.ci/*.sh` scripts. In the test stage add a pytest job that installs git with `apk -q add git`, configures git via `su build -c 'git config --global user.email ci@ci'` and `su build -c 'git config --global user.name CI'`, appends a sudoers line `echo 'build ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers`, runs `.ci/pytest.sh`, and on failure copies log files to the workspace and stores `log_testsuite.txt` and `log.txt` as artifacts. In the deploy stage add a deploy job that installs `openssh-client` and `rsync` with `apk -q add openssh-client rsync`, creates `~/.ssh`, writes `${SSH_HOST_KEY}` and `${SSH_PRIVATE_KEY}` to known_hosts and id_ed25519, sets permissions, then syncs `public/` to the remote host via `rsync -hrvz --delete -e \"ssh -p ${SSH_PORT}\" public/ \"${SSH_HOST}\":/var/www/docs.postmarketos.org/pmbootstrap/`; it runs only on the master branch and targets the environment named deploy. Apply workflow rules so the pipeline runs on merge‑request events or when the branch is master, wip, or docs.",
+  "tags": [
+    "alpine",
+    "lint",
+    "deploy",
+    "pytest",
+    "ssh",
+    "rsync",
+    "sphinx",
+    "codespell",
+    "mr-settings"
+  ]
+}

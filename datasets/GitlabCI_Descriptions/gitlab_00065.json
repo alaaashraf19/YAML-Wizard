@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_00065",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1085,
+  "description": "Create a GitLab CI pipeline with a single job named build that runs in the build stage using the debian:stable Docker image on a docker-shared-amd64 runner. The job should retry up to 2 times and have a timeout of 3 hours 30 minutes. It must install required packages with `apt update -qq && apt install -y -qq wget curl libfuse2 xz-utils file appstream gpg`, download the deb2appimage AppImage via `wget https://github.com/simoniz0r/deb2appimage/releases/download/v0.0.5/deb2appimage-0.0.5-x86_64.AppImage -O deb2appimage.AppImage`, make it executable, and run it with `./deb2appimage.AppImage -j $CI_PROJECT_DIR/shadow-alpha-bullseye.json -o $CI_PROJECT_DIR --debug` as well as for shadow-beta-bullseye.json, shadow-bullseye.json, shadowusb-bullseye.json, and shadowusb-bookworm.json. The job should publish artifacts that expire in 2 days, named `shadowresurrected-linux-x86_64.AppImage-$CI_COMMIT_REF_NAME`, containing any files matching `$CI_PROJECT_DIR/shadow*-linux-x86_64.AppImage`.",
+  "tags": [
+    "debian",
+    "deb2appimage",
+    "appimage",
+    "build",
+    "retry",
+    "timeout"
+  ]
+}

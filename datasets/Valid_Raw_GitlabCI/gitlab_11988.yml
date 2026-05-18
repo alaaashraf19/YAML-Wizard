@@ -1,0 +1,27 @@
+image: fpco/stack-build
+install_dhall:
+  artifacts:
+    paths:
+    - bin
+  cache:
+    paths:
+    - bin
+  script:
+  - if [ -f bin/dhall-to-text ]; then exit; fi
+  - stack setup
+  - stack install dhall-1.8.0 dhall-text
+  - mkdir bin
+  - cp $(which dhall-to-text) bin
+  stage: install_deps
+pages:
+  artifacts:
+    paths:
+    - public
+  script:
+  - mkdir .public
+  - echo './Index/generate-index ./Index/lectures' | ./bin/dhall-to-text > .public/index.html
+  - mv .public public
+  stage: deploy
+stages:
+- install_deps
+- deploy

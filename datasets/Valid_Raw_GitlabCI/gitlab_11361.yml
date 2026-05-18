@@ -1,0 +1,92 @@
+generate_pages:
+  artifacts:
+    expire_in: 1 day
+    paths:
+    - gitlab-pages/generated/
+    when: always
+  dependencies:
+  - unit_tests_centos
+  - pylint
+  - pycodestyle
+  image: alpine:3.10
+  script:
+  - apk update && apk add bash make python2-dev py-pip py-gtk-dev
+  - pip install sphinx tornado==5.1.1
+  - ./ci_scripts/generate_web_pages.sh
+  stage: generate
+image: alpine
+pages:
+  artifacts:
+    paths:
+    - public
+  dependencies:
+  - generate_pages
+  only:
+  - master
+  script:
+  - mkdir public
+  - cp -r gitlab-pages/generated/* public
+  stage: deploy
+pycodestyle:
+  artifacts:
+    expire_in: 1 day
+    paths:
+    - ci_scripts/generated_files/pycodestyle_issue_count.txt
+    when: always
+  script:
+  - apk update && apk add bash python2-dev py-pip
+  - pip install pycodestyle
+  - ./ci_scripts/pycodestyle_src.sh
+  stage: test
+pylint:
+  artifacts:
+    expire_in: 1 day
+    paths:
+    - ci_scripts/generated_files/pylint_score.txt
+    when: always
+  script:
+  - apk update && apk add bash python2-dev py-pip
+  - pip install pylint
+  - ./ci_scripts/pylint_src.sh
+  stage: test
+stages:
+- test
+- generate
+- deploy
+unit_tests_centos:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - test/test.log
+    - ci_scripts/generated_files/coverage_percent.txt
+    - ci_scripts/generated_files/coverage_html
+    when: always
+  image: centos:7
+  script:
+  - yum --assumeyes update
+  - yum --assumeyes install epel-release
+  - yum --assumeyes install python-devel gcc
+  - yum --assumeyes install python-pip
+  - pip install --upgrade pip==20.3.4
+  - pip install certifi
+  - pip install twisted==16.6.0 service_identity tornado==5.1.1 coverage mock==3.0.5
+    decorator
+  - ci_scripts/run_tests_with_coverage.sh
+  stage: test
+unit_tests_centos_python_3:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - test/test.log
+    when: always
+  image: centos
+  script:
+  - yum --assumeyes update
+  - yum --assumeyes install epel-release
+  - yum --assumeyes install python3 python3-devel gcc
+  - pip3 install --upgrade pip
+  - pip3 install certifi
+  - pip3 install twisted==16.6.0 service_identity tornado==5.1.1 mock decorator six
+  - ln -s /usr/bin/python3 /usr/bin/python
+  - ci_scripts/run_tests.sh
+  stage: test

@@ -1,0 +1,15 @@
+image: aergus/latex
+presentation:
+  artifacts:
+    paths:
+    - presentation/predictingdeeper-presentation.pdf
+  script:
+  - cd presentation
+  - latexmk -lualatex
+report:
+  artifacts:
+    paths:
+    - report/predictingdeeper-report.pdf
+  script:
+  - cd report
+  - latexmk -lualatex

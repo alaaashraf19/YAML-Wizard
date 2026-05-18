@@ -1,0 +1,15 @@
+{
+  "sha": "7fa9708dad800a130402606aa3f4725970187262b391ac0967a3471263cece0e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1666,
+  "description": "Create a GitHub Actions workflow named Run all tests that runs on every push and pull request. Use three ubuntu-latest jobs: tests with a matrix of Python 3.6, 3.7, 3.8, and 3.9, coverage with Python 3.6, and docs with Python 3.6. For each job, check out the code, set up Python, install dependencies with pip, and run specific commands: tox for tests, tox with TOXENV=cover for coverage, and tox with TOXENV=docs for docs.",
+  "tags": [
+    "python",
+    "tests",
+    "coverage",
+    "docs",
+    "tox",
+    "ubuntu"
+  ]
+}

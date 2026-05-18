@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_19172",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 9780,
+  "description": "Create a GitLab CI pipeline that uses the project’s default Docker image with PostgreSQL services defined in .use-pg/.use-pg-10 and additional services (postgres:9.6, redis:alpine, elasticsearch) for EE jobs. Define stages: prepare, test, quick-test, post-test. In the prepare stage run the setup-test-env job (bundles ruby, runs TestEnv.init, builds gitaly) and the static-analysis job (runs scripts/static-analysis with a Ruby/RuboCop cache). In the test stage include db:check-schema, db:migrate-from-v11.11.0, db:migrate:reset, db:rollback, db:rollback geo, downtime_check, gitlab:setup, and all rspec jobs (rspec integration pg, rspec integration pg ee, rspec integration pg-10, rspec quarantine pg, rspec quarantine pg ee, rspec system pg, rspec system pg ee, rspec system pg-10, rspec unit pg, rspec unit pg ee, rspec unit pg-10, rspec-fast-spec-helper, rspec geo pg ee, rspec geo pg-10 ee, rspec geo pg, rspec geo pg-10) each executing bundle exec rake or knapsack rspec commands with KNAPSACK environment variables, generating junit_rspec.xml, and publishing coverage and other artifacts; they inherit .only-code-rails-job-base, .only-ee, .only-master and variable rules for branch/tag triggers. In the quick-test stage run quick-rspec geo pg ee and quick-rspec geo pg-10 ee with similar scripts limited to geo‑related changes. In the post-test stage run the coverage job that merges SimpleCov, gathers memory data, stores coverage artifacts, and reports coverage via a regex. All jobs share default tags, retry, cache, before_script and set SETUP_DB='false' where needed.",
+  "tags": [
+    "rails",
+    "rspec",
+    "postgres",
+    "docker",
+    "ci",
+    "knapsack",
+    "coverage",
+    "static-analysis"
+  ]
+}

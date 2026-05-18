@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_11983",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 139,
+  "description": "Create a GitLab CI pipeline that uses the ruby:2.5 Docker image. Define a single stage named deploy. Add a pages job in the deploy stage that runs the exact shell command `/bin/bash generate_to public`, captures the `public/` directory as an artifact, and is limited to the default branch. Publish the `public/` artifact as a GitLab Pages site.",
+  "tags": [
+    "ruby",
+    "gitlab-pages",
+    "deploy",
+    "artifact"
+  ]
+}

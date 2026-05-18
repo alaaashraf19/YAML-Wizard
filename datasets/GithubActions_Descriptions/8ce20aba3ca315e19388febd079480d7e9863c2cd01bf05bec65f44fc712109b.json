@@ -1,0 +1,17 @@
+{
+  "sha": "8ce20aba3ca315e19388febd079480d7e9863c2cd01bf05bec65f44fc712109b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3155,
+  "description": "Create a GitHub Actions workflow named CI that runs on push to master and tags matching v*, on pull requests to master, and daily at 6AM UTC. The workflow has three jobs: lint, test, and deploy. The lint job checks code quality on ubuntu-latest with Python 3.8, caching PyPI dependencies. The test job runs unit tests on multiple Python versions (3.6-3.9) with coverage and uploads results to Codecov. The deploy job uploads distributions to PyPI if a tag is pushed.",
+  "tags": [
+    "python",
+    "ci",
+    "cd",
+    "pypi",
+    "tests",
+    "ubuntu",
+    "coverage",
+    "codecov"
+  ]
+}

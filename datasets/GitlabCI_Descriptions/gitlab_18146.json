@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_18146",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 178,
+  "description": "Create a GitLab CI pipeline with a single job called test that runs in the default test stage using the default Docker image (no image or services are specified). The test job must execute these exact shell commands in order: apt-get update -qy, apt-get install -y python2 python2-pip, pip install python-dateutil pytest mock python-coveralls pytest-cov coverage, and py.test -v. No caches, artifacts, or special rules/only/except triggers are needed, and the pipeline does not deploy anywhere.",
+  "tags": [
+    "apt",
+    "python2",
+    "pytest",
+    "coverage"
+  ]
+}

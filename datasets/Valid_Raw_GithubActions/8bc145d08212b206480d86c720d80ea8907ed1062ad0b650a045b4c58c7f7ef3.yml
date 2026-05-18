@@ -1,0 +1,63 @@
+name: test
+
+on:
+  push:
+    branches: [ master ]
+    tags:
+      - v*.*.*
+    paths:
+      - '!README.md'
+      - '!CONTRIBUTING.md'
+      - '!docs/**'
+      - 'src/**'
+      - 'tests/**'
+      - '.github/**'
+      - 'tools/**'
+
+  pull_request:
+    branches: [ master ]
+    paths:
+      - '!README.md'
+      - '!CONTRIBUTING.md'
+      - '!docs/**'
+      - 'src/**'
+      - '.github/**'
+      - 'tests/**'
+      - 'tools/**'
+
+env:
+  BUILD_TYPE: Debug
+
+jobs:
+  test-on-Windows:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Cache Libraries
+      uses: actions/cache@v2
+      with:
+        path: ${{github.workspace}}/libs
+        key: x64-libs-cache-test-220126
+
+    - name: Setup Libraries
+      run: "tools/setup_libs.bat -msvc 64"
+
+    - name: Setup Test Framework
+      run: "tools/setup_test_framework.bat"
+
+    - name: Configure CMake
+      run: |
+        cmake -B ${{github.workspace}}/tests/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} tests
+
+    - name: Build
+      run: |
+        cmake --build ${{github.workspace}}/tests/build --config ${{env.BUILD_TYPE}}
+
+    - name: Test
+      working-directory: ${{github.workspace}}
+      run: |
+        cd tests/build
+        ctest -C ${{env.BUILD_TYPE}} --output-on-failure
+        cd ../..

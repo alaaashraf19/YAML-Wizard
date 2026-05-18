@@ -1,0 +1,60 @@
+before_script:
+- yarn --silent
+- yarn --cwd ./functions --silent
+build_develop:
+  artifacts:
+    paths:
+    - functions/dist/
+    - functions/lib/
+  environment:
+    name: dev
+  only:
+  - develop
+  script:
+  - chmod +x ./config.sh
+  - yarn run build:client-and-server-bundles
+  - yarn --cwd functions run build
+  stage: build
+build_prod:
+  artifacts:
+    paths:
+    - functions/dist/
+    - functions/lib/
+  environment:
+    name: prod
+  only:
+  - master
+  script:
+  - chmod +x ./config.sh
+  - yarn run build:client-and-server-bundles
+  - yarn --cwd functions run build
+  stage: build
+cache:
+  key: $CI_COMMIT_REF_NAME
+  paths:
+  - node_modules/
+  - functions/node_modules/
+deploy_develop:
+  dependencies:
+  - build_develop
+  environment:
+    name: dev
+  only:
+  - develop
+  script:
+  - yarn run deploy
+  stage: deploy
+deploy_production:
+  dependencies:
+  - build_prod
+  environment:
+    name: prod
+  only:
+  - master
+  script:
+  - yarn run deploy
+  stage: deploy
+image: node:latest
+stages:
+- build
+- deploy

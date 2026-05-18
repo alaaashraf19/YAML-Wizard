@@ -1,0 +1,13 @@
+{
+  "sha": "78dfa900de9085ab67d04c6e6aecf7fc472ee0a06c60c34b16a252b72d6c6141",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1299,
+  "description": "Create a GitHub Actions workflow named CMake Test that runs on push and pull request events for branches devel and release/**, ignoring certain paths. The workflow should cancel in-progress runs if a newer run is started on a given PR, except for devel and release/ branches. Use an ubuntu-22.04 job that checks out the repository with submodules, sets up the environment using a custom action, and runs CMake tests in the ./cmake/test directory using pytest.",
+  "tags": [
+    "cmake",
+    "ubuntu",
+    "tests",
+    "github-actions"
+  ]
+}

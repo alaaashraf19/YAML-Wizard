@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_08095",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1778,
+  "description": "Create a GitLab CI pipeline with stages build and deploy. In the build stage add a job named build that runs on the gioxa/ruby-rpm-build-centos Docker image, uses the odagrun tag, sets GIT_CACHE_STRATEGY=push-pull and ODAGRUN_POD_SIZE=large, runs mkdir -pv rpm, export spec=ruby.spec, export tar=ruby-${version}.tar.gz, copy --if_value=$CI_COMMIT_TAG --from_text=\"${CI_COMMIT_TAG}\" --to_var=version, export dl_url=\"${raw_url}/${version}/ruby.spec\", echo $dl_url, echo $version, a conditional removal of $spec, downloads $spec with curl checking HTTP status, creates the rpmbuild directory tree, copies ruby.spec, changes to the SOURCES directory, sets src_url to the Ruby source tarball URL, downloads the tarball with curl checking status, builds the RPM with rpmbuild --quiet -bb ../SPECS/$spec, and copies the resulting RPMs to ${CI_PROJECT_DIR}/rpm; the job stores the rpm/ directory and any *.spec files as artifacts. In the deploy stage add a job named deploy that runs on a runner with the deployctl-gioxapp.com tag, sets GIT_STRATEGY=none, targets the production environment at https://repo.deployctl.com, and executes deployctl repo_add to publish the RPMs. Define global variables DEPLOY_REPO_PATH=/, DEPLOY_REPO_URL=https://repo.deployctl.com, raw_url=https://raw.githubusercontent.com/feedforce/ruby-rpm, url=https://github.com/jgm/pandoc, and version=2.5.3.",
+  "tags": [
+    "ruby",
+    "rpm",
+    "centos",
+    "deployctl",
+    "ci",
+    "build"
+  ]
+}

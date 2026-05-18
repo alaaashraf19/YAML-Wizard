@@ -1,0 +1,18 @@
+{
+  "sha": "0248087f87515b2f701258321a8832b041a6cc721ffe608053a17369cac42a85",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 8322,
+  "description": "Create a GitHub Actions workflow named Python cibuildwheel that builds wheels for Python bindings on multiple platforms. The workflow triggers on push to master, develop, actions_pypi branches and tags matching v*, and on pull requests to master. It uses a matrix strategy to build wheels for various Python versions, platforms, and architectures, and uploads the resulting wheels to PyPI or TestPyPI.",
+  "tags": [
+    "python",
+    "cibuildwheel",
+    "pypi",
+    "testpypi",
+    "windows",
+    "linux",
+    "macos",
+    "arm64",
+    "x86_64"
+  ]
+}

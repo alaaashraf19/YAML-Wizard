@@ -1,0 +1,28 @@
+build:
+  artifacts:
+    paths:
+    - plugin/target/*.jar
+  script:
+  - cd plugin
+  - java -version
+  - mvn -v
+  - mvn -B clean
+  - mvn -B package -s settings.xml
+  stage: build
+cache:
+  paths:
+  - .m2/
+deploy:
+  only:
+  - master
+  script:
+  - cd plugin
+  - java -version
+  - mvn -v
+  - mvn -B clean
+  - mvn -B deploy -s settings.xml
+  stage: deploy
+image: maven:3-jdk-11-slim
+stages:
+- build
+- deploy

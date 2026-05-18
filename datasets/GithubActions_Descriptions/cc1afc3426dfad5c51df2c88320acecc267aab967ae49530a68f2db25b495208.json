@@ -1,0 +1,16 @@
+{
+  "sha": "cc1afc3426dfad5c51df2c88320acecc267aab967ae49530a68f2db25b495208",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3201,
+  "description": "Create a GitHub Actions workflow named CI that runs on push to the master branch, on pull requests, and daily at 6am UTC. The workflow has three jobs: MacOS, Docker_Linux, and windows. The MacOS job runs on macos-latest, checks out the code, caches LLVM artifacts, and runs tests with a script. The Docker_Linux job runs on ubuntu-latest with a matrix of LLVM and Ubuntu versions, builds and tests Docker images, and pushes them to GitHub and Docker Hub. The windows job runs on windows-latest, checks out the code, and runs tests with a batch script.",
+  "tags": [
+    "ci",
+    "macos",
+    "docker",
+    "linux",
+    "windows",
+    "llvm",
+    "testing"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "sha": "e5e31d8dcc71dfb5e94c17ecc5854bea7fada6f51852c1041e77256d0071a9cc",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 6490,
+  "description": "Create a GitHub Actions workflow named Pipeline that runs on push to master, hotfix/*, and tags matching v*, on pull requests, and on workflow dispatch with an optional force_release input. The workflow has multiple jobs: tests running on a matrix of ubuntu-latest, windows-latest, and macos-latest with various Python versions and configurations; asan for address sanitizer tests on ubuntu-latest; build_sdist and build_wheel for building Python sdist and wheel on various platforms; and release for uploading to PyPI if a tag is pushed or force_release is true.",
+  "tags": [
+    "python",
+    "github-actions",
+    "ci",
+    "cd",
+    "pypi",
+    "asan",
+    "cibuildwheel"
+  ]
+}

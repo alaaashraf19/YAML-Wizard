@@ -1,0 +1,17 @@
+before_script:
+- TEXMFHOME=`kpsewhich -var-value TEXMFHOME`
+- LOCALTEX=$TEXMFHOME/tex/latex
+- LOCALBIB=$TEXMFHOME/bibtex/bib
+- mkdir -p $LOCALTEX
+- mkdir -p $LOCALBIB
+- for x in $(find images/. -name \*.svg -print); do inkscape -A $(basename $x .svg).pdf
+  $x; done
+build:
+  artifacts:
+    paths:
+    - $FILE.pdf
+  image: adnrv/texlive:tools
+  script:
+  - latexmk -pdf -pdflatex="pdflatex --shell-escape %O %S" $FILE
+variables:
+  FILE: guia-documentos-tecnicos

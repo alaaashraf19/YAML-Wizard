@@ -1,0 +1,14 @@
+{
+  "sha": "808d2f69f2a0faf55a8fdabe9b56b238cf8d0e4e1631ed7ea834f9c418aecb74",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 553,
+  "description": "Create a GitHub Actions workflow named Check style that runs on push events to all branches except master, staging.tmp, trying.tmp, and staging-squash-merge.tmp, and on pull requests. Use an ubuntu-20.04 job that checks out the repository, installs clang-format, and then checks code style by verifying clang-format version, running fix_style.py in dry-run mode, checking header guards, and updating languages.",
+  "tags": [
+    "style",
+    "clang-format",
+    "ubuntu",
+    "checks",
+    "scripts"
+  ]
+}

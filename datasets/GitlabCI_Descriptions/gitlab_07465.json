@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_07465",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 496,
+  "description": "Create a GitLab CI pipeline with two jobs. In the deploy stage add a pages job that runs apt-get update, apt-get install -y npm python3-yaml inkscape fonts-roboto-slab fonts-noto-core fonts-noto-cjk zopfli iso-codes, npm install -g svgo, pushd badge, ./1-translate-svg.py, ./2-optimize-svg.sh, ./3-export-png.sh, ./4-copy.sh, ./5-check.py, popd, mkdir public, and cp -r badge public/, then publishes the public directory as a Pages artifact. Add a reuse job that uses the fsfe/reuse:latest Docker image with an empty entrypoint and runs reuse lint. The pipeline has no global image, services, caches, or rules, and the pages job deploys to GitLab Pages.",
+  "tags": [
+    "pages",
+    "reuse",
+    "svg-badge",
+    "npm",
+    "apt",
+    "gitlab-pages"
+  ]
+}

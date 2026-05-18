@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_00133",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 189,
+  "description": "Create a GitLab CI pipeline that uses the openjdk:8 Docker image. Define two stages: build and test. In the build stage add a job named job1 that runs only on the master branch and executes ./gradlew groovydoc then ./gradlew jars pom. In the test stage add a job named testjob that runs ./gradlew test. No services, caches, artifacts, or deployment targets are configured.",
+  "tags": [
+    "openjdk",
+    "gradle",
+    "groovydoc",
+    "jars",
+    "pom",
+    "test"
+  ]
+}

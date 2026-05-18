@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_04953",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 246,
+  "description": "Create a GitLab CI configuration that runs RuboCop linting on Ruby files. Use the default Docker image (no explicit image) and define no explicit stages or jobs, but provide a RuboCop configuration that includes all \"**/*.rb\" files, excludes \"test/**/*\", \"vendor/**/*\", and \".bundle/**/*\", sets max_files to 5000, enables only safe cops, and specifies the rubocop reporter. No caches, artifacts, services, or deployment targets are defined, and no environment variables or secrets are referenced.",
+  "tags": [
+    "rubocop",
+    "ruby",
+    "lint",
+    "gitlab-ci",
+    "code-quality"
+  ]
+}

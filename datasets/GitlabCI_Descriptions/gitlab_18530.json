@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_18530",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1652,
+  "description": "Create a GitLab CI pipeline with stages lint, vendor, test, build, and docker, using the golang Docker image for the lint, vendor, test, and build jobs and the docker image with a docker:dind service for the docker jobs, and set DOCKER_HOST to tcp://docker:2375 for the docker stage. Define a shared before_script that creates a symlink to /go/src/soundcloud-extractor and changes into that directory, and reuse it in lint, vendor, test, and build jobs. In the lint stage add a lint job that runs `make lint`. In the vendor stage add a vendor job that runs `make vendor` and stores the resulting vendor directory as a one‑week artifact. In the test stage add a test job that depends on vendor and runs `make test`. In the build stage add a build job that depends on vendor, runs `make`, and archives the binaries in build/soundcloud-extractor and build/wordpress-importer as one‑week artifacts. In the docker stage add a docker:soundcloud-extractor job that depends on build, runs `docker build -t \"${CI_REGISTRY_IMAGE}/soundcloud-extractor:latest\" -f docker/Dockerfile-soundcloud-extractor .`, logs in to the registry with `docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}`, and pushes the image, and a docker:wordpress-importer job that similarly builds and pushes the wordpress‑importer image using its Dockerfile, both without additional rules.",
+  "tags": [
+    "golang",
+    "docker",
+    "dind",
+    "make",
+    "registry",
+    "soundcloud-extractor",
+    "wordpress-importer",
+    "artifact"
+  ]
+}

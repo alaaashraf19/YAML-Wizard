@@ -1,0 +1,16 @@
+{
+  "sha": "19ad2b2c2b3f0d910695ba23597323fad02dd62d455e1bb5765e0bb525019697",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3331,
+  "description": "Create a GitHub Actions workflow named Lantern that uses a reusable workflow call. Define a build job matrix that runs on various OS and version configurations across macOS, Ubuntu, and Windows, with different runners and containers. For each job, install system dependencies if in a container, checkout code, set up CMake 3.25.1, and optionally install CUDA and CuDNN based on the matrix configuration. Run CMake, build libraries, and upload artifacts to S3 or GitHub depending on the workflow and event type.",
+  "tags": [
+    "github-actions",
+    "lantern",
+    "cuda",
+    "cudnn",
+    "cmake",
+    "s3",
+    "matrix-build"
+  ]
+}

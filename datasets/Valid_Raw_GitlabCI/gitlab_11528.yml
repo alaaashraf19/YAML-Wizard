@@ -1,0 +1,156 @@
+.default_before_script: &id001
+- apt-get -y update
+- xargs -r -a packages.debian apt-get -qy install $GITLAB_CI_APT_PACKAGES
+- pip install --break-system-packages -cconstraints.txt tox
+build:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - dist
+    when: always
+  before_script:
+  - *id001
+  image: ${GITLAB_CI_IMAGE_GNURADIO}
+  needs: []
+  script:
+  - rm -rf dist
+  - tox run -e "build"
+  stage: build
+container_scanning:
+  needs:
+  - artifacts: false
+    job: docker
+  rules:
+  - if: $CI_REGISTRY_IMAGE && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  stage: security
+  variables:
+    CI_APPLICATION_REPOSITORY: ${CI_REGISTRY_IMAGE}/${GITLAB_CI_DOCKER_IMAGE_NAME}
+    CI_APPLICATION_TAG: ${CI_COMMIT_REF_NAME}
+dependency_scanning:
+  needs: []
+  stage: security
+  variables:
+    DS_EXCLUDED_ANALYZERS: gemnasium-maven
+    DS_MAJOR_VERSION: 6.1.9
+deploy:
+  before_script:
+  - *id001
+  dependencies: []
+  image: ${GITLAB_CI_IMAGE_GNURADIO}
+  rules:
+  - if: $CI_PIPELINE_SOURCE == 'trigger'
+    when: never
+  - if: $CI_COMMIT_TAG && $PYPI_USERNAME && $PYPI_PASSWORD
+  script:
+  - rm -rf dist
+  - tox run -e "upload"
+  stage: deploy
+docker:
+  dependencies: []
+  stage: deploy
+  variables:
+    GITLAB_CI_DOCKER_IMAGE_VERSION: ${CI_COMMIT_REF_NAME}
+    GNURADIO_IMAGE_TAG: 3.10.5.1-satnogs
+docker_unstable:
+  extends: docker
+  variables:
+    GITLAB_CI_DOCKER_IMAGE_TAG_CACHE_NAME: cache-unstable
+    GITLAB_CI_DOCKER_IMAGE_TAG_LATEST_NAME: unstable
+    GITLAB_CI_DOCKER_IMAGE_VERSION: ${CI_COMMIT_REF_NAME}-unstable
+    GNURADIO_IMAGE_TAG: 3.10.5.1-satnogs_unstable
+docs:
+  before_script:
+  - *id001
+  image: ${GITLAB_CI_IMAGE_GNURADIO}
+  needs: []
+  stage: build
+gemnasium-python-dependency_scanning:
+  before_script:
+  - apt-get -y update
+  - xargs -r -a packages.debian apt-get -qy install
+include:
+- template: Workflows/MergeRequest-Pipelines.gitlab-ci.yml
+- template: Jobs/Dependency-Scanning.gitlab-ci.yml
+- template: Jobs/SAST.gitlab-ci.yml
+- template: Jobs/Secret-Detection.gitlab-ci.yml
+- template: Jobs/Container-Scanning.gitlab-ci.yml
+- file: .gitlab-ci-sign-off.yml
+  project: librespacefoundation/templates/gitlab-ci
+  ref: ed44d9741ba9d13ff097b85cbd6ce7c11af3ee8c
+- file: .gitlab-ci-docs.yml
+  project: librespacefoundation/templates/gitlab-ci
+  ref: ed44d9741ba9d13ff097b85cbd6ce7c11af3ee8c
+- file: .gitlab-ci-docker.yml
+  project: librespacefoundation/templates/gitlab-ci
+  ref: ed44d9741ba9d13ff097b85cbd6ce7c11af3ee8c
+lint:
+  before_script:
+  - *id001
+  image: ${GITLAB_CI_IMAGE_GNURADIO}
+  needs: []
+  rules:
+  - when: never
+  stage: static
+pages:
+  rules:
+  - if: $CI_PIPELINE_SOURCE == 'trigger'
+    when: never
+  - if: $CI_COMMIT_TAG && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  stage: deploy
+sast:
+  needs: []
+  stage: security
+secret_detection:
+  needs: []
+  stage: security
+sentry_release:
+  image: ${GITLAB_CI_IMAGE_SENTRY_CLI}
+  rules:
+  - if: $CI_PIPELINE_SOURCE == 'trigger'
+    when: never
+  - if: $CI_COMMIT_TAG && $SENTRY_AUTH_TOKEN && $SENTRY_ORG
+  script:
+  - sentry-cli releases new --finalize -p ${CI_PROJECT_NAME} ${CI_PROJECT_NAME}@${CI_COMMIT_TAG}
+  - sentry-cli releases set-commits --auto ${CI_PROJECT_NAME}@${CI_COMMIT_TAG}
+  stage: sentry_release
+sign_off:
+  needs: []
+  stage: static
+stages:
+- static
+- build
+- test
+- deploy
+- sentry_release
+- security
+static:
+  before_script:
+  - *id001
+  image: ${GITLAB_CI_IMAGE_GNURADIO}
+  needs: []
+  script:
+  - tox run -e "flake8,isort,yapf,pylint,robot-lint"
+  stage: static
+test:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - robot/output
+    when: always
+  before_script:
+  - *id001
+  image: ${GITLAB_CI_IMAGE_GNURADIO}
+  needs: []
+  script:
+  - rm -rf robot/output
+  - tox run-parallel -e "pytest,deps,robot"
+  stage: test
+variables:
+  GITLAB_CI_APT_PACKAGES: git python3-pip python3-venv
+  GITLAB_CI_DOCKER_BUILDX_PLATFORMS: linux/amd64,linux/arm/v7,linux/arm64
+  GITLAB_CI_DOCKER_IMAGE_NAME: satnogs-client
+  GITLAB_CI_DOCKER_IMAGE_TAG_LATEST: ${CI_COMMIT_TAG}
+  GITLAB_CI_DOCKER_PULL: '1'
+  GITLAB_CI_IMAGE_GNURADIO: librespace/gnuradio:3.10.5.1-satnogs
+  GITLAB_CI_IMAGE_SENTRY_CLI: getsentry/sentry-cli
+  GITLAB_CI_SIGN_OFF_EXCLUDE: a3fe97202e64477cc59554f2f76299e41a3113f7

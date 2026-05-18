@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_11616",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 306,
+  "description": "Create a GitLab CI pipeline with a single job called build_image that runs in the default test stage. Use the docker:git Docker image and the docker:dind service. Configure the job to run only on the master branch. In the script, first log in to registry.gitlab.com with the gitlab-ci-token and $CI_BUILD_TOKEN, then build the image registry.gitlab.com/living-map/frontend-builder and tag it as latest, and finally push the image to the registry.",
+  "tags": [
+    "docker",
+    "dind",
+    "gitlab-registry",
+    "master-only",
+    "docker-build"
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "sha": "gitlab_10657",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 5842,
+  "description": "Set the global Docker image to registry.gitlab.com/itk.fr/lorhammer/build and use the docker:dind service for any job that needs Docker, with a before_script that creates a symlink to /go/src/lorhammer and changes into that directory. Define the stages lint, vendor, test, integration, compile, and doc; the lint job runs `make lint`, the vendor job runs `make vendor` and stores the vendor directory as a one‑week artifact. In the test stage add test:unit running `make test`, test:coverage running `make cover` with a coverage regex, and test:docker which runs `./resources/scripts/buildAllEnv.sh -light --snapshot`, builds lorhammer and orchestrator images with `docker build -t \"${CI_REGISTRY_IMAGE}/lorhammer:${CI_PIPELINE_ID}\" …` and `docker build -t \"${CI_REGISTRY_IMAGE}/orchestrator:${CI_PIPELINE_ID}\" …`, logs in to the registry, and pushes both images. In the integration stage add five jobs (oneShot, oneShotOneNodeOneLap, oneShotReplayLaps, oneShotReplayLapsNoJoin, repeat) that inherit the .integration template: after_script runs `docker ps -a`, `docker-compose ps`, `docker logs ${CI_JOB_ID}_lorhammer_1`, and `docker-compose -p ${CI_JOB_ID} down --remove-orphans`; script runs `LORHAMMER_MQTT_IP=\"mqtt\" ./resources/scripts/launchTools.sh`, sleeps, echoes, brings up lorhammer and prometheus with `docker-compose … up -d lorhammer prometheus`, then runs the orchestrator with `docker-compose … run orchestrator`; each sets COMPOSE_HTTP_TIMEOUT=200, DOCKER_HOST, and a specific FROM_FILE path. In the compile stage add compile:all (runs `./resources/scripts/buildAllEnv.sh -full --snapshot` on the master branch and archives the dist folder), compile:docker-tag:lorhammer and compile:docker-tag:orchestrator (run on tags, build light images with `docker build -t \"$CI_REGISTRY_IMAGE/lorhammer:${CI_COMMIT_REF_NAME}\" …` or orchestrator, then push), compile:docker:lorhammer and compile:docker:orchestrator (run on master, build snapshot images and push), and compile:tag (run on tags, build full snapshot and archive dist); all compile jobs use docker:dind and set DOCKER_HOST. Finally, the doc stage includes a pages job that runs `make doc`, publishes the public directory as a pages artifact, and only runs on the master branch.",
+  "tags": [
+    "docker",
+    "dind",
+    "go",
+    "make",
+    "lint",
+    "vendor",
+    "test",
+    "integration",
+    "compile",
+    "pages",
+    "ci",
+    "lorhammer",
+    "orchestrator"
+  ]
+}

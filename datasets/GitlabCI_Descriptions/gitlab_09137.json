@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_09137",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 242,
+  "description": "Create a GitLab CI pipeline that uses the ruby:2.1 Docker image. Add a job named pages that runs in the default stage, is limited to the master branch, and deploys to GitLab Pages. In the pages job run the shell commands: apt-get update -yqqq, apt-get install -y nodejs, bundle install --path vendor, and bundle exec middleman build. Cache the vendor directory, publish the public directory as a pages artifact, and ensure the job only triggers on the master branch.",
+  "tags": [
+    "ruby",
+    "middleman",
+    "bundler",
+    "gitlab-pages",
+    "nodejs",
+    "apt"
+  ]
+}

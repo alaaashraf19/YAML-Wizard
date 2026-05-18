@@ -1,0 +1,17 @@
+{
+  "sha": "a72a7b5d2da0bdf3b4d36a5859557917280a00f8bc7f607660359b8a783852e7",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 25916,
+  "description": "Create a GitHub Actions workflow named build-test that runs on every push and pull request. Use a matrix job that runs on ubuntu-18.04, macos-latest, and windows-latest, with different combinations of install_mdns and use_conan. The job checks out the repository, sets up Python 3.8, and then performs various setup steps depending on the operating system, including installing dependencies, setting environment variables, and configuring Google credentials.",
+  "tags": [
+    "github-actions",
+    "python",
+    "matrix",
+    "ubuntu",
+    "macos",
+    "windows",
+    "google-sheets",
+    "testing"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "sha": "8612232d99356ab744ac7f1fabf20cde3470300aa0baca6f28c3e6aac41d1ef8",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2756,
+  "description": "Create a GitHub Actions workflow named Commit that runs on push, pull request, and workflow dispatch events. The workflow consists of three jobs: darglint, coverage, and build_posix. Each job runs on a matrix of operating systems and Python versions, setting up Python, installing dependencies, and running tests with nox. The darglint and coverage jobs run sequentially on a single operating system and Python version, while the build_posix job runs in parallel across multiple operating systems and Python versions.",
+  "tags": [
+    "python",
+    "nox",
+    "tests",
+    "coverage",
+    "darglint",
+    "ubuntu",
+    "macos"
+  ]
+}

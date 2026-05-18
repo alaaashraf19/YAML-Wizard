@@ -1,0 +1,15 @@
+{
+  "sha": "0ea7c1b4cf3d65db19ffbaed6810f2117856e1c107747bb66d9ff53aff892e38",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1017,
+  "description": "Create a scheduled GitHub Actions workflow named Squashfs-ify the compilers that runs daily at 6:15 AM and can be manually triggered. The workflow uses a self-hosted ubuntu environment to clean the directory, check out the code, cache the environment based on requirements.txt, and then either set up the environment or mark the cache as up to date. Finally, it runs a command to squash specific targets or all targets if none are specified.",
+  "tags": [
+    "ubuntu",
+    "scheduled",
+    "self-hosted",
+    "make",
+    "cache",
+    "squash"
+  ]
+}

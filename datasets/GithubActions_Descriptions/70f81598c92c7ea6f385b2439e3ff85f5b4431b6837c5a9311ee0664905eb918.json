@@ -1,0 +1,14 @@
+{
+  "sha": "70f81598c92c7ea6f385b2439e3ff85f5b4431b6837c5a9311ee0664905eb918",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3370,
+  "description": "Create a GitHub Actions workflow named Build - Release that runs on workflow dispatch and on published releases. The workflow uses an ubuntu-latest environment to build and release a project using a matrix of targets, including x86_64-pc-linux-gnu, aarch64-linux-gnu, x86_64-w64-mingw32, x86_64-apple-darwin, and aarch64-apple-darwin. It checks out the repository, configures the environment, sets up dependencies, builds and packages the project, and uploads the artifact and checksum to a release. Additionally, it creates a Docker image and pushes it to Docker Hub.",
+  "tags": [
+    "release",
+    "docker",
+    "rust",
+    "matrix",
+    "multi-platform"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "6349f3257835ddb5d04045b0ba1c240f78f90641d855ad2a240d5de23920f75a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1162,
+  "description": "Create a GitHub Actions release workflow that triggers on pushes to the development branch and tags matching v*.*.*. The workflow has two jobs: one that builds wheels on multiple operating systems (ubuntu, windows, macos) using cibuildwheel and uploads them as artifacts, and another that downloads these artifacts, sets up Python, and deploys them to PyPI if the workflow is triggered by a tag.",
+  "tags": [
+    "python",
+    "release",
+    "pypi",
+    "cibuildwheel",
+    "wheels",
+    "multi-os"
+  ]
+}

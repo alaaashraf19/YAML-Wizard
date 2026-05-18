@@ -1,0 +1,83 @@
+docker:
+  except:
+  - master
+  image: docker:git
+  retry:
+    max: 1
+    when:
+    - runner_system_failure
+    - stuck_or_timeout_failure
+  script:
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+  - docker pull $CI_REGISTRY_IMAGE:ci || true
+  - docker build --cache-from $CI_REGISTRY_IMAGE:ci .
+  services:
+  - docker:dind
+  stage: build
+docker_tags:
+  image: docker:git
+  only:
+  - master@bigapplepy/yak-bak
+  retry:
+    max: 1
+    when:
+    - runner_system_failure
+    - stuck_or_timeout_failure
+  script:
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+  - docker pull $CI_REGISTRY_IMAGE:ci || true
+  - docker build --cache-from $CI_REGISTRY_IMAGE:ci --tag $CI_REGISTRY_IMAGE:ci --tag
+    $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA .
+  - docker push $CI_REGISTRY_IMAGE:ci
+  - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+  services:
+  - docker:dind
+  stage: build
+migrate:
+  image: python:3.8
+  script:
+  - python3.8 -m pip install tox
+  - echo 0.0.0-0-fakeForGitLab > version.txt
+  - cp yakbak.toml-example yakbak.toml
+  - tox -r -e migrate
+  services:
+  - postgres:12
+  stage: validate
+  variables:
+    POSTGRES_5432_TCP_PORT: 5432
+    POSTGRES_DB: yakbak_tox_test
+    POSTGRES_HOST: postgres
+    POSTGRES_PASSWORD: y4kb4k
+    POSTGRES_USER: yakbak
+mypy:
+  image: python:3.8
+  script:
+  - python3.8 -m pip install tox
+  - tox -r -e mypy
+  stage: test
+py38:
+  image: python:3.8
+  script:
+  - python3.8 -m pip install tox
+  - tox -r -e py38
+  services:
+  - postgres:12
+  stage: test
+  variables:
+    POSTGRES_5432_TCP_PORT: 5432
+    POSTGRES_DB: yakbak_tox_test
+    POSTGRES_HOST: postgres
+    POSTGRES_PASSWORD: y4kb4k
+    POSTGRES_USER: yakbak
+stages:
+- test
+- validate
+- build
+style:
+  image: python:3.8
+  script:
+  - apt-get update
+  - apt-get install -y git
+  - python3.8 -m pip install --constraint dev-requirements.txt pre-commit
+  - pre-commit run --all-files
+  stage: test

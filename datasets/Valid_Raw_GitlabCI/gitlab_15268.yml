@@ -1,0 +1,13 @@
+image: node:4
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - git submodule update --init --recursive
+  - mkdir .public
+  - cp -r * .public
+  - mv .public public
+  stage: deploy

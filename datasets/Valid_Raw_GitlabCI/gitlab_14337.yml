@@ -1,0 +1,567 @@
+apt_repository:
+  environment:
+    name: packages-apt
+    url: https://packages.panto.app/debian/
+  only:
+  - master
+  retry: 1
+  script:
+  - eval $(ssh-agent -s)
+  - ssh-add <(echo "$SSH_PANTO_KEY")> /dev/null
+  - gpg --import <(echo "$GPG_PRIVATE_KEY")
+  - cd .debian
+  - ./add_to_repo.sh -l debian -r "panto@web.pantomath.io:/var/www/packages.panto.app"
+    -p panto_${LONG_VERSION}-1_amd64.deb
+  - ./add_to_repo.sh -l debian -r "panto@web.pantomath.io:/var/www/packages.panto.app"
+    -p panto-agent_${LONG_VERSION}-1_amd64.deb
+  stage: distribute
+before_script:
+- sysctl -w net.ipv4.ping_group_range='0   2147483647'
+- export LONG_VERSION=$(cat $CI_PROJECT_DIR/VERSION)
+- export SHORT_VERSION=$(cat $CI_PROJECT_DIR/VERSION | cut -d "." -f 1-2)
+- export NODE_ENV=production
+- cd $CI_PROJECT_DIR
+binaries_edge:
+  environment:
+    name: packages-bin-edge
+    url: https://packages.panto.app/bin/edge/
+  only:
+  - develop
+  retry: 1
+  script:
+  - eval $(ssh-agent -s)
+  - ssh-add <(echo "$SSH_PANTO_KEY")> /dev/null
+  - mkdir -p dist/$LONG_VERSION/panto-$LONG_VERSION-$CI_JOB_ID-linux_x86_64
+  - cp bin/panto dist/$LONG_VERSION/panto-$LONG_VERSION-$CI_JOB_ID-linux_x86_64/
+  - cp bin/panto-ctl dist/$LONG_VERSION/panto-$LONG_VERSION-$CI_JOB_ID-linux_x86_64/
+  - mkdir -p dist/$LONG_VERSION/panto-agent-$LONG_VERSION-$CI_JOB_ID-linux_x86_64
+  - cp bin/panto-agent dist/$LONG_VERSION/panto-agent-$LONG_VERSION-$CI_JOB_ID-linux_x86_64/
+  - cd dist/$LONG_VERSION
+  - tar --remove-files -czf panto-$LONG_VERSION-$CI_JOB_ID-linux_x86_64.tar.gz panto-$LONG_VERSION-$CI_JOB_ID-linux_x86_64
+  - tar --remove-files -czf panto-agent-$LONG_VERSION-$CI_JOB_ID-linux_x86_64.tar.gz
+    panto-agent-$LONG_VERSION-$CI_JOB_ID-linux_x86_64
+  - cd -
+  - rsync -arz -e ssh dist/$LONG_VERSION/ panto@web.pantomath.io:/var/www/packages.panto.app/bin/edge/
+  stage: distribute
+binaries_stable:
+  environment:
+    name: packages-bin-stable
+    url: https://packages.panto.app/bin/stable/
+  only:
+  - master
+  retry: 1
+  script:
+  - eval $(ssh-agent -s)
+  - ssh-add <(echo "$SSH_PANTO_KEY")> /dev/null
+  - mkdir -p dist/$LONG_VERSION/panto-$LONG_VERSION-linux_x86_64
+  - cp bin/panto dist/$LONG_VERSION/panto-$LONG_VERSION-linux_x86_64/
+  - cp bin/panto-ctl dist/$LONG_VERSION/panto-$LONG_VERSION-linux_x86_64/
+  - mkdir -p dist/$LONG_VERSION/panto-agent-$LONG_VERSION-linux_x86_64
+  - cp bin/panto-agent dist/$LONG_VERSION/panto-agent-$LONG_VERSION-linux_x86_64/
+  - cd dist/$LONG_VERSION
+  - tar --remove-files -czf panto-$LONG_VERSION-linux_x86_64.tar.gz panto-$LONG_VERSION-linux_x86_64
+  - tar --remove-files -czf panto-agent-$LONG_VERSION-linux_x86_64.tar.gz panto-agent-$LONG_VERSION-linux_x86_64
+  - cd ..
+  - ln -s $LONG_VERSION stable
+  - cd ..
+  - rsync -arz -e ssh dist/ panto@web.pantomath.io:/var/www/packages.panto.app/bin/
+  stage: distribute
+build_agent:
+  artifacts:
+    paths:
+    - bin/
+  only:
+  - develop
+  - master
+  retry: 1
+  script:
+  - GOPROXY=https://proxy.golang.org/ go mod download
+  - make -B panto-agent
+  stage: build
+build_server:
+  artifacts:
+    paths:
+    - bin/
+  only:
+  - develop
+  - master
+  retry: 1
+  script:
+  - GOPROXY=https://proxy.golang.org/ go mod download
+  - make -B panto panto-ctl
+  stage: build
+build_watch:
+  artifacts:
+    paths:
+    - watch/dist
+  only:
+  - develop
+  - master
+  retry: 1
+  script:
+  - VUE_APP_PANTO_SERVER_URL="https://api.panto.watch" make -B panto-watch
+  stage: build
+build_web:
+  artifacts:
+    paths:
+    - web/dist
+  only:
+  - develop
+  - master
+  retry: 1
+  script:
+  - make -B panto-web
+  stage: build
+cache:
+  paths:
+  - /go/pkg/mod
+code_coverage:
+  only:
+  - develop
+  - master
+  retry: 1
+  script:
+  - make coverage
+  services:
+  - influxdb:1.5-alpine
+  - redis:latest
+  - memcached:1.5-alpine
+  - mysql:latest
+  - alias: elasticsearch
+    command:
+    - bin/elasticsearch
+    - -Ediscovery.type=single-node
+    name: docker.elastic.co/elasticsearch/elasticsearch:6.3.0
+  - alias: nginx
+    name: registry.gitlab.com/pantomath-io/docker-nginx-with-status:latest
+  - alias: phpfpm
+    name: registry.gitlab.com/pantomath-io/docker-php-fpm-with-status:latest
+  - mongo:latest
+  - postgres:10-alpine
+  - docker:dind
+  - alias: cassandra
+    name: registry.gitlab.com/pantomath-io/docker-cassandra-with-jolokia:latest
+  - alias: snmpd
+    name: really/snmpd:latest
+  - alias: sybase
+    name: nguoianphu/docker-sybase
+  stage: test
+  variables:
+    MYSQL_ROOT_PASSWORD: password
+    POSTGRES_PASSWORD: password
+code_coverage_report:
+  only:
+  - develop
+  retry: 1
+  script:
+  - eval $(ssh-agent -s)
+  - make coveragehtml
+  - ssh-add <(echo "$SSH_PANTO_KEY")> /dev/null
+  - scp coverage.html panto@web.pantomath.io:/var/www/engineering.pantomath.io/coverage/index.html
+  services:
+  - influxdb:1.5-alpine
+  - redis:latest
+  - memcached:1.5-alpine
+  - mysql:latest
+  - alias: elasticsearch
+    command:
+    - bin/elasticsearch
+    - -Ediscovery.type=single-node
+    name: docker.elastic.co/elasticsearch/elasticsearch:6.3.0
+  - alias: nginx
+    name: registry.gitlab.com/pantomath-io/docker-nginx-with-status:latest
+  - alias: phpfpm
+    name: registry.gitlab.com/pantomath-io/docker-php-fpm-with-status:latest
+  - mongo:latest
+  - postgres:10-alpine
+  - docker:dind
+  - alias: cassandra
+    name: registry.gitlab.com/pantomath-io/docker-cassandra-with-jolokia:latest
+  - alias: snmpd
+    name: really/snmpd:latest
+  - alias: sybase
+    name: nguoianphu/docker-sybase
+  stage: test
+  variables:
+    MYSQL_ROOT_PASSWORD: password
+    POSTGRES_PASSWORD: password
+copyright_header:
+  except:
+    variables:
+    - $CI_COMMIT_MESSAGE =~ /^WIP/
+  retry: 1
+  script:
+  - ./copyright.sh
+  stage: quality
+docker_build:
+  image: docker:latest
+  only:
+    changes:
+    - docker/Dockerfile-build
+    refs:
+    - develop
+  retry: 1
+  script:
+  - echo $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin registry.gitlab.com
+  - docker build -t $DOCKER_BUILD_IMAGE_NAME:latest -f docker/Dockerfile-build .
+  - docker push $DOCKER_BUILD_IMAGE_NAME:latest
+  services:
+  - docker:dind
+  stage: release
+docker_image:
+  image: docker:latest
+  only:
+  - develop
+  - master
+  retry: 1
+  script:
+  - echo $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin registry.gitlab.com
+  - docker build -t $DOCKER_SERVER_IMAGE_NAME:$CI_COMMIT_REF_SLUG -f docker/Dockerfile-server
+    .
+  - docker push $DOCKER_SERVER_IMAGE_NAME:$CI_COMMIT_REF_SLUG
+  - docker build -t $DOCKER_AGENT_IMAGE_NAME:$CI_COMMIT_REF_SLUG -f docker/Dockerfile-agent
+    .
+  - docker push $DOCKER_AGENT_IMAGE_NAME:$CI_COMMIT_REF_SLUG
+  - docker build -t $DOCKER_WATCH_IMAGE_NAME:$CI_COMMIT_REF_SLUG -f docker/Dockerfile-watch
+    .
+  - docker push $DOCKER_WATCH_IMAGE_NAME:$CI_COMMIT_REF_SLUG
+  - docker build -t $DOCKER_WEB_IMAGE_NAME:$CI_COMMIT_REF_SLUG -f docker/Dockerfile-web
+    .
+  - docker push $DOCKER_WEB_IMAGE_NAME:$CI_COMMIT_REF_SLUG
+  - docker build -t $DOCKER_ALL_IN_ONE_IMAGE_NAME:$CI_COMMIT_REF_SLUG -f docker/Dockerfile-all-in-one
+    .
+  - docker push $DOCKER_ALL_IN_ONE_IMAGE_NAME:$CI_COMMIT_REF_SLUG
+  services:
+  - docker:dind
+  stage: release
+docker_tag_edge:
+  image: docker:latest
+  only:
+  - develop
+  retry: 1
+  script:
+  - echo $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin registry.gitlab.com
+  - docker pull $DOCKER_SERVER_IMAGE_NAME:$CI_COMMIT_REF_SLUG
+  - docker tag $DOCKER_SERVER_IMAGE_NAME:$CI_COMMIT_REF_SLUG $DOCKER_SERVER_IMAGE_NAME:edge
+  - docker push $DOCKER_SERVER_IMAGE_NAME:edge
+  - docker pull $DOCKER_AGENT_IMAGE_NAME:$CI_COMMIT_REF_SLUG
+  - docker tag $DOCKER_AGENT_IMAGE_NAME:$CI_COMMIT_REF_SLUG $DOCKER_AGENT_IMAGE_NAME:edge
+  - docker push $DOCKER_AGENT_IMAGE_NAME:edge
+  - docker pull $DOCKER_WATCH_IMAGE_NAME:$CI_COMMIT_REF_SLUG
+  - docker tag $DOCKER_WATCH_IMAGE_NAME:$CI_COMMIT_REF_SLUG $DOCKER_WATCH_IMAGE_NAME:edge
+  - docker push $DOCKER_WATCH_IMAGE_NAME:edge
+  - docker pull $DOCKER_WEB_IMAGE_NAME:$CI_COMMIT_REF_SLUG
+  - docker tag $DOCKER_WEB_IMAGE_NAME:$CI_COMMIT_REF_SLUG $DOCKER_WEB_IMAGE_NAME:edge
+  - docker push $DOCKER_WEB_IMAGE_NAME:edge
+  - docker pull $DOCKER_ALL_IN_ONE_IMAGE_NAME:$CI_COMMIT_REF_SLUG
+  - docker tag $DOCKER_ALL_IN_ONE_IMAGE_NAME:$CI_COMMIT_REF_SLUG $DOCKER_ALL_IN_ONE_IMAGE_NAME:edge
+  - docker push $DOCKER_ALL_IN_ONE_IMAGE_NAME:edge
+  services:
+  - docker:dind
+  stage: distribute
+docker_tag_stable:
+  image: docker:latest
+  only:
+  - master
+  retry: 1
+  script:
+  - echo $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin registry.gitlab.com
+  - docker pull $DOCKER_SERVER_IMAGE_NAME:$CI_COMMIT_REF_SLUG
+  - docker tag $DOCKER_SERVER_IMAGE_NAME:$CI_COMMIT_REF_SLUG $DOCKER_SERVER_IMAGE_NAME:$LONG_VERSION
+  - docker tag $DOCKER_SERVER_IMAGE_NAME:$CI_COMMIT_REF_SLUG $DOCKER_SERVER_IMAGE_NAME:$SHORT_VERSION
+  - docker tag $DOCKER_SERVER_IMAGE_NAME:$CI_COMMIT_REF_SLUG $DOCKER_SERVER_IMAGE_NAME:latest
+  - docker push $DOCKER_SERVER_IMAGE_NAME
+  - docker pull $DOCKER_AGENT_IMAGE_NAME:$CI_COMMIT_REF_SLUG
+  - docker tag $DOCKER_AGENT_IMAGE_NAME:$CI_COMMIT_REF_SLUG $DOCKER_AGENT_IMAGE_NAME:$LONG_VERSION
+  - docker tag $DOCKER_AGENT_IMAGE_NAME:$CI_COMMIT_REF_SLUG $DOCKER_AGENT_IMAGE_NAME:$SHORT_VERSION
+  - docker tag $DOCKER_AGENT_IMAGE_NAME:$CI_COMMIT_REF_SLUG $DOCKER_AGENT_IMAGE_NAME:latest
+  - docker push $DOCKER_AGENT_IMAGE_NAME
+  - docker pull $DOCKER_WATCH_IMAGE_NAME:$CI_COMMIT_REF_SLUG
+  - docker tag $DOCKER_WATCH_IMAGE_NAME:$CI_COMMIT_REF_SLUG $DOCKER_WATCH_IMAGE_NAME:$LONG_VERSION
+  - docker tag $DOCKER_WATCH_IMAGE_NAME:$CI_COMMIT_REF_SLUG $DOCKER_WATCH_IMAGE_NAME:$SHORT_VERSION
+  - docker tag $DOCKER_WATCH_IMAGE_NAME:$CI_COMMIT_REF_SLUG $DOCKER_WATCH_IMAGE_NAME:latest
+  - docker push $DOCKER_WATCH_IMAGE_NAME
+  - docker pull $DOCKER_WEB_IMAGE_NAME:$CI_COMMIT_REF_SLUG
+  - docker tag $DOCKER_WEB_IMAGE_NAME:$CI_COMMIT_REF_SLUG $DOCKER_WEB_IMAGE_NAME:$LONG_VERSION
+  - docker tag $DOCKER_WEB_IMAGE_NAME:$CI_COMMIT_REF_SLUG $DOCKER_WEB_IMAGE_NAME:$SHORT_VERSION
+  - docker tag $DOCKER_WEB_IMAGE_NAME:$CI_COMMIT_REF_SLUG $DOCKER_WEB_IMAGE_NAME:latest
+  - docker push $DOCKER_WEB_IMAGE_NAME
+  - docker pull $DOCKER_ALL_IN_ONE_IMAGE_NAME:$CI_COMMIT_REF_SLUG
+  - docker tag $DOCKER_ALL_IN_ONE_IMAGE_NAME:$CI_COMMIT_REF_SLUG $DOCKER_ALL_IN_ONE_IMAGE_NAME:$LONG_VERSION
+  - docker tag $DOCKER_ALL_IN_ONE_IMAGE_NAME:$CI_COMMIT_REF_SLUG $DOCKER_ALL_IN_ONE_IMAGE_NAME:$SHORT_VERSION
+  - docker tag $DOCKER_ALL_IN_ONE_IMAGE_NAME:$CI_COMMIT_REF_SLUG $DOCKER_ALL_IN_ONE_IMAGE_NAME:latest
+  - docker push $DOCKER_ALL_IN_ONE_IMAGE_NAME
+  services:
+  - docker:dind
+  stage: distribute
+format_code:
+  except:
+    variables:
+    - $CI_COMMIT_MESSAGE =~ /^WIP/
+  retry: 1
+  script:
+  - diff -u <(echo -n) <(gofmt -s -d .)
+  stage: quality
+image: registry.gitlab.com/pantomath-io/panto/panto-build:8b1b1517
+ineffectual_assignment:
+  except:
+    variables:
+    - $CI_COMMIT_MESSAGE =~ /^WIP/
+  retry: 1
+  script:
+  - ineffassign *
+  stage: quality
+landing_production:
+  artifacts:
+    paths:
+    - www/about/
+  environment:
+    name: landing-production
+    url: https://about.panto.app
+  only:
+  - master
+  retry: 1
+  script:
+  - eval $(ssh-agent -s)
+  - make -C docs/site-docs docs
+  - ssh-add <(echo "$SSH_PANTO_KEY")> /dev/null
+  - rsync -arz -e ssh www/about/ panto@web.pantomath.io:/var/www/about.panto.app/
+  stage: distribute
+landing_staging:
+  artifacts:
+    paths:
+    - www/about/
+  environment:
+    name: landing-staging
+    url: https://about.staging.panto.app
+  only:
+  - develop
+  retry: 1
+  script:
+  - eval $(ssh-agent -s)
+  - make -C docs/site-docs docs
+  - ssh-add <(echo "$SSH_PANTO_KEY")> /dev/null
+  - rsync -arz -e ssh www/about/ panto@web.pantomath.io:/var/www/about.staging.panto.app/
+  stage: distribute
+lint_code:
+  except:
+    variables:
+    - $CI_COMMIT_MESSAGE =~ /^WIP/
+  retry: 1
+  script:
+  - make lint
+  stage: quality
+lint_watch:
+  except:
+    variables:
+    - $CI_COMMIT_MESSAGE =~ /^WIP/
+  retry: 1
+  script:
+  - cd watch
+  - make dep
+  - make lint
+  stage: quality
+lint_web:
+  except:
+    variables:
+    - $CI_COMMIT_MESSAGE =~ /^WIP/
+  retry: 1
+  script:
+  - cd web
+  - make dep
+  - make lint
+  stage: quality
+memory_sanitizer:
+  except:
+    variables:
+    - $CI_COMMIT_MESSAGE =~ /^WIP/
+  retry: 1
+  script:
+  - make msan
+  services:
+  - influxdb:1.5-alpine
+  - redis:latest
+  - memcached:1.5-alpine
+  - mysql:latest
+  - alias: elasticsearch
+    command:
+    - bin/elasticsearch
+    - -Ediscovery.type=single-node
+    name: docker.elastic.co/elasticsearch/elasticsearch:6.3.0
+  - alias: nginx
+    name: registry.gitlab.com/pantomath-io/docker-nginx-with-status:latest
+  - alias: phpfpm
+    name: registry.gitlab.com/pantomath-io/docker-php-fpm-with-status:latest
+  - mongo:latest
+  - postgres:10-alpine
+  - docker:dind
+  - alias: cassandra
+    name: registry.gitlab.com/pantomath-io/docker-cassandra-with-jolokia:latest
+  - alias: snmpd
+    name: really/snmpd:latest
+  - alias: sybase
+    name: nguoianphu/docker-sybase
+  stage: test
+  variables:
+    MYSQL_ROOT_PASSWORD: password
+    POSTGRES_PASSWORD: password
+package_debian:
+  artifacts:
+    paths:
+    - .debian/*.deb
+  only:
+  - master
+  retry: 1
+  script:
+  - cd .debian
+  - ./build_deb.sh -v "${LONG_VERSION}" -p "panto"
+  - ./build_deb.sh -v "${LONG_VERSION}" -p "panto-agent"
+  stage: release
+packages_index:
+  artifacts:
+    paths:
+    - www/packages/
+  environment:
+    name: packages_index
+    url: https://packages.panto.app
+  only:
+  - master
+  retry: 1
+  script:
+  - eval $(ssh-agent -s)
+  - make packages
+  - ssh-add <(echo "$SSH_PANTO_KEY")> /dev/null
+  - rsync -arz -e ssh www/packages/ panto@web.pantomath.io:/var/www/packages.panto.app/
+  stage: distribute
+race_detector:
+  except:
+    variables:
+    - $CI_COMMIT_MESSAGE =~ /^WIP/
+  retry: 1
+  script:
+  - make race
+  services:
+  - influxdb:1.5-alpine
+  - redis:latest
+  - memcached:1.5-alpine
+  - mysql:latest
+  - alias: elasticsearch
+    command:
+    - bin/elasticsearch
+    - -Ediscovery.type=single-node
+    name: docker.elastic.co/elasticsearch/elasticsearch:6.3.0
+  - alias: nginx
+    name: registry.gitlab.com/pantomath-io/docker-nginx-with-status:latest
+  - alias: phpfpm
+    name: registry.gitlab.com/pantomath-io/docker-php-fpm-with-status:latest
+  - mongo:latest
+  - postgres:10-alpine
+  - docker:dind
+  - alias: cassandra
+    name: registry.gitlab.com/pantomath-io/docker-cassandra-with-jolokia:latest
+  - alias: snmpd
+    name: really/snmpd:latest
+  - alias: sybase
+    name: nguoianphu/docker-sybase
+  stage: test
+  variables:
+    MYSQL_ROOT_PASSWORD: password
+    POSTGRES_PASSWORD: password
+slice_preallocation:
+  except:
+    variables:
+    - $CI_COMMIT_MESSAGE =~ /^WIP/
+  retry: 1
+  script:
+  - prealloc -set_exit_status ./...
+  stage: quality
+stages:
+- test
+- quality
+- build
+- release
+- distribute
+suspicious_construct:
+  except:
+    variables:
+    - $CI_COMMIT_MESSAGE =~ /^WIP/
+  retry: 1
+  script:
+  - go vet ./...
+  stage: quality
+unit_test:
+  except:
+    variables:
+    - $CI_COMMIT_MESSAGE =~ /^WIP/
+  retry: 1
+  script:
+  - make test
+  services:
+  - influxdb:1.5-alpine
+  - redis:latest
+  - memcached:1.5-alpine
+  - mysql:latest
+  - alias: elasticsearch
+    command:
+    - bin/elasticsearch
+    - -Ediscovery.type=single-node
+    name: docker.elastic.co/elasticsearch/elasticsearch:6.3.0
+  - alias: nginx
+    name: registry.gitlab.com/pantomath-io/docker-nginx-with-status:latest
+  - alias: phpfpm
+    name: registry.gitlab.com/pantomath-io/docker-php-fpm-with-status:latest
+  - mongo:latest
+  - postgres:10-alpine
+  - docker:dind
+  - alias: cassandra
+    name: registry.gitlab.com/pantomath-io/docker-cassandra-with-jolokia:latest
+  - alias: snmpd
+    name: really/snmpd:latest
+  - alias: sybase
+    name: nguoianphu/docker-sybase
+  stage: test
+  variables:
+    MYSQL_ROOT_PASSWORD: password
+    POSTGRES_PASSWORD: password
+unnecessary_conversion:
+  except:
+    variables:
+    - $CI_COMMIT_MESSAGE =~ /^WIP/
+  retry: 1
+  script:
+  - unconvert ./...
+  stage: quality
+unused_func_parameter:
+  except:
+    variables:
+    - $CI_COMMIT_MESSAGE =~ /^WIP/
+  retry: 1
+  script:
+  - unparam ./...
+  stage: quality
+variables:
+  CC: clang
+  DOCKER_AGENT_IMAGE_NAME: registry.gitlab.com/pantomath-io/panto/panto-agent
+  DOCKER_ALL_IN_ONE_IMAGE_NAME: registry.gitlab.com/pantomath-io/panto/panto
+  DOCKER_BUILD_IMAGE_NAME: registry.gitlab.com/pantomath-io/panto/panto-build
+  DOCKER_DRIVER: overlay
+  DOCKER_SERVER_IMAGE_NAME: registry.gitlab.com/pantomath-io/panto/panto-server
+  DOCKER_WATCH_IMAGE_NAME: registry.gitlab.com/pantomath-io/panto/panto-watch
+  DOCKER_WEB_IMAGE_NAME: registry.gitlab.com/pantomath-io/panto/panto-web
+  LIVE_TEST: y
+watch_staging:
+  environment:
+    name: watch-production
+    url: https://panto.watch/
+  only:
+  - develop
+  retry: 1
+  script:
+  - eval $(ssh-agent -s)
+  - ssh-add <(echo "$SSH_PANTO_KEY")> /dev/null
+  - rsync -arz --delete -e ssh watch/dist/ deploy@panto.watch:/var/www/panto.watch/
+  - docker-compose -f /opt/panto.watch/docker-compose.yaml pull && docker-compose
+    -f /opt/panto.watch/docker-compose.yaml up -d
+  - docker-compose -f /opt/panto.watch/docker-compose.yaml exec server sh -c 'echo
+    "Y" | panto-ctl dbconf upgrade'
+  stage: distribute

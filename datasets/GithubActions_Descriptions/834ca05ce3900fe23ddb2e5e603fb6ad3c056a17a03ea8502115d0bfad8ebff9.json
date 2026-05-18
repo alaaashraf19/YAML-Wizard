@@ -1,0 +1,15 @@
+{
+  "sha": "834ca05ce3900fe23ddb2e5e603fb6ad3c056a17a03ea8502115d0bfad8ebff9",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1902,
+  "description": "Create a GitHub Actions workflow named CI for Windows that runs on push and pull request events. Use a windows-latest job with a matrix strategy to test different build configurations, including Release and Debug builds with shared libraries ON and OFF on x64 and Win32 platforms. Set up Python 3.7, install Conan, and configure it for the build. Run Conan, build, install, and test the project using CMake and Python.",
+  "tags": [
+    "windows",
+    "cmake",
+    "conan",
+    "python",
+    "ci",
+    "tests"
+  ]
+}

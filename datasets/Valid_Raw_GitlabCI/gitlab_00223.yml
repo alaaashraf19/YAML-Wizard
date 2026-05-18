@@ -1,0 +1,25 @@
+build:
+  artifacts:
+    paths:
+    - moth-server
+  cache:
+    paths:
+    - cmake-build-debug/
+  image: rikorose/gcc-cmake
+  script:
+  - cmake .
+  - make
+  stage: Build
+run_test:
+  before_script:
+  - export DEBIAN_FRONTEND="noninteractive"
+  - apt-get update && apt-get -y install curl
+  dependencies:
+  - build
+  image: ubuntu
+  script:
+  - ./test/gitlab-test.sh
+  stage: Test
+stages:
+- Build
+- Test

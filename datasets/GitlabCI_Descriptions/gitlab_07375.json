@@ -1,0 +1,21 @@
+{
+  "sha": "gitlab_07375",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 13769,
+  "description": "Create a GitLab CI pipeline with stages build, dockerize, test, deploy, and postdeploy. In the build stage run the elm_make job that restores ~/.elm and ~/.npm caches, installs npm dependencies, builds production assets with npm run build:prod, copies elm-web.js, index.html, ports.js, cloud_configs.js, config.js, exosphere.webmanifest, assets, fonts, and service-worker.js into the public folder, caches node_modules, home/.elm, home/.npm, and stores the public directory as an artifact. In the dockerize stage define build_with_kaniko (excluded on master and dev) that edits public/config.js via sed, copies elm-web.js, ports.js, cloud_configs.js, config.js, creates a kaniko Docker config with CI registry credentials, builds Docker images with the kaniko executor using the Selenium${BROWSER}AndExosphere Dockerfile and tags them as $CI_REGISTRY_IMAGE:e2e-${BROWSER_LOWER}-$TAG (including latest on default branch); also define build_standalone_container that edits environment-configs/docker-config.js similarly and builds a standalone image with kaniko using docker/standalone.Dockerfile. In the test stage define .e2e jobs (e2e_chrome, e2e_firefox, mr_e2e) that use the python:3.11 image, verify OS_USERNAME and OS_PASSWORD, install Python requirements, create screenshots and logs directories, run behave with junit output and custom -D variables (including UNIQUE_TAG, EXOSPHERE_BASE_URL, BROWSER, REMOTE_WEBDRIVER, COMMAND_EXECUTOR), provide Selenium service containers (selenium/standalone-chrome:4 or selenium/standalone-firefox:4), allow failure for mr_e2e, and upload junit reports and screenshots/logs as artifacts. In the deploy stage add deploy_dev, deploy_jetstream2, deploy_prod, and deploy_rescloud jobs that set up ssh-agent, add the DOGFOOD_SSH_PRIV_KEY, configure known hosts, install rsync, copy the appropriate environment-config.js to public/config.js, update instanceConfigMgtRepoCheckout and releaseVersion via sed, adjust the base href in index.html, and rsync the public directory to the target server, each with its own environment name and URL and limited to its branch via only rules. In the postdeploy stage add .dev_post_deploy, .jetstream2_post_deploy, .prod_post_deploy jobs that run only on their respective branches, set ENV_NAME and EXOSPHERE_BASE_URL variables, and depend on the corresponding deploy jobs; the pipeline also uses a global node:current-bookworm image, includes the Dependency-Scanning template, and defines a cache keyed by job name for node_modules, home/.elm, home/.npm, and elm-stuff.",
+  "tags": [
+    "kaniko",
+    "docker",
+    "elm",
+    "npm",
+    "node",
+    "python",
+    "selenium",
+    "e2e",
+    "gitlab-ci",
+    "cache",
+    "deploy",
+    "behave"
+  ]
+}

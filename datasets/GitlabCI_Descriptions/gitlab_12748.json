@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_12748",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1602,
+  "description": "Create a GitLab CI pipeline using the ubuntu:noble Docker image and a redis:latest service, with a before_script that updates apt, installs texinfo, guile-3.0, guile-3.0-dev, build-essential, automake, git, autoconf, libtool, mariadb development libraries, nss3, gettext, redis, libcurl4-openssl-dev and locales, then clones, checks out, builds and installs guile-dbi 2.1.8, guile-dbd-mysql 2.1.8, guile-curl v0.9, guile-redis 2.2.0, guile-json 4.7.3, runs autogen.sh, configures and installs the main project. Define a single stage named test. Add a test job in the test stage that runs only on the master branch, sets REDIS_HOST, REDIS_PORT and REDIS_URL variables to point to the redis service, and executes \"make test && guile -c '(display (@ (artanis artanis) artanis-version))'\". No caches, artifacts, or deployment targets are defined.",
+  "tags": [
+    "ubuntu",
+    "redis",
+    "guile",
+    "make",
+    "test",
+    "artanis"
+  ]
+}

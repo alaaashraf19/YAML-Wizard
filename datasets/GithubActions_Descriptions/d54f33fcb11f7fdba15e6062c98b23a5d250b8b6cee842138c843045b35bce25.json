@@ -1,0 +1,14 @@
+{
+  "sha": "d54f33fcb11f7fdba15e6062c98b23a5d250b8b6cee842138c843045b35bce25",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1859,
+  "description": "Create a GitHub Actions workflow to generate and upload documentation on push to the master branch. The workflow should trigger on pull requests to specific files and on push to master. It should use an ubuntu-latest job with a Python 3.8 matrix, install Poetry, load cached dependencies, install dependencies with Poetry, generate documentation using a bash script, and deploy the documentation to GitHub Pages if pushing to master.",
+  "tags": [
+    "documentation",
+    "github-pages",
+    "poetry",
+    "python",
+    "mkdocs"
+  ]
+}

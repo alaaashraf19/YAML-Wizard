@@ -1,0 +1,18 @@
+{
+  "sha": "91ca5adbb2a1736380973a512e5d0eb80e1eb055df609afa0364be0c67c4e214",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2080,
+  "description": "Create a GitHub Actions workflow named Testing Java API that runs on every pull request. The workflow should have read permission to repository contents. It should have two jobs: one for testing the Java API and another for checking ASCII safety of JavaScript files. Both jobs run on ubuntu-latest and harden the runner with step-security/harden-runner. The Java API job sets up JDK 8 and Maven, then uses Maven with the github-actions profile to test build tools and the Java API with Ant. The second job installs ascii-safe-cli and checks if .js API files are ASCII safe.",
+  "tags": [
+    "java",
+    "api",
+    "testing",
+    "javascript",
+    "ascii",
+    "github-actions",
+    "maven",
+    "ant",
+    "ubuntu"
+  ]
+}

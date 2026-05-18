@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_07130",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1133,
+  "description": "Create a GitLab CI pipeline using the jangrewe/gitlab-ci-android Docker image, with variables ANDROID_BUILD_TOOLS=24.0.0, ANDROID_COMPILE_SDK='25', ANDROID_SDK_TOOLS=24.4.1, and a cache keyed by CI_PROJECT_ID that stores the .gradle/ directory. Define two stages: build and test. In the build stage add a build job that runs a before_script exporting GRADLE_USER_HOME=$(pwd)/.gradle and chmod +x ./gradlew, then executes ./gradlew assembleDebug and uploads the app/build/outputs/ directory as an artifact. In the test stage add a unitTests job that runs ./gradlew test, and a functionalTests job that runs curl --silent --output android-wait-for-emulator https://raw.githubusercontent.com/travis-ci/travis-cookbooks/0f497eb71291b52a703143c5cd63a217c8766dc9/community-cookbooks/android-sdk/files/default/android-wait-for-emulator, chmod +x android-wait-for-emulator, echo y | /sdk/tools/android --silent update sdk --no-ui --all --filter sys-img-x86-google_apis-${ANDROID_COMPILE_SDK}, echo no | /sdk/tools/android create avd -n test -t android-${ANDROID_COMPILE_SDK} --abi google_apis/x86, /sdk/tools/emulator64-x86 -avd test -no-window -no-audio &, ./android-wait-for-emulator, adb shell input keyevent 82, and finally ./gradlew cAT.",
+  "tags": [
+    "android",
+    "gradle",
+    "emulator",
+    "functional-tests",
+    "unit-tests",
+    "gitlab-ci"
+  ]
+}

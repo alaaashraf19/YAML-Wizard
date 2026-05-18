@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_09653",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 191,
+  "description": "Create a GitLab CI pipeline that uses the docker:stable Docker image with a docker:dind service and sets the variables DOCKER_DRIVER to overlay2 and DOCKER_HOST to tcp://docker:2375. Define a single stage named build and add a job called build in that stage that executes the exact shell command `docker build -t gnar-base .`. The pipeline does not define any caches, artifacts, or special rules, so the job runs on every pipeline execution.",
+  "tags": [
+    "docker",
+    "docker-build",
+    "dind",
+    "gnar-base",
+    "ci"
+  ]
+}

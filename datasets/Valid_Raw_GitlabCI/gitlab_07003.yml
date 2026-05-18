@@ -1,0 +1,17 @@
+build:
+  artifacts:
+    paths:
+    - build/kvasir.zip
+    - build/kvasir.xpi
+  before_script:
+  - apt-get update -y && apt-get install -y zip
+  script:
+  - npm install
+  - npm run package
+  stage: build
+cache:
+  paths:
+  - node_modules/
+image: node:8.9.4
+stages:
+- build

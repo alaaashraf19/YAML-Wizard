@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_11322",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 972,
+  "description": "Create a GitLab CI pipeline that uses the default Linux runner image and runs a before_script to set up the Android build environment. The before_script executes: apt-get --quiet update --yes; apt-get --quiet install --yes wget tar unzip openjdk-7-jdk lib32stdc++6 lib32z1; wget --quiet --output-document=android-sdk.tgz https://dl.google.com/android/android-sdk_r24.4.1-linux.tgz; tar --extract --gzip --file=android-sdk.tgz; echo y | android-sdk-linux/tools/android --silent update sdk --no-ui --all --filter android-23; echo y | android-sdk-linux/tools/android --silent update sdk --no-ui --all --filter platform-tools; echo y | android-sdk-linux/tools/android --silent update sdk --no-ui --all --filter build-tools-23.0.3; echo y | android-sdk-linux/tools/android --silent update sdk --no-ui --all --filter extra-android-m2repository; export ANDROID_HOME=$PWD/android-sdk-linux. Add a build job (default test stage) that runs ./gradlew assembleDebug check --stacktrace and publishes the lint results (build/outputs/lint-results-debug.html, build/outputs/lint-results-debug.xml, and build/outputs/lint-results-debug_files) as artifacts.",
+  "tags": [
+    "android",
+    "gradle",
+    "lint",
+    "sdk",
+    "gitlab-ci"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "3e994e82e3fafbe31dae91cfa37cab7dff2cd846ca8f53ec82aac341e588af2c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1553,
+  "description": "Create a GitHub Actions workflow named FppTest that runs on push to devel and release branches and on pull requests to those branches, excluding certain paths. The workflow should cancel in-progress runs if a newer run starts on a PR. Use an ubuntu-22.04 job to check out the repository with submodules, install requirements, generate and build UTs with fprime-util, run UTs, and archive logs.",
+  "tags": [
+    "fpp",
+    "ubuntu",
+    "tests",
+    "ci",
+    "automation"
+  ]
+}

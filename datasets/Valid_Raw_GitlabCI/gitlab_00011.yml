@@ -1,0 +1,10 @@
+image: alpine:latest
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - "echo 'Dosyalar kopyalan\u0131yor'"
+  stage: deploy

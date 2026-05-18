@@ -1,0 +1,13 @@
+{
+  "sha": "1334967544767db2056414e2ba3cafd527fa24738df8e4549f895690470093de",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 747,
+  "description": "Create a GitHub Actions workflow named Build and Push Docker Image that triggers on push to the develop branch when files under docker/ or .github/workflows/docker-publish.yml change, and also allow manual dispatch. The workflow should run on an ubuntu-latest environment, checking out the repository, logging in to Docker Hub with credentials from secrets, building a Docker image from the Dockerfile in docker/, and pushing the image tagged as latest to Docker Hub.",
+  "tags": [
+    "docker",
+    "dockerhub",
+    "github-actions",
+    "workflow-dispatch"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_11367",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 353,
+  "description": "Create a GitLab CI pipeline using the cnam/make-builder:latest Docker image with a docker:dind service and set DOCKER_DRIVER to overlay. Define a single stage called build and a job named build that runs in this stage on a runner tagged docker. The job executes the script command `make test release IMAGE=registry.gitlab.com/leanlabsio/kanban TAG=${CI_BUILD_REF:0:12} REGISTRY_USERNAME=gitlab-ci-token REGISTRY_PASSWORD=$CI_BUILD_TOKEN` and after the script runs `make clean`. No caches, artifacts, or conditional rules are defined.",
+  "tags": [
+    "make",
+    "docker",
+    "dind",
+    "registry",
+    "kanban"
+  ]
+}

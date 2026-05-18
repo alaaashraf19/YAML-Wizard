@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_11080",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 619,
+  "description": "Create a GitLab CI pipeline that uses a postgres:14.8 service and sets POSTGRES_HOST_AUTH_METHOD to trust. Add a before_script that runs python3 --version, creates a virtual environment with python3 -m venv venv, activates it, and installs requirements from requirements/ci.txt using the custom index https://pypi.kbsoftware.co.uk/kb/dev/+simple/. Define a test job in the test stage that exports DATABASE_HOST=postgres, DATABASE_PASS=, DATABASE_PORT=, DATABASE_USER=postgres, DOMAIN=dev, HOST_NAME=\\\"http://localhost:8000\\\", LOG_FOLDER=, LOG_SUFFIX=dev, MAIL_TEMPLATE_TYPE=\\\"django\\\", SECRET_KEY=\\\"sk_test\\\" and then runs pytest --create-db --cov-report term --cov=block.",
+  "tags": [
+    "python",
+    "pytest",
+    "postgres",
+    "venv",
+    "ci",
+    "coverage"
+  ]
+}

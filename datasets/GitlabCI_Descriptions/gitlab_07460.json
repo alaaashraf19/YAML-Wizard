@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_07460",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 598,
+  "description": "Create a GitLab CI pipeline using the ubuntu:18.10 Docker image with a single build stage. Define a job named build that runs in the build stage. In its before_script, update apt and install python3, python3-pip, g++, git, ninja-build, libboost-all-dev, libgl1-mesa-dev, libglu1-mesa-dev, freeglut3-dev, libgtest-dev and cmake; then compile Google Test by creating /tmp/gtest_build, running cmake /usr/src/gtest, make -j, and copying the resulting *.a files to /usr/local/lib; finally install meson via pip3 and return to the previous directory. In the script section, run `meson --prefix=$(pwd)/target --buildtype=release build` and then `cd build && meson test --suite design_patterns_examples:auto`. Cache the build/ directory.",
+  "tags": [
+    "ubuntu",
+    "meson",
+    "gtest",
+    "c++",
+    "build"
+  ]
+}

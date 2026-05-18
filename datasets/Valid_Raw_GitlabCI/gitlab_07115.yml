@@ -1,0 +1,10 @@
+build:
+  coverage: '/coverage: \d+\.\d+% of statements/'
+  script:
+  - docker build .
+  stage: build
+image: docker:latest
+services:
+- docker:dind
+stages:
+- build

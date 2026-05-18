@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_15136",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 899,
+  "description": "Create a GitLab CI pipeline using the ubuntu:devel Docker image and defining two stages: build and deploy. In the global before_script export DEBIAN_FRONTEND=noninteractive, run apt update, and install the packages listed in the DEPENDENCIES variable. Add a build job in the build stage that runs meson _build, cd _build, ninja, meson test, starts broadwayd in background, runs GDK_BACKEND=broadway meson test, and finally ninja install. Add a pages job in the deploy stage that runs meson _build, cd _build, ninja, moves the generated docs/GSvgtk-* files to a public directory, renames public/index.htm to public/index.html, and publishes the public/ folder as a GitLab Pages artifact. Ensure the pages job defines an artifact with path public and has no special rules.",
+  "tags": [
+    "ubuntu",
+    "meson",
+    "ninja",
+    "gitlab-pages",
+    "gtk",
+    "c-build"
+  ]
+}

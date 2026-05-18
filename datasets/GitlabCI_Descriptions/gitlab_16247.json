@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_16247",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 615,
+  "description": "Create a GitLab CI pipeline that uses the microsoft/dotnet:latest Docker image and defines a DOCKER_DRIVER variable set to overlay2. Define two stages: build and publish. Add a build job named build that runs in the build stage, executes \"cd Sbatman.Networking\" then \"dotnet build -c release\", and publishes the Release and Debug binaries from Sbatman.Networking/bin/Release and Sbatman.Networking/bin/Debug as artifacts. Add a nuget job named nuget that runs in the publish stage, only on the master branch, executes \"cd Sbatman.Networking\", \"dotnet pack -c release\", \"cd bin/release/\", and \"dotnet nuget push *.nupkg -k $NUGETKEY -s https://api.nuget.org/v3/index.json\", and also stores the same artifact paths. No services or caches are defined.",
+  "tags": [
+    "dotnet",
+    "nuget",
+    "build",
+    "publish",
+    "microsoft-dotnet",
+    "gitlab-ci"
+  ]
+}

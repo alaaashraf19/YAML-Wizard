@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_11191",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 724,
+  "description": "Create a GitLab CI pipeline with a single build stage and a job named build_modpacks that uses the Docker image registry.gitlab.com/kirara/launcher/builder and runs only on the master branch. The job runs manually, sets variables CONTAINER_NAME as ${CI_PROJECT_NAME}-web, IMAGE_NAME as ${CI_REGISTRY_IMAGE}/web, and PORT as '8080', and executes the following shell commands in order: git lfs pull; ./build_packs.py; for each directory in server it echoes \"Packing modpack $modpack\", creates a tar.gz archive with tar -czvf server/${modpack}.tar.gz -C server/${modpack} . and removes the original directory; docker build -f Dockerfile.web -t ${IMAGE_NAME} .; docker stop ${CONTAINER_NAME} && docker rm ${CONTAINER_NAME} || true; and docker run -d --name ${CONTAINER_NAME} -p \"$PORT:80\" ${IMAGE_NAME}. The pipeline sets GIT_STRATEGY to clone and tags the runner with docker-host.",
+  "tags": [
+    "docker",
+    "git-lfs",
+    "modpacks",
+    "manual",
+    "docker-host",
+    "gitlab-ci"
+  ]
+}

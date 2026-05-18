@@ -1,0 +1,51 @@
+build:
+  artifacts:
+    paths:
+    - app/build/outputs/
+  script:
+  - export CI_COMMIT_SHORT_SHA
+  - ./gradlew assembleDebug
+  stage: build
+image: mobiledevops/android-sdk-image:34.0.0-jdk17
+release:
+  artifacts:
+    paths:
+    - app/build/outputs/
+  script:
+  - ./gradlew assembleRelease
+  stage: release
+release_apk:
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  rules:
+  - if: $CI_COMMIT_TAG
+  script:
+  - "release-cli create --name \"Release $CI_COMMIT_TAG\" --tag-name $CI_COMMIT_TAG\
+    \ \\\n  --assets-link \"{\\\"name\\\":\\\"${APK_RELEASE}\\\",\\\"url\\\":\\\"\
+    ${PACKAGE_REGISTRY_URL}/${APK_RELEASE}\\\"}\" \\\n  --assets-link \"{\\\"name\\\
+    \":\\\"${APK_DEBUG}\\\",\\\"url\\\":\\\"${PACKAGE_REGISTRY_URL}/${APK_DEBUG}\\\
+    \"}\"\n"
+  stage: release_apk
+stages:
+- build
+- release
+- upload
+- release_apk
+upload:
+  image: curlimages/curl:latest
+  rules:
+  - if: $CI_COMMIT_TAG
+  script:
+  - 'curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file ${APK_FOLDER}/release/app-release-unsigned.apk
+    "${PACKAGE_REGISTRY_URL}/${APK_RELEASE}"
+
+    '
+  - 'curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file ${APK_FOLDER}/debug/app-debug.apk
+    "${PACKAGE_REGISTRY_URL}/${APK_DEBUG}"
+
+    '
+  stage: upload
+variables:
+  APK_DEBUG: app-debug.apk
+  APK_FOLDER: app/build/outputs/apk/
+  APK_RELEASE: app-release-unsigned.apk
+  PACKAGE_REGISTRY_URL: ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/unote/${CI_COMMIT_TAG}

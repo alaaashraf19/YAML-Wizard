@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_12878",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 210,
+  "description": "Create a GitLab CI pipeline that runs a global before_script executing `R --vanilla -f install.R` for all jobs. Define a single job named `build:rocker/ropensci` that uses the `rocker/ropensci` Docker image, runs in the default stage, and executes the shell commands `make install roxygen check`, then `mv ../rkeos.Rcheck rcheck`, and finally `export`. Configure the job to collect the `rcheck/` directory as an artifact after the script finishes. No additional stages, caches, or rules are specified.",
+  "tags": [
+    "r",
+    "rocker",
+    "ropensci",
+    "make",
+    "gitlab-ci"
+  ]
+}

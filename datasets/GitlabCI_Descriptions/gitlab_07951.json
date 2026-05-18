@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_07951",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 352,
+  "description": "Create a GitLab CI pipeline using the python:latest Docker image with a postgres:latest service and a pip cache at ~/.cache/pip/. Define a global POSTGRES_DB variable set to ci and a before_script that prints the Python version and installs dependencies via pip install -r requirements.txt. Add a test job (default stage) that sets a DATABASE_URL variable to postgresql://postgres:postgres@postgres:5432/$POSTGRES_DB and runs python manage.py test --settings gitlab_ci_example_django.settings.ci. The pipeline has no explicit stages, artifacts, or rules.",
+  "tags": [
+    "python",
+    "django",
+    "postgres",
+    "pip-cache",
+    "gitlab-ci"
+  ]
+}

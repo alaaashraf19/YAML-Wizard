@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_04183",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1014,
+  "description": "Create a GitLab CI pipeline using the php:latest Docker image with a mysql:latest service and define MYSQL_DATABASE and MYSQL_ROOT_PASSWORD variables. Set a global before_script that runs apt-get update -yqq, installs Node.js 7 via the official setup script, installs a long list of development libraries (git, libcurl4-gnutls-dev, libicu-dev, libmcrypt-dev, libvpx-dev, libjpeg-dev, libpng-dev, libxpm-dev, zlib1g-dev, libfreetype6-dev, libxml2-dev, libexpat1-dev, libbz2-dev, libgmp3-dev, libldap2-dev, unixodbc-dev, libpq-dev, libsqlite3-dev, libaspell-dev, libsnmp-dev, libpcre3-dev, libtidy-dev), runs docker-php-ext-install mbstring pdo_mysql curl json intl gd xml zip bz2 opcache, installs and enables Xdebug via pecl, installs Composer, runs php composer.phar install, runs npm install, copies .env.testing to .env, runs npm run dev, generates a Laravel application key, caches the config, runs migrations and seeds the database. Define a cache for the vendor/ and node_modules/ paths. Add a test job in the test stage that runs php vendor/bin/phpunit --coverage-text --colors=never and npm test.",
+  "tags": [
+    "php",
+    "mysql",
+    "composer",
+    "npm",
+    "phpunit",
+    "laravel",
+    "gitlab-ci"
+  ]
+}

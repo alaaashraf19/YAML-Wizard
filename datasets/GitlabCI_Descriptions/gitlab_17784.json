@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_17784",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 122,
+  "description": "Create a GitLab CI pipeline that uses the ruby:2.3-alpine Docker image and runs a before_script to install git and alpine-sdk with apk. Define a single job called specs in the default test stage that runs 'bundle install' then 'rake spec'. No caches, artifacts, services, or conditional rules are required.",
+  "tags": [
+    "ruby",
+    "alpine",
+    "bundler",
+    "rake",
+    "specs"
+  ]
+}

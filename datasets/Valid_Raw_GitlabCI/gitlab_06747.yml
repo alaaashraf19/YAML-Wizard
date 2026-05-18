@@ -1,0 +1,67 @@
+.job_template_test_hotsite:
+  before_script: &id001
+  - hugo version
+  image: registry.gitlab.com/osinfs/containerize:base-hugo-0.17
+before_script:
+- sed -e "s/#version = \"v-VERSION\"/version = \"v-$CI_BUILD_REF_NAME\"/" -i config.toml
+- docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+- apk add --update --no-cache curl
+- curl -LO https://releases.rancher.com/cli2/v$RANCHER_CLI_VERSION/rancher-linux-amd64-v$RANCHER_CLI_VERSION.tar.gz
+- tar zxvf rancher-linux-amd64-v$RANCHER_CLI_VERSION.tar.gz
+- mv rancher-v$RANCHER_CLI_VERSION/rancher /usr/local/bin/
+- curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
+- mv kubectl /usr/local/bin
+- chmod +x /usr/local/bin/kubectl /usr/local/bin/rancher
+- rancher login --context $RANCHER_CONTEXT --token $RANCHER_TOKEN $RANCHER_URL
+build to realease:
+  environment:
+    name: production
+  only:
+  - tags
+  script:
+  - sed -e "s/#Ganalytics/Ganalytics/" -i config.toml
+  - docker build -f Dockerfile -t $CONTAINER_TEST_IMAGE .
+  - docker push $CONTAINER_TEST_IMAGE
+  stage: build:hugo
+deploy to production:
+  environment:
+    name: production
+  only:
+  - tags
+  script:
+  - rancher kubectl --namespace devopsdaysbsb set image deployment/devopsdaysbsb devopsdaysbsb=${CONTAINER_TEST_IMAGE}
+  stage: deploy
+image: docker:git
+release-image-tag-latest:
+  environment:
+    name: production
+  only:
+  - tags
+  script:
+  - docker pull $CONTAINER_TEST_IMAGE
+  - docker tag $CONTAINER_TEST_IMAGE $CONTAINER_RELEASE_IMAGE
+  - docker push $CONTAINER_RELEASE_IMAGE
+  stage: release
+services:
+- docker:dind
+stages:
+- test
+- build:hugo
+- release
+- deploy
+test contentbuild:
+  before_script: *id001
+  image: registry.gitlab.com/osinfs/containerize:base-hugo-0.17
+  script:
+  - hugo --verbose --config config.toml
+  stage: test
+test contentbuild::FD:
+  allow_failure: true
+  before_script: *id001
+  image: registry.gitlab.com/osinfs/containerize:base-hugo-0.17
+  script:
+  - hugo -FD
+  stage: test
+variables:
+  CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE:latest
+  CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME

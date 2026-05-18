@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_10703",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 263,
+  "description": "Create a GitLab CI pipeline that uses the default runner image and runs a before_script to update apt (apt-get update -yq), install npm (apt-get install -y npm), install nodejs-legacy (apt-get install nodejs-legacy), install git (apt-get install git), globally install bower and grunt-cli (npm install -g bower grunt-cli), run npm install, and run bower install --allow-root. Add a single job named build-project (in the default stage) that executes the command grunt, and defines artifacts that include all files under dist/*. Ensure the artifacts paths are set to dist/* and no explicit stages, images, or services are defined.",
+  "tags": [
+    "npm",
+    "bower",
+    "grunt",
+    "apt",
+    "artifacts",
+    "build-project"
+  ]
+}

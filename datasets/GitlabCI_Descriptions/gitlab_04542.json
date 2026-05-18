@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_04542",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 3434,
+  "description": "Create a GitLab CI pipeline with stages test:static, test:unit, test:integ, build, deploy:staging, and deploy:production, define global variables for API and NGINX image tags and cache paths, and enable a pip cache at pip-cache/. In the build stage add a build_api_image job that uses the docker:1.12 image with the docker:1.12-dind service, logs in to $CONTAINER_REGISTRY, runs docker load < $CACHE_API_IMAGE_TAR || true, removes the tar if it exists, builds the API image with docker build --pull -f build/api/Dockerfile -t $API_TEST_IMAGE ., pushes it with docker push $API_TEST_IMAGE, and saves the image layers to $CACHE_API_IMAGE_TAR, caching that file with key docker-build-cache-api. Also provide a hidden .build_nginx_image template that performs the same sequence for the NGINX image using $CACHE_NGINX_IMAGE_TAR and cache key docker-build-cache-nginx. In the test:static stage add a pep8 job using python:3.5.2 that installs pep8 and runs pep8 --exclude=env,__pycache__,**/migrations/* --count .; in test:unit add a django_unit job using python:3.5.2 that installs requirements and runs python3 manage.py test --testrunner=utils.testing.no_db_setup_runner.NoDbSetupTestRunner --parallel --tag=unit with Django variables; in test:integ add a django_integ job using python:3.5.2 that installs requirements and runs python3 manage.py test --parallel --exclude-tag=unit, using a postgres:9.5.5 service. Finally, add manual deployment jobs: staging in deploy:staging with environment staging running make deploy, and production in deploy:production with environment production running make deploy, both triggered manually.",
+  "tags": [
+    "docker",
+    "dind",
+    "python-3.5",
+    "django",
+    "postgres",
+    "pep8",
+    "manual-deploy",
+    "cache",
+    "build",
+    "test"
+  ]
+}

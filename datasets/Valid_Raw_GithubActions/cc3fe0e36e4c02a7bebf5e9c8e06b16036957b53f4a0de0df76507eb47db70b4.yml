@@ -1,0 +1,21 @@
+name: rp2350B SparkfunXRP
+
+on:
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - 'README.md'
+      - '**/README.md'
+  pull_request_target:
+    branches:
+      - master
+    paths-ignore:
+      - 'README.md'
+      - '**/README.md'
+
+jobs:
+  build:
+    uses: ./.github/workflows/build_template.yml
+    with:
+      args: sparkfun_xrp_controller

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_11719",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 251,
+  "description": "Create a GitLab CI pipeline that uses the node:8.9 Docker image and caches the node_modules/ directory. Define a deploy stage with a pages job that runs the before_script commands npm install gitbook-cli -g, gitbook fetch latest, and gitbook install, then executes gitbook build . public. The pages job should publish the public/ folder as a pages artifact and only run on the master branch.",
+  "tags": [
+    "node",
+    "gitbook",
+    "pages",
+    "npm",
+    "cache"
+  ]
+}

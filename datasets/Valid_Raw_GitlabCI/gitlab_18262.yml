@@ -1,0 +1,194 @@
+algolia:
+  application_id: null
+  index_name: null
+  powered_by: null
+  search_only_api_key: null
+analytics:
+  google:
+    anonymize_ip: null
+    tracking_id: null
+  provider: false
+atom_feed:
+  path: null
+author:
+  avatar: /assets/images/bio-photo.jpg
+  bio: Bahn. Wandern. IT.
+  email: null
+  links:
+  - icon: fab fa-fw fa-twitter
+    label: Twitter
+  - icon: fab fa-fw fa-mastodon
+    label: Mastodon
+  - icon: fab fa-fw fa-github
+    label: GitHub
+  location: null
+  name: Michael Ummels
+baseurl: null
+bing_site_verification: null
+comments:
+  discourse:
+    server: null
+  disqus:
+    shortname: null
+  facebook:
+    appid: null
+    colorscheme: null
+    num_posts: null
+  giscus:
+    category_id: null
+    category_name: null
+    discussion_term: null
+    reactions_enabled: null
+    repo_id: null
+    theme: null
+  provider: null
+  staticman:
+    branch: null
+    endpoint: null
+  utterances:
+    issue_term: null
+    theme: null
+compress_html:
+  clippings: all
+  ignore:
+    envs: development
+date_format: '%d.%m.%Y'
+defaults:
+- scope:
+    path: ''
+  values:
+    author_profile: true
+    header:
+      image: /assets/images/landwasser.jpg
+      image_description: Am Landwasserviadukt
+- scope:
+    path: ''
+    type: posts
+  values:
+    comments: null
+    layout: single
+    read_time: false
+    related: true
+    share: true
+    show_date: true
+- scope:
+    path: ''
+    type: pages
+  values:
+    layout: single
+description: Michaels Blog
+encoding: utf-8
+excerpt_separator: '
+
+
+  '
+exclude:
+- photos/import.sh
+- deploy.sh
+- vendor
+- .asset-cache
+- .bundle
+- .jekyll-assets-cache
+- .sass-cache
+- assets/js/plugins
+- assets/js/_main.js
+- assets/js/vendor
+- Capfile
+- CHANGELOG
+- config
+- Gemfile
+- Gruntfile.js
+- gulpfile.js
+- LICENSE
+- log
+- node_modules
+- package.json
+- Rakefile
+- README
+- tmp
+- /docs
+- /test
+facebook:
+  app_id: null
+  publisher: null
+  username: null
+google:
+  instant_search: null
+  search_engine_id: null
+google_site_verification: null
+highlighter: rouge
+image:
+  source: /photos/
+include:
+- .htaccess
+- _pages
+incremental: false
+jekyll-archives:
+  enabled:
+  - tags
+  layouts:
+    tag: archive-taxonomy
+  permalinks:
+    tag: /tags/:name/
+keep_files:
+- .git
+- .svn
+kramdown:
+  auto_ids: true
+  enable_coderay: false
+  entity_output: as_char
+  footnote_nr: 1
+  hard_wrap: false
+  input: GFM
+  smart_quotes: lsquo,rsquo,ldquo,rdquo
+  toc_levels: 1..6
+locale: de
+lsi: false
+markdown: kramdown
+markdown_ext: markdown,mkdown,mkdn,mkd,md
+minimal_mistakes_skin: default
+name: Michael Ummels
+naver_site_verification: null
+og_image: null
+paginate: 3
+paginate_path: /page:num/
+permalink: pretty
+plugins:
+- jekyll-paginate
+- jekyll-sitemap
+- jekyll-feed
+- jekyll-archives
+- jekyll-tagging-related_posts
+reCaptcha:
+  secret: null
+  siteKey: null
+repository: null
+sass:
+  sass_dir: _sass
+  style: compressed
+search: null
+search_full_content: null
+search_provider: null
+social:
+  links: null
+  name: null
+  type: null
+tag_archive:
+  path: /tags/
+  type: jekyll-archives
+teaser: null
+theme: minimal-mistakes-jekyll
+timezone: Europe/Berlin
+title: ummels.de
+title_separator: '-'
+twitter:
+  username: trassenfinder
+url: https://www.ummels.de
+whitelist:
+- jekyll-paginate
+- jekyll-sitemap
+- jekyll-gist
+- jekyll-feed
+- jemoji
+words_per_minute: 200
+yandex_site_verification: null

@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_18733",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 623,
+  "description": "Create a GitLab CI pipeline using the debian:buster Docker image, with a cache for node_modules/ and .yarn, and set GIT_SUBMODULE_STRATEGY to recursive. Define two stages: test and release. Add a py-qa job in the test stage that runs the shared before_script (echo \"deb http://archive.debian.org/debian buster main contrib non-free\" > /etc/apt/sources.list; apt-get update -qy; apt-get install -qy make git; make debian-nosudo; pip install -U pip; make pip-nosudo; make pip-dev; make db) then executes make qa, is allowed to fail, and only runs on the master branch. Add a test job in the test stage that runs the same before_script and then runs make unit, also only on the master branch.",
+  "tags": [
+    "debian",
+    "make",
+    "python",
+    "qa",
+    "unit-tests",
+    "cache",
+    "gitlab-ci"
+  ]
+}

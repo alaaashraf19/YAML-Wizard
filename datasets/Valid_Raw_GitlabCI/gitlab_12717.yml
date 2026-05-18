@@ -1,0 +1,17 @@
+build:
+  artifacts:
+    paths:
+    - execasm
+  before_script:
+  - apt update && apt -y install make cmake
+  - cmake --version
+  - make -v
+  - gcc -v
+  - ld -v
+  cache:
+    paths:
+    - '*.o'
+  script:
+  - cmake . && make execasm
+  stage: build
+image: gcc

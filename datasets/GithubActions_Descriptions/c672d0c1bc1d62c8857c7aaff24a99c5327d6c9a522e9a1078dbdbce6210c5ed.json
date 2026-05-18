@@ -1,0 +1,14 @@
+{
+  "sha": "c672d0c1bc1d62c8857c7aaff24a99c5327d6c9a522e9a1078dbdbce6210c5ed",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1407,
+  "description": "Create a GitHub Actions workflow named package that triggers on push to specific paths and branches, and on pull requests to those branches and paths. The workflow runs two jobs: conan-package and npm-package. The conan-package job uses a reusable workflow with Conan and WASM platform enabled. The npm-package job depends on conan-package, is conditional on specific push events to certain branches, and uses another reusable workflow with a package version derived from the conan-package job output.",
+  "tags": [
+    "conan",
+    "npm",
+    "reusable-workflows",
+    "conditional-jobs",
+    "github-actions"
+  ]
+}

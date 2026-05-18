@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_04740",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 157,
+  "description": "Create a GitLab CI pipeline that uses the python:3.6-alpine Docker image. Add a before_script that installs libsodium-dev, gcc, and musl-dev with apk and then runs pip install . to install the current package. Define a single job named test that runs in the default test stage and executes the command python -m unittest discover. No services, caches, artifacts, or special rules are required.",
+  "tags": [
+    "python-3.6-alpine",
+    "unittest",
+    "apk",
+    "libsodium",
+    "gcc",
+    "pip"
+  ]
+}

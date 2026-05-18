@@ -1,0 +1,16 @@
+before_script:
+- apt update -qq
+- apt-get -y install texlive texlive-pstricks texlive-latex-recommended texlive-fonts-extra
+  cm-super make
+build-distcheck:
+  artifacts:
+    paths:
+    - pdfs/*
+  script:
+  - make
+  - mkdir pdfs
+  - mv *.pdf pdfs
+  stage: build
+image: debian:unstable
+stages:
+- build

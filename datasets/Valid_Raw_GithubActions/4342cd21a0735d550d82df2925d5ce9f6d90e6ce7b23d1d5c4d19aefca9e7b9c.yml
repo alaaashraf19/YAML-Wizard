@@ -1,0 +1,50 @@
+on:
+    push:
+        branches:
+            - master # Push events on master branch
+jobs:
+    build:
+        strategy:
+            fail-fast: false
+            matrix:
+                os: [ubuntu-20.04]
+        runs-on: ${{ matrix.os }}
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                node-version: '16.x'
+            - name: Install ubuntu deps
+              if: contains(matrix.os, 'ubuntu-20.04')
+              run: sudo apt install mesa-common-dev libglu1-mesa-dev libegl1 libopengl-dev
+            - name: Install deps
+              run: npm install
+            - name: Build nodegui
+              run: npm run build
+            - name: Archive using npm pack
+              run: npm --no-git-tag-version version 0.0.0-latest-master && npm pack
+            - uses: actions/upload-artifact@v4
+              with:
+                  name: latest-release
+                  path: nodegui-nodegui-0.0.0-latest-master.tgz
+            - uses: nodegui/create-release@master
+              with:
+                  token: ${{ secrets.GITHUB_TOKEN }}
+                  code: v0.0.0-latest-master
+                  name: Latest Master Release
+                  body: >
+                      Latest auto release corresponding to commit ${{github.sha}} 🔥.
+                      To install do:
+                      `npm install https://github.com/nodegui/nodegui/releases/download/v0.0.0-latest-master/nodegui-master.tgz`
+                      or
+                      `npm install http://master-release.nodegui.org`
+                  assets: >
+                      nodegui-nodegui-0.0.0-latest-master.tgz:nodegui-master.tgz:application/tar+gzip
+                  recreate: true
+            - name: Repository Dispatch
+              uses: peter-evans/repository-dispatch@v3
+              with:
+                  token: ${{ secrets.REPO_ACCESS_TOKEN }}
+                  repository: nodegui/nodegui
+                  event-type: on-demand-build
+                  client-payload: '{"ref": "${{ github.ref }}","tag": "v0.0.0-latest-master"}'

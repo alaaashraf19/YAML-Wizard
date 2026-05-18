@@ -1,0 +1,47 @@
+.publish_template:
+  dependencies: &id001
+  - test
+  environment: &id002
+    name: publish
+    url: https://www.powershellgallery.com/WakeUpAzureWebApp
+  image: mcr.microsoft.com/dotnet/sdk:3.1
+  script: &id003
+  - pwsh -ExecutionPolicy Unrestricted -NoLogo -NonInteractive -File ./Deploy/RunPublish.ps1
+    -MTA -ErrorActionPreference Stop
+  services: &id004
+  - alias: pwsh
+    command:
+    - pwsh
+    - pwsh
+    name: mcr.microsoft.com/powershell:7.1.3-ubuntu-20.04
+.test_template:
+  script: &id005
+  - pwsh -ExecutionPolicy Unrestricted -NoLogo -NonInteractive -File ./Deploy/RunTest.ps1
+    -MTA -ErrorActionPreference Stop
+before_script:
+- find ./ -type d -execdir chmod u+x {} +
+image: mcr.microsoft.com/powershell:7.1.3-ubuntu-20.04
+publish:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - ./
+    when: always
+  dependencies: *id001
+  environment: *id002
+  image: mcr.microsoft.com/dotnet/sdk:3.1
+  only:
+  - tags
+  script: *id003
+  services: *id004
+  stage: publish
+stages:
+- test
+- publish
+test:
+  script: *id005
+  stage: test
+variables:
+  CI_DEBUG_TRACE: 'false'
+  ErrorActionPreference: stop
+  GIT_SSL_NO_VERIFY: 'true'

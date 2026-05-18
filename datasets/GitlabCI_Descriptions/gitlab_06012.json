@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_06012",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 440,
+  "description": "Create a GitLab CI pipeline that runs a shared before_script executing `bash ci/docker_install.sh > /dev/null`, `curl -sS https://getcomposer.org/installer | php`, `cp ci/custom_php.ini /usr/local/etc/php/conf.d/custom.ini`, and `php composer.phar install` for all jobs. Add three jobs named `test:7.1`, `test:7.2` and `test:7.3` each using the Docker images `php:7.1`, `php:7.2` and `php:7.3` respectively, inheriting the before_script. In each job run the command `phpunit --configuration phpunit.xml.dist` as the sole script step. No explicit stages, caches, artifacts or rules are defined, so the jobs run in the default test stage on every pipeline.",
+  "tags": [
+    "php",
+    "phpunit",
+    "composer",
+    "docker-install",
+    "custom-php-ini"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_15241",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2126,
+  "description": "Create a GitLab CI pipeline with stages Pre testes, Build CI, Release CI, Builds, Testes, Release das imagens, and Implantação, using the default image registry.gitlab.com/radar-parlamentar/radar/ci:latest and a global docker:19.03.5-dind service. In the Build CI stage add a \"Build da Imagem de CI\" job that runs a before_script \"apk add --update bash git\", uses the docker:stable image, triggers only on changes to scripts/ci/00_ci_build.sh, scripts/ci/01_ci_release.sh, and scripts/dockerfiles/CI, and executes \"bash scripts/ci/run_ci.sh ci_build\". In the Builds stage add \"Imagem de Teste\" and \"Imagem do Nginx\" jobs that run \"bash scripts/ci/run_ci.sh teste_build\" and \"bash scripts/ci/run_ci.sh nginx_build\" respectively. In the Pre testes stage add \"Linter: Shellcheck\" running \"bash scripts/ci/run_ci.sh linter shellcheck\" and \"Migrations alteradas manualmente\" running \"bash scripts/ci/run_ci.sh testa_migrations_modificadas_manualmente\". In the Testes stage add \"Migrations\" and \"Suite de testes Python\" jobs that use docker:dind and postgres:latest services, set DOCKER_DRIVER=overlay2, DOCKER_HOST=tcp://docker:2375/, POSTGRES_DB=radar, POSTGRES_PASSWORD=radar, POSTGRES_USER=radar, and run \"bash scripts/ci/run_ci.sh testa_migrations_esquecidas\" and \"bash scripts/ci/run_ci.sh testa_aplicacao\" respectively. In the Release das imagens stage add \"Principal\" (only on master) running \"bash scripts/ci/run_ci.sh producao_release\" and \"nginx\" (only on master) running \"bash scripts/ci/run_ci.sh nginx_release\"; in the Release CI stage add \"Release da Imagem de CI\" with a before_script \"apk add --update bash git\", docker:stable image, triggers on the same changes plus master, running \"bash scripts/ci/run_ci.sh ci_release\"; finally, in the Implantação stage add an \"Implantação\" job limited to master, setting environment production and executing \"bash scripts/ci/run_ci.sh implantacao\".",
+  "tags": [
+    "docker",
+    "bash",
+    "postgres",
+    "ci",
+    "release",
+    "test",
+    "nginx",
+    "shellcheck",
+    "migration"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "37a88b3adcce17a2352dc2a0d3e16912336e00c363ece4477546975dd87d2165",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2993,
+  "description": "Create a GitHub Actions workflow named wasm_docker that runs on push to the master branch and on workflow dispatch. Use an ubuntu-latest job that checks out the repository, caches Docker images, installs UV for Python, compiles fastled.js, fastled.wasm, and index.html, scans for artifacts, checks for required files, generates a timestamp and random hex, uploads wasm artifacts, and installs Playwright to verify onFastLedFrame functionality.",
+  "tags": [
+    "wasm",
+    "docker",
+    "playwright",
+    "python",
+    "github-actions"
+  ]
+}

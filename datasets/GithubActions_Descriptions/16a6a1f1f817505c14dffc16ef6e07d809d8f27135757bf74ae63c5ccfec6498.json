@@ -1,0 +1,15 @@
+{
+  "sha": "16a6a1f1f817505c14dffc16ef6e07d809d8f27135757bf74ae63c5ccfec6498",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1170,
+  "description": "Create a GitHub Actions workflow named CI that runs on every push to the master branch and on pull requests. Use a ubuntu-latest job with read permission to repository contents, and a bash shell by default. In a matrix build with multiple Debian and Alpine variants, check out the repository, clone the official-images repository, build a Docker image for each variant with a specific Rust version, run tests, and list the Docker images.",
+  "tags": [
+    "docker",
+    "rust",
+    "ci",
+    "ubuntu",
+    "tests",
+    "matrix-build"
+  ]
+}

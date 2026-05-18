@@ -1,0 +1,16 @@
+{
+  "sha": "3fc356c040fe5eeb5aef050d9ae389490df476c5a235689649bacd565182e65f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3489,
+  "description": "Create a GitHub Actions workflow named Linux Builds that runs on push to master and github_actions branches and on pull requests to master. Use a ubuntu-20.04 job matrix to build Godot with different float precision settings. For each build, clone the Godot repository and a module, configure dependencies, load and use a scons cache, set up Python 3.x, install scons, and compile the project with specific flags. Upload the resulting binaries as artifacts.",
+  "tags": [
+    "godot",
+    "linux",
+    "ubuntu",
+    "scons",
+    "python",
+    "ci",
+    "builds"
+  ]
+}

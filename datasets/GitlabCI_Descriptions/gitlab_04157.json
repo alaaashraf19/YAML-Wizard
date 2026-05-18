@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_04157",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 594,
+  "description": "Create a GitLab CI pipeline that uses the java:8 Docker image and defines the variables GRADLE_VERSION='2.13' and GRAILS_VERSION=3.1.9. Add a global before_script that runs apt-get update && apt-get install -y unzip, installs SDKMAN, configures it for automatic answers, installs and selects Gradle $GRADLE_VERSION, writes gradle.properties with grailsVersion=$GRAILS_VERSION and gradleWrapperVersion=2.14, refreshes Gradle dependencies, and creates a .bowerrc allowing root. Define a single job named build in the default test stage that executes the shell command ./gradlew build. No caches, artifacts, services, or conditional rules are specified.",
+  "tags": [
+    "java",
+    "gradle",
+    "sdkman",
+    "grails",
+    "build"
+  ]
+}

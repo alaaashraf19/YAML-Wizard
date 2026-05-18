@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_07248",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 74,
+  "description": "Create a GitLab CI pipeline that defines a hidden .tests job limited to push events (only: pushes) and a hidden .rspec job that extends .tests, runs in the default test stage, and executes the shell command `rake rspec`. No explicit Docker image or services are specified, so the runner uses its default image. The .rspec job inherits the pushes-only rule from .tests, ensuring it runs only on push pipelines.",
+  "tags": [
+    "ruby",
+    "rake",
+    "rspec",
+    "gitlab-ci",
+    "tests"
+  ]
+}

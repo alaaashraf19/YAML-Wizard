@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_09897",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1270,
+  "description": "Create a GitLab CI pipeline that uses docker:latest as the default image with a docker:dind service and defines the variables DOCKER_DRIVER=overlay and SPRING_PROFILES_ACTIVE=gitlab-ci. Define three stages: build, package, and deploy. In the build stage add a maven-build job that runs on the maven:3-jdk-8 image, executes \"mvn clean package -B\", and publishes the resulting target/*.jar files as artifacts. In the package stage add a docker-build job that runs \"docker build -t registry.gitlab.com/hieu.vo/testjavaapp .\", then \"docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com\", and finally \"docker push registry.gitlab.com/hieu.vo/testjavaapp\". In the deploy stage add a k8s-deploy job that runs only on the master branch, uses the google/cloud-sdk image, writes $GOOGLE_KEY to key.json, authenticates with gcloud, sets the compute zone to asia-southeast1-a and project to testjavaapp-210103, retrieves credentials for the test-kubernetes-cluster, deletes any existing Docker registry secret, creates a new docker-registry secret using CI variables, and applies deployment.yml to the staging environment at https://example.staging.com.",
+  "tags": [
+    "docker",
+    "docker-build",
+    "maven",
+    "kubernetes-deploy",
+    "gcloud",
+    "gitlab-ci"
+  ]
+}

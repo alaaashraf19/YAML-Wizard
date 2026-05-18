@@ -1,0 +1,21 @@
+before_script:
+- docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_PASSWORD
+build:
+  only:
+  - master
+  script:
+  - docker build -t nickbusey/inventario:dev .
+  - docker push nickbusey/inventario:dev
+image: docker:latest
+release:
+  except:
+  - branches
+  only:
+  - /^v.*$/
+  script:
+  - docker build -t nickbusey/inventario:latest .
+  - docker push nickbusey/inventario:latest
+  - docker tag nickbusey/inventario:latest nickbusey/inventario:$CI_COMMIT_REF_NAME
+  - docker push nickbusey/inventairo:$CI_COMMIT_REF_NAME
+services:
+- docker:dind

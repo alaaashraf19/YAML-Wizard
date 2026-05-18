@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_17768",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 374,
+  "description": "Create a GitLab CI pipeline that uses the docker:latest Docker image with a docker:dind service. Define a single stage called build and a job named job1 that runs in the build stage on runners tagged docker. The job executes the exact script commands: docker build -t taisun/gateway:$CI_BUILD_REF ., docker tag taisun/gateway:$CI_BUILD_REF taisun/gateway:latest, echo $DOCKERPASS | docker login -u taisun --password-stdin, docker push taisun/gateway:$CI_BUILD_REF, and docker push taisun/gateway:latest. No caches, artifacts, or conditional rules are defined, and the job pushes the built image to Docker Hub.",
+  "tags": [
+    "docker",
+    "docker-hub",
+    "build",
+    "dind",
+    "gateway"
+  ]
+}

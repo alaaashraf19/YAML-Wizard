@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_15846",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 4254,
+  "description": "Create a GitLab CI pipeline with stages preflight, homeassistant, deploy, docker-deploy, and postflight. In the preflight stage add a jsonlint job using the sahsu/docker-jsonlint image that runs a for‑loop over all *.json files (excluding mysensors.json) executing `jsonlint -q $file` and exits with status 1 if any file fails; add a yamllint job using the sdesbure/yamllint image that moves fake_secrets.yaml to secrets.yaml, removes known_devices.yaml, appdaemon.yaml and apps/apps.yaml, then runs `yamllint .`; add a shellcheck job using koalaman/shellcheck-alpine:stable image that symlinks the project directory to /config, renames fake_secrets.sh to secrets.sh, installs grep, then iterates over all script files with a shebang and runs `shellcheck -x $file`, failing the job if any check fails. In the homeassistant stage define four jobs—ha-deployed, ha-dev, ha-latest, ha-rc—each using the homeassistant/home-assistant image with tags 2022.10, dev, latest, and rc respectively, all with the same before_script that prints the Home Assistant version, moves fake_secrets.yaml to secrets.yaml, and removes packages/network_map.yaml, and a script that runs `python -m homeassistant --config $CI_PROJECT_DIR --script check_config --info all`; all these jobs are tagged \"hass\", set the PYTHONPATH variable, and have allow_failure true for the dev, latest, and rc variants. In the deploy stage add a deploy job using the alpine:latest image (entrypoint set to empty) that installs openssh-client, writes the $DEPLOYMENT_SSH_KEY to id_rsa, chmods it, then SSHs into $DEPLOYMENT_SSH_LOGIN to fetch the repo, checkout the exact commit SHA, sync and update submodules, and finally removes id_rsa; this job runs only on the master branch, needs ha-deployed, and sets the environment name to home-assistant. In the docker-deploy stage add a docker-deploy job with the same Alpine image and SSH setup that runs `ssh … \"./update.sh\"` to update the Docker composition; it runs only on master when docker-compose.yml or update.sh change, needs the deploy job, and also removes id_rsa after execution. In the postflight stage add a restart-hass job using alpine:latest that installs curl and sends a POST request with the $DEPLOYMENT_HASS_TOKEN to $DEPLOYMENT_HASS_URL/api/services/homeassistant/restart; it runs only on master, except when docker-compose.yml or update.sh change, needs deploy, and sets the same home-assistant environment. Also define hidden template jobs .ha and .preflight (not executed) and set the global variable GIT_SUBMODULE_STRATEGY to recursive.",
+  "tags": [
+    "homeassistant",
+    "preflight",
+    "jsonlint",
+    "yamllint",
+    "shellcheck",
+    "deploy",
+    "docker-deploy",
+    "restart-hass",
+    "alpine",
+    "ssh"
+  ]
+}

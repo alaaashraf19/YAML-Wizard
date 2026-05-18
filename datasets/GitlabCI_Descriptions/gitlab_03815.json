@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_03815",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 113,
+  "description": "Create a GitLab CI pipeline that uses the ubuntu Docker image as the global default. Add a job named job2 that runs in the default stage, overrides the image to perl, and executes the command cat /etc/*release. Add a job named test_it that also runs in the default stage, uses the ruby image, and runs cat /etc/*release. The pipeline does not define any additional stages, caches, artifacts, services, or rules, so the jobs run on every pipeline execution.",
+  "tags": [
+    "ubuntu",
+    "perl",
+    "ruby",
+    "cat-release",
+    "gitlab-ci"
+  ]
+}

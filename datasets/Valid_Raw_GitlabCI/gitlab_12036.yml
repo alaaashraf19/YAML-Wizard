@@ -1,0 +1,103 @@
+audit:
+  image: ruby:2.5.1-alpine
+  script:
+  - gem install bundle-audit
+  - bundle audit check --update
+  stage: test
+build-latest:
+  image: docker:stable
+  only:
+  - dev
+  script:
+  - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  - docker build --pull -t "$CI_REGISTRY_IMAGE:latest" .
+  - docker push "$CI_REGISTRY_IMAGE:latest"
+  services:
+  - docker:dind
+  stage: build
+build-latest-stable:
+  image: docker:stable
+  only:
+  - master
+  script:
+  - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  - docker build --pull -t "$CI_REGISTRY_IMAGE:latest-stable" .
+  - docker push "$CI_REGISTRY_IMAGE:latest-stable"
+  services:
+  - docker:dind
+  stage: build
+build-release:
+  except:
+  - branches
+  image: docker:stable
+  only:
+  - /^v.*$/
+  script:
+  - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  - docker build --pull -t "$CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME" .
+  - docker push "$CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME"
+  services:
+  - docker:dind
+  stage: build
+code_quality:
+  allow_failure: true
+  artifacts:
+    reports:
+      codequality: gl-code-quality-report.json
+  image: docker:stable
+  script:
+  - export SP_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
+  - docker run --env SOURCE_CODE="$PWD" --volume "$PWD":/code --volume /var/run/docker.sock:/var/run/docker.sock
+    "registry.gitlab.com/gitlab-org/security-products/codequality:$SP_VERSION" /code
+  services:
+  - docker:stable-dind
+  stage: test
+  variables:
+    DOCKER_DRIVER: overlay2
+sast:
+  allow_failure: true
+  artifacts:
+    paths:
+    - gl-sast-report.json
+  image: docker:stable
+  script:
+  - export SP_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
+  - docker run --env SAST_CONFIDENCE_LEVEL="${SAST_CONFIDENCE_LEVEL:-3}" --volume
+    "$PWD:/code" --volume /var/run/docker.sock:/var/run/docker.sock "registry.gitlab.com/gitlab-org/security-products/sast:$SP_VERSION"
+    /app/bin/run /code
+  services:
+  - docker:stable-dind
+  stage: test
+  variables:
+    DOCKER_DRIVER: overlay2
+stages:
+- test
+- build
+test:
+  artifacts:
+    paths:
+    - tmp/capybara
+  cache:
+    paths:
+    - vendor/ruby
+    - node_modules
+  image: registry.gitlab.com/prismosuite/base-images:test
+  script:
+  - export RAILS_ENV=test
+  - export SECRET_KEY_BASE=test
+  - yarn install
+  - bundle install -j $(nproc) --path vendor
+  - bundle exec rails db:create || true
+  - bundle exec rake db:structure:load
+  - bundle exec rspec --exclude-pattern "spec/features/**/*"
+  - bundle exec rspec --pattern "spec/features/**/*.rb"
+  - cat log/bullet.log 2>/dev/null
+  services:
+  - redis:latest
+  - postgres:latest
+  stage: test
+  variables:
+    DATABASE_URL: postgresql://postgres:postgres@postgres:5432/$POSTGRES_DB
+    REDIS_URL: redis://redis
+variables:
+  POSTGRES_DB: database_name

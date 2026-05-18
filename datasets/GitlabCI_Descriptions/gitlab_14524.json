@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_14524",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 339,
+  "description": "Create a GitLab CI pipeline with three stages: captcha-server-deploy, mvn-package, and deploy. Add a captcha-server-deploy job in the captcha-server-deploy stage that runs `bash captcha-server-deploy.sh`. Add a package job in the mvn-package stage that runs `mvn --settings ./settings.xml clean package -U -DskipTests=false`. Add a deploy job in the deploy stage that runs `bash deploy.sh`. Configure a cache that preserves the `target/` directory across jobs.",
+  "tags": [
+    "maven",
+    "captcha-server",
+    "bash",
+    "cache",
+    "gitlab-ci"
+  ]
+}

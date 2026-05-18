@@ -1,0 +1,12 @@
+{
+  "sha": "gitlab_10387",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 131,
+  "description": "Create a GitLab CI pipeline with a single job named shellcheck that uses the koalaman/shellcheck-alpine:latest Docker image. In the before_script step run `shellcheck --version`, then in the script step run `shellcheck bin/ienv`. The job runs in the default stage (test) with no caches, artifacts, or special rules, and it simply executes the ShellCheck commands on the repository files.",
+  "tags": [
+    "shellcheck",
+    "alpine",
+    "ci"
+  ]
+}

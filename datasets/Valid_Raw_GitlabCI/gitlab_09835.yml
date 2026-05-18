@@ -1,0 +1,37 @@
+before_script:
+- export GRADLE_USER_HOME=$(pwd)/.gradle
+- chmod +x ./gradlew
+build:
+  artifacts:
+    paths:
+    - app/build/outputs/
+  script:
+  - ./gradlew assembleDebug
+  stage: build
+cache:
+  paths:
+  - .m2/
+  - .gradle/
+fabricBeta:
+  script:
+  - fastlane beta
+  stage: deploy
+image: unitedclassifiedsapps/gitlab-ci-android-fastlane
+playstoreBeta:
+  script:
+  - fastlane playstore_beta
+  stage: prod
+  when: manual
+stages:
+- build
+- test
+- deploy
+- prod
+unitTests:
+  script:
+  - ./gradlew test
+  stage: test
+variables:
+  ANDROID_BUILD_TOOLS: 25.0.2
+  ANDROID_COMPILE_SDK: '26'
+  ANDROID_SDK_TOOLS: 27.0.1

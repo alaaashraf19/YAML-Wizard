@@ -1,0 +1,14 @@
+{
+  "sha": "0b575a452f05d924bac4fac865f264d40a461ece5b519b6ca1deece0db18067d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1419,
+  "description": "Create a GitHub Actions workflow to publish packages to PyPI when a specific version tag is pushed. The workflow should have three jobs: build, publish, and release. The build job should run on ubuntu-latest, set up Python 3.x, install build dependencies, create packages with python -m build, and archive the packages. The publish job should depend on build, download the packages, and publish them to PyPI. The release job should create a GitHub release with a changelog.",
+  "tags": [
+    "python",
+    "pypi",
+    "release",
+    "github-release",
+    "tags"
+  ]
+}

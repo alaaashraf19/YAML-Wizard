@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_12334",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 372,
+  "description": "Create a GitLab CI pipeline that uses the mstrasuns/ubuntu-dlang:2.081 Docker image and sets GIT_SUBMODULE_STRATEGY to recursive. Define a single test stage and add an expected-compiles job that runs the shell command ci/test-expected.sh. Add a samples job that runs ci/test-samples.sh, captures coverage using the regex /is \\d+\\.\\d+% covered/, and stores the files matching cov/source-*.lst as artifacts that expire after one week. Add a unittest job that runs dub test.",
+  "tags": [
+    "dlang",
+    "dub",
+    "ubuntu",
+    "coverage",
+    "gitlab-ci"
+  ]
+}

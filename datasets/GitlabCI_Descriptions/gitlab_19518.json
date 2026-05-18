@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_19518",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 569,
+  "description": "Create a GitLab CI pipeline using the debian:testing Docker image with two stages: build and test. In the build stage add a build job that runs before_script apt update and apt install -y --no-install-recommends build-essential g++ pkg-config libboost-all-dev meson librtlsdr-dev libgpiod-dev, then script meson build and cd build && ninja, and publishes the path build/subprojects/librts/test/tests as an artifact. In the test stage add a test job that sets GIT_STRATEGY to none, runs before_script apt update and apt install -y --no-install-recommends librtlsdr0 libgpiod2 libboost-test-dev, then script cd build/subprojects/librts/test && ./tests. No caches, services, or special rules are defined.",
+  "tags": [
+    "debian",
+    "meson",
+    "ninja",
+    "apt",
+    "build-essential",
+    "boost",
+    "librtlsdr",
+    "gpiod",
+    "gitlab-ci"
+  ]
+}

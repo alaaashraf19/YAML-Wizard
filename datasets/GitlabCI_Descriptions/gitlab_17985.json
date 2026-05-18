@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_17985",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 442,
+  "description": "Create a GitLab CI pipeline using the jangrewe/gitlab-ci-android Docker image. Define a cache keyed by the project ID that stores the .gradle directory and a before_script that sets GRADLE_USER_HOME to the repository .gradle folder and makes gradlew executable. Add a build stage with two jobs: assembleDebug runs ./gradlew assembleDebug, and lintDebug runs ./gradlew -Pci --console=plain :app:lintDebug -PbuildDir=lint. Add a test stage with a testDebug job that runs ./gradlew -Pci --console=plain :app:testDebug. No artifacts, rules, or services are defined.",
+  "tags": [
+    "android",
+    "gradle",
+    "build",
+    "lint",
+    "test",
+    "gitlab-ci-android"
+  ]
+}

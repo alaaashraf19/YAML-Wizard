@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_12548",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 183,
+  "description": "Create a GitLab CI pipeline that uses the maven:3.5.2-jdk-7-alpine Docker image and defines three stages: build, test, and deploy. Add a job called job1 in the build stage that runs the shell command echo \"OKK\" and is limited to the master branch via only. Assign the docker runner tag to job1. No before_script, after_script, services, caches, artifacts, or deployment steps are needed.",
+  "tags": [
+    "maven",
+    "docker",
+    "build",
+    "gitlab-ci"
+  ]
+}

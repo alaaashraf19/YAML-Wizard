@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_08072",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 168,
+  "description": "Create a GitLab CI pipeline that uses the node:11-alpine Docker image. Define a single deploy stage with a pages job that runs the exact commands: yarn install, yarn start build, and mv dist public. The job should publish the public/ directory as a pages artifact and be limited to the master branch. This config deploys the built site to GitLab Pages.",
+  "tags": [
+    "node",
+    "yarn",
+    "gitlab-pages",
+    "alpine",
+    "deploy"
+  ]
+}

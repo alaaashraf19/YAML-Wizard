@@ -1,0 +1,37 @@
+build-android:
+  artifacts:
+    paths:
+    - bin/sputnit.apk
+  image: nitlang/nit:latest-full
+  script:
+  - nitc --version
+  - make bin/sputnit.apk
+build-linux:
+  artifacts:
+    paths:
+    - bin/sputnit
+    - assets/
+  image: nitlang/nit:latest-full
+  script:
+  - nitc --version
+  - make bin/sputnit
+deploy:
+  dependencies:
+  - unit-tests
+  - build-linux
+  - build-android
+  image: debian:jessie
+  only:
+  - master
+  script:
+  - which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )
+  - eval $(ssh-agent -s)
+  - ssh-add <(echo "$DEPLOY_PRIVATE_KEY")
+  - mkdir -p ~/.ssh
+  - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+  - tar -czf sputnit.tar.gz bin/sputnit assets/
+  - scp bin/sputnit.apk sputnit.tar.gz $DEPLOY_SERVER
+  stage: deploy
+unit-tests:
+  image: nitlang/nit:latest
+  script: nitunit src/tests src/game

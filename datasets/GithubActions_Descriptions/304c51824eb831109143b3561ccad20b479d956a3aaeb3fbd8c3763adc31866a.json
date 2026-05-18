@@ -1,0 +1,15 @@
+{
+  "sha": "304c51824eb831109143b3561ccad20b479d956a3aaeb3fbd8c3763adc31866a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2288,
+  "description": "Create a GitHub Actions workflow named Deploy to Docker Hub on release that triggers on prereleased and released events. In an ubuntu-latest job, check out the repository, set a version number in a specific C# file based on the GitHub reference, set up QEMU and Docker Buildx, login to Docker Hub, build and push a Docker image with multiple tags, and create a PR in a dependent repository with an updated version number.",
+  "tags": [
+    "docker",
+    "dockerhub",
+    "release",
+    "github-actions",
+    "qemu",
+    "buildx"
+  ]
+}

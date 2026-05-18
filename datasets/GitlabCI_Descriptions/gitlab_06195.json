@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_06195",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2359,
+  "description": "Create a GitLab CI pipeline using the gradle:4.4.1-jdk8-alpine Docker image, set the GRADLE_OPTS variable to -Dorg.gradle.daemon=false, and add a before_script that exports GRADLE_USER_HOME to a .gradle directory in the repository. Define two stages: build and test. In the build stage add a build job that caches paths assignment-*/build and assignment-*/.gradle keyed by $CI_COMMIT_REF_NAME with a push policy, and runs the command `gradle --build-cache assemble`. In the test stage add a manual funtest:a1 job that pulls the same cache for assignment-1 and executes five commands `gradle -q :assignment-1:run < assignment-1/testcases/in1.txt` through `gradle -q :assignment-1:run < assignment-1/testcases/in5.txt`; also add test:a1, test:a2, test:a3, and test:a4 jobs that each pull their respective assignment-N caches, run `gradle :assignment-N:check`, generate artifacts from assignment-N/build/reports named with the project namespace, name, branch and a suffix (e.g., A2Reports), keep them for 12 weeks, always upload them, and exclude execution on the master branch of the DDP2-CSUI/assignment project. No deployment targets are defined.",
+  "tags": [
+    "gradle",
+    "java",
+    "build-cache",
+    "manual-test",
+    "artifacts",
+    "gitlab-ci"
+  ]
+}

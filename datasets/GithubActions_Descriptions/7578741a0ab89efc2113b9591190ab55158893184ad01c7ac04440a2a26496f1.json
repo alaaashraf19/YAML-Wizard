@@ -1,0 +1,14 @@
+{
+  "sha": "7578741a0ab89efc2113b9591190ab55158893184ad01c7ac04440a2a26496f1",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3470,
+  "description": "Create a GitHub Actions workflow named Annotation that triggers on issue comment creation. When a comment with '/check' is added to a pull request by cmllr, run a job on ubuntu-latest that fetches the PR data, checks out the PR's head repository and ref, sets up Python 3.11, installs dependencies, runs Django management commands to parse and annotate a matrix, and comments the results back on the PR with relevant labels.",
+  "tags": [
+    "django",
+    "github-script",
+    "annotations",
+    "pull-requests",
+    "comments"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "dc9ea2f385a9fa39f88b44cf2dec8a3714381c63c9fe35683aefe30e4877181b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 603,
+  "description": "Create a GitHub Actions workflow named Deploy package on PyPI that triggers on published releases. Use an ubuntu-latest job that checks out the repository, sets up Python 3.9, upgrades pip, installs build, builds the package with python -m build, and publishes it to PyPI using the pypa/gh-action-pypi-publish action with the PYPI_API_TOKEN from secrets.",
+  "tags": [
+    "python",
+    "pypi",
+    "release",
+    "deploy",
+    "github-actions"
+  ]
+}

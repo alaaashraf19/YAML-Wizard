@@ -1,0 +1,24 @@
+build:
+  image: docker:git
+  only:
+  - branches
+  script:
+  - docker build -t "$CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG:latest" --build-arg "APP_GITSLUG=$CI_COMMIT_SHA"
+    .
+  - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+  - docker push "$CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG:latest"
+  services:
+  - docker:dind
+  stage: build
+  variables:
+    DOCKER_DRIVER: overlay2
+image: alpine:latest
+stages:
+- build
+- test
+- review
+- staging
+- canary
+- production
+- cleanup
+variables: null

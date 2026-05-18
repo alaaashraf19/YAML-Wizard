@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_05859",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 643,
+  "description": "Create a GitLab CI pipeline that uses the docker:stable Docker image with a docker:dind service and sets the variables CONTAINER_IMAGE (registry.gitlab.com/$CI_PROJECT_PATH:latest), DOCKER_DRIVER=overlay2, and DOCKER_HOST=tcp://docker:2375. Add a single build job (default stage) that runs the following script commands in order: docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com; docker pull ${CONTAINER_IMAGE} || true; export CACHE_FROM=\"--cache-from ${CONTAINER_IMAGE}\"; apk add git; git checkout ${CI_COMMIT_REF_NAME}; ./build/build.sh dist; mv dist/*.zip .; docker tag crankykernel/cryptoxscanner:builder ${CONTAINER_IMAGE}. The job uploads any *.zip files as artifacts. No additional rules or deployment steps are defined.",
+  "tags": [
+    "docker",
+    "dind",
+    "zip-artifact",
+    "build",
+    "registry-login",
+    "git"
+  ]
+}

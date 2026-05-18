@@ -1,0 +1,15 @@
+{
+  "sha": "1be7361d6fcc8b2f12ba5e7d7cf4abc30ff10b0f70dc570fe87ead6c4c69dde5",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1892,
+  "description": "Create a GitHub Actions workflow named macOS that runs on every push to the master branch and on pull requests to master. Use a macOS job that checks out the repository, sets up build variables, installs Qt 5.15.2, configures kColorPicker and kImageAnnotator, builds the project with CMake and make, runs tests, and uploads build artifacts. Additionally, create a release job that depends on the build job and uses the release-action to create a prerelease with a given body and name.",
+  "tags": [
+    "macos",
+    "cmake",
+    "qt",
+    "make",
+    "release",
+    "artifacts"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "sha": "edc2476cfc022043e33a2487910f882d51a56e3a0e6d53ad807eab874cfefa69",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 10678,
+  "description": "Create a GitHub Actions workflow named Push Binary Nightly that runs daily at 10:45 AM or on manual dispatch. The workflow has two jobs: build_on_cpu and test_on_gpu. The build_on_cpu job runs on a linux.2xlarge host, sets up Conda, installs dependencies, and builds FBGEMM_GPU nightly wheel for Python 3.8, 3.9, and 3.10 with CUDA 11. The test_on_gpu job runs on a linux.g5.4xlarge.nvidia.gpu host, downloads the wheel from GHA, installs dependencies, tests FBGEMM_GPU installation, and pushes the wheel to PyPI.",
+  "tags": [
+    "github-actions",
+    "conda",
+    "cuda",
+    "fbgemm-gpu",
+    "pytorch",
+    "pypi",
+    "python",
+    "tests"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "sha": "5acb3001954eeeb4f136472ad6fc6e5f71e8ccd8792d99f722b9e7f4ac519bb1",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3229,
+  "description": "Create a GitHub Actions workflow named App build that runs on every push. It has two jobs: one for creating a release when a tag is pushed, and another for building and uploading artifacts for multiple platforms including Windows, Linux, and optionally macOS. The build job sets up Python, installs system libraries, caches dependencies, makes a release, and uploads build artifacts. When a tag is pushed, it also uploads release artifacts and sourceforge artifacts.",
+  "tags": [
+    "python",
+    "release",
+    "github-actions",
+    "multi-os",
+    "build",
+    "upload",
+    "sourceforge"
+  ]
+}

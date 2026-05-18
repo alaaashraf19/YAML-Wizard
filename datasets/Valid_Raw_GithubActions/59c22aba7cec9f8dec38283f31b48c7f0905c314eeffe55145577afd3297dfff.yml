@@ -1,0 +1,17 @@
+name: macOS
+on: [push]
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install dependencies
+      run: |
+        brew install sdl2 freetype libvorbis libepoxy jpeg webp pkg-config boost ninja
+    - name: Build with CMake
+      run: |
+        cmake -H. -Bbuild-cmake -GNinja
+        ninja -Cbuild-cmake
+    # - name: Android
+    #   run: |
+    #     make -Candroid

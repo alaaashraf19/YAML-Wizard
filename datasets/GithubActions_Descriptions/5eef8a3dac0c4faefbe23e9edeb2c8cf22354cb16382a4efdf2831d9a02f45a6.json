@@ -1,0 +1,14 @@
+{
+  "sha": "5eef8a3dac0c4faefbe23e9edeb2c8cf22354cb16382a4efdf2831d9a02f45a6",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3215,
+  "description": "Create a GitHub Actions workflow named Library builds (shared) that runs on push to specific branches and tags, and on pull requests to certain branches. The workflow uses a matrix strategy to build on windows-latest, ubuntu-latest, and macOS-latest. It checks out the repository, sets up Python 3.x, installs dependencies, extracts the CoolProp version, configures and builds with CMake, and archives the shared library artifact.",
+  "tags": [
+    "cmake",
+    "python",
+    "shared-library",
+    "multi-os",
+    "github-actions"
+  ]
+}

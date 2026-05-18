@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_11077",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 657,
+  "description": "Create a GitLab CI pipeline that uses the default Docker image and a postgres:14.8 service, sets POSTGRES_HOST_AUTH_METHOD to trust, and runs a before_script that prints the Python version, creates a virtual environment, activates it, and installs CI requirements from a custom index. Define a single test job (stage test) that inherits the before_script and then exports DATABASE_HOST=postgres, DATABASE_PASS=, DATABASE_PORT=, DATABASE_USER=postgres, DOMAIN=dev, LOG_FOLDER=, LOG_SUFFIX=dev, MAILGUN_SERVER_NAME=test.net, STRIPE_PUBLISH_KEY=\\\"pk_test\\\", STRIPE_SECRET_KEY=\\\"sk_test\\\", USE_OPENID_CONNECT=False, and finally runs pytest --create-db --cov-report term --cov=base. The pipeline has no caches, artifacts, or special rules.",
+  "tags": [
+    "python",
+    "pytest",
+    "postgres",
+    "virtualenv",
+    "coverage",
+    "ci"
+  ]
+}

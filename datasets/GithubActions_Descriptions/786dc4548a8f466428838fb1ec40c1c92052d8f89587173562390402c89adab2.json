@@ -1,0 +1,15 @@
+{
+  "sha": "786dc4548a8f466428838fb1ec40c1c92052d8f89587173562390402c89adab2",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1181,
+  "description": "Create a GitHub Actions workflow named Windows that runs on push events. The workflow should have two jobs: one for building with MSVC on a Windows 2022 environment and another for building with MinGW on an Ubuntu environment with a Fedora container. The MSVC job should check out the code, configure and build with CMake in Debug and Release modes, and also configure and build for UWP. The MinGW job should install dependencies, check out the code, and build with CMake and GCC in a Debug configuration.",
+  "tags": [
+    "windows",
+    "mingw",
+    "cmake",
+    "msvc",
+    "uwp",
+    "github-actions"
+  ]
+}

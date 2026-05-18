@@ -1,0 +1,14 @@
+before_script:
+- apk update
+- apk add doxygen
+image: alpine
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - doxygen doxygen/Doxyfile
+  - mkdir -p doxygen/documentation/html
+  - mv doxygen/documentation/html/ public/

@@ -1,0 +1,29 @@
+flatpak:
+  artifacts:
+    expire_in: 30 days
+    paths:
+    - ${BUNDLE}
+    - _build/meson-logs/meson-log.txt
+    - _build/meson-logs/testlog.txt
+  cache:
+    paths:
+    - .flatpak-builder/cache
+  image: registry.gitlab.gnome.org/gnome/gnome-runtime-images/gnome:master
+  script:
+  - flatpak-builder --stop-at=${FLATPAK_MODULE} app ${MANIFEST_PATH}
+  - flatpak build app meson --prefix=/app ${MESON_ARGS} _build
+  - flatpak build app ninja -C _build install
+  - flatpak-builder --finish-only --repo=repo app ${MANIFEST_PATH}
+  - flatpak build-bundle repo ${BUNDLE} --runtime-repo=${RUNTIME_REPO} ${DBUS_ID}
+  - flatpak build app ninja -C _build test
+  stage: test
+  variables:
+    DBUS_ID: org.tabos.tvguide
+    FLATPAK_MODULE: tvguide
+    MANIFEST_PATH: org.tabos.tvguide.json
+    MESON_ARGS: ''
+    RUNTIME_REPO: https://sdk.gnome.org/gnome-nightly.flatpakrepo
+stages:
+- test
+variables:
+  BUNDLE: tvguide-git.flatpak

@@ -1,0 +1,16 @@
+{
+  "sha": "6cdfcc8fbeb4b337452db8820a7a372a61d350c378d8061c6f4190e2d58b5fe9",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1573,
+  "description": "Create a GitHub Actions workflow named build that runs on push, pull request, and a scheduled cron job. The workflow should ignore changes to docs, .github/workflows/docs.yml, and markdown files. It should use a matrix strategy to build on ubuntu-latest, macos-14, and windows-latest, checking out the code, installing dependencies, modifying environment variables, creating a build directory, configuring CMake, building, and testing with CTest.",
+  "tags": [
+    "cmake",
+    "ctest",
+    "ubuntu",
+    "macos",
+    "windows",
+    "scheduled",
+    "ci"
+  ]
+}

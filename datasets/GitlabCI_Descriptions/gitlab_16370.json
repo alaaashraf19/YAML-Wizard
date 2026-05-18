@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_16370",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 580,
+  "description": "Create a GitLab CI pipeline using the python:3.6.4-stretch Docker image. Add a pages job that runs in the default stage, publishes the public/ directory as a GitLab Pages artifact, runs only on the master branch, and executes the exact shell commands: pip install sphinx numpy sphinx_rtd_theme versioneer sqlalchemy; pip install git+https://github.com/leokoppel/sphinxcontrib-versioning; python setup.py install; rm -rf docs/source && sphinx-apidoc -e -f -o docs/source/ pynmet/; cd docs/ && make html && cd ../; sphinx-versioning build docs docs/_build/html; mv docs/_build/html/ public/. Add a pypi job that also runs in the default stage, triggers only on tag pushes, uses no cache, and runs: pip install -U twine; python setup.py sdist; twine upload dist/* to publish the package to PyPI.",
+  "tags": [
+    "python-3.6",
+    "sphinx",
+    "gitlab-pages",
+    "pypi",
+    "twine",
+    "sphinx-versioning"
+  ]
+}

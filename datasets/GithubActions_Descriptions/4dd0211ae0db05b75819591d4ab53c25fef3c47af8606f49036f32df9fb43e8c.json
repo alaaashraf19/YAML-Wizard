@@ -1,0 +1,15 @@
+{
+  "sha": "4dd0211ae0db05b75819591d4ab53c25fef3c47af8606f49036f32df9fb43e8c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3562,
+  "description": "Create a GitHub Actions workflow named publish that can be triggered manually with a tag name input. The workflow has separate jobs for building on android, ios, osx, and windows environments, each checking out the code and running a build script. Artifacts from each build job are uploaded. A final publish job, dependent on all build jobs, retrieves the plugin version from source, downloads the artifacts, creates a tarball, and then creates a release with the tarball as an asset using the provided tag name.",
+  "tags": [
+    "multi-os",
+    "unity",
+    "release",
+    "tag",
+    "workflow-dispatch",
+    "artifacts"
+  ]
+}

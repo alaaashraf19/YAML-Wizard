@@ -1,0 +1,30 @@
+before_script:
+- yarn install
+build html:
+  artifacts:
+    paths:
+    - ./build
+  script:
+  - yarn build
+  stage: build
+cache:
+  paths:
+  - node_modules/
+deploy:
+  before_script:
+  - mkdir -p ~/.ssh
+  - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+  - chmod 700 ~/.ssh/id_rsa
+  - eval "$(ssh-agent -s)"
+  - ssh-add ~/.ssh/id_rsa
+  - ssh-keyscan -H '18.191.5.73' >> ~/.ssh/known_hosts
+  only:
+  - develop
+  script:
+  - yarn build
+  - scp -r ./public/ ubuntu@18.191.5.73:/var/www/WeBuild.World/build
+  stage: deploy
+image: node:latest
+stages:
+- build
+- deploy

@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_04733",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 353,
+  "description": "Create a GitLab CI pipeline using the ruby:2.3 Docker image, set the variables JEKYLL_ENV=production and LC_ALL=C.UTF-8, and run bundle install as a before_script. Define two stages: test and deploy. Add a test job in the test stage that executes bundle exec jekyll build -d test, saves the test directory as an artifact, and runs on all branches except master. Add a pages job in the deploy stage that runs bundle exec jekyll build -d public, publishes the public directory as a pages artifact, and only runs on the master branch.",
+  "tags": [
+    "ruby",
+    "jekyll",
+    "bundle",
+    "pages",
+    "gitlab-pages",
+    "test",
+    "deploy"
+  ]
+}

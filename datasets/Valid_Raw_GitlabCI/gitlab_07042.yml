@@ -1,0 +1,32 @@
+before_script:
+- apk update -qq && apk add -u -qq git zip bash
+- apk add --update -u -qq nodejs nodejs-npm
+- npm install -g gulp gulp-cli gulp-babel babel-preset-es2015
+- chmod 777 -R storage
+- chmod 777 -R storage/logs
+- chmod 777 -R package/app
+- chmod 777 -R bootstrap/cache
+- rm .env.testing
+- cp .env.ci .env.testing
+- COMPOSER_PROCESS_TIMEOUT=2000 composer install
+cache:
+  paths:
+  - vendor/
+image: jguyomard/laravel-php:7.2
+services:
+- postgres:latest
+stages:
+- test
+test:app:
+  artifacts:
+    paths:
+    - storage/logs
+    when: on_failure
+  script:
+  - ./vendor/bin/phpunit --coverage-text --colors=never
+  stage: test
+variables:
+  CI_DEBUG_SERVICES: trace
+  POSTGRES_DB: drypack_db
+  POSTGRES_PASSWORD: ''
+  POSTGRES_USER: runner

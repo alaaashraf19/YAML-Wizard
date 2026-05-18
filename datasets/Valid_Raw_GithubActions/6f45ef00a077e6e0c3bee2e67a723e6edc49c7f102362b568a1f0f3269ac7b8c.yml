@@ -1,0 +1,56 @@
+name: Documentation
+
+on: [push, pull_request]
+
+jobs:
+    build-docs:
+        name: Build documentation
+        runs-on: ubuntu-20.04
+        steps:
+          - name: Install prerequisites
+            run: |
+                sudo apt-get install doxygen ninja-build
+                sudo pip3 install meson
+          - name: Install mdbook
+            run: |
+                wget -O mdbook.tar.gz https://github.com/rust-lang/mdBook/releases/download/v0.3.7/mdbook-v0.3.7-x86_64-unknown-linux-gnu.tar.gz
+                tar xf mdbook.tar.gz
+                sudo install -D mdbook /usr/local/bin/mdbook
+          - name: Install rsync-ssl
+            run: |
+                wget https://raw.githubusercontent.com/WayneD/rsync/c3f7414c450faaf6a8281cc4a4403529aeb7d859/rsync-ssl
+                sudo install -D rsync-ssl /usr/local/bin/rsync-ssl
+          - name: Checkout
+            uses: actions/checkout@v2
+            with:
+              path: src/
+          - name: Configure
+            run: meson build/ src/ -Dbuild_docs=true
+          - name: Build handbook
+            run: ninja mdbook
+            working-directory: build/
+          - name: Build hel reference
+            run: ninja hel-api
+            working-directory: build/
+          - name: Upload handbook artifact
+            uses: actions/upload-artifact@v2
+            with:
+                name: handbook
+                path: build/docs/
+          - name: Upload hel reference artifact
+            uses: actions/upload-artifact@v2
+            with:
+                name: hel-reference
+                path: build/hel-api/html/
+          - name: Upload handbook to docs.managarm.org
+            if: github.ref == 'refs/heads/master'
+            env:
+                RSYNC_PASSWORD: ${{ secrets.RSYNC_DOCUMENTATION_PASSWD }}
+            run:
+                rsync-ssl -a --delete build/docs/ docs@docs.managarm.org::docs/handbook
+          - name: Upload hel reference to docs.managarm.org
+            if: github.ref == 'refs/heads/master'
+            env:
+                RSYNC_PASSWORD: ${{ secrets.RSYNC_DOCUMENTATION_PASSWD }}
+            run:
+                rsync-ssl -a --delete build/hel-api/html/ docs@docs.managarm.org::docs/hel-api

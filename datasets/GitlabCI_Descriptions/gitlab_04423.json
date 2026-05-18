@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_04423",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 494,
+  "description": "Create a GitLab CI pipeline using the golang:1.10 Docker image. Define a single stage called build and a job named build that runs in this stage. Include a before_script that runs `go get -u github.com/jessevdk/go-flags`, changes directory to `/builds/bestmethod/go-acp/src`, and creates the directories `../bin/linux`, `../bin/windows`, and `../bin/osx`. In the build job script, execute `env GOOS=linux GOARCH=amd64 go build -o ../bin/linux/acp`, `env GOODS=osx GOARCH=amd64 go build -o ../bin/osx/acp`, `env GOOS=windows GOARCH=amd64 go build -o ../bin/windows/acp.exe`, and then `cd ..`. Publish the directories `bin/linux`, `bin/windows`, and `bin/osx` as artifacts.",
+  "tags": [
+    "go",
+    "golang",
+    "cross-compile",
+    "docker-image",
+    "build-artifacts"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_03746",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 561,
+  "description": "Create a GitLab CI pipeline using python:3.4-slim as the default Docker image and defining two stages: test and build. In the test stage add a testing job that runs pip install -r requirements.txt, then pip install coverage pytest, then coverage run --source stretchy -m pytest -x, uses a mongo service, and sets the DB_HOSTNAME variable to mongo. In the build stage add a release docker image job that overrides the image to docker:stable, uses the docker:dind service, runs a before_script to docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY, defines IMAGE_TAG as $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME, and then executes docker build -t $IMAGE_TAG . followed by docker push $IMAGE_TAG. No caches, artifacts, or conditional rules are defined.",
+  "tags": [
+    "python-3.4-slim",
+    "docker",
+    "dind",
+    "mongo",
+    "coverage",
+    "pytest",
+    "ci-registry"
+  ]
+}

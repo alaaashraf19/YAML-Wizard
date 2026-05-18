@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_14075",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2445,
+  "description": "Create a GitLab CI pipeline that uses docker:latest as the default image with a docker:dind service, sets DOCKER_DRIVER to overlay2 and defines IMAGE_BRANCH and IMAGE_TAG variables. Define three stages: test, build, and deploy, and add a react-test job in the test stage using the node:8 image that runs `cd react-app`, `yarn install`, and `yarn test`. Add a build-production job in the build stage that runs only on the master branch and executes `docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY`, `docker pull $IMAGE_BRANCH || true`, `docker build --build-arg REACT_APP_API_URL=$REACT_APP_API_URL --build-arg REACT_APP_IDENTITY_URL=$REACT_APP_IDENTITY_URL --cache-from $IMAGE_BRANCH -t $IMAGE_TAG -t $IMAGE_BRANCH .`, then `docker push $IMAGE_TAG` and `docker push $IMAGE_BRANCH`. Add a build-staging job with the same script but only on the develop branch and with REACT_APP_API_URL set to https://api-staging.otrack.info and REACT_APP_IDENTITY_URL to https://identity-staging.otrack.info. Add deploy-production and deploy-staging jobs in the deploy stage using the google/cloud-sdk image, each running only on master or develop respectively, that write the appropriate Google service account key to key.json, activate it with `gcloud auth activate-service-account --key-file=key.json`, get cluster credentials with `gcloud container clusters get-credentials $PRODUCTION_CLUSTER` or `$STAGING_CLUSTER`, and update the Kubernetes deployment image with `kubectl set image deployments/restaurants otrack-restaurants=$IMAGE_TAG` or `kubectl set image deployments/restaurants-s otrack-restaurants=$IMAGE_TAG`.",
+  "tags": [
+    "docker",
+    "docker-dind",
+    "node",
+    "yarn",
+    "react",
+    "kubernetes",
+    "gcloud",
+    "ci-cd",
+    "staging",
+    "production"
+  ]
+}

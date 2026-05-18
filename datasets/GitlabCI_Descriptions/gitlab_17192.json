@@ -1,0 +1,12 @@
+{
+  "sha": "gitlab_17192",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 132,
+  "description": "Create a GitLab CI pipeline that runs a global before_script executing \"make clean\". Define a single stage named test and add a job called test_job in that stage. The test_job should execute the shell commands \"make test-ci\" followed by \"make test\" and should be scheduled on runners tagged with \"slashdeploy\". No Docker image, services, caches, artifacts, or special rules are required.",
+  "tags": [
+    "make",
+    "test",
+    "slashdeploy"
+  ]
+}

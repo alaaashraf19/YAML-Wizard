@@ -1,0 +1,12 @@
+{
+  "sha": "gitlab_12030",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 93,
+  "description": "Create a GitLab CI pipeline that uses the python:2.7 Docker image as the default image. Define a single job called test that runs in the default test stage. In the test job execute the shell commands `pip install cookiecutter` followed by `cookiecutter . --no-input`. The pipeline does not define any services, caches, artifacts, or special rules, so the job runs on every commit.",
+  "tags": [
+    "python-2.7",
+    "cookiecutter",
+    "test"
+  ]
+}

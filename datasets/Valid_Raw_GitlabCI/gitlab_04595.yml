@@ -1,0 +1,23 @@
+before_script:
+- rm -rf fdroidserver
+- mkdir fdroidserver
+- commit=$(git ls-remote https://gitlab.com/fdroid/fdroidserver.git master | cut -f1)
+- echo "Using fdroidserver ${commit}"
+- curl --silent https://gitlab.com/fdroid/fdroidserver/repository/${commit}/archive.tar.gz
+  | tar -xz --directory=fdroidserver --strip-components=1
+- export PATH="$PWD/fdroidserver:$PATH"
+fdroid:build:
+  script:
+  - cd fdroidrepo
+  - PYTHONPATH=. fdroid gencibuild eu.bubu1.fdroidclassic
+  - fdroid build --stop -v -l eu.bubu1.fdroidclassic
+image: registry.gitlab.com/fdroid/ci-images-client:latest
+lint+test+build:
+  artifacts:
+    paths:
+    - app/build/reports/
+  script:
+  - sed -i -e 's,textReport .*,textReport true,' app/build.gradle
+  - gradlew-fdroid lint
+  - gradlew-fdroid testReleaseUnitTest
+  - gradlew-fdroid assembleDebug

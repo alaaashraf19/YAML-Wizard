@@ -1,0 +1,12 @@
+build:
+  only:
+    refs:
+    - dev
+  script:
+  - chmod a+x ./build/run.sh
+  - ./build/run.sh
+  stage: build
+stages:
+- build
+- test
+- package

@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_12873",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 8877,
+  "description": "Create a GitLab CI pipeline using the nebulouslabs/sia-ci Docker image with three stages: lint, test, and deploy, and define variables for Docker Hub webhook and package lists. In the lint stage add a build job that runs ./check-builds.sh, publishes the artifacts directory as a Binaries artifact, and a lint job that sets GOCACHE, then executes make vet, make lint, make markdown-spellcheck and make test while caching .cache with key lint-cache. In the test stage add legacy-tests, legacy-tests-nightly, legacy-windows-tests-nightly, package-host-tests, package-host-tests-nightly, package-host-windows-tests-nightly, package-renter-tests, package-renter-tests-nightly, package-renter-windows-tests-nightly, package-tests, package-tests-nightly, package-windows-tests-nightly, siatest-renter-sub-tests, siatest-renter-sub-tests-nightly, siatest-renter-sub-windows-tests-nightly, siatest-renter-tests, siatest-renter-tests-nightly, siatest-renter-windows-tests-nightly, siatest-tests, siatest-tests-nightly, and siatest-windows-tests-nightly, each using the same before_script (date, go version, cache setup), after_script (copy SiaTesting), artifacts named SiaTesting-$CI_JOB_NAME with paths SiaTesting and cover/cover.out, appropriate caches (e.g., legacy-cache, package-cache, siatest-cache), and triggers: regular jobs run on all branches except schedules, nightly jobs run only on schedules, and Windows variants run on Windows runners with tag nebulous-windows and use PowerShell before_script. Finally, add a deploy job that runs only on the master branch and sends a POST request to the Docker Hub build webhook.",
+  "tags": [
+    "go",
+    "make",
+    "docker",
+    "ci",
+    "test",
+    "lint",
+    "deploy",
+    "windows",
+    "nebula",
+    "sia-ci"
+  ]
+}

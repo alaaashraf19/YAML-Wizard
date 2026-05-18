@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_05739",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1888,
+  "description": "Create a GitLab CI pipeline that runs Codeception unit tests with coverage across multiple PHP versions (5.6, 7.0, 7.1, 7.2, 7.3, 7.4) using the corresponding composepress core CI Docker images. Use a shared before_script that sets COMPOSER_MEMORY_LIMIT, runs composer install, creates a MySQL database named wordpress via a mariadb:latest service aliased as mysql, and for the PHP 7 jobs also runs composer require \"lucatume/wp-browser\" \"*\". Cache the vendor directory between jobs, and define variables MYSQL_ROOT_PASSWORD=root, PHP_IDE_CONFIG=serverName=localhost, and XDEBUG_CONFIG=idekey=PHPSTORM remote_host=192.168.1.2 remote_enable=1. Each job executes the script `php ./vendor/codeception/codeception/codecept run unit --coverage` in the test stage. No explicit stages, artifacts, or rules are defined, so all jobs run on every pipeline execution.",
+  "tags": [
+    "php",
+    "codeception",
+    "composer",
+    "mariadb",
+    "ci",
+    "unit-tests",
+    "coverage"
+  ]
+}

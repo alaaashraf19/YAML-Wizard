@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_15161",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 441,
+  "description": "Create a GitLab CI pipeline that uses the php:7.1 Docker image and defines a global before_script which runs `bash Tests/gitlab-ci/docker_install.sh > /dev/null`, writes `date.timezone = Europe/Paris` to `/usr/local/etc/php/php.ini`, downloads Composer via `curl --silent --show-error https://getcomposer.org/installer | php` and installs dependencies with `php composer.phar install --prefer-dist -o`. Add a single job named `test:Fonctionnel` in the default test stage, cache the `./vendor/` directory, and execute the command `vendor/bin/phpunit -c phpunit.xml --exclude-group online --coverage-text --colors=never --debug --verbose`. No additional stages, artifacts, rules, or services are defined. The pipeline is intended solely for functional PHP unit testing.",
+  "tags": [
+    "php",
+    "phpunit",
+    "composer",
+    "docker-install",
+    "cache"
+  ]
+}

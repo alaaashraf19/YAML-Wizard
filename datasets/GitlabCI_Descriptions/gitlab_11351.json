@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_11351",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 785,
+  "description": "Create a GitLab CI pipeline that uses the Docker image registry.gitlab.com/latex-template/docker and a single build stage. Add a build job in the build stage that runs latexmk -synctex=1 -interaction=batchmode -halt-on-error -file-line-error -pdf document, uploads document.pdf, document.log and document.synctex.gz as artifacts that expire after one week, and runs on all branches except tags. Add a build_chapter job in the same stage that changes to the sections directory, executes find . -name '*.tex' -exec latexmk -interaction=nonstopmode -file-line-error -pdf {} \\; , stores all sections/*.pdf files as artifacts expiring after one week, and also runs only on non‑tag pipelines. Add a build_release job in the build stage that runs the same latexmk command as the build job, stores the same artifacts without expiration, and runs only when a tag is pushed.",
+  "tags": [
+    "latex",
+    "latexmk",
+    "docker",
+    "gitlab-ci",
+    "pdf",
+    "build",
+    "release"
+  ]
+}

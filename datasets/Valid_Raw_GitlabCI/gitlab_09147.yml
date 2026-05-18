@@ -1,0 +1,23 @@
+angular-demo:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - angular-demo/dist
+  image: alexsuch/angular-cli:1.4.2
+  script:
+  - cd angular-demo
+  - npm install --loglevel warn
+  - ng build --prod
+  stage: build
+dockerize:
+  before_script:
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  image: gitlab/dind
+  script:
+  - mv angular-demo ./docker
+  - docker build -t $IMAGE:$TAG ./docker
+  - docker push $IMAGE
+  stage: deploy
+  variables:
+    IMAGE: $CI_REGISTRY_IMAGE/angular-demo
+    TAG: $CI_COMMIT_REF_NAME

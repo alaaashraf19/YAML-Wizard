@@ -1,0 +1,12 @@
+prepare done:
+  extends:
+  - .common:stage-done
+  stage: validate
+validate:
+  before_script:
+  - apk add -U make bash
+  extends:
+  - .common:docker-in-docker
+  - .rules:merge-requests
+  script: make build validate
+  stage: validate

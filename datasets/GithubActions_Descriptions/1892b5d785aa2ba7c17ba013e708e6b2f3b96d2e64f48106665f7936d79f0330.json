@@ -1,0 +1,13 @@
+{
+  "sha": "1892b5d785aa2ba7c17ba013e708e6b2f3b96d2e64f48106665f7936d79f0330",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 535,
+  "description": "Create a reusable GitHub Actions workflow named ci that can be called from another workflow. The workflow runs a single job on an ubuntu-latest environment with a ubuntu:jammy container. In this job, check out the repository, run a setup script from .github/ubuntu_setup in the drake_catkin_installed directory, then run a build and test script from .github/ci_build_test in the same directory.",
+  "tags": [
+    "ubuntu",
+    "catkin",
+    "reusable-workflow",
+    "container"
+  ]
+}

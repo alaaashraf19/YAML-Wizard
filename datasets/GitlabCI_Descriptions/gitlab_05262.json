@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_05262",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 6656,
+  "description": "Create a GitLab CI pipeline with three stages (test, release, post-release) using the default Helm build image and a configurable runner tag. In the test stage add a lint job that runs `helm lint .`, a unit_tests job that installs the helm‑unittest plugin version ${HELM_UNITTEST_PLUGIN_VERSION} and runs `helm unittest .`, and three integration test jobs (authentication token in values.yaml, authentication token through secret, mount empty dir) that extend a shared .integration_test template which uses the docker:20.10.16-git image with a docker:20.10.16-dind service (alias kubernetes), sets DOCKER_DRIVER and DOCKER_HOST, installs openssl curl bash, validates the TOKEN variable, downloads kubectl and kind, creates a kind cluster, installs helm, and finally executes `scripts/integration.sh` with the job‑specific TOKEN_PROVISION_METHOD, TOKEN, and VALUE_YAML_FILE variables; these jobs run on merge‑request events, the default branch, or stable release branches/tags as defined by .rules:default. In the release stage add a release beta job that runs on the default branch, installs py‑pip and awscli, computes beta_info and build_time, updates Chart.yaml and values.yaml with sed, packages the chart, syncs it to an S3 bucket using REPO_URL and S3_URL variables, and echoes installation instructions. Also add a release development job that runs manually on merge‑request pipelines, allows failure, packages the chart with `helm package .` and stores the resulting *.tgz as a 7‑day artifact. Finally, add a release stable job that runs on version tags matching vX.Y.Z(-rcN), uses the alpine:${ALPINE_IMAGE_TAG} image, installs curl, and triggers a downstream pipeline via the GitLab API using CI_JOB_TOKEN. All jobs inherit the appropriate rule sets (.rules:default, .rules:release:beta, .rules:release:development, .rules:release:stable) and share global variables such as ALPINE_IMAGE_TAG, KIND_VERSION, and KUBECTL_VERSION.",
+  "tags": [
+    "helm",
+    "kubernetes",
+    "kind",
+    "docker",
+    "aws-s3",
+    "release-beta",
+    "release-stable",
+    "integration-test",
+    "lint",
+    "unit-test"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_00073",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 362,
+  "description": "Create a GitLab CI pipeline that uses the python:latest Docker image and defines a before_script that runs python -V, installs virtualenv via pip, creates a virtual environment in a venv directory, and activates it. Set a PIP_CACHE_DIR variable pointing to .cache/pip, and cache both the .cache/pip directory and the venv/ folder. Add a run job (default stage) that executes python setup.py bdist_wheel, then pip install dist/*, and publishes any dist/*.whl files as artifacts. Add a test job (default stage) that runs python setup.py test. Both jobs inherit the before_script and the cache settings.",
+  "tags": [
+    "python",
+    "virtualenv",
+    "wheel",
+    "pip-cache",
+    "gitlab-ci"
+  ]
+}

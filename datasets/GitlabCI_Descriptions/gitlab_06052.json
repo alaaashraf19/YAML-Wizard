@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_06052",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 5796,
+  "description": "Create a GitLab CI pipeline that uses the docker:latest image with a docker:dind service and logs in to the GitLab Container Registry via a before_script running `docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY`. Define three stages: prepare, build, and release. In the prepare stage add a job named `prepare` that runs `docker build -t $CONTAINER_TEST_IMAGE-prepare -f Dockerfile.prepare .` then `docker push $CONTAINER_TEST_IMAGE-prepare`. In the build stage add jobs `build:24.2`, `build:24.3`, `build:24.4`, `build:24.5`, `build:25.1`, `build:25.2`, `build:25.3`, and `build:26.0`, each setting its own `EMACS_VERSION` variable and executing `echo 0 > /proc/sys/kernel/randomize_va_space`, `docker build --pull --build-arg BASE=$CONTAINER_TEST_IMAGE-prepare --build-arg EMACS_VERSION=$EMACS_VERSION --build-arg EMACS_URL=$EMACS_URL -t $CONTAINER_TEST_IMAGE-$EMACS_VERSION .`, and `docker push $CONTAINER_TEST_IMAGE-$EMACS_VERSION`. In the release stage add jobs `release-image:24.2` through `release-image:26.0` that run only on the master branch and execute `docker pull $CONTAINER_TEST_IMAGE-$EMACS_VERSION`, `docker tag $CONTAINER_TEST_IMAGE-$EMACS_VERSION $CONTAINER_RELEASE_IMAGE:$EMACS_VERSION`, and `docker push $CONTAINER_RELEASE_IMAGE:$EMACS_VERSION`.",
+  "tags": [
+    "docker",
+    "dind",
+    "emacs",
+    "prepare",
+    "build",
+    "release",
+    "gitlab-ci"
+  ]
+}

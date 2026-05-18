@@ -1,0 +1,14 @@
+{
+  "sha": "303ae4ef5c4fd3feddb4add8fd5d72547d107c1cef5565484f2a7a9cb528f463",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2343,
+  "description": "Create a reusable GitHub Actions workflow named Build that can be called by other workflows. The workflow uses a matrix strategy to run a job on ubuntu-latest for Fedora versions 41, 42, and 43. For each version, it updates and upgrades packages, installs dependencies, checks out the repository, configures git, generates a project with cmake, compiles and deploys the project, and uploads the resulting RPM packages as artifacts.",
+  "tags": [
+    "fedora",
+    "cmake",
+    "rpm",
+    "github-actions",
+    "reusable-workflow"
+  ]
+}

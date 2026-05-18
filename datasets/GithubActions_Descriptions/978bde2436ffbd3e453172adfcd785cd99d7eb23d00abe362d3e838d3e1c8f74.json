@@ -1,0 +1,15 @@
+{
+  "sha": "978bde2436ffbd3e453172adfcd785cd99d7eb23d00abe362d3e838d3e1c8f74",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2594,
+  "description": "Create a GitHub Actions workflow named MSYS2 PKGBUILD that triggers on push events with tags matching v* and on workflow dispatch. Run a matrix job on windows-latest for various MSYS2 environments, each with a different system, environment, renderer, and Qt version. For each matrix entry, check out the repository, set up MSYS2, build a package using makepkg, upload the package as an artifact, install it, and test it.",
+  "tags": [
+    "msys2",
+    "mingw",
+    "windows",
+    "makepkg",
+    "package-build",
+    "ci"
+  ]
+}

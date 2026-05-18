@@ -1,0 +1,15 @@
+before_script:
+- node --version
+- npm --version
+- npm ci || npm install
+image: node:latest
+package:
+  artifacts:
+    paths:
+    - '*.tgz'
+  script:
+  - npm run make
+  - npm pack
+  stage: pack
+stages:
+- pack

@@ -1,0 +1,14 @@
+{
+  "sha": "f62b0e65c1b40c714bf86cf5f1ecf6832f6b92d8dc5e1d53ff0eab664feacb25",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1607,
+  "description": "Create a GitHub Actions workflow named AWS CodeBuild CI that runs on pull requests, pushes, and once a day. The workflow should also be callable from another workflow, passing the required CI_AWS_ROLE_ARN secret. Use a ubuntu-latest job with read permission to repository contents and write permission to ID tokens. In the job, use a matrix strategy to run AWS CodeBuild tests with different Python versions and CodeBuild file names. Configure AWS credentials using the provided role ARN and run the CodeBuild tests with a 120-minute timeout.",
+  "tags": [
+    "aws",
+    "codebuild",
+    "python",
+    "github-actions",
+    "ci"
+  ]
+}

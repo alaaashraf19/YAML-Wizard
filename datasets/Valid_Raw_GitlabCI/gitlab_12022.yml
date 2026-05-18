@@ -1,0 +1,5 @@
+build_binary:
+  script: shards install && crystal build src/main.cr --static --release --progress
+    -o crlocator-static --error-trace
+  stage: build
+image: crystallang/crystal:0.35.1-alpine

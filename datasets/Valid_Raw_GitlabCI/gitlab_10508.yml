@@ -1,0 +1,9 @@
+include:
+- template: Auto-DevOps.gitlab-ci.yml
+test:
+  script:
+  - wget -qO- "https://github.com/koalaman/shellcheck/releases/download/latest/shellcheck-latest.linux.x86_64.tar.xz"
+    |tar -xJv
+  - shellcheck-latest/shellcheck -eSC2039 -eSC1071 -eSC2086 $(grep -m1 -lsI '#!/bin/'
+    /builds/internetarchive/kre8/* |fgrep -v aliases |fgrep -v .yaml)
+  stage: test

@@ -1,0 +1,13 @@
+{
+  "sha": "7187c93d1e5fe2c83cf3e88dec6e818e8db24309aa412101990d41671bc9fcca",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 453,
+  "description": "Create a GitHub Actions workflow named Nix-Tests that runs on every pull request and push. Use a single ubuntu-latest job that checks out the repository, installs Nix with cachix/install-nix-action, then runs nix flake show, nix flake check, and nix build with build logs printed.",
+  "tags": [
+    "nix",
+    "flake",
+    "tests",
+    "ubuntu"
+  ]
+}

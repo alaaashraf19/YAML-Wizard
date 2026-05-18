@@ -1,0 +1,18 @@
+{
+  "sha": "ffda858fb38f1a254ba00a9fd0dd7da48d2ea0cb9ec7c0fed06c880412d8eac9",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5102,
+  "description": "Create a GitHub Actions workflow that triggers on push and pull request events. The workflow should have multiple jobs for building and testing on different platforms: macOS, Windows, and Ubuntu. Each build job should check out the repository, set up ccache, install dependencies, and then build the project. The test job on Ubuntu should depend on the Ubuntu build job, install additional Python dependencies, and run tests.",
+  "tags": [
+    "github-actions",
+    "ci",
+    "cd",
+    "monero",
+    "build",
+    "test",
+    "ubuntu",
+    "windows",
+    "macos"
+  ]
+}

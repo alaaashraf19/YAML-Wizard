@@ -1,0 +1,18 @@
+{
+  "sha": "0008e5b0684a19fcf95e23bc9d69b5d172cc690687e174a6b80971c70309fcee",
+  "provider": "groq",
+  "model": "llama-3.3-70b-versatile",
+  "yaml_bytes": 2545,
+  "description": "Create a GitHub Actions workflow named msys2 that triggers on push to main and pull requests to main. The workflow uses a windows-latest environment with a matrix strategy for MINGW32 and MINGW64 architectures. It checks out the repository, sets up MSYS2, installs various dependencies, removes HarfBuzz DLLs, installs Python dependencies, sets up Meson, builds and tests the project, and uploads the resulting DLLs as artifacts. The workflow has read permission to repository contents.",
+  "tags": [
+    "msys2",
+    "windows",
+    "mingw",
+    "meson",
+    "python",
+    "ci",
+    "build",
+    "test",
+    "artifact-upload"
+  ]
+}

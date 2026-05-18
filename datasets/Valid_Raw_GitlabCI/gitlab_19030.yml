@@ -1,0 +1,31 @@
+before_script:
+- eval $(ssh-agent -s)
+- ssh-add <(echo "$SSH_PRIVATE_KEY")
+- mkdir -p ~/.ssh
+- '[[ -f /.dockerenv ]] && echo "$SSH_SERVER_HOSTKEYS" > ~/.ssh/known_hosts'
+- cd android/
+- git archive --remote=$SECRETS_REPO HEAD $KEYSTORE_RELPATH | tar -x
+- echo $GPLAY_SERVICE_ACCOUNT > app/gplay_service_account.json
+- export GRADLE_USER_HOME=$(pwd)/.gradle
+- chmod +x ./gradlew
+- cd ..
+build:
+  artifacts:
+    paths:
+    - android/app/build/outputs/apk/app-debug.apk
+    - android/app/build/outputs/apk/app-release.apk
+  script:
+  - yarn install
+  - cd android/
+  - ./gradlew assembleDebug
+  - ./gradlew assembleRelease
+  - ./gradlew publishApkRelease
+  stage: build
+cache:
+  key: ${CI_PROJECT_ID}
+  paths:
+  - node_modules/
+  - .gradle/
+image: registry.gitlab.com/motorica-org/gitlab-ci-react-native-android:master
+stages:
+- build

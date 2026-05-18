@@ -1,0 +1,182 @@
+.conda-template:
+  artifacts: &id001
+    expire_in: 1 month
+    paths:
+    - kwant-dev*.tar.bz2
+  image: condaforge/linux-anvil
+  script: &id002
+  - /usr/bin/sudo -n yum install -y devtoolset-2-gcc-gfortran
+  - git clone https://gitlab.kwant-project.org/kwant/conda-recipes.git
+  - conda config --add channels kwant
+  - conda build --python 3.5 conda-recipes/kwant-dev
+  - conda build --python 3.6 conda-recipes/kwant-dev
+  - mv /opt/conda/conda-bld/linux-64/kwant-dev*.tar.bz2 .
+  - if [ ! -z $ANACONDA_TOKEN ]; then anaconda --token=$ANACONDA_TOKEN upload --force
+    kwant-dev*tar.bz2; fi
+  stage: deploy
+build PDF documentation:
+  artifacts:
+    expire_in: 1 month
+    paths:
+    - doc/build/latex/kwant.pdf
+  script:
+  - pip3 install sympy
+  - pip3 install --upgrade matplotlib
+  - make -C doc latex SPHINXOPTS='-n -W'
+  - cd doc/build/latex
+  - make all-pdf
+  stage: test
+build and upload conda package:
+  artifacts: *id001
+  image: condaforge/linux-anvil
+  only:
+  - master
+  script: *id002
+  stage: deploy
+build and upload conda package (manual):
+  artifacts: *id001
+  except:
+  - master
+  image: condaforge/linux-anvil
+  script: *id002
+  stage: deploy
+  when: manual
+build documentation:
+  artifacts:
+    expire_in: 1 month
+    paths:
+    - doc/build/html/
+  script:
+  - pip3 install --upgrade matplotlib
+  - make -C doc realclean; make -C doc html SPHINXOPTS='-A website_deploy=True -n
+    -W' REFNAME="${CI_COMMIT_TAG:-$CI_COMMIT_SHA}" SOURCE_URL="$CI_PROJECT_URL"/blob
+  stage: test
+build package:
+  artifacts:
+    expire_in: 1 hour
+    untracked: true
+  script:
+  - echo -e "[DEFAULT]\ndefine_macros = CYTHON_TRACE=1" >build.conf
+  - ./setup.py build
+  - ./setup.py build_ext -i
+  stage: build
+check for broken links in doc:
+  allow_failure: true
+  script:
+  - make -C doc linkcheck
+  stage: test
+check for dependencies installed:
+  allow_failure: true
+  script:
+  - if [ -d .eggs ]; then echo "$(ls -d .eggs/*/) downloaded by build, update build
+    environment" >&2; fi
+  stage: test
+check whitespace style:
+  allow_failure: true
+  script: ./check_whitespace
+  stage: build
+image: kwant/testing
+remove_coverage:
+  after_script:
+  - rm -rf ~/.ssh
+  before_script:
+  - mkdir -p ~/.ssh
+  - echo $MASTER_WEBSITE_KEY | base64 -d > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
+  environment:
+    action: stop
+    name: coverage/$CI_BUILD_REF_NAME
+  only:
+  - branches@kwant/kwant
+  script:
+  - mkdir empty/
+  - rsync -rlv -e "$IGNORE_HOSTKEY" --delete empty/ kwant@kwant-project.org:coverage/$CI_BUILD_REF_SLUG
+  stage: deploy
+  when: manual
+remove_docs:
+  after_script:
+  - rm -rf ~/.ssh
+  before_script:
+  - mkdir -p ~/.ssh
+  - echo $TEST_WEBSITE_KEY | base64 -d > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
+  environment:
+    action: stop
+    name: docs review/$CI_BUILD_REF_NAME
+  only:
+  - branches@kwant/kwant
+  script:
+  - mkdir empty
+  - rsync -arv -e "$IGNORE_HOSTKEY" --delete empty/ kwant@kwant-project.org:doc/$CI_BUILD_REF_SLUG/
+  stage: deploy
+  when: manual
+run tests:
+  artifacts:
+    paths:
+    - htmlcov
+  script:
+  - py.test -r w --cov=kwant --cov-report term --cov-report html --flakes kwant
+  stage: test
+stages:
+- build
+- test
+- deploy
+upload coverage:
+  after_script:
+  - rm -rf ~/.ssh
+  before_script:
+  - mkdir -p ~/.ssh
+  - echo $MASTER_WEBSITE_KEY | base64 -d > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
+  environment:
+    name: coverage/$CI_BUILD_REF_NAME
+    on_stop: remove_coverage
+    url: https://kwant-project.org/coverage/$CI_BUILD_REF_SLUG
+  only:
+  - branches@kwant/kwant
+  script:
+  - mv htmlcov $CI_BUILD_REF_SLUG
+  - rsync -rlv -e "$IGNORE_HOSTKEY" --delete --relative $CI_BUILD_REF_SLUG kwant@kwant-project.org:coverage/
+  stage: deploy
+upload dev version docs:
+  after_script:
+  - rm -rf ~/.ssh
+  before_script:
+  - mkdir -p ~/.ssh
+  - echo $MASTER_WEBSITE_KEY | base64 -d > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
+  environment:
+    name: production
+    url: https://kwant-project.org/doc/dev
+  only:
+  - master@kwant/kwant
+  script:
+  - rsync -rlv -e "$IGNORE_HOSTKEY" --delete doc/build/html/* kwant@kwant-project.org:doc/dev
+  stage: deploy
+upload docs of tagged build:
+  after_script:
+  - rm -rf ~/.ssh
+  before_script:
+  - mkdir -p ~/.ssh
+  - echo $MASTER_WEBSITE_KEY | base64 -d > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
+  environment:
+    name: production
+  only:
+  - /^v[0-9]+\.[0-9]+.[0-9]+$/@kwant/kwant
+  script:
+  - rsync -rlv -e "$IGNORE_HOSTKEY" --delete doc/build/html/* kwant@kwant-project.org:doc/$(echo
+    $CI_BUILD_TAG | sed 's/v\([0-9]\+\.[0-9]\+\)\.[0-9]\+/\1/')
+  stage: deploy
+upload documentation to the test server:
+  after_script:
+  - rm -rf ~/.ssh
+  before_script:
+  - mkdir -p ~/.ssh
+  - echo $TEST_WEBSITE_KEY | base64 -d > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
+  environment:
+    name: docs review/$CI_BUILD_REF_NAME
+    on_stop: remove_docs
+    url: https://test.kwant-project.org/doc/$CI_BUILD_REF_SLUG
+  only:
+  - branches@kwant/kwant
+  script:
+  - rsync -rlv -e "$IGNORE_HOSTKEY" --delete doc/build/html/* kwant@kwant-project.org:doc/$CI_BUILD_REF_SLUG
+  stage: deploy
+variables:
+  IGNORE_HOSTKEY: ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null

@@ -1,0 +1,17 @@
+build_image:
+  image: docker
+  script:
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+  - docker build -t $IMAGE .
+  - if [ "$CI_COMMIT_REF_NAME" = master ]; then docker push $IMAGE; fi
+  stage: build
+  tags:
+  - docker
+services:
+- docker:dind
+stages:
+- build
+variables:
+  DOCKER_DRIVER: overlay2
+  GIT_SUBMODULE_STRATEGY: recursive
+  IMAGE: $CI_REGISTRY_IMAGE:latest

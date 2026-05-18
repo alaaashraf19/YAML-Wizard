@@ -1,0 +1,34 @@
+before_script:
+- yarn
+cache:
+  paths:
+  - node_modules/
+image: node:8
+lint:
+  except:
+  - tags
+  script:
+  - yarn lint
+  - yarn dist
+  - git status --porcelain dist/*.js | if read; then echo "generated files are out
+    of date"; false; fi
+test:coverage:node:4:
+  except:
+  - tags
+  image: node:4
+  script:
+  - yarn test:coverage
+  - yarn codecov -- -t $codecov_token
+test:coverage:node:6:
+  except:
+  - tags
+  image: node:6
+  script:
+  - yarn test:coverage
+  - yarn codecov -- -t $codecov_token
+test:node:8:
+  except:
+  - tags
+  script:
+  - yarn test:coverage
+  - yarn codecov -t $codecov_token

@@ -1,0 +1,51 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+    name: Testing on ${{ matrix.os }} with Python version ${{ matrix.python }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.7']
+        os: ['ubuntu-latest']
+    steps:
+      - uses: actions/checkout@master
+        
+      - name: Setup python
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python }}
+          architecture: x64
+
+      - name: Install requirements
+        run: pip install -r requirements.txt && pip install coverage flake8
+
+      - name: Run tests with coverage and create report as xml file
+        run: coverage run --source=pyais -m unittest discover tests -v && coverage xml
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1.0.3
+        with:
+            token: ${{secrets.CODECOV_TOKEN}}
+            file: coverage.xml
+
+      - name: Run Flake8
+        run: flake8
+
+  publish:
+    name: Publish Package
+    runs-on: ${{ matrix.os }}
+    if: build.status==success
+    steps:
+      - name: Create Distribution Package
+        run: python3 setup.py sdist bdist_wheel
+
+      - name: Publish package to TestPyPI
+        uses: pypa/gh-action-pypi-publish@master
+        with:
+          user: __token__
+          password: ${{ secrets.test_pypi_password }}
+          repository_url: https://test.pypi.org/legacy/

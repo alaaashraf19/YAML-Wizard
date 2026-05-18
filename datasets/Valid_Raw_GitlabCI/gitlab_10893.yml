@@ -1,0 +1,139 @@
+Africa/Johannesburg:
+  cache:
+    policy: pull
+    untracked: true
+  image: node:16-alpine
+  script:
+  - TZ='Africa/Johannesburg' yarn test:moment-tz-date-adapter
+  stage: test
+America/Los_Angeles:
+  cache:
+    policy: pull
+    untracked: true
+  image: node:16-alpine
+  script:
+  - TZ='America/Los_Angeles' yarn test:moment-tz-date-adapter
+  stage: test
+America/New_York:
+  cache:
+    policy: pull
+    untracked: true
+  image: node:16-alpine
+  script:
+  - TZ='America/New_York' yarn test:moment-tz-date-adapter
+  stage: test
+America/Santiago:
+  cache:
+    policy: pull
+    untracked: true
+  image: node:16-alpine
+  script:
+  - TZ='America/Santiago' yarn test:moment-tz-date-adapter
+  stage: test
+Asia/Jakarta:
+  cache:
+    policy: pull
+    untracked: true
+  image: node:16-alpine
+  script:
+  - TZ='Asia/Jakarta' yarn test:moment-tz-date-adapter
+  stage: test
+Asia/Shanghai:
+  cache:
+    policy: pull
+    untracked: true
+  image: node:16-alpine
+  script:
+  - TZ='Asia/Shanghai' yarn test:moment-tz-date-adapter
+  stage: test
+Australia/Melbourne:
+  cache:
+    policy: pull
+    untracked: true
+  image: node:16-alpine
+  script:
+  - TZ='Australia/Melbourne' yarn test:moment-tz-date-adapter
+  stage: test
+Europe/London:
+  cache:
+    policy: pull
+    untracked: true
+  image: node:16-alpine
+  script:
+  - TZ='Europe/London' yarn test:moment-tz-date-adapter
+  stage: test
+UTC:
+  cache:
+    policy: pull
+    untracked: true
+  image: node:16-alpine
+  script:
+  - TZ='UTC' yarn test:moment-tz-date-adapter
+  stage: test
+build:
+  cache:
+    untracked: true
+  image: node:16-alpine
+  script:
+  - apk add yarn
+  - yarn install
+  stage: build
+core:
+  cache:
+    policy: pull
+    untracked: true
+  image: node:16-alpine
+  script:
+  - TZ='America/Los_Angeles' yarn test:core
+  stage: test
+dayjs_date_adapter:
+  cache:
+    policy: pull
+    untracked: true
+  image: node:16-alpine
+  script:
+  - TZ='America/Los_Angeles' yarn test:dayjs-date-adapter
+  stage: test
+joda_date_adapter:
+  cache:
+    policy: pull
+    untracked: true
+  image: node:16-alpine
+  script:
+  - TZ='America/Los_Angeles' yarn test:joda-date-adapter
+  stage: test
+luxon_date_adapter:
+  cache:
+    policy: pull
+    untracked: true
+  image: node:16-alpine
+  script:
+  - TZ='America/Los_Angeles' yarn test:luxon-date-adapter
+  stage: test
+moment_date_adapter:
+  cache:
+    policy: pull
+    untracked: true
+  image: node:16-alpine
+  script:
+  - TZ='America/Los_Angeles' yarn test:moment-date-adapter
+  stage: test
+recurrence_rules_resolver:
+  cache:
+    policy: pull
+    untracked: true
+  image: node:16-alpine
+  script:
+  - TZ='America/Los_Angeles' yarn test:recurrence-rules-resolver
+  stage: test
+stages:
+- build
+- test
+standard_date_adapter:
+  cache:
+    policy: pull
+    untracked: true
+  image: node:16-alpine
+  script:
+  - TZ='America/Los_Angeles' yarn test:standard-date-adapter
+  stage: test

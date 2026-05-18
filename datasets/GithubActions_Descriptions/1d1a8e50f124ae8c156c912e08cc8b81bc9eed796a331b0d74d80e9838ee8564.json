@@ -1,0 +1,14 @@
+{
+  "sha": "1d1a8e50f124ae8c156c912e08cc8b81bc9eed796a331b0d74d80e9838ee8564",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1194,
+  "description": "Create a GitHub Actions workflow named Publish Docs that triggers on page build for the gh-pages branch, excluding the docs directory, and when the update-doxygen workflow completes. Use a single ubuntu-latest job that checks out the repository, sets up Python 3.8, checks out the gh-pages branch, installs dependencies from requirements.txt, generates HTML documentation with make html, and pushes changes to the gh-pages branch if updates are detected.",
+  "tags": [
+    "python",
+    "docs",
+    "github-pages",
+    "sphinx",
+    "doxygen"
+  ]
+}

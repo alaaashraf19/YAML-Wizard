@@ -1,0 +1,46 @@
+azure:
+  only:
+    changes:
+    - src/Server/**
+    - paket.lock
+    refs:
+    - master
+  script:
+  - docker build -f deploy.Dockerfile -t $IMAGE_TAG --build-arg AZ_PASS=$SECRET_AZ_PASS
+    --build-arg AZ_USER=$SECRET_AZ_USER --build-arg AZ_TENANT=$SECRET_AZ_TENANT --build-arg
+    AZ_RESOURCEGROUP=$SECRET_AZ_RESOURCEGROUP --build-arg AZ_FUNCTIONNAME=$SECRET_AZ_FUNCTIONNAME
+    .
+  stage: deploy-azure
+before_script:
+- docker info
+- docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+build:
+  only:
+  - merge_requests
+  script:
+  - docker build -f build.Dockerfile -t $IMAGE_TAG .
+  stage: build
+image: docker:stable
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - docker build -f build.Dockerfile -t $IMAGE_TAG .
+  - id=$(docker run -d -i $IMAGE_TAG bash)
+  - docker cp $id:/build/public public
+  - docker stop $id
+  - docker rm -v $id
+  stage: deploy
+services:
+- docker:dind
+stages:
+- build
+- deploy
+- deploy-azure
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_HOST: tcp://docker:2375
+  IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG

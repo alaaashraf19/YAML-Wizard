@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_13128",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1260,
+  "description": "Create a GitLab CI pipeline using the node:11.6.0 Docker image, with a global before_script that configures git URLs, adds node_modules/.bin to PATH, and runs npm install --unsafe-perm, and a cache keyed by $CI_BUILD_REF_NAME storing node_modules/ and bower_components/ (including untracked files). Define three stages: build, test, and deploy. In the build stage add a build job that runs npm build and publishes the dist/ directory as an artifact that expires in one week. In the test stage add a test job that (1) downloads and adds the Google Linux signing key via wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -, (2) adds the Chrome repository with sh -c 'echo \"deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main\" >> /etc/apt/sources.list.d/google.list', (3) runs apt update && apt-get install -y google-chrome-stable, and (4) executes npm run test:ci, then stores coverage/* as an artifact for one week. In the deploy stage add a pages job that runs rm -rf public/*, mkdir -p public/, mv landing-page/* public/, mv coverage/ public/, publishes the public/ folder as a pages artifact for 30 days, and runs only on the master branch; also add production and staging jobs that depend on build, set the respective environment, echo a deployment message, and run only on the production or staging branches respectively.",
+  "tags": [
+    "node-11",
+    "npm",
+    "gitlab-pages",
+    "cache",
+    "chrome",
+    "deployment",
+    "test-ci"
+  ]
+}

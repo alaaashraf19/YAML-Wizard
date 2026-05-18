@@ -1,0 +1,23 @@
+before_script:
+- apt-get update -qy
+- apt-get install -y nodejs
+- bundle install --without development --path vendor
+cache:
+  paths:
+  - vendor/
+image: ruby:2.1
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - bundle exec middleman build
+  stage: deploy
+test:
+  except:
+  - master
+  script:
+  - bundle exec middleman build
+  stage: test

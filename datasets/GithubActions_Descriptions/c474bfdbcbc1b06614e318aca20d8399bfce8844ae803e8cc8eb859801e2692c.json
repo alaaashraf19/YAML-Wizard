@@ -1,0 +1,14 @@
+{
+  "sha": "c474bfdbcbc1b06614e318aca20d8399bfce8844ae803e8cc8eb859801e2692c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 795,
+  "description": "Create a GitHub Actions workflow named OpenSSL CI that runs on push to the master branch and on pull requests to master that affect specific files. Use a ubuntu-latest job with a matrix strategy to test with different OpenSSL versions. For each version, check out the code, install CMake, Google Test, and the specific OpenSSL version, then configure and build the project with CMake and make, and finally run tests.",
+  "tags": [
+    "openssl",
+    "cmake",
+    "gtest",
+    "ci",
+    "ubuntu"
+  ]
+}

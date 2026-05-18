@@ -1,0 +1,15 @@
+{
+  "sha": "1cc708f2aebb900ada97c9eccc0aaf07c54964afe30525a8ee9b4ee0278b1f4b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5174,
+  "description": "Create a GitHub Actions workflow named Test '$PYTHONPATH' installation that runs on every push to dev and main branches and on pull requests to these branches. Use an ubuntu-latest job with a matrix strategy to test Python 3.11 with various pytest flags. The job checks out the repository, sets up Python, installs ISOFIT and its dependencies, caches and downloads additional dependencies, and executes tests with custom test paths and pytest flags.",
+  "tags": [
+    "python",
+    "pytest",
+    "github-actions",
+    "ubuntu",
+    "tests",
+    "isofit"
+  ]
+}

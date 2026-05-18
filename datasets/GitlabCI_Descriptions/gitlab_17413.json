@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_17413",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 151,
+  "description": "Create a GitLab CI pipeline that uses the node:latest Docker image and caches the node_modules/ directory. Define a single job named all_tests that runs in the default test stage and executes the shell commands: npm install, npm run test-coverage, npm run build, and npm run dist. No services, artifacts, or special rules are required.",
+  "tags": [
+    "node",
+    "npm",
+    "test-coverage",
+    "build",
+    "cache"
+  ]
+}

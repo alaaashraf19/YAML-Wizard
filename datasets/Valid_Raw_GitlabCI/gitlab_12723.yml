@@ -1,0 +1,105 @@
+.build_appimage:
+  after_script:
+  - chmod +x pkgs/version.sh
+  - chmod +x pkgs/appimage.sh && pkgs/appimage.sh
+  - mv pkgs/cuteproject-* .
+  artifacts:
+    name: cuteproject-x86_64
+    paths:
+    - cuteproject-*
+  before_script:
+  - chmod +x gitlab.sh && ./gitlab.sh
+  - echo "catchTests=false" > globals.pri
+  image: mxklb/docker-qt5-deb:xenial
+  script: &id002
+  - qmake cuteproject.pro -r CONFIG+=release
+  - make
+  stage: deploy
+.build_debian_pkg:
+  artifacts:
+    paths:
+    - cuteproject-*.deb
+  script:
+  - chmod +x pkgs/version.sh
+  - chmod +x pkgs/debian.sh && pkgs/debian.sh
+  - mv pkgs/deb/cuteproject-*.deb .
+  stage: deploy
+.debug_build_with_tests:
+  rules:
+  - if: $CI_COMMIT_TAG == null
+  script: &id001
+  - qmake cuteproject.pro -r CONFIG+=debug
+  - make
+  stage: tests
+.debug_compile:
+  script: *id001
+.release_compile:
+  script: *id002
+.release_deployment:
+  rules: &id003
+  - if: $CI_COMMIT_TAG
+  stage: release
+appimage_latest:
+  extends: .build_appimage
+appimage_stable:
+  extends: .build_appimage
+  rules: *id003
+  stage: release
+before_script:
+- chmod +x gitlab.sh && ./gitlab.sh
+debian_trusty_latest:
+  artifacts:
+    name: cuteproject-trusty_amd64
+  before_script:
+  - chmod +x gitlab.sh && ./gitlab.sh
+  - export USER=$GITLAB_USER_LOGIN
+  extends: .build_debian_pkg
+  image: mxklb/docker-qt5-deb:trusty
+debian_trusty_stable:
+  extends: debian_trusty_latest
+  rules: *id003
+  stage: release
+debian_xenial_latest:
+  artifacts:
+    name: cuteproject-xenial_amd64
+  extends: .build_debian_pkg
+  image: mxklb/docker-qt5-deb:xenial
+debian_xenial_stable:
+  extends: debian_xenial_latest
+  rules: *id003
+  stage: release
+debug_tests_coverage:
+  after_script:
+  - gcovr -r . -e '.*extern.*' -e '.*moc_.*'
+  - chmod +x lcov.sh && ./lcov.sh
+  - mv coverage/*.pdf .
+  - mv coverage/*.tar.gz .
+  artifacts:
+    name: test_coverage
+    paths:
+    - coverage.pdf
+    - coverage.tar.gz
+  extends: .debug_build_with_tests
+debug_tests_devel:
+  allow_failure: true
+  extends: .debug_build_with_tests
+  image: mxklb/docker-qt5-deb:devel
+debug_tests_rolling:
+  allow_failure: true
+  extends: .debug_build_with_tests
+  image: mxklb/docker-qt5-deb:rolling
+image: mxklb/docker-qt5-deb
+release_build:
+  before_script:
+  - chmod +x gitlab.sh && ./gitlab.sh
+  - echo "catchTests=false" > globals.pri
+  script: *id002
+  stage: build
+release_tests:
+  script: *id002
+  stage: tests
+stages:
+- tests
+- build
+- deploy
+- release

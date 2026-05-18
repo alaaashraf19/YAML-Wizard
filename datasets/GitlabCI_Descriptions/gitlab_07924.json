@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_07924",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1174,
+  "description": "Create a GitLab CI pipeline that uses the docker:latest image with a docker:dind service and defines DOCKER_DRIVER=overlay and SPRING_PROFILES_ACTIVE=gitlab-ci variables. Define three stages: build, package, and deploy. In the build stage add a maven-build job that runs the maven:3-jdk-8 image, executes mvn package -B, and saves target/*.jar as artifacts. In the package stage add a docker-build job that runs docker build -t registry.gitlab.com/freundchen/spring-boot-and-react ., then docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com, and finally docker push registry.gitlab.com/freundchen/spring-boot-and-react. In the deploy stage add a k8s-deploy job that uses the google/cloud-sdk image to write $GOOGLE_KEY to key.json, authenticate with gcloud, set the compute zone to europe-west3-b, set the project to spring-boot-and-react, enable client certificates, retrieve the cluster credentials, create a Docker registry secret using $REGISTRY_PASSWD, and apply deployment.yml with kubectl.",
+  "tags": [
+    "docker",
+    "dind",
+    "maven",
+    "java",
+    "spring-boot",
+    "kubernetes",
+    "gcloud",
+    "ci-variables",
+    "registry",
+    "deployment"
+  ]
+}

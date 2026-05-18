@@ -1,0 +1,15 @@
+{
+  "sha": "6f748b74b45be5a417918ec403b3bd6c869c3d8eca1d7bbb869596277687def6",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1837,
+  "description": "Create a GitHub Actions workflow named Build openSUSE that runs on every push to the master branch and on pull requests to master. Use a single ubuntu-latest job in a Tumbleweed container with a matrix strategy for different LLVM versions and build types. Install required packages, set up the environment, build the project with CMake and make, run flake8 and pyupgrade on Python files, and execute tests with pytest.",
+  "tags": [
+    "opensuse",
+    "llvm",
+    "cmake",
+    "python",
+    "pytest",
+    "flake8"
+  ]
+}

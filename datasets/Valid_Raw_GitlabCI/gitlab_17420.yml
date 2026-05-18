@@ -1,0 +1,51 @@
+formatting:
+  before_script:
+  - rustup component add rustfmt-preview
+  script:
+  - rustc --version && cargo --version
+  - bash ./bin/check-formatting
+  stage: pre
+image: rust:latest
+pages:
+  artifacts:
+    paths:
+    - public
+  before_script:
+  - apt-get update -yqq
+  - apt-get install -yqq --no-install-recommends libzmq3-dev
+  cache:
+    paths:
+    - target/doc
+  only:
+  - dev
+  script:
+  - cargo doc --no-deps
+  - mv target/doc public
+  - echo '<meta http-equiv="refresh" content=0;url=jupyter_client/index.html>' > public/index.html
+  stage: pre
+stages:
+- pre
+- test
+test:nightly:
+  before_script:
+  - apt-get update -yqq
+  - apt-get install -yqq --no-install-recommends libzmq3-dev
+  - rustup install nightly
+  cache:
+    paths:
+    - target/debug
+  script:
+  - rustc --version && cargo --version
+  - RUST_VERSION=nightly bash ./bin/test
+  stage: test
+test:stable:
+  before_script:
+  - apt-get update -yqq
+  - apt-get install -yqq --no-install-recommends libzmq3-dev
+  cache:
+    paths:
+    - target/debug
+  script:
+  - rustc --version && cargo --version
+  - bash ./bin/test
+  stage: test

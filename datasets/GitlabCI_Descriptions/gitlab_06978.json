@@ -1,0 +1,25 @@
+{
+  "sha": "gitlab_06978",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 10484,
+  "description": "Create a GitLab CI pipeline with variables LANG and LC_ALL set to C.UTF-8, four stages linting, build, test, and deploy, and all jobs limited to merge_requests. In the linting stage run a code format job on alpine:3.12 (docker tag) that installs clang and python3, prints clang-format version, and executes ./tools/run-clang-format.py -j 1 -r --exclude tests/doctest.h src tests examples; a header updated job on amd64/alpine:3.12 that installs m4 and runs ./tools/is_header_up_to_date.sh; a posix coverage job on amd64/alpine:3.12 that installs cmake g++ ninja m4 gcovr and runs ./tools/coverage.sh producing a Cobertura report artifact; and a static linting job on ubuntu:18.04 that installs cmake g++ clang ninja-build clang-tidy, configures a Ninja build with export compile commands, and runs clang-tidy on source files, all with docker tags and only on merge_requests. In the build stage compile various targets: linux gcc v9.3 x86 on i386/alpine:3.12, linux gcc v9.3 x86-64 on amd64/alpine:3.12, four mingw-w64 cross‑compile jobs on appropriate alpine images with toolchain files (installing cmake, mingw-w64-gcc, ninja, m4), configuring Ninja, building, and moving test binaries to artifact paths; and a windows‑any msvc v19.40 job on a Windows SaaS runner that runs '& ./tools/build_msvc.bat', creates a build directory, and moves Debug/Release binaries to artifact paths, all restricted to merge_requests. In the test stage run linux test x86 and linux test x86-64 jobs on matching alpine images, each depending on their respective build jobs, installing libstdc++ and executing the built test binaries with JUnit reporters to generate XML reports as artifacts; also run a windows‑any tests job on the Windows SaaS runner depending on the msvc and mingw builds, executing each test binary with JUnit reporters and publishing all XML reports, all limited to merge_requests. Finally, in the deploy stage run a sphinx job on ubuntu:22.04 that updates apt, installs python3-pip, make, doxygen, installs documentation requirements from docs/requirements.txt, builds HTML with make, and runs only on merge_requests.",
+  "tags": [
+    "alpine",
+    "ubuntu",
+    "windows",
+    "clang-format",
+    "cmake",
+    "ninja",
+    "gcc",
+    "mingw",
+    "msvc",
+    "junit",
+    "coverage",
+    "sphinx",
+    "linting",
+    "build",
+    "test",
+    "deploy"
+  ]
+}

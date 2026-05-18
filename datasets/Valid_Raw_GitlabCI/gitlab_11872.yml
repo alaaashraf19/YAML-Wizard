@@ -1,0 +1,38 @@
+.pre_install:
+  before_script: &id001
+  - echo "Put your pre-instructions here!"
+image: composer
+pages:
+  artifacts:
+    paths:
+    - public
+  dependencies:
+  - test:app
+  only:
+  - master
+  script:
+  - mkdir public
+  - cp ci/pages/index.html public/
+  - cp reports/* public/
+  stage: deploy
+stages:
+- test
+- deploy
+test:app:
+  artifacts:
+    expire_in: 30m
+    paths:
+    - reports
+  before_script: *id001
+  script:
+  - apk add --no-cache $PHPIZE_DEPS
+  - pecl install xdebug-2.6.0
+  - docker-php-ext-enable xdebug
+  - composer install
+  - ./vendor/bin/phpunit --testsuite=unit --coverage-text --colors=never --log-junit
+    reports/phpunit-junit.log --testdox-html reports/phpunit-report.html
+  - ./vendor/bin/phpcs -sw --standard=phpcs_squiz.xml.dist src --basepath=. --report=full
+    --report-file=reports/phpcs-report.log || echo "phpcs failed"
+  - ./vendor/bin/phpmd src html phpmd.xml.dist --reportfile reports/phpmd-report.html
+    --ignore-violations-on-exit
+  stage: test

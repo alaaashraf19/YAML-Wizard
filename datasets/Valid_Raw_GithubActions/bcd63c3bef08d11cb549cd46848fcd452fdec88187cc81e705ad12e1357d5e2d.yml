@@ -1,0 +1,32 @@
+name: publish
+
+env:
+  AZURE_WEBAPP_NAME: devBetter
+  AZURE_GROUP_NAME: DevBetterGroup
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-and-deploy:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.101
+    
+    - name: Build and test
+      run: dotnet test --configuration Release
+    - name: publish
+      run: dotnet publish ./src/DevBetterWeb.Web/DevBetterWeb.Web.csproj -c Release -o WebApp
+    
+    - name: publish to azure     
+      uses: azure/webapps-deploy@v2
+      with:
+        publish-profile: ${{ secrets.azureWebAppPublishProfile }}

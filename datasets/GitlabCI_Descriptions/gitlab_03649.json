@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_03649",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 366,
+  "description": "Create a GitLab CI pipeline that uses the default Docker image and runs a before_script that updates apt, installs python-dev python-pip bridge-utils qemu, upgrades setuptools via pip, and installs the project with python setup.py install. Define a job named irati-test in the test stage that executes the command python examples/vpn.py. Define a pages job in the deploy stage that runs pip install sphinx sphinx_rtd_theme then sphinx-build doc/ public/, publishes the public/ directory as a pages artifact, and only runs on the master branch.",
+  "tags": [
+    "python",
+    "sphinx",
+    "gitlab-pages",
+    "apt",
+    "vpn"
+  ]
+}

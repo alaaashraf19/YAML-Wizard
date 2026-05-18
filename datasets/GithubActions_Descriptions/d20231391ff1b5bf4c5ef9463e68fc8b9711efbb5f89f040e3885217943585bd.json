@@ -1,0 +1,14 @@
+{
+  "sha": "d20231391ff1b5bf4c5ef9463e68fc8b9711efbb5f89f040e3885217943585bd",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1274,
+  "description": "Create a GitHub Actions workflow named Release that triggers on push to the master branch. Use an ubuntu-latest job to check if a release should be created using the release-please-action. If a release is created, use another ubuntu-latest job to check out the repository, set up Python 3.9, install dependencies, build a distribution, publish it to PyPI, and deploy documentation.",
+  "tags": [
+    "python",
+    "release",
+    "pypi",
+    "documentation",
+    "github-actions"
+  ]
+}

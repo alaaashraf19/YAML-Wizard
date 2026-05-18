@@ -1,0 +1,263 @@
+#
+# Copyright 2020 - 2022 Free Software Foundation, Inc.
+#
+# This file is part of VOLK
+#
+# SPDX-License-Identifier: LGPL-3.0-or-later
+#
+
+name: Run VOLK tests
+
+on: [push, pull_request]
+
+jobs:
+  build-ubuntu:
+    name: Build on ${{ matrix.compiler.distro }} ${{ matrix.compiler.name }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: 
+          - { name: g++-7, cc: gcc-7, cxx: g++-7, distro: ubuntu-20.04 }
+          - { name: g++-8, cc: gcc-8, cxx: g++-8, distro: ubuntu-20.04 }
+          - { name: g++-9, cc: gcc-9, cxx: g++-9, distro: ubuntu-latest }
+          - { name: g++-10, cc: gcc-10, cxx: g++-10, distro: ubuntu-latest }
+          - { name: clang-7, cc: clang-7, cxx: clang++-7, distro: ubuntu-20.04 }
+          - { name: clang-8, cc: clang-8, cxx: clang++-8, distro: ubuntu-20.04 }
+          - { name: clang-9, cc: clang-9, cxx: clang++-9, distro: ubuntu-20.04 }
+          - { name: clang-10, cc: clang-10, cxx: clang++-10, distro: ubuntu-20.04 }
+          - { name: clang-11, cc: clang-11, cxx: clang++-11, distro: ubuntu-20.04 }
+          - { name: clang-12, cc: clang-12, cxx: clang++-12, distro: ubuntu-latest }
+          - { name: clang-13, cc: clang-13, cxx: clang++-13, distro: ubuntu-latest }
+          - { name: clang-14, cc: clang-14, cxx: clang++-14, distro: ubuntu-latest }
+          # - { name: clang-15, cc: clang-15, cxx: clang++-15, distro: ubuntu-latest }
+
+    runs-on: ${{ matrix.compiler.distro }}
+    
+    steps:
+    - uses: actions/checkout@v3.1.0
+      with:
+        submodules: 'recursive'
+    - name: Install dependencies
+      run: sudo apt install python3-mako liborc-dev ${{ matrix.compiler.name }}
+    - name: Configure
+      env:
+        CC: ${{ matrix.compiler.cc }}
+        CXX: ${{ matrix.compiler.cxx }}
+      run: mkdir build && cd build && cmake -DCMAKE_CXX_FLAGS="-Werror" -DBUILD_EXECUTABLE=ON ..
+    - name: Build
+      run: |
+        echo "Build with $(nproc) thread(s)"
+        cmake --build build -j$(nproc)
+    - name: Print info
+      run: |
+        ./build/cpu_features/list_cpu_features
+        ./build/apps/volk-config-info --alignment
+        ./build/apps/volk-config-info --avail-machines
+        ./build/apps/volk-config-info --all-machines
+        ./build/apps/volk-config-info --malloc
+        ./build/apps/volk-config-info --cc
+    - name: Test
+      run: |
+        cd build
+        ctest -V
+
+  build-ubuntu-arm:
+    # The host should always be linux
+    # see: https://github.com/uraimo/run-on-arch-action
+    runs-on: ubuntu-latest
+    name: Build on ${{ matrix.distro }} ${{ matrix.arch }} ${{ matrix.compiler.name }}
+
+    # Run steps on a matrix of compilers and possibly archs.
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: aarch64
+            distro: ubuntu20.04
+            compiler: { name: g++-8, cc: gcc-8, cxx: g++-8 }
+          - arch: aarch64
+            distro: ubuntu20.04
+            compiler: { name: g++-9, cc: gcc-9, cxx: g++-9 }
+          - arch: aarch64
+            distro: ubuntu20.04
+            compiler: { name: g++-10, cc: gcc-10, cxx: g++-10 }
+          - arch: aarch64
+            distro: ubuntu22.04
+            compiler: { name: g++-12, cc: gcc-12, cxx: g++-12 }
+          - arch: aarch64
+            distro: ubuntu20.04
+            compiler: { name: clang-9, cc: clang-9, cxx: clang++-9 }
+          - arch: aarch64
+            distro: ubuntu20.04
+            compiler: { name: clang-10, cc: clang-10, cxx: clang++-10 }
+          - arch: aarch64
+            distro: ubuntu22.04
+            compiler: { name: clang-14, cc: clang-14, cxx: clang++-14 }
+          - arch: armv7
+            distro: ubuntu22.04
+            compiler: { name: g++-12, cc: gcc-12, cxx: g++-12 }
+          - arch: ppc64le
+            distro: ubuntu22.04
+            compiler: { name: g++-12, cc: gcc-12, cxx: g++-12 }
+          - arch: s390x
+            distro: ubuntu22.04
+            compiler: { name: g++-12, cc: gcc-12, cxx: g++-12 }
+          # It would be really nice to test on Risc-V but that'll take time.
+          - arch: riscv64
+            distro: ubuntu22.04
+            compiler: { name: g++-12, cc: gcc-12, cxx: g++-12 }
+    
+    steps:
+      - uses: actions/checkout@v3.1.0
+        with:
+          submodules: 'recursive'
+      - uses: uraimo/run-on-arch-action@v2.5.0
+        name: Build in non-x86 container
+        continue-on-error: ${{ contains(fromJson('["ppc64le", "s390x"]'), matrix.arch) || contains(fromJson('["clang-14"]'), matrix.compiler.name) }}
+        id: build
+        with:
+          arch: ${{ matrix.arch }}
+          distro: ${{ matrix.distro }}
+
+          # Not required, but speeds up builds
+          githubToken: ${{ github.token }}
+
+          setup: |
+            mkdir -p "${PWD}/build"
+
+          dockerRunArgs: |
+            --volume "${PWD}:/volk"
+
+          env: | # YAML, but pipe character is necessary
+            CC: ${{ matrix.compiler.cc }}
+            CXX: ${{ matrix.compiler.cxx }}
+
+          shell: /bin/sh
+
+          install: |
+            case "${{ matrix.distro }}" in
+              ubuntu*|jessie|stretch|buster)
+                apt-get update -q -y
+                apt-get install -q -y git cmake python3-mako liborc-dev ${{ matrix.compiler.name }}
+                ;;
+              fedora*)
+                dnf -y update
+                dnf -y install git which
+                ;;
+            esac
+
+          run: |
+            cd /volk
+            cd build
+            cmake -DCMAKE_CXX_FLAGS="-Werror" -DBUILD_EXECUTABLE=ON ..
+            echo "Build with $(nproc) thread(s)"
+            make -j$(nproc)
+            ./cpu_features/list_cpu_features
+            ./apps/volk-config-info --alignment
+            ./apps/volk-config-info --avail-machines
+            ./apps/volk-config-info --all-machines
+            ./apps/volk-config-info --malloc
+            ./apps/volk-config-info --cc
+            ctest -V
+
+  build-ubuntu-static:
+    name: Build static on ubuntu-latest
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3.1.0
+      with:
+        submodules: 'recursive'
+    - name: dependencies
+      run: sudo apt install python3-mako liborc-dev
+    - name: configure
+      run: mkdir build && cd build && cmake -DENABLE_STATIC_LIBS=True -DBUILD_EXECUTABLE=ON ..
+    - name: build
+      run: cmake --build build -j$(nproc)
+    - name: Print info
+      run: |
+        ./build/cpu_features/list_cpu_features
+        ./build/apps/volk-config-info --alignment
+        ./build/apps/volk-config-info --avail-machines
+        ./build/apps/volk-config-info --all-machines
+        ./build/apps/volk-config-info --malloc
+        ./build/apps/volk-config-info --cc
+    - name: test
+      run: cd build && ctest -V
+
+  build-windows:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v3.1.0
+      with:
+        submodules: 'recursive'
+    - name: dependencies
+      run: pip install mako
+    - name: configure
+      run: mkdir build && cd build && cmake ..
+    - name: build
+      run: cmake --build build --config Release --target INSTALL -j2
+    - name: test
+      run: cd build && ctest -V -C Release
+
+  # build-windows-msys2:
+  #   name: Build on windows-latest using MinGW and MSYS2
+    
+  #   runs-on: windows-latest
+  #   steps:
+  #     - uses: msys2/setup-msys2@v2
+  #       with:
+  #         update: true
+  #         install: >-
+  #           base-devel
+  #           git
+  #           mingw-w64-x86_64-gcc-libs
+  #           mingw-w64-x86_64-orc
+  #           python
+  #           python-mako
+  #           python-six
+  #           mingw-w64-x86_64-gcc
+  #           mingw-w64-x86_64-cmake
+  #     - uses: actions/checkout@v2
+  #     - name: Checkout submodules
+  #       run: git submodule update --init --recursive
+  #     - name: Configure
+  #       shell: msys2 {0}
+  #       run: mkdir build && cd build && cmake -G "MSYS Makefiles" -DCMAKE_BUILD_TYPE=Release -DPYTHON_EXECUTABLE=/usr/bin/python3 -DCMAKE_CXX_FLAGS="-Werror" ..
+  #     - name: Build
+  #       shell: msys2 {0}
+  #       run: cd build && make -j$(nproc)
+  #     - name: Test 
+  #       shell: msys2 {0}
+  #       run: |
+  #         cd build
+  #         ctest -V
+
+  build-macos:
+
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v3.1.0
+      with:
+        submodules: 'recursive'
+    - name: dependencies
+      run: pip3 install mako
+    - name: configure
+      run: mkdir build && cd build && cmake -DBUILD_EXECUTABLE=ON ..
+    - name: build
+      run: cmake --build build --config Debug -j3
+    - name: Print info
+      run: |
+        ./build/cpu_features/list_cpu_features
+        # ./build/apps/volk-config-info --alignment
+        # ./build/apps/volk-config-info --avail-machines
+        # ./build/apps/volk-config-info --all-machines
+        # ./build/apps/volk-config-info --malloc
+        # ./build/apps/volk-config-info --cc
+    - name: test
+      run: cd build && ctest -V

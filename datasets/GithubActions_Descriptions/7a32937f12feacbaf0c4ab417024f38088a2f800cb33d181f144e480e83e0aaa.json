@@ -1,0 +1,15 @@
+{
+  "sha": "7a32937f12feacbaf0c4ab417024f38088a2f800cb33d181f144e480e83e0aaa",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1935,
+  "description": "Create a GitHub Actions workflow that triggers on push and pull requests. Run two parallel jobs: one to build a source package and another to build Sphinx documentation. Both jobs should use ubuntu-latest, check out the code, install uv, and set up Python. The source package job should install dependencies, install the project with uv, run unit tests with pytest, create a source package, and upload it as an artifact. The documentation job should install dependencies, install the project, build Sphinx documentation, and upload it as an artifact.",
+  "tags": [
+    "python",
+    "sphinx",
+    "ubuntu",
+    "packaging",
+    "documentation",
+    "tests"
+  ]
+}

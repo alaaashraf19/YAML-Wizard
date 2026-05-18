@@ -1,0 +1,16 @@
+{
+  "sha": "413361cf2c24b8902dfc3756dc55793f336207fb6595e76bb34c05d5c3abc84f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1956,
+  "description": "Create a GitHub Actions workflow named Build & publish PyPI packages that triggers on push of tags matching v[0-9]+.** and on workflow dispatch. The workflow should have three jobs: Make SDist, upload to test PyPI, and upload to PyPI. The Make SDist job should run on multiple OS environments, set up Miniconda, build a source distribution, and upload the artifact. The other two jobs should download the artifact and upload it to test PyPI and PyPI respectively, using provided API tokens.",
+  "tags": [
+    "python",
+    "pypi",
+    "release",
+    "tags",
+    "conda",
+    "sdist",
+    "workflow-dispatch"
+  ]
+}

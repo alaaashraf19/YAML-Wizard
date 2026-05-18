@@ -1,0 +1,107 @@
+name: Build & publish PyPI packages
+
+on:
+  push:
+    tags:
+      - v[0-9]+.**
+  workflow_dispatch:
+
+jobs:
+  build-sdist:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+      - name: Building source package
+        run: |
+          python -m pip install --upgrade pip build
+          python -m build --sdist
+      - uses: actions/upload-artifact@v3
+        with:
+          name: packages
+          path: "dist/*"
+
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        python-version: ["3.11"]
+        include:
+          - os: "macos-latest"
+            cibuild: "*macosx*"
+          - os: "ubuntu-latest"
+            cibuild: "*manylinux*"
+          - os: "ubuntu-latest"
+            cibuild: "*musllinux*"
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up MSVC
+        uses: ilammy/msvc-dev-cmd@v1
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - name: Install build dependencies
+        run: |
+          python -m pip install --upgrade pip wheel oldest-supported-numpy
+          python -m pip install conan ninja
+          conan install zlib/1.2.13@ -s compiler.version='16' -g cmake_paths
+      - name: Build wheels ${{ matrix.python-version }}   # check https://cibuildwheel.readthedocs.io/en/stable/setup/#github-actions
+        uses: pypa/cibuildwheel@v2.11.2
+        env:
+          CIBW_BUILD: ${{ matrix.cibuild }}
+          CMAKE_GENERATOR: "Ninja"
+          CMAKE_TOOLCHAIN_FILE: "conan_paths.cmake"
+      - uses: actions/upload-artifact@v3
+        with:
+          name: packages
+          path: "dist/*.whl"
+
+# The following was taken from https://cibuildwheel.readthedocs.io/en/stable/deliver-to-pypi/
+  make_sdist:
+    name: Make SDist
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0  # Optional, use if you use setuptools_scm
+        submodules: true  # Optional, use if you have submodules
+
+    - name: Build SDist
+      run: pipx run build --sdist
+
+    - uses: actions/upload-artifact@v2
+      with:
+        path: dist/*.tar.gz
+
+  upload_to_test_pypy:
+    needs: [build, make_sdist]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/download-artifact@v2
+      with:
+        name: artifact
+        path: dist
+
+    - uses: pypa/gh-action-pypi-publish@v1.4.2
+      continue-on-error: true   # might fail if we don't bump the version
+      with:
+        user: __token__
+        password: ${{ secrets.test_pypi_password }}
+        repository_url: https://test.pypi.org/legacy/
+
+  upload_to_pypi:
+    needs: [build, make_sdist]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release' && github.event.action == 'published'
+    steps:
+    - uses: actions/download-artifact@v2
+      with:
+        name: artifact
+        path: dist
+
+    - uses: pypa/gh-action-pypi-publish@v1.4.2
+      with:
+        user: __token__
+        password: ${{ secrets.pypi_password }}

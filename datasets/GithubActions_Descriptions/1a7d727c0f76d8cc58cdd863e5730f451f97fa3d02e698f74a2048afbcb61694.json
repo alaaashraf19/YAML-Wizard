@@ -1,0 +1,15 @@
+{
+  "sha": "1a7d727c0f76d8cc58cdd863e5730f451f97fa3d02e698f74a2048afbcb61694",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1537,
+  "description": "Create a GitHub Actions workflow named publish nuget that triggers on push events with any tag. The workflow should run on an ubuntu-latest environment, checking out the code and setting up .NET SDK 5.0.100. It should then dynamically update a version number in a specific C# file based on the GitHub tag reference, pack multiple .NET projects with a version derived from the tag, and push the resulting NuGet packages to NuGet.org using a provided API key.",
+  "tags": [
+    "dotnet",
+    "nuget",
+    "publish",
+    "tags",
+    "tests",
+    "code-coverage"
+  ]
+}

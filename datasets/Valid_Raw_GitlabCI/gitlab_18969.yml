@@ -1,0 +1,30 @@
+phpcs-cakephp:
+  allow_failure: true
+  image: willhallonline/cakephp-phpcs:alpine
+  script:
+  - phpcs ./
+phpcs-drupal:
+  allow_failure: true
+  image: willhallonline/drupal-phpcs:alpine
+  script:
+  - phpcs ./
+phpcs-laravel:
+  allow_failure: true
+  image: willhallonline/laravel-phpcs:alpine
+  script:
+  - phpcs ./
+phpcs-psr:
+  allow_failure: true
+  image: willhallonline/phpcs:alpine
+  script:
+  - phpcs ./
+phpcs-wordpress:
+  allow_failure: true
+  image: willhallonline/wordpress-phpcs:alpine
+  script:
+  - phpcs ./
+phpcs-yii:
+  allow_failure: true
+  image: willhallonline/yii-phpcs:alpine
+  script:
+  - phpcs ./

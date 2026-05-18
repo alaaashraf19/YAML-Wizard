@@ -1,0 +1,17 @@
+{
+  "sha": "61a7e3f75fedda9cd298c3b9f3730d4028c8e95f75d8d0cbed9cc44dd7fe5640",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1043,
+  "description": "Create a GitHub Actions workflow named main that triggers on push events. Use a matrix strategy to run a build job on both ubuntu-latest and windows-latest environments with Python versions 3.8, 3.9, 3.10, and 3.11. For each job, check out the code, set up the corresponding Python version, install dependencies with poetry, run make commands to check dependencies, install dependencies, check code, test code, and run a demo. Upload coverage to Codecov only for ubuntu-latest with Python 3.8.",
+  "tags": [
+    "python",
+    "poetry",
+    "make",
+    "codecov",
+    "tests",
+    "matrix",
+    "ubuntu",
+    "windows"
+  ]
+}

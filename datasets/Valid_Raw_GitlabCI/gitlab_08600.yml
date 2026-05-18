@@ -1,0 +1,62 @@
+.package-and-qa:
+  needs:
+  - ubuntu_20.04 test
+  - ubuntu_20.04_fips test
+  stage: qa
+  trigger:
+    branch: master
+    project: gitlab-org/build/omnibus-gitlab-mirror
+    strategy: depend
+  variables:
+    BUILDER_IMAGE_REGISTRY: ${CI_REGISTRY_IMAGE}/staging
+    BUILDER_IMAGE_REVISION: ${CI_COMMIT_REF_SLUG}
+    DEV_BUILDER_IMAGE_REGISTRY: dev.gitlab.org:5005/cookbooks/gitlab-omnibus-builder/staging
+    PUBLIC_BUILDER_IMAGE_REGISTRY: ${CI_REGISTRY_IMAGE}/staging
+.trigger-build-packages-dev: &id001
+  before_script:
+  - git clone "https://${OMNIBUS_GITLAB_BUILDER_IMAGE_BOT_USERNAME}:${OMNIBUS_GITLAB_BUILDER_IMAGE_BOT_PASSWORD}@${DEV_OMNIBUS_GITLAB_PROJECT}"
+  - cd omnibus-gitlab
+  - git checkout -B ${DEV_OMNIBUS_GITLAB_BRANCH}
+  - git merge master
+  - git push origin ${DEV_OMNIBUS_GITLAB_BRANCH} -o ci.skip
+  image: registry.gitlab.com/gitlab-org/gitlab-build-images:alpine-bash-jq-curl-git
+  rules:
+  - allow_failure: true
+    if: $PIPELINE_TYPE =~ "/CANONICAL_(FEATURE_BRANCH|MERGE_REQUEST)_PIPELINE/"
+    variables:
+      DEV_OMNIBUS_GITLAB_BRANCH: omnibus-gitlab-builder-branch
+      DEV_OMNIBUS_GITLAB_PROJECT: dev.gitlab.org/gitlab/omnibus-gitlab.git
+      DEV_OMNIBUS_GITLAB_TRIGGER_URL: https://dev.gitlab.org/api/v4/projects/283/trigger/pipeline
+      DEV_REGISTRY_IMAGE: dev.gitlab.org:5005/cookbooks/gitlab-omnibus-builder
+    when: manual
+  script:
+  - curl --silent --request POST --form "token=${DEV_TRIGGER_TOKEN}" --form "ref=${DEV_OMNIBUS_GITLAB_BRANCH}"
+    --form "variables[BUILDER_IMAGE_REGISTRY]=${DEV_REGISTRY_IMAGE}/staging" --form
+    "variables[DEV_BUILDER_IMAGE_REGISTRY]=${DEV_REGISTRY_IMAGE}/staging" --form "variables[BUILDER_IMAGE_REVISION]=${CI_COMMIT_REF_SLUG}"
+    ${TRIGGER_EXTRA_ARGS} ${DEV_OMNIBUS_GITLAB_TRIGGER_URL}
+  services: []
+  stage: qa
+build-ce-packages: *id001
+build-ee-packages:
+  extends: .trigger-build-packages-dev
+  variables:
+    TRIGGER_EXTRA_ARGS: --form variables[ee]=true
+include:
+- local: /.gitlab/ci/templates.gitlab-ci.yml
+package-and-qa-ce:
+  extends: .package-and-qa
+  rules:
+  - allow_failure: true
+    if: $PIPELINE_TYPE =~ "/CANONICAL_(FEATURE_BRANCH|MERGE_REQUEST)_PIPELINE/"
+    variables:
+      PIPELINE_TYPE: TRIGGERED_CE_PIPELINE
+    when: manual
+package-and-qa-ee:
+  extends: .package-and-qa
+  rules:
+  - allow_failure: true
+    if: $PIPELINE_TYPE =~ "/CANONICAL_(FEATURE_BRANCH|MERGE_REQUEST)_PIPELINE/"
+    variables:
+      PIPELINE_TYPE: TRIGGERED_EE_PIPELINE
+      ee: 'true'
+    when: manual

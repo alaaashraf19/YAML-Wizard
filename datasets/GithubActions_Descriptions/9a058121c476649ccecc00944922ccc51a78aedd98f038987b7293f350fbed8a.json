@@ -1,0 +1,14 @@
+{
+  "sha": "9a058121c476649ccecc00944922ccc51a78aedd98f038987b7293f350fbed8a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3011,
+  "description": "Create a GitHub Actions workflow to periodically update the Catch library to the latest release. The workflow should trigger on a schedule and on workflow dispatch. It should run on an ubuntu-latest environment with read repository contents permission. The workflow should check the current Catch version in the repository, compare it with the latest release tag, and if they differ, update the Catch library and create a pull request with the changes.",
+  "tags": [
+    "catch",
+    "dependencies",
+    "update",
+    "github-actions",
+    "automated-pr"
+  ]
+}

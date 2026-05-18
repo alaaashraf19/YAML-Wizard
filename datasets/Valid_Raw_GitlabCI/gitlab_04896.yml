@@ -1,0 +1,24 @@
+before_script:
+- apk update
+- apk add bash
+build_conda_base:
+  script:
+  - bash build_image.sh conda_base
+  stage: build
+build_python1:
+  script:
+  - bash build_image.sh python1
+  stage: build
+build_python2:
+  script:
+  - bash build_image.sh python2
+  stage: build
+build_ubuntu_base:
+  script:
+  - bash build_image.sh ubuntu_base
+  stage: build
+image: docker:git
+services:
+- docker:dind
+stages:
+- build

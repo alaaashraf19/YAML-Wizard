@@ -1,0 +1,84 @@
+build:
+  artifacts:
+    paths:
+    - '*/target/'
+    reports:
+      junit:
+      - '*/target/surefire-reports/TEST-*.xml'
+      - '*/target/failsafe-reports/TEST-*.xml'
+    when: always
+  except:
+  - tags
+  interruptible: true
+  script:
+  - mvn $MAVEN_CLI_OPTS -Pcoverage clean verify install
+  stage: build
+cache:
+  paths:
+  - .m2/repository
+  - .sonar/cache
+deploy:
+  artifacts:
+    paths:
+    - Fudaa-Prepro-*.zip
+  before_script:
+  - bash /ci_scripts/prevent_maven_recompile.sh
+  dependencies:
+  - build
+  only:
+  - master
+  script:
+  - mvn $MAVEN_CLI_OPTS -DskipTests -Passemble -Dmaven.test.skip=true install
+  - mv ui/target/Fudaa-Prepro-*.zip ./
+  stage: deploy
+deploy_release:
+  artifacts:
+    paths:
+    - Fudaa-Prepro-*.zip
+  dependencies: []
+  except:
+  - branches
+  only:
+  - /^release-.*$/
+  script:
+  - mvn $MAVEN_CLI_OPTS -Passemble install
+  - mv ui/target/Fudaa-Prepro-*.zip ./
+  stage: deploy
+generate_sonar_report:
+  allow_failure: true
+  before_script:
+  - bash /ci_scripts/prevent_maven_recompile.sh
+  cache:
+    key: ${CI_JOB_NAME}
+    paths:
+    - .sonar/cache
+  dependencies:
+  - build
+  interruptible: true
+  only:
+  - master
+  script:
+  - mvn sonar:sonar -Dsonar.projectKey=fudaa-prepro -Dsonar.organization=fudaa -Dsonar.host.url=https://sonarcloud.io
+    -Dsonar.login=$SONAR_TOKEN
+  stage: deploy
+  variables:
+    GIT_DEPTH: '0'
+    SONAR_USER_HOME: ${CI_PROJECT_DIR}/.sonar
+image: registry.gitlab.com/fudaa/fudaa-scripts:21
+release:
+  dependencies: []
+  except:
+  - tags
+  script:
+  - bash /ci_scripts/maven_tag_new_version_and_next_snapshot.sh
+  stage: release
+  when: manual
+stages:
+- build
+- deploy
+- release
+variables:
+  MAVEN_CLI_OPTS: --batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true
+    -DdeployAtEnd=true
+  MAVEN_OPTS: -Dhttps.protocols=TLSv1.2 -Dmaven.repo.local=.m2/repository -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN
+    -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true

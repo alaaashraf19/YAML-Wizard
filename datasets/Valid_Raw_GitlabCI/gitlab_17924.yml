@@ -1,0 +1,16 @@
+pages:
+  artifacts:
+    paths:
+    - public
+  before_script:
+  - apt update -q
+  - apt install pandoc -yqq
+  only:
+  - master
+  script:
+  - "for d in pres*/; do\n  echo \"Building presentation in $d...\"\n  cd \"$d\"\n\
+    \  make\n  cd -\ndone\n"
+  - mkdir .public
+  - cp -r pres* .public
+  - mv .public public
+  stage: deploy

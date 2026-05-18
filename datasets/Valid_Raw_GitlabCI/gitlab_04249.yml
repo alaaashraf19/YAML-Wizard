@@ -1,0 +1,33 @@
+before_script:
+- ruby -v
+- gem install bundler  --no-ri --no-rdoc
+- bundle install -j $(nproc) --path vendor
+cache:
+  paths:
+  - vendor/ruby
+deploy:
+  environment: production
+  script:
+  - gem install dpl
+  - dpl --provider=heroku --app=$HEROKU_APP_NAME --api-key=$HEROKU_PRODUCTION_KEY
+  type: deploy
+image: ruby:2.5
+rails:
+  script:
+  - rails db:migrate
+  - rails db:seed
+  - rails test
+  variables:
+    DATABASE_URL: postgresql://postgres:postgres@postgres:5432/$POSTGRES_DB
+rspec:
+  script:
+  - rspec spec
+rubocop:
+  script:
+  - rubocop
+services:
+- mysql:latest
+- redis:latest
+- postgres:latest
+variables:
+  POSTGRES_DB: database_name

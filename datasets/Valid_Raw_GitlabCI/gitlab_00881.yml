@@ -1,0 +1,149 @@
+before_script:
+- echo $HOME
+- VERSION=`cat angreal/VERSION`
+- pip install virtualenv
+- virtualenv ~/.venv/angreal
+- source ~/.venv/angreal/bin/activate
+- pip install .[dev]
+cleanup_release:
+  only:
+  - tags
+  script:
+  - rm -vf ~/.pypirc
+  stage: release
+  when: always
+functional-test:
+  allow_failure: false
+  except:
+  - tags
+  image: python:3.6
+  script:
+  - doit functional_tests
+  stage: test
+image: python:3.6
+init_data_science_project:
+  allow_failure: true
+  before_script:
+  - echo ""
+  image: python:3
+  only:
+  - tags
+  script:
+  - pip install angreal
+  - angreal init data_science_project --no-input
+  stage: post_release
+init_gitlab_python:
+  allow_failure: true
+  before_script:
+  - echo ""
+  image: python:3
+  only:
+  - tags
+  script:
+  - pip install angreal
+  - angreal init gitlab_python --no-input --no_pypi --no_gitlab
+  stage: post_release
+init_meeting_minutes:
+  allow_failure: true
+  before_script:
+  - echo ""
+  image: python:3
+  only:
+  - tags
+  script:
+  - pip install angreal
+  - angreal init meeting-minutes --no-input
+  stage: post_release
+init_presentation:
+  allow_failure: true
+  before_script:
+  - echo ""
+  image: python:3
+  only:
+  - tags
+  script:
+  - pip install angreal
+  - angreal init presentation --no-input
+  stage: post_release
+init_template:
+  allow_failure: true
+  before_script:
+  - echo ""
+  image: python:3
+  only:
+  - tags
+  script:
+  - pip install angreal
+  - angreal init template --no-input
+  stage: post_release
+install-test:
+  allow_failure: false
+  except:
+  - tags
+  image: python:3.6
+  script:
+  - pip install .
+  stage: test
+release:
+  before_script:
+  - VERSION=`cat angreal/VERSION`
+  - if ! [[ "$CI_BUILD_TAG" = "$VERSION" ]]; then echo "$VERSION does not match $CI_BUILD_TAG";
+    exit -1 ; fi
+  image: python:3.6
+  only:
+  - tags
+  script:
+  - pip install twine
+  - pip install .[dev]
+  - echo "[server-login]" >> ~/.pypirc
+  - echo "repository=https://pypi.python.org/pypi" >> ~/.pypirc
+  - echo "username="$PYPI_USER >> ~/.pypirc
+  - echo "password="$PYPI_PASSWORD >> ~/.pypirc
+  - python setup.py check sdist bdist_wheel
+  - twine upload --repository pypi dist/*
+  - echo "" > ~/.pypirc && rm ~/.pypirc
+  stage: release
+  when: manual
+release-test:
+  allow_failure: true
+  image: python:3.6
+  only:
+  - tags
+  script:
+  - pip install twine
+  - echo "[distutils]" >> ~/.pypirc
+  - echo "index-servers=" >> ~/.pypirc
+  - echo "  testpypi" >> ~/.pypirc
+  - echo "[testpypi]" >> ~/.pypirc
+  - echo 'repository=https://test.pypi.org/legacy/' >> ~/.pypirc
+  - echo 'username='$PYPI_USER >> ~/.pypirc
+  - echo 'password='$PYPI_PASSWORD >> ~/.pypirc
+  - python setup.py check sdist bdist_wheel
+  - twine upload --repository testpypi dist/*
+  - pip install --index-url https://test.pypi.org/simple/ angreal
+  - echo "" > ~/.pypirc && rm ~/.pypirc
+  stage: release
+stages:
+- test
+- release
+- post_release
+- pages
+trigger_docs:
+  before_script:
+  - echo "No need to setup"
+  only:
+  - master
+  script:
+  - curl --request POST --form "token=$GITLAB_TRIGGER_TOKEN" --form ref=master https://gitlab.com/api/v4/projects/$APP_PROJECT_ID/trigger/pipeline
+  stage: pages
+  variables:
+    APP_PROJECT_ID: 12432876
+unit-test:
+  coverage: /TOTAL.+ ([0-9]{1,3}%)/
+  except:
+  - tags
+  image: python:3.6
+  script:
+  - export GITLAB_CI=1
+  - doit tests
+  stage: test

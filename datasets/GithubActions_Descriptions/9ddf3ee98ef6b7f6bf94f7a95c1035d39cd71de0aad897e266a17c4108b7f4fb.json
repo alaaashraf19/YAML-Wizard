@@ -1,0 +1,18 @@
+{
+  "sha": "9ddf3ee98ef6b7f6bf94f7a95c1035d39cd71de0aad897e266a17c4108b7f4fb",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 11273,
+  "description": "Create a GitHub Actions workflow named Release Build that triggers on version tags (v[0-9]*). The workflow performs optimized/release builds for Linux, Windows, macOS, and Android, creates a release, and attaches build artifacts to the release. For each platform, it checks out the repository, installs dependencies, runs a build script, prepares artifacts, and uploads them. After all platform jobs complete, it creates a release with a body from the annotated tag message and uploads the release URL as an artifact. Finally, it publishes release artifacts to the release by downloading build artifacts, creating release files, and uploading them to the release.",
+  "tags": [
+    "release",
+    "multi-os",
+    "github-actions",
+    "ci",
+    "cd",
+    "android",
+    "linux",
+    "windows",
+    "macos"
+  ]
+}

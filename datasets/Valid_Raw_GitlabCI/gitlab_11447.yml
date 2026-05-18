@@ -1,0 +1,30 @@
+build_on_branches:
+  except:
+  - master
+  image: chybie/node-aws-cli
+  only:
+  - branches
+  script:
+  - python --version
+  - node --version
+  - cd app
+  - npm install
+  - ls -al
+  - npm test -- --coverage
+  - npm run build
+  - cd build
+  - ls -al
+upload_to_s3_frontend:
+  image: chybie/node-aws-cli
+  only:
+  - master
+  script:
+  - python --version
+  - node --version
+  - cd app
+  - npm install
+  - ls -al
+  - npm test -- --coverage
+  - npm run build
+  - cd build
+  - aws s3 sync . s3://${BUCKET_NAME}

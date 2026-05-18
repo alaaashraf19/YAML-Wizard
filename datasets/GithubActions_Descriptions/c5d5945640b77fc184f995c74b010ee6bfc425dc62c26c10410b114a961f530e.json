@@ -1,0 +1,14 @@
+{
+  "sha": "c5d5945640b77fc184f995c74b010ee6bfc425dc62c26c10410b114a961f530e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1069,
+  "description": "Create a GitHub Actions workflow that builds and pushes a Docker image when code is pushed to the develop branch under the util/docker/ubuntu-20.04_all-depenencies path or when manually dispatched. The workflow uses a self-hosted Linux runner, checks out the code, builds the Docker image with a specific Dockerfile, logs in to the GitHub Container Registry, and pushes the image with a lowercase repository owner name.",
+  "tags": [
+    "docker",
+    "github-actions",
+    "self-hosted-runner",
+    "linux",
+    "container-registry"
+  ]
+}

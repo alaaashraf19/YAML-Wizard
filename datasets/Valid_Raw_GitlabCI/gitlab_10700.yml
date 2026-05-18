@@ -1,0 +1,11 @@
+cache:
+  paths:
+  - node_modules/
+image: node:10
+stages:
+- test
+test:
+  script:
+  - npm install
+  - npm test
+  stage: test

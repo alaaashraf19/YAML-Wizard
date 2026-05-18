@@ -1,0 +1,14 @@
+{
+  "sha": "9a985aeac9a0f66e819506ddf8c52d7dda83bf803fcf3161cfe9ebd821ad4e21",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2883,
+  "description": "Create a CodeQL GitHub Actions workflow named CodeQL-js that analyzes JavaScript code. The workflow runs on pushes to the master branch, on pull requests to the master branch, and on a scheduled cron job. Use an ubuntu-22.04 job with read permissions for actions, contents, and write permissions for security events. The workflow checks out the repository, initializes CodeQL tools, performs CodeQL analysis, uploads results as a build artifact, filters SARIF results, and uploads the filtered SARIF file.",
+  "tags": [
+    "codeql",
+    "javascript",
+    "github-actions",
+    "security",
+    "analysis"
+  ]
+}

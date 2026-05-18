@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_06725",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1052,
+  "description": "Create a GitLab CI pipeline that uses the microsoft/dotnet:latest Docker image globally and runs a global before_script `dotnet restore RestRabbit.sln`. Define two stages: build and release. In the build stage add a `build` job that executes `dotnet build RestRabbit.sln` after the restore step. In the release stage add a `relase_version` job that runs only on tags, uses the docker:latest image with the docker:dind service, runs `docker version`, `docker info`, logs in to $CI_REGISTRY with the gitlab-ci-token via `docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY`, builds the image `${CI_REGISTRY}/${CI_PROJECT_PATH}:${CI_COMMIT_TAG}` from ./RestRabbit/Dockerfile with `docker build -t ${CI_REGISTRY}/${CI_PROJECT_PATH}:${CI_COMMIT_TAG} --pull -f ./RestRabbit/Dockerfile .` and pushes it with `docker push ${CI_REGISTRY}/${CI_PROJECT_PATH}:${CI_COMMIT_TAG}`, then logs out with `docker logout ${CI_REGISTRY}`. Also add a `release_latest` job that runs only on the master branch, uses the same docker image and service, performs the same docker version/info/login steps, builds the untagged image `${CI_REGISTRY}/${CI_PROJECT_PATH}` using `docker build -t ${CI_REGISTRY}/${CI_PROJECT_PATH} --pull -f ./RestRabbit/Dockerfile .` and pushes it, then logs out.",
+  "tags": [
+    "dotnet",
+    "docker",
+    "dind",
+    "release",
+    "gitlab-ci"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "sha": "b36a853b23d6ab5afb3db041566d320bf54457f926aa922cc36af29a4156a59d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1197,
+  "description": "Create a GitHub Actions workflow that builds and runs unit tests for the fprime-tutorial-math-component repository. The workflow should trigger on push events to devel and release branches, and on pull requests to those branches, excluding certain paths. It should also cancel in-progress runs if a newer run is started on a given PR, unless the ref is devel or release. Use two reusable workflows: one to get the target branch and another to build the project and run unit tests.",
+  "tags": [
+    "github-actions",
+    "reusable-workflows",
+    "unit-tests",
+    "fprime"
+  ]
+}

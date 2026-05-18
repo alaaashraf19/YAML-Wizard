@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_10331",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 597,
+  "description": "Create a GitLab CI pipeline that uses the default Docker image, adds the mdillon/postgis service, and defines POSTGRES_DB, POSTGRES_USER, and POSTGRES_PASSWORD variables. Include a before_script that runs apt-get update, apt-get install -q -y locales-all python3-pip libpq-dev python-dev libjpeg-dev zlib1g-dev libxml2-dev libxslt1-dev libgeos-dev libexiv2-dev python3-gdal libboost-python-dev libtidy-0.99-0, then pip3 install -r requirements_gitlab.txt, copies Makefile.example to Makefile and local_settings.py.gitlab-ci to local_settings.py, and sets LANG=french and LC_CTYPE=\"fr_FR.UTF8\". Add a job named master that runs on the jessie runner tag, executes the script make test_gitlab, and is limited to the master, v3.0, and v3.1 branches. No caches, artifacts, or additional stages are defined.",
+  "tags": [
+    "python",
+    "make",
+    "postgis",
+    "apt",
+    "gitlab-ci"
+  ]
+}

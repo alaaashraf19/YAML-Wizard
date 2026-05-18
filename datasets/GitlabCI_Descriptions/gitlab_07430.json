@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_07430",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1264,
+  "description": "Create a GitLab CI pipeline with two stages, test and deploy, using the python:3.6 Docker image for the UnitTest job and the ruby:2.4 image for the Deployment job. In the test stage, the UnitTest job runs a before_script that adds the Google Chrome apt repository, installs google-chrome-stable, xvfb, unzip, downloads and extracts chromedriver, installs Python requirements, runs Django migrations, collects static files, and starts the development server in the background. Its script then executes `coverage run --include='register/*','berita/*','ppwbisa/*','donasiDanForm/*','logins/*','about/*' manage.py test` followed by `coverage report -m` and runs only on successful pipelines. In the deploy stage, the Deployment job uses a before_script to install the dpl gem and the Heroku CLI, sets the environment to production with URL $HEROKU_APP_HOST, and its script runs `dpl --provider=heroku --app=$HEROKU_APPNAME --api-key=$HEROKU_APIKEY`, exports HEROKU_API_KEY, and triggers a database migration with `heroku run --app $HEROKU_APPNAME migrate`. No caches, artifacts, or additional rules are defined.",
+  "tags": [
+    "python-3.6",
+    "ruby-2.4",
+    "heroku",
+    "dpl",
+    "coverage",
+    "chrome",
+    "gitlab-ci"
+  ]
+}

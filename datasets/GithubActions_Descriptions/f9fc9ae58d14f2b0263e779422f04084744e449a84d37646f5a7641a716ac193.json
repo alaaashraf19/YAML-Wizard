@@ -1,0 +1,16 @@
+{
+  "sha": "f9fc9ae58d14f2b0263e779422f04084744e449a84d37646f5a7641a716ac193",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2987,
+  "description": "Create a Windows CI GitHub Actions workflow that runs on pull requests, pushes, published releases, and a weekly schedule. The workflow checks out the repository, sets up NSIS, MSBuild, and Conan, then creates a Conan profile. It attempts to restore libraries from the cache, installs them if necessary, saves the libraries to the cache, runs CMake, builds InspIRCd with MSBuild, and uploads the installer on releases.",
+  "tags": [
+    "windows",
+    "ci",
+    "nsis",
+    "msbuild",
+    "conan",
+    "cmake",
+    "inspircd"
+  ]
+}

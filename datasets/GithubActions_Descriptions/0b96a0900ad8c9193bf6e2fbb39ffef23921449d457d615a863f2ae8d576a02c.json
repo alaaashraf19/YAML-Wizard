@@ -1,0 +1,14 @@
+{
+  "sha": "0b96a0900ad8c9193bf6e2fbb39ffef23921449d457d615a863f2ae8d576a02c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1727,
+  "description": "Create a GitHub Actions workflow named Upload Python Package that triggers on published releases. The workflow should have two ubuntu-latest jobs: build and publish. The build job checks out the repository, sets up Python 3.x, installs dependencies, sets the version from the release tag, builds the package, and uploads the distribution as an artifact. The publish job depends on the build job, downloads the artifact, and publishes it to PyPI.",
+  "tags": [
+    "python",
+    "release",
+    "pypi",
+    "github-actions",
+    "package"
+  ]
+}

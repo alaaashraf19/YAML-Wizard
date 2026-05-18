@@ -1,0 +1,14 @@
+{
+  "sha": "ea46f8feec3cde1d69af0eb388293e329ba5b21e5a52c0236f906463ec63d7ee",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 10075,
+  "description": "Create a GitHub Actions workflow to package mc_rtc. Trigger on repository dispatches of type package-master or package-release, on push to tags matching v*, and on pull requests to any branch except when pushing to specific paths. The workflow checks tag consistency, builds and uploads packages for various distributions and architectures, and triggers dependent repositories rebuild.",
+  "tags": [
+    "github-actions",
+    "package",
+    "mc-rtc",
+    "bintray",
+    "ubuntu"
+  ]
+}

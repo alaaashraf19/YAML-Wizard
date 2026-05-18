@@ -1,0 +1,17 @@
+{
+  "sha": "00ab06c45f94014ab2850bb7e0613cc6729900078d6a268b9ef00fddc3881ac8",
+  "provider": "groq",
+  "model": "llama-3.3-70b-versatile",
+  "yaml_bytes": 1656,
+  "description": "Create a GitHub Actions workflow named sdl2-examples that triggers on push to any branch, ignoring markdown files, on pull requests to any branch, also ignoring markdown files, and on workflow dispatch. The workflow should have two jobs: cmake and make, both running on ubuntu-latest. The cmake job should install dependencies including libsdl2-dev, ninja-build, and cmake, then build the code in various C++ standard folders using cmake and ninja. The make job should install a broader set of dependencies including crystal, mono, and nasm, then build the code in various language folders using make.",
+  "tags": [
+    "c",
+    "c++",
+    "cmake",
+    "make",
+    "sdl2",
+    "ubuntu",
+    "matrix",
+    "multi-language"
+  ]
+}

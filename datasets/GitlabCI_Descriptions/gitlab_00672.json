@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_00672",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 221,
+  "description": "Create a GitLab CI pipeline that runs on the rust:1.44.1 Docker image. Add a before_script step that installs the rustfmt and clippy components via rustup component add rustfmt clippy. Define a test job named test in the default test stage that executes the following shell commands in order: rustc --version && cargo --version, cargo test --verbose --jobs 1, cargo fmt --all -- --check, and cargo clippy --all. The pipeline does not use any services, caches, artifacts, or conditional rules.",
+  "tags": [
+    "rust",
+    "cargo",
+    "clippy",
+    "rustfmt",
+    "test"
+  ]
+}

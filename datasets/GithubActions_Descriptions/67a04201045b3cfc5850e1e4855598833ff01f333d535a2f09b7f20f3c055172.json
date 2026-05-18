@@ -1,0 +1,15 @@
+{
+  "sha": "67a04201045b3cfc5850e1e4855598833ff01f333d535a2f09b7f20f3c055172",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3085,
+  "description": "Create a GitHub Actions workflow named Build and Test that runs on push to ci and master branches and on pull requests to the master branch. Use a matrix job that runs on ubuntu-20.04, checks out the repository with submodules, caches ccache, and installs dependencies, cpprestsdk, and etcd. Then build and test the project with ccache and etcd, and finally display ccache statistics.",
+  "tags": [
+    "ubuntu",
+    "ccache",
+    "cmake",
+    "cpprestsdk",
+    "etcd",
+    "tests"
+  ]
+}

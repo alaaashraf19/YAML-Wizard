@@ -1,0 +1,39 @@
+after_script:
+- date
+image: dev.gitlab.org:5005/gitlab/gitlab-build-images:ruby-2.6.3-golang-1.11-git-2.22-chrome-73.0-node-12.x-yarn-1.16-postgresql-9.6-graphicsmagick-1.3.33
+include:
+- local: .gitlab/ci/global.gitlab-ci.yml
+- local: .gitlab/ci/cng.gitlab-ci.yml
+- local: .gitlab/ci/docs.gitlab-ci.yml
+- local: .gitlab/ci/frontend.gitlab-ci.yml
+- local: .gitlab/ci/memory.gitlab-ci.yml
+- local: .gitlab/ci/pages.gitlab-ci.yml
+- local: .gitlab/ci/qa.gitlab-ci.yml
+- local: .gitlab/ci/reports.gitlab-ci.yml
+- local: .gitlab/ci/rails.gitlab-ci.yml
+- local: .gitlab/ci/review.gitlab-ci.yml
+- local: .gitlab/ci/setup.gitlab-ci.yml
+- local: .gitlab/ci/test-metadata.gitlab-ci.yml
+- local: .gitlab/ci/yaml.gitlab-ci.yml
+stages:
+- prepare
+- quick-test
+- test
+- review-prepare
+- review
+- qa
+- post-test
+- pages
+variables:
+  BUILD_ASSETS_IMAGE: 'false'
+  EE_KNAPSACK_RSPEC_SUITE_REPORT_PATH: knapsack/${CI_PROJECT_NAME}/rspec_report-master-ee.json
+  ELASTIC_URL: http://elastic:changeme@docker.elastic.co-elasticsearch-elasticsearch:9200
+  ES_JAVA_OPTS: -Xms256m -Xmx256m
+  FLAKY_RSPEC_SUITE_REPORT_PATH: rspec_flaky/report-suite.json
+  GET_SOURCES_ATTEMPTS: '3'
+  GIT_DEPTH: '20'
+  GIT_SUBMODULE_STRATEGY: none
+  KNAPSACK_RSPEC_SUITE_REPORT_PATH: knapsack/${CI_PROJECT_NAME}/rspec_report-master.json
+  NODE_ENV: test
+  RAILS_ENV: test
+  SIMPLECOV: 'true'

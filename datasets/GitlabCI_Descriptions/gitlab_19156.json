@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_19156",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1292,
+  "description": "Create a GitLab CI pipeline that inherits the project's default tags, retry policy, cache, before_script and runs only on code changes. Add a memory-on-boot job (default stage) that uses the .use-pg-10 extension (PostgreSQL 10 service), sets NODE_ENV, NODE_OPTIONS, RAILS_ENV, SETUP_DB='true' and SKIP_STORAGE_VALIDATION='true', and executes `ENABLE_BOOTSNAP=false PATH_TO_HIT=\"/users/sign_in\" CUT_OFF=0.3 bundle exec derailed exec perf:mem >> tmp/memory_on_boot.txt` followed by `scripts/generate-memory-metrics-on-boot tmp/memory_on_boot.txt >> tmp/memory_on_boot_metrics.txt`; it stores tmp/memory_*.txt as artifacts and publishes tmp/memory_on_boot_metrics.txt as a metrics report. Add a memory-static job (default stage) that sets SETUP_DB='false' and runs `bundle exec derailed bundle:mem > tmp/memory_bundle_mem.txt`, `scripts/generate-gems-size-metrics-static tmp/memory_bundle_mem.txt >> tmp/memory_metrics.txt`, `bundle exec derailed bundle:objects > tmp/memory_bundle_objects.txt`, and `scripts/generate-gems-memory-metrics-static tmp/memory_bundle_objects.txt >> tmp/memory_metrics.txt`; it also stores tmp/memory_*.txt as artifacts and publishes tmp/memory_metrics.txt as a metrics report.",
+  "tags": [
+    "rails",
+    "memory-profiling",
+    "derailed",
+    "postgres-10",
+    "metrics",
+    "ci"
+  ]
+}

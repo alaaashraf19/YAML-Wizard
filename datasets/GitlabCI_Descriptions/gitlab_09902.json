@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_09902",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 728,
+  "description": "Create a GitLab CI pipeline that uses the rubydev/ruby22-phantomjs21:latest Docker image and caches the vendor/ruby directory with the cache key ruby22. Add a test:rails job in the test stage that runs ruby -v, gem install bundler --no-ri --no-rdoc, bundle install -j $(nproc) --path vendor, rails db:migrate, and rails test. Add a deploy:staging job in the deploy stage that runs gem install dpl --no-ri --no-rdoc, dpl --provider=heroku --app=$HEROKU_STAGING_APP_NAME --api-key=$HEROKU_STAGING_API_KEY, and a curl POST to the Heroku API to execute bundle exec rails db:migrate. Configure the deploy job to run only on the master branch and target the Heroku staging environment at https://vast-sierra-11740.herokuapp.com/. Use the HEROKU_STAGING_APP_NAME and HEROKU_STAGING_API_KEY variables as secrets.",
+  "tags": [
+    "ruby",
+    "rails",
+    "heroku",
+    "dpl",
+    "cache",
+    "staging",
+    "gitlab-ci"
+  ]
+}

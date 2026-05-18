@@ -1,0 +1,7 @@
+include:
+- file: templates/gitlab-ci-buildpkg.yml
+  project: Orange-Opensource/gitlab-buildpkg
+- file: templates/gitlab-ci-buildpkg-all-distrib.yml
+  project: Orange-Opensource/gitlab-buildpkg
+variables:
+  PKG_BUILD_SUFFIX_MODE: short

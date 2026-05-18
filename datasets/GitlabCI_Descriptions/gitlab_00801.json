@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_00801",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 357,
+  "description": "Create a GitLab CI pipeline that uses the node:latest Docker image, caches the node_modules directory per branch with key ${CI_COMMIT_REF_SLUG}, and runs npm install in a before_script for every job. Define two stages: test and deploy. Add a test-stage job called npm_test that executes the commands 'npm test' and then 'npm run coverage'. Add a deploy-stage job called submit_npmjs that runs only on tags, runs 'npm run build', creates an .npmrc file containing the NPM_TOKEN secret via echo \"//registry.npmjs.org/:_authToken=${NPM_TOKEN}\" > .npmrc, and finally publishes the package with 'npm publish'.",
+  "tags": [
+    "node",
+    "npm",
+    "cache",
+    "npm-test",
+    "npm-publish",
+    "gitlab-ci"
+  ]
+}

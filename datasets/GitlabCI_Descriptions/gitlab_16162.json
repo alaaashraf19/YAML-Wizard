@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_16162",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 162,
+  "description": "Create a GitLab CI pipeline that includes the external configuration files /.gitlab-ci-coverage-runners.yml and /.gitlab-ci-main.yml. Define the variable SAMBA_CI_AUTOBUILD_ENABLE_COVERAGE with the value --enable-coverage and the variable SAMBA_CI_FLAVOR with the value coverage. The pipeline will inherit all stages, jobs, and settings from the included files, using these variables to enable coverage mode and set the build flavor accordingly.",
+  "tags": [
+    "include",
+    "variables",
+    "samba",
+    "coverage",
+    "autobuild"
+  ]
+}

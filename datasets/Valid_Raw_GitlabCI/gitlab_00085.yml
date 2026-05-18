@@ -1,0 +1,33 @@
+.build_template:
+  script: &id001
+  - mkdir _build
+  - cd _build
+  - "if [[ `uname` == \"Linux\" ]]; then\n  mkdir -p external/cmake\n  pushd external/cmake\n\
+    \  wget https://cmake.org/files/v3.11/cmake-3.11.0-Linux-x86_64.sh\n  chmod +x\
+    \ cmake-*-Linux-x86_64.sh\n  ./cmake-*-Linux-x86_64.sh --exclude-subdir --skip-license\n\
+    \  export PATH=\"${PWD}/bin:$PATH\"\n  popd\nelse\n  brew update\n  brew outdated\
+    \ cmake || brew upgrade cmake\nfi\n"
+  - cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DBUILD_SHARED_LIBS=ON -DOPTION_SELF_CONTAINED=ON
+    -DCMAKE_INSTALL_PREFIX=./asap-install ..
+  - make -j 2
+  - make install
+  - ctest -C $BUILD_TYPE --output-on-failure
+  stage: build
+build:ubuntu:trusty:gcc-6:
+  before_script:
+  - apt-get update -qq
+  - apt-get install -y -qq software-properties-common python-software-properties
+  - add-apt-repository ppa:ubuntu-toolchain-r/test
+  - apt-get update -qq
+  - apt-get install -y -qq wget git build-essential gcc-6 g++-6
+  image: ubuntu:trusty
+  script: *id001
+  stage: build
+  variables:
+    CC: gcc-6
+    CXX: g++-6
+stages:
+- build
+variables:
+  BUILD_TYPE: Release
+  GIT_SUBMODULE_STRATEGY: recursive

@@ -1,0 +1,61 @@
+ansible-lint:
+  dependencies:
+  - roles-install
+  script:
+  - pip3 install $ANS_DEPS
+  - pip3 install ansible-lint[community,yamllint]
+  - ansible-lint --version
+  - yamllint --version
+  - find . -name '*.vault.*' -delete
+  - export EXT_ROLES_DIRS=$(find . -mindepth 2 -name ".galaxy_install_info" -printf
+    "%h " | xargs -n 1 dirname)
+  - ansible-lint -p $(echo ${EXT_ROLES_DIRS} | sed -r 's/\./--exclude=\./g') playbooks
+  stage: check
+ansible-syntax-check:
+  dependencies:
+  - roles-install
+  script:
+  - pip3 install $ANS_DEPS
+  - ansible --version
+  - find . -name '*.vault.*' -delete
+  - find playbooks/ -maxdepth 1 -name '*.yml' | xargs -n 1 ansible-playbook --syntax-check
+  - find playbooks/tenants/ -maxdepth 1 -name '*.yml' | xargs -n 1 ansible-playbook
+    --syntax-check
+  stage: check
+before_script:
+- apt-get update
+- apt-get install -y locales
+- echo "${LANG} UTF-8" > /etc/locale.gen
+- locale-gen ${LANG}
+- apt-get install -y python3-pip
+- chmod 0755 .
+image: python:3-stretch
+python-lint:
+  dependencies: []
+  script:
+  - pip3 install flake8
+  - flake8 --version
+  - flake8 --exclude=plugins/strategy/mitogen_linear.py .
+  stage: check
+roles-install:
+  artifacts:
+    expire_in: 1h
+    name: external-roles
+    paths:
+    - roles/**
+    untracked: true
+  script:
+  - pip3 install $ANS_DEPS
+  - ansible-galaxy --version
+  - ansible-galaxy install -r requirements.yml
+  stage: deps
+stages:
+- deps
+- check
+variables:
+  ANSIBLE_FORCE_COLOR: 'true'
+  ANS_DEPS: ansible>=4
+  DEBIAN_FRONTEND: noninteractive
+  LANG: en_US.UTF-8
+  LANGUAGE: en_US:en
+  LC_ALL: en_US.UTF-8

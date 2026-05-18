@@ -1,0 +1,15 @@
+before_script:
+- bundle install
+image: ruby:2.3
+pages:
+  artifacts:
+    paths:
+    - public/
+  only:
+  - master
+  script:
+  - bundle exec jekyll build -d public
+  stage: deploy
+variables:
+  JEKYLL_ENV: production
+  LC_ALL: C.UTF-8

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_14626",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1587,
+  "description": "Create a GitLab CI pipeline that uses the alpine:latest Docker image by default and applies a global only rule for the master branch, merge requests, and tags. Add a build::alpine::amd64 job that installs build-base, cryptsetup-dev, eudev-libs, imagemagick, libxi, linux-headers, mesa-dri-gallium, meson, scdoc, sdl2-dev, sdl2_ttf-dev, ttf-dejavu, xdotool, xvfb-run via apk, then runs meson _build, meson compile -C _build, and meson test -C _build --print-errorlogs, and always stores the _build/ directory as an artifact while excluding *.o files. Add a build::debian::amd64 job that uses the debian:testing image, installs build-essential, meson, pkg-config, scdoc, libsdl2-dev, libsdl2-ttf-dev, libcryptsetup-dev, fonts-dejavu-core, cryptsetup, libgles2, xvfb, xdotool, imagemagick via apt, modifies osk.conf with a sed command, then runs the same meson commands and stores the same artifacts. Add a clang-format job that installs git via apk, clones the postmarketOS/ci-common repository, and runs ci-common/clang-format/ci_run.sh, triggered only on master, merge requests, and tags. Add an mr-settings job that runs only on merge requests, installs python3 via apk, downloads the check_mr_settings.py script from the ci-common repo, and executes it with python3. Add a static-analysis job that installs cppcheck via apk and runs test/static_analysis.sh, also limited to master, merge requests, and tags.",
+  "tags": [
+    "alpine",
+    "debian",
+    "meson",
+    "clang-format",
+    "static-analysis",
+    "mr-settings"
+  ]
+}

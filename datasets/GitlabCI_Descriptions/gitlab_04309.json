@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_04309",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 450,
+  "description": "Create a GitLab CI pipeline using the node:10-stretch Docker image, caching node_modules, and a global before_script that runs npm install. Define stages test and deployment. Add a lint job in the test stage that runs CI=true npm run lint. Add a test_app job in the test stage that runs CI=true npm test. Add a deploy job in the deployment stage that only runs on the master branch and executes apt-get update -qy, apt-get install -y ruby ruby-dev rubygems-integration, gem install dpl, and dpl --provider=heroku --app=test-app-bh --api-key=$HEROKU_APIKEY to deploy to Heroku.",
+  "tags": [
+    "node",
+    "npm",
+    "heroku",
+    "deployment",
+    "lint",
+    "test"
+  ]
+}

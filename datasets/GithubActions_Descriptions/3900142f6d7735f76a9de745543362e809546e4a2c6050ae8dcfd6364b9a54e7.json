@@ -1,0 +1,18 @@
+{
+  "sha": "3900142f6d7735f76a9de745543362e809546e4a2c6050ae8dcfd6364b9a54e7",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 22211,
+  "description": "Create a complex GitHub Actions workflow named Test that runs on pull requests, pushes to specific branches, and workflow dispatches. The workflow has multiple jobs (build, pytest, ctest, validate, build_release) with different configurations and runners (ubuntu-latest, self-hosted GPU). Each job performs various steps such as checking out code, configuring and building with CMake, running tests with pytest or ctest, and uploading artifacts.",
+  "tags": [
+    "github-actions",
+    "cmake",
+    "ctest",
+    "pytest",
+    "mpi",
+    "gpu",
+    "ubuntu",
+    "self-hosted",
+    "validation"
+  ]
+}

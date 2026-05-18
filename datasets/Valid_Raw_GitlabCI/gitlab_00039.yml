@@ -1,0 +1,47 @@
+acceptance_test:
+  script:
+  - echo "Running acceptance tests at profiles_api app"
+  - docker-compose up -d
+  - docker-compose exec -T profiles_api mvn clean package -Dtest=**.acceptance.**.*Test
+    clean package
+  stage: test
+before_script:
+- echo "Installing docker-compose to run unit, integration and acceptance tests using
+  real Redis and PostgreSQL"
+- apk add --update python py-pip python-dev && pip install docker-compose
+- docker version
+- docker-compose version
+build:
+  script:
+  - echo "Build and test apps"
+  - docker-compose up --build -d
+  stage: build
+create_tag_and_promote:
+  script:
+  - echo "Step to create new tag and promote to QA env"
+  stage: promote
+deploy_prod:
+  script:
+  - echo "Fake step to deploy app to Production (use docker orchestration like Swarm,
+    Kubernetes, OpenShift)"
+  stage: deploy_prod
+deploy_qa:
+  script:
+  - echo "Fake step to deploy app to QA (use docker orchestration like Swarm, Kubernetes,
+    OpenShift)"
+  stage: deploy_qa
+deploy_stg:
+  script:
+  - echo "Fake step to deploy app to Stage (use docker orchestration like Swarm, Kubernetes,
+    OpenShift)"
+  stage: deploy_stg
+image: docker:latest
+services:
+- docker:dind
+stages:
+- build
+- test
+- promote
+- deploy_qa
+- deploy_stg
+- deploy_prod

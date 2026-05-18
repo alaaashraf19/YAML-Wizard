@@ -1,0 +1,16 @@
+{
+  "sha": "1421dc501009718eeb3afed6567394ec52dd70b576662c1b1388012bd7490998",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4389,
+  "description": "Create a GitHub Actions workflow named lint-tidier that runs on workflow dispatch and on pull requests affecting specific C and header files. Use an ubuntu-latest job to auto-apply clang-tidy, checking out the repository, installing system and Python requirements, setting up Conan, building CuraEngine, and running clang-tidy to diagnose and fix files. Upload the results as an artifact and comment on the pull request with suggestions.",
+  "tags": [
+    "clang-tidy",
+    "conan",
+    "c++",
+    "github-actions",
+    "linter",
+    "ubuntu",
+    "curaengine"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "sha": "0a472619569524e5905e0358b36dad37d378c09a7b694cc416e6442af42707fa",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2013,
+  "description": "Create a GitHub Actions workflow named EVE - Documentation Tests that runs on every pull request to the main branch. Use a ubuntu-latest job in a container with image ghcr.io/jfalcou/compilers:v7. Run a matrix of documentation tests with different compiler, architecture, and option combinations, each involving cmake configuration, compilation of documentation tests with ninja, and execution of random sampling tests with ctest.",
+  "tags": [
+    "cmake",
+    "ctest",
+    "ninja",
+    "clang",
+    "gcc",
+    "ubuntu",
+    "documentation",
+    "tests"
+  ]
+}

@@ -1,0 +1,10 @@
+before_script:
+- apk add --no-cache git git-lfs make docker-compose
+- git lfs pull -I '*'
+build:
+  script:
+  - make
+  stage: build
+image: docker:stable
+services:
+- docker:stable-dind

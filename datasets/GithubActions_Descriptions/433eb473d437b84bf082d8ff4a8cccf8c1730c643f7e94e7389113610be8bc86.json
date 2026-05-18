@@ -1,0 +1,14 @@
+{
+  "sha": "433eb473d437b84bf082d8ff4a8cccf8c1730c643f7e94e7389113610be8bc86",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2097,
+  "description": "Create a GitHub Actions workflow named Publish NuGet Packages that can be triggered manually with a workflow dispatch or called by another workflow. The workflow takes two required inputs: channel and run_id. It uses an ubuntu-24.04 job to check out the repository, download Java artifacts from a previous workflow run, and then publish Maven packages to a repository based on the specified channel.",
+  "tags": [
+    "java",
+    "maven",
+    "github-actions",
+    "workflow-dispatch",
+    "nightly"
+  ]
+}

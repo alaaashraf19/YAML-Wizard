@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_15638",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 434,
+  "description": "Create a GitLab CI pipeline that runs a before_script installing graphviz (apt-get update -qq && apt-get install -y graphviz), prints the Ruby version (ruby -v), shows the Ruby binary path (which ruby), installs bundler without documentation (gem install bundler --no-ri --no-rdoc), and runs bundle install with parallel jobs (bundle install --jobs $(nproc) \"${FLAGS[@]}\"). Define four test jobs named test:2.4.3, test:2.4.4, test:2.5.0, and test:2.5.1, each using the ruby:2.4.3, ruby:2.4.4, ruby:2.5.0, and ruby:2.5.1 Docker images respectively, and each executing the script command bundle exec rspec. All jobs run in the default test stage with no additional caches, artifacts, or rules. This pipeline validates the Ruby code across multiple Ruby versions using RSpec.",
+  "tags": [
+    "ruby",
+    "rspec",
+    "bundler",
+    "graphviz",
+    "multiple-ruby-versions"
+  ]
+}

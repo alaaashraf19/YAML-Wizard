@@ -1,0 +1,31 @@
+audit:
+  allow_failure: true
+  only:
+  - merge_requests
+  - master
+  script:
+  - cd src/server
+  - npm audit
+  stage: test
+image: node:lts
+lint-client:
+  only:
+  - merge_requests
+  - master
+  script:
+  - cd src/client
+  - npm install
+  - npm run lint
+  stage: test
+lint-server:
+  only:
+  - merge_requests
+  - master
+  script:
+  - cd src/server
+  - npm install
+  - npm run lint
+  stage: test
+stages:
+- test
+- build

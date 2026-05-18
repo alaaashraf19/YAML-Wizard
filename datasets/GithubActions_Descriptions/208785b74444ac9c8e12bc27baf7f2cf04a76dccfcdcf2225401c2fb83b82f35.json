@@ -1,0 +1,17 @@
+{
+  "sha": "208785b74444ac9c8e12bc27baf7f2cf04a76dccfcdcf2225401c2fb83b82f35",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3816,
+  "description": "Create a GitHub Actions workflow named build that runs on every push to any branch and on pull requests to any branch. The workflow has three jobs: clang-format, markdown-link-check, and build. The clang-format job checks code formatting using clang-format 9 on ubuntu-latest. The markdown-link-check job checks markdown links using Node.js 12 on ubuntu-latest. The build job runs a matrix of builds across multiple operating systems and generators, including Windows, Ubuntu, and macOS, with various configurations, and performs cmake, build, and test steps.",
+  "tags": [
+    "clang-format",
+    "markdown-link-check",
+    "cmake",
+    "build",
+    "matrix",
+    "ubuntu",
+    "windows",
+    "macos"
+  ]
+}

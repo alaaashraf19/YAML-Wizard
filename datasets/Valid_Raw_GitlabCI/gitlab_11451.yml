@@ -1,0 +1,33 @@
+cargo_test:
+  artifacts:
+    paths:
+    - $CI_PROJECT_DIR/target
+    - $CI_PROJECT_DIR/Cargo.lock
+  before_script:
+  - apt-get update
+  - apt-get install -y cmake openssl libssl-dev git pkg-config zlib1g zlib1g-dev
+  image: rust:slim
+  script: cargo test
+  stage: build
+fmt_and_clippy:
+  artifacts:
+    paths:
+    - $CI_PROJECT_DIR/target
+    - $CI_PROJECT_DIR/Cargo.lock
+  before_script:
+  - apt-get update
+  - apt-get install -y cmake openssl libssl-dev git pkg-config zlib1g zlib1g-dev
+  - rustup component add clippy-preview
+  - rustup component add rustfmt-preview
+  dependencies:
+  - cargo_test
+  image: rustlang/rust:nightly-slim
+  script:
+  - cargo fmt -- --check
+  - cargo clippy -- -D clippy
+  stage: check
+stages:
+- build
+- check
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive

@@ -1,0 +1,16 @@
+{
+  "sha": "eb4923cf1ecb5894856fb40ffe0b5f1566791760d6a1569922e9f40f70ff8094",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1256,
+  "description": "Create a GitHub Actions workflow named Linux that runs on push and pull request events. Use a matrix job that runs on ubuntu-18.04 and ubuntu-20.04, checks out the repository, installs dependencies with apt, runs autogen.sh and configure, builds and tests the project with make, and uploads a tarball artifact. Also, run lv2lint, make check with coverage, and report to Codecov.",
+  "tags": [
+    "linux",
+    "ubuntu",
+    "make",
+    "autotools",
+    "codecov",
+    "ci",
+    "tarball"
+  ]
+}

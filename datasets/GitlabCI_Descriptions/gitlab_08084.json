@@ -1,0 +1,25 @@
+{
+  "sha": "gitlab_08084",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 11661,
+  "description": "Create a GitLab CI pipeline with stages cache, build, test, build-image, review, review_starter, staging, release-image, production, and cleanup. In the cache stage run refresh_cache using the scratch image, executing copy commands to set ODAGRUN_IMAGE_VERSION, BASE_DEPLOY_URL, ODAGRUN_IMAGE_DESCRIPTION and related variables; it retries twice and caches Git data. In the build stage define build (image gioxa/build-image-4-odagrun) that runs autogen.sh, a heavily‑flagged configure, make, make install, copies binaries to output and rootfs, then registry_push; build_check (same image) runs autogen.sh, configure and make check, storing test/*.log on failure; build_cov runs autogen.sh, configure --enable-code-coverage, makes check-code-coverage and archives coverage output with a coverage regex; build_dist creates a source tarball and moves it to output/dist; build_docs (image gioxa/pandoc-centos) generates a manual.html with pandoc and copies documentation files, publishing the output directory as an artifact. The hidden .build_rootfs job (image centos) depends on build, prepares a rootfs directory and runs registry_push with --rootfs and --config; .review-image-starter (image scratch) pushes a review image with --ISR and --skip_label. Review jobs (reviewb, reviewb-image, reviewm, reviewm-image) run on branch or master pipelines, deploy to review environments using deployctl release and registry_push, with manual stop jobs stop_reviewb and stop_reviewm that delete the environment; they use tags and allow_failure as specified. Staging and production release jobs (Release_Staging, Release_production) run deployctl release only on tag pushes, setting environment URLs. Release-image and release-image:docker jobs (image odagrun) manually push and tag images to Docker Hub and Quay on tag events, with retry and manual trigger. Finally, cleanup runs DockerHub_delete_tag and MicroBadger_Update always, allowing failure and using a pipeline‑scope workspace cleanup strategy.",
+  "tags": [
+    "centos",
+    "scratch",
+    "build",
+    "test",
+    "coverage",
+    "docs",
+    "docker-registry",
+    "dockerhub",
+    "quay",
+    "review",
+    "staging",
+    "production",
+    "cleanup",
+    "cache",
+    "odagrun",
+    "deployctl"
+  ]
+}

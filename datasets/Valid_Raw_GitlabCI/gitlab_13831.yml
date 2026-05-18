@@ -1,0 +1,29 @@
+build:docker-images:
+  before_script: 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY
+
+    '
+  image: docker
+  interruptible: true
+  needs: []
+  script: 'REGISTRY=${REGISTRY} TAG=${CI_COMMIT_SHA}-untested docker buildx bake -f
+    docker/bake.hcl --push
+
+    '
+  stage: build
+  variables:
+    REGISTRY: registry.gitlab.com/oly-exams/exam_tools/
+push:docker-images:
+  before_script: 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY
+
+    '
+  image: docker
+  interruptible: false
+  script: "\nfor stage_name in 'django-server' 'celery-worker' 'nginx-with-static';\
+    \ do\n  docker buildx imagetools create --tag ${REGISTRY}${stage_name}:${CI_COMMIT_SHA}\
+    \ ${REGISTRY}${stage_name}:${CI_COMMIT_SHA}-untested\n  docker buildx imagetools\
+    \ create --tag ${REGISTRY}${stage_name}:${CI_COMMIT_REF_SLUG} ${REGISTRY}${stage_name}:${CI_COMMIT_SHA}-untested\n\
+    done\n"
+  stage: push
+  variables:
+    GIT_DEPTH: 1
+    REGISTRY: registry.gitlab.com/oly-exams/exam_tools/

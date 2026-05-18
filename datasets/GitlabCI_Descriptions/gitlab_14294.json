@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_14294",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 415,
+  "description": "Create a GitLab CI pipeline that uses the python:3.8-buster Docker image with a before_script executing \"pip install -r requirements.txt\". Define two stages, test and deploy. In the test stage add a job named \"test\" that runs the command \"mkdocs build --strict --verbose --site-dir test\", saves the generated \"test\" directory as an artifact, and is triggered only when $CI_COMMIT_REF_NAME is not the default branch. In the deploy stage add a job named \"pages\" that runs \"mkdocs build --strict --verbose\", publishes the \"public\" directory as a pages artifact, and runs only when $CI_COMMIT_REF_NAME equals the default branch.",
+  "tags": [
+    "python",
+    "mkdocs",
+    "pages",
+    "test",
+    "gitlab-ci"
+  ]
+}

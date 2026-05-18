@@ -1,0 +1,11 @@
+image: alpine:edge
+mypy:
+  before_script:
+  - adduser -D build
+  script:
+  - .ci/mypy.sh
+ruff:
+  before_script:
+  - adduser -D build
+  script:
+  - .ci/ruff.sh

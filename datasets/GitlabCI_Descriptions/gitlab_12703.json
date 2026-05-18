@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_12703",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 93,
+  "description": "Create a GitLab CI pipeline that defines a single job named \"Test & Coverage\" in the default test stage. The job runs the commands \"npm install\" followed by \"npm run cover\". Configure the job with an except rule so it does not run on tag pipelines (except tags). No image, services, caches, artifacts, or runner tags are specified.",
+  "tags": [
+    "node",
+    "npm",
+    "coverage",
+    "gitlab-ci"
+  ]
+}

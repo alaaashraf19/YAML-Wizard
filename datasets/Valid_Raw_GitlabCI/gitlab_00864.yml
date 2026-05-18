@@ -1,0 +1,32 @@
+codespell:
+  before_script:
+  - apt update
+  - apt install -qy codespell
+  image:
+    name: debian:stable
+  script:
+  - codespell *
+compile:
+  artifacts:
+    expire_in: never
+    paths:
+    - build/
+    when: always
+  before_script:
+  - mkdir -p /go/src
+  - ln -s /builds /go/src/gitlab.com
+  - cd /go/src/gitlab.com/$CI_PROJECT_PATH
+  image: golang
+  script:
+  - date
+  - go get
+  - date
+  - make lint
+  - date
+  - make build
+  - date
+  - make tarball
+  - date
+  - date -Ins > build/timestamp.txt
+  - git describe > build/git-describe.txt
+  stage: build

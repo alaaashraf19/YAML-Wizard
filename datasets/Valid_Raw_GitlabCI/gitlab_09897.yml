@@ -1,0 +1,42 @@
+docker-build:
+  script:
+  - docker build -t registry.gitlab.com/hieu.vo/testjavaapp .
+  - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+  - docker push registry.gitlab.com/hieu.vo/testjavaapp
+  stage: package
+image: docker:latest
+k8s-deploy:
+  environment:
+    name: staging
+    url: https://example.staging.com
+  image: google/cloud-sdk
+  only:
+  - master
+  script:
+  - echo "$GOOGLE_KEY" > key.json
+  - gcloud auth activate-service-account --key-file key.json
+  - gcloud config set compute/zone asia-southeast1-a
+  - gcloud config set project testjavaapp-210103
+  - gcloud container clusters get-credentials test-kubernetes-cluster
+  - kubectl delete secret registry.gitlab.com 2>/dev/null || echo "secret does not
+    exist"
+  - kubectl create secret docker-registry registry.gitlab.com --docker-server="$CI_REGISTRY"
+    --docker-username=$CI_REGISTRY_USER --docker-password=$CI_REGISTRY_PASSWORD --docker-email="$GITLAB_USER_EMAIL"
+  - kubectl apply -f deployment.yml
+  stage: deploy
+maven-build:
+  artifacts:
+    paths:
+    - target/*.jar
+  image: maven:3-jdk-8
+  script: mvn clean package -B
+  stage: build
+services:
+- docker:dind
+stages:
+- build
+- package
+- deploy
+variables:
+  DOCKER_DRIVER: overlay
+  SPRING_PROFILES_ACTIVE: gitlab-ci

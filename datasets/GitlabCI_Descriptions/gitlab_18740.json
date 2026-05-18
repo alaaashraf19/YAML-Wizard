@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_18740",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 216,
+  "description": "Create a GitLab CI pipeline using the daewok/lisp-devel Docker image and define two stages: build and test. Add a global before_script that runs apt-get update -qy, apt-get install -y git-core, and make install for every job. In the build stage, add a build job that executes make build and publishes the bookshops directory as an artifact. No additional services, caches, rules, or deployment targets are configured.",
+  "tags": [
+    "lisp",
+    "make",
+    "apt",
+    "docker-image",
+    "build"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "sha": "711d8f7aa1fb84ddf34dc09806033160a88b0341e0fce0d7c90a2654db483a7b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5735,
+  "description": "Create a GitHub Actions workflow named Python cibuildwheel that runs on push to master, main, develop, actions_pypi branches and tags matching v*, and on pull requests to those branches. The workflow has multiple jobs: set-version sets an output version; python_source builds a source package; python_ubuntu, python_ubuntu_arm, python_windows, and python_macos build wheels for different platforms and Python versions; merge_wheels merges the artifacts; and upload_python_bindings_to_pypi uploads the wheels to PyPI or TestPyPI.",
+  "tags": [
+    "python",
+    "cibuildwheel",
+    "github-actions",
+    "pypi",
+    "testpypi",
+    "wheels",
+    "ubuntu",
+    "windows",
+    "macos"
+  ]
+}

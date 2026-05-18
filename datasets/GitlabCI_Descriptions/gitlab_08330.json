@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_08330",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 446,
+  "description": "Create a GitLab CI pipeline using the node:latest Docker image with two stages: build and pages. Add a build job that runs in the build stage and executes the exact commands: npm install --only=dev, npm install --global grunt-cli, grunt, mkdir public, and mv {content,css,js,lib,plugin}/ index.html pdf.css public/. The build job should publish the public/ directory as an artifact named public that expires in 31 days. Add a pages job that runs in the pages stage, depends on the build job, only runs on the master branch, runs the command echo \"Building pages ...\", and publishes the public/ directory as a pages artifact for deployment to GitLab Pages.",
+  "tags": [
+    "node",
+    "npm",
+    "grunt",
+    "gitlab-pages",
+    "build",
+    "pages"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "7101e1324770928899c8fb861679b9bf7a8c09b0510f5081c9ed6d00d4430270",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1978,
+  "description": "Create a GitHub Actions workflow named Coverage that runs on pull requests and pushes to the master branch. Use an ubuntu-24.04 job to check out the code, install vcpkg dependencies, generate the German locale, and install ninja, lcov, and other build tools. Configure CMake with vcpkg, build the project, run tests with ctest, generate a coverage report with lcov, and upload it to Coveralls.",
+  "tags": [
+    "ubuntu",
+    "coverage",
+    "vcpkg",
+    "cmake",
+    "lcov",
+    "coveralls"
+  ]
+}

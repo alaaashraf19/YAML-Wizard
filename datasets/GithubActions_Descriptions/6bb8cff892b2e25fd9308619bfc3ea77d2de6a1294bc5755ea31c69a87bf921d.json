@@ -1,0 +1,15 @@
+{
+  "sha": "6bb8cff892b2e25fd9308619bfc3ea77d2de6a1294bc5755ea31c69a87bf921d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1625,
+  "description": "Create a GitHub Actions workflow named Crowdin Translation Integration that runs on a scheduled basis, specifically every Friday at 10:15 PM UTC. The workflow should use an ubuntu-latest job to set up Java JDK 8 and Python, then check out the repository with a personal access token. It should then download translations from Crowdin using a Python script and a provided API key, recreate a specific header file, commit the changes, and push them back to the repository.",
+  "tags": [
+    "crowdin",
+    "translations",
+    "java",
+    "python",
+    "scheduled",
+    "github-push"
+  ]
+}

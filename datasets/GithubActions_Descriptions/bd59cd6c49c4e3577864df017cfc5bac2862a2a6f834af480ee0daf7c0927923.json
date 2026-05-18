@@ -1,0 +1,16 @@
+{
+  "sha": "bd59cd6c49c4e3577864df017cfc5bac2862a2a6f834af480ee0daf7c0927923",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1558,
+  "description": "Create a GitHub Actions workflow named CI that runs on push, pull request, and workflow dispatch events. The workflow dispatch event has an optional input for force-rebuild. The workflow has two jobs: build and CI. The build job runs on ubuntu-20.04, generates a cache key based on files or a timestamp if force-rebuild is true, caches the lib directory, and runs npm run build if the cache is missed. The CI job runs on a matrix of ubuntu-20.04, macos-11, and windows-2022, depends on the build job, and runs tests after caching the lib directory and installing dependencies.",
+  "tags": [
+    "nodejs",
+    "npm",
+    "ci",
+    "ubuntu",
+    "tests",
+    "cache",
+    "matrix"
+  ]
+}

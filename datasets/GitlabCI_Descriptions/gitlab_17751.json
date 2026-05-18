@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_17751",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 550,
+  "description": "Create a GitLab CI pipeline that includes the precommit, publish-gitlab-release, and publish-to-pypi components. Define two stages: test and release. In the test stage add a test job that uses the Docker image registry.gitlab.com/thelabnyc/python:${IMAGE}, runs in parallel across a matrix of IMAGE values py312 and py313 with corresponding TOX_SKIP_ENV variables (^((?!py312-)) and ^((?!py313-))) set, executes the shell commands pip install tox then tox, and captures test coverage using the regex /^TOTAL.+?(\\d+\\%)$/. The job has no explicit rules, caches, or artifacts, and runs on all branches. The release stage jobs are provided by the included components.",
+  "tags": [
+    "python",
+    "tox",
+    "precommit",
+    "gitlab-release",
+    "pypi",
+    "parallel",
+    "coverage",
+    "matrix"
+  ]
+}

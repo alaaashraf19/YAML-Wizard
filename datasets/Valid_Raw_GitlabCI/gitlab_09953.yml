@@ -1,0 +1,16 @@
+.template_install_dependencies:
+  before_script: &id001
+  - apt-get update && apt-get --yes install graphviz
+  - cd $CI_PROJECT_DIR
+  - pip3 install pipenv
+  - pipenv sync
+  variables: &id002
+    DEBIAN_FRONTEND: noninteractive
+image: python:3.6-stretch
+run_tests:
+  before_script: *id001
+  script:
+  - pipenv run pytest -vv ./tests
+  stage: test
+  variables: *id002
+  when: always

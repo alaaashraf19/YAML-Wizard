@@ -1,0 +1,5 @@
+deploy-to-heroku:
+  script:
+  - git remote add heroku https://heroku:$HEROKU_API_KEY@git.heroku.com/hello-gitlab-heroku.git
+  - git push -f heroku master
+image: bravissimolabs/alpine-git

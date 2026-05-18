@@ -1,0 +1,101 @@
+.script_functions: "[[ \"$TRACE\" ]] && set -x\nexport CI_APPLICATION_REPOSITORY=$CI_REGISTRY_IMAGE\n\
+  export CI_APPLICATION_TAG=$CI_COMMIT_SHA\n\nfunction build() {\n  if [[ -n \"$CI_REGISTRY_USER\"\
+  \ ]]; then\n    echo \"Logging to GitLab Container Registry with CI credentials...\"\
+  \n    docker login -u \"$CI_REGISTRY_USER\" -p \"$CI_REGISTRY_PASSWORD\" \"$CI_REGISTRY\"\
+  \n    echo \"\"\n  fi\n\n  if [[ -f Dockerfile ]]; then\n    echo \"Building Dockerfile-based\
+  \ application...\"\n    docker build --pull -t \"$CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG\"\
+  \ .\n    docker tag \"$CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG\" \"$CI_APPLICATION_REPOSITORY:latest\"\
+  \n  else\n    echo \"Missing Dockerfile!\"\n    exit 1\n  fi\n\n  echo \"Pushing\
+  \ to GitLab Container Registry...\"\n  docker push \"$CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG\"\
+  \n  docker push \"$CI_APPLICATION_REPOSITORY:latest\"\n  echo \"\"\n\n  echo \"\
+  Logging to Docker Registry...\"\n  if [ -z \"$DOCKER_REGISTRY_USER\" ]; then\n \
+  \   echo \"DOCKER_REGISTRY_USER must be defined in GitLab variables\"\n    exit\
+  \ 1\n  fi\n  if [[ -z \"$DOCKER_REGISTRY_PASSWORD\" ]]; then\n    echo \"DOCKER_REGISTRY_PASSWORD\
+  \ must be defined in GitLab variables\"\n    exit 1\n  fi\n\n  docker login -u \"\
+  $DOCKER_REGISTRY_USER\" -p \"$DOCKER_REGISTRY_PASSWORD\"\n\n  docker tag \"$CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG\"\
+  \ \"$DOCKER_REGISTRY_IMAGE:$CI_APPLICATION_TAG\"\n  docker tag \"$CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG\"\
+  \ \"$DOCKER_REGISTRY_IMAGE:latest\"\n\n  echo \"Pushing to Docker Registry...\"\n\
+  \  docker push \"$DOCKER_REGISTRY_IMAGE:$CI_APPLICATION_TAG\"\n  docker push \"\
+  $DOCKER_REGISTRY_IMAGE:latest\"\n  echo \"\"\n\n}\n"
+before_script:
+- "[[ \"$TRACE\" ]] && set -x\nexport CI_APPLICATION_REPOSITORY=$CI_REGISTRY_IMAGE\n\
+  export CI_APPLICATION_TAG=$CI_COMMIT_SHA\n\nfunction build() {\n  if [[ -n \"$CI_REGISTRY_USER\"\
+  \ ]]; then\n    echo \"Logging to GitLab Container Registry with CI credentials...\"\
+  \n    docker login -u \"$CI_REGISTRY_USER\" -p \"$CI_REGISTRY_PASSWORD\" \"$CI_REGISTRY\"\
+  \n    echo \"\"\n  fi\n\n  if [[ -f Dockerfile ]]; then\n    echo \"Building Dockerfile-based\
+  \ application...\"\n    docker build --pull -t \"$CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG\"\
+  \ .\n    docker tag \"$CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG\" \"$CI_APPLICATION_REPOSITORY:latest\"\
+  \n  else\n    echo \"Missing Dockerfile!\"\n    exit 1\n  fi\n\n  echo \"Pushing\
+  \ to GitLab Container Registry...\"\n  docker push \"$CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG\"\
+  \n  docker push \"$CI_APPLICATION_REPOSITORY:latest\"\n  echo \"\"\n\n  echo \"\
+  Logging to Docker Registry...\"\n  if [ -z \"$DOCKER_REGISTRY_USER\" ]; then\n \
+  \   echo \"DOCKER_REGISTRY_USER must be defined in GitLab variables\"\n    exit\
+  \ 1\n  fi\n  if [[ -z \"$DOCKER_REGISTRY_PASSWORD\" ]]; then\n    echo \"DOCKER_REGISTRY_PASSWORD\
+  \ must be defined in GitLab variables\"\n    exit 1\n  fi\n\n  docker login -u \"\
+  $DOCKER_REGISTRY_USER\" -p \"$DOCKER_REGISTRY_PASSWORD\"\n\n  docker tag \"$CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG\"\
+  \ \"$DOCKER_REGISTRY_IMAGE:$CI_APPLICATION_TAG\"\n  docker tag \"$CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG\"\
+  \ \"$DOCKER_REGISTRY_IMAGE:latest\"\n\n  echo \"Pushing to Docker Registry...\"\n\
+  \  docker push \"$DOCKER_REGISTRY_IMAGE:$CI_APPLICATION_TAG\"\n  docker push \"\
+  $DOCKER_REGISTRY_IMAGE:latest\"\n  echo \"\"\n\n}\n"
+build:
+  artifacts:
+    expire_in: 1 day
+    paths:
+    - onetimesecret
+  script:
+  - CGO_ENABLED=0 go build -ldflags "-s -w" -o $CI_PROJECT_DIR/onetimesecret
+  stage: build
+build-docker:
+  image: docker:git
+  only:
+  - main
+  script:
+  - build
+  services:
+  - docker:dind
+  stage: build-docker
+deploy:
+  cache: {}
+  dependencies: []
+  environment:
+    name: production
+    url: https://secret.totakoko.com
+  image:
+    entrypoint:
+    - ''
+    name: totakoko/compose-deploy
+  only:
+  - main
+  script:
+  - MODULES_ROOT=$PWD compose-deploy update-module onetimesecret server
+  stage: deploy
+image: golang:1.18.3-alpine3.16
+lint-go:
+  image: golangci/golangci-lint:v1.46.2
+  script:
+  - golangci-lint run
+  stage: test
+lint-node:
+  image: node:18.4.0-alpine3.16
+  script:
+  - npm install
+  - npx standard
+  stage: test
+stages:
+- test
+- build
+- build-docker
+- deploy
+test:
+  image: golang:1.18.3
+  script:
+  - go test -cover -race -p 1 ./...
+  - go test -run bench -bench . ./...
+  services:
+  - redis:7.0.2-alpine3.16
+  stage: test
+  variables:
+    OTS_STORE_ADDR: redis:6379
+variables:
+  DOCKER_REGISTRY_IMAGE: totakoko/onetimesecret
+  REPO_NAME: gitlab.com/totakoko/onetimesecret

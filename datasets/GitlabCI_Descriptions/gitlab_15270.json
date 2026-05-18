@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_15270",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1770,
+  "description": "Create a GitLab CI pipeline using the default node:lts image. Define a build stage with a packages:build job that runs corepack enable, corepack prepare pnpm@latest-10 --activate, pnpm config set store-dir .pnpm-store, then pnpm -F './packages/*' install and pnpm -F './packages/*' build; cache the pnpm store keyed by pnpm-lock.yaml and also cache node_modules and packages/**/dist under the radiolise-build-cache key with push policy. Add a deploy stage containing three jobs: packages:deploy (default image) which runs corepack enable, corepack prepare pnpm@latest-10 --activate, pnpm config set -- //registry.npmjs.org/:_authToken=$NPM_TOKEN, pnpm -F './packages/*' install and pnpm changeset publish, pulls the radiolise-build-cache, depends on packages:build, and only runs when $CI_PROJECT_ID equals $TRUSTED_PROJECT_ID to publish to npm; pages (using alpine:latest) which moves packages/radiolise/dist to a public directory, gzips static files, pulls the radiolise-build-cache for packages/radiolise/dist, declares public as an artifact for GitLab Pages, and also depends on packages:build; and server:deploy (using docker:git) which links the Caddyfile, runs docker compose build and docker compose up -d, has no dependencies, is tagged deployment, and runs only when $CI_PROJECT_ID equals $TRUSTED_PROJECT_ID. The pipeline runs only on the default branch as defined in workflow rules.",
+  "tags": [
+    "node",
+    "pnpm",
+    "docker",
+    "alpine",
+    "gitlab-pages",
+    "npm",
+    "deployment",
+    "cache"
+  ]
+}

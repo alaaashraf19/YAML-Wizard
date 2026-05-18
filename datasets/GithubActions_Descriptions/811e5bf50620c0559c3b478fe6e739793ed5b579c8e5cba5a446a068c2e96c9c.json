@@ -1,0 +1,16 @@
+{
+  "sha": "811e5bf50620c0559c3b478fe6e739793ed5b579c8e5cba5a446a068c2e96c9c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2578,
+  "description": "Create a GitHub Actions workflow named Tests on Linux that runs on push, pull request, and workflow dispatch events. Use an ubuntu-latest job with a matrix strategy to test multiple Python versions, Boost interface configurations, and Capstone versions. The job should check out the repository, set up Python, upgrade pip, install dependencies, and then install various tools and libraries including LLVM, Clang, Z3, Ninja, Meson, Bitwuzla, Capstone, Unicorn, and LIEF. Finally, compile Triton and run unittests.",
+  "tags": [
+    "linux",
+    "python",
+    "tests",
+    "matrix",
+    "llvm",
+    "clang",
+    "triton"
+  ]
+}

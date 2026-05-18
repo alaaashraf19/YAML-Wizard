@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_17271",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1158,
+  "description": "Create a GitLab CI pipeline with three jobs: test, master-deploy-user, and tag-deploy-user. Include a before_script that exports GIT_SSH_URL by converting $CI_PROJECT_URL to an SSH URL. Use the image registry.gitlab.com/qcad.fi/docker/minimal:latest for the test job, which runs only on master and tags, executes \"mkdir build && cd build\", \"cmake ..\", \"make -j4\", and \"make check\" in the testing stage and is triggered manually. Use the image appropriate/curl:latest for both deploy jobs in the deploy stage, each running manually; master-deploy-user runs only on the master branch and tag-deploy-user runs only on tags, and both send a POST request with curl to $DEPLOYMENT_PIPELINE_TRIGGER_URL including token, ref=master, and variables TRIGGER_REPO_URL (the GIT_SSH_URL), TRIGGER_PACKAGE_NAME, TRIGGER_COMMIT_SHA, and for the tag job also TRIGGER_COMMIT_TAG.",
+  "tags": [
+    "cmake",
+    "make",
+    "curl",
+    "manual-deploy",
+    "gitlab-ci",
+    "docker"
+  ]
+}

@@ -1,0 +1,56 @@
+# This workflow runs actions to pull and build Tacent View.
+name: Build
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel.
+jobs:
+
+  # The checkoutbuildwindows job builds tacentview on windows.
+  CheckoutBuildWindows_CmakeNinjaMsvc:
+
+    # The type of runner that the job will run on
+    runs-on: windows-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it.
+    - uses: actions/checkout@v2
+
+    # Build using CMake
+    # NMake generator really slow. Lacks parallel build.
+    # Ninja and 'Visual Studio 17 2022' both slow compared to Ubuntu build.
+    # I think msvc-dev-cmd needed for Ninja.
+    # - uses: ilammy/msvc-dev-cmd@v1.10.0
+    - name: Build using CMake Ninja MSVC
+      run: |
+        echo '*** CMake Configure ***'
+        mkdir build
+        cd build
+        # cmake .. -G"Visual Studio 17 2022" -Ax64
+        cmake .. -G"Ninja"
+        echo '*** CMake Build ***'
+        cmake --build . --config Release --target install
+        echo '*** Done Building ***'
+        
+  # The checkoutbuildubuntu job builds tacentview on ubuntu.
+  CheckoutBuildUbuntu_CmakeNinjaClang:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: seanmiddleditch/gha-setup-ninja@master
+    - name: Build Using CMake Ninja Clang
+      run: |
+        echo '*** Configuring CMake ***'
+        mkdir buildninja
+        cd buildninja
+        cmake .. -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=clang -DCMAKE_C_COMPILER=clang
+        echo '*** Ninja Build ***'
+        ninja install
+        echo '*** Done Building ***'

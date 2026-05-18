@@ -1,0 +1,30 @@
+cache:
+  key: cache_yarn
+  paths:
+  - .cache_yarn
+image: node:10.8.0
+install:
+  artifacts:
+    expire_in: 2 weeks
+    paths:
+    - node_modules
+  only:
+  - master
+  - next
+  script:
+  - yarn install --cache-folder .cache_yarn
+  stage: install
+pages:
+  artifacts:
+    paths:
+    - public
+  dependencies:
+  - install
+  only:
+  - master
+  script:
+  - yarn build
+  stage: pages
+stages:
+- install
+- pages

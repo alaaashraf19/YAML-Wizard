@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_16014",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 377,
+  "description": "Create a GitLab CI pipeline using the rubdos/python3-clang Docker image. Define three stages: build, test, and deploy, and include a before_script that runs pip3 install -r requirements.txt before every job. In the build stage add a build job that executes which nosetests then python3 setup.py install --user. In the test stage add a static-analysis job that runs coala-ci and a unit-tests job that runs nosetests. In the deploy stage add a deploy job that runs only on the master branch and runs bash push_pypi.sh to publish the package to PyPI.",
+  "tags": [
+    "python",
+    "clang",
+    "pip",
+    "nosetests",
+    "coala",
+    "pypi",
+    "gitlab-ci"
+  ]
+}

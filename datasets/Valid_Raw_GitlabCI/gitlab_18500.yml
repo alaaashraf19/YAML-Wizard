@@ -1,0 +1,25 @@
+before_script:
+- apt update >/dev/null && apt install -y git >/dev/null
+- git clone https://gitlab.com/VictorLamoine/ros_gitlab_ci.git >/dev/null
+- source ros_gitlab_ci/gitlab-ci.bash >/dev/null
+image: ros:noetic-ros-core
+melodic catkin build:
+  image: ros:melodic-ros-core
+  script:
+  - catkin build --summarize --no-status --force-color
+  stage: build
+melodic catkin_make:
+  image: ros:melodic-ros-core
+  script:
+  - catkin_make
+  stage: build
+noetic catkin build:
+  script:
+  - catkin build --summarize --no-status --force-color
+  stage: build
+noetic catkin_make:
+  script:
+  - catkin_make
+  stage: build
+variables:
+  ROS_PACKAGES_TO_INSTALL: actionlib

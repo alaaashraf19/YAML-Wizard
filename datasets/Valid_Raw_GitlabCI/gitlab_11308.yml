@@ -1,0 +1,10 @@
+image: golang:1.7-alpine
+stages:
+- test
+test:
+  before_script:
+  - apk add --update --no-cache git && rm -rf /tmp/* /var/cache/apk/*
+  script:
+  - go get gitlab.com/kylehqcom/gojsonapi
+  - go test
+  stage: test

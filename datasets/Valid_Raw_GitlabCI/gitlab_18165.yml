@@ -1,0 +1,18 @@
+before_script:
+- apt-get update
+- apt-get install -y gettext
+- node --version
+- npm --version
+- npm ci || npm install
+image: node
+package:
+  artifacts:
+    paths:
+    - '*.tgz'
+  except:
+  - tags
+  script:
+  - npm pack
+  stage: pack
+stages:
+- pack

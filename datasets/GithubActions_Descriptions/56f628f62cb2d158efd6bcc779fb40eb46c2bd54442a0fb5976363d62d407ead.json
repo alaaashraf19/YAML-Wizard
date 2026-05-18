@@ -1,0 +1,15 @@
+{
+  "sha": "56f628f62cb2d158efd6bcc779fb40eb46c2bd54442a0fb5976363d62d407ead",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1105,
+  "description": "Create a GitHub Actions workflow named Check Markdown for Broken Links that checks for broken links in Markdown files. The workflow should trigger on push and pull request events for Markdown files, on a daily schedule, and allow manual runs. Use an ubuntu-latest job that checks out the repository, sets up Node.js 14, and runs Linkinator to scan Markdown files for broken links, excluding certain URLs and directories.",
+  "tags": [
+    "markdown",
+    "link-checker",
+    "nodejs",
+    "ubuntu",
+    "scheduled",
+    "github-actions"
+  ]
+}

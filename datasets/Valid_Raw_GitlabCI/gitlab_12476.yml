@@ -1,0 +1,45 @@
+before_script:
+- apt-get update -yqq
+- apt-get install git -yqq
+- apt-get install zip -yqq
+- docker-php-ext-enable curl && docker-php-ext-enable json && docker-php-ext-enable
+  zip && docker-php-ext-enable mbstring && docker-php-ext-enable gd && docker-php-ext-enable
+  pdo_mysql
+- curl -sS https://getcomposer.org/installer | php
+- php composer.phar require --dev php-parallel-lint/php-parallel-lint
+- php composer.phar require --dev friendsofphp/php-cs-fixer
+- php composer.phar install
+cache:
+  paths:
+  - vendor/
+image: php:7.3
+job_lint_app_phpnextversion:
+  allow_failure: true
+  image: php:7.4
+  script:
+  - ./vendor/bin/parallel-lint --exclude vendor .
+  - ./vendor/bin/php-cs-fixer -vvv fix . --dry-run --diff --using-cache=no --rules=@PSR2
+test_app_php56:
+  image: php:5.6
+  script:
+  - ./vendor/bin/parallel-lint --exclude vendor .
+  - ./vendor/bin/php-cs-fixer -vvv fix . --dry-run --diff --using-cache=no --rules=@PSR2
+test_app_php70:
+  image: php:7.0
+  script:
+  - ./vendor/bin/parallel-lint --exclude vendor .
+  - ./vendor/bin/php-cs-fixer -vvv fix . --dry-run --diff --using-cache=no --rules=@PSR2
+test_app_php71:
+  image: php:7.1
+  script:
+  - ./vendor/bin/parallel-lint --exclude vendor .
+  - ./vendor/bin/php-cs-fixer -vvv fix . --dry-run --diff --using-cache=no --rules=@PSR2
+test_app_php72:
+  image: php:7.2
+  script:
+  - ./vendor/bin/parallel-lint --exclude vendor .
+  - ./vendor/bin/php-cs-fixer -vvv fix . --dry-run --diff --using-cache=no --rules=@PSR2
+test_app_phpdefaultversion:
+  script:
+  - ./vendor/bin/parallel-lint --exclude vendor .
+  - ./vendor/bin/php-cs-fixer -vvv fix . --dry-run --diff --using-cache=no --rules=@PSR2

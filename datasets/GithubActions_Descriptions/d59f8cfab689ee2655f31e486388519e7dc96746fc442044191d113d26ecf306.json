@@ -1,0 +1,15 @@
+{
+  "sha": "d59f8cfab689ee2655f31e486388519e7dc96746fc442044191d113d26ecf306",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5270,
+  "description": "Create a GitHub Actions workflow named Emscripten that runs on push and workflow dispatch events. The workflow uses an ubuntu-24.04 environment and checks out the code, installs Emscripten SDK, and then performs a matrix build with different build types (Debug, Release, DevDist, LuaDist). For each build type, it configures CMake, makes the project, and optionally packages and pushes artifacts to a public repository.",
+  "tags": [
+    "emscripten",
+    "cmake",
+    "ubuntu",
+    "github-actions",
+    "matrix-build",
+    "artifacts"
+  ]
+}

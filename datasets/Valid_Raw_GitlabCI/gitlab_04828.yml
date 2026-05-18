@@ -1,0 +1,35 @@
+build_image:
+  image: docker:git
+  script:
+  - docker login -u Rankaisija -p runneri123 registry.gitlab.com
+  - docker build -t registry.gitlab.com/casette/sauna-project:release .
+  - docker push registry.gitlab.com/casette/sauna-project:release
+  services:
+  - docker:dind
+  stage: build
+  tags:
+  - rankaisumetodit
+cache:
+  paths:
+  - node_modules/
+image: node:latest
+robotTest:
+  after_script:
+  - pm2 stop index
+  - pm2 stop main
+  before_script:
+  - pm2 start app/index.js
+  - pm2 start app/main.js
+  script:
+  - firefox -v
+  - robot robot
+  stage: test
+  tags:
+  - testi
+services:
+- mongo:latest
+stages:
+- test
+- build
+variables:
+  MONGO_URI: mongodb://mongo/SaunaDB

@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_07530",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2773,
+  "description": "Create a GitLab CI pipeline using the global image debian:bullseye with DEBIAN_FRONTEND=noninteractive and LC_ALL=C.UTF-8 variables and two stages: test and deploy. In the test stage add a pycodestyle job that runs a multi‑line apt‑setup script (set -e, set -x, echo Etc/UTC > /etc/timezone, write APT config to /etc/apt/apt.conf.d/99gitlab, apt-get update and apt-get dist-upgrade), installs pycodestyle via apt-get and executes ./tests/test-pep8.sh. Also in test add a pylint job that runs the same apt‑setup in before_script, installs Python packages with pip3 install -r requirements.txt and pip3 install -r requirements-dev.txt, then runs ./tests/test-pylint.sh. Add a units job in test that runs the apt‑setup, installs npm, runs ./setup.sh, installs dev Python requirements, runs npm install --user, caches /usr/local/lib/python*/dist-packages and node_modules, and finally executes ./tests/test-units.sh. In the deploy stage add a docker job that uses the docker:git image with a docker:dind service, logs in to the GitLab Container Registry using $CI_JOB_TOKEN, builds the image with docker build -t $CI_REGISTRY_IMAGE:latest ., tags it also as $CI_REGISTRY_IMAGE:bullseye and $CI_REGISTRY_IMAGE:django-2, pushes all three tags, runs only on the master branch, sets the environment name to docker, and runs on_success.",
+  "tags": [
+    "debian",
+    "docker",
+    "dind",
+    "pycodestyle",
+    "pylint",
+    "units",
+    "apt-setup",
+    "npm"
+  ]
+}

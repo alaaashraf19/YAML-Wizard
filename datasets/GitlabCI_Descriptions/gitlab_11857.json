@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_11857",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 939,
+  "description": "Create a GitLab CI pipeline that uses the ghcr.io/maxking/mailman-ci-runner Docker image, includes the SAST.gitlab-ci.yml template, and sets the variable SAST_DEFAULT_ANALYZERS to bandit,secrets. Define two stages, quality-assurance and test. In the quality-assurance stage add a qa job that runs `tox -e qa` and uploads gl-code-quality-report.json as a codequality artifact. In the test stage add a coverage job that runs `tox -e py312-django52-coverage`, a py313-djangolatest job (allowed to fail) that prints a message, edits pyproject.toml with `sed -E 's/django[<=>,.[:digit:]]+/django/' -i pyproject.toml`, then runs `tox -e py313-djangolatest`, a test-django42 job that runs in parallel for PYTHON_VER values 39,310,311,312 executing `tox -e \"py$PYTHON_VER-django42\"`, and a test-django52 job that runs in parallel for PYTHON_VER values 310,311,312,313 executing `tox -e \"py$PYTHON_VER-django52\"`.",
+  "tags": [
+    "mailman-ci-runner",
+    "tox",
+    "django",
+    "sast",
+    "codequality",
+    "parallel",
+    "gitlab-ci"
+  ]
+}

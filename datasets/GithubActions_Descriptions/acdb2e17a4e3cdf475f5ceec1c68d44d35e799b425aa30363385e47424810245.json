@@ -1,0 +1,14 @@
+{
+  "sha": "acdb2e17a4e3cdf475f5ceec1c68d44d35e799b425aa30363385e47424810245",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1679,
+  "description": "Create a GitHub Actions workflow named build that runs on push and pull request events. The workflow should have three jobs: linux, windows, and macos, each running on a different environment. For each job, check out the code, compile tests with cmake and a matrix of compilers or toolsets, and then run tests with ctest.",
+  "tags": [
+    "cmake",
+    "ctest",
+    "matrix",
+    "multijob",
+    "cross-platform"
+  ]
+}

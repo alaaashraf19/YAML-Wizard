@@ -1,0 +1,15 @@
+{
+  "sha": "c9899bb8dceed6731198c8575696eeba20925f9701591801ae54502312099269",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1873,
+  "description": "Create a GitHub Actions workflow named Linux that runs on push and pull request events, ignoring changes to docs and ChangeLog files. The workflow has two jobs: build and wheels. The build job runs on a matrix of Python versions and an Ubuntu OS, setting up Python, installing dependencies, building and installing the package, and testing with pytest. The wheels job runs on an Ubuntu OS with a matrix of architectures, building and testing wheels using a Docker image, and archiving the resulting wheels and sdist.",
+  "tags": [
+    "python",
+    "linux",
+    "tests",
+    "wheels",
+    "mssql",
+    "docker"
+  ]
+}

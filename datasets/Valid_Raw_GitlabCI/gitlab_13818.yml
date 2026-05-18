@@ -1,0 +1,18 @@
+build:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - olang
+  script:
+  - go get -v .
+  - go build -ldflags "-X gitlab.com/olanguage/olang/version.version=$(git describe
+    --tags) -X gitlab.com/olanguage/olang/version.commit=$(git rev-parse HEAD) -X
+    gitlab.com/olanguage/olang/version.date=$(date -u +%Y-%m-%dT%H:%M:%SZ)" -o olang
+  stage: build
+image: golang:latest
+stages:
+- build
+variables:
+  ARTIFACTS_DIR: artifacts
+  BIN_NAME: olang
+  GO_PROJECT: gitlab.com/olanguage/olang

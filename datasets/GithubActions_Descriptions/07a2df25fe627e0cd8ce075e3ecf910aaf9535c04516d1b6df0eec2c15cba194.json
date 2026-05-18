@@ -1,0 +1,14 @@
+{
+  "sha": "07a2df25fe627e0cd8ce075e3ecf910aaf9535c04516d1b6df0eec2c15cba194",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2302,
+  "description": "Create a GitHub Actions workflow named Build OSW-OS that runs on a schedule, on pull requests, and on workflow dispatch. The workflow uses an ubuntu-latest job to determine features, then uses a matrix strategy to build OSW-OS on ubuntu-latest, macos-latest, and windows-latest for multiple models and languages. The workflow checks out the repository, caches pip and PlatformIO, sets up Python 3.10, installs PlatformIO, and compiles the code for each model and language combination.",
+  "tags": [
+    "python",
+    "github-actions",
+    "matrix",
+    "build",
+    "osw-os"
+  ]
+}

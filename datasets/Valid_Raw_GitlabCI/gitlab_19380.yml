@@ -1,0 +1,24 @@
+buildbinary:
+  script:
+  - Rscript -e 'devtools::build(binary = TRUE)'
+  stage: build
+checkpackage:
+  script:
+  - Rscript -e 'devtools::check(document = TRUE, args = "--no-tests")'
+  stage: check
+image: zauster/r-rcpparmadillo:latest
+stages:
+- build
+- check
+- test
+unittests:
+  script:
+  - R CMD build . --no-build-vignettes --no-manual
+  - PKG_FILE_NAME=$(ls -1t *.tar.gz | head -n 1)
+  - R CMD check "${PKG_FILE_NAME}" --no-build-vignettes --no-manual --as-cran
+  - Rscript -e 'devtools::test()'
+  - Rscript -e 'devtools::install_dev_deps()'
+  - Rscript -e 'covr::codecov()'
+  stage: test
+variables:
+  CODECOV_TOKEN: ac94d7a7-5313-41a7-bf93-fdec696cffb3

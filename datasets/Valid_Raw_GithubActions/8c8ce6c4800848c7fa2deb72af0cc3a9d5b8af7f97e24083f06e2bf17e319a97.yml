@@ -1,0 +1,90 @@
+name: cov-build
+
+on:
+  schedule:
+    - cron: '0 18 * * 4'
+
+  push:
+    tags:
+      - v*.*.*
+
+  pull_request:
+    branches:
+      - master
+    paths:
+      - '!README.md'
+      - '!CONTRIBUTING.md'
+      - '!docs/**'
+      - 'src/**'
+      - '.github/**'
+      - 'tests/**'
+      - 'tools/**'
+
+env:
+  TOKEN: ${{secrets.COVERITY_TOKEN}}
+  EMAIL: ${{secrets.COVERITY_EMAIL}}
+
+jobs:
+  x64:
+    runs-on: windows-latest
+
+    defaults:
+      run:
+        shell: msys2 {0}
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup MinGW
+      uses: msys2/setup-msys2@v2
+      with:
+        msystem: MINGW64
+        install: >-
+          git
+          unzip
+          base-devel
+          mingw-w64-x86_64-gcc
+          mingw-w64-x86_64-make
+          mingw-w64-x86_64-cmake
+
+    - name: Cache libraries
+      uses: actions/cache@v2
+      with:
+        path: |
+          ${{github.workspace}}/libs
+        key: x64-libs-cache-210828
+
+    - name: Install libraries
+      run: "tools/setup_libs.bat -mingw 64"
+
+    - name: Cache Coverity scan tools
+      uses: actions/cache@v2
+      with:
+        path: |
+          ${{github.workspace}}/cov_tools
+        key: x64-coverity-cache-210829-4
+
+    - name: Install Coverity scan tools
+      run: "tools/install_coverity_tools.bat $TOKEN"
+
+    - name: Configure CMake
+      run: |
+        cov_tools/bin/cov-configure --config build/covtest/cov.xml --comptype g++ --compiler g++ --template
+        cmake -B build -DCMAKE_BUILD_TYPE=Debug -G "MinGW Makefiles" -DBIT_TYPE=64 -DCCACHE_ENABLE=OFF .
+
+    - name: Build with Coverity
+      run: |
+        cov_tools/bin/cov-build --config build/covtest/cov.xml --dir build/cov-int cmake --build build
+        cd build
+        tail cov-int/build-log.txt
+        tar -czvf cov-int.tgz cov-int
+        cd ..
+
+    - name: Submit tarball to Coverity
+      run: |
+        curl --form token=$TOKEN \
+          --form email=$EMAIL \
+          --form file=@build/cov-int.tgz \
+          --form version="latest" \
+          --form description="Automatic submission with GitHub Actions" \
+          https://scan.coverity.com/builds?project=pit-ray%2Fwin-vind

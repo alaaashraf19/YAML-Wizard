@@ -1,0 +1,17 @@
+before_script:
+- npm install -g yarn
+- yarn
+build:
+  script: yarn build
+  stage: build
+cache:
+  paths:
+  - node_modules/
+image: node:11
+lint:
+  script:
+  - yarn lint
+  stage: lint
+stages:
+- lint
+- build

@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_12022",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 192,
+  "description": "Create a GitLab CI pipeline that uses the crystallang/crystal:0.35.1-alpine Docker image and defines a single stage called build. Add a job named build_binary in the build stage that runs the shell command 'shards install && crystal build src/main.cr --static --release --progress -o crlocator-static --error-trace'. No caches, artifacts, services, or special rules are required.",
+  "tags": [
+    "crystal",
+    "shards",
+    "static-build",
+    "docker"
+  ]
+}

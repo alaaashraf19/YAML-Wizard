@@ -1,0 +1,16 @@
+{
+  "sha": "64364f325cce551ff9359f17d5503d756812661d249da62c67ee265d2c10aa74",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1747,
+  "description": "Create a GitHub Actions workflow named macOS that runs on push to specific files and directories, on pull requests to those files and directories, and on published releases. Use a matrix job strategy to build the project in Release and Debug configurations on macOS 12, 13, and 14 environments. In each job, check out the repository with submodules, set up ccache, configure the build with CMake, compile dependencies, compile OSP-Magnum, compile unit tests, and run unit tests with ctest.",
+  "tags": [
+    "macos",
+    "cmake",
+    "ccache",
+    "ctest",
+    "matrix",
+    "build",
+    "tests"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "1e47f310b184f799d37a0f2e423088f509ff809bf0ba6b17bd81a151842b221f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3051,
+  "description": "Create a GitHub Actions workflow named windows that runs on push to master and on pull requests to master. The workflow has three jobs: build, test, and release. The build job runs on windows-latest, checks out the code, sets up build variables, installs Qt, sets up nmake and two projects (kColorPicker and kImageAnnotator), builds the project, and uploads the build package as an artifact. The test job depends on build, downloads the artifact, sets up nmake, and runs tests. The release job depends on test and creates an automatic release.",
+  "tags": [
+    "windows",
+    "qt",
+    "cmake",
+    "nmake",
+    "release",
+    "ci"
+  ]
+}

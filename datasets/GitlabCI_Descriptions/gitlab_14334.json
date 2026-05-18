@@ -1,0 +1,21 @@
+{
+  "sha": "gitlab_14334",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 8589,
+  "description": "Create a GitLab CI pipeline using the docker:stable image with a docker:dind service and a before_script that logs into the GitLab registry and installs zip, curl, tar, and findutils via apk. Define stages test, build, and deploy. In the test stage add a run-test job that pulls $CONTAINER_IMAGE:test-latest, builds a test image with Dockerfile.test tagging $CONTAINER_IMAGE:test-$CI_COMMIT_SHORT_SHA and $CONTAINER_IMAGE:test-latest, then pushes both tags. In the build stage add three jobs: build (runs on all branches except master) that pulls $CONTAINER_IMAGE:$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA, builds the main and utils images with appropriate tags, pushes them, extracts binaries to a temporary directory, creates platform‑specific tar.gz and zip archives and stores them as artifacts; build-master (runs only on master) that performs the same steps using the latest tag; and build-tags (runs only on tags) that builds from the stable image, tags with the commit tag, pushes, creates archives named with $CI_COMMIT_TAG, and uploads each file to the GitLab generic package registry via curl. In the deploy stage add a build-utils job (runs only on develop) that pulls, builds, and pushes a utils image using Dockerfile.utils, and a package-deploy job (runs on tags and develop) that packages source code into src.tar.gz, extracts the built binaries, creates the same archives, and uploads all .tar.gz and .zip files to the GitLab Package Registry using the CI job token, publishing the archives as artifacts.",
+  "tags": [
+    "docker",
+    "docker-dind",
+    "build",
+    "test",
+    "deploy",
+    "gitlab-package-registry",
+    "tar",
+    "zip",
+    "utils",
+    "branches",
+    "master",
+    "tags"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_11206",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 728,
+  "description": "Create a GitLab CI pipeline using the ubuntu:16.04 Docker image and a before_script that runs apt-get update, installs build-essential, cmake, libtool, autoconf, automake, git, unzip, wget and ca-certificates, then cleans the apt cache. Define two stages: build and deploy. In the build stage add a job_build job that executes the shell commands: cat /etc/debian_version, ./scripts/build-deps-unix.sh, ./scripts/build.sh, cd build, make, cd tests, make test, cd .., cp -a ../include ., cp src/liberpiko.a liberpiko.a, cp ../deps/libressl/crypto/.libs/libcrypto.a ., cp ../deps/libressl/ssl/.libs/libssl.a ., and tar cJf liberpiko.linux.tar.xz include liberpiko.a libcrypto.a libssl.a. The job caches the build directory and publishes the resulting build/liberpiko.linux.tar.xz as an artifact.",
+  "tags": [
+    "ubuntu-16.04",
+    "c++",
+    "make",
+    "cmake",
+    "artifact",
+    "tar",
+    "build-deps"
+  ]
+}

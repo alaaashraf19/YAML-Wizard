@@ -1,0 +1,128 @@
+.Alpine Linux:
+  before_script:
+  - apk add --update alpine-sdk autoconf automake libtool clang-dev cmake ninja qt5-qtbase-dev
+    qt5-qttools-dev boost-dev ttf-freefont xvfb
+  image: alpine:latest
+  script:
+  - ./ci/build-gitlab.sh
+  stage: build
+  variables:
+    BUSYBOX_BASH: 1
+.OS X:
+  script:
+  - ./ci/build-gitlab.sh
+  stage: build
+  tags:
+  - clang
+  - osx
+  variables:
+    CC: clang
+    CXX: clang++
+.Ubuntu Linux Trusty:
+  artifacts: &id001
+    expire_in: 2d
+    paths:
+    - build*/*.tar*
+    - build*/*_test
+    - csa_results
+    - build*/SHA1SUMS
+  before_script:
+  - ./util/build_prep/update-common && ./util/build_prep/ubuntu/prep.sh
+  image: ubuntu:trusty
+  script: &id002
+  - ./ci/build-gitlab.sh
+  stage: build
+  variables:
+    CC: gcc
+    CXX: g++
+    FLAVOR: trusty
+.Ubuntu Linux:ASAN:
+  artifacts: *id001
+  before_script:
+  - ./util/build_prep/update-common && ./util/build_prep/ubuntu/prep.sh
+  script: *id002
+  stage: build
+  variables:
+    ASAN: 1
+    FLAVOR: zesty_asan
+.Ubuntu Linux:TSAN:
+  artifacts: *id001
+  before_script:
+  - ./util/build_prep/update-common && ./util/build_prep/ubuntu/prep.sh
+  script: *id002
+  stage: build
+  variables:
+    FLAVOR: zesty_tsan
+    TSAN: 1
+.linux_template:
+  artifacts: *id001
+  script: *id002
+  variables: &id003
+    BOOST_ROOT: /usr/local/boost
+    CC: clang
+    CXX: clang++
+Arch Linux:
+  artifacts: *id001
+  before_script:
+  - pacman --noconfirm -Syu qt5-tools xorg-server-xvfb clang clang-tools-extra cmake
+    boost boost-libs ninja lsb-release
+  image: base/devel:latest
+  script:
+  - mkdir -p csa_results/
+  - scan-build -o csa_results/ ./ci/build-gitlab.sh
+  stage: build
+  variables: *id003
+Artful OPTIMIZED:
+  artifacts: *id001
+  before_script:
+  - ./util/build_prep/update-common && ./util/build_prep/ubuntu/prep.sh
+  image: ubuntu:artful
+  script: *id002
+  stage: build
+  variables:
+    FLAVOR: artful
+    SIMD: 1
+Ubuntu Linux Artful:
+  artifacts: *id001
+  before_script:
+  - ./util/build_prep/update-common && ./util/build_prep/ubuntu/prep.sh
+  image: ubuntu:artful
+  script: *id002
+  stage: build
+  variables:
+    FLAVOR: artful
+Ubuntu Linux Xenial:
+  artifacts: *id001
+  before_script:
+  - ./util/build_prep/update-common && ./util/build_prep/ubuntu/prep.sh
+  image: ubuntu:xenial
+  script: *id002
+  stage: build
+  variables:
+    FLAVOR: xenial
+Ubuntu Linux Xenial Beta:
+  artifacts: *id001
+  before_script:
+  - ./util/build_prep/update-common && ./util/build_prep/ubuntu/prep.sh
+  image: ubuntu:xenial
+  script: *id002
+  stage: build
+  variables:
+    BETA: 1
+    FLAVOR: xenial
+Xenial OPTIMIZED:
+  artifacts: *id001
+  before_script:
+  - ./util/build_prep/update-common && ./util/build_prep/ubuntu/prep.sh
+  image: ubuntu:xenial
+  script: *id002
+  stage: build
+  variables:
+    FLAVOR: xenial
+    SIMD: 1
+image: ubuntu:xenial
+stages:
+- build
+- test
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive

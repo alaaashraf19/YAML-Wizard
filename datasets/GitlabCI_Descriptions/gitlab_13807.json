@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_13807",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 264,
+  "description": "Create a GitLab CI pipeline that uses the registry.gitlab.com/offa/docker-images/docker-build:stable Docker image with a docker:dind service and sets the DOCKER_DRIVER variable to overlay2. Add a before_script that runs docker login -u gitlab-ci-token -p ${CI_JOB_TOKEN} ${CI_REGISTRY}. Define a single job named placeholder (default stage) that executes the script command echo \"*** Placeholder ***\". The pipeline has no caches, artifacts, or conditional rules, and runs on every pipeline execution.",
+  "tags": [
+    "docker",
+    "dind",
+    "docker-login",
+    "placeholder"
+  ]
+}

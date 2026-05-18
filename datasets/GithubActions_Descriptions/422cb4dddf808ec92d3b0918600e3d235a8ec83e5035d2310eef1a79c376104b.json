@@ -1,0 +1,16 @@
+{
+  "sha": "422cb4dddf808ec92d3b0918600e3d235a8ec83e5035d2310eef1a79c376104b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5992,
+  "description": "Create a comprehensive GitHub Actions workflow that runs on push and pull requests to the main and vnext branches. The workflow consists of multiple jobs: test, docs, benchmarks, examples, and array_api_tests. The test job runs on a matrix of OS, Python versions, and Numba bounds checking configurations, and performs steps such as checking out the repository, caching conda packages, setting up Julia and Miniconda, installing packages, running tests, and uploading test results. The docs job builds documentation using Sphinx, the benchmarks job runs benchmarks using ASV, the examples job runs examples with Finch, and the array_api_tests job runs array API tests with Numba and Finch backends.",
+  "tags": [
+    "python",
+    "github-actions",
+    "ci",
+    "cd",
+    "testing",
+    "benchmarks",
+    "documentation"
+  ]
+}

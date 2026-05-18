@@ -1,0 +1,16 @@
+{
+  "sha": "1dfcd89213d78ba02eab569dd27aa4088bfa0cd8fc3dd4cbec7ebbc3d3759bc2",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2872,
+  "description": "Create a GitHub Actions pipeline that runs on push to master, hotfix branches, and tags matching v*, as well as on pull requests. The pipeline consists of two jobs: tests and release. The tests job runs on a matrix of OS (ubuntu-latest, windows-latest, macos-latest), Python versions (3.9, 3.8, 3.7), and configuration (Release, Debug), with specific exclusions and inclusions. It checks out the code, sets up Python, builds the project, runs C++ and Python tests, generates documentation on Ubuntu, and builds and uploads a package on Windows and Ubuntu for Release configuration. The release job runs on ubuntu-latest, depends on the tests job, and uploads the package to PyPI if the workflow is triggered by a tag.",
+  "tags": [
+    "python",
+    "multios",
+    "multiversion",
+    "tests",
+    "release",
+    "pypi",
+    "twine"
+  ]
+}

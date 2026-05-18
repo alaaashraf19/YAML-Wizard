@@ -1,0 +1,32 @@
+build_page:
+  artifacts:
+    paths:
+    - public
+    when: always
+  needs: []
+  script:
+  - apk add --update bash gzip gettext
+  - bash ./build.sh
+  stage: build
+image: alpine
+include:
+- template: Workflows/MergeRequest-Pipelines.gitlab-ci.yml
+pages:
+  artifacts:
+    paths:
+    - public
+  rules:
+  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  script:
+  - ls public
+  stage: deploy
+shellcheck:
+  image: koalaman/shellcheck-alpine
+  script:
+  - shellcheck ./build.sh
+  - shellcheck -e SC2034 -s bash translations/*
+  stage: test
+stages:
+- test
+- build
+- deploy

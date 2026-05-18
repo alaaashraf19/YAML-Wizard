@@ -1,0 +1,44 @@
+before_script:
+- make init
+compile:
+  artifacts:
+    expire_in: 30 minutes
+    paths:
+    - _build
+  dependencies:
+  - get-dependencies
+  script:
+  - make compile
+  stage: build
+get-dependencies:
+  artifacts:
+    expire_in: 30 minutes
+    paths:
+    - deps
+    - mix.lock
+  script:
+  - make deps
+  stage: setup
+image: elixir:latest
+lint:
+  dependencies:
+  - get-dependencies
+  - compile
+  script:
+  - make lint
+  stage: test
+stages:
+- setup
+- build
+- test
+tests:
+  coverage: /\[TOTAL\]\s+(\d+\.\d+)%/
+  dependencies:
+  - get-dependencies
+  - compile
+  script:
+  - make test
+  - mix coveralls.json
+  stage: test
+variables:
+  MIX_ENV: test

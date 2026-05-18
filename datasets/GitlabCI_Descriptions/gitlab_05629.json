@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_05629",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 93,
+  "description": "Create a GitLab CI pipeline that defines a job called docker which runs in the default stage and uses the yegor256/rultor Docker image (no explicit script commands). Add a merge job that also runs in the default stage, executes the shell command echo \"Nothing to do.\", and is configured with a fast-forward only rule so it only runs on fast‑forward merge requests. Both jobs use the default image settings and no additional caches, artifacts, or deployment targets are specified.",
+  "tags": [
+    "rultor",
+    "docker",
+    "merge",
+    "fast-forward"
+  ]
+}

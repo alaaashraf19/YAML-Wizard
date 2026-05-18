@@ -1,0 +1,18 @@
+{
+  "sha": "e1be914e5a12f9f6ebc1de66752893d3ca6e1080eb8400b133361fb84020f3c6",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 10279,
+  "description": "Create a GitHub Actions workflow named CI that runs on every pull request and on push to master or tags. Use two jobs, one on macos-latest and one on ubuntu-latest, each with a matrix strategy across multiple patterns. For each pattern, check out the repository, install dependencies, configure and build the project with cmake and make, and run tests with ctest. On ubuntu-latest, also upload coverage reports to CodeCov for certain patterns.",
+  "tags": [
+    "cmake",
+    "make",
+    "ctest",
+    "codecov",
+    "macos",
+    "ubuntu",
+    "ci",
+    "matrix",
+    "patterns"
+  ]
+}

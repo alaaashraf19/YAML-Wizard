@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_11865",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 392,
+  "description": "Create a GitLab CI pipeline using the image ghcr.io/maxking/mailman-ci-runner:latest with two stages: quality-assurance and test. Add a qa job in the quality-assurance stage that runs the command tox -e lint. Add a coverage job in the test stage that runs tox -e py313-coverage. Add a test-sqlite job in the test stage that runs in parallel across a matrix of PYTHON_VER values (39, 310, 311, 312, 313, 313-head) executing tox -e \"py$PYTHON_VER\". No caches, artifacts, services, or special rules are defined.",
+  "tags": [
+    "mailman-ci",
+    "tox",
+    "python-versions",
+    "parallel",
+    "coverage",
+    "lint"
+  ]
+}

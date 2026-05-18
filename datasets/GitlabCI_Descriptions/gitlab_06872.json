@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_06872",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 95,
+  "description": "Create a GitLab CI pipeline with a single job named test that runs in the default test stage. The test job executes the exact shell commands: apt-get update -qy, apt-get install -y texlive-full latexmk, and make -B. No Docker image, services, caches, artifacts, or rules are defined, so it uses the runner's default environment and runs on every pipeline execution.",
+  "tags": [
+    "apt",
+    "latex",
+    "make",
+    "ci"
+  ]
+}

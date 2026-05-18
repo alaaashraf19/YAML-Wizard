@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_04516",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 271,
+  "description": "Create a GitLab CI pipeline using the gcc Docker image. Define a single job named build (runs in the default stage) that runs an apt update && apt install -y qt5-qmake libqt5core5a libqt5network5 libqt5gui5 libqt5widgets5 qtbase5-dev qttools5-dev in its before_script, caches all files matching \"*.o\", then executes \"QT_SELECT=qt5 qmake&&make\" in the script, and finally uploads the \"cutentr\" directory as an artifact. No services, variables, or additional stages are defined.",
+  "tags": [
+    "gcc",
+    "qt5",
+    "qmake",
+    "make",
+    "apt",
+    "cache",
+    "artifacts"
+  ]
+}

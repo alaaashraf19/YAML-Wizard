@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_18136",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 4212,
+  "description": "Create a GitLab CI pipeline with three stages (build, test, deploy) using the node:8.9.4 Docker image for backend and frontend jobs and a custom Android image (registry.gitlab.com/motorica-org/gitlab-ci-react-native-android:master) for mobile jobs. In the build stage add a build-backend job that runs on node:8.9.4, only on the master branch, executes `cd backend`, `npm install`, `npm run build`, and stores the compiled binary `backend/track-my-ride-backend` as an artifact; a build-frontend job on the same image, only on master, caches `frontend/node_modules/`, runs `cd frontend`, `npm install`, `npm run build`, and artifacts the `frontend/build` directory; and a build-mobile job on the Android image, only on master, with a before_script that copies licenses, makes gradlew executable, decodes `$MOBILE_KEYSTORE` and appends `$MOBILE_SIGNING_INFO` to gradle.properties, changes to the mobile directory, caches `mobile/node_modules/` and `mobile/.gradle/` keyed by the project ID, runs `npm run build`, and artifacts the APK output `mobile/android/app/build/outputs/apk`. In the test stage add a test-mobile job on the Android image, only on master, caching `mobile/node_modules/`, that runs `cd mobile`, `npm install`, `npm test`; and a test-webservices job on a custom Node 8.9.4 image (registry.gitlab.com/trackmyride/psit4-docker:8.9.4), only on master, with a before_script `export REPO=$(pwd)`, caches both backend and frontend node_modules, depends on the build-backend and build-frontend artifacts, runs `cd backend`, `npm install`, `npm test`, creates a config.json with database variables, starts the backend binary with the config in background, waits, then runs `cd ../frontend`, `npm install`, `npm test`, waits, and finally kills the backend process. Finally, add a deployment job in the deploy stage using node:8.9.4, only on master, with a before_script that sets up SSH keys from `$SSH_DEPLOYMENT_KEY` and known hosts, then a script that removes old frontend files on the remote server, copies the new `frontend/build` via scp, stops any running backend process, clears and recreates backend directories, copies SQL init and update scripts and runs them with mysql, uploads the backend binary and makes it executable, starts it in the background, creates a download folder, and uploads the mobile APK to the server.",
+  "tags": [
+    "node-8",
+    "npm",
+    "android",
+    "react-native",
+    "ssh-deployment",
+    "gitlab-ci"
+  ]
+}

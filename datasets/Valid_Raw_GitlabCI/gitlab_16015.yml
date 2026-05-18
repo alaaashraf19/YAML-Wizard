@@ -1,0 +1,70 @@
+before_script:
+- pip install -r requirements.txt
+- pip install -r requirements_dev.txt
+docs:
+  artifacts:
+    paths:
+    - public
+  script:
+  - python setup.py develop
+  - sphinx-apidoc -o docs/ reflink
+  - (cd docs; make html)
+  - mkdir -p public/docs/
+  - cp docs/_build/html/* public/docs -r
+  stage: build-docs
+image: python:3
+pages:
+  artifacts:
+    paths:
+    - public
+  before_script: []
+  dependencies:
+  - docs
+  - test-python3
+  only:
+  - master
+  script:
+  - echo packing stuff
+  stage: deploy
+pypi-3:
+  dependencies:
+  - test-python3-package
+  image: python:3
+  only:
+  - tags
+  script:
+  - bash deploy.sh
+  stage: deploy
+stages:
+- test
+- test-package
+- build-docs
+- deploy
+test-python2:
+  image: python:2
+  script:
+  - python setup.py develop
+  - pytest --doctest-modules -m "not btrfs"
+  stage: test
+test-python2-package:
+  image: python:2
+  script:
+  - python setup.py sdist
+  - (cd dist; pip install reflink-*.tar.gz)
+  stage: test-package
+test-python3:
+  artifacts:
+    paths:
+    - public/coverage
+  image: python:3
+  script:
+  - python setup.py develop
+  - pytest --doctest-modules -m "not btrfs" --cov-report term --cov-report html:public/coverage/
+    --cov
+  stage: test
+test-python3-package:
+  image: python:3
+  script:
+  - python setup.py sdist
+  - (cd dist; pip install reflink-*.tar.gz)
+  stage: test-package

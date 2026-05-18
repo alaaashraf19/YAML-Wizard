@@ -1,0 +1,14 @@
+image: tsgkadot/sphinx-plantuml:latest
+pages:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - public
+  script:
+  - pip install -r requirements.txt -U
+  - sphinx-build -b html ./source public
+  stage: build
+  tags:
+  - docker
+stages:
+- build

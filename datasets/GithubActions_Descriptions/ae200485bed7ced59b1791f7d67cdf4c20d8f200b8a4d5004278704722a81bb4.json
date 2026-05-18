@@ -1,0 +1,14 @@
+{
+  "sha": "ae200485bed7ced59b1791f7d67cdf4c20d8f200b8a4d5004278704722a81bb4",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1603,
+  "description": "Create a GitHub Actions workflow that compiles and checks XCSoar on UNIX. The workflow should trigger on workflow dispatch, push to master branch (excluding certain paths), and pull requests to master (excluding certain paths). Use an ubuntu-latest job that checks out the repository with submodules, caches ccache, and then uses a Docker image to compile and check XCSoar with ccache and verbose output.",
+  "tags": [
+    "xcsoar",
+    "unix",
+    "docker",
+    "ccache",
+    "github-actions"
+  ]
+}

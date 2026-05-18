@@ -1,0 +1,14 @@
+{
+  "sha": "64c3f7629afa080d2d506c3cd0660869a09fba9ccf9567d5db93412e0bc41411",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1340,
+  "description": "Create a GitHub Actions workflow named Commit that runs on every push. Use a matrix strategy to test on ubuntu-latest and macos-latest with Python 3.6, 3.7, and 3.8 in parallel. For each job, check out the code, set up the corresponding Python version, install pip, setuptools, and tox, and then run tox. Additionally, run a separate job on windows-latest with Python 3.7 to run tox with a specific environment.",
+  "tags": [
+    "python",
+    "tox",
+    "matrix",
+    "tests",
+    "multios"
+  ]
+}

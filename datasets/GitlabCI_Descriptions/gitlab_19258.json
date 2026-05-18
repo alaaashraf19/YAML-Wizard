@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_19258",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 927,
+  "description": "Create a GitLab CI pipeline with a single build stage and a job named job that runs on the docker tag. Include a global before_script that installs Node.js 7 via the Nodesource setup script, adds i386 architecture, adds the WebUpd8 Java 8 repository, imports its apt key, accepts the Oracle license, updates apt and installs nodejs, wine, and oracle-java8-installer, sets node alternative to /usr/bin/nodejs, and upgrades npm globally. In the job, which is limited to the master branch, execute npm install, then npm run build-win, and finally run java -jar BoxIO-1.0.1.jar credentials.properties upload dist/*/*exe. No image, services, caches, artifacts or deployment targets are defined.",
+  "tags": [
+    "docker",
+    "nodejs",
+    "java",
+    "wine",
+    "npm",
+    "build-win"
+  ]
+}

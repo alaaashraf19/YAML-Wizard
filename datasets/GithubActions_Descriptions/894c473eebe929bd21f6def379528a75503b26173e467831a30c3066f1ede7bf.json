@@ -1,0 +1,17 @@
+{
+  "sha": "894c473eebe929bd21f6def379528a75503b26173e467831a30c3066f1ede7bf",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5355,
+  "description": "Create a GitHub Actions workflow named mac-pwsafe that runs on push requests to the master branch, on pull requests to the master branch, and on workflow dispatch. The workflow should run on a macOS environment with read permissions to repository contents. It should check out the repository, set build parameters, force a compatible Xcode version, install tools, build libyubikey and ykpers from upstream, cache and build wxWidgets, generate and print xcconfigs, build pwsafe, move the app to another folder, install dependencies for creating a dmg, create a dmg, and upload the dmg as an artifact.",
+  "tags": [
+    "macos",
+    "xcode",
+    "pwsafe",
+    "github-actions",
+    "ci",
+    "cd",
+    "autotools",
+    "brew"
+  ]
+}

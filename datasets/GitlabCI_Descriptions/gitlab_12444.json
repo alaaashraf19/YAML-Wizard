@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_12444",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 417,
+  "description": "Create a GitLab CI pipeline with three stages: build, testing, and cleanup. In the build stage add a build job that runs `docker-compose down`, `docker volume prune -f`, and `docker-compose build`. In the testing stage add a testing job (retry up to 2 times) that runs `docker-compose up -d` followed by `docker-compose exec -T cidemon python test_app.py`. In the cleanup stage add a cleanup job that always runs, executing `docker-compose down`, `docker volume prune -f`, and `docker rm -f $(docker ps -qa) || echo \"\"`. Use the default Docker image to run these commands.",
+  "tags": [
+    "docker-compose",
+    "testing",
+    "cleanup",
+    "retry",
+    "gitlab-ci"
+  ]
+}

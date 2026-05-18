@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_14391",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 334,
+  "description": "Create a GitLab CI pipeline with a single job named test that runs in the default test stage. Use a generic Linux image (e.g., ubuntu:latest) and execute the following commands in order: apt-get update -qy, apt-get install -y python-dev python-pip, pip install -r requirements.txt, ./unit_test_empty_destination_dir, py.test --cov=./picture_video_organizer/ unit_test/, flake8 --max-line-length=120 --ignore=F401 picture_video_organizer/*.py, pydocstyle picture_video_organizer/*.py. Do not define any caches, artifacts, or special rules, and rely on the default branch triggers.",
+  "tags": [
+    "python",
+    "pytest",
+    "flake8",
+    "pydocstyle",
+    "apt-get",
+    "unit-test"
+  ]
+}

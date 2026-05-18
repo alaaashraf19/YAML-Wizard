@@ -1,0 +1,24 @@
+stages:
+- changes
+update::readme:
+  before_script:
+  - apk add --update git bash
+  - git clone https://gitlab-ci-token:$TOKEN_GITLAB$(echo $CI_REPOSITORY_URL | grep
+    -o '@.*')
+  - git config --global user.email 'gitlab-ci-token@gitlab.com'
+  - git config --global user.name 'gitlab-ci-token'
+  - cd $CI_PROJECT_NAME
+  except:
+    variables:
+    - $CI_COMMIT_MESSAGE =~ /Gitlab/
+  image: alpine:3.8
+  only:
+    changes:
+    - '**/**/README.md'
+    - '**/README.md'
+  script:
+  - ./CHANGELOG.sh
+  - git add README.md
+  - git commit -m '[Gitlab] Update README.md' || true
+  - git push origin master || true
+  stage: changes

@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_00913",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 810,
+  "description": "Create a GitLab CI pipeline using the Docker image viraweb/mblowfish-angularjs-builder:1.0.0 and a cache on node_modules. Define two stages: build and deploy. In the build stage add a grunt_build job that runs npm install, bower install --allow-root --no-interactive, chmod 777 -fR ., su builder -c \"grunt\", and find . -name lcov.info | xargs -d '\\n' cat | node_modules/.bin/codacy-coverage -t $CODACY_PROJECT_TOKEN; it stores ./${CI_PROJECT_NAME}.zip and ./doc as artifacts, captures coverage with the regex /Lines\\s*:\\s*(\\d+\\.\\d+)%/, and runs only on the master and develop branches. In the deploy stage add a marketplace_deploy job that runs npm install, bower install --allow-root --no-interactive, chmod 777 -fR ., su builder -c \"grunt build\", and uploads the zip via curl to http://marketplace.digidoki.com/api/v2/marketplace/spas/token-$MARKETPLACE_TOKEN; it runs only on the master branch.",
+  "tags": [
+    "angularjs",
+    "grunt",
+    "npm",
+    "bower",
+    "codacy-coverage",
+    "marketplace-deploy",
+    "node",
+    "docker-image",
+    "ci-cache"
+  ]
+}

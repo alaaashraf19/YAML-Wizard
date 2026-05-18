@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_05648",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 357,
+  "description": "Create a GitLab CI pipeline that includes three external CI config files from https://gitlab.com/coala/solar/common/raw/master/ci-config/base.yml, lint.yml and continuous-delivery.yml. Define the stages test, build, release, and deploy. Add a job named test:template_sync that runs in the test stage using the python:3 Docker image and executes the script command test_template_sync, with no caches, artifacts, or special rules.",
+  "tags": [
+    "python",
+    "template-sync",
+    "includes",
+    "gitlab-ci"
+  ]
+}

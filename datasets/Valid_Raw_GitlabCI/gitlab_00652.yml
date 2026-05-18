@@ -1,0 +1,25 @@
+.template:build:
+  script: &id001
+  - docker login -u gitlab-ci-token -p ${CI_BUILD_TOKEN} ${REGISTRY}
+  - docker build . -t ${CANONICAL_NAME}:latest -t ${CANONICAL_NAME}
+  - docker push ${CANONICAL_NAME}:latest
+  - VERSION=$(docker run ${CANONICAL_NAME} docker-compose -v | grep -o '\d\+\.\d\+\.\d\+')
+  - docker tag ${CANONICAL_NAME} ${CANONICAL_NAME}:${VERSION}
+  - docker push ${CANONICAL_NAME}:${VERSION}
+docker:build:
+  script: *id001
+  stage: build
+docker:rebuild:
+  script: *id001
+  stage: rebuild
+  when: manual
+image: docker:latest
+services:
+- docker:dind
+stages:
+- build
+- rebuild
+variables:
+  CANONICAL_NAME: ${REGISTRY}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}
+  PROJECT_NAME: ${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}
+  REGISTRY: registry.gitlab.com

@@ -1,0 +1,18 @@
+before_script:
+- cp config/database-ci.yml config/database.yml
+- ruby -v
+- which ruby
+- gem install bundler --no-ri --no-rdoc
+- bundle check || bundle install
+- RAILS_ENV=test bundle exec rake db:create
+- RAILS_ENV=test bundle exec rake db:migrate
+image: ruby:2.3
+rspec:
+  script:
+  - bundle exec rspec
+services:
+- postgres:latest
+variables:
+  POSTGRES_DB: resource_cataloguer_test
+  POSTGRES_PASSWORD: resource_cataloguer
+  POSTGRES_USER: resource_cataloguer

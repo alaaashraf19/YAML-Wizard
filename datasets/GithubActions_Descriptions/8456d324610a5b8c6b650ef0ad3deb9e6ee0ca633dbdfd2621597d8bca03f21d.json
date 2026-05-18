@@ -1,0 +1,18 @@
+{
+  "sha": "8456d324610a5b8c6b650ef0ad3deb9e6ee0ca633dbdfd2621597d8bca03f21d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 7329,
+  "description": "Create a GitHub Actions workflow named ci-build that triggers on push to the master branch and on pull requests to master, excluding certain paths. The workflow should have three jobs: coverage, build, and build-windows. The coverage job should run on ubuntu-latest, install dependencies, configure, and run tests. The build job should also run on ubuntu-latest, install dependencies, configure, and build the project. The build-windows job should run on windows-latest, set up MSYS2, install dependencies, configure, build, and package the project for distribution.",
+  "tags": [
+    "ci",
+    "ubuntu",
+    "windows",
+    "msys2",
+    "autotools",
+    "make",
+    "test",
+    "coverage",
+    "release"
+  ]
+}

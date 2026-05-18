@@ -1,0 +1,55 @@
+.pages:
+  artifacts:
+    expire_in: 60 days
+    paths:
+    - public
+  coverage: '/^ *lines\.*: *(\d+\.\d+\%) .*$/'
+  image: registry.gitlab.com/craigbarnes/dockerfiles/lua-testing
+  script:
+  - git fetch --tags
+  - make docs dist
+  - make coverage-report
+before_script:
+- export MAKEFLAGS="-j$(mk/nproc.sh)" V=1 VERBOSE=1
+pages:
+  extends: .pages
+  only:
+  - master
+  stage: dist
+pages:non-master:
+  except:
+  - master
+  extends: .pages
+  stage: test
+stages:
+- test
+- dist
+test:alpine:
+  image: registry.gitlab.com/craigbarnes/dockerfiles/cdev-alpine
+  script:
+  - make vars
+  - make build-all
+  - make check-all
+  - make benchmark CFLAGS='-O3 -DNDEBUG'
+  stage: test
+test:arch:
+  image: registry.gitlab.com/craigbarnes/dockerfiles/lua-testing
+  script:
+  - make vars
+  - make build-all
+  - make check-all check-luajit
+  - make clean-obj
+  - luarocks --lua-version=5.4 --tree=/usr make gumbo-scm-1.rockspec
+  - lua5.4 -e 'require "gumbo"'
+  - make clean-obj
+  - luarocks --lua-version=5.3 --tree=/usr make gumbo-scm-1.rockspec
+  - lua5.3 -e 'require "gumbo"'
+  - make clean-obj
+  - luarocks --lua-version=5.2 --tree=/usr make gumbo-scm-1.rockspec
+  - lua5.2 -e 'require "gumbo"'
+  - make clean-obj
+  - luarocks --lua-version=5.1 --tree=/usr make gumbo-scm-1.rockspec
+  - lua5.1 -e 'require "gumbo"'
+  - make clean-obj
+  - make benchmark CFLAGS='-O3 -DNDEBUG'
+  stage: test

@@ -1,0 +1,70 @@
+.job:
+  cache: &id001
+    paths:
+    - vendor/
+    policy: pull
+  tags: &id002
+  - docker
+build:
+  artifacts:
+    expire_in: 4 week
+    name: $CI_COMMIT_SHA
+    paths:
+    - build_out/
+  cache: *id001
+  image: ${IMAGE_GO_BUILDER}
+  script:
+  - CGO_ENABLED=0 go build -o build_out/keyforce
+  stage: test
+  tags: *id002
+container:
+  cache: *id001
+  dependencies:
+  - build
+  image: docker:latest
+  script:
+  - docker info
+  - docker login -u "${REGISTRY_USERNAME}" -p "${REGISTRY_PASSWORD}" "${REGISTRY_SERVER}"
+  - echo "$CI_BUILD_REF" > VERSION
+  - docker build -t "${REGISTRY_IMAGE}:${CI_COMMIT_REF_SLUG}" .
+  - docker push "${REGISTRY_IMAGE}:${CI_COMMIT_REF_SLUG}"
+  - docker logout "${REGISTRY_SERVER}"
+  services:
+  - docker:dind
+  stage: publish
+  tags: *id002
+release:
+  cache: *id001
+  dependencies:
+  - container
+  image: docker:latest
+  only:
+  - master
+  script:
+  - docker info
+  - docker login -u "${REGISTRY_USERNAME}" -p "${REGISTRY_PASSWORD}" "${REGISTRY_SERVER}"
+  - docker pull "${REGISTRY_IMAGE}:${CI_COMMIT_REF_SLUG}"
+  - docker tag "${REGISTRY_IMAGE}:${CI_COMMIT_REF_SLUG}" "${REGISTRY_IMAGE}:latest"
+  - docker push "${REGISTRY_IMAGE}:latest"
+  - docker logout "${REGISTRY_SERVER}"
+  services:
+  - docker:dind
+  stage: release
+  tags: *id002
+stages:
+- prepare
+- test
+- publish
+- release
+unittest:
+  cache: *id001
+  image: ${IMAGE_GO_BUILDER}
+  script:
+  - go test ./...
+  stage: test
+  tags: *id002
+variables:
+  GO_PROJECT: gitlab.com/tomkukral/keyforce
+  IMAGE_GO_BUILDER: golang:1.11
+  REGISTRY_IMAGE: docker.io/tomkukral/keyforce
+  REGISTRY_SERVER: docker.io

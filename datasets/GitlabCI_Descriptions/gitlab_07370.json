@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_07370",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 197,
+  "description": "Create a GitLab CI pipeline that uses the exo1/dev-base-haskell:latest Docker image, enables an untracked cache for all files, and runs a global before_script 'stack upgrade' before any job. Define a single stage named build. Add a stack-build job that runs in the build stage on docker runners (tagged docker), executes the commands 'stack setup' and then 'stack build', inheriting the global before_script. No artifacts, rules, or deployment targets are specified.",
+  "tags": [
+    "haskell",
+    "stack",
+    "docker",
+    "build",
+    "ci"
+  ]
+}

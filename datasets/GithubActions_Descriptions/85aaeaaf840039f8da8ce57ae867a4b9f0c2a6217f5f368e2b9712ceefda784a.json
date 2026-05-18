@@ -1,0 +1,15 @@
+{
+  "sha": "85aaeaaf840039f8da8ce57ae867a4b9f0c2a6217f5f368e2b9712ceefda784a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1371,
+  "description": "Create a GitHub Actions workflow to publish a Python distribution to PyPI. The workflow should trigger on push events with tags matching v*.*.*. It should have two jobs: one to build the distribution and another to publish it to PyPI if the push event is a tag. The build job should check out the code, set up Python 3.x, install build, and create a binary wheel and source tarball. The publish job should download the distribution and publish it to PyPI using a trusted publishing method.",
+  "tags": [
+    "python",
+    "pypi",
+    "release",
+    "twine",
+    "tags",
+    "github-actions"
+  ]
+}

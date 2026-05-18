@@ -1,0 +1,14 @@
+{
+  "sha": "dc8bb5e298777845a962aa1461102f6a39ce70fcfeab219c5364615f03db9761",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3170,
+  "description": "Create a GitHub Actions workflow that runs linters on pull requests for the rosbag2 repository. The workflow should have four jobs: ament_copyright, ament_xmllint, ament_lint_cpp, and ament_lint_python. Each job runs on an ubuntu-latest environment with a Docker container based on ROS Eloquent, checks out the code, and then runs a specific linter on a set of packages.",
+  "tags": [
+    "ros",
+    "linting",
+    "github-actions",
+    "ubuntu",
+    "docker"
+  ]
+}

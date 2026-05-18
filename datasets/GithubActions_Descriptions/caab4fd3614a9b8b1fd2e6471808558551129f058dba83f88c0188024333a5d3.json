@@ -1,0 +1,14 @@
+{
+  "sha": "caab4fd3614a9b8b1fd2e6471808558551129f058dba83f88c0188024333a5d3",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 798,
+  "description": "Create a GitHub Actions workflow named test that runs on push to master branch, tags matching v*.*.*, and on pull requests to master, while ignoring changes to README.md, CONTRIBUTING.md, and docs/. Configure the build type to Debug. Use a single windows-latest job that checks out the repository, sets up the test framework with tools/setup_test_framework.bat, configures CMake with the build type, builds the project, and runs tests with ctest.",
+  "tags": [
+    "windows",
+    "cmake",
+    "ctest",
+    "tests",
+    "debug"
+  ]
+}

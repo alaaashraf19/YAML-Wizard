@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_05399",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 738,
+  "description": "Create a GitLab CI pipeline using the node:10.8.0 Docker image with a global cache named cache_yarn storing .cache_yarn. Define stages install, build, test, and deploy. In the install stage add an install job that runs 'yarn install --cache-folder .cache_yarn', stores node_modules as a 2‑week artifact, and runs only on the master and next branches. In the build stage add a build job that depends on install, runs 'yarn build', saves the build directory as a 2‑week artifact, and also runs only on master and next. In the test stage add a test job that depends on install, runs 'yarn testCI', and runs only on master and next. In the deploy stage add a deploy job that depends on install and build, runs 'yarn firebase deploy --token $FIREBASE_TOKEN' with the FIREBASE_TOKEN variable, and runs only on the master branch, deploying to Firebase.",
+  "tags": [
+    "node",
+    "yarn",
+    "firebase",
+    "cache",
+    "ci",
+    "gitlab-ci"
+  ]
+}

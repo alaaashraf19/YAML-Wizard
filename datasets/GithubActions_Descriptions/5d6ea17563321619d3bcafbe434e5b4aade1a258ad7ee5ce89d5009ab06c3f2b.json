@@ -1,0 +1,16 @@
+{
+  "sha": "5d6ea17563321619d3bcafbe434e5b4aade1a258ad7ee5ce89d5009ab06c3f2b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1086,
+  "description": "Create a GitHub Actions workflow named test that runs on push and pull request events across three jobs: ubuntu, macos, and windows. The ubuntu job uses ubuntu-latest, installs brotli, and runs tests with make. The macos job uses macos-latest and runs tests with make. The windows job uses windows-latest, configures Git, checks out the code, sets up MSBuild, and builds and runs tests with MSBuild and x64 test executable.",
+  "tags": [
+    "ci",
+    "tests",
+    "ubuntu",
+    "macos",
+    "windows",
+    "make",
+    "msbuild"
+  ]
+}

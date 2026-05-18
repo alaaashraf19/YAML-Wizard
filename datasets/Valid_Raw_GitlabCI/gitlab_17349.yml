@@ -1,0 +1,65 @@
+before_script:
+- export GRADLE_USER_HOME=`pwd`/.gradle
+docs:
+  allow_failure: true
+  artifacts:
+    expire_in: 1 days
+    name: $CI_JOB_STAGE-$CI_COMMIT_REF_NAME-docs
+    paths:
+    - docs/build/docs
+    when: always
+  cache:
+    key: $CI_COMMIT_REF_SLUG-java
+    paths:
+    - .gradle/wrapper
+    - .gradle/caches
+  image: java:8-jdk
+  script:
+  - ./gradlew docs:asciidoctor
+  stage: docs
+  when: always
+pages:
+  artifacts:
+    expire_in: 1 days
+    name: $CI_JOB_STAGE-$CI_COMMIT_REF_NAME-gitlabpages
+    paths:
+    - public
+  cache:
+    key: $CI_COMMIT_REF_SLUG-java
+    paths:
+    - .gradle/wrapper
+    - .gradle/caches
+  environment:
+    name: gitlab-pages
+    url: https://spare-time-demos.gitlab.io/project-template/
+  image: java:8-jdk
+  only:
+  - master
+  script:
+  - ./gradlew backend:test
+  - ./gradlew backend:schemaspy backend:dbDocToReports
+  - ./gradlew docs:docs
+  stage: site
+  when: always
+stages:
+- test
+- docs
+- site
+test-backend:
+  allow_failure: true
+  artifacts:
+    expire_in: 1 days
+    name: $CI_JOB_STAGE-$CI_COMMIT_REF_NAME-test
+    paths:
+    - backend/build/reports
+    when: always
+  cache:
+    key: $CI_COMMIT_REF_SLUG-java
+    paths:
+    - .gradle/wrapper
+    - .gradle/caches
+  image: java:8-jdk
+  script:
+  - ./gradlew backend:check
+  stage: test
+  when: always

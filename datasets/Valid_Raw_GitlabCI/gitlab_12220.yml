@@ -1,0 +1,62 @@
+build:jenkins-master:
+  before_script:
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+  image: docker:18.03
+  only:
+  - master
+  script:
+  - docker pull $CONTAINER_IMAGE:latest || true
+  - docker build --cache-from $CONTAINER_IMAGE:latest --tag $CONTAINER_IMAGE:$CI_BUILD_REF
+    --tag $CONTAINER_IMAGE:latest docker/jenkins-master/
+  - docker push $CONTAINER_IMAGE:$CI_BUILD_REF
+  - docker push $CONTAINER_IMAGE:latest
+  services:
+  - docker:dind
+  stage: build
+  variables:
+    CONTAINER_IMAGE: registry.gitlab.com/merlodicus/jenkins-docker/master
+    DOCKER_DRIVE: overlay2
+    DOCKER_HOST: tcp://docker:2375
+build:jenkins-nginx:
+  before_script:
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+  image: docker:18.03
+  only:
+  - master
+  script:
+  - docker pull $CONTAINER_IMAGE:latest || true
+  - docker build --cache-from $CONTAINER_IMAGE:latest --tag $CONTAINER_IMAGE:$CI_BUILD_REF
+    --tag $CONTAINER_IMAGE:latest docker/jenkins-nginx/
+  - docker push $CONTAINER_IMAGE:$CI_BUILD_REF
+  - docker push $CONTAINER_IMAGE:latest
+  services:
+  - docker:dind
+  stage: build
+  variables:
+    CONTAINER_IMAGE: registry.gitlab.com/merlodicus/jenkins-docker/nginx
+    DOCKER_DRIVE: overlay2
+    DOCKER_HOST: tcp://docker:2375
+stages:
+- validate
+- build
+validate:inspec-tests:
+  image:
+    entrypoint:
+    - /bin/sh
+    - -c
+    name: chef/inspec:2.2.27
+  script:
+  - cd infrastructure/inspec-profiles
+  - for p in $(ls -d */); do echo "Checking ${p}" && inspec check ${p}; done
+  stage: validate
+validate:packer-templates:
+  image:
+    entrypoint:
+    - /bin/sh
+    - -c
+    name: hashicorp/packer:1.2.4
+  script:
+  - cd infrastructure/images
+  - for t in $(ls | grep .json$); do echo "Validating ${t}" && packer validate ${t};
+    done
+  stage: validate

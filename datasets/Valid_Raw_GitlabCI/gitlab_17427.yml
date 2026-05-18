@@ -1,0 +1,11 @@
+build:
+  script:
+  - echo "gradle clean...."
+  - gradle clean
+  - echo "gradle checkstyleMain start"
+  - gradle checkstyleMain --info
+  - echo "gradle build start"
+  - gradle build
+  stage: build
+stages:
+- build

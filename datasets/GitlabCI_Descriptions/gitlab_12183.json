@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_12183",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 664,
+  "description": "Create a GitLab CI pipeline that defines a hidden .build_base job in the build-base stage, which runs a before_script that sources .gitlab/ci/scripts/docker_build_before_script.sh and .gitlab/ci/scripts/python_image_version.sh, then exports EXTRA_ARGS=\"--build-arg PYTHON_VERSION=$PYTHON_VERSION\" and IMAGE_TAG=$BASE_SHA-python$PYTHON_IMAGE_VERSION, and extends the .docker_build and .parallel:python_version templates with DOCKERFILE set to docker/base/Dockerfile and IMAGE_NAME to $CI_REGISTRY_IMAGE/base. Add a meltano_base job that extends .build_base and is limited to runs only when changes occur in docker/base/Dockerfile or poetry.lock. Add a meltano_base_forks job that also extends .build_base but excludes execution on any branches or tags of the meltano/meltano project. Both jobs inherit the Docker build steps from .docker_build to build and push the image to the GitLab Container Registry using the constructed IMAGE_TAG.",
+  "tags": [
+    "docker",
+    "python",
+    "meltano",
+    "build-base",
+    "gitlab-ci"
+  ]
+}

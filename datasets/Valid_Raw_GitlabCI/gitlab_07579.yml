@@ -1,0 +1,157 @@
+.image_release:
+  script: &id001
+  - buildah login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+  - buildah pull $IMAGE
+  - buildah tag $IMAGE $RELEASE_IMAGE
+  - buildah push $RELEASE_IMAGE
+.integration-test-template:
+  image: $IMAGE
+  only:
+    variables:
+    - $CI_PROJECT_PATH == "finestructure/pipeline-trigger"
+  stage: test
+.release_template:
+  image: quay.io/buildah/stable:latest
+  stage: release
+basic integration test:
+  extends: .integration-test-template
+  script:
+  - trigger -a "$API_TOKEN" -p "$PROJ_B_PIPELINE_TOKEN" -t $REF $PROJ_B_ID
+build-sha:
+  image: quay.io/buildah/stable:latest
+  script:
+  - buildah login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+  - buildah build --pull -t $IMAGE .
+  - buildah push $IMAGE
+  stage: build
+detch integration test:
+  extends: .integration-test-template
+  script:
+  - trigger -d -p "$PROJ_B_PIPELINE_TOKEN" -t $REF $PROJ_B_ID
+env variables & job output integration test:
+  extends: .integration-test-template
+  script:
+  - trigger -a "$API_TOKEN" -p "$PROJ_A_PIPELINE_TOKEN" -t $REF -e foo1=bar2 -e foo2=bar3
+    -o $PROJ_A_ID
+host & url integration test:
+  extends: .integration-test-template
+  script:
+  - trigger -a "$API_TOKEN" -p "$PROJ_B_PIPELINE_TOKEN" -t $REF -h gitlab.com -u /api/v4/projects
+    $PROJ_B_ID
+  - trigger -a "$API_TOKEN" -p "$PROJ_B_PIPELINE_TOKEN" -t $REF -h https://gitlab.com
+    -u /api/v4/projects $PROJ_B_ID
+issue 14 integration test:
+  extends: .integration-test-template
+  script: "# test for https://gitlab.com/finestructure/pipeline-trigger/issues/14\n\
+    apk add --no-cache curl\n\necho -e \"\\nPushing failing commit ...\"\n_=$(./tests/commit.sh\
+    \ \"$API_TOKEN\" $PROJ_TEST_ID ./tests/fail.json)\n\necho -e \"\\nFirst trigger\
+    \ call (expected to fail, just to get a pipeline id) ...\"\nres=$(\n  trigger\
+    \ -a \"$API_TOKEN\" -p \"$PROJ_TEST_PIPELINE_TOKEN\" -t $REF $PROJ_TEST_ID ||\
+    \ echo -e \"\\nfailed as expected\"\n)\necho -e \"\\nFirst trigger done:\\n$res\"\
+    \n\n# could use something a bit more elegant than this\npid=$(echo $res | python\
+    \ -c \"import re, sys; print(re.match('.+ Waiting for pipeline (\\d+) to finish\
+    \ .+', sys.stdin.read()).groups()[0])\")\necho -e \"\\nPID from first run: $pid\"\
+    \n\n# test the result we've received from first trigger\necho \"$res\" | grep\
+    \ \"failed as expected$\" > /dev/null 2&>1\n\necho -e \"\\nPushing succeeding\
+    \ commit ...\"\n_=$(./tests/commit.sh \"$API_TOKEN\" $PROJ_TEST_ID ./tests/succeed.json)\n\
+    \necho -e \"\\nSecond trigger call, now with -f flag (expected to retry new pipeline\
+    \ and succeed) ...\"\ntrigger -a \"$API_TOKEN\" -p \"$PROJ_TEST_PIPELINE_TOKEN\"\
+    \ -t $REF --pid $pid $PROJ_TEST_ID\n"
+issue 20 integration test:
+  extends: .integration-test-template
+  script:
+  - trigger -a "$API_TOKEN" -p "$PROJ_B_PIPELINE_TOKEN" -t $REF --verifyssl false
+    $PROJ_B_ID
+manual pass integration test:
+  extends: .integration-test-template
+  script:
+  - trigger -a "$API_TOKEN" -p "$PROJ_B_PIPELINE_TOKEN" -t manual --on-manual pass
+    $PROJ_B_ID
+manual play integration test:
+  extends: .integration-test-template
+  script:
+  - trigger -a "$API_TOKEN" -p "$PROJ_B_PIPELINE_TOKEN" -t manual --on-manual play
+    $PROJ_B_ID
+pages:
+  artifacts:
+    expire_in: 1 year
+    paths:
+    - public
+  dependencies:
+  - unit tests
+  only:
+  - master
+  script:
+  - mv htmlcov/ public/
+  stage: release
+project name integration test:
+  extends: .integration-test-template
+  script:
+  - trigger -a "$API_TOKEN" -p "$PROJ_B_PIPELINE_TOKEN" -t master finestructure/pt-proj-b
+release-latest:
+  image: quay.io/buildah/stable:latest
+  only:
+  - main
+  script: *id001
+  stage: release
+  variables:
+    RELEASE_IMAGE: $CI_REGISTRY_IMAGE:latest
+release-tag:
+  image: quay.io/buildah/stable:latest
+  only:
+  - tags
+  script: *id001
+  stage: release
+  variables:
+    RELEASE_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG
+retry integration test:
+  extends: .integration-test-template
+  script: "# https://gitlab.com/finestructure/pt-proj-retry.git is a project that\
+    \ randomly failes with a rate of 50%\n# In order to test retry behaviour, we run\
+    \ it until it fails and then run until it succeeds.\nmax_retries=20\ncmd=\"trigger\
+    \ -a \"$API_TOKEN\" -p \"$PROJ_RETRY_PIPELINE_TOKEN\" -t $REF -r $PROJ_RETRY_ID\"\
+    \n\necho\necho \"## Trying until we get first faiure\"\necho\nattempt=1\nuntil\
+    \ ! $cmd\ndo\n  if [ $attempt -le $max_retries ]; then\n    echo \"Attempt $attempt\
+    \ failed, retrying ...\"\n    attempt=$((attempt+1))\n  else\n    echo \"Max retries\
+    \ exceeded - exiting\"\n    exit 1\n  fi\ndone\n\necho\necho \"## Trying until\
+    \ we get first success\"\necho\nattempt=1\nuntil $cmd\ndo\n  if [ $attempt -le\
+    \ $max_retries ]; then\n    echo \"Attempt $attempt failed, retrying ...\"\n \
+    \   attempt=$((attempt+1))\n  else\n    echo \"Max retries exceeded - exiting\"\
+    \n    exit 1\n  fi\ndone\n"
+retry pid integration test:
+  extends: .integration-test-template
+  script: 'pid=25900902  # known existing pipeline id in proj-b
+
+    trigger -a "$API_TOKEN" -p "$PROJ_B_PIPELINE_TOKEN" -t $REF --pid $pid $PROJ_B_ID
+
+    '
+stages:
+- build
+- test
+- release
+unit tests:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - htmlcov
+  image: $IMAGE
+  script: 'coverage run -m unittest test_trigger.py
+
+    coverage report -m --fail-under 85 trigger.py
+
+    coverage html
+
+    '
+  stage: test
+variables:
+  API_TOKEN: $PERSONAL_ACCESS_TOKEN
+  IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+  PROJ_A_ID: 4624510
+  PROJ_A_PIPELINE_TOKEN: $PROJ_A_PIPELINE_TOKEN
+  PROJ_B_ID: 4624517
+  PROJ_B_PIPELINE_TOKEN: $PROJ_B_PIPELINE_TOKEN
+  PROJ_RETRY_ID: 6955857
+  PROJ_RETRY_PIPELINE_TOKEN: $PROJ_RETRY_PIPELINE_TOKEN
+  PROJ_TEST_ID: 8223553
+  PROJ_TEST_PIPELINE_TOKEN: $PROJ_TEST_PIPELINE_TOKEN
+  REF: master

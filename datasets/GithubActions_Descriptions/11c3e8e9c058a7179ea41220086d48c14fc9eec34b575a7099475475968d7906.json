@@ -1,0 +1,17 @@
+{
+  "sha": "11c3e8e9c058a7179ea41220086d48c14fc9eec34b575a7099475475968d7906",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 7401,
+  "description": "Create a GitHub Actions release workflow that triggers on push of tags matching v[0-9]+.[0-9]+.[0-9]+, on a scheduled cron job, and on workflow dispatch with an optional tag_name input. The workflow has three build jobs for Linux, macOS, and Windows, each checking out the code, installing dependencies, building a release package, and uploading it as an artifact. A subsequent publish job, dependent on the build jobs, downloads the artifacts, generates a release body based on the event type and tag name, and creates a GitHub release with the artifacts.",
+  "tags": [
+    "release",
+    "multi-os",
+    "github-release",
+    "cron",
+    "workflow-dispatch",
+    "conan",
+    "cmake",
+    "ninja"
+  ]
+}

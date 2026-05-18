@@ -1,0 +1,15 @@
+{
+  "sha": "9595db65e6bf87e08fcb7bc064dbd874c2ee86719ac3f7017763d91c9d935e79",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 891,
+  "description": "Create a GitHub Actions workflow named All Tests that can be triggered manually. The workflow should run on multiple jobs with different combinations of operating systems (ubuntu-latest, windows-latest, macOS-latest) and Python versions (3.6 to 3.10). For each job, check out the repository, set up the corresponding Python version, install pipenv, install dependencies with pipenv, and run all tests using pytest with coverage and junitxml reporting.",
+  "tags": [
+    "python",
+    "tests",
+    "pipenv",
+    "pytest",
+    "matrix",
+    "workflow-dispatch"
+  ]
+}

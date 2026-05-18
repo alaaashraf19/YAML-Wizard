@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_19203",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 964,
+  "description": "Create a GitLab CI pipeline with a test stage and three jobs. The cache gems job runs in the test stage, executes the script `bundle package --all --all-platforms`, sets the variable SETUP_DB to 'false', caches the vendor/cache directory as an artifact, depends on and needs the setup-test-env job, and only runs on the master branch or tags when $CI_SERVER_HOST == \"gitlab.com\" && $CI_PROJECT_NAMESPACE == \"gitlab-org\". The gitlab_git_test job extends the minimal-job template and runs the script `spec/support/prepare-gitlab-git-test-for-commit --check-for-changes`. The no_ee_check job also extends the minimal-job template, runs the script `scripts/no-ee-check`, and is limited to runs when the CI server host and project name match either $CI_SERVER_HOST == \"gitlab.com\" && $CI_PROJECT_NAME == \"gitlab-foss\" or $CI_SERVER_HOST == \"dev.gitlab.org\" && $CI_PROJECT_NAME == \"gitlabhq\".",
+  "tags": [
+    "ruby",
+    "bundle",
+    "gitlab-ci",
+    "cache",
+    "qa",
+    "no-ee-check"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_05522",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 343,
+  "description": "Create a GitLab CI pipeline that uses the Docker image registry.gitlab.com/cloud-oscilloscope/qtloscope and sets GIT_SUBMODULE_STRATEGY to recursive. Define a single stage called build and a job named build that runs in this stage. The job executes the commands: make, cp .build/qmloscilloscope .build/libqmqtt.so.1 ./, and cp src/oscilloscope.ini ./ . After the script finishes, it uploads an artifact named oscilloscope containing the files qmloscilloscope, libqmqtt.so.1, and oscilloscope.ini. The pipeline has no additional services, caches, or conditional rules.",
+  "tags": [
+    "qtloscope",
+    "docker-image",
+    "make",
+    "submodule",
+    "artifacts"
+  ]
+}

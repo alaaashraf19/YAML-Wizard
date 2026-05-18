@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_07968",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 4554,
+  "description": "Create a GitLab CI pipeline using the docker:19.03.2 image with the docker:19.03.2-dind service and a global before_script that logs in to the GitLab Container Registry. Define three stages: prepare, test, and build. In the prepare stage add a prepare_2019_1_3f1 job that runs ci/prepare.sh, sets variables for Unity 2019.1.3f1 download (BUILD, DOCKER_DRIVER, DOCKER_TLS_CERTDIR, DOWNLOAD_URL, SHA1, TAG, VERSION), and stores licence_request.alf as an artifact. In the test stage add a test-ci-generator job that uses python:3.7-alpine, runs a before_script to cd ci-generator, install virtualenv, create and activate a venv, install requirements, caches .cache/pip and ci-generator/venv/, then runs coverage run -m unittest tests/test*.py, coverage report, and coverage html, and saves the ci-generator/htmlcov directory as an artifact with a coverage regex. In the build stage add unity_2019_1_3f1-android, unity_2019_1_3f1-ios, unity_2019_1_3f1-linux-il2cpp, unity_2019_1_3f1-mac, unity_2019_1_3f1-webgl, and unity_2019_1_3f1-windows jobs that each retry twice, inherit the script ci/build.sh, use the global docker image, and provide specific variables for BUILD, COMPONENTS, DOCKERFILE_NAME, DOWNLOAD_URL, RELEASE_NOTES, RELEASE_URL, SHA1, TAG, and VERSION.",
+  "tags": [
+    "docker",
+    "docker-dind",
+    "unity",
+    "python",
+    "coverage",
+    "ci-generator",
+    "build"
+  ]
+}

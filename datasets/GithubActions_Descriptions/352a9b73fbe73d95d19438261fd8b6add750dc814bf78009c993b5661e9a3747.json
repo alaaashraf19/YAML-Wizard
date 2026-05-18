@@ -1,0 +1,14 @@
+{
+  "sha": "352a9b73fbe73d95d19438261fd8b6add750dc814bf78009c993b5661e9a3747",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1121,
+  "description": "Create a GitHub Actions workflow named test-tools that runs on push to main, on pull requests to main, and on merge groups for main. The workflow should cancel any in-progress runs for the same pull request or reference, except for the main branch. Use a single ubuntu-22.04 job with specific environment variables to build and test p4tools. The job should check out the repository with submodules, use ccache with a specific key and max size, build the tools with a script, and run tests with sudo and specific options.",
+  "tags": [
+    "ubuntu",
+    "tests",
+    "build",
+    "p4tools",
+    "ci"
+  ]
+}

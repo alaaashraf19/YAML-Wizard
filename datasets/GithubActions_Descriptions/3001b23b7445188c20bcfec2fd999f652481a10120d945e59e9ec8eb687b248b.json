@@ -1,0 +1,16 @@
+{
+  "sha": "3001b23b7445188c20bcfec2fd999f652481a10120d945e59e9ec8eb687b248b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2501,
+  "description": "Create a GitHub Actions workflow named Compiler Tests that runs every Friday at 7AM UTC and allows manual dispatch. The workflow consists of two jobs: all-compilers and latest-compilers-all-gem5-builds. The all-compilers job runs on a self-hosted Linux environment with various images and options, checks out the develop branch, and compiles gem5 with scons. The latest-compilers-all-gem5-builds job tests the two latest GCC and Clang compilers against all gem5 compilations in a similar environment.",
+  "tags": [
+    "compiler-tests",
+    "scons",
+    "gcc",
+    "clang",
+    "self-hosted",
+    "linux",
+    "scheduled-workflow"
+  ]
+}

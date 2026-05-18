@@ -1,0 +1,14 @@
+{
+  "sha": "04c6944bf2948066cd03a4507e84d7086d6c781c506ea092f11830b7513e8cf5",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1299,
+  "description": "Create a reusable GitHub Actions workflow named Template for Custom Board Build that accepts a string input args. The workflow runs on ubuntu-latest, checks out the repository, installs Python 3.11, and then installs PlatformIO build dependencies. It performs a pre-build step to ensure the PlatformIO boards folder is created, copies a custom board JSON file to the boards folder, and then builds the project using the provided args. If the build fails, it uploads the build artifacts and exits with a non-zero status.",
+  "tags": [
+    "python",
+    "custom-board",
+    "platformio",
+    "build",
+    "reusable-workflow"
+  ]
+}

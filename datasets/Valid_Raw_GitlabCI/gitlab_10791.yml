@@ -1,0 +1,77 @@
+.job_build_template:
+  only: &id001
+  - master
+  script: &id002
+  - apk add --no-cache m4
+  - m4 $CONTAINER_TAG/Dockerfile.m4 > $CONTAINER_TAG/Dockerfile
+  - docker build -t $CONTAINER_REPO:$CONTAINER_TAG $CONTAINER_TAG
+  - docker push $CONTAINER_REPO:$CONTAINER_TAG
+  stage: build
+.job_tag_template:
+  only: &id003
+  - master
+  script: &id004
+  - docker pull $CONTAINER_REPO:$CONTAINER_TAG_SOURCE
+  - docker tag $CONTAINER_REPO:$CONTAINER_TAG_SOURCE $CONTAINER_REPO:$CONTAINER_TAG_TARGET
+  - docker push $CONTAINER_REPO:$CONTAINER_TAG_TARGET
+  stage: tag
+before_script:
+- docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+image: docker:latest
+job_build_10_alpine:
+  only: *id001
+  script: *id002
+  stage: build
+  variables:
+    CONTAINER_TAG: $CONTAINER_TAG_10_ALPINE
+job_build_10_default:
+  only: *id001
+  script: *id002
+  stage: build
+  variables:
+    CONTAINER_TAG: $CONTAINER_TAG_10_DEFAULT
+job_build_6_alpine:
+  only: *id001
+  script: *id002
+  stage: build
+  variables:
+    CONTAINER_TAG: $CONTAINER_TAG_6_ALPINE
+job_build_6_default:
+  only: *id001
+  script: *id002
+  stage: build
+  variables:
+    CONTAINER_TAG: $CONTAINER_TAG_6_DEFAULT
+job_build_8_alpine:
+  only: *id001
+  script: *id002
+  stage: build
+  variables:
+    CONTAINER_TAG: $CONTAINER_TAG_8_ALPINE
+job_build_8_default:
+  only: *id001
+  script: *id002
+  stage: build
+  variables:
+    CONTAINER_TAG: $CONTAINER_TAG_8_DEFAULT
+job_build_latest:
+  only: *id003
+  script: *id004
+  stage: tag
+  variables:
+    CONTAINER_TAG_SOURCE: $CONTAINER_TAG_10_DEFAULT
+    CONTAINER_TAG_TARGET: $CONTAINER_TAG_LATEST
+services:
+- docker:dind
+stages:
+- build
+- tag
+variables:
+  CONTAINER_REPO: jeeon/node-ionic-android
+  CONTAINER_TAG_10_ALPINE: 10-alpine
+  CONTAINER_TAG_10_DEFAULT: 10-default
+  CONTAINER_TAG_6_ALPINE: 6-alpine
+  CONTAINER_TAG_6_DEFAULT: 6-default
+  CONTAINER_TAG_8_ALPINE: 8-alpine
+  CONTAINER_TAG_8_DEFAULT: 8-default
+  CONTAINER_TAG_LATEST: latest

@@ -1,0 +1,17 @@
+{
+  "sha": "d7b437a54b5d8d1587d99febed9c02800689149ff16c7c12a120673dff269bd8",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 13159,
+  "description": "Create a GitHub Actions workflow named Github Autobuild that runs on every push and pull request. The workflow should have multiple jobs: test-release and test-debug on ubuntu-latest with elasticsearch service, prepare-mingw64-libs on ubuntu-latest, build-mingw64 on ubuntu-latest dependent on prepare-mingw64-libs, and build-osx on macos-latest.",
+  "tags": [
+    "github-actions",
+    "autobuild",
+    "ubuntu",
+    "macos",
+    "elasticsearch",
+    "mingw",
+    "cross-build",
+    "tests"
+  ]
+}

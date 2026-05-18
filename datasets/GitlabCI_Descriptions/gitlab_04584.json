@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_04584",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 155,
+  "description": "Create a GitLab CI pipeline that uses the python:3.6 Docker image. Define a single stage named test (the default) and a job called test. In the test job run the following shell commands in order: apt-get update -qy, apt-get install -y python-dev python-pip, pip install -r requirements.txt, and pytest tests. The job has no caches, artifacts, services, or special rules, so it runs on every pipeline.",
+  "tags": [
+    "python-3.6",
+    "pytest",
+    "apt-get",
+    "pip",
+    "gitlab-ci"
+  ]
+}

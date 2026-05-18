@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_10763",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 364,
+  "description": "Create a GitLab CI pipeline using the femtopixel/multiarchbuilder Docker image with a docker:dind service and set DOCKER_HOST to tcp://docker:2375. Define a single stage called build and a job named build that runs only on the master branch. In the before_script of the build job, log in to Docker Hub by echoing $DOCKER_HUB_PASSWORD into docker login -u $DOCKER_HUB_LOGIN --password-stdin, then create a BuildKit builder with docker buildx create --driver=docker-container --name=buildkit-builder --use. In the script step run make. No caches, artifacts, or deployments are defined.",
+  "tags": [
+    "docker",
+    "multiarchbuilder",
+    "make",
+    "buildx",
+    "docker-hub",
+    "gitlab-ci"
+  ]
+}

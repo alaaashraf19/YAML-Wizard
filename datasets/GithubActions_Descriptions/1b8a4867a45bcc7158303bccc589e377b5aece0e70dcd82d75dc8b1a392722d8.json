@@ -1,0 +1,13 @@
+{
+  "sha": "1b8a4867a45bcc7158303bccc589e377b5aece0e70dcd82d75dc8b1a392722d8",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1800,
+  "description": "Create a GitHub Actions workflow named Build RPM Packages that builds RPM packages for multiple architectures and distributions. The workflow can be triggered manually with optional inputs for Ice version, repository URL, and repository suffix. It uses a matrix strategy to build for different distributions and architectures, checking out the repository and then calling a custom action to build the RPM packages.",
+  "tags": [
+    "rpm",
+    "github-actions",
+    "workflow-dispatch",
+    "matrix-build"
+  ]
+}

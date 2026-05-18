@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_18238",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1426,
+  "description": "Create a GitLab CI pipeline that uses the clickable/ci-$UT_VERSION-$ARCH:$CLICKABLE_VERSION Docker image and selects the runner tag based on the project namespace (ubports → ubports, otherwise → saas-linux-small-amd64). Define global variables CLICKABLE_VERSION=8, UT_VERSION=20.04, DOCKER_DRIVER=overlay2, and GIT_SUBMODULE_STRATEGY=recursive and two stages: build and publish. In the build stage add three jobs (build-amd64, build-arm64, build-armhf) that each extend a common .build template, set ARCH and ARCH_TRIPLET variables (amd64 → x86_64-linux-gnu, arm64 → aarch64-linux-gnu, armhf → arm-linux-gnueabihf), run the shell command `clickable build --clean --accept-review-errors`, and publish the directory build/$ARCH_TRIPLET/app as a one‑week artifact. In the publish stage add a publish job that runs only when a Git tag is present, uses the amd64 variable set, executes `clickable publish --arch amd64 -- \"$CI_COMMIT_MESSAGE\"`, `clickable publish --arch arm64`, and `clickable publish --arch armhf`, and stores all generated *.click files from the three architecture build directories as one‑week artifacts. The pipeline respects the workflow rules to set the appropriate runner tag and does not define any additional services.",
+  "tags": [
+    "clickable",
+    "multi-arch",
+    "docker",
+    "gitlab-ci",
+    "build",
+    "publish"
+  ]
+}

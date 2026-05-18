@@ -1,0 +1,14 @@
+{
+  "sha": "5f47429c571c93b7fec15b2840faa1643b7b1805621522cf20b19df299f85db5",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1657,
+  "description": "Create a GitHub Actions workflow named CI that runs on push and pull request events, excluding markdown files. The workflow should have three jobs: build-linux, build-windows, and build-apple, each running on a different environment (ubuntu-latest, windows-latest, and macos-latest respectively). Each job should check out the code, then perform build and test steps specific to its environment.",
+  "tags": [
+    "ci",
+    "multi-os",
+    "build",
+    "test",
+    "cross-platform"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_00863",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 132,
+  "description": "Create a GitLab CI pipeline that defines a job called codespell using the debian:stable Docker image. In its before_script run \"apt update\" then \"apt install -qy codespell\" to install the tool. In the script step execute \"codespell *\" to perform a spell‑check on the repository files. The job runs in the default stage, with no caches, artifacts, or conditional rules.",
+  "tags": [
+    "codespell",
+    "debian",
+    "apt",
+    "spell-check"
+  ]
+}

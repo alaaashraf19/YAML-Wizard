@@ -1,0 +1,22 @@
+cache:
+  paths:
+  - src/node_modules/
+eslint:
+  script:
+  - cd src
+  - npm run lint
+  stage: test
+image: node:latest
+prepare:
+  script:
+  - cd src
+  - npm install
+  stage: build
+stages:
+- build
+- test
+test:
+  script:
+  - cd src
+  - npm run test
+  stage: test

@@ -1,0 +1,20 @@
+{
+  "sha": "gitlab_11313",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1928,
+  "description": "Create a GitLab CI pipeline using the node:7.6 Docker image with a cache of node_modules/. Define three stages: test, build, and deploy. In the test stage add a hidden template .tpl_test that runs npm i, npm i @exaprint/logger, and yarn test, and use it for four parallel uTests jobs (node-4.8, node-6.10, node-7.6, node-latest) each with its respective node image, the same script, a coverage regex, and for node-latest also publish the coverage directory as an artifact; also add a Lint & Security checks job that runs npm i and yarn lint and excludes develop, master, and tags, and a Check Package Version job that runs npm i and yarn check-version only on release/*, hotfix/* branches or tags. In the build stage add a Build Doc & Analysis job that runs npm i and yarn build, stores artifacts in artifacts/jsdoc/ and artifacts/plato/, and runs only on the master branch. In the deploy stage add a Codacy Coverage Publish job that runs yarn codacy-coverage, a pages job that installs indexifier globally, creates a public directory, moves coverage and documentation artifacts into it, generates an index.html with indexifier, publishes the public/ folder as a pages artifact (30‑day expiry), and runs only on master with dependencies on uTests:node-latest and Build Doc & Analysis, and a publish job that writes the NPM auth token to .npmrc and runs npm publish, executing only on tags. All jobs use the docker tag.",
+  "tags": [
+    "node",
+    "npm",
+    "yarn",
+    "test",
+    "build",
+    "deploy",
+    "coverage",
+    "pages",
+    "npm-publish",
+    "docker",
+    "cache"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_06822",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1374,
+  "description": "Create a GitLab CI pipeline that uses the microsoft/aspnetcore-build:2.0 Docker image for .NET Core build, test, and publish jobs and the docker:latest image for the Docker image build job. Define the stages build, test, publish, builddocker, push, and deploy, and set the build job to run only on the master branch, executing `dotnet restore src/PipelineSample.sln` then `dotnet build -c Release src/PipelineSample.sln`. Add two test jobs in the test stage—`test:integrationtests` and `test:unittests`—both depending on build and running `dotnet test` with TRX loggers for integration and unit tests respectively. Add a publish job in the publish stage that depends on build, runs `dotnet publish -c Release -o ../output src/PipelineSample.WebApi/PipelineSample.WebApi.csproj`, and stores the `src/output` directory as an artifact. Add a builddockerimage job in the builddocker stage that depends on publish, uses the docker:latest image, runs `ls -la`, `ls -la src/output`, and `docker --version`, and finally add a deploy_staging job in the deploy stage that runs only on master, sets the staging environment with URL https://staging.example.com, and echoes \"Deploy to staging server\".",
+  "tags": [
+    "dotnet",
+    "aspnetcore",
+    "docker",
+    "gitlab-ci",
+    "staging",
+    "integration-tests",
+    "unit-tests"
+  ]
+}

@@ -1,0 +1,29 @@
+image: registry.gitlab.com/noughmad/serde_any_ci:latest
+test:ansi:
+  script:
+  - rustc --version && cargo --version
+  - cargo test --all --no-default-features --features ansi
+test:cargo:
+  script:
+  - rustc --version && cargo --version
+  - cargo test --all
+  - cargo doc
+  - linkchecker target/doc/ptree/
+  - cargo tarpaulin --out Xml
+  - bash <(curl -s https://codecov.io/bash)
+test:conf:
+  script:
+  - rustc --version && cargo --version
+  - cargo test --all --no-default-features --features conf
+test:nofeatures:
+  script:
+  - rustc --version && cargo --version
+  - cargo test --all --no-default-features
+test:petgraph:
+  script:
+  - rustc --version && cargo --version
+  - cargo test --all --no-default-features --features petgraph
+test:value:
+  script:
+  - rustc --version && cargo --version
+  - cargo build --all --no-default-features --features value

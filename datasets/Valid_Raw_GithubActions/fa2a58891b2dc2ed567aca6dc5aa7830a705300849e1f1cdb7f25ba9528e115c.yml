@@ -1,0 +1,55 @@
+name: Test and Lint
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
+    services:
+      typesense:
+        image: typesense/typesense:28.0
+        ports:
+          - 8108:8108
+        volumes:
+          - /tmp/typesense-data:/data
+          - /tmp/typesense-analytics:/analytics
+        env:
+          TYPESENSE_API_KEY: xyz
+          TYPESENSE_DATA_DIR: /data
+          TYPESENSE_ENABLE_CORS: true
+          TYPESENSE_ANALYTICS_DIR: /analytics
+          TYPESENSE_ENABLE_SEARCH_ANALYTICS: true
+
+    steps:
+    - name: Wait for Typesense
+      run: |
+        timeout 20 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:8108/health)" != "200" ]]; do sleep 1; done' || false
+
+    - uses: actions/checkout@v4
+
+    - name: Install uv and set the python version
+      uses: astral-sh/setup-uv@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install the project
+      run: uv sync --locked --all-extras --dev
+
+    - name: Lint with Ruff
+      run: |
+        uv run ruff check src/typesense
+
+    - name: Check types with mypy
+      run: |
+        uv run mypy src/typesense
+
+    - name: Run tests and coverage (excluding OpenAI)
+      run: |
+        uv run coverage run -m pytest -m "not open_ai"

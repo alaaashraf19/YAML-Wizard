@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_11027",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 373,
+  "description": "Create a GitLab CI pipeline with two stages: build and deploy. In the build stage add a job named map that uses the jonzelner/rstan:latest Docker image, runs the command `make map`, and stores the generated `output` directory as an artifact. In the deploy stage add a job named pages that uses the ruby:2.3 Docker image, depends on the map job, runs `mkdir -p web/images`, `cp output/hotspot_map.jpg web/images/.`, `gem install jekyll`, and `cd web && jekyll build -d ../public`, then publishes the `public` directory as an artifact, and configure it to run only on the master branch.",
+  "tags": [
+    "rstan",
+    "make",
+    "ruby",
+    "jekyll",
+    "pages",
+    "deploy"
+  ]
+}

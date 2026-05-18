@@ -1,0 +1,109 @@
+before_script:
+- curl -O https://bootstrap.pypa.io/get-pip.py
+- python get-pip.py
+- pip install -U setuptools
+build:
+  artifacts:
+    expire_in: 1 month
+    paths:
+    - dist/
+  only:
+  - develop
+  - before_0.9
+  script:
+  - pip install devpi-client
+  - rm -rf dist build
+  - devpi use https://pkgs.frkl.io/
+  - devpi login frkl --password="${DEVPI_PASSWORD}"
+  - devpi use /frkl/dev
+  - devpi upload
+  stage: release
+build_beta:
+  artifacts:
+    expire_in: 1 month
+    paths:
+    - dist/
+  except:
+  - branches
+  only:
+  - /^\d+\.\d+\.\d+b\d+$/
+  script:
+  - pip install devpi-client
+  - rm -rf dist build
+  - devpi use https://pkgs.frkl.io/
+  - devpi login frkl --password="${DEVPI_PASSWORD}"
+  - devpi use /frkl/beta
+  - devpi upload
+  - UPLOAD_FILE=(dist/freckles-*.tar.gz)
+  - curl -F package=@${UPLOAD_FILE} https://${GEMFURY_TOKEN}@push.fury.io/frkl/
+  - UPLOAD_FILE=(dist/freckles-*.whl)
+  - curl -F package=@${UPLOAD_FILE} https://${GEMFURY_TOKEN}@push.fury.io/frkl/
+  stage: release
+build_stable:
+  artifacts:
+    expire_in: 1 month
+    paths:
+    - dist/
+  except:
+  - branches
+  only:
+  - /^\d+\.\d+\.\d+$/
+  script:
+  - pip install devpi-client
+  - rm -rf dist build
+  - devpi use https://pkgs.frkl.io/
+  - devpi login frkl --password="${DEVPI_PASSWORD}"
+  - devpi use /frkl/stable
+  - devpi upload
+  - UPLOAD_FILE=(dist/freckles-*.tar.gz)
+  - curl -F package=@${UPLOAD_FILE} https://${GEMFURY_TOKEN}@push.fury.io/frkl/
+  - UPLOAD_FILE=(dist/freckles-*.whl)
+  - curl -F package=@${UPLOAD_FILE} https://${GEMFURY_TOKEN}@push.fury.io/frkl/
+  stage: release
+commitlint:
+  image: node:8
+  only:
+  - master
+  - merge_requests
+  - develop
+  script:
+  - npm install -g @commitlint/cli @commitlint/config-conventional
+  - export LAST_TAG=$(git describe --abbrev=0 --tags)
+  - commitlint --from=$LAST_TAG
+  stage: test
+flake8:
+  image: python
+  script:
+  - pip install tox
+  - tox -e flake8
+  stage: test
+image: python
+python27:
+  image: python:2.7
+  script:
+  - pip install tox
+  - tox -e py27
+  stage: test
+python35:
+  image: python:3.5
+  script:
+  - pip install tox
+  - tox -e py35
+  stage: test
+python36:
+  image: python:3.6
+  script:
+  - pip install tox
+  - tox -e py36
+  stage: test
+python37:
+  image: python:3.7
+  script:
+  - pip install tox
+  - tox -e py37
+  stage: test
+stages:
+- test
+- release
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive

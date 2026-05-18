@@ -1,0 +1,12 @@
+{
+  "sha": "gitlab_11271",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 86,
+  "description": "Create a GitLab CI pipeline that uses the mono:latest Docker image. Add a before_script that makes build.sh executable with chmod +x build.sh. Define a test job in the default test stage that runs the command sh build.sh. The pipeline does not define any caches, artifacts, services, or special rules, and it does not deploy to any target.",
+  "tags": [
+    "mono",
+    "build-sh",
+    "gitlab-ci"
+  ]
+}

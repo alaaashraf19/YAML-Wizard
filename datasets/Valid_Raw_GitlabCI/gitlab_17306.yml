@@ -1,0 +1,172 @@
+alpine_test_all:
+  image: alpine:latest
+  script:
+  - apk add --update bash curl git
+  - mkdir ~/.ssh
+  - printf "Host *\n StrictHostKeyChecking no" > ~/.ssh/config
+  - which bash
+  - which busybox
+  - bash --version
+  - bash test/test_all_exit_status.sh
+  - bash test/test_install.sh
+  - bash test/test_core.sh
+  - bash test/test_function.sh
+  - bash test/test_yaml.sh
+  stage: test
+arch_test_all:
+  image: archlinux:20191205
+  script:
+  - pacman -Sy --noconfirm diffutils glibc git which
+  - mkdir ~/.ssh
+  - printf "Host *\n StrictHostKeyChecking no" > ~/.ssh/config
+  - which bash
+  - bash --version
+  - bash test/test_all_exit_status.sh
+  - bash test/test_install.sh
+  - bash test/test_core.sh
+  - bash test/test_function.sh
+  - bash test/test_yaml.sh
+  stage: test
+bash32_base_tests:
+  image: bash:3.2
+  script:
+  - which bash
+  - bash --version
+  - bash test/test_install.sh
+  - bash test/test_core.sh
+  - bash test/test_function.sh
+  - bash test/test_yaml.sh
+  stage: test
+bash40_base_tests:
+  image: bash:4.0
+  script:
+  - which bash
+  - bash --version
+  - bash test/test_install.sh
+  - bash test/test_core.sh
+  - bash test/test_function.sh
+  - bash test/test_yaml.sh
+  stage: test
+bash50_base_tests:
+  image: bash:5.0
+  script:
+  - which bash
+  - bash --version
+  - bash test/test_install.sh
+  - bash test/test_core.sh
+  - bash test/test_function.sh
+  - bash test/test_yaml.sh
+  stage: test
+centos_test_all:
+  image: centos:latest
+  script:
+  - yum -y update
+  - yum -y install curl git which
+  - mkdir ~/.ssh
+  - printf "Host *\n StrictHostKeyChecking no" > ~/.ssh/config
+  - which bash
+  - bash --version
+  - bash test/test_all_exit_status.sh
+  - bash test/test_install.sh
+  - bash test/test_core.sh
+  - bash test/test_function.sh
+  - bash test/test_yaml.sh
+  stage: test
+debianjessie_curl_test_all:
+  image: debian:jessie
+  script:
+  - apt-get update -qq
+  - apt-get install -y -qq curl
+  - mkdir ~/.ssh
+  - printf "Host *\n StrictHostKeyChecking no" > ~/.ssh/config
+  - which bash
+  - bash test/test_all_exit_status.sh
+  - bash test/test_install.sh
+  - bash test/test_core.sh
+  - bash test/test_function.sh
+  - bash test/test_yaml.sh
+  stage: test
+debianjessie_test_all:
+  image: debian:jessie
+  script:
+  - apt-get update -qq
+  - apt-get install -y -qq curl git
+  - mkdir ~/.ssh
+  - printf "Host *\n StrictHostKeyChecking no" > ~/.ssh/config
+  - which bash
+  - bash test/test_all_exit_status.sh
+  - bash test/test_install.sh
+  - bash test/test_core.sh
+  - bash test/test_function.sh
+  - bash test/test_yaml.sh
+  stage: test
+debianjessie_wget_test_all:
+  image: debian:jessie
+  script:
+  - apt-get update -qq
+  - apt-get install -y -qq wget
+  - mkdir ~/.ssh
+  - printf "Host *\n StrictHostKeyChecking no" > ~/.ssh/config
+  - which bash
+  - bash test/test_all_exit_status.sh
+  - bash test/test_install.sh
+  - bash test/test_core.sh
+  - bash test/test_function.sh
+  - bash test/test_yaml.sh
+  stage: test
+debianlatest_test_all:
+  image: debian:latest
+  script:
+  - apt-get update -qq
+  - apt-get install -y -qq curl git
+  - mkdir ~/.ssh
+  - printf "Host *\n StrictHostKeyChecking no" > ~/.ssh/config
+  - which bash
+  - bash test/test_all_exit_status.sh
+  - bash test/test_install.sh
+  - bash test/test_core.sh
+  - bash test/test_function.sh
+  - bash test/test_yaml.sh
+  stage: test
+image_build:
+  image: docker:git
+  only:
+  - tags
+  script:
+  - IMAGE_VERSION=$(grep "\_VERSION\=" space | cut -d'=' -f2 | cut -d"\"" -f2)
+  - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+  - docker build --build-arg VERSION=$IMAGE_VERSION -t $CI_REGISTRY_IMAGE:$IMAGE_VERSION
+    -f ./build/Dockerfile .
+  - docker push $CI_REGISTRY_IMAGE:$IMAGE_VERSION
+  services:
+  - docker:dind
+  stage: image_build_version
+image_release:
+  image: docker:git
+  only:
+  - tags
+  script:
+  - IMAGE_VERSION=$(grep "\_VERSION\=" space | cut -d'=' -f2 | cut -d"\"" -f2)
+  - docker pull $CI_REGISTRY_IMAGE:$IMAGE_VERSION
+  - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+  - docker tag $CI_REGISTRY_IMAGE:$IMAGE_VERSION $CI_REGISTRY_IMAGE:latest
+  - docker push $CI_REGISTRY_IMAGE:latest
+  services:
+  - docker:dind
+  stage: image_update_latest
+image_test:
+  image: docker:git
+  only:
+  - tags
+  script:
+  - IMAGE_VERSION=$(grep "\_VERSION\=" space | cut -d'=' -f2 | cut -d"\"" -f2)
+  - docker pull $CI_REGISTRY_IMAGE:$IMAGE_VERSION
+  - sh test/test_build.sh
+  services:
+  - docker:dind
+  stage: image_test_version
+stages:
+- test
+- image_build_version
+- image_test_version
+- image_update_latest

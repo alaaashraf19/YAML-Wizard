@@ -1,0 +1,16 @@
+{
+  "sha": "f3b9574e09c2a3c098caa605e63d983a028ec96625bd08b1876f48276beefa49",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2554,
+  "description": "Create a GitHub Actions workflow named Build all wheels for testing that runs on push to the master branch and on pull requests. Use a matrix job that builds wheels on multiple operating systems (macos-12, macos-13-large, ubuntu-20.04, and windows-2019) with Python 3.11, installing cibuildwheel and twine, and running C++ tests. The workflow should build wheels for various Python versions and upload them as artifacts.",
+  "tags": [
+    "python",
+    "cibuildwheel",
+    "wheels",
+    "testing",
+    "macos",
+    "ubuntu",
+    "windows"
+  ]
+}

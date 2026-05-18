@@ -1,0 +1,22 @@
+---
+name: Recent Activity Summary
+on:  # yamllint disable-line rule:truthy
+  workflow_dispatch:  # Allow manual triggering
+
+jobs:
+  prs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate and Post Repository Summary
+        uses: akaihola/repo-summary-post@v0.0.4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repo-name: ${{ github.repository }}
+          project-name: 'Darker'
+          extra-packages: 'llm-openrouter'
+          # Optional inputs for debugging purposes:
+          verbose: '2'
+          dry-run: 'true'
+          output-content: '-'
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}

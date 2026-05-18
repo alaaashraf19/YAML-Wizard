@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_05434",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1755,
+  "description": "Create a GitLab CI pipeline using golang:latest as the default image and docker:dind service, with a global before_script that logs in to the GitLab Container Registry via `docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY`. Define three stages: build, test, and deploy. In the build stage add a build job that runs on the gitlab/dind image, only on the master branch, and executes `docker build -t ${IMAGE_BUILD} .`, `docker run -d --name temprun ${IMAGE_BUILD} sleep infinity`, `docker cp temprun:/go/bin/eth-tipper .`, `docker kill temprun`, `docker build -t ${IMAGE_PROD} -f Dockerfile.prod .`, `docker tag ${IMAGE_PROD} ${IMAGE_REPO}:latest`, `docker push ${IMAGE_PROD}`, and `docker push ${IMAGE_REPO}:latest`. In the test stage add a test job that depends on the build job, runs on gitlab/dind, and runs `docker build -t ${IMAGE_BUILD} .`, `docker run -d --name ganache --net=host trufflesuite/ganache-cli:latest -s 99 -i 99`, `docker run --net=host --name testimage ${IMAGE_BUILD} go test -race ./...`, and `docker kill ganache`. In the deploy stage add a bitnode job with its own before_script that creates `~/.ssh` directory, writes an SSH config disabling strict host key checking, decodes `$SSH_PRIVATE_KEY` into `~/.ssh/id_rsa_bitnode`, sets permissions, starts ssh-agent and adds the key, runs only on master, and finally runs `ssh root@bitnode.cryptostash.net \"cd /root/eth-tipper; ./deploy.sh\"`. Use the CI variables IMAGE_BUILD, IMAGE_PROD, IMAGE_REPO, IMAGE_TAG, and REPO_NAME for image naming and tagging.",
+  "tags": [
+    "golang",
+    "docker",
+    "dind",
+    "ssh-deploy",
+    "ci",
+    "eth-tipper"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_09734",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 835,
+  "description": "Create a GitLab CI pipeline using the docker:git image with a docker:dind service. Define variables RELEASE_IMAGE and TEST_IMAGE that point to the GitLab Container Registry paths. Set three stages: build, test, and release. In the build stage add a build job that runs \"docker build -t ${TEST_IMAGE} .\" then \"docker push $TEST_IMAGE\" (login is performed in before_script). In the test stage add two jobs: test_failure runs \"docker run ${TEST_IMAGE} ./reproduce.py release-1.0.3\" and test_success runs \"docker run ${TEST_IMAGE} ./reproduce.py release-1.0.1\". In the release stage add a release job that only runs on the master branch or tags, executing \"docker pull $TEST_IMAGE\", \"docker tag $TEST_IMAGE $RELEASE_IMAGE\", and \"docker push $RELEASE_IMAGE\".",
+  "tags": [
+    "docker",
+    "dind",
+    "gitlab-ci",
+    "build",
+    "test",
+    "release",
+    "registry"
+  ]
+}

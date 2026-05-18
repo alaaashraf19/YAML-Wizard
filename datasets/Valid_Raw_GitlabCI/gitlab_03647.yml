@@ -1,0 +1,26 @@
+before_script:
+- apt-get update -qq && apt-get install -y -qq gcc g++ libprotobuf-dev protobuf-compiler
+  cmake bc python swig
+build_kernel_script:
+  script:
+  - wget https://www.kernel.org/pub/linux/kernel/v4.x/linux-4.13.10.tar.gz
+  - tar zxf linux-4.13.10.tar.gz
+  - pushd .
+  - cd linux-4.13.10
+  - make defconfig
+  - make modules_prepare
+  - popd
+  - uname -a
+  - ./configure --kernbuilddir $(pwd)/linux-4.13.10 --no-user
+  - make ker
+  - make ker_install
+  stage: build_stage
+build_user_script:
+  script:
+  - ./configure --no-kernel
+  - make usr
+  - make test
+  - make usr_install
+  stage: build_stage
+stages:
+- build_stage

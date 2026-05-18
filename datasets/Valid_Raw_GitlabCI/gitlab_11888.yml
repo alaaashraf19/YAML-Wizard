@@ -1,0 +1,28 @@
+before_script:
+- apk update && apk upgrade
+- apk add build-base
+- python -m pip install --quiet --upgrade pip
+- python --version
+- pip --version
+- pip install --quiet virtualenv
+- virtualenv venv
+- source venv/bin/activate
+- pip install --quiet -r requirements.txt
+- pip install --quiet -r requirements-dev.txt
+cache:
+  paths:
+  - .cache/pip
+  - venv/
+image: python:3.6-alpine
+pylint_test_job:
+  script:
+  - pylint pyramid_rlp
+  stage: test
+pytest_test_job:
+  script:
+  - pytest --cov
+  stage: test
+stages:
+- test
+variables:
+  PIP_CACHE_DIR: $CI_PROJECT_DIR/.cache

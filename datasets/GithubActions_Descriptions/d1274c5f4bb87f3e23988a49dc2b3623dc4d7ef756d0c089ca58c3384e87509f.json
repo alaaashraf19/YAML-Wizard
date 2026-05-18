@@ -1,0 +1,15 @@
+{
+  "sha": "d1274c5f4bb87f3e23988a49dc2b3623dc4d7ef756d0c089ca58c3384e87509f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3033,
+  "description": "Create a Linux CI GitHub Actions workflow that runs on push to the master branch and on pull requests. Use an ubuntu-22.04 job that checks out the repository, sets up a bash environment, installs required packages, syncs and updates submodules, restores vcpkg and its artifacts from the GitHub cache, builds with code coverage using cmake and make, and uploads the coverage report to CodeCov.",
+  "tags": [
+    "linux",
+    "ci",
+    "codecov",
+    "ubuntu",
+    "cmake",
+    "vcpkg"
+  ]
+}

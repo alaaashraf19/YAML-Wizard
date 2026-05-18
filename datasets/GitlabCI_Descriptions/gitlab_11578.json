@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_11578",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1070,
+  "description": "Create a GitLab CI pipeline that uses the rustlang/rust:nightly Docker image and defines a single test stage with a test job. The job should run a before_script that updates apt, installs unzip and chromium, adds the wasm32-unknown-unknown target via rustup, downloads and extracts the specified wasm-bindgen version, moves the wasm-bindgen binary to /usr/bin, and downloads and unzips the specified chromedriver version. In the script section run rustc --version && cargo --version, then cargo +nightly test --manifest-path macros/Cargo.toml, then CHROMEDRIVER=`pwd`/chromedriver cargo +nightly test --target wasm32-unknown-unknown, and finally ./build_all_examples.sh. Define variables CARGO_HOME=$CI_PROJECT_DIR/.cargo, CHROME_DRIVER_VERSION='2.41', and WASM_BINDGEN_VERSION=0.2.43, with no caches, artifacts, or special rules.",
+  "tags": [
+    "rust",
+    "wasm",
+    "cargo",
+    "chromium",
+    "chromedriver",
+    "wasm-bindgen",
+    "gitlab-ci"
+  ]
+}

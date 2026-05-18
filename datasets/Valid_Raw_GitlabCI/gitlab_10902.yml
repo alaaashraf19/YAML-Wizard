@@ -1,0 +1,27 @@
+build:
+  artifacts:
+    paths:
+    - pharo-nos-build/build/NOS.img
+    - pharo-nos-build/results/NOS.kernel
+  before_script:
+  - which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )
+  - eval $(ssh-agent -s)
+  - ssh-add <(echo "$SSH_PRIVATE_KEY")
+  - mkdir -p ~/.ssh
+  - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+  script:
+  - ssh git@gitlab.com
+  - git clone --depth=1 https://gitlab-ci-token:$CI_BUILD_TOKEN@gitlab.com/johnnyzz/pharo-vm.git
+    pharo-vm/
+  - cd pharo-vm
+  - git submodule init
+  - git submodule update --recursive --remote
+  - cd ..
+  - mkdir pharo-nos-build
+  - cd pharo-nos-build
+  - cmake ../pharo-vm/ -DST_SCRIPT=gen-pharo-nos-stack -DST_PLATFORM_NAME=PharoNOS
+  - make
+  stage: build
+  tags:
+  - linux
+image: registry.gitlab.com/johnnyzz/dev-build:base

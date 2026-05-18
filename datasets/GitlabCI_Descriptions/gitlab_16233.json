@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_16233",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 3292,
+  "description": "Create a GitLab CI pipeline with stages setup, build, test, coverage, and deploy, using the global docker:20 image and docker:20.10-dind service and defining BUILD_DIR, CONTAINER_TAG_PREFIX, CTEST_OUTPUT_ON_FAILURE, and GIT_SUBMODULE_STRATEGY variables. In the setup stage add a Docker -- Dependency Image job (image docker:20-git) that exits if deps unchanged, logs in to $CI_REGISTRY, builds and pushes $CONTAINER_TAG_PREFIX-ubuntu2204, and runs except on develop and master, plus a Lint and Format job (image registry.gitlab.com/sat-mtl/ptt/dev-tools/lint:latest) that runs pre-commit run --all-files. In the build stage add a Build -- Ubuntu 22.04 job (image $CONTAINER_TAG_PREFIX-ubuntu2204) that runs cmake -GNinja -B build -DENABLE_GPL=\"ON\" -DPLUGIN_WEBRTC=OFF -DPLUGIN_JACK=OFF -DPLUGIN_TIMECODE=OFF -DPLUGIN_VRPN=OFF -DCMAKE_BUILD_TYPE=\"Release\" and ninja -C build, excludes develop and master, and stores the build directory as an artifact. In the test stage add Test -- Package Ubuntu 22.04 (only on develop and test-switcher-ci) that runs cmake with ENABLE_GPL and Release, installs xvfb, and xvfb-run ninja package_source_test -C build, and Test -- Ubuntu 22.04 (except develop and master, needs Build -- Ubuntu 22.04) that installs xvfb, runs ninja install -C build, ldconfig, pulseaudio, and xvfb-run ninja test -C build, publishing the Testing/Temporary/ folder on failure. In the coverage stage add Coverage -- Package (only on develop and test-switcher-ci) that installs lcov, zip, xvfb, configures cmake with -DTEST_COVERAGE=ON, builds, installs, runs pulseaudio, runs xvfb-run ninja check_coverage -C build, zips coverage.zip and moves it up, publishing it as switcher_coverage_${CI_BUILD_REF_NAME}; finally, in the deploy stage add Debian -- Package Ubuntu 22.04 (only on master and test-switcher-ci) that updates apt, configures cmake with -DCMAKE_INSTALL_PREFIX=/usr, runs ninja package -C build, moves the resulting .deb to switcher_ubuntu22.04_latest_amd64.deb, and publishes it as an artifact.",
+  "tags": [
+    "cmake",
+    "ninja",
+    "docker",
+    "lint",
+    "coverage",
+    "ubuntu22.04",
+    "gitlab-ci"
+  ]
+}

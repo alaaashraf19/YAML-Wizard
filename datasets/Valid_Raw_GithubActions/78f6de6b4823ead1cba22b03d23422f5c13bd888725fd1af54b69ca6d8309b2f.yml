@@ -1,0 +1,78 @@
+name: "🧪 Test"
+
+# Controls when the action will run. Triggers the workflow on push or
+# pull request events but only for the master branch
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+    name: "${{ matrix.os.name }} (${{ matrix.cpython }})"
+    runs-on: "${{ matrix.os.runner }}"
+    defaults:
+      run:
+        shell: "bash"
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - name: "Linux"
+            runner: "ubuntu-latest"
+          - name: "macOS"
+            runner: "macos-latest"
+        cpython:
+          - "3.9"
+          - "3.10"
+          - "3.11"
+          - "3.12"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.cpython }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.cpython }}
+
+      - name: setup prerequisites (Linux)
+        if: matrix.os.name == 'Linux'
+        run: |
+          sudo apt install libpcsclite-dev python3-all-dev python3-setuptools swig
+
+      - name: setup prerequisites (macOS)
+        if: matrix.os.name == 'macOS'
+        run: |
+          brew install swig pylint
+
+      - name: build
+        run: |
+          python3 -m venv temp
+          source temp/bin/activate
+          pip install -r dev-requirements.txt 
+          make
+
+      - name: test run
+        run: |
+          source temp/bin/activate
+          make test
+
+      - name: coverage
+        run: |
+          source temp/bin/activate
+          python3 -m coverage erase
+          python3 -m coverage run -m pytest
+          python3 -m coverage report
+
+      - name: Coveralls
+        if: matrix.os == 'ubuntu-latest'
+        uses: AndreMiras/coveralls-python-action@develop
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: pylint
+        run: |
+          pylint --errors-only smartcard || true

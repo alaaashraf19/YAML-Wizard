@@ -1,0 +1,21 @@
+.compile_pdf:
+  artifacts:
+    paths:
+    - libro/tmpDir/piensaperl6.pdf
+  image: philipptempel/docker-ubuntu-tug-texlive
+  script:
+  - make -C libro/
+  stage: build
+pages:
+  artifacts:
+    paths:
+    - public
+    - master/piensaperl6.pdf
+  image: alpine:latest
+  only:
+  - master
+  script:
+  - echo 'Nothing to do...'
+  stage: deploy
+stages:
+- deploy

@@ -1,0 +1,49 @@
+before_script:
+- export ANDROID_SDK_HOME=`pwd`
+- export GRADLE_USER_HOME=`pwd`/.gradle
+- chmod +x ./gradlew
+build:debug:
+  artifacts:
+    paths:
+    - presentation/build/outputs/
+  except:
+  - master
+  script:
+  - ./gradlew assembleDebug --no-daemon --stacktrace
+  stage: build
+build:release:
+  artifacts:
+    paths:
+    - variables
+    - presentation/build/outputs/
+  only:
+  - master
+  script:
+  - openssl aes-256-cbc -K $key -iv $iv -in keystore.jks.enc -out keystore.jks -d
+  - ./gradlew assemble --no-daemon
+  - echo "export APP_VERSION="$(./gradlew -q pV) > variables
+  stage: build
+cache:
+  key: $CI_COMMIT_REF_NAME
+  paths:
+  - .gradle/caches/
+  - .gradle/wrapper/
+  - .android/build-cache
+deploy:artifacts:
+  artifacts:
+    paths:
+    - ORIOKS*.apk
+  before_script: []
+  cache:
+    paths: []
+  only:
+  - master
+  script:
+  - source variables
+  - cp presentation/build/outputs/apk/release/presentation-release.apk "ORIOKS-$APP_VERSION-build-$CI_PIPELINE_IID.apk"
+  - cp presentation/build/outputs/apk/debug/presentation-debug.apk "ORIOKS-$APP_VERSION-debug-build-$CI_PIPELINE_IID.apk"
+  stage: deploy
+image: javiersantos/android-ci:latest
+stages:
+- build
+- deploy

@@ -1,0 +1,612 @@
+name: Build Packages
+
+on:
+  push:
+    paths-ignore:
+    - 'doc/**'
+    - '**.md'
+    - 'appveyor.yml'
+    - '.travis.yml'
+  pull_request:
+    paths-ignore:
+    - 'doc/**'
+    - '**.md'
+    - 'appveyor.yml'
+    - '.travis.yml'
+
+env:
+  QT_VERSION: 5.15.2
+  QTCREATOR_VERSION: 13.0.1
+  VERSION: 2025.2
+  THUNDER_RELEASE: ${{ startsWith(github.ref, 'refs/tags/2') }}
+
+  # CCACHE related variables
+  CCACHE_DIR: "ccache"
+  CCACHE_COMPRESS: "true"
+  CCACHE_COMPRESSLEVEL: "4"
+  CCACHE_MAXSIZE: "512M"
+  CCACHE_CFLAGS: -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+
+  # BSD related variables
+  BSD_DEPS: "llvm17 libinotify openal-soft xorg 7-zip cmake-core ninja pkgconf ccache4"
+  BSD_QT: "qt5-widgets qt5-core qt5-gui qt5-svg qt5-xml qt5 qmake"
+  BSD_CC: "clang17"
+  BSD_CXX: "clang++17"
+  BSD_VERSION: "14.1"
+
+jobs:
+  version:
+    name: GitHub Actions
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get-version.outputs.version }}
+      release: ${{ steps.get-version.outputs.release }}
+
+    steps:
+    - name: Get version
+      id: get-version
+      run: |
+        if [[ "$THUNDER_RELEASE" == 'true' ]]; then echo "::set-output name=version::${VERSION}" ; fi
+        if [[ "$THUNDER_RELEASE" != 'true' ]]; then echo "::set-output name=version::${VERSION}-SNAPSHOT" ; fi
+        echo "::set-output name=release::${THUNDER_RELEASE}"
+        
+  linux:
+    name: Linux
+    runs-on: ubuntu-20.04
+    needs: version
+  
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+  
+    - name: Prepare Vulkan SDK
+      uses: humbletim/setup-vulkan-sdk@523828e49cd4afabce369c39c7ee6543a2b7a735
+      with:
+        vulkan-query-version: latest
+        vulkan-components: Vulkan-Headers, Vulkan-Loader
+        vulkan-use-cache: true
+  
+    - name: Install dependencies
+      run: |
+        sudo apt update
+        sudo apt install binutils g++-7 libgl1-mesa-dev zlib1g-dev libzstd-dev p7zip-full xorg-dev libopenal-dev
+        
+    - name: Install Qt
+      run: |
+        sudo ./build/install-qt.sh --version ${QT_VERSION} qtbase qtmultimedia qtscript qtsvg qtimageformats qttools qtxmlpatterns qtdeclarative icu | tee -a $GITHUB_PATH
+        sudo ./build/install-qt.sh --version ${QTCREATOR_VERSION} qtcreator | tee -a $GITHUB_PATH
+  
+    - name: Setup Qbs
+      run: |
+        qbs --version
+        qbs setup-toolchains --detect
+        qbs setup-qt --detect
+        qbs config defaultProfile
+        qbs config --list
+  
+    - name: Build Qbs
+      if: needs.version.outputs.release == 'true'
+      run: |
+        qbs build -d thirdparty/qbs -f thirdparty/qbs/qbs.qbs --all-products config:release project.withDocumentation:false project.withExamples:false project.withTests:false
+  
+    - name: Build Thunder
+      run: |
+        qbs install --all-products config:release
+        7z a -t7z ThunderEngine-linux-x86_64.7z release/install-root/
+        
+    - name: Upload Thunder
+      uses: actions/upload-artifact@v4
+      with:
+        name: ThunderEngine-linux-x86_64.7z
+        path: ThunderEngine-linux-x86_64.7z
+  
+  android:
+    name: Android
+    runs-on: ubuntu-20.04
+    needs: version
+  
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4      
+      with:
+        submodules: recursive
+        
+    - name: Setup NDK
+      uses: nttld/setup-ndk@v1
+      with:
+        ndk-version: r19c
+  
+    - name: Install dependencies
+      run: |
+        sudo apt update
+        sudo apt install binutils g++-7 libgl1-mesa-dev zlib1g-dev libzstd-dev p7zip-full xorg-dev
+        
+    - name: Install Qt
+      run: |
+        sudo ./build/install-qt.sh --version ${QTCREATOR_VERSION} qtcreator | tee -a $GITHUB_PATH
+  
+    - name: Environment
+      run: |
+        mkdir ~/.android
+        /usr/lib/jvm/temurin-8-jdk-amd64/bin/keytool -genkey -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname 'CN=Android Debug,O=Android,C=US'
+  
+    - name: Setup Qbs
+      run: |
+        qbs --version
+        qbs setup-android --ndk-dir /opt/hostedtoolcache/ndk/r19c/x64 android
+        qbs setup-toolchains --detect
+        qbs config --list
+  
+    - name: Build Thunder
+      run: |
+        qbs build --all-products config:release qbs.toolchainType:clang profile:android
+        7z a -t7z ThunderEngine-android.7z release/install-root/sdk/${VERSION}/android
+    
+    - name: Upload Thunder
+      uses: actions/upload-artifact@v4
+      with:
+        name: ThunderEngine-android.7z
+        path: ThunderEngine-android.7z
+
+  osx:
+    name: MacOS
+    runs-on: macos-15
+    needs: version
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Install Qt
+      run: |
+        sudo ./build/install-qt.sh --version 6.7.2 qtbase qtmultimedia qtscript qtsvg qtimageformats qttools qtxmlpatterns qtdeclarative | tee -a $GITHUB_PATH
+        sudo ./build/install-qt.sh --version ${QTCREATOR_VERSION} qtcreator | tee -a $GITHUB_PATH
+
+    - name: Install OpenSSL
+      run: |
+        brew install openssl
+
+    - name: Setup Qbs
+      run: |
+        qbs --version
+        qbs setup-toolchains --detect
+        qbs config defaultProfile xcode
+        qbs config --list
+
+    - name: Build Qbs
+      if: needs.version.outputs.release == 'true'
+      run: |
+        qbs build -d thirdparty/qbs -f thirdparty/qbs/qbs.qbs --all-products config:release project.withDocumentation:false project.withExamples:false project.withTests:false
+
+    - name: Build Thunder
+      run: |
+        qbs install --all-products config:release profile:xcode-macosx-arm64
+        7z a -t7z ThunderEngine-macosx-arm64.7z release/install-root
+
+    - name: Upload Thunder
+      uses: actions/upload-artifact@v4
+      with:
+        name: ThunderEngine-macosx-arm64.7z
+        path: ThunderEngine-macosx-arm64.7z
+
+  ios:
+    name: iOS
+    runs-on: macos-13
+    needs: version
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+       
+    - name: Install Qt
+      run: |
+        sudo ./build/install-qt.sh --version ${QTCREATOR_VERSION} qtcreator | tee -a $GITHUB_PATH
+
+    - name: Setup Qbs
+      run: |
+        qbs --version
+        qbs setup-toolchains --detect
+        qbs config --list
+
+    - name: Build Thunder
+      run: |
+        qbs install --all-products config:release profile:xcode-iphoneos-arm64
+        7z a -t7z ThunderEngine-ios-arm64.7z release/install-root/sdk/${VERSION}/ios
+
+    - name: Upload Thunder
+      uses: actions/upload-artifact@v4
+      with:
+        name: ThunderEngine-ios-arm64.7z
+        path: ThunderEngine-ios-arm64.7z
+    
+  tvos:
+    name: tvOS
+    runs-on: macos-13
+    needs: version
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+       
+    - name: Install Qt
+      run: |
+        sudo ./build/install-qt.sh --version ${QTCREATOR_VERSION} qtcreator | tee -a $GITHUB_PATH
+
+    - name: Setup Qbs
+      run: |
+        qbs --version
+        qbs setup-toolchains --detect
+        qbs config --list
+        
+    - name: Build Thunder
+      run: |
+        qbs install --all-products config:release profile:xcode-appletvos-arm64
+        7z a -t7z ThunderEngine-tvos-arm64.7z release/install-root/sdk/${VERSION}/tvos
+
+    - name: Upload Thunder
+      uses: actions/upload-artifact@v4
+      with:
+        name: ThunderEngine-tvos-arm64.7z
+        path: ThunderEngine-tvos-arm64.7z
+    
+  windows:
+    name: Windows
+    runs-on: windows-latest
+    needs: version
+    
+    defaults:
+      run:
+        shell: bash
+
+    strategy:
+      matrix:
+        include:
+        - qt_version: 5.15.2
+          qt_version_major: 5
+        - qt_version: 6.7.2
+          qt_version_major: 6
+    
+    env:
+        MSVC: 2022
+        QT_INSTALL_DIR: /c/Qt
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+    
+    - name: Prepare Vulkan SDK
+      uses: humbletim/setup-vulkan-sdk@523828e49cd4afabce369c39c7ee6543a2b7a735
+      with:
+        vulkan-query-version: latest
+        vulkan-components: Vulkan-Headers, Vulkan-Loader
+        vulkan-use-cache: true
+        
+    - name: Install Qt
+      run: |
+        echo "QT_PATH=$(./build/install-qt.sh -d ${QT_INSTALL_DIR} --version ${{ matrix.qt_version }} --toolchain win64_msvc2019_64 qtbase qtmultimedia qtscript qtsvg qtimageformats qttools qtxmlpatterns qtdeclarative)" >> $GITHUB_ENV
+
+    - name: Install Qbs
+      run: |
+        choco install -y qbs --version 2.2.1
+        
+    - name: Setup Qbs
+      run: |
+        qbs --version
+        qbs setup-toolchains --detect
+        qbs setup-qt ${QT_PATH}/qmake.exe qt
+        qbs config --list
+    
+    - name: Build Qbs
+      if: needs.version.outputs.release == 'true'
+      run: |
+        qbs build -d thirdparty/qbs -f thirdparty/qbs/qbs.qbs --all-products config:release project.withDocumentation:false project.withExamples:false project.withTests:false profile:qt
+        
+    - name: Build Thunder
+      run: |
+        qbs install --all-products config:release profile:qt
+
+    - name: Upload Editor To Sign
+      id: upload-windows-sign
+      uses: actions/upload-artifact@v4
+      if: github.repository == 'thunder-engine/thunder' && needs.version.outputs.release == 'true' && matrix.qt_version_major == 5
+      with:
+        path: release/install-root/sdk/${{ env.VERSION }}/windows/x86_64/bin/WorldEditor.exe
+
+    - name: Sign Editor
+      uses: signpath/github-action-submit-signing-request@v1
+      if: github.repository == 'thunder-engine/thunder' && needs.version.outputs.release == 'true' && matrix.qt_version_major == 5
+      with:
+        api-token: '${{secrets.SIGNPATH_API_TOKEN}}'
+        organization-id: '43ba02b9-3691-4230-a433-40cd139ade27'
+        project-slug: 'thunder'
+        signing-policy-slug: 'release-signing'
+        github-artifact-id: '${{steps.upload-windows-sign.outputs.artifact-id}}'
+        wait-for-completion: true
+        output-artifact-directory: 'release/install-root/sdk/${{ env.VERSION }}/windows/x86_64/bin'
+
+    - name: Pack Thunder
+      run: |
+        7z a -t7z ThunderEngine-windows-x64.7z release/install-root
+    
+    - name: Upload Thunder
+      if: matrix.qt_version_major == 5
+      uses: actions/upload-artifact@v4
+      with:
+        name: ThunderEngine-windows-x64.7z
+        path: ThunderEngine-windows-x64.7z
+    
+  freebsd:
+    name: FreeBSD
+    runs-on: ubuntu-latest
+    needs: version
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+        path: 'thunder'
+
+    - name: Prepare FreeBSD ccache
+      if: steps.bsd_ccache.outputs.cache-hit != 'true'
+      run: |
+        mkdir -p FreeBSD-ccache-${{ env.BSD_VERSION }}
+        touch FreeBSD-ccache-${{ env.BSD_VERSION }}/ccache-hits.txt
+        echo "Created new ccache hash"
+
+    - name: Restore/Create FreeBSD ccache
+      id: bsd_ccache
+      uses: actions/cache@v4
+      with:
+        path: |
+          ${{ env.CCACHE_DIR }}-${{ env.BSD_VERSION }}
+        key: FreeBSD-ccache-${{ env.BSD_VERSION }}-${{ hashFiles('**/ccache-hits.txt') }}
+        restore-keys: |
+          FreeBSD-ccache-${{ env.BSD_VERSION }}-${{ hashFiles('**/ccache-hits.txt') }}-
+          FreeBSD-ccache-
+
+    - name: Restore/Create FreeBSD pkg cache
+      id: bsd_pkg_cache
+      uses: actions/cache@v4
+      with:
+        path: |
+          pkg
+        key: FreeBSD-pkg-${{ env.BSD_VERSION }}
+        restore-keys: |
+          FreeBSD-pkg-${{ env.BSD_VERSION }}-
+          FreeBSD-pkg-
+
+    - name: Build Thunder
+      uses: vmactions/freebsd-vm@v1.0.8
+      with:
+        usesh: true
+        sync: rsync
+        release: ${{ env.BSD_VERSION }}
+        run: |
+          export PKG_CACHEDIR=$PWD/pkg
+          mkdir -p /usr/local/etc
+          echo "PKG_CACHEDIR: $PKG_CACHEDIR" >> /usr/local/etc/pkg.conf
+          pkg install -y ${{ env.BSD_DEPS }}
+          pkg install -y ${{ env.BSD_QT }}
+
+          ccache -z
+          export CCACHE_DIR=$PWD/${{ env.CCACHE_DIR }}-${{ env.BSD_VERSION }}
+          export CCACHE_COMPRESS=${{ env.CCACHE_COMPRESS }}
+          export CCACHE_COMPRESSLEVEL=${{ env.CCACHE_COMPRESSLEVEL }}
+          export CCACHE_MAXSIZE=${{ env.CCACHE_MAXSIZE }}
+          export CC=${{ env.BSD_CC }} 
+          export CXX=${{ env.BSD_CXX }}
+          mkdir -pv thunder/build/Desktop-Release
+          cd thunder/build/Desktop-Release
+          cmake ${{ env.CCACHE_CFLAGS }} ../.. -G "Ninja"
+          ninja
+          ninja install
+          mkdir -pv release
+          mv -v install-root release
+          7z a -t7z ../../../ThunderEngine-freebsd-x64.7z release/install-root
+          cd ../../..
+          mv -v thunder /tmp
+          echo "$(ccache -s | grep -a2 Hits)" > $CCACHE_DIR/ccache-hits.txt
+
+    - name: Upload Thunder
+      uses: actions/upload-artifact@v4
+      with:
+          name: ThunderEngine-freebsd-x64.7z
+          path: ThunderEngine-freebsd-x64.7z
+
+  emscripten:
+    name: Emscripten
+    runs-on: ubuntu-latest
+    needs: version
+    
+    env:
+      EMSCRIPTEN_VERSION: 3.1.56
+      
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+        
+    - name: Emscripten setup
+      run: |
+        git clone --depth 1 https://github.com/emscripten-core/emsdk.git ~/emsdk &&
+        ~/emsdk/emsdk install ${{ env.EMSCRIPTEN_VERSION }} && ~/emsdk/emsdk activate ${{ env.EMSCRIPTEN_VERSION }}
+        
+    - name: Packages installation
+      run: |
+        sudo apt update && sudo apt install -y --no-install-recommends \
+        ninja-build    
+        
+    - name: Build setup
+      shell: bash
+      run: |
+        cmake -E make_directory ${{ runner.workspace }}/thunder/build
+        
+    - name: Configuration
+      shell: bash
+      working-directory: ${{ runner.workspace }}/thunder/build
+      run: |
+        source ~/emsdk/emsdk_env.sh &&
+        emcmake cmake -G "Ninja" ..
+        
+    - name: Build
+      shell: bash
+      working-directory: ${{ runner.workspace }}/thunder/build
+      run: |
+        cmake --build . --config Release
+
+    - name: Install
+      shell: bash
+      working-directory: ${{ runner.workspace }}/thunder/build
+      run: |
+        cmake --install . --config Release
+        7z a -t7z ThunderEngine-webgl-x86.7z install-root/sdk/${VERSION}/emscripten
+        
+    - name: Upload Thunder
+      uses: actions/upload-artifact@v4
+      with:
+          name: ThunderEngine-webgl-x86.7z
+          path: ${{ runner.workspace }}/thunder/build/ThunderEngine-webgl-x86.7z
+
+  github:
+    name: Upload to GitHub releases
+    runs-on: ubuntu-latest
+    needs: [version, linux, windows, android, osx, ios, tvos, freebsd, emscripten]
+
+    if: github.repository == 'thunder-engine/thunder' && needs.version.outputs.release == 'true'
+
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ needs.version.outputs.version }}
+          draft: true
+          prerelease: false
+
+      - name: Download Windows binaries
+        id: download-windows
+        uses: actions/download-artifact@v4
+        with:
+          name: ThunderEngine-windows-x64.7z
+
+      - name: Download Linux binaries
+        id: download-linux
+        uses: actions/download-artifact@v4
+        with:
+          name: ThunderEngine-linux-x86_64.7z
+
+      - name: Download OSX
+        id: download-osx
+        uses: actions/download-artifact@v4
+        with:
+          name: ThunderEngine-macosx-x86_64.7z
+
+      - name: Download tvOS
+        id: download-tvos
+        uses: actions/download-artifact@v4
+        with:
+          name: ThunderEngine-tvos-arm64.7z
+          
+      - name: Download iOS
+        id: download-ios
+        uses: actions/download-artifact@v4
+        with:
+          name: ThunderEngine-ios-arm64.7z
+          
+      - name: Download Android
+        id: download-android
+        uses: actions/download-artifact@v4
+        with:
+          name: ThunderEngine-android.7z
+
+      - name: Download FreeBSD binaries
+        id: download-freebsd
+        uses: actions/download-artifact@v4
+        with:
+          name: ThunderEngine-freebsd-x64.7z
+          
+      - name: Download WebGL binaries
+        id: download-webgl
+        uses: actions/download-artifact@v4
+        with:
+          name: ThunderEngine-webgl-x86.7z
+
+      - name: Upload Windows
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ThunderEngine-windows-x64.7z
+          asset_name: ThunderEngine-windows-x64.7z
+          asset_content_type: application/x-7z-compressed
+
+      - name: Upload Linux
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ThunderEngine-linux-x86_64.7z
+          asset_name: ThunderEngine-linux-x86_64.7z
+          asset_content_type: application/x-7z-compressed
+
+      - name: Upload OSX
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ThunderEngine-macosx-x86_64.7z
+          asset_name: ThunderEngine-macosx-x86_64.7z
+          asset_content_type: application/x-7z-compressed
+
+      - name: Upload tvOS
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ThunderEngine-tvos-arm64.7z
+          asset_name: ThunderEngine-tvos-arm64.7z
+          asset_content_type: application/x-7z-compressed
+          
+      - name: Upload iOS
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ThunderEngine-ios-arm64.7z
+          asset_name: ThunderEngine-ios-arm64.7z
+          asset_content_type: application/x-7z-compressed
+          
+      - name: Upload Android
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ThunderEngine-android.7z
+          asset_name: ThunderEngine-android.7z
+          asset_content_type: application/x-7z-compressed
+
+      - name: Upload FreeBSD
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ThunderEngine-freebsd-x64.7z
+          asset_name: ThunderEngine-freebsd-x64.7z
+          asset_content_type: application/x-7z-compressed
+          
+      - name: Upload WebGL
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ThunderEngine-webgl-x86.7z
+          asset_name: ThunderEngine-webgl-x86.7z
+          asset_content_type: application/x-7z-compressed

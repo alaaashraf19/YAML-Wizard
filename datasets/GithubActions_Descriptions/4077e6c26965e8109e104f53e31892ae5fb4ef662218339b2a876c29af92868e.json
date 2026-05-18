@@ -1,0 +1,15 @@
+{
+  "sha": "4077e6c26965e8109e104f53e31892ae5fb4ef662218339b2a876c29af92868e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2070,
+  "description": "Create a GitHub Actions workflow named gcc that runs on push to master and development branches and on pull requests to master. Use a matrix strategy to run three jobs on ubuntu-20.04 and ubuntu-22.04, each setting up GCC 12, building with specific cmake flags, and running tests. The jobs differ by build configuration: one with STL, one without STL, and one with STL and forced C++03.",
+  "tags": [
+    "gcc",
+    "linux",
+    "cmake",
+    "tests",
+    "ubuntu",
+    "matrix"
+  ]
+}

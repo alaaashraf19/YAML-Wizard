@@ -1,0 +1,92 @@
+Prod Deploy API:
+  artifacts:
+    paths:
+    - backend/
+  environment:
+    name: Production API
+    url: https://www.hitmaps.com/api
+  image: php:7.2
+  only:
+  - master
+  script:
+  - apt-get update
+  - apt-get install -y lftp zip curl wget
+  - cd api/
+  - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+  - php composer-setup.php
+  - php -r "unlink('composer-setup.php');"
+  - php composer.phar install --no-dev
+  - cd ../
+  - cd ci/prod/
+  - bash deploy_backend.sh
+  stage: Prod Deploy
+Prod Deploy Frontend:
+  artifacts:
+    paths:
+    - frontend/
+  environment:
+    name: Production Frontend
+    url: https://www.hitmaps.com
+  image: node:10
+  only:
+  - master
+  script:
+  - apt-get update
+  - apt-get install -y lftp zip curl nodejs wget
+  - npm ci
+  - npm run build
+  - cd ci/prod/
+  - bash deploy_frontend.sh
+  stage: Prod Deploy
+Refresh Stage DB:
+  image: php:7.2
+  only:
+  - stage
+  script:
+  - wget https://test.hitmaps.com/refresh-stage-db.php?access-key=$ACCESS_KEY
+  stage: Utilities
+  when: manual
+Stage Deploy API:
+  artifacts:
+    paths:
+    - backend/
+  environment:
+    name: Staging API
+    url: https://test.hitmaps.com/api
+  image: php:7.2
+  only:
+  - stage
+  script:
+  - apt-get update
+  - apt-get install -y lftp zip curl wget
+  - cd api/
+  - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+  - php composer-setup.php
+  - php -r "unlink('composer-setup.php');"
+  - php composer.phar install --no-dev
+  - cd ../
+  - cd ci/stage/
+  - bash deploy_backend.sh
+  stage: Stage Deploy
+Stage Deploy Frontend:
+  artifacts:
+    paths:
+    - frontend/
+  environment:
+    name: Staging Frontend
+    url: https://test.hitmaps.com
+  image: node:10
+  only:
+  - stage
+  script:
+  - apt-get update
+  - apt-get install -y lftp zip curl nodejs wget
+  - npm ci
+  - npm run staging
+  - cd ci/stage/
+  - bash deploy_frontend.sh
+  stage: Stage Deploy
+stages:
+- Prod Deploy
+- Stage Deploy
+- Utilities

@@ -1,0 +1,21 @@
+before_script:
+- apk add --no-cache make curl util-linux git
+- make --version
+- git --version
+image: alpine:latest
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - make all DEPLOY=public
+  stage: deploy
+test:
+  artifacts:
+    paths:
+    - test
+  script:
+  - make all DEPLOY=test VERBOSE=1
+  stage: test

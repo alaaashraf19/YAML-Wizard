@@ -1,0 +1,7 @@
+node:build:
+  extends:
+  - .base_node
+  - .node-cache-push
+  script:
+  - yarn install
+  stage: build

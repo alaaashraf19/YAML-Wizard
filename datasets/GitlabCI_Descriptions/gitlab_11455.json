@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_11455",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2704,
+  "description": "Create a GitLab CI pipeline with global variables BUILD_IMAGES_PROJECT, CFLAGS_DEFAULT, CONFIGURE_BASE_FLAGS, DEBIAN_BUILD, GET_SOURCES_ATTEMPTS, and MINGW_BUILD, a before_script that creates a cache directory and sets CCACHE_BASEDIR, CCACHE_DIR and CC=ccache gcc, an after_script that reports ccache statistics, and a cache keyed by $CI_JOB_NAME-ver1 storing the cache/ directory. In the default stage add a MinGW/Debian job using the image $CI_REGISTRY/$BUILD_IMAGES_PROJECT:$MINGW_BUILD that runs: export CFLAGS=\"$CFLAGS_DEFAULT\"; export CC=\"ccache $PREFIX-gcc\"; ./bootstrap; ./configure $CONFIGURE_BASE_FLAGS --build=x86_64-pc-linux-gnu --host=$PREFIX --enable-build-type=release; make -j$(nproc). Add a Sanitizers/Stretch job using the image $CI_REGISTRY/$BUILD_IMAGES_PROJECT:$DEBIAN_BUILD that runs: export CFLAGS=\"$CFLAGS_DEFAULT\"; ./bootstrap; export CC=\"ccache clang\"; export ASAN_SYMBOLIZER_PATH=/usr/lib/llvm-3.8/bin/llvm-symbolizer; ./configure $CONFIGURE_BASE_FLAGS --disable-doc --enable-build-type=debug --enable-sanitizers; make -j$(nproc) && make check, and on failure uploads all *.log files under the project as artifacts that expire in two weeks. Add a Scan-Build/Debian job (except tags) using the same Debian image that runs: export CFLAGS=\"$CFLAGS_DEFAULT\"; export CC=\"clang-3.8\"; ./bootstrap; scan-build --use-cc=clang-3.8 ./configure $CONFIGURE_BASE_FLAGS --enable-build-type=debug --disable-sanitizers; scan-build --use-cc=\"ccache clang-3.8\" -v -enable-checker security,nullability --status-bugs -o scan-build make -j$(nproc); scan-build --use-cc=\"ccache clang-3.8\" -v -enable-checker security,nullability --status-bugs -o scan-build make -k check, and on failure stores the scan-build/* directory as artifacts expiring in two weeks. Finally, add a dist/Stretch job using the Debian image that runs: export CFLAGS=\"$CFLAGS_DEFAULT\"; ./bootstrap; ./configure $CONFIGURE_BASE_FLAGS --enable-build-type=release; make -j$(nproc) dist, and on success publishes the generated libmicrohttpd-*.*.*.tar.?? files as an artifact named $CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA that expires in two weeks; also add a gcc/Stretch job using the Debian image that runs: export CFLAGS=\"$CFLAGS_DEFAULT\"; ./bootstrap; ./configure $CONFIGURE_BASE_FLAGS --enable-build-type=debug --disable-sanitizers; make -j$(nproc) && make check, and on failure uploads all *.log files as artifacts expiring in two weeks.",
+  "tags": [
+    "c",
+    "make",
+    "gcc",
+    "clang",
+    "ccache",
+    "docker",
+    "gitlab-ci",
+    "sanitizers",
+    "scan-build",
+    "dist"
+  ]
+}

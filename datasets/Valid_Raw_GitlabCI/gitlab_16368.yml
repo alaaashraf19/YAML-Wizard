@@ -1,0 +1,32 @@
+before_script:
+- apt-get update -qy
+- apt-get install -y python-dev python-pip python3 python3-dev python3-pip
+- pip install virtualenv
+- virtualenv -p python3 venv3
+- source venv3/bin/activate
+- pip install .
+- python setup.py test
+- deactivate
+- virtualenv -p python2 venv2
+- source venv2/bin/activate
+- pip install .
+- python setup.py test
+- pip install -r requirements-docs.txt
+- sh build-docs.sh
+- pip install awscli
+production:
+  only:
+  - tags
+  script:
+  - pip install twine
+  - export BUCKET='docs.seeq.io'
+  - aws s3 sync docs/_build/html/ s3://$BUCKET/api/python/ --delete --region us-east-1
+  - python setup.py sdist
+  - python setup.py bdist_wheel --universal
+  - twine upload dist/*
+staging:
+  only:
+  - master
+  script:
+  - export BUCKET='docs-staging.seeq.io'
+  - aws s3 sync docs/_build/html/ s3://$BUCKET/api/python/ --delete --region us-east-1

@@ -1,0 +1,14 @@
+{
+  "sha": "f870e3857a79cbbe2152c917bb73ec6792b1188c4b0f3bc9e536ff81217d8b01",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1474,
+  "description": "Create a reusable GitHub Actions workflow named Build Flatpak that accepts a boolean input IS_RELEASE. Run a single ubuntu-latest job in a privileged container, checkout the repository, determine the Flatpak release branch based on IS_RELEASE, show environment variables and Flatpak manifest, build a Flatpak package using the determined branch, prepare the Flatpak directory, and upload it as an artifact.",
+  "tags": [
+    "flatpak",
+    "github-actions",
+    "reusable-workflow",
+    "ubuntu",
+    "artifact"
+  ]
+}

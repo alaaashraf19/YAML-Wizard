@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_04888",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 438,
+  "description": "Create a GitLab CI pipeline that uses the python:3.6 Docker image and runs a before_script of `pip install -r config/requirements.txt` for every job. Define two stages named static_analysis and dynamic_analysis. In the static_analysis stage add a flake8 job that executes `make flake8`, a pylint job that executes `make pylint`, and a vulnerabilities job that executes `make vulnerabilities`. In the dynamic_analysis stage add a unit_test job that runs `make test`, stores the `cov_html` directory as an artifact, and captures test coverage using the regex `/\\d+%\\s*$/`. No caches, services, or conditional rules are required.",
+  "tags": [
+    "python-3.6",
+    "static-analysis",
+    "dynamic-analysis",
+    "flake8",
+    "pylint",
+    "vulnerabilities",
+    "unit-test",
+    "make",
+    "coverage"
+  ]
+}

@@ -1,0 +1,60 @@
+before_script:
+- echo "$CI_REGISTRY_PASSWORD" | docker login --username "$CI_REGISTRY_USER" --password-stdin
+  "$CI_REGISTRY"
+build:ascii:
+  script:
+  - ./build.sh ascii
+  stage: build
+build:beowulf:
+  script:
+  - ./build.sh beowulf
+  stage: build
+build:ceres:
+  script:
+  - ./build.sh ceres
+  stage: build
+build:chimaera:
+  script:
+  - ./build.sh chimaera
+  stage: build
+build:jessie:
+  script:
+  - ./build.sh jessie
+  stage: build
+derive:ascii:
+  script:
+  - ./derive.sh ascii
+  stage: derive
+derive:beowulf:
+  script:
+  - ./derive.sh beowulf
+  stage: derive
+derive:ceres:
+  script:
+  - ./derive.sh ceres
+  stage: derive
+derive:chimaera:
+  script:
+  - ./derive.sh chimaera
+  stage: derive
+derive:jessie:
+  script:
+  - ./derive.sh jessie
+  stage: derive
+image: docker:latest
+migrate:
+  script:
+  - ./migrate.sh
+  stage: migrate
+services:
+- docker:dind
+stages:
+- migrate
+- build
+- derive
+variables:
+  DEBIAN_VERSION: jessie-20180426
+  DEVUAN_RELEASE: beowulf
+  DOCKER_TLS_CERTDIR: /certs
+  LC_ALL: C
+  TZ: UTC

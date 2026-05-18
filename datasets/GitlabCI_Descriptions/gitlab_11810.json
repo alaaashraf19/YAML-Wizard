@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_11810",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 771,
+  "description": "Create a GitLab CI pipeline using the ubuntu:18.04 Docker image with a mariadb:latest service, setting DEBIAN_FRONTEND, MYSQL_DATABASE and MYSQL_ROOT_PASSWORD variables. Define a global before_script that runs apt-get update -y, installs python3-pip, python-dev, python3-dev, build-essential, mariadb-client, libmariadbclient-dev-compat, virtualenv, nodejs and npm, creates a Python virtual environment with virtualenv -p python3 venv, activates it, installs the requirements from requirements.txt, installs pylint and pylint-flask via pip, and runs npm install. Cache the node_modules/ and venv/ directories. Add a css_lint job that executes tests/css-lint.sh, an import_database job that executes tests/import_database.sh $MYSQL_DATABASE mariadb root $MYSQL_ROOT_PASSWORD, a js_lint job that executes tests/javascript-lint.sh, and a python_lint job that executes tests/python-lint.sh, all inheriting the before_script and running in the default stage.",
+  "tags": [
+    "ubuntu",
+    "mariadb",
+    "lint",
+    "css",
+    "javascript",
+    "python",
+    "npm",
+    "virtualenv",
+    "pip",
+    "apt-get"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "1b9f4d687b209ebe8008e4e572724e81a112dc882a95629523a058486aea246c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2006,
+  "description": "Create a GitHub Actions workflow named Flatpak that triggers on push and pull request events. Run an ubuntu-latest job that checks out the repository, installs dependencies, and then performs build and deployment steps depending on whether the workflow is triggered by a tag or not. For tags, perform a release build and deploy, and upload release assets. For non-tag pushes, perform a daily build and deploy, and upload daily build assets to a prerelease.",
+  "tags": [
+    "flatpak",
+    "ubuntu",
+    "release",
+    "deploy",
+    "github-release"
+  ]
+}

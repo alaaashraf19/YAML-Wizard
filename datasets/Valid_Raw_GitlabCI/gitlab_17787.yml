@@ -1,0 +1,15 @@
+before_script:
+- date
+- uname -a
+- pip install --upgrade pip
+- pip install -r requirements.txt
+- printenv | sort
+image: python:3.5
+services:
+- postgres:9.5
+test:
+  script:
+  - python test.py
+variables:
+  DB_STRING: postgresql://postgres:postgres@postgres:5432/$POSTGRES_DB
+  POSTGRES_DB: bookdb

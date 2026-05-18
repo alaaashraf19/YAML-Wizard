@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_14506",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2456,
+  "description": "Create a GitLab CI pipeline that defines an .opensbi_job_rules template with complex rules: never run unless $QEMU_CI is \"1\" or \"2\" and the project namespace is not \"qemu-project\", run manually on changes to opensbi files or when the ref name or commit message matches ^opensbi, otherwise run on_success for those conditions, and never run on scheduled pipelines from the upstream namespace. Add a docker-opensbi job in the containers stage using the docker:latest image with the docker:dind service, set GIT_DEPTH=3 and IMAGE_TAG=$CI_REGISTRY_IMAGE:opensbi-cross-build, login to the registry, wait for Docker, then execute \"docker pull $IMAGE_TAG || true\", \"docker build --cache-from $IMAGE_TAG --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA --tag $IMAGE_TAG .gitlab-ci.d/opensbi\", and push both tags. Add a build-opensbi job in the build stage using the $CI_REGISTRY_IMAGE:opensbi-cross-build image, needs docker-opensbi, set GIT_DEPTH=3, update the opensbi submodule, compute JOBS=$(($(getconf _NPROCESSORS_ONLN)+1)), echo the job count, clean and build opensbi32-generic and opensbi64-generic with make -j${JOBS}, redirecting stdout and stderr to log files, and publish the generated binaries and log files as artifacts on success. Both jobs inherit the .opensbi_job_rules for their execution conditions.",
+  "tags": [
+    "opensbi",
+    "docker",
+    "make",
+    "gitlab-ci",
+    "dind",
+    "cross-build",
+    "rules"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "sha": "ba3603c8024d1ab234d211053ce930ee80ac0a67eb649e1703f933697c3ea1e2",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3767,
+  "description": "Create a GitHub Actions workflow named Analyzers that runs on every pull request, push, and published release. Use two jobs, one on ubuntu-latest and one on windows-latest, each with a matrix strategy to run different static analysis tools (clang-analyzer, iwyu, CodeQL, and msvc-code-analysis) in both Release and Debug configurations. For each job, check out the repository, install dependencies, configure the build, and then run the specified analysis tool.",
+  "tags": [
+    "codeql",
+    "clang-analyzer",
+    "iwyu",
+    "msvc-code-analysis",
+    "cmake",
+    "ubuntu",
+    "windows",
+    "static-analysis"
+  ]
+}

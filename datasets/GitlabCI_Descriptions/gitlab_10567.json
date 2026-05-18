@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_10567",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 322,
+  "description": "Create a GitLab CI pipeline that uses the continuumio/miniconda3 Docker image and runs a before_script to update apt, install libgomp1, append ./bin to PATH, ./lib to LD_LIBRARY_PATH, ./z3 to PYTHONPATH, and make bin/z3 executable. Define a single stage named test (the default) and add a test job in that stage. The test job executes the commands 'z3 test.txt' and then uses find to locate all .py files except those under ./z3 and runs each with python via '-exec python {} \\;'. No caches, artifacts, services, or conditional rules are configured.",
+  "tags": [
+    "miniconda",
+    "z3",
+    "python",
+    "apt",
+    "gitlab-ci"
+  ]
+}

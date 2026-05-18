@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_04890",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 4008,
+  "description": "Create a GitLab CI pipeline with stages init, test, build, and release, using a global before_script to restore /go/bin and /go/pkg from .bin-cache.tar.gz and .pkg-cache.tar.gz and an after_script to re‑archive them, and a pull‑only cache for those tar files. In the init stage add an init job (golang:1-stretch) that runs `go install golang.org/x/lint/golint`, `go build -o depcharge`, `./depcharge -h`, computes a short VERSION from $CI_COMMIT_SHA or $CI_COMMIT_TAG, writes it to VERSION.txt, caches the bin and pkg archives with push policy, and stores VERSION.txt and src/ as a 10‑minute artifact. In the test stage add a gofmt job (golang:1-stretch) that executes a conditional `gofmt -s -d *.go` check and exits on changes, a golint job (golang:1-stretch) that runs `golint -set_exit_status`, and a test job (golang:1-stretch) that runs `. ./scripts/create-coverage.sh`, publishes coverage.html as a weekly artifact, applies a coverage regex, depends on init, and sets COVER_STRICT=true. In the build stage add build-linux, build-mac, and build-win jobs (golang:1-alpine) that each export VERSION from VERSION.txt, then run `go build` with GOOS/GOARCH set to linux/amd64, darwin/amd64, and windows/amd64 respectively, using ldflags `-w -s -X main.version=$VERSION` (mac and win also use `-a`), outputting depcharge-linux, depcharge-mac, and depcharge.exe as weekly artifacts, depend on init, and run only on develop, master, or tags for mac and win. In the release stage add a pages job (alpine:latest) that runs only on develop, creates a public directory, moves coverage.html to public/index.html, and publishes the public folder as a pages artifact, and a release job (registry.gitlab.com/centerorbit/release-github) that runs only on develop, master, or tags, checks out master, pushes the repository and tags to GitHub using $GITHUB_ACCESS_TOKEN, determines a pre‑release flag and tag, creates a GitHub release via PHP scripts, renames and zips each binary (linux, mac, win) and uploads them with php uploadBinary.php, depends on the three build jobs, and defines ACCESS_TOKEN, OWNER, and REPO variables.",
+  "tags": [
+    "go",
+    "golang",
+    "gitlab-ci",
+    "coverage",
+    "pages",
+    "release",
+    "docker",
+    "github"
+  ]
+}

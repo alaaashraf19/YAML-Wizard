@@ -1,0 +1,61 @@
+build:
+  artifacts:
+    untracked: true
+  script: timeout 1440 bash -x ./build.sh --build
+  stage: build
+  tags:
+  - docker
+image: registry.gitlab.com/clarin-eric/build-image:1.3.5
+informative-vulnerability-scan:
+  allow_failure: true
+  script: timeout 1440 bash -x ./build.sh --scan
+  stage: security
+  tags: null
+  variables:
+    SCAN_SEVERITY_THRESHOLD: low
+lint-dockerfile:
+  script: timeout 1440 bash -x ./build.sh --lint-docker
+  stage: lint
+normative-vulnerability-scan:
+  allow_failure: false
+  script: timeout 1440 bash -x ./build.sh --scan
+  stage: security
+  tags:
+  - docker
+  variables:
+    SCAN_FAIL_ON: all
+    SCAN_SEVERITY_THRESHOLD: high
+release:
+  only:
+  - tags
+  - triggers
+  script: timeout 1440 bash -x ./build.sh --release
+  stage: release
+  tags:
+  - docker
+services:
+- name: docker:28.5.1-dind
+shell-check:
+  script: timeout 1440 bash -x ./build.sh --lint-shell
+  stage: lint
+stages:
+- lint
+- build
+- test
+- security
+- release
+test:
+  dependencies:
+  - build
+  script: timeout 1440 bash -x ./build.sh --test
+  stage: test
+  tags:
+  - docker
+variables:
+  BUILD_PLATFORMS: linux/amd64,linux/arm64,linux/arm/v7
+  DOCKER_CERT_PATH: $DOCKER_TLS_CERTDIR/client
+  DOCKER_DRIVER: overlay2
+  DOCKER_HOST: tcp://docker:2376
+  DOCKER_TLS_CERTDIR: /certs
+  DOCKER_TLS_VERIFY: 1
+  GIT_SUBMODULE_STRATEGY: recursive

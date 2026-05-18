@@ -1,0 +1,26 @@
+build docker images:
+  image: docker:18.06.1-ce
+  script:
+  - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+  - docker build -t registry.gitlab.com/jorgemurta/docker-for-laravel -f docker/application/Dockerfile
+    .
+  - docker push registry.gitlab.com/jorgemurta/docker-for-laravel
+  stage: build
+docker info:
+  image: docker:18.06.1-ce
+  script:
+  - docker info
+  stage: build
+services:
+- docker:dind
+stages:
+- build
+- test
+unit tests:
+  image: registry.gitlab.com/jorgemurta/docker-for-laravel
+  script:
+  - vendor/bin/phpunit
+  stage: test
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_HOST: tcp://docker:2375/

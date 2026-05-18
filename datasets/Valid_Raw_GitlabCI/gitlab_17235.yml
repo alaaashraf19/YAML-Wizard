@@ -1,0 +1,54 @@
+before_script:
+- apt-get update -y
+- apt-get install -y make sfst python3 python3-pip python3-venv locales git
+- python3 -m venv .venv
+- source .venv/bin/activate
+- locale-gen ml_IN.UTF-8
+build:
+  artifacts:
+    paths:
+    - malayalam.a
+    - python/dist/
+  script:
+  - make
+  stage: build
+image: debian:bookworm
+publish:
+  before_script:
+  - echo "Pass. Just overriding"
+  dependencies:
+  - build
+  only:
+  - tags
+  script:
+  - pip install twine
+  - twine upload dist/* --username __token__ --password $PYPI_API_KEY
+  stage: publish
+stages:
+- build
+- test
+- publish
+test:
+  dependencies:
+  - build
+  script:
+  - LC_ALL=ml_IN.UTF-8 make test
+  stage: test
+test:python:
+  before_script:
+  - echo "Pass. Just overriding"
+  dependencies:
+  - build
+  image: docker.io/python:$PYTHON_VERSIONS
+  parallel:
+    matrix:
+    - PYTHON_VERSIONS:
+      - '3.8'
+      - '3.9'
+      - '3.10'
+      - '3.11'
+      - '3.12'
+  script:
+  - pip install tox
+  - tox -e py -c python/tox.ini
+  stage: test

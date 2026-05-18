@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_07715",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 447,
+  "description": "Create a GitLab CI pipeline using the alpine:latest Docker image. Install curl, unzip, git and openssh, download Terraform 0.9.8 zip, and unzip it in a global before_script. Define a test stage with a plan job that runs `export PATH=$PATH:$(pwd)`, `./terraform init` and `./terraform plan`. Define a deploy stage with an apply job that runs only on the master branch, is manual, and executes `export PATH=$PATH:$(pwd)`, `./terraform init` and `./terraform apply`. No caches, artifacts, or services are used.",
+  "tags": [
+    "alpine",
+    "terraform",
+    "infra",
+    "manual-deploy",
+    "plan",
+    "apply"
+  ]
+}

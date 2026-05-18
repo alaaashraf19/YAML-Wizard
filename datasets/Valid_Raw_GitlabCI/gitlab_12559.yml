@@ -1,0 +1,97 @@
+.Linux Build:
+  artifacts:
+    paths:
+    - jdrive
+  script:
+  - npm i --unsafe-perm
+  - npx pkg -t linux .
+  stage: build
+  variables:
+    NODE_ENV: dev
+.testcode:
+  script:
+  - npm ci --unsafe-perm
+  - npm test
+  - npm run lint
+  stage: test
+Alpine Build:
+  artifacts:
+    paths:
+    - jdrive
+  environment: Alpine Binary distribution
+  only:
+  - tags
+  script:
+  - npm i --unsafe-perm
+  - npx pkg -t latest-alpine .
+  stage: build
+  variables:
+    NODE_ENV: dev
+Build npm tarball:
+  artifacts:
+    paths:
+    - jdrive.tgz
+  script:
+  - npm pack -q|xargs -I {} mv {} jdrive.tgz
+  stage: build
+  variables:
+    NODE_ENV: production
+Deploy to NPM:
+  environment: NPM
+  only:
+  - tags
+  script:
+  - echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}'>.npmrc
+  - npm publish
+  stage: deploy
+Linux Build:
+  environment: Linux Binary distribution
+  extends: .Linux Build
+  only:
+  - tags
+Linux Test Build:
+  except:
+  - tags
+  extends: .Linux Build
+Test Node 11:
+  extends: .testcode
+  image: node:11
+Test Node LTS:
+  extends: .testcode
+  image: node:lts
+Test Node latest:
+  extends: .testcode
+  image: node:latest
+image: node:10
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+    refs:
+    - master
+  script:
+  - npm i --no-save jsdoc
+  - stat public&&rm -rf public||true
+  - npx jsdoc . lib -d public
+  stage: build
+sast:
+  allow_failure: true
+  artifacts:
+    paths:
+    - gl-sast-report.json
+  image: docker:stable
+  script:
+  - export SP_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
+  - docker run --env SAST_CONFIDENCE_LEVEL="${SAST_CONFIDENCE_LEVEL:-3}" --volume
+    "$PWD:/code" --volume /var/run/docker.sock:/var/run/docker.sock "registry.gitlab.com/gitlab-org/security-products/sast:latest"
+    /app/bin/run /code
+  services:
+  - docker:stable-dind
+  stage: test
+  variables:
+    DOCKER_DRIVER: overlay2
+stages:
+- test
+- build
+- deploy

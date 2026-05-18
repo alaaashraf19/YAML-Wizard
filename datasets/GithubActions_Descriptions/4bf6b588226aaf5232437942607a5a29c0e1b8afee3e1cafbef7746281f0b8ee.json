@@ -1,0 +1,16 @@
+{
+  "sha": "4bf6b588226aaf5232437942607a5a29c0e1b8afee3e1cafbef7746281f0b8ee",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2275,
+  "description": "Create a GitHub Actions workflow named build that runs on push to the master branch and on pull requests. The workflow has two jobs: unix and windows. The unix job runs on ubuntu and macos with different compilers and definitions in a matrix strategy, checking out the repository, then running make test and make coverage with various configurations. The windows job runs on windows-latest with different architectures and definitions, configuring and testing with cmake, including C++17 configurations.",
+  "tags": [
+    "cmake",
+    "make",
+    "c++",
+    "unix",
+    "windows",
+    "tests",
+    "coverage"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_14233",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 3165,
+  "description": "Create a GitLab CI pipeline using the image registry.gitlab.com/ostrokach-docker/conda:latest with three stages: build, test, and deploy. In the build stage define three jobs (build-py27, build-py36, build-py37) that run the before_script from .configure (link libssl/libcrypto, create .conda dirs, set conda envs and pkgs dirs, add conda‑forge/gcc7 channel) then execute `cd \"$CI_PROJECT_DIR\"/recipe` and `conda build . --variant-config-files conda_build_config.yaml --python ${PYTHON_VERSION} --output-folder \"$CI_PROJECT_DIR\"/conda-bld --no-test 2>&1 | tee \"$CI_PROJECT_DIR\"/build-log.txt`, tag them with 16gb, and always archive the paths conda-bld, config.log and build.log. In the test stage add six jobs: test-py27/36/37 (extending .test) that run `conda build --test $CI_PROJECT_DIR/conda-bld/linux-64/*.tar.bz2`; and test-plotting-py27/36/37 (extending .test-plotting) that run `cp -r $CI_PROJECT_DIR/conda-bld/* /opt/conda/conda-bld/`, `conda index /opt/conda/conda-bld/`, `conda create -n graph-tool -y -q \"python=$PYTHON_VERSION\"`, `conda install -n graph-tool -y -q --use-local graph-tool`, `source activate graph-tool`, `python ./tests/make_plot.py`, and `[[ -f graph-draw-sfdp.png ]]`, and publish the files environment-pyX.yml and graph-draw-sfdp.png as artifacts. In the deploy stage add three jobs (deploy-py27, deploy-py36, deploy-py37) that depend on their respective build jobs, run only on the master branch, and execute a conditional `if [[ ${CI_COMMIT_REF_NAME} = 'master' ]] ; then anaconda -t $ANACONDA_TOKEN upload $CI_PROJECT_DIR/conda-bld/linux-64/*.tar.bz2 -u ${CI_PROJECT_NAMESPACE} --force --no-progress ; else anaconda -t $ANACONDA_TOKEN upload $CI_PROJECT_DIR/conda-bld/linux-64/*.tar.bz2 -u ${CI_PROJECT_NAMESPACE} --label dev --force --no-progress ; fi` to upload packages to Anaconda.",
+  "tags": [
+    "conda",
+    "conda-build",
+    "anaconda",
+    "python-2.7",
+    "python-3.6",
+    "python-3.7",
+    "gitlab-ci"
+  ]
+}

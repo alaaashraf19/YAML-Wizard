@@ -1,0 +1,97 @@
+before_script:
+- export GRADLE_USER_HOME=`pwd`/.gradle
+build:
+  cache:
+    key: $CI_COMMIT_REF_NAME
+    paths:
+    - assignment-*/build
+    - assignment-*/.gradle
+    policy: push
+  script: gradle --build-cache assemble
+  stage: build
+funtest:a1:
+  cache:
+    key: $CI_COMMIT_REF_NAME
+    paths:
+    - assignment-1/build
+    - assignment-1/.gradle
+    policy: pull
+  script:
+  - gradle -q :assignment-1:run < assignment-1/testcases/in1.txt
+  - gradle -q :assignment-1:run < assignment-1/testcases/in2.txt
+  - gradle -q :assignment-1:run < assignment-1/testcases/in3.txt
+  - gradle -q :assignment-1:run < assignment-1/testcases/in4.txt
+  - gradle -q :assignment-1:run < assignment-1/testcases/in5.txt
+  stage: test
+  when: manual
+image: gradle:4.4.1-jdk8-alpine
+stages:
+- build
+- test
+test:a1:
+  artifacts:
+    expire_in: 12 weeks
+    name: ${CI_PROJECT_NAMESPACE}-${CI_PROJECT_NAME}-${CI_COMMIT_REF_NAME}-Reports
+    paths:
+    - assignment-1/build/reports
+    when: always
+  cache:
+    key: $CI_COMMIT_REF_NAME
+    paths:
+    - assignment-1/build
+    - assignment-1/.gradle
+    policy: pull
+  except:
+  - master@DDP2-CSUI/assignment
+  script: gradle :assignment-1:check
+  stage: test
+test:a2:
+  artifacts:
+    expire_in: 12 weeks
+    name: ${CI_PROJECT_NAMESPACE}-${CI_PROJECT_NAME}-${CI_COMMIT_REF_NAME}-A2Reports
+    paths:
+    - assignment-2/build/reports
+    when: always
+  cache:
+    paths:
+    - assignment-2/build
+    - assignment-2/.gradle
+    policy: pull
+  except:
+  - master@DDP2-CSUI/assignment
+  script: gradle :assignment-2:check
+  stage: test
+test:a3:
+  artifacts:
+    expire_in: 12 weeks
+    name: ${CI_PROJECT_NAMESPACE}-${CI_PROJECT_NAME}-${CI_COMMIT_REF_NAME}-A3Reports
+    paths:
+    - assignment-3/build/reports
+    when: always
+  cache:
+    paths:
+    - assignment-3/build
+    - assignment-3/.gradle
+    policy: pull
+  except:
+  - master@DDP2-CSUI/assignment
+  script: gradle :assignment-3:check
+  stage: test
+test:a4:
+  artifacts:
+    expire_in: 12 weeks
+    name: ${CI_PROJECT_NAMESPACE}-${CI_PROJECT_NAME}-${CI_COMMIT_REF_NAME}-A4Reports
+    paths:
+    - assignment-4/build/reports
+    when: always
+  cache:
+    paths:
+    - assignment-4/build
+    - assignment-4/.gradle
+    policy: pull
+  except:
+  - master@DDP2-CSUI/assignment
+  script: gradle :assignment-4:check
+  stage: test
+variables:
+  GRADLE_OPTS: -Dorg.gradle.daemon=false

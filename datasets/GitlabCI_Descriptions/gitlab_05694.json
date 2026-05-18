@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_05694",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 999,
+  "description": "Create a GitLab CI pipeline that uses the node:latest Docker image and caches the node_modules/ directory. Include a before_script that runs \"docker info\" and logs in to registry.gitlab.com with the CI job token. Add a build_image_dev job that only runs on the dev branch, executes \"npm install\", \"sudo npm install -g @angular/cli\", \"npm run build:dev\", builds a Docker image tagged registry.gitlab.com/codingstones1/ndi-front:latest, pushes it, clones https://gitlab.com/codingstones1/ndi-playbook, and runs an Ansible playbook with the dev inventory (deploy_front_dev.yaml). Add a build_image_prod job that only runs on the master branch, runs \"npm install\", \"sudo npm install -g @angular/cli\", \"npm run build\", builds a Docker image tagged registry.gitlab.com/codingstones1/ndi-front:stable, pushes it, clones the same playbook repository, and runs the Ansible playbook with the prod inventory (deploy_front_prod.yaml).",
+  "tags": [
+    "node",
+    "npm",
+    "angular-cli",
+    "docker",
+    "ansible",
+    "gitlab-registry",
+    "dev",
+    "prod"
+  ]
+}

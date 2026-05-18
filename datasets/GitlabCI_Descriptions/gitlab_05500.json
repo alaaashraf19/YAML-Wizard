@@ -1,0 +1,24 @@
+{
+  "sha": "gitlab_05500",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2759,
+  "description": "Create a GitLab CI pipeline with a docker:dind service and Docker TLS variables, defining two stages: test and publish. In the test stage add an integration-test job using the clickable/clickable-ci image, triggered on merge requests, tags, the dev branch or the default branch, that runs `export HOME=`pwd`/home`, `mkdir -p $HOME`, and `pytest ./tests/integration` with the variable CLICKABLE_SKIP_DOCKER_CHECKS=1; a lint job (clickable/clickable-ci) with the same triggers that runs `flake8` and `pylint clickable`; a unit-test job (clickable/clickable-ci) with the same triggers that runs `pytest --cov=clickable ./tests/unit`; and include the SAST job from the Security/SAST template with a list of excluded analyzers. In the publish stage add a build-deb job using the clickable/build-deb:focal image, triggered on the dev or default branch, that runs `dpkg-buildpackage` and stores any `../*.deb` files as artifacts for one week. Also add publish-focal, publish-jammy, publish-noble, and publish-plucky jobs (clickable/build-deb:focal) that run only on tags, each executing `./scripts/setup_gpg_keys.sh`, a `sed` command replacing \"unstable\" with the respective Ubuntu codename, `debuild -S`, and `dput ppa:bhdouglass/clickable ../clickable_*_source.changes`. Finally, add a publish-pypi job using the clickable/clickable-ci image, triggered on tags, that runs `python3 setup.py sdist bdist_wheel` followed by `python3 -m twine upload dist/*` to publish to PyPI.",
+  "tags": [
+    "clickable",
+    "docker",
+    "dind",
+    "deb",
+    "ppa",
+    "pypi",
+    "pytest",
+    "flake8",
+    "pylint",
+    "sast",
+    "integration-test",
+    "unit-test",
+    "lint",
+    "publish",
+    "build-deb"
+  ]
+}

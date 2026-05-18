@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_09988",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1053,
+  "description": "Create a GitLab CI pipeline with three stages named dep, test, and build and a variable PACKAGE_PATH pointing to /go/src/gitlab.com/hypnoglow/example-go-docker-gitlab. In the dep stage add a job called dep that uses the golang:1.10-alpine3.7 image, runs an before_script installing curl and git via apk, downloads the dep tool with curl to /go/bin/dep, makes it executable, then creates the package directory with mkdir -p $(dirname ${PACKAGE_PATH}) && ln -s ${CI_PROJECT_DIR} ${PACKAGE_PATH} && cd ${PACKAGE_PATH}, and finally executes dep ensure -v -vendor-only, publishing the vendor/ directory as an artifact named vendor-$CI_PIPELINE_ID that expires after 1 hour. In the test stage add a job called test that also uses golang:1.10-alpine3.7, depends on the dep job, runs the same before_script to set up the package path, and then runs go test ./... to execute the Go test suite. In the build stage add a job called build that uses the docker:17 image with the docker:dind service, depends on the dep job, and runs docker build -t app . to build the Docker image.",
+  "tags": [
+    "golang",
+    "docker",
+    "dep",
+    "go-test",
+    "docker-dind",
+    "artifact"
+  ]
+}

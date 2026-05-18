@@ -1,0 +1,14 @@
+{
+  "sha": "5681fca539ebbbf76305dfd50bd2b8d47ab87c98183c5a057258377d13053c5d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1256,
+  "description": "Create a GitHub Actions workflow that triggers on repository dispatches of type on-demand-build and on release events. Run a build job on a matrix of ubuntu-18.04, windows-latest, and macos-latest environments. For each job, check out the repository, set up Node.js 13.x, install dependencies with npm install, and then conditionally change the version if the tag contains '0.0.0-latest-master'. Finally, prebuild a binary with npm run prebuild:build and create a GitHub release with the prebuilt tar.gz files.",
+  "tags": [
+    "nodejs",
+    "release",
+    "github-release",
+    "multi-os",
+    "matrix-build"
+  ]
+}

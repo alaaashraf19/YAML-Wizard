@@ -1,0 +1,36 @@
+assembleDebug:
+  artifacts:
+    paths:
+    - app/build/outputs/
+  script:
+  - ./gradlew assembleDebug
+  stage: build
+assembleRelease:
+  artifacts:
+    paths:
+    - app/build/outputs/
+  script:
+  - ./gradlew assembleRelease
+  stage: build
+before_script:
+- export GRADLE_USER_HOME=$(pwd)/.gradle
+- chmod +x ./gradlew
+- git submodule sync --recursive
+- git submodule update --init --recursive
+cache:
+  key: ${CI_PROJECT_ID}
+  paths:
+  - .gradle/
+image: inovex/gitlab-ci-android:25
+lintDebug:
+  script:
+  - ./gradlew -Pci --console=plain lintDebug -PbuildDir=lint
+  stage: build
+spotlessCheck:
+  script:
+  - ./gradlew spotlessCheck
+  stage: build
+stages:
+- build
+variables:
+  GRADLE_OPTS: -Dorg.gradle.daemon=false

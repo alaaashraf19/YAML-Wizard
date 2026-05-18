@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_11196",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 202,
+  "description": "Create a GitLab CI pipeline that uses the node Docker image and caches the node_modules/ directory. Define a pages job (stage: pages) that runs only on the master branch, executes the commands: mkdir .public, npm install, cp -r * .public/, and mv .public public, then publishes the public/ folder as a GitLab Pages artifact. No services, variables, or additional stages are required.",
+  "tags": [
+    "node",
+    "npm",
+    "gitlab-pages",
+    "cache",
+    "master"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "c9bb89f60bdd6b868aa13fe88a1965dae033a7835c168bb3aa95cf9048a0b3d5",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1754,
+  "description": "Create a GitHub Actions workflow named Check Markdown for Broken Links that checks for broken links in markdown files on push, pull request, and on a scheduled basis. The workflow should also be manually triggerable. It uses an ubuntu-latest job with read permissions to checkout the repository and run the Linkinator action on all markdown files, excluding links to repository commits and issues.",
+  "tags": [
+    "markdown",
+    "link-check",
+    "github-actions",
+    "ubuntu",
+    "scheduled-workflow"
+  ]
+}

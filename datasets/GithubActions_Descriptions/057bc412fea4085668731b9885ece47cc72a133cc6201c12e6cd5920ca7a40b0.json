@@ -1,0 +1,17 @@
+{
+  "sha": "057bc412fea4085668731b9885ece47cc72a133cc6201c12e6cd5920ca7a40b0",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2693,
+  "description": "Create a GitHub Actions workflow for a Python package that runs on every push and pull request. Use an ubuntu-latest job with a matrix strategy to test multiple Python versions (3.7 to 3.10) in parallel. For each version, check out the code, set up Python, install Poetry, and then install dependencies, test the build step, run unit tests with pytest and coverage, lint with flake8, and perform additional tests and checks with mypy, codecov, and more.",
+  "tags": [
+    "python",
+    "poetry",
+    "pytest",
+    "flake8",
+    "mypy",
+    "codecov",
+    "ci",
+    "ubuntu"
+  ]
+}

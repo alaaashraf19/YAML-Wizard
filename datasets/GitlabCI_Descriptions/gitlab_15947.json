@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_15947",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2750,
+  "description": "Create a GitLab CI pipeline that uses the ruby:3.2 Docker image and defines two stages: build and deploy. In the build stage add a job called build_site that caches the Bundler directory at vendor/bundle, runs `gem install bundler`, then `bundle install --path vendor/bundle`, and finally `bundle exec jekyll build -d public` to generate the static site, and publishes the `public/` folder as an artifact available always. In the deploy stage add a pages job that simply passes the `public/` artifact to GitLab Pages and is restricted to run only on the main branch. Set the variable JEKYLL_ENV=production for the build job.",
+  "tags": [
+    "jekyll",
+    "ruby",
+    "gitlab-pages",
+    "bundler",
+    "static-site",
+    "minimal-mistakes"
+  ]
+}

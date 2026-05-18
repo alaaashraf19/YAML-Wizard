@@ -1,0 +1,31 @@
+name: draft-release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository and submodules
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+          fetch-depth: 0
+      - name: Set ownership
+        run: |
+          # this is to fix "fatal: detected dubious ownership in repository at '/github/workspace'"
+          chown -R $(id -u):$(id -g) $PWD
+      - name: Build binaries
+        uses: ctag-fh-kiel/esp-idf-action@1
+      - name: Archive binaries
+        run: |
+          zip --junk-paths binaries build/*.bin build/bootloader/*.bin build/partition_table/*.bin
+      - name: Upload binary
+        uses: actions/upload-artifact@v2.2.1
+        with:
+          name: binaries.zip
+          # A file, directory or wildcard pattern that describes what to upload
+          path: ./binaries.zip

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_06945",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 463,
+  "description": "Create a GitLab CI pipeline that uses the docker:stable image with a docker:dind service and defines CONTAINER_IMAGE, DOCKER_DRIVER, and DOCKER_HOST variables. Define a single build stage with a build job that runs: docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY; docker pull $CONTAINER_IMAGE:latest || true; docker build --cache-from $CONTAINER_IMAGE:latest --tag $CONTAINER_IMAGE:latest Dockerfile; docker push $CONTAINER_IMAGE:latest. The job runs in the build stage, has no caches, artifacts, or conditional rules, and pushes the built image to the GitLab Container Registry.",
+  "tags": [
+    "docker",
+    "dind",
+    "container-registry",
+    "build",
+    "docker-login"
+  ]
+}

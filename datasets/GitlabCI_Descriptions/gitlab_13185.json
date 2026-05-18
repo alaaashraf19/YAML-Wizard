@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_13185",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1355,
+  "description": "Create a GitLab CI pipeline using the nicosingh/rpi-dind:latest Docker image and two stages: build-branch and build-master. Define variables DOCKERHUB_IMAGE_NAME, DOCKERHUB_REGISTRY, GITLAB_IMAGE_NAME, and GITLAB_REGISTRY as provided. Add a branch-docker_hub job in the build-branch stage that runs on rpi runners, excludes the master branch, and executes: docker login -u nicosingh -p $DOCKERHUB_NICOSINGH_PASSWORD $DOCKERHUB_REGISTRY; docker build -t $DOCKERHUB_IMAGE_NAME:$CI_COMMIT_REF_NAME .; docker push $DOCKERHUB_IMAGE_NAME:$CI_COMMIT_REF_NAME. Add a branch-gitlab job in the same stage, also excluded from master, that runs: docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $GITLAB_REGISTRY; docker build -t $GITLAB_IMAGE_NAME:$CI_COMMIT_REF_NAME .; docker push $GITLAB_IMAGE_NAME:$CI_COMMIT_REF_NAME. Add a master-docker_hub job in the build-master stage that runs only on the master branch, uses the same rpi tag, and runs: docker login -u nicosingh -p $DOCKERHUB_NICOSINGH_PASSWORD $DOCKERHUB_REGISTRY; docker build -t $DOCKERHUB_IMAGE_NAME:latest .; docker push $DOCKERHUB_IMAGE_NAME:latest. Finally, add a master-gitlab job in the build-master stage that runs only on master and executes: docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $GITLAB_REGISTRY; docker build -t $GITLAB_IMAGE_NAME:latest .; docker push $GITLAB_IMAGE_NAME:latest.",
+  "tags": [
+    "docker",
+    "docker-hub",
+    "gitlab-registry",
+    "rpi",
+    "dind",
+    "branch-build",
+    "master-build"
+  ]
+}

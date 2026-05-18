@@ -1,0 +1,15 @@
+{
+  "sha": "1b82b99123d608215d8cacabbd3836db6ef3ed2c3b84a86497db4443acfd6c47",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1790,
+  "description": "Create a GitHub Actions workflow named Build x86 Linux Wheels (ROCm) that triggers on pull requests, pushes to specific branches (nightly, main, and release candidate branches), and workflow dispatches. The workflow generates a build matrix for Linux wheel packages with ROCm enabled, then uses this matrix to build and publish wheels for the pytorch/FBGEMM repository to the nightly channel, handling concurrency and cancellation of in-progress jobs.",
+  "tags": [
+    "linux",
+    "wheels",
+    "rocm",
+    "pytorch",
+    "github-actions",
+    "ci"
+  ]
+}

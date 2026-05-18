@@ -1,0 +1,17 @@
+before_script:
+- npm install
+cache:
+  paths:
+  - node_modules/
+test:node:14:
+  image: node:14
+  script:
+  - npm test
+test:node:16:
+  image: node:16
+  script:
+  - npm test
+test:node:latest:
+  image: node:latest
+  script:
+  - npm test

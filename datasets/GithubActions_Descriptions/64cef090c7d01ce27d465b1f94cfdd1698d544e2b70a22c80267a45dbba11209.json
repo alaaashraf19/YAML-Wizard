@@ -1,0 +1,16 @@
+{
+  "sha": "64cef090c7d01ce27d465b1f94cfdd1698d544e2b70a22c80267a45dbba11209",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 12790,
+  "description": "Create a GitHub Actions workflow named build that compiles and packages OpenJK on multiple platforms. Trigger on push to master, pull requests to master, workflow dispatch, and published releases. Use separate jobs for Windows (MSVC and MSVC XP), Ubuntu, and macOS, each with matrixed architecture, build type, and portability. For each job, check out code, configure CMake, build, and install. Upload artifacts on release builds.",
+  "tags": [
+    "openjk",
+    "cmake",
+    "cross-platform",
+    "windows",
+    "ubuntu",
+    "macos",
+    "github-actions"
+  ]
+}

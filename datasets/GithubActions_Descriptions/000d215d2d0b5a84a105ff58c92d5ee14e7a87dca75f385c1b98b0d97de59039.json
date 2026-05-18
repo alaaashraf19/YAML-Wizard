@@ -1,0 +1,14 @@
+{
+  "sha": "000d215d2d0b5a84a105ff58c92d5ee14e7a87dca75f385c1b98b0d97de59039",
+  "provider": "groq",
+  "model": "llama-3.3-70b-versatile",
+  "yaml_bytes": 2360,
+  "description": "Create a GitHub Actions workflow named GitHub Release that triggers on pull requests, pushes to branches starting with trunk-, and tag pushes matching v*. The workflow has two jobs: release, which builds a release tarball on ubuntu-latest, and publish, which publishes the release to GitHub. The release job checks out the code, installs tools, determines the last tag, writes a version change log, copies the source, removes .git, tars the source, and uploads the release files. The publish job downloads the artifacts, creates a release on GitHub with the uploaded files and change log, but only if the workflow was triggered by a tag push.",
+  "tags": [
+    "github-release",
+    "tarball",
+    "ubuntu",
+    "bash",
+    "github-token"
+  ]
+}

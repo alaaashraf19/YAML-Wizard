@@ -1,0 +1,28 @@
+before_script:
+- docker login -u gitlab-ci-token -p ${CI_BUILD_TOKEN} registry.gitlab.com
+build:
+  script:
+  - ash -v ./build.sh
+  stage: build
+image: docker:latest
+release_image:
+  only:
+  - master
+  - /alpine-v[0-9]+\.[0-9]+\.[0-9]+/
+  script:
+  - ash ./release.sh
+  stage: release
+services:
+- docker:dind
+stages:
+- build
+- test
+- release
+test:
+  script:
+  - ash -v ./test.sh
+  stage: test
+variables:
+  CONTAINER_NAME: test_container_${CI_COMMIT_SHA}
+  CONTAINER_RELEASE_IMAGE_NAME: registry.gitlab.com/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}
+  CONTAINER_TEST_IMAGE: registry.gitlab.com/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}:${CI_COMMIT_REF_NAME}

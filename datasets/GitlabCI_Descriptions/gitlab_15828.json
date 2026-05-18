@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_15828",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1512,
+  "description": "Create a GitLab CI pipeline using the continuumio/miniconda3:latest Docker image, with a cache on $CI_PROJECT_DIR/.conda_cache and $CI_PROJECT_DIR/.apt-cache. Define three stages: test, test_conda_build, and gitlab-release. In the test stage add a test job that runs the global before_script (conda install -c conda-forge mamba; mamba update -y -n base conda; mamba install conda-build; apt-get update; apt-get -o dir::cache::archives=\".apt-cache\" install -y texlive-lang-german texlive-xetex texlive-fonts-extra texlive-science; bash gitlab-ci.sh; source activate $CI_PROJECT_DIR/.conda_cache/mapping-4; pip install -e .) then executes \"cd test\" and \"./test_mapping.py\", and runs only on branches unstable_development and master. In the test_conda_build stage add a test_conda_build job that inherits the same global before_script and then runs \"cd .conda && conda build . -c conda-forge -c bioconda\", and runs only on tags test_conda_build and stage_conda_release. In the gitlab-release stage add a make_new_release job with its own before_script (apt-get update; apt-get -y install software-properties-common; apt-get update; apt-get -y install php php-json git openssh-client curl), runs only on master, and executes commands to set VERSION=$(git tag | grep -E 'v[0-9]+\\.[0-9]+\\.[0-9]+$' | tail -n1), DESCRIPTION=$(git cat-file -p $VERSION), MESSAGE=$(php -r \"echo json_encode(['name' => '$VERSION', 'tag_name' => '$VERSION', 'description' => '$DESCRIPTION']);\"), echo $MESSAGE, and curl --header 'Content-Type: application/json' --header \"JOB-TOKEN: ${CI_JOB_TOKEN}\" --data \"$MESSAGE\" --request POST ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/releases.",
+  "tags": [
+    "conda",
+    "mamba",
+    "gitlab-ci",
+    "release",
+    "php",
+    "curl",
+    "test"
+  ]
+}

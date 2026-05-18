@@ -1,0 +1,14 @@
+{
+  "sha": "ef76089e42c37361829b0f2e89b0922bfc793f932b55e82d718022082d38ba62",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2102,
+  "description": "Create a GitHub Actions workflow named Standard Build and Test that runs on push to the develop branch, on pull requests not affecting certain paths, and on manual workflow dispatch. The workflow uses a matrix strategy to build and test PyNE across different stages and HDF5 configurations on an ubuntu-latest environment. It sets up the environment, checks out the repository, builds PyNE with custom flags based on the matrix parameters, and runs tests using a script.",
+  "tags": [
+    "python",
+    "test",
+    "build",
+    "matrix",
+    "github-actions"
+  ]
+}

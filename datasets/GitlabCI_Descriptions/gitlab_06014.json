@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_06014",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 686,
+  "description": "Create a GitLab CI pipeline with two stages (test and deploy). Add a sast job that runs in the default test stage using the docker:stable image with a docker:stable-dind service, sets DOCKER_DRIVER=overlay2, executes `export SP_VERSION=$(echo \"$CI_SERVER_VERSION\" | sed 's/^\\([0-9]*\\)\\.\\([0-9]*\\).*/\\1-\\2-stable/')` then runs `docker run --env SAST_CONFIDENCE_LEVEL=\"${SAST_CONFIDENCE_LEVEL:-3}\" --volume \"$PWD:/code\" --volume /var/run/docker.sock:/var/run/docker.sock \"registry.gitlab.com/gitlab-org/security-products/sast:$SP_VERSION\" /app/bin/run /code`, and always uploads the SAST report gl-sast-report.json as a sast artifact while allowing failures. Add a pages job in the deploy stage that runs `mkdir .public`, `cp -r * .public`, and `mv .public public`, publishes the public/ directory as a pages artifact, and is limited to the master branch.",
+  "tags": [
+    "pages",
+    "gitlab-pages",
+    "sast",
+    "docker",
+    "dind",
+    "security"
+  ]
+}

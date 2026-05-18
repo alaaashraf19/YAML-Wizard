@@ -1,0 +1,34 @@
+before_script:
+- mkdir -p ${GOPATH}/src/${GO_PROJECT}
+- mkdir -p ${CI_PROJECT_DIR}/${ARTIFACTS_DIR}
+- curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+- cp -r ${CI_PROJECT_DIR}/* ${GOPATH}/src/${GO_PROJECT}/
+- cd ${GOPATH}/src/${GO_PROJECT}
+- go get github.com/golang/mock/gomock
+- go install github.com/golang/mock/mockgen
+- go get github.com/satori/go.uuid
+- mkdir mock_server
+- go generate ./...
+- cd mock_server
+- go install
+- cd ../
+build-my-project:
+  artifacts:
+    paths:
+    - ${ARTIFACTS_DIR}
+  script:
+  - go build -o ${CI_PROJECT_DIR}/${ARTIFACTS_DIR}/${BIN_NAME}
+  stage: build
+image: golang:1.10
+stages:
+- build
+- test
+test-my-project:
+  script:
+  - go test -v -race -cover -coverprofile=coverage.txt -tags="unit integration" -covermode=atomic
+  - bash <(curl -s https://codecov.io/bash)
+  stage: test
+variables:
+  ARTIFACTS_DIR: artifacts
+  BIN_NAME: server
+  GO_PROJECT: gitlab.com/prosign/server

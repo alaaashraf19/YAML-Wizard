@@ -1,0 +1,50 @@
+deploy:
+  only:
+  - master
+  script:
+  - netstat -rn
+  - source /home/cicd/CICD/bin/activate
+  - SIMULATION_NAME="prod_simulation" ./tests/setup_simulation.py
+  - export ANSIBLE_HOST_KEY_CHECKING=False
+  - ansible-playbook -i gen/inventory_prod_simulation ansible/site.yml
+  - for i in $(seq 1 8); do ansible-playbook -i gen/inventory_prod_simulation ansible/test.yml
+    && ex=0 && break || ex=$? && sleep 5; done; (exit $ex)
+  stage: deploy
+deploy:shutdown-simulation:
+  except:
+  - /^(?!master$)/
+  only:
+  - schedules
+  - web
+  script:
+  - source /home/cicd/CICD/bin/activate
+  - SIMULATION_NAME="prod_simulation" ./tests/setup_simulation.py shutdown
+  - sleep 60
+  stage: deploy:shutdown-simulation
+stages:
+- test:shutdown-simulation
+- test
+- deploy:shutdown-simulation
+- deploy
+test:
+  except:
+  - master
+  script:
+  - source /home/cicd/CICD/bin/activate
+  - ./tests/setup_simulation.py
+  - export ANSIBLE_HOST_KEY_CHECKING=False
+  - ansible-playbook -i gen/inventory_test_simulation ansible/site.yml
+  - for i in $(seq 1 8); do ansible-playbook -i gen/inventory_test_simulation ansible/test.yml
+    && ex=0 && break || ex=$? && sleep 5; done; (exit $ex)
+  stage: test
+test:shutdown-simulation:
+  except:
+  - master
+  only:
+  - schedules
+  - web
+  script:
+  - source /home/cicd/CICD/bin/activate
+  - ./tests/setup_simulation.py shutdown
+  - sleep 60
+  stage: test:shutdown-simulation

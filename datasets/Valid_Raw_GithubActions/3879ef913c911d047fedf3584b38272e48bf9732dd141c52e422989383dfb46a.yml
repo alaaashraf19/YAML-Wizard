@@ -1,0 +1,99 @@
+name: Build Python Wheels
+
+on:
+  # allow manual runs
+  workflow_dispatch:
+  # run when we tag a release
+  release:
+    types:
+      - "created"
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build_sdist:
+    name: Source distribution
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-python@v4
+        name: Install Python
+        with:
+          python-version: '3.x'
+
+      - name: Install build package
+        run: python -m pip install build --user
+
+      - name: Build sdist
+        run: python -m build --sdist --outdir dist
+
+      - uses: actions/upload-artifact@v2
+        with:
+          path: dist/*.tar.gz
+
+  build_wheels:
+    name: ${{ matrix.config.name }}
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      #fail-fast: false
+      matrix:
+        config:
+        - {
+            name: "MacOS Latest (Intel)",
+            os: macos-latest,
+            cibw-arch: macosx_x86_64
+          }
+        - {
+            name: "MacOS Latest (Apple Silicon)",
+            os: macos-latest,
+            cibw-arch: macosx_arm64
+          }
+        - {
+            name: "Ubuntu Latest (x86_64)",
+            os: ubuntu-latest,
+            cibw-arch: manylinux_x86_64
+          }
+        - {
+            name: "Ubuntu Latest (i686)",
+            os: ubuntu-latest,
+            cibw-arch: manylinux_i686
+          }
+        - {
+            name: "Windows Latest",
+            os: windows-latest,
+            cibw-arch: win_amd64
+          }
+
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up Python 3.x
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+           
+      - name: Install Python dependencies
+        run: python -m pip install cibuildwheel==2.5.0
+        
+      - name: Configure cibuildwheel
+        shell: bash
+        run: |
+          CMAKE_OSX_ARCHITECTURES=${{ matrix.config.cibw-arch == 'macosx_x86_64' && 'x86_64' || matrix.config.cibw-arch == 'macosx_arm64' && 'arm64' || matrix.config.cibw-arch == 'macosx_universal2' && '"arm64;x86_64"' || '' }}
+          echo "CIBW_ARCHS_MACOS=x86_64 arm64" >> $GITHUB_ENV
+          echo "CIBW_BUILD=*-${{ matrix.config.cibw-arch }}" >> $GITHUB_ENV
+          echo "CIBW_ENVIRONMENT_MACOS=CMAKE_OSX_ARCHITECTURES=\"$CMAKE_OSX_ARCHITECTURES\"" >> $GITHUB_ENV
+        
+      - name: Build wheels
+        run: python -m cibuildwheel --output-dir dist
+        env:
+          CIBW_BEFORE_BUILD_LINUX: "yum remove -y cmake"
+          CIBW_BEFORE_BUILD: "python -m pip install cmake>=3.18"
+          CIBW_SKIP: "*-win32 pp*-macosx*"
+
+      - uses: actions/upload-artifact@v2
+        with:
+          path: ./dist/*.whl

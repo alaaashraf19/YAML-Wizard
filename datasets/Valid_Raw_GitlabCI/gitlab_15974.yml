@@ -1,0 +1,19 @@
+default:
+  before_script:
+  - apk add --update --no-cache git go
+image: registry.gitlab.com/pages/hugo/hugo_extended:latest
+pages:
+  artifacts:
+    paths:
+    - public
+  rules:
+  - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+  script:
+  - hugo mod get -u
+  - hugo
+test:
+  rules:
+  - if: $CI_COMMIT_REF_NAME != $CI_DEFAULT_BRANCH
+  script:
+  - hugo mod get -u
+  - hugo

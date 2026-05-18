@@ -1,0 +1,14 @@
+{
+  "sha": "8903c27c60975854f780ebf94d9be050c6a251aad86e767547e2ba6139294be8",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 945,
+  "description": "Create a GitHub Actions workflow named release that runs on workflow dispatch and when a release is published. The workflow should have two jobs: build and publish. The build job runs on ubuntu-latest, checks out the repository, builds an SDist and wheel using pipx and the build package, uploads the artifacts, and checks the metadata with twine. The publish job depends on the build job, downloads the artifacts, and publishes the package to PyPI using the PyPI API token from secrets.",
+  "tags": [
+    "python",
+    "release",
+    "pypi",
+    "twine",
+    "artifacts"
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "sha": "gitlab_12140",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 13195,
+  "description": "Create a GitLab CI pipeline with stages Snowflake, Extract, dbt Run, dbt Misc, dbt Docs, Python Critical, Python, Snowflake Stop, notify, triage and triage run, using the provided global variables and workflow rules. In the dbt Docs stage define a pages job (and its .pages_job_template) that uses the image registry.gitlab.com/gitlab-data/dbt-image:v0.1.2, runs a series of shell commands to set SNOWFLAKE_SNAPSHOT_DATABASE, configure SSH, install dbt dependencies, generate docs, edit catalog.json, copy JSON and HTML files to the public/ directory, and publishes the public/ folder as an artifact named \"dbt Docs Files\" that expires in one week. Define several Python jobs: \"\\u26ABpython_black\" (critical stage) runs black on changed .py files; \"\\u2705python_pytest\" runs pytest with a JUnit report and coverage artifact; \"\\u270F\\uFE0Fpython_mypy\" runs mypy; \"\\U0001F33Dpython_flake8\" runs flake8; \"\\U0001F5D2\\uFE0Fpython_pylint\" runs pylint; \"\\U0001F914python_complexity\" runs xenon, all using the ci-python-image, triggered on merge‑request changes to *.py or *.ipynb with the specified allow_failure settings. Add Snowflake clone management jobs: .snowflake_clone_template (manual), .snowflake_start_clone (manual review environment), force_clone_both, clone_prod, clone_prep_specific_schema, clone_prod_specific_schema, clone_prod_real, clone_raw_full, each using the data-image, setting GIT_STRATEGY, environment variables and running manage_snowflake.py scripts, plus a clone_stop job that stops the review environment. Include triage jobs (dry-run:triage, policy:run-triage, schedule:run-triage) using ruby:3.1 to install and run gitlab‑triage, a secret_detection job that runs on merge‑request events, and a yaml_validation job that validates changed YAML files with Python, all jobs tagged \"analytics\" and respecting the defined only/except rules.",
+  "tags": [
+    "dbt",
+    "python",
+    "flake8",
+    "mypy",
+    "black",
+    "pylint",
+    "xenon",
+    "snowflake",
+    "triage",
+    "secret-detection",
+    "yaml-validation",
+    "gitlab-pages"
+  ]
+}

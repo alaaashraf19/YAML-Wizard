@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_07152",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 371,
+  "description": "Create a GitLab CI pipeline that uses the gradle:7.6.4-jdk17 Docker image, sets GRADLE_USER_HOME to the repository's .gradle directory in a before_script, and defines the GRADLE_OPTS variable as -Dorg.gradle.daemon=false. Enable a cache for .gradle/, build/ and any */build/ directories. Add a build job in the build stage that runs `gradle --build-cache --full-stacktrace assemble`. Add a test job in the test stage that runs `gradle --build-cache --full-stacktrace check` followed by `gradle jacocoReport`.",
+  "tags": [
+    "gradle",
+    "jdk17",
+    "build-cache",
+    "jacoco",
+    "gitlab-ci"
+  ]
+}

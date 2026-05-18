@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_00812",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 4972,
+  "description": "Create a GitLab CI pipeline that uses the python:3.5 Docker image and runs a global before_script `pip install -r requirements.txt` for all jobs. Define the stages `build` and `test`, and add the build jobs `check_week_4_additional` (allow_failure, only on branches matching `/^lab[-_].*4$/` and not `master` or `branches@CSUI-AdvProg-2017/lab-exercises`, script `test -e week_4/week4a.py`) and `check_week_4_mandatory` (no allow_failure, same triggers, scripts `test -e week_4/week4.py`, `test -e week_4/test_week4.py`, `test -e week_4/m1facade.txt`). Add the test jobs for each week: `grade_week_1_additional` (allow_failure, only `/^lab[-_].*1$/`, scripts `file week_1/form_a1.py` and `python week_1/form_a1.py`), `grade_week_1_mandatory` (scripts `file week_1/form_m{1,2,3}.py` and `python week_1/form_m{1,2,3}.py`), `grade_week_2_additional` (scripts `cd week_2/factory-method-pattern`, `python Tutorial2-FM-Dynamic.py`, `cat factoryMethodPattern.txt`), `grade_week_2_mandatory` (scripts `cd week_2/factory-method-pattern`, `python Tutorial2-FM.py`, `cd ../singleton-pattern`, `python SingletonPattern.py`, `python NewSingleton.py`, `cat SingletonVsNewSingleton.txt`, `python Tutorial2Singleton.py`), `grade_week_3_additional` (scripts `file week_3/a1bridge.py` and `python week_3/a1bridge.py`), `grade_week_3_mandatory` (scripts `file week_3/m1{adapter,bridge}.py`, `file week_3/m2{adapter,bridge}.txt`, `python week_3/m1{adapter,bridge}.py`, `cat week_3/m2{adapter,bridge}.txt`), `grade_week_4_additional` (script `python week_4/week4a.py`), `grade_week_4_mandatory` (scripts `python week_4/week4.py`, `cat week_4/m1facade.txt`, `python -m unittest discover week_4`), `grade_week_5_additional` (scripts `cd week_5`, `python -m unittest tests/a1com-tests.py`, `python -m unittest tests/a1cor-tests.py`), `grade_week_5_mandatory` (scripts `cd week_5`, `python -m unittest tests/m1com-tests.py`, `python -m unittest tests/m1cor-tests.py`), `grade_week_6_additional` (script `python week_6/additional_observer.py`), `grade_week_6_mandatory` (script `python week_6/{simple_observer,mediator,observer}.py`), `grade_week_7_additional` (script `python week_7/queue_{a1,a2}.py`), and `grade_week_7_mandatory` (scripts `cat week_7/queue_{m1,m2}.txt`, `cat week_7/futures_m1.txt`, `python week_7/queue_{m1,m2}.py`, `python week_7/futures_m1.py`), each restricted to their respective `/^lab[-_].*X$/` branches and excluding `master` and the lab-exercises project. Also add preparation build jobs `prep_week_3` through `prep_week_8` that run only on tags matching `week-3`, `week-4`, `week-5`, `week-6`, `week-7`, and `week_8` in the same project, executing flake8 checks or file existence tests as defined. No caches, artifacts, services, or deployment targets are defined.",
+  "tags": [
+    "python-3.5",
+    "gitlab-ci",
+    "flake8",
+    "unittest",
+    "lab-exercises",
+    "build-stage",
+    "test-stage"
+  ]
+}

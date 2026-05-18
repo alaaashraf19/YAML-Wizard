@@ -1,0 +1,40 @@
+name: "Build on Ubuntu"
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: mogemimi/gamedev-ubuntu
+    strategy:
+      matrix:
+        build_config: [Debug, Release]
+        cmake_flags:
+          - |
+            -DCMAKE_CXX_FLAGS="-stdlib=libc++" \
+            -DCMAKE_EXE_LINKER_FLAGS="-stdlib=libc++ -lc++abi"
+          - |
+            -DCMAKE_CXX_FLAGS="-stdlib=libstdc++" \
+            -DCMAKE_EXE_LINKER_FLAGS="-stdlib=libstdc++"
+    steps:
+      - name: Check out repositry
+        uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
+          fetch-depth: 50 # FIXME: for giflib submodule
+      - name: Generate Ninja files
+        run: |
+          cmake -Bbuild.cmake -H. -G Ninja \
+            -DCMAKE_C_COMPILER=clang \
+            -DCMAKE_CXX_COMPILER=clang++ \
+            ${{ matrix.cmake_flags }} \
+            -DCMAKE_BUILD_TYPE=${{ matrix.build_config }}
+      - name: Build
+        run: ninja -C build.cmake
+      - name: Run test
+        run: ./build.cmake/test/PomdogTest

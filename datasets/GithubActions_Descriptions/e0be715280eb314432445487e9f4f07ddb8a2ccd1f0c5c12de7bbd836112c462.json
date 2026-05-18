@@ -1,0 +1,16 @@
+{
+  "sha": "e0be715280eb314432445487e9f4f07ddb8a2ccd1f0c5c12de7bbd836112c462",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3028,
+  "description": "Create a reusable GitHub Actions workflow named Test suite that accepts inputs for a DFHack repository, reference, operating system, compiler, plugins, and configuration. The workflow runs tests in a job that varies based on the provided OS, compiler, plugins, and configuration. It sets up environment variables, installs dependencies if on Ubuntu, clones the specified DFHack repository, detects and caches the DF version, downloads or restores DF, installs DFHack, and runs tests including Lua tests and RPC interface checks, uploading test artifacts.",
+  "tags": [
+    "dfhack",
+    "tests",
+    "ubuntu",
+    "compiler",
+    "plugins",
+    "config",
+    "reusable-workflow"
+  ]
+}

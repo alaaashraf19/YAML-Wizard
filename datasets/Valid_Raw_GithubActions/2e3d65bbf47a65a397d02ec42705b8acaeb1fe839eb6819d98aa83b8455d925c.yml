@@ -1,0 +1,121 @@
+name: CI
+
+on: [push, pull_request]
+
+env:
+  BOOST_VERSION: 1_78_0
+
+jobs:
+  unix:
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            xcode: ''
+            ccache: /home/runner/.ccache
+          - os: macos-latest
+            xcode: '11'
+            ccache: /Users/runner/.ccache
+          - os: macos-latest
+            xcode: '13'
+            ccache: /Users/runner/.ccache
+
+    name: Build ${{ matrix.os }} ${{ matrix.xcode }}
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Linux dependencies
+      if: ${{ runner.os == 'Linux' }}
+      run: |
+        sudo apt update
+        sudo apt-get install -yq \
+          rename libasound2-dev libsoxr-dev libvorbisidec-dev libvorbis-dev \
+          libflac-dev libopus-dev alsa-utils libpulse-dev \
+          libavahi-client-dev avahi-daemon debhelper ccache expat
+        echo "CMAKE_CXX_FLAGS=-DJSON_HAS_CPP_14" >> ${GITHUB_ENV}
+    - name: macOS dependencies
+      if: ${{ runner.os == 'macOS' }}
+      run: |
+        brew install pkgconfig libsoxr ccache expat
+        echo "CMAKE_CXX_FLAGS=-I/usr/local/include -Wno-deprecated-declarations" >> ${GITHUB_ENV}
+    - name: cache boost
+      id: cache-boost
+      uses: actions/cache@v2
+      with:
+        path: boost_${{ env.BOOST_VERSION }}
+        key: ${{ runner.os }}-boost
+    - name: get boost
+      if: steps.cache-boost.outputs.cache-hit != 'true'
+      run: |
+        wget https://boostorg.jfrog.io/artifactory/main/release/${BOOST_VERSION//_/.}/source/boost_${BOOST_VERSION}.tar.bz2
+        tar xjf boost_${BOOST_VERSION}.tar.bz2
+    - name: cache ccache
+      id: cache-ccache
+      uses: actions/cache@v2
+      with:
+        path: ${{ matrix.ccache }}
+        key: ${{ runner.os }}-ccache-${{ github.sha }}
+        restore-keys: ${{ runner.os }}-ccache-
+    #- name: ccache dump config
+    #  run: ccache -p
+    - name: cmake build
+      run: |
+        cmake -S . -B build \
+          -DWERROR=ON -DBUILD_TESTS=ON \
+          -DBOOST_ROOT=boost_${BOOST_VERSION} \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
+          -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS}"
+    - name: cmake make
+      run: cmake --build build --parallel 3
+
+  windows:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: cache dependencies
+      id: cache-dependencies
+      uses: actions/cache@v2
+      with:
+        #path: ${VCPKG_INSTALLATION_ROOT}\installed
+        path: c:\vcpkg\installed
+        key: ${{ runner.os }}-dependencies
+    - name: dependencies
+      if: steps.cache-dependencies.outputs.cache-hit != 'true'
+      run: vcpkg.exe install libflac libvorbis soxr opus boost-asio --triplet x64-windows
+    - name: cmake build
+      run: |
+        echo vcpkg installation root: ${env:VCPKG_INSTALLATION_ROOT}
+        cmake -S . -B build -G "Visual Studio 16 2019" \
+          -DWERROR=ON -DBUILD_TESTS=ON \
+          -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" \
+          -DVCPKG_TARGET_TRIPLET="x64-windows" \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DREVISION="${{ github.sha }}"
+    - name: cmake make
+      run: cmake --build build --config Release --parallel 3 --verbose
+    - name: installer
+      run: |
+        copy ${env:VCPKG_INSTALLATION_ROOT}\installed\x64-windows\bin\FLAC.dll bin\Release\
+        copy ${env:VCPKG_INSTALLATION_ROOT}\installed\x64-windows\bin\ogg.dll bin\Release\
+        copy ${env:VCPKG_INSTALLATION_ROOT}\installed\x64-windows\bin\opus.dll bin\Release\
+        copy ${env:VCPKG_INSTALLATION_ROOT}\installed\x64-windows\bin\vorbis.dll bin\Release\
+        copy ${env:VCPKG_INSTALLATION_ROOT}\installed\x64-windows\bin\soxr.dll bin\Release\
+        copy "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Redist\MSVC\v142\vc_redist.x64.exe" bin\Release\
+    - name: Archive artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: develop_snapshot_win64-${{github.sha}}
+        path: |
+          bin\Release\snapclient.exe
+          bin\Release\FLAC.dll
+          bin\Release\ogg.dll
+          bin\Release\opus.dll
+          bin\Release\vorbis.dll
+          bin\Release\soxr.dll
+          bin\Release\vc_redist.x64.exe

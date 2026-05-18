@@ -1,0 +1,16 @@
+{
+  "sha": "3bfdcc766fdc0ced539dcf35d8b13a7af8c1e8b39ce61a95bf301c1695fa79cb",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3669,
+  "description": "Create a GitHub Actions workflow named C/C++ CI that runs on every push to the dev branch, on pull requests to dev, and on pull request targets to dev. Use a matrix job that runs on ubuntu-latest with different configurations for clang and gcc, and installs Python 3.7. The job checks out the repository, sets up Python, installs system and Python dependencies, runs a Python linter, checks include guards, configures and builds the project, runs tests, and shows failure logs if the job fails.",
+  "tags": [
+    "c",
+    "cpp",
+    "ci",
+    "ubuntu",
+    "clang",
+    "gcc",
+    "python"
+  ]
+}

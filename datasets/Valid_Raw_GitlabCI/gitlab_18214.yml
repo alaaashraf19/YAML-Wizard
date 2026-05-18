@@ -1,0 +1,36 @@
+build:
+  script:
+  - cd $build_path
+  - dotnet build --no-incremental -v q /warnaserror
+  stage: build
+  variables:
+    build_path: $project
+image: mcr.microsoft.com/dotnet/sdk:8.0
+publish:
+  environment:
+    name: production
+  only:
+  - master
+  script:
+  - cd $build_path
+  - rm -rf bin
+  - dotnet pack -v q /warnaserror -c Release
+  - cd bin/Release
+  - dotnet nuget push ./*.nupkg --source https://api.nuget.org/v3/index.json --api-key
+    $NUGET
+  stage: publish
+  variables:
+    build_path: $project
+stages:
+- build
+- test
+- publish
+test:
+  script:
+  - cd $test_path
+  - dotnet test
+  stage: test
+  variables:
+    test_path: $project.Tests
+variables:
+  project: NoData

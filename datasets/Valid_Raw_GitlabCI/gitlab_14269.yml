@@ -1,0 +1,39 @@
+build:
+  artifacts:
+    expire_in: 1 day
+    paths:
+    - public
+  image: node:20-bookworm-slim
+  rules:
+  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  - if: $CI_MERGE_REQUEST_ID
+  script:
+  - npm install --cpu=x64 --os=linux --libc=glibc sharp
+  - npm install
+  - npm run build
+  - ls -la
+  stage: build
+  variables:
+    PREFIX_PATHS: true
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+  - node_modules/
+  - .cache/
+  - public
+pages:
+  artifacts:
+    expire_in: 1 day
+    paths:
+    - public
+  image: busybox
+  needs:
+  - build
+  rules:
+  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  script:
+  - echo "Deploying to GitLab Pages..."
+  stage: deploy
+stages:
+- build
+- deploy

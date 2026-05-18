@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_18216",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1334,
+  "description": "Create a GitLab CI pipeline using the maven:latest Docker image with a cache of .m2/repository and target/, define MAVEN_CLI_OPTS and MAVEN_OPTS variables, and stages compile, static-analysis, test, and deploy. In the compile stage add a compile job that runs `mvn $MAVEN_CLI_OPTS clean compile`. In the static-analysis stage add a static-analysis job that runs `mvn $MAVEN_CLI_OPTS -B test-compile checkstyle:check` followed by `mvn $MAVEN_CLI_OPTS -B pmd:check`. In the test stage add a test job that runs `mvn $MAVEN_CLI_OPTS -B install` and an awk command to calculate coverage, and publishes target/surefire-reports and target/site/jacoco (including JUnit XML reports) as artifacts with a 30‑day expiration and a coverage regex `/(d+.d+ \\%) covered/`. In the deploy stage add a deploy job (only on master) running `mvn $MAVEN_CLI_OPTS -Djga.version=1.0.0.2 deploy`, a deploy-snapshot job (only on development) running `mvn $MAVEN_CLI_OPTS -Djga.version=1.0.0.2-SNAPSHOT deploy`, and a pages job (only on master and development) that runs `mvn $MAVEN_CLI_OPTS -B site` then `mv target/site/apidocs public/` and publishes the public/ directory as a GitLab Pages artifact.",
+  "tags": [
+    "maven",
+    "java",
+    "gitlab-ci",
+    "cache",
+    "static-analysis",
+    "test",
+    "coverage",
+    "pages",
+    "deploy",
+    "snapshot"
+  ]
+}

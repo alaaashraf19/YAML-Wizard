@@ -1,0 +1,138 @@
+before_script:
+- export VERSION="unknown"
+- export VERSION=$(cat ./version)
+- docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+encode_gate-amd64:
+  dependencies:
+  - semver
+  image: docker:latest
+  only:
+  - master
+  - /dev(.)*|DEV(.)*/
+  - /rc(.)*|RC(.)*/
+  script:
+  - if [ "$CI_COMMIT_REF_NAME" = "master" ]; then export CI_COMMIT_REF_NAME="Stable";
+    fi
+  - docker build --pull -t "$CI_REGISTRY_IMAGE/encode_gate:$VERSION-$CI_COMMIT_REF_NAME-amd64"
+    -f Dockerfiles/encode_gate .
+  - docker push "$CI_REGISTRY_IMAGE/encode_gate:$VERSION-$CI_COMMIT_REF_NAME-amd64"
+  stage: deploy
+  tags:
+  - x86_64
+encode_gate-arm:
+  dependencies:
+  - semver
+  image: docker:latest
+  only:
+  - master
+  - /dev(.)*|DEV(.)*/
+  - /rc(.)*|RC(.)*/
+  script:
+  - if [ "$CI_COMMIT_REF_NAME" = "master" ]; then export CI_COMMIT_REF_NAME="Stable";
+    fi
+  - docker build --pull -t "$CI_REGISTRY_IMAGE/encode_gate:$VERSION-$CI_COMMIT_REF_NAME-arm"
+    -f Dockerfiles/encode_gate .
+  - docker push "$CI_REGISTRY_IMAGE/encode_gate:$VERSION-$CI_COMMIT_REF_NAME-arm"
+  stage: deploy
+  tags:
+  - ARM
+encode_gui-amd64:
+  dependencies:
+  - semver
+  image: docker:latest
+  only:
+  - master
+  - /dev(.)*|DEV(.)*/
+  - /rc(.)*|RC(.)*/
+  script:
+  - if [ "$CI_COMMIT_REF_NAME" = "master" ]; then export CI_COMMIT_REF_NAME="Stable";
+    fi
+  - docker build --pull -t "$CI_REGISTRY_IMAGE/encode_gui:$VERSION-$CI_COMMIT_REF_NAME-amd64"
+    -f Dockerfiles/encode_gui .
+  - docker push "$CI_REGISTRY_IMAGE/encode_gui:$VERSION-$CI_COMMIT_REF_NAME-amd64"
+  stage: deploy
+  tags:
+  - x86_64
+encode_gui-arm:
+  dependencies:
+  - semver
+  image: docker:latest
+  only:
+  - master
+  - /dev(.)*|DEV(.)*/
+  - /rc(.)*|RC(.)*/
+  script:
+  - if [ "$CI_COMMIT_REF_NAME" = "master" ]; then export CI_COMMIT_REF_NAME="Stable";
+    fi
+  - docker build --pull -t "$CI_REGISTRY_IMAGE/encode_gui:$VERSION-$CI_COMMIT_REF_NAME-arm"
+    -f Dockerfiles/encode_gui .
+  - docker push "$CI_REGISTRY_IMAGE/encode_gui:$VERSION-$CI_COMMIT_REF_NAME-arm"
+  stage: deploy
+  tags:
+  - ARM
+encoder-amd64:
+  dependencies:
+  - semver
+  image: docker:latest
+  only:
+  - master
+  - /dev(.)*|DEV(.)*/
+  - /rc(.)*|RC(.)*/
+  script:
+  - if [ "$CI_COMMIT_REF_NAME" = "master" ]; then export CI_COMMIT_REF_NAME="Stable";
+    fi
+  - docker build --pull -t "$CI_REGISTRY_IMAGE/encoder:$VERSION-$CI_COMMIT_REF_NAME-amd64"
+    -f Dockerfiles/encoder .
+  - docker push "$CI_REGISTRY_IMAGE/encoder:$VERSION-$CI_COMMIT_REF_NAME-amd64"
+  stage: deploy
+  tags:
+  - x86_64
+image: archlinux/base
+loader-amd64:
+  dependencies:
+  - semver
+  image: docker:latest
+  only:
+  - master
+  - /dev(.)*|DEV(.)*/
+  - /rc(.)*|RC(.)*/
+  script:
+  - if [ "$CI_COMMIT_REF_NAME" = "master" ]; then export CI_COMMIT_REF_NAME="Stable";
+    fi
+  - docker build --pull -t "$CI_REGISTRY_IMAGE/loader:$VERSION-$CI_COMMIT_REF_NAME-amd64"
+    -f Dockerfiles/loader .
+  - docker push "$CI_REGISTRY_IMAGE/loader:$VERSION-$CI_COMMIT_REF_NAME-amd64"
+  stage: deploy
+  tags:
+  - x86_64
+semver:
+  artifacts:
+    paths:
+    - version
+  before_script:
+  - mkdir -p ~/.ssh && chmod 700 ~/.ssh
+  - ssh-keyscan gitlab.com >> ~/.ssh/known_hosts && chmod 644 ~/.ssh/known_hosts
+  - eval $(ssh-agent -s)
+  - ssh-add <(echo "$DEP_KEY")
+  - git clone -q --depth 1 $SEMVER_REPO /tmp/semver
+  image: python:3.7-stretch
+  only:
+  - master
+  - /dev(.)*|DEV(.)*/
+  - /rc(.)*|RC(.)*/
+  script:
+  - pip install semver
+  - python3 /tmp/semver/gensemver.py > version
+  - echo $(cat version)
+  stage: version
+  tags:
+  - x86_64
+  variables:
+    SEMVER_REPO: https://gitlab.com/mjcarson/semver.git
+services:
+- docker:dind
+stages:
+- version
+- deploy
+variables:
+  DOCKER_DRIVER: overlay

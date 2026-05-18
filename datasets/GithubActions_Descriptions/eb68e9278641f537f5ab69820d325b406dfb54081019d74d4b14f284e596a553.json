@@ -1,0 +1,15 @@
+{
+  "sha": "eb68e9278641f537f5ab69820d325b406dfb54081019d74d4b14f284e596a553",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1626,
+  "description": "Create a GitHub Actions workflow named tox that runs on every push to the master branch and on pull requests to master. The workflow should have two jobs: test and check. The test job should run on ubuntu-latest with a matrix of Python versions 3.8 to 3.12, installing dependencies, running tox, and uploading a coverage report to Codecov. The check job should run on ubuntu-latest with Python 3.12, installing dependencies and running tox with linters.",
+  "tags": [
+    "python",
+    "tox",
+    "tests",
+    "coverage",
+    "linters",
+    "ubuntu"
+  ]
+}

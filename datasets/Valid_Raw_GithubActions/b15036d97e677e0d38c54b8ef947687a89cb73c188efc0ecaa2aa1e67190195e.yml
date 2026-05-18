@@ -1,0 +1,100 @@
+name: Test
+
+# On all pushes to branches and pull requests in general.
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        # Start Linux jobs last since they are fastest to start and complete, and start 3.9 first,
+        # since it pairs wiht macOS+Windows jobs, and 2.7+3.4+3.5 last since they only run tests and
+        # don't use venv.
+        python-version: [3.9, 3.6, 3.7, 3.8, 2.7, 3.4, 3.5]
+        os: [windows-latest, macos-latest, ubuntu-latest]
+
+        # Choose test script depending on OS.
+        include:
+          - os: ubuntu-latest
+            test_script_name: ./misc/actions/test.sh
+          - os: macos-latest
+            test_script_name: ./misc/actions/test.sh
+          - os: windows-latest
+            test_script_name: ./misc/actions/test.ps1
+
+        # Only test on macOS and Windows with Python 3.9.
+        exclude:
+          - os: macos-latest
+            python-version: 2.7
+          - os: macos-latest
+            python-version: 3.4
+          - os: macos-latest
+            python-version: 3.5
+          - os: macos-latest
+            python-version: 3.6
+          - os: macos-latest
+            python-version: 3.7
+          - os: macos-latest
+            python-version: 3.8
+          - os: windows-latest
+            python-version: 2.7
+          - os: windows-latest
+            python-version: 3.4
+          - os: windows-latest
+            python-version: 3.5
+          - os: windows-latest
+            python-version: 3.6
+          - os: windows-latest
+            python-version: 3.7
+          - os: windows-latest
+            python-version: 3.8
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - uses: actions/cache@v2
+      if: startsWith(matrix.os, 'ubuntu-latest')
+      with:
+        path: ~/.cache/pip
+        key: ${{ matrix.os }}-pip-${{ hashFiles('**/.*-requirements.txt') }}
+        restore-keys: |
+          ${{ matrix.os }}-pip-
+
+    - uses: actions/cache@v2
+      if: startsWith(matrix.os, 'macos-latest')
+      with:
+        path: ~/Library/Caches/pip
+        key: ${{ matrix.os }}-pip-${{ hashFiles('**/.*-requirements.txt') }}
+        restore-keys: |
+          ${{ matrix.os }}-pip-
+
+    - uses: actions/cache@v2
+      if: startsWith(matrix.os, 'windows-latest')
+      with:
+        path: ~\AppData\Local\pip\Cache
+        key: ${{ matrix.os }}-pip-${{ hashFiles('**/.*-requirements.txt') }}
+        restore-keys: |
+          ${{ matrix.os }}-pip-
+
+    - uses: actions/cache@v2
+      with:
+        path: .venv/
+        # Include the python version in the key because it's important since 2.7+3.4+3.5 do not have
+        # a .venv/ so their caches would be empty, and they are faster so they'd be saved first.
+        key: ${{ runner.os }}-venv${{ matrix.python-version }}-coverage3-${{ hashFiles('**/.*-requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-venv${{ matrix.python-version }}-coverage3-
+
+    - name: Test and coverage
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This is needed especially for fork PRs.
+        COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+      run: ${{ matrix.test_script_name }}

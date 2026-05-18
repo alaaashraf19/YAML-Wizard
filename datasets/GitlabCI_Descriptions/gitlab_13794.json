@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_13794",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 821,
+  "description": "Create a GitLab CI pipeline with a single test stage that runs three jobs named node-10, node-6, and node-8. Each job uses the corresponding Docker image (node:10, node:6, node:8), runs a before_script step `npm install`, then executes `npm test` as its script, and connects to a dynamodb service defined as alias `dynamodb` using the image cnadiminti/dynamodb-local. All jobs set the variables AWS_DYNAMODB_ENDPOINT=http://dynamodb:8000, DATA_DIR=./test/data, and NODE_ENV=test. No caches, artifacts, or conditional rules are defined.",
+  "tags": [
+    "node-10",
+    "node-6",
+    "node-8",
+    "dynamodb",
+    "npm",
+    "test"
+  ]
+}

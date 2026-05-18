@@ -1,0 +1,14 @@
+{
+  "sha": "04bcc561f4797cd7951f3e46b7d889c6452438d8bac0c1f20965b5b49102a86e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1013,
+  "description": "Create a GitHub Actions workflow named CIFuzz that runs on every pull request. Use an ubuntu-latest job with write permission to security events. Build fuzzers for the fast_float project in C++ using google/oss-fuzz, then run the fuzzers for 300 seconds and output results in SARIF format. Upload artifacts on failure and SARIF results on success.",
+  "tags": [
+    "fuzzing",
+    "oss-fuzz",
+    "c++",
+    "github-actions",
+    "security-events"
+  ]
+}

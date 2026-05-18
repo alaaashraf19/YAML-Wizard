@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_09741",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 611,
+  "description": "Create a GitLab CI pipeline using the elixir:1.6 Docker image, setting the MIX_ENV variable to test and running make hex as a global before_script. Define three stages—Setup, Build, and Test. In the Setup stage add a deps job that runs make deps and stores the deps directory and mix.lock as artifacts for 30 minutes. In the Build stage add a compile job that depends on deps, runs make compile, and publishes the _build directory as a 30‑minute artifact. In the Test stage add a lint job (allow_failure) that depends on deps and compile and runs make lint, and a tests job that also depends on deps and compile, runs make test, uses a mongo:3.6 service, and captures test coverage with the regex /\\[TOTAL\\]\\s+(\\d+\\.\\d+)%/.",
+  "tags": [
+    "elixir",
+    "make",
+    "mongo",
+    "setup",
+    "build",
+    "test",
+    "coverage",
+    "gitlab-ci"
+  ]
+}

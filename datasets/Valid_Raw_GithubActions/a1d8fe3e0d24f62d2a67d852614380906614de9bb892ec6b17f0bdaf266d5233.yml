@@ -1,0 +1,94 @@
+name: Nightly CEA builds
+
+on:
+  schedule:
+    - cron: "0 2 * * 1-5" # every weekday at 2am UTC
+
+permissions: read-all
+
+jobs:
+  build_and_test:
+    # only run on original repo
+    if: github.repository == 'kokkos/kokkos'
+
+    strategy:
+      # allow all matrix jobs to perform even if errors occur
+      fail-fast: false
+      matrix:
+        build_type:
+          - Release
+        backend:
+          - name: Cuda-A100-GCC/11.2-Cuda/12.2.1
+            configure: -DKokkos_ENABLE_CUDA=ON -DKokkos_ARCH_AMPERE80=ON
+            test: -e gpu -g a100
+            modules: gcc/11.2.0/gcc-4.8.5 cuda/12.2.1/gcc-11.2.0 cmake/3.28.3/gcc-11.2.0
+
+    runs-on: [self-hosted, cuda]
+
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Initialize the build tree
+        # note: BUILDNAME sets the name of the build on the Dashboard
+        # note: SITE sets the name of the site on the Dashboard
+        # note: run is a Ruche command
+        run: |
+          run \
+            -m "${{ matrix.backend.modules }}" \
+            -e local \
+            cmake \
+              -B build \
+              -DBUILDNAME=${{ matrix.backend.name }} \
+              -DSITE=cea-ruche \
+              -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+              -DCMAKE_CXX_STANDARD=17 \
+              -DCMAKE_COMPILE_WARNING_AS_ERROR=ON \
+              -DKokkos_ENABLE_COMPILER_WARNINGS=ON \
+              -DKokkos_ENABLE_TESTS=ON \
+              -DKokkos_ENABLE_EXAMPLES=ON \
+              ${{ matrix.backend.configure }}
+
+      - name: Start, update and configure
+        continue-on-error: true
+        run: |
+          run \
+            -m "${{ matrix.backend.modules }}" \
+            -e local \
+            ctest \
+              -V \
+              --test-dir build \
+              -D NightlyStart \
+              -D NightlyUpdate \
+              -D NightlyConfigure
+
+      - name: Build
+        continue-on-error: true
+        run: |
+          run \
+            -m "${{ matrix.backend.modules }}" \
+            -e cpu \
+            CMAKE_BUILD_PARALLEL_LEVEL=40 \
+            ctest \
+              -V \
+              --test-dir build \
+              -D NightlyBuild
+
+      - name: Test
+        continue-on-error: true
+        run: |
+          run \
+            -m "${{ matrix.backend.modules }}" \
+            ${{ matrix.backend.test }} \
+            ctest \
+              --output-on-failure \
+              --test-dir build \
+              -D NightlyTest
+
+      - name: Submit
+        run: |
+          run \
+            -m "${{ matrix.backend.modules }}" \
+            -e local \
+            ctest \
+              --test-dir build \
+              -D NightlySubmit

@@ -1,0 +1,32 @@
+lint:
+  image: python:3
+  script:
+  - pip install pre-commit
+  - pre-commit run --all-files --show-diff-on-failure
+publish:
+  image: python:3
+  needs:
+  - test
+  - lint
+  rules:
+  - changes:
+    - libsan/__about__.py
+    if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_PROJECT_PATH == "rh-kernel-stqe/python-libsan"
+  script:
+  - pip install hatch
+  - hatch build
+  - hatch publish
+test:
+  image: fedora:latest
+  script:
+  - dnf install -y python3-pip python3.9 python3.11
+  - python3 -m pip install nox
+  - cp sample_san_top.conf /etc/san_top.conf
+  - nox
+test-python-36:
+  image: fedora:38
+  script:
+  - dnf install -y python3-pip python36
+  - python3 -m pip install "virtualenv<20.22.0" nox
+  - cp sample_san_top.conf /etc/san_top.conf
+  - nox -f "noxfile-python36.py"

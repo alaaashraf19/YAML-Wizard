@@ -1,0 +1,11 @@
+before_script:
+- apt-get update && apt-get -y install cmake naturaldocs python3-markdown
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - main
+  script:
+  - ./rebuild.sh
+  stage: deploy

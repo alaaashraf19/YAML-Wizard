@@ -1,0 +1,14 @@
+{
+  "sha": "7b8c265601475189e253c998b11aedb83dff8d302ce41a0d20336eef1f98b4b7",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3887,
+  "description": "Create a GitHub Actions workflow named bins that runs on push to the master branch, excluding changes to docs, README.md, and NEWS.md. The workflow can also be triggered by a workflow call with optional inputs for lnav_version_number and upload_url. It has two jobs, build-musl and build-macos, that run on ubuntu-latest and macos-12 respectively, and build and upload lnav packages for musl and macOS.",
+  "tags": [
+    "lnav",
+    "musl",
+    "macos",
+    "release",
+    "github-actions"
+  ]
+}

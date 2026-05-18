@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_07173",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 422,
+  "description": "Create a GitLab CI pipeline that uses the ruby:2.3 Docker image, sets the BUNDLE_GEMFILE variable to Gemfile.gitlab, and caches the vendor/bundle directory. Add a test stage with a test job that runs the before_script `bundle install --clean --jobs $(nproc) --path vendor/bundle`, then executes `bundle exec jekyll build -d test`, stores the test directory as an artifact, and runs on all branches except master. Add a deploy stage with a pages job that also runs the same before_script, then runs `bundle exec jekyll build -d public`, publishes the public directory as a GitLab Pages artifact, and is limited to the master branch. Both jobs inherit the cache of vendor/bundle for faster dependency installation.",
+  "tags": [
+    "ruby",
+    "jekyll",
+    "bundle",
+    "pages",
+    "gitlab-pages",
+    "cache"
+  ]
+}

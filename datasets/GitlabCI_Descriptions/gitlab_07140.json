@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_07140",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 303,
+  "description": "Create a GitLab CI pipeline that defines a before_script which echoes \"Downloading GLua Lexer\", downloads glualint.zip from the GitHub release using curl, echoes \"Unzipping GLua Lexer\", and unzips the archive. Add a test job named \"test\" in the test stage that runs a script echoing \"Running GLua Lexer\" and then executes ./glualint magic_carpets/lua. No custom Docker image, services, caches, artifacts, or rules are specified, so the pipeline uses the default runner environment.",
+  "tags": [
+    "glua",
+    "glualint",
+    "test",
+    "gitlab-ci"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "sha": "330b681e8b6dcef3a7b9caed739d08a03896932118643c0c57fb767222159cf7",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2930,
+  "description": "Create a GitHub Actions workflow named Continuous Integration v2 that runs on a schedule, on workflow dispatch, and on pull requests. The workflow has two jobs: CI and Formatting. The CI job runs on a matrix of operating systems, configurations, and build environments, checking out the code, preparing the build environment, generating the build system, building and testing NovelRT, publishing unit test results, and installing NovelRT. The Formatting job runs on ubuntu-latest, checks code formatting with clang-format, and uploads a patch if formatting fails.",
+  "tags": [
+    "ci",
+    "cpp",
+    "clang-format",
+    "conan",
+    "cmake",
+    "ubuntu",
+    "windows",
+    "macos"
+  ]
+}

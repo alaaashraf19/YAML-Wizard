@@ -1,0 +1,80 @@
+.if-pre-deploy:
+  if: ($CI_PIPELINE_SOURCE == "schedule" || $CI_PIPELINE_SOURCE == "web") && $PRE_DEPLOY
+    == "true"
+.pre_notify_base:
+  allow_failure: true
+  extends:
+  - .with-bundle
+  - .common-ci-tokens
+  rules:
+  - if: ($CI_PIPELINE_SOURCE == "schedule" || $CI_PIPELINE_SOURCE == "web") && $PRE_DEPLOY
+      == "true"
+  script:
+  - bundle exec rake 'pre:notify'
+  variables:
+    DEPLOY_ENVIRONMENT: pre
+pre:deploy:
+  needs:
+  - pre:prepare
+  rules:
+  - if: ($CI_PIPELINE_SOURCE == "schedule" || $CI_PIPELINE_SOURCE == "web") && $PRE_DEPLOY
+      == "true"
+  stage: pre:deploy
+  trigger:
+    project: gitlab-com/gl-infra/deployer
+    strategy: depend
+  variables:
+    DEPLOY_ENVIRONMENT: pre
+    DEPLOY_USER: deployer
+    DEPLOY_VERSION: $DEPLOY_VERSION
+    SKIP_PIPELINE_NOTIFY: 'true'
+    TRIGGER_REF: master
+pre:notify_failed:
+  extends:
+  - .pre_notify_base
+  - .common-ci-tokens
+  needs:
+  - pre:prepare
+  - pre:deploy
+  stage: pre:finish
+  when: on_failure
+pre:notify_start:
+  extends:
+  - .pre_notify_base
+  - .common-ci-tokens
+  needs:
+  - pre:prepare
+  stage: pre:start
+pre:notify_success:
+  extends:
+  - .pre_notify_base
+  - .common-ci-tokens
+  needs:
+  - pre:prepare
+  - pre:deploy
+  stage: pre:finish
+  when: on_success
+pre:prepare:
+  artifacts:
+    reports:
+      dotenv: build.env
+  extends:
+  - .with-bundle
+  - .common-ci-tokens
+  rules:
+  - if: ($CI_PIPELINE_SOURCE == "schedule" || $CI_PIPELINE_SOURCE == "web") && $PRE_DEPLOY
+      == "true"
+  script:
+  - bundle exec rake 'pre:prepare'
+  stage: pre:start
+pre:release_note:
+  extends:
+  - .pre_notify_base
+  - .common-ci-tokens
+  needs:
+  - pre:prepare
+  - pre:deploy
+  script:
+  - bundle exec rake 'pre:release_note'
+  stage: pre:finish
+  when: on_success

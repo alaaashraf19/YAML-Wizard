@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_18099",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 827,
+  "description": "Create a GitLab CI pipeline using the rust:slim Docker image with GIT_SUBMODULE_STRATEGY=recursive and ZOLA_VERSION=v0.21.0 variables, and define two stages: prepare and build. In the prepare stage add a download-zola job that runs `apt-get update && apt-get install -y build-essential libsass1 curl`, then `curl -L https://github.com/getzola/zola/releases/download/$ZOLA_VERSION/zola-$ZOLA_VERSION-x86_64-unknown-linux-gnu.tar.gz > zola.tar.gz`, then `tar -xzf zola.tar.gz`, and stores the extracted `zola` binary as an artifact at path `zola`. In the build stage add a check job that depends on download-zola, runs `./zola check`, and is configured with rules to run on all branches except master. Also in the build stage add a pages job that depends on download-zola, runs `./zola check` and `./zola build`, publishes the `public/` directory as a GitLab Pages artifact, and is configured with rules to run only on the master branch.",
+  "tags": [
+    "rust",
+    "zola",
+    "gitlab-pages",
+    "prepare",
+    "build"
+  ]
+}

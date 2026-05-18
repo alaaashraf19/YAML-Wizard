@@ -1,0 +1,61 @@
+# Copyright (C) 2005 - 2021 Settlers Freaks <sf-team at siedler25.org>
+#
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+name: Static analysis
+
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: ${{format('staticAna-{0}:{1}', github.repository, github.ref)}}
+  cancel-in-progress: true
+
+env:
+  CC: clang-10
+  CXX: clang++-10
+  ADDITIONAL_CMAKE_FLAGS: ""
+
+jobs:
+  StyleAndFormatting:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: git submodule update --init
+      - name: Validation
+        run: tools/ci/staticValidation.sh "$GITHUB_WORKSPACE"
+      - name: Formatting
+        uses: DoozyX/clang-format-lint-action@v0.9
+        with:
+          source: "extras libs tests external/libendian external/liblobby external/libsiedler2 external/libutil external/mygettext external/s25edit external/s25update"
+          clangFormatVersion: 10
+      - name: Check include guards
+        run: |
+          find . \( -path ./build -o -path ./external/glad -o -path ./external/dev-tools -o \
+                    -path ./external/turtle -o -path ./external/kaguya \) \
+                 -prune -false -o \( -name '*.hpp' -or -name '*.h' \) \
+                 -print0 | xargs -0 -n1 tools/ci/checkIncludeGuards.sh
+      - name: Lint markdown files
+        uses: avto-dev/markdown-lint@v1.3.0
+        with:
+          args: --ignore data/RTTR/MAPS .
+          ignore: external
+      - name: Check licensing
+        run:
+          pip install --user reuse
+          reuse lint
+
+  Clang-Tidy:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - run: git submodule update --init
+      - name: Install dependencies
+        run: |
+          sudo apt-get update && sudo apt-get install -y \
+            clang-10 clang-tidy-10 \
+            libsdl2-dev libsdl2-mixer-dev libcurl4-openssl-dev libbz2-dev libminiupnpc-dev liblua5.2-dev gettext \
+            libboost-filesystem-dev libboost-program-options-dev libboost-thread-dev libboost-test-dev libboost-locale-dev libboost-iostreams-dev
+      - name: Run Clang-Tidy
+        run: tools/ci/runClangTidy.sh

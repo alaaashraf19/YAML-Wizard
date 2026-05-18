@@ -1,0 +1,98 @@
+build_binary:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - penguin-htdocs.deb
+  image: registry.gitlab.com/chusiang/continuous-delivery-workshop/ubuntu:16.04
+  script:
+  - chmod 755 penguin-htdocs/DEBIAN
+  - dpkg -b penguin-htdocs
+  stage: build
+  tags:
+  - docker
+deploy_to_dev:
+  environment:
+    name: staging
+    url: http://stg.cdws.drx.tw:31080
+  image: registry.gitlab.com/chusiang/continuous-delivery-workshop/ansible:2.5.3
+  only:
+  - master@drx-tw/cdws-2.0-team-a
+  - develop@drx-tw/cdws-2.0-team-a
+  - tags@drx-tw/cdws-2.0-team-a
+  script:
+  - ls
+  - cd ansible-playbooks/
+  - echo "${VAULT_KEY}" > secret.txt
+  - ansible-playbook deploy.yml
+  - rm -f secret.txt
+  stage: deploy
+  tags:
+  - docker
+deploy_to_prod:
+  environment:
+    name: production
+    url: http://stg.cdws.drx.tw:31180
+  image: registry.gitlab.com/chusiang/continuous-delivery-workshop/ansible:2.5.3
+  only:
+  - master@drx-tw/cdws-2.0-team-a
+  - tags@drx-tw/cdws-2.0-team-a
+  script:
+  - ls
+  - cd ansible-playbooks/
+  - echo "${VAULT_KEY}" > secret.txt
+  - ansible-playbook -i production deploy.yml
+  - rm -f secret.txt
+  stage: release
+  tags:
+  - docker
+stages:
+- try
+- build
+- deploy
+- test
+- release
+test_dev:
+  environment:
+    name: staging
+    url: http://stg.cdws.drx.tw:31080
+  image: registry.gitlab.com/chusiang/continuous-delivery-workshop/ansible:2.5.3
+  only:
+  - master@drx-tw/cdws-2.0-team-a
+  - develop@drx-tw/cdws-2.0-team-a
+  - tags@drx-tw/cdws-2.0-team-a
+  script:
+  - cd ansible-playbooks/
+  - echo "${VAULT_KEY}" > secret.txt
+  - ansible-playbook test.yml
+  - rm -f secret.txt
+  stage: test
+  tags:
+  - docker
+try_arthur:
+  image: ubuntu:16.04
+  script:
+  - echo "Hello World"
+  stage: try
+  tags:
+  - docker
+try_dean:
+  image: ubuntu:16.04
+  script:
+  - echo "Hello World dean"
+  stage: try
+  tags:
+  - docker
+try_herb:
+  image: ubuntu:16.04
+  script:
+  - echo "Hello World"
+  stage: try
+  tags:
+  - docker
+try_kema:
+  image: ubuntu:16.04
+  script:
+  - echo "Hello World"
+  stage: try
+  tags:
+  - docker

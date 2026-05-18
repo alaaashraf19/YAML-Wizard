@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_17655",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 616,
+  "description": "Create a GitLab CI pipeline using the node:latest Docker image and caching the node_modules/ directory. Define two stages, test and deploy, with a test job that runs npm install then npm run coverage and uploads the coverage/ directory as an artifact. Also in the test stage add a docs job that runs npm install then npm run docs and stores the generated docs/ directory as an artifact. In the deploy stage add a pages job that depends on test and docs, runs only on the develop branch, moves coverage/ and docs/ into a public/ folder and publishes public/ as a pages artifact that expires in 30 days. Finally add a publish job that runs only on tags or triggers, executes npm run build, creates an .npmrc file with the NPM_TOKEN secret via echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}'>.npmrc, and runs npm publish to release the package to the npm registry.",
+  "tags": [
+    "node",
+    "npm",
+    "cache",
+    "coverage",
+    "documentation",
+    "gitlab-pages",
+    "npm-publish"
+  ]
+}

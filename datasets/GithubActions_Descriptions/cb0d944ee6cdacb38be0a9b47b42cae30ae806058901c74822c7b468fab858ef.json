@@ -1,0 +1,15 @@
+{
+  "sha": "cb0d944ee6cdacb38be0a9b47b42cae30ae806058901c74822c7b468fab858ef",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1744,
+  "description": "Create a GitHub Actions workflow named ptf-ebpf that runs on every push to main and on pull requests to main. The workflow should have a concurrency policy that cancels any in-progress runs on non-main branches. Use a single ubuntu-latest job with environment variables UNIFIED and ENABLE_GMP set to ON. Check out the repository with submodules, use ccache with a maximum size of 1000M, build a Docker image with specific arguments, and run PTF tests for the eBPF backend.",
+  "tags": [
+    "docker",
+    "ptf",
+    "ebpf",
+    "linux",
+    "tests",
+    "ccache"
+  ]
+}

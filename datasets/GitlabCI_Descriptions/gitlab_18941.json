@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_18941",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1053,
+  "description": "Create a GitLab CI pipeline using the docker:git image with a docker:dind service and a global before_script that runs docker info. Define three stages: test, build, test (the second test stage is used by the test_image job). Add a build_image job in the build stage that runs only on the master branch and executes: docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com; docker build -t registry.gitlab.com/welcheb/docker_slides2txt .; docker push registry.gitlab.com/welcheb/docker_slides2txt:latest. Add a test_image job in the test stage that also runs only on master and runs: cd /builds/welcheb/docker_slides2txt/test_slides/; ls -la /builds/welcheb/docker_slides2txt/; /bin/sh /builds/welcheb/docker_slides2txt/slides2txt_run.sh shakespeare_pptx.pptx; echo '10ac401d8c4cc77bee9e437b6e80e7cd1f99374d shakespeare_pptx.txt' | sha1sum -c -; /bin/sh /builds/welcheb/docker_slides2txt/slides2txt_run.sh shakespeare_ppt.ppt; echo '10d5d2d5daf98606fcc5e26882a4f18a996e8618 shakespeare_ppt.txt' | sha1sum -c -; /bin/sh /builds/welcheb/docker_slides2txt/slides2txt_run.sh shakespeare_key.key; echo 'a50abc48cb754b8bf0e0f145bb53866510136b8e shakespeare_key.txt' | sha1sum -c -.",
+  "tags": [
+    "docker",
+    "dind",
+    "registry",
+    "build",
+    "test",
+    "sha1",
+    "gitlab-ci-token"
+  ]
+}

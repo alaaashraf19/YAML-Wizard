@@ -1,0 +1,101 @@
+dependency-scan:
+  allow_failure: true
+  image:
+    entrypoint:
+    - ''
+    name: snyk/snyk:golang-1.23
+  script:
+  - snyk auth $SNYK_TOKEN
+  - snyk test --file=go.mod
+  services:
+  - docker:dind
+  stage: test
+image: docker:latest
+image-scan:
+  allow_failure: true
+  image:
+    entrypoint:
+    - ''
+    name: snyk/snyk-cli:1.1228.0-docker
+  script:
+  - touch vaultbot
+  - snyk auth $SNYK_TOKEN
+  - docker build -t msvechla/vaultbot:${CI_COMMIT_SHORT_SHA} .
+  - snyk test --docker msvechla/vaultbot:${CI_COMMIT_SHORT_SHA} --file=Dockerfile
+  services:
+  - docker:dind
+  stage: test
+lint:
+  allow_failure: true
+  artifacts:
+    paths:
+    - gl-code-quality-report.json
+    reports:
+      codequality: gl-code-quality-report.json
+  image: golangci/golangci-lint:v1.59.1-alpine
+  script:
+  - 'golangci-lint run --issues-exit-code 0 --exclude ''Using the variable on range
+    scope `tt` in function literal'' --out-format code-climate | tee gl-code-quality-report.json
+    | jq -r ''.[] | "\(.location.path):\(.location.lines.begin) \(.description)"''
+
+    '
+  stage: test
+release:
+  before_script:
+  - mkdir -p $HOME/.docker/cli-plugins/
+  - wget -O $HOME/.docker/cli-plugins/docker-buildx $BUILDX_URL
+  - chmod a+x $HOME/.docker/cli-plugins/docker-buildx
+  - "echo -e '{\n  \"experimental\": \"enabled\"\n}' | tee $HOME/.docker/config.json"
+  - docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+  - docker buildx create --use --driver docker-container --name multiarch --platform=${BUILDX_PLATFORM}
+  - echo "$GPG_PRIVATE_KEY" > key.gpg
+  image: docker:26
+  only:
+  - tags
+  script: "rm -f gl-code-quality-report.json\nls -l\ndocker buildx build --help\n\
+    docker run --rm --privileged \\\n  -v $PWD:/go/src/gitlab.com/msvechla/vaultbot\
+    \ \\\n  -w /go/src/gitlab.com/msvechla/vaultbot \\\n  -v /var/run/docker.sock:/var/run/docker.sock\
+    \ \\\n  -e DOCKER_USERNAME -e DOCKER_PASSWORD -e DOCKER_REGISTRY  \\\n  -e GITLAB_TOKEN\
+    \ \\\n  -e CI_PROJECT_ID \\\n  goreleaser/goreleaser:v2.6.1 release --clean\n"
+  services:
+  - docker:dind
+  stage: release
+  variables:
+    DOCKER_REGISTRY: https://index.docker.io/v1/
+    DOCKER_USERNAME: msvechla
+    GIT_DEPTH: 0
+semantic-release:
+  before_script:
+  - npm install
+  image: node:21
+  only:
+  - master
+  script:
+  - npx semantic-release
+  stage: release
+services:
+- command:
+  - --experimental
+  name: docker:dind
+stages:
+- test
+- release
+test:
+  artifacts:
+    paths:
+    - testoutput
+    when: on_failure
+  script:
+  - sh testdata/run.sh
+  - docker run --link vault --rm -v "$PWD":/usr/src/vaultbot -w /usr/src/vaultbot
+    -e GO111MODULE=on golang:$GO_VERSION /bin/bash -c "go test -v ./... -coverprofile
+    cp.out ./... && go tool cover -func cp.out"
+  stage: test
+variables:
+  BUILDX_PLATFORM: linux/arm64/v8,linux/amd64
+  BUILDX_URL: https://github.com/docker/buildx/releases/download/v0.4.1/buildx-v0.4.1.linux-amd64
+  DOCKER_BUILDKIT: 1
+  DOCKER_CLI_EXPERIMENTAL: enabled
+  DOCKER_DRIVER: overlay2
+  DOCKER_HOST: tcp://docker:2375
+  GO_VERSION: '1.23'

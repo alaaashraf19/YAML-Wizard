@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_18282",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1684,
+  "description": "Create a GitLab CI pipeline using the revolutionsystems/python:3.6.9-wee-optimized-lto Docker image and a cache keyed by CI_COMMIT_REF_SLUG that stores pip-cache, cache/Cypress, and vue/.yarn. Define a single test stage with two jobs. The test job runs apt-get update -qy, installs python-dev python-pip, installs pip-tools, syncs requirements with pip-sync requirements.txt requirements-dev.txt, exports SECRET_KEY from \\\"$DJANGO_SECRET_KEY\\\", and executes pytest heimlich/tickets/tests/ --create-db. The test-e2e job runs apt-get update -qy, installs apt-transport-https and adds the Yarn APT repository, installs Node.js 10, then installs libgconf2-dev libgconf-2-4 nodejs yarn xvfb libgtk2.0-0 libnotify-dev libnss3 libxss1 libasound2 python-dev python-pip, installs pip-tools, syncs requirements, exports SECRET_KEY, sets CYPRESS_HEIMLICH_PROJECT_ROOT and PYTHONPATH, runs python manage.py migrate, cd vue, installs Vue CLI globally, runs yarn install --pure-lockfile --cache-folder .yarn, upgrades caniuse-lite browserslist, sets CYPRESS_ENV and ENABLE_FIXTURE_RUNNER, and finally runs yarn test:e2e-ci. The test-e2e job archives screenshots and videos from vue/tests/e2e as artifacts for 1 week and always uploads them, and the pipeline uses variables CYPRESS_CACHE_FOLDER and npm_config_cache as defined.",
+  "tags": [
+    "python",
+    "pytest",
+    "cypress",
+    "vue",
+    "yarn",
+    "apt",
+    "pip-tools",
+    "docker-image",
+    "cache"
+  ]
+}

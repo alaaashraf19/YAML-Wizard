@@ -1,0 +1,21 @@
+{
+  "sha": "b35cdf669d6c404debe41967655311591c437b8588b7b9d20e004428c57edc3f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 9489,
+  "description": "Create a GitHub Actions workflow named Build that runs on workflow dispatch, push to main, and push to tags matching v*. The workflow has multiple jobs for different environments and build configurations, including format verification, Linux x86_64 and arm64 builds with various optimizations, Windows x86_64 builds, and GPU builds with CUDA and ROCm support. Each job checks out the code, sets up the environment, and runs custom build and test scripts.",
+  "tags": [
+    "github-actions",
+    "build",
+    "cmake",
+    "conda",
+    "gpu",
+    "cuda",
+    "rocm",
+    "linux",
+    "windows",
+    "osx",
+    "arm64",
+    "x86_64"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_19269",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 2530,
+  "description": "Create a GitLab CI pipeline with stages build, test, codequality, and security (added by the Dependency‑Scanning template). Add a build job using ruby:2.6 that runs `gem install bundler --no-document` then `bundle update` and publishes Gemfile.lock as an artifact. Add multiple rspec‑rubyX‑railsY jobs in the test stage, each using the specified ruby image, executing a before_script that prints ruby version, echoes the RSPEC_RAILS_VERSION variable, installs bundler, sets BUNDLE_GEMFILE, runs `bundle install --jobs=$(nproc) --path=\"../cache/bundle\"` and `bundle list`, caches the `cache/` directory with a key of the job name, and then runs `bundle exec rake spec`; each job sets RSPEC_RAILS_VERSION to the appropriate Rails version. Add a rubocop job in the codequality stage using ruby:3.1 that installs rubocop, rubocop‑performance and rubocop‑rails and then runs `rubocop`. The pipeline includes the Security/Dependency‑Scanning template to add a security stage.",
+  "tags": [
+    "ruby",
+    "rspec",
+    "rubocop",
+    "dependency-scanning",
+    "codequality",
+    "ci"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "sha": "166c4029d8a4deee73490280f84b52fe8e5f864bbf9203d6be539f8b4c09eb35",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3321,
+  "description": "Create a GitHub Actions workflow named compiler-python-release that runs on push and pull request events with a concurrency policy to cancel in-progress jobs for non-master and non-release branches. The workflow consists of two jobs: build-compiler and build-native. The build-compiler job uses a matrix to build .NET 7.0 on multiple platforms (x86_64-macos, x86_64-linux, x86_64-windows), caches NuGet packages, and uploads the build artifact. The build-native job depends on build-compiler, uses another matrix to build on the same platforms, installs the build artifact, sets up .NET and Python, and uploads the Python build artifact.",
+  "tags": [
+    "dotnet",
+    "python",
+    "cibuildwheel",
+    "vulkan",
+    "macos",
+    "linux",
+    "windows",
+    "github-actions"
+  ]
+}

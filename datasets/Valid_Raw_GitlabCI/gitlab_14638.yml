@@ -1,0 +1,30 @@
+cache:
+  paths:
+  - node_modules/
+image: node:latest
+pages:
+  artifacts:
+    paths:
+    - public/
+  dependencies:
+  - test
+  only:
+  - master
+  script:
+  - mv coverage/lcov-report/  public/
+  type: deploy
+test:
+  artifacts:
+    paths:
+    - coverage/
+  script:
+  - npm install
+  - npm run-script test
+variables:
+  DB_DATABASE: dchp9k20hl81qh
+  DB_DIALECT: postgres
+  DB_HOST: ec2-23-21-204-166.compute-1.amazonaws.com
+  DB_PASSWORD: 6a1716c10e6613c4cb887b059cb9f281e438f34128714582c972de56d489ef47
+  DB_PORT: '5432'
+  DB_SCHEMA: public
+  DB_USERNAME: cpvwouugonohlr

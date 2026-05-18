@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_10317",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1298,
+  "description": "Create a GitLab CI pipeline that uses the gradle:4.6-jdk8-alpine Docker image, sets GRADLE_USER_HOME to the repository's .gradle directory in a before_script, and defines the variable GRADLE_OPTS as -Dorg.gradle.daemon=false. Define a single stage named test. Add seven jobs named test:t1 through test:t7, each running in the test stage, each excluding the branch csui-advprog-2018/lab and only triggering on branches matching the regex /.*tutorial[_-].*N$/ where N is the tutorial number (1‑7). Each job executes the shell command \"gradle :tutorial-N:check\" (replace N with the tutorial number), and the test:t7 job also runs \"gradle :tutorial-7:jacocoTestReport\". Jobs test:t5, test:t6, and test:t7 publish the contents of /tutorial-N/build/* as artifacts (with N matching the tutorial number).",
+  "tags": [
+    "gradle",
+    "java",
+    "jacoco",
+    "tutorial",
+    "ci"
+  ]
+}

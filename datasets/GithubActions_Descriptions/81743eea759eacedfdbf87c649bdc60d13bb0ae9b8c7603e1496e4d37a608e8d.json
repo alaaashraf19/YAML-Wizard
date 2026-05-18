@@ -1,0 +1,16 @@
+{
+  "sha": "81743eea759eacedfdbf87c649bdc60d13bb0ae9b8c7603e1496e4d37a608e8d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1630,
+  "description": "Create a GitHub Actions workflow named Build and Test that runs on push and pull request events. The workflow should have two jobs, linux and macos, each with a matrix strategy. The linux job should run on an ubuntu-latest container with various images and build types, while the macos job should run on macos-latest with different Xcode versions. For each job, create a build environment, configure, build, and test using cmake and ctest.",
+  "tags": [
+    "cmake",
+    "ctest",
+    "matrix",
+    "ubuntu",
+    "macos",
+    "xcode",
+    "conan"
+  ]
+}

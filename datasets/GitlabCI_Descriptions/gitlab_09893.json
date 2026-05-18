@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_09893",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 94,
+  "description": "Create a GitLab CI pipeline that uses the maven:3.3.9-jdk-8 Docker image and defines a single stage named test. Add a job called unit_tests in the test stage that executes the exact shell command \"mvn clean install\". The pipeline does not define any caches, artifacts, or special rules, so the unit_tests job runs on every pipeline execution.",
+  "tags": [
+    "maven",
+    "java",
+    "unit-tests",
+    "gitlab-ci"
+  ]
+}

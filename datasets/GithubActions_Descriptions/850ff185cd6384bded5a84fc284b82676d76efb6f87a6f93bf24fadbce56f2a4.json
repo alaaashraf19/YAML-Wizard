@@ -1,0 +1,14 @@
+{
+  "sha": "850ff185cd6384bded5a84fc284b82676d76efb6f87a6f93bf24fadbce56f2a4",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2048,
+  "description": "Create a weekly GitHub Actions workflow that automatically generates a pull request to update the repository. The workflow should run every Tuesday at midnight and also be manually dispatchable. In an ubuntu-latest job, check out the repository code with a fetch depth of 2, run a Python script to generate dispatch code, check if any changes were made, and if so, create a pull request against the develop branch with a title indicating an automatic update.",
+  "tags": [
+    "github-actions",
+    "automation",
+    "pull-request",
+    "schedule",
+    "python"
+  ]
+}

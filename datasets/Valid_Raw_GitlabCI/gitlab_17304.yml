@@ -1,0 +1,23 @@
+dist:
+  artifacts:
+    name: $CI_PROJECT_NAME-$CI_COMMIT_REF_NAME
+    paths:
+    - example
+  script:
+  - export IMAGE_TAG=$(echo "$CI_COMMIT_REF_NAME" | sed "s/master/latest/")
+  - sed -i "s/latest/$IMAGE_TAG/g" example/Makefile
+  stage: release
+docker image:
+  script:
+  - docker info
+  - export IMAGE_TAG=$(echo "$CI_COMMIT_REF_NAME" | sed "s/master/latest/")
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+  - docker build -t $CI_REGISTRY_IMAGE:$IMAGE_TAG .
+  - docker push $CI_REGISTRY_IMAGE:$IMAGE_TAG
+  stage: build
+image: docker:latest
+services:
+- docker:dind
+stages:
+- build
+- release

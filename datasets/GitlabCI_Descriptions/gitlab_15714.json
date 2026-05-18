@@ -1,0 +1,21 @@
+{
+  "sha": "gitlab_15714",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 5263,
+  "description": "Create a GitLab CI pipeline with two stages (test and deploy) using python:3.10 for most jobs and python:3.14 or pypy:latest for specific variants. Add a frontend_chromium_subdir job (stage test, image python:3.10) that runs `apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -yy xvfb chromium-driver`, installs Poetry via `curl -sSL https://install.python-poetry.org | python3 -`, disables virtualenvs, runs `poetry install --no-interaction`, executes `scripts/update_translations.sh`, and finally runs `TAGUETTE_TEST_WEBDRIVER=chromium TAGUETTE_TEST_BASE_PATH=/base/path xvfb-run python tests.py -v TestSeleniumMultiuser`. Add a frontend_chromium_valkey job (stage test, same image) with the same setup commands plus `TAGUETTE_TEST_REDIS=redis://valkey:6379` in the test command and a `valkey/valkey:latest` service aliased as valkey. Add a frontend_firefox job (stage test, image python:3.10) that installs xvfb and firefox-esr, downloads and extracts geckodriver, configures Poetry, runs the translation script, and executes `TAGUETTE_TEST_WEBDRIVER=firefox xvfb-run python tests.py -v TestSeleniumMultiuser`. Add a mariadb job (stage test, image python:3.10) that installs Poetry, runs `poetry install --no-interaction -E mysql`, updates translations, and runs `python -Wd tests.py -v` with a mariadb:latest service and MySQL environment variables (MYSQL_DATABASE, MYSQL_PASSWORD, MYSQL_ROOT_PASSWORD, MYSQL_USER, TAGUETTE_TEST_DB). Add a postgres job (stage test, image python:3.10) that installs Poetry, runs `poetry install --no-interaction -E postgres`, updates translations, and runs `python -Wd tests.py -v` with a postgres:latest service and PostgreSQL variables (POSTGRES_PASSWORD, POSTGRES_USER, TAGUETTE_TEST_DB). Add a sqlite3 job (stage test, image python:3.10) that installs Poetry, runs the translation script, renders the README, runs coverage with `python -Wd -m coverage run --branch --source=taguette tests.py -v`, generates HTML coverage, reports the final coverage line, runs `flake8 --ignore=W503,W504 tests.py taguette`, and executes a grep check, storing the `htmlcov` directory as an artifact. Add a sqlite3_latest job (stage test, image python:3.14) that upgrades setuptools, installs Poetry, disables virtualenvs, removes the lock file, updates the pyproject Python version, installs dependencies, updates translations, and runs `python -Wd tests.py -v`. Add a sqlite3_latest_pip job (stage test, image python:3.14) that installs Poetry, upgrades pip, installs `babel<3`, updates translations, builds the package with `poetry build`, reinstalls the built wheel with extra dependencies, and runs `python -Wd tests.py -v`. Add a sqlite3_pypy job (stage test, image pypy:latest) that installs Poetry, creates and activates a temporary venv, upgrades pip, installs dependencies, updates translations, and runs `python -Wd tests.py -v`. Finally, add a sqlite3_valkey job (stage test, image python:3.10) that installs Poetry, updates translations, and runs `TAGUETTE_TEST_REDIS=redis://valkey:6379 python -Wd tests.py -v` with a valkey service. No deployment jobs are defined.",
+  "tags": [
+    "python",
+    "poetry",
+    "selenium",
+    "chromium",
+    "firefox",
+    "valkey",
+    "mariadb",
+    "postgres",
+    "sqlite",
+    "pypy",
+    "coverage",
+    "flake8"
+  ]
+}

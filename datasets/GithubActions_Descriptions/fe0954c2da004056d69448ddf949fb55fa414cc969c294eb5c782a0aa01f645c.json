@@ -1,0 +1,16 @@
+{
+  "sha": "fe0954c2da004056d69448ddf949fb55fa414cc969c294eb5c782a0aa01f645c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1539,
+  "description": "Create a GitHub Actions workflow named Publish library that triggers on push events with any tag. The workflow should have three jobs: check-javascript, test, and publish. The check-javascript job should run on ubuntu-latest, check out the code, set up Node.js 16.17.0, install frontend dependencies, lint JavaScript, and build the JavaScript bundle. The test job should use a matrix strategy to test with Python 3.7, 3.8, 3.9, and 3.10 on ubuntu-latest, checking out the code, setting up Python, installing dependencies, and running tests with tox. The publish job should depend on the test job, run on ubuntu-latest, check out the code, set up Python 3.9, build artifacts, and publish a Python distribution to PyPI using a token from secrets.",
+  "tags": [
+    "nodejs",
+    "python",
+    "pypi",
+    "tests",
+    "javascript",
+    "tox",
+    "ubuntu"
+  ]
+}

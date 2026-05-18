@@ -1,0 +1,91 @@
+.artifact_paths_template:
+  paths: &id001
+  - ebin
+  - doc
+.build_job_template:
+  before_script: &id002
+  - apk add --update make
+  image: $DEFAULT_IMAGE
+  script: &id003
+  - make ci
+  stage: build
+.test_job_template:
+  script: &id004
+  - make ci
+  stage: test
+cache:
+  key: $CI_PROJECT_PATH
+  paths:
+  - _build/default/rebar3_*_plt
+default-build:
+  artifacts:
+    expire_in: 1 month
+    name: $CI_PROJECT_NAME-ci-${CI_BUILD_REF_NAME}
+    paths: *id001
+  before_script: *id002
+  image: $DEFAULT_IMAGE
+  script: *id003
+  stage: build
+pages:
+  artifacts:
+    paths:
+    - public
+  before_script:
+  - apk add --update make emacs texinfo ca-certificates curl
+  - update-ca-certificates
+  - cd pages
+  - ./install
+  - cd ..
+  image: $DEFAULT_IMAGE
+  only:
+  - master
+  script:
+  - make pages
+  - mv pages/out public
+  stage: deploy
+release:
+  artifacts:
+    name: $CI_PROJECT_NAME-${CI_BUILD_REF_NAME}
+    paths: *id001
+  before_script: *id002
+  image: $DEFAULT_IMAGE
+  only:
+  - tags
+  script: *id003
+  stage: build
+test:18:
+  image: erlang:18
+  script: *id004
+  stage: test
+test:19:
+  image: erlang:19
+  script: *id004
+  stage: test
+test:20:
+  before_script:
+  - apk add --update make
+  image: erlang:20-alpine
+  script: *id004
+  stage: test
+test:21:
+  before_script:
+  - apk add --update make
+  image: erlang:21-alpine
+  script: *id004
+  stage: test
+test:22:
+  before_script:
+  - apk add --update make
+  image: $DEFAULT_IMAGE
+  script: *id004
+  stage: test
+test:dialyze:
+  before_script:
+  - apk add --update make
+  image: $DEFAULT_IMAGE
+  script:
+  - make ci-dialyze
+  stage: test
+variables:
+  DEFAULT_IMAGE: erlang:22-alpine
+  GIT_DEPTH: '3'

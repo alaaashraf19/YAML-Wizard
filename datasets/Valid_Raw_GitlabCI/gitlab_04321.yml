@@ -1,0 +1,10 @@
+build:
+  script:
+  - ./build.sh
+  stage: build
+image: gcc
+test:
+  script:
+  - cd test
+  - ./test.sh
+  stage: test

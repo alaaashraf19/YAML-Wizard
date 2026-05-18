@@ -1,0 +1,28 @@
+on:
+  push:
+    branches:
+      - staging
+      - develop
+      - master
+      - ci/*
+  pull_request:
+    branches:
+      - staging
+      - develop
+      - master
+      - ci/*
+jobs:
+  release:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-18.04]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build & Package
+      run: PKG_VERSION_PREFIX="$(git rev-parse --abbrev-ref HEAD)-" ./make.sh release-git
+    - name: Publish
+      uses: actions/upload-artifact@v1
+      with:
+        name: defichain-x86_64-pc-linux-gnu
+        path: ./build/defichain-defichain-x86_64-pc-linux-gnu-*

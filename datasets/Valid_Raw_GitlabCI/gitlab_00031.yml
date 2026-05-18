@@ -1,0 +1,35 @@
+deploy:
+  environment:
+    name: staging
+    url: http://<NAME>.vc1s.4ge.it
+  image: registry.gitlab.com/4geit/docker/docker-compose
+  only:
+  - tags@<GROUP>/<NAME>
+  script:
+  - docker-compose down
+  - docker-compose build
+  - docker-compose up -d
+  stage: deploy
+release:
+  image: registry.gitlab.com/4geit/docker/semantic-release-gitlab
+  only:
+  - master@<GROUP>/<NAME>
+  script:
+  - DEBUG=* semantic-release-gitlab
+  stage: release
+stages:
+- test
+- release
+- deploy
+test:
+  before_script:
+  - yarn
+  except:
+  - master@<GROUP>/<NAME>
+  - production@<GROUP>/<NAME>
+  image: node:alpine
+  only:
+  - branches@<GROUP>/<NAME>
+  script:
+  - yarn swagger project verify
+  stage: test

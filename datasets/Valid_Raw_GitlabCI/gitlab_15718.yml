@@ -1,0 +1,26 @@
+Myre-efi:
+  artifacts:
+    name: Myre
+    paths:
+    - Myre
+  only:
+  - master
+  script:
+  - echo "Releasing efi..."
+  - mv efi Myre
+  stage: release
+before_script:
+- echo "starting build for ${PROJECT_NAME} with current env "
+build:
+  artifacts:
+    untracked: true
+  only:
+  - master
+  script:
+  - make re
+  stage: build
+stages:
+- build
+- release
+variables:
+  PROJECT_NAME: Myre

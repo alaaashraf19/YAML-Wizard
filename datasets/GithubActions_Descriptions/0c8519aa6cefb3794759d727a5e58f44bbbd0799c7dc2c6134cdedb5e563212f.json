@@ -1,0 +1,14 @@
+{
+  "sha": "0c8519aa6cefb3794759d727a5e58f44bbbd0799c7dc2c6134cdedb5e563212f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1243,
+  "description": "Create a GitHub Actions workflow named Build that triggers on push to the master branch for specific paths and allows manual dispatch with an optional architecture input. The workflow uses an ubuntu-latest job to check out the code, get a Git tag description, set up QEMU and Buildx for Docker, log in to Docker Hub, and then build a Docker image using a custom script with optional architecture limitation.",
+  "tags": [
+    "docker",
+    "build",
+    "qemu",
+    "buildx",
+    "github-actions"
+  ]
+}

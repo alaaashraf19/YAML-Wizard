@@ -1,0 +1,15 @@
+{
+  "sha": "bc8b5b261a1bc7e601aadd2a035f8e8eb496c9c16ad1052a4440c2f86f299e50",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1303,
+  "description": "Create a GitHub Actions workflow named CI that runs on every push and pull request. The workflow should have two jobs: lint and test. The lint job runs on ubuntu-20.04, sets up Python 3.8, installs bandit, codespell, and flake8, and then runs these tools to check the code. The test job uses a matrix strategy to test on different ROS 2 distributions (foxy and galactic) on ubuntu-20.04, setting up ROS and running a ROS CI action.",
+  "tags": [
+    "ros2",
+    "python",
+    "ci",
+    "ubuntu",
+    "linting",
+    "testing"
+  ]
+}

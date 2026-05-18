@@ -1,0 +1,14 @@
+{
+  "sha": "d32756af95f937e956d0cd2d9b96d3ad72d00d3c21b67d983bad93b7920dc0c8",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1147,
+  "description": "Create a GitHub Actions workflow named MinGW build that runs on push to master, ghact branches and tags matching v*.*.*, and on pull requests to master, while ignoring changes to README.md and CONTRIBUTING.md. Use a single windows-latest job with msys2 shell, check out the repository, install MinGW, gcc, and make, cache libraries, install libraries with a batch script, configure CMake with MinGW Makefiles, and build the project with cmake --build.",
+  "tags": [
+    "mingw",
+    "windows",
+    "cmake",
+    "gcc",
+    "msys2"
+  ]
+}

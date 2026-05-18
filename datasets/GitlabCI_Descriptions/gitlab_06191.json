@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_06191",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 665,
+  "description": "Create a GitLab CI pipeline using the alpine:3.8 Docker image. In the global before_script download tclkit-8.6.8 and tclkit-8.5.19 with wget from the specified URLs, write their SHA256 checksums to a file, verify the downloads with sha256sum -c checksum and remove the checksum file, then make both binaries executable with chmod +x tclkit*. Add a test job (default stage) that runs ./tclkit-8.6.8 tests.tcl, ./tclkit-8.5.19 tests.tcl, ./tclkit-8.6.8 hosts.tcl version, and ./tclkit-8.5.19 hosts.tcl version, and note that the pipeline defines no caches, artifacts, or conditional rules.",
+  "tags": [
+    "alpine",
+    "tclkit",
+    "tests",
+    "ci"
+  ]
+}

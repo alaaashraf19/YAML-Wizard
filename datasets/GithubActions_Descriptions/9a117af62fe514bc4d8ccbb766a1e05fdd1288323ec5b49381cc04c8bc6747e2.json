@@ -1,0 +1,14 @@
+{
+  "sha": "9a117af62fe514bc4d8ccbb766a1e05fdd1288323ec5b49381cc04c8bc6747e2",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2153,
+  "description": "Create a GitHub Actions workflow named Feature CI that runs on push and pull request events, excluding branches main and fix/*. The workflow should have three jobs: linux, macos, and windows. Each job should create a build environment, install ninja if needed, configure, build, and test using cmake and ctest with different configurations and tools for each operating system.",
+  "tags": [
+    "cmake",
+    "ctest",
+    "multi-os",
+    "matrix",
+    "conan"
+  ]
+}

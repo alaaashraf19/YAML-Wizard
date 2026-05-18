@@ -1,0 +1,16 @@
+{
+  "sha": "51698138a712c20f0155184b026859f11e81f25708c01b972c1aa9b3685fddda",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5187,
+  "description": "Create a GitHub Actions workflow named CI Build that runs on push to master and pull requests to master. The workflow has three build jobs for different platforms: Windows, macOS, and Linux. Each build job checks out the code, configures and builds the project, runs tests, archives binaries, and uploads artifacts. A separate publish job downloads the artifacts and creates a GitHub release with the binaries.",
+  "tags": [
+    "ci",
+    "build",
+    "windows",
+    "macos",
+    "linux",
+    "github-release",
+    "artifacts"
+  ]
+}

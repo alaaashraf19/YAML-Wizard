@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_17663",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 533,
+  "description": "Create a GitLab CI pipeline that uses the gradle:latest Docker image. Define two stages: build and publish. In the build stage add a build job that runs gradle clean build and stores the resulting JAR files matching build/libs/gspinners*.jar as artifacts. In the publish stage add a publish job that runs gradle publish, configures git user name and email with git config --global user.name 'David Kohut' and git config --global user.email 'devid.kohut@gmail.com', clones https://gitlab.com/TesLex/repo, copies the built artifacts from build/repo/* into the cloned repo, commits with the message 'Update gspinners', and pushes back using the GITLAB_PRIVATE_KEY secret for authentication. No additional caches or rules are defined.",
+  "tags": [
+    "gradle",
+    "java",
+    "jar",
+    "publish",
+    "gitlab-ci",
+    "docker"
+  ]
+}

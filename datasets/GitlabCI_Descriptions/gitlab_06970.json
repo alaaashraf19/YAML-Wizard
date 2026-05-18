@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_06970",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 178,
+  "description": "Create a GitLab CI pipeline with a single stage called unittests. Define a global before_script that runs pwd. Add a job named python in the unittests stage that always runs and executes the commands: sudo service gdm stop, sleep 5, and dogtail-run-headless-next \"nose2 -v tests\". No Docker image, services, caches, artifacts, or variables are specified.",
+  "tags": [
+    "python",
+    "unittests",
+    "dogtail",
+    "nose2",
+    "gitlab-ci"
+  ]
+}

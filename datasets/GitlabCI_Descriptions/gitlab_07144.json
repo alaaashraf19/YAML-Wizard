@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_07144",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 762,
+  "description": "Create a GitLab CI pipeline with stages test, build, deploy-staging, and deploy-production. Add a job_test in the test stage using the node:latest image that runs `npm i` then `npm test`. Add a job_build in the build stage using node:latest, limited to the dev, staging, and master branches, that runs `npm i` and `npm run build` and stores the build directory as an artifact. Add a job_staging in the deploy-staging stage using ruby:latest, limited to the staging and master branches, that installs the dpl gem and deploys to the Heroku staging app git-staging with `dpl --provider=heroku --api-key=$HEROKU_TOKEN --app=git-staging --skip_cleanup` and sets the environment name to staging. Add a job_deploy in the deploy-production stage using ruby:latest, runs only on tags, that installs dpl and deploys to the Heroku production app git-production with `dpl --provider=heroku --api-key=$HEROKU_TOKEN --app=git-production --skip_cleanup` and sets the environment name to production.",
+  "tags": [
+    "node",
+    "npm",
+    "ruby",
+    "heroku",
+    "dpl",
+    "deployment",
+    "staging",
+    "production"
+  ]
+}

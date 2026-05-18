@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_12251",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 815,
+  "description": "Create a GitLab CI pipeline using the mggmuggins/manjaro-rustup Docker image and three stages: build, test, and package. In the build stage add a build:cargo:nightly job that runs `rustup toolchain add nightly` then `cargo +nightly build --verbose` and publishes the compiled binary at target/release/aurum-cli as an artifact, and a build:cargo:stable job that runs `rustup toolchain add stable` then `cargo +stable build --verbose` with the same artifact path. In the test stage add a test:cargo:nightly job (allow_failure) that runs `rustup toolchain add nightly` followed by `cargo +nightly test`, and a test:cargo:stable job (allow_failure) that runs `rustup toolchain add stable` then `cargo +stable test`. In the package stage add a package job (allow_failure) that creates a build directory, copies the PKGBUILD file into it, changes into the build directory, runs `makepkg`, and stores any resulting *.pkg.tar.xz files as artifacts. No additional caches, services, or conditional rules are defined.",
+  "tags": [
+    "rust",
+    "cargo",
+    "nightly",
+    "stable",
+    "package",
+    "makepkg",
+    "manjaro",
+    "gitlab-ci"
+  ]
+}

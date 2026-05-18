@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_12414",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 403,
+  "description": "Create a GitLab CI pipeline with stages build, test, clean, and deploy. In the build stage add a build_job1 job that runs echo \"build job1\" and a build_job2 job that runs echo \"build job2\". Also in the build stage add a deploy job that runs echo \"deploy, password is $PASSWORD\". In the test stage add a testing job that runs echo \"testing envionment is $ENVIRONMENT\". In the clean stage add a cleanup job that runs echo \"clean up\" and include a global before_script that echoes \"before script\".",
+  "tags": [
+    "build",
+    "test",
+    "clean",
+    "deploy",
+    "gitlab-ci"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_07329",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 302,
+  "description": "Create a GitLab CI pipeline with two stages named check and copy. In the check stage add a print-env job that runs the commands whoami, pwd, echo $PATH, and export CUR_PATH=$(pwd). In the copy stage add a copy-env job that runs export REMOTE_PATH=\"/home/gitlab-runner/go/src/gitlab.com/eunleem/gopack\", creates the directory with mkdir -p $REMOTE_PATH, removes any .git folder with rm -rf ./.git, and copies the repository contents to $REMOTE_PATH with cp -r ./ $REMOTE_PATH. Use the default GitLab runner image and no additional services, caches, artifacts, or trigger rules.",
+  "tags": [
+    "shell",
+    "environment",
+    "copy",
+    "print"
+  ]
+}

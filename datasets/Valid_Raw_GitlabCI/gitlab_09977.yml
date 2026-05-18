@@ -1,0 +1,69 @@
+before_script:
+- ruby -v
+- apt update
+- apt install git build-essential -y
+- gem install bundler --no-document
+- bundle install -j $(nproc) --path vendor
+cache:
+  paths:
+  - vendor/ruby
+fasterer:
+  allow_failure: true
+  script:
+  - bundle exec fasterer
+image: ruby:2.7
+include:
+- template: Dependency-Scanning.gitlab-ci.yml
+pages:
+  artifacts:
+    expire_in: 30 days
+    paths:
+    - public
+  dependencies:
+  - rspec
+  only:
+  - master
+  script:
+  - mkdir -p public/
+  - mv coverage/ public/
+  stage: deploy
+reek:
+  allow_failure: true
+  script:
+  - bundle exec reek --version
+  - bundle exec reek
+rspec:
+  artifacts:
+    expire_in: 30 days
+    paths:
+    - coverage/
+  script:
+  - bundle exec rspec spec
+rspec:2.5:
+  image: ruby:2.5
+  script:
+  - bundle exec rspec spec
+rspec:2.6:
+  image: ruby:2.6
+  script:
+  - bundle exec rspec spec
+rspec:2.7:
+  image: ruby:2.7
+  script:
+  - bundle exec rspec spec
+rspec:3.0:
+  allow_failure: true
+  image: ruby:3.0
+  script:
+  - bundle exec rspec spec
+rspec:jruby:9.2:
+  image: jruby:9.2
+  script:
+  - bundle exec rspec spec
+rubocop:
+  allow_failure: true
+  script:
+  - bundle exec rubocop --version
+  - bundle exec rubocop --extra-details --display-style-guide --format clang
+variables:
+  JRUBY_OPTS: --debug

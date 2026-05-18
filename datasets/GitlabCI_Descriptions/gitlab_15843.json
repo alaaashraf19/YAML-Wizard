@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_15843",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 564,
+  "description": "Create a GitLab CI pipeline with three stages: lint, test, and deploy, and a global before_script that runs pip install -r test-requirements.txt. Add a lint job using the python:3.6 image that runs tox -epep8 in the lint stage. Add three test jobs in the test stage: test_python34 using python:3.4 runs tox -epy34, test_python35 using python:3.5 runs tox -epy35, and test_python36 using python:3.6 runs tox -epy36. Add a pages job in the deploy stage using python:3.6 that runs pip install sphinx, pip install ., cd docs/, make html, and moves the generated _build/html/ to a public/ directory, publishes the public/ folder as an artifact, and only runs on the master branch.",
+  "tags": [
+    "python-3.6",
+    "lint",
+    "tox",
+    "pages",
+    "sphinx",
+    "make",
+    "python-3.4",
+    "python-3.5",
+    "python-3.6-test"
+  ]
+}

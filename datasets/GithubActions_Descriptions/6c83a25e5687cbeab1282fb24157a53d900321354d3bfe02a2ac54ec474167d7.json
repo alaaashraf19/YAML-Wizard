@@ -1,0 +1,15 @@
+{
+  "sha": "6c83a25e5687cbeab1282fb24157a53d900321354d3bfe02a2ac54ec474167d7",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1155,
+  "description": "Create a GitHub Actions workflow named sw that runs on push and pull request events. The workflow should have two jobs: one for Windows and one for Linux. The Windows job runs on a Windows 2022 environment, checks out the code, uses the sw-action, builds the source with ./sw build source -static, and uploads the binaries as an artifact named sw-windows. The Linux job runs in a fedora:35 container on an ubuntu-20.04 environment, checks out the code, prepares the environment by installing dependencies, uses the sw-action, builds the source with ./sw -static build source -compiler gcc, and uploads the binaries as an artifact named sw-linux.",
+  "tags": [
+    "windows",
+    "linux",
+    "ubuntu",
+    "fedora",
+    "github-actions",
+    "artifacts"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_10917",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 289,
+  "description": "Create a GitLab CI pipeline that uses the node:10.16.0 Docker image (identified by its sha256 digest) and sets the LC_ALL variable to C.UTF-8. Define a single stage named build and a cache called purty-v1 that saves the .bazel-cache directory from the project. Add a job named Build purty in the build stage that executes the command make test BAZEL_CONFIG='--config=gitlabci'. The pipeline has no services, artifacts, or conditional rules.",
+  "tags": [
+    "node",
+    "make",
+    "bazel",
+    "cache",
+    "gitlab-ci"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_18156",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 607,
+  "description": "Create a GitLab CI pipeline using the node:18 Docker image and three stages: fetch, build, and test. In the fetch stage add an npm_install job that runs npm install and stores the node_modules/ directory as an artifact for 4 weeks. In the build stage add a build job that depends on npm_install, runs npm run build, and saves the dist/ directory as an artifact for 14 weeks; also add a lint job that depends on npm_install, runs npm run tslint, and saves the same dist/ artifact for 14 weeks. In the test stage add a mocha_tests job that depends on npm_install and build, runs npm run test, and stores the dist/ directory as an artifact for 14 weeks.",
+  "tags": [
+    "node",
+    "npm",
+    "build",
+    "lint",
+    "test",
+    "mocha"
+  ]
+}

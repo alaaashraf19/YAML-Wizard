@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_12553",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 473,
+  "description": "Create a GitLab CI pipeline using the Docker image registry.gitlab.com/mpapp-public/couchbase-lite-node:latest, with a cache for node_modules/ and vendor/couchbase-lite-core, and set GIT_SUBMODULE_STRATEGY to recursive. Define three jobs that all run in the default test stage: a cppcheck job that runs `cppcheck C`; a test job that runs `./vendor/couchbase-lite-core/build_cmake/scripts/build_unix.sh`, `npm install`, `node-gyp configure build`, `tsc`, and `LD_LIBRARY_PATH=./vendor/couchbase-lite-core/build_cmake/unix npm test`; and a tslint job that runs `tslint test/*.ts src/*.ts`. No artifacts, caches, or rules beyond the default behavior.",
+  "tags": [
+    "cppcheck",
+    "node",
+    "npm",
+    "typescript",
+    "couchbase-lite",
+    "gitlab-ci"
+  ]
+}

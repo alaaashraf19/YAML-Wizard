@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_00714",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 387,
+  "description": "Create a GitLab CI pipeline using the rust:latest Docker image, defining variables CARGO_HOME set to $CI_PROJECT_DIR/cargo, GIT_STRATEGY fetch, and GIT_SUBMODULE_STRATEGY none. Define three stages: info, test, and build, and a global cache for apt/, cargo/, and target/. Add an info job in the info stage that runs rustc --version then cargo --version. Add a test job in the test stage that runs cargo test --all-features. Add a build job in the build stage that runs cargo build, with no artifacts or special rules.",
+  "tags": [
+    "rust",
+    "cargo",
+    "build",
+    "test",
+    "gitlab-ci"
+  ]
+}

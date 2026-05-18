@@ -1,0 +1,17 @@
+{
+  "sha": "41e2a167661d5c6250d4201c61848bb0d6e60718d432349f59f94e2bd683632e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5780,
+  "description": "Create a GitHub Actions workflow named Build that runs on push and pull request events. The workflow has multiple jobs for building on different platforms (Linux, macOS, Windows) and deploying the SDK. Each build job checks out the repository, generates makefiles or build files, builds the project, runs tests, and archives the resulting binaries or libraries as artifacts. The assemble-sdk job downloads these artifacts, generates an SDK, and archives it. Deploy jobs download the SDK artifact, unpack it, and build example projects using the SDK.",
+  "tags": [
+    "cmake",
+    "cross-platform",
+    "sdk",
+    "github-actions",
+    "ci",
+    "ubuntu",
+    "macos",
+    "windows"
+  ]
+}

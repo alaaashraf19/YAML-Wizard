@@ -1,0 +1,15 @@
+{
+  "sha": "dee97f8452ccf7d78c643ab0c898f2b77d8db1f3b5562b40d7487a8d30bae5b5",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2295,
+  "description": "Create a GitHub Actions workflow named basic test that runs on push to any tag and branches master, and on pull requests to branches master and feature-2.0. Use an ubuntu-latest job with a matrix strategy to test multiple Python environments with tox, caching .tox and pip directories, and using Docker. For each matrix entry, set up the corresponding Python version, install tox-travis, and run tox with a specific configuration.",
+  "tags": [
+    "python",
+    "tox",
+    "tests",
+    "docker",
+    "matrix",
+    "ubuntu"
+  ]
+}

@@ -1,0 +1,39 @@
+before_script:
+- mkdir deps
+- export GOPATH=$(pwd)/deps
+compile-go-1.5:
+  image: golang:1.5
+  script:
+  - go get -v -d
+  - go build
+  stage: build
+format:
+  image: golang:1.5
+  script:
+  - go get golang.org/x/tools/cmd/goimports
+  - (if [ "$(bin/goimports -d .)" == "" ]; then echo "Good format"; else echo "Bad
+    format"; exit 33; fi);
+  - (if [ "$(bin/goimports -d *.go)" == "" ]; then echo "Good format"; else echo "Bad
+    format"; exit 33; fi);
+  stage: build
+stages:
+- build
+- test
+test-go-1.5:
+  allow_failure: false
+  image: golang:1.5
+  script:
+  - go get -v -d
+  - go test -race -p 1  -cover .
+  stage: test
+vet:
+  artifacts:
+    paths:
+    - botbrother
+    - ./botbrother
+    untracked: true
+  image: golang:1.5
+  script:
+  - go tool vet -composites=false .
+  - go tool vet -composites=false -shadow=true *.go
+  stage: build

@@ -1,0 +1,14 @@
+{
+  "sha": "5da7e6e5df11602e68f91d39536a85b76f691e831adea951dcd127ada8b6d739",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3423,
+  "description": "Create a GitHub Actions workflow named CI macOS that runs on pull requests and pushes to main or tags. Use a macOS job matrix to test with different LLVM versions. Checkout the repository with submodules, fix git config, set build settings, and run a CI task using Ansible. Publish the package to Cloudsmith if the API key is available, move the package, and attach it to the tag if the workflow was triggered by a tag push.",
+  "tags": [
+    "macos",
+    "llvm",
+    "ansible",
+    "cloudsmith",
+    "github-actions"
+  ]
+}

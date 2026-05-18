@@ -1,0 +1,12 @@
+{
+  "sha": "gitlab_18899",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 90,
+  "description": "Create a GitLab CI pipeline that runs a global before_script to update git submodules with `git submodule update --init`. Define a single job named `make_os` that runs in the default test stage, uses the `make` command as its only script step, and is limited to runners tagged `rust`. The pipeline does not specify a Docker image, services, caches, artifacts, or any conditional rules, so it will execute on every pipeline run.",
+  "tags": [
+    "rust",
+    "make",
+    "git-submodule"
+  ]
+}

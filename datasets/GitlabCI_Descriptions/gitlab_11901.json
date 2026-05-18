@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_11901",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1366,
+  "description": "Create a GitLab CI pipeline using the mardy/qt:5.9 Docker image, set GIT_SUBMODULE_STRATEGY to recursive, and configure an apt cache stored in apt-cache/ with key apt-cache. Define a before_script that creates $APT_CACHE_DIR, runs apt-get update and installs pkg-config libexiv2-dev, libegl1-mesa libgl1-mesa-dev libxss1, lcov gcovr xvfb, and sets PKG_CONFIG_PATH to the Qt pkgconfig directory. Add a build_desktop job in the build stage that sets STAGING=$PWD/staging, prepends its lib/pkgconfig to PKG_CONFIG_PATH, builds libauthentication with qmake PREFIX=\"$STAGING\" CONFIG+=debug CONFIG+=nomake_tests .. and make -j4 install, then creates a build directory, runs qmake PREFIX=\"$STAGING\" CONFIG+=debug CONFIG+=coverage CONFIG+=desktop .. and make -j4, and archives the build/ and staging/ directories as artifacts. Add a test_desktop job in the test stage that depends on build_desktop, sets the same STAGING and PKG_CONFIG_PATH, touches all files in build, runs LD_LIBRARY_PATH=\"$STAGING/lib:$LD_LIBRARY_PATH\" make coverage-html, and stores build/coverage-html/ as an artifact. No special rules or only/except conditions are defined, so both jobs run on all branches.",
+  "tags": [
+    "qt",
+    "qmake",
+    "make",
+    "coverage",
+    "apt-cache",
+    "gitlab-ci"
+  ]
+}

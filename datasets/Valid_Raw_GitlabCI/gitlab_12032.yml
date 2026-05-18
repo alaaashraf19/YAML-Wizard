@@ -1,0 +1,29 @@
+cache:
+  paths:
+  - .m2/repository
+docker-build:
+  script:
+  - docker build -t registry.gitlab.com/mayermic/smartvineyards-dhms .
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+  - docker push registry.gitlab.com/mayermic/smartvineyards-dhms
+  stage: package
+image: docker:latest
+maven-build:
+  artifacts:
+    paths:
+    - target/*.jar
+  image: maven:3-jdk-8
+  script: mvn $MAVEN_CLI_OPTS package -B
+  stage: build
+services:
+- docker:dind
+stages:
+- build
+- package
+variables:
+  DOCKER_DRIVER: overlay
+  MAVEN_CLI_OPTS: --batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true
+    -DdeployAtEnd=true
+  MAVEN_OPTS: -Dmaven.repo.local=.m2/repository -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN
+    -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true
+  SPRING_PROFILES_ACTIVE: gitlab-ci

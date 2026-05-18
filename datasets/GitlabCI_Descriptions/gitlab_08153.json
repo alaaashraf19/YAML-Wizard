@@ -1,0 +1,18 @@
+{
+  "sha": "gitlab_08153",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 955,
+  "description": "Create a GitLab CI pipeline that uses the ruby:2.6 Docker image and defines two stages: test and publish, with a global before_script that starts ssh-agent, adds the CI_PRIVATE_KEY, creates an SSH config disabling strict host checking, prints the Ruby version, installs bundler, and runs bundle install --jobs $(nproc) \\\"${FLAGS[@]}\\\" --path vendor, and caches the vendor directory. In the test stage add a cookstyle job that runs bundle exec cookstyle, a kitchen job that runs apt-get -qq update && apt-get -yqq install openssh-client rsync make jq, then make gems and make kitchen, and an rspec job that runs bundle exec rspec -f d, all inheriting the before_script and using the cached vendor path. In the publish stage add a push-cookbook job that only runs on the master branch when the OPS_CLONE_USERNAME and OPS_CLONE_PASSWORD variables are set, clones https://$OPS_CLONE_USERNAME:$OPS_CLONE_PASSWORD@ops.gitlab.net/gitlab-cookbooks/cookbook-publisher.git into /tmp/cookbook-publisher, copies publisher.rb to the project root, and executes ruby publisher.rb.",
+  "tags": [
+    "ruby",
+    "bundler",
+    "cookstyle",
+    "kitchen",
+    "rspec",
+    "ssh",
+    "cache",
+    "publish",
+    "master"
+  ]
+}

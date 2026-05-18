@@ -1,0 +1,19 @@
+{
+  "sha": "gitlab_13663",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 3582,
+  "description": "Create a GitLab CI pipeline with stages build, test, release, and deploy, using docker:stable with a docker:dind service for the build, code_quality, and release jobs, google/cloud-sdk:alpine for the deploy jobs, and node:8.15.0-jessie for the test-api job. In the build-api job (stage build, only prod/master/API) run `docker login -u _json_key -p \"${GC_KEY}\" https://gcr.io`, `docker build --pull -t $CONTAINER_TEST_IMAGE_API ./API/`, and `docker push $CONTAINER_TEST_IMAGE_API`; in build-frontend (stage build, only prod/master/10-site-web-creation-des-pages-principales-carte) run the same commands with $CONTAINER_TEST_IMAGE_FRONTEND. In code_quality-api (stage test, allow_failure, only prod) execute `cd ./API`, set `SP_VERSION=$(echo \"$CI_SERVER_VERSION\" | sed 's/^\\([0-9]*\\)\\.\\([0-9]*\\).*/\\1-\\2-stable/')`, and run the GitLab Code Quality Docker image with appropriate volumes and env. In test-api (stage test, only prod/master/API) run `cd ./API`, `npm i npm@latest -g`, `npm config set python /usr/bin/python`, `npm install`, `npm install run-rs`, `npm rebuild bcrypt --build-from-source`, start the service with `node ./node_modules/run-rs/ -v 4.0.0 -h 127.0.0.1 -q &`, then `sleep 30 && npm test`. In deploy-api and deploy-frontend (stage deploy, only prod) use google/cloud-sdk:alpine to install kubectl, authenticate with `gcloud auth activate-service-account --key-file=<(echo \"${GC_KEY}\")`, get cluster credentials, delete existing deployments, and apply the respective Kubernetes service and deployment manifests. In release-image-api and release-image-frontend (stage release, only prod) run `docker login -u _json_key -p \"${GC_KEY}\" https://gcr.io`, `docker pull` the test image, tag it to the release image variable, and `docker push` the release image, with variables CONTAINER_RELEASE_IMAGE_API, CONTAINER_RELEASE_IMAGE_FRONTEND, CONTAINER_TEST_IMAGE_API, and CONTAINER_TEST_IMAGE_FRONTEND defined at the pipeline level.",
+  "tags": [
+    "docker",
+    "dind",
+    "google-cloud-sdk",
+    "kubernetes",
+    "node",
+    "npm",
+    "code-quality",
+    "api",
+    "frontend",
+    "release"
+  ]
+}

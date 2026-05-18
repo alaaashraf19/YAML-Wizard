@@ -1,0 +1,21 @@
+name: macOS
+on: [push]
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install dependencies
+      run: |
+        brew install sdl2 freetype libvorbis webp pkg-config ninja
+    - name: Build with CMake
+      run: |
+        cmake -H. -Bbuild-cmake -GNinja
+        ninja -Cbuild-cmake
+    - uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'zulu'
+    - name: Android
+      run: |
+        make -Candroid

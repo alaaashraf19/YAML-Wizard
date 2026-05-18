@@ -1,0 +1,100 @@
+before_script:
+- export GRADLE_USER_HOME=`pwd`/.gradle
+image: gradle:4.6-jdk8-alpine
+stages:
+- test
+test:t1:
+  except:
+  - branches@csui-advprog-2018/lab
+  only:
+  - /.*tutorial[_-].*1$/
+  script: gradle :tutorial-1:check
+  stage: test
+test:t10:
+  artifacts:
+    paths:
+    - /tutorial-10/build/*
+  except:
+  - branches@csui-advprog-2018/lab
+  only:
+  - /.*tutorial[_-].*10$/
+  script:
+  - gradle :tutorial-10:check
+  stage: test
+test:t2:
+  except:
+  - branches@csui-advprog-2018/lab
+  only:
+  - /.*tutorial[_-].*2$/
+  script: gradle :tutorial-2:check
+  stage: test
+test:t3:
+  except:
+  - branches@csui-advprog-2018/lab
+  only:
+  - /.*tutorial[_-].*3$/
+  script: gradle :tutorial-3:check
+  stage: test
+test:t4:
+  except:
+  - branches@csui-advprog-2018/lab
+  only:
+  - /.*tutorial[_-].*4$/
+  script: gradle :tutorial-4:check
+  stage: test
+test:t5:
+  artifacts:
+    paths:
+    - /tutorial-5/build/*
+  except:
+  - branches@csui-advprog-2018/lab
+  only:
+  - /.*tutorial[_-].*5$/
+  script: gradle :tutorial-5:check
+  stage: test
+test:t6:
+  artifacts:
+    paths:
+    - /tutorial-6/build/*
+  except:
+  - branches@csui-advprog-2018/lab
+  only:
+  - /.*tutorial[_-].*6$/
+  script: gradle :tutorial-6:check
+  stage: test
+test:t7:
+  artifacts:
+    paths:
+    - /tutorial-7/build/*
+  except:
+  - branches@csui-advprog-2018/lab
+  only:
+  - /.*tutorial[_-].*7$/
+  script:
+  - gradle :tutorial-7:check
+  - gradle :tutorial-7:jacocoTestReport
+  stage: test
+test:t8:
+  artifacts:
+    paths:
+    - /tutorial-8/build/*
+  except:
+  - branches@csui-advprog-2018/lab
+  only:
+  - /.*tutorial[_-].*8$/
+  script:
+  - gradle :tutorial-8:check
+  stage: test
+test:t9:
+  artifacts:
+    paths:
+    - /tutorial-9/build/*
+  except:
+  - branches@csui-advprog-2018/lab
+  only:
+  - /.*tutorial[_-].*9$/
+  script:
+  - gradle :tutorial-9:check
+  stage: test
+variables:
+  GRADLE_OPTS: -Dorg.gradle.daemon=false

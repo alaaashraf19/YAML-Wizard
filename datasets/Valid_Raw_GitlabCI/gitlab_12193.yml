@@ -1,0 +1,8 @@
+include:
+- template: Security/SAST.gitlab-ci.yml
+nodejs-scan-sast:
+  rules:
+  - when: never
+sast:
+  variables:
+    SAST_EXCLUDED_PATHS: cloud,docker,docs,model,scripts,tests

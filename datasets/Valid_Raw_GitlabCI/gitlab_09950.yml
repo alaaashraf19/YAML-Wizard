@@ -1,0 +1,12 @@
+before_script:
+- pacman -Suy --noconfirm
+- pacman --noconfirm -S rust base-devel clang
+binary:
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - target/release/aurs
+  script: cargo build --release
+image: archlinux/base
+test:
+  script: cargo test

@@ -1,0 +1,62 @@
+.only-default:
+  only: &id001
+  - master
+  - merge_requests
+  - tags
+build::alpine::amd64:
+  artifacts:
+    exclude:
+    - '*.o'
+    paths:
+    - _build/
+    when: always
+  before_script:
+  - apk -q add build-base cryptsetup-dev eudev-libs imagemagick libxi linux-headers
+    mesa-dri-gallium meson scdoc sdl2-dev sdl2_ttf-dev ttf-dejavu xdotool xvfb-run
+  only: *id001
+  script:
+  - meson _build
+  - meson compile -C _build
+  - meson test -C _build --print-errorlogs
+build::debian::amd64:
+  artifacts:
+    exclude:
+    - '*.o'
+    paths:
+    - _build/
+    when: always
+  before_script:
+  - apt update
+  - apt install -y build-essential meson pkg-config scdoc libsdl2-dev libsdl2-ttf-dev
+    libcryptsetup-dev fonts-dejavu-core cryptsetup libgles2 xvfb xdotool imagemagick
+  image: debian:testing
+  only: *id001
+  script:
+  - sed -i 's|/usr/share/fonts/ttf-dejavu/DejaVuSans.ttf|/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf|'
+    osk.conf
+  - meson _build
+  - meson compile -C _build
+  - meson test -C _build --print-errorlogs
+clang-format:
+  before_script:
+  - apk -q add git
+  - git clone -q --depth=1 "https://gitlab.com/postmarketOS/ci-common.git"
+  only: *id001
+  script:
+  - ci-common/clang-format/ci_run.sh
+image: alpine:latest
+mr-settings:
+  before_script:
+  - apk -q add python3
+  only:
+  - merge_requests
+  script:
+  - wget -q "https://gitlab.com/postmarketOS/ci-common/-/raw/master/check_mr_settings.py"
+  - python3 ./check_mr_settings.py
+static-analysis:
+  before_script:
+  - apk -q add cppcheck
+  image: alpine:latest
+  only: *id001
+  script:
+  - test/static_analysis.sh

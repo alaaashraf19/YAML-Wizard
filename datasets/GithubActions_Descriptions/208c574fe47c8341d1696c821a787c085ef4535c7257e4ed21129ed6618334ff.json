@@ -1,0 +1,15 @@
+{
+  "sha": "208c574fe47c8341d1696c821a787c085ef4535c7257e4ed21129ed6618334ff",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4020,
+  "description": "Create a GitHub Actions workflow that triggers on push to main and tags, pull requests, and workflow dispatches. The workflow has read permissions to repository contents and consists of multiple jobs: lint_and_test, linux, windows, macos, sdist, and release. The lint_and_test job runs on ubuntu-latest with a matrix of Python versions and runs tests. The other jobs build and upload wheels for different platforms and Python versions, and the release job publishes to PyPI if the workflow is triggered by a tag.",
+  "tags": [
+    "python",
+    "maturin",
+    "github-actions",
+    "ci",
+    "cd",
+    "pypi"
+  ]
+}

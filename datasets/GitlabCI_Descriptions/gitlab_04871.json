@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_04871",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 728,
+  "description": "Create a GitLab CI pipeline using the alpine Docker image and define two stages: test and deploy. In the test stage add a run pylint job that executes: apk --no-cache add $(cat apk-requirements.txt), pip install -r requirements.txt, pip install -e ., and python tests/run_pylint.py. In the deploy stage add a pages job that runs: apk --no-cache add $(cat apk-requirements.txt), pip install -r requirements.txt, echo $CI_COMMIT_TAG > .version, pip install -e ., make html -C docs, mv docs/build/html/ public/, then publishes the public/ directory as a pages artifact and runs only on the master branch. Also in the deploy stage add a publish to pypi job that runs: apk --no-cache add $(cat apk-requirements.txt), pip install twine, echo $CI_COMMIT_TAG > .version, python setup.py sdist, twine upload dist/*, stores the dist/ directory as an artifact, and runs only for Git tags.",
+  "tags": [
+    "alpine",
+    "gitlab-pages",
+    "pypi",
+    "pylint",
+    "apk",
+    "python"
+  ]
+}

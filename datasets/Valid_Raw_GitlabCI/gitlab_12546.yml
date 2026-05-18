@@ -1,0 +1,27 @@
+cache:
+  paths:
+  - node_modules/
+image: weltn24/up-docker-node-chrome-headless
+installs:
+  except:
+  - master
+  script:
+  - npm install
+  stage: .pre
+pages:
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  script:
+  - mkdir .public
+  - cp -r doc/* .public
+  - mv .public public
+  stage: deploy
+test:
+  except:
+  - master
+  script:
+  - npm test
+  stage: test

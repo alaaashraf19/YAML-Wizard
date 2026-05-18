@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_06137",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 566,
+  "description": "Create a GitLab CI pipeline that uses the fedora:latest Docker image as the default and defines two stages: prep and build. Add a tito_prep job in the prep stage that runs the script ./.gitlab-ci/get-tarballs.sh, uploads the resulting ./*/*.tar.gz files as artifacts that expire after 1 hour, and runs on docker tags. Add a pkg_build job in the build stage that depends on tito_prep, uses the ubuntu:18.04 image, executes the scripts ./.gitlab-ci/setup-apt-sources.sh, ./.gitlab-ci/get-debbuild.sh, ./.gitlab-ci/get-deb-buildreqs.sh, and ./.gitlab-ci/build-packages.sh in sequence, and stores the generated ./*/*/*.sdeb and ./*/*/*/*.deb files as artifacts that expire after 5 days, also running on docker tags.",
+  "tags": [
+    "fedora",
+    "ubuntu",
+    "deb-packages",
+    "tito",
+    "build",
+    "gitlab-ci"
+  ]
+}

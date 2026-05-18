@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_07932",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1717,
+  "description": "Create a GitLab CI pipeline that uses the docker:latest image with the docker:dind service and defines the variables CONTAINER_TEST_IMAGE as ${CI_REGISTRY_IMAGE}/review:$CI_BUILD_REF_NAME and CONTAINER_RELEASE_IMAGE as ${CI_REGISTRY_IMAGE}:latest. Define three stages: build, test, and release. In the build stage add a build job that runs the before_script `echo \"$CI_REGISTRY_PASSWORD\" | docker login --username \"$CI_REGISTRY_USER\" --password-stdin $CI_REGISTRY`, then executes `docker build -t $CONTAINER_TEST_IMAGE .` and `docker push $CONTAINER_TEST_IMAGE`. In the test stage add a test job that runs the same login command and then runs `docker run -v $PWD:/code -w /code $CONTAINER_TEST_IMAGE bash test.sh`. In the release stage add four versioned release jobs named \"release 5.10.0\", \"release 5.10.1\", \"release 5.9.2\", and \"release 5.9.3\" that run only on the master branch, export VERSION from the job name, derive MAJOR, MINOR, and BUILD with sed, build the image with `docker build -t ${CI_REGISTRY_IMAGE}:${MAJOR}.${MINOR}.${BUILD} --build-arg qt_major=${MAJOR} --build-arg qt_minor=${MINOR} --build-arg qt_build=${BUILD} .` and push it, and also add a \"release latest\" job that runs only on master, pulls $CONTAINER_TEST_IMAGE, tags it as $CONTAINER_RELEASE_IMAGE, and pushes the latest tag to the registry.",
+  "tags": [
+    "docker",
+    "dind",
+    "gitlab-ci",
+    "build",
+    "test",
+    "release",
+    "docker-registry"
+  ]
+}

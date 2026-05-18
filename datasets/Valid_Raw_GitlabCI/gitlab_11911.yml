@@ -1,0 +1,7 @@
+before_script:
+- bash ./ci/gitlab-ci.sh
+- composer install
+image: ubuntu:16.04
+test:app:
+  script:
+  - ./vendor/bin/phpunit

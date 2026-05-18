@@ -1,0 +1,13 @@
+stages:
+- test
+unittest:
+  artifacts:
+    paths:
+    - target/surefire-reports/TEST-*.html
+    reports:
+      junit:
+      - target/surefire-reports/TEST-*.xml
+      - target/failsafe-reports/TEST-*.xml
+  image: maven:3.5-jdk-8
+  script: mvn test
+  stage: test

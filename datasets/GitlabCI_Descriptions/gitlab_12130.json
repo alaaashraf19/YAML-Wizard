@@ -1,0 +1,13 @@
+{
+  "sha": "gitlab_12130",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 92,
+  "description": "Create a GitLab CI pipeline that defines a single job named test:cargo. The job runs in the default test stage on the runner's default Docker image (no explicit image is set). In its script it executes the three shell commands: rustup show, rustup default nightly-2025-01-15, and cargo build. No caches, artifacts, services, or special rules are configured for this job.",
+  "tags": [
+    "rust",
+    "cargo",
+    "rustup",
+    "gitlab-ci"
+  ]
+}

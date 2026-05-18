@@ -1,0 +1,12 @@
+{
+  "sha": "gitlab_09092",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 147,
+  "description": "Create a GitLab CI pipeline that incorporates three local configuration files via include: .gitlab/ci/include/secrets-self-contained.yml, .gitlab/ci/templates.gitlab-ci.yml, and .gitlab/ci/test.gitlab-ci.yml. The pipeline does not define its own jobs, stages, variables, or services, relying entirely on the included files for all CI/CD logic. Ensure the includes are processed in the order listed so that later files can override earlier definitions if needed.",
+  "tags": [
+    "include",
+    "local-include",
+    "gitlab-ci"
+  ]
+}

@@ -1,0 +1,167 @@
+name: Analyzers
+
+on:
+  push:
+    paths:
+      - '.github/workflows/analyzers.yml'
+      - 'CMakeLists.txt'
+      - 'src/**'
+      - 'test/**'
+      - 'modules/**'
+      - '3rdparty/**'
+      - '**.imp'
+  pull_request:
+    paths:
+      - '.github/workflows/analyzers.yml'
+      - 'CMakeLists.txt'
+      - 'src/**'
+      - 'test/**'
+      - 'modules/**'
+      - '3rdparty/**'
+      - '**.imp'
+  release:
+    types: published
+
+jobs:
+  analyze-linux:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        tool: [clang-analyzer, iwyu, CodeQL]
+        config: [Release, Debug]
+
+    permissions:
+      # required for all codeql to report detected outcomes
+      security-events: write
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 1
+        submodules: recursive
+
+    - name: Hack to fix github runner
+      run: |
+        # Hack to deal with https://github.com/actions/runner-images/issues/8659
+        sudo rm -f /etc/apt/sources.list.d/ubuntu-toolchain-r-ubuntu-test-jammy.list
+        sudo apt-get update
+        sudo apt-get install -y --allow-downgrades libc6=2.35-0ubuntu3.4 libc6-dev=2.35-0ubuntu3.4 libstdc++6=12.3.0-1ubuntu1~22.04 libgcc-s1=12.3.0-1ubuntu1~22.04
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt install -y libglfw3-dev libopenal-dev libglvnd-core-dev iwyu clang clang-tidy clang-tools ninja-build
+        # TODO: Really, this should only be fetching the build dependencies, so we can only use the in-tree version
+        sudo apt install -y libsdl2-dev
+
+    - name: Configure
+      run: |
+        cmake -G Ninja -B build -DCMAKE_BUILD_TYPE=${{ matrix.config }}
+
+    # Compile deps before initializing codeql, to avoid unnecessary analysis.
+    # and for iwyu and clang-analayzer, SDL2 apparently generates some code at build time, which breaks the analyzers if we don't compile
+    - name: Compile Dependencies
+      run: |
+        cmake --build build --parallel --config ${{ matrix.config }} --target compile-osp-magnum-deps compile-test-deps
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v2
+      if: ${{ matrix.tool == 'CodeQL' }}
+      with:
+        languages: cpp
+
+    - name: Reconfigure for CodeQL
+      if: ${{ matrix.tool == 'CodeQL' }}
+      run: |
+        cmake -G Ninja -B build -DCMAKE_BUILD_TYPE=${{ matrix.config }}
+
+    - name: Compile for CodeQL
+      if: ${{ matrix.tool == 'CodeQL' }}
+      run: |
+        cmake --build build --parallel --target osp-magnum compile-tests
+
+    # Unlike clang-analyzer and include-what-you-use, CodeQL can't operate on just the config step. Need to actually build everything.
+    - name: Perform CodeQL Analysis
+      if: ${{ matrix.tool == 'CodeQL' }}
+      uses: github/codeql-action/analyze@v2
+      with:
+        upload: false
+        output: sarif-results
+
+    - name: Filter 3rdparty from CodeQL
+      if: ${{ matrix.tool == 'CodeQL' }}
+      uses: advanced-security/filter-sarif@v1
+      with:
+        # filter out all test files unless they contain a sql-injection vulnerability
+        patterns: |
+          -3rdparty/**
+        input: sarif-results/cpp.sarif
+        output: sarif-results/cpp.sarif
+
+    - name: Upload SARIF
+      if: ${{ matrix.tool == 'CodeQL' }}
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: sarif-results/cpp.sarif
+
+    # Implicitly requires build/compile_commands.json to exist
+    - name: Run Clang Analyzer
+      if: ${{ matrix.tool == 'clang-analyzer' }}
+      run: |
+        wget https://raw.githubusercontent.com/llvm/llvm-project/llvmorg-14.0.6/clang-tools-extra/clang-tidy/tool/run-clang-tidy.py
+        chmod +x run-clang-tidy.py
+        ./run-clang-tidy.py -j $(nproc) -p build
+
+    # Implicitly requires build/compile_commands.json to exist
+    - name: Run IWYU
+      if: ${{ matrix.tool == 'iwyu' }}
+      run: |
+        wget https://raw.githubusercontent.com/include-what-you-use/include-what-you-use/clang_14/iwyu_tool.py
+        chmod +x iwyu_tool.py
+        # iwyu_tool.py returns non-zero if any executions returned nonzero. Which... happens to be useless unless the project is already IWYU clean.
+        ./iwyu_tool.py -j $(nproc) -p build -- -Xiwyu --mapping_file=${GITHUB_WORKSPACE}/iwyu-ubuntu.imp || exit 0
+
+  analyze-windows:
+    runs-on: windows-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        tool: [msvc-code-analysis]
+        config: [Release, Debug]
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 1
+        submodules: recursive
+
+    - name: Configure (MSVC)
+      run: |
+        cmake -B build -DCMAKE_CONFIGURATION_TYPES=${{ matrix.config }}
+
+    # Compile deps before initializing codeql, to avoid unnecessary analysis.
+    # and for iwyu and clang-analayzer, SDL2 apparently generates some code at build time, which breaks the analyzers if we don't compile
+    - name: Compile Dependencies
+      run: |
+        cmake --build build --parallel --config ${{ matrix.config }} --target compile-osp-magnum-deps compile-test-deps
+
+    - name: Initialize MSVC Code Analysis
+      uses: microsoft/msvc-code-analysis-action@v0.1.1
+      # Provide a unique ID to access the sarif output path
+      id: run-analysis
+      with:
+        cmakeBuildDirectory: build
+        buildConfiguration: ${{ matrix.config }}
+        # Ruleset file that will determine what checks will be run
+        ruleset: NativeRecommendedRules.ruleset
+        ignoredPaths: 3rdparty
+        ignoredIncludePaths: 3rdparty
+
+      # Upload SARIF file to GitHub Code Scanning Alerts
+    - name: Upload SARIF to GitHub
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: ${{ steps.run-analysis.outputs.sarif }}

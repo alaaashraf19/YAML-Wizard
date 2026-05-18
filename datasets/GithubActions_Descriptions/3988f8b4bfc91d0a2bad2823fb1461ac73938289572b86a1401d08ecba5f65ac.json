@@ -1,0 +1,16 @@
+{
+  "sha": "3988f8b4bfc91d0a2bad2823fb1461ac73938289572b86a1401d08ecba5f65ac",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2547,
+  "description": "Create a scheduled GitHub Actions workflow named Test: chart that runs every Saturday at 16:00. The workflow uses an ubuntu-latest job with a matrix strategy for mode: release. It checks out two repositories, sets up ccache, and runs a series of scripts to install packages, build OMNeT++ and INET, install Python packages, and run chart tests. The workflow also uploads artifacts if tests are run.",
+  "tags": [
+    "ubuntu",
+    "scheduled",
+    "omnetpp",
+    "inet",
+    "chart",
+    "tests",
+    "python"
+  ]
+}

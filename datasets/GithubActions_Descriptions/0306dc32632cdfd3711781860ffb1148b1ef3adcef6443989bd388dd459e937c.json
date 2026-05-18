@@ -1,0 +1,15 @@
+{
+  "sha": "0306dc32632cdfd3711781860ffb1148b1ef3adcef6443989bd388dd459e937c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2846,
+  "description": "Create a GitHub Actions workflow named MacOS/iOS/tvOS build that triggers on push and pull request events. The workflow consists of two jobs: prechecks and build. The prechecks job runs on macos-14, clones DiligentCore and DiligentTools repositories, and performs format validation. The build job depends on prechecks, runs on macos-14 with a matrix strategy for MacOS, iOS, and tvOS platforms and Debug and Release build types, and performs various build and test steps.",
+  "tags": [
+    "macos",
+    "ios",
+    "tvos",
+    "build",
+    "cmake",
+    "tests"
+  ]
+}

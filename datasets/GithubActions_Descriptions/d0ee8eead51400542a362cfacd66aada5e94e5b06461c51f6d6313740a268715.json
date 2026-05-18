@@ -1,0 +1,19 @@
+{
+  "sha": "d0ee8eead51400542a362cfacd66aada5e94e5b06461c51f6d6313740a268715",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 10204,
+  "description": "Create a GitHub Actions workflow named CI: Build Test that runs on push and pull request events, excluding markdown files. The workflow uses a matrix strategy to build and test the project on multiple platforms (Windows, Ubuntu, macOS) with different Qt versions (5.12.7, 5.14.1). For each job, it checks out the code, installs Python 3.7, sets up Qt, downloads and installs Ninja and CMake, and configures and builds the project using CMake and Ninja. The workflow also caches Qt and ccache files to improve performance. Additionally, it uploads build artifacts and creates a release on tag push events.",
+  "tags": [
+    "qt",
+    "cmake",
+    "ninja",
+    "ccache",
+    "github-actions",
+    "ci",
+    "cd",
+    "windows",
+    "ubuntu",
+    "macos"
+  ]
+}

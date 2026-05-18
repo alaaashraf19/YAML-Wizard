@@ -1,0 +1,14 @@
+{
+  "sha": "182d4a1b88b8d55b8fe1dd45392c493f677d58ad1138af6a22879793091c1429",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2145,
+  "description": "Create a GitHub Actions workflow named Cross-Platform CI that runs on every push to the master branch and on pull requests to master. Use a matrix job that runs on macos-latest, windows-latest, and ubuntu-latest. For each OS, check out the repository, prepare the environment, create a build directory, configure and build with CMake, run tests, and generate badges based on the build status. Finally, publish the badges to a gh-pages branch.",
+  "tags": [
+    "cross-platform",
+    "cmake",
+    "github-pages",
+    "badges",
+    "ci"
+  ]
+}

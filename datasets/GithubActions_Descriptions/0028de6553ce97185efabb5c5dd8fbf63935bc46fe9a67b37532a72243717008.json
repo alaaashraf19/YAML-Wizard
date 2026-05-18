@@ -1,0 +1,17 @@
+{
+  "sha": "0028de6553ce97185efabb5c5dd8fbf63935bc46fe9a67b37532a72243717008",
+  "provider": "groq",
+  "model": "llama-3.3-70b-versatile",
+  "yaml_bytes": 1623,
+  "description": "Create a GitHub Actions Continuous Integration workflow that triggers on every push and pull request. It uses a windows-latest job with a build matrix for configurations Release and Debug, and platforms x64 and Win32. The workflow checks out the repository with submodules, sets up msbuild and NuGet.exe, restores the solution, builds it with MSBuild, and conditionally builds documentation and an installer for the Release configuration.",
+  "tags": [
+    "csharp",
+    "windows",
+    "msbuild",
+    "nuget",
+    "ci",
+    "matrix",
+    "documentation",
+    "installer"
+  ]
+}

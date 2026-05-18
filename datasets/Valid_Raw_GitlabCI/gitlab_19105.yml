@@ -1,0 +1,14 @@
+before_script:
+- apt-get update -qq && apt-get install -y -qq libxml2-dev
+- crystal -v
+- shards
+cache:
+  paths:
+  - lib
+image: crystallang/crystal:latest
+minitest:
+  script:
+  - crystal test/spec_test.cr
+spec:
+  script:
+  - crystal spec

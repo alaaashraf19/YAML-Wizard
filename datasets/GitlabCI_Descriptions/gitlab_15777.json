@@ -1,0 +1,14 @@
+{
+  "sha": "gitlab_15777",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 204,
+  "description": "Create a GitLab CI pipeline with no explicit Docker image that runs a before_script to install NVM, source the Bash profile, install the latest Node.js version, activate it, and run npm install. Define a single job named test in the default test stage that executes npm test. The before_script runs the exact commands: wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.30.2/install.sh | bash, source /root/.bashrc, nvm install node, nvm use node, npm install. No caches, artifacts, services, variables, or rules are defined, and the pipeline has no special deployment targets.",
+  "tags": [
+    "node",
+    "npm",
+    "nvm",
+    "gitlab-ci",
+    "test"
+  ]
+}

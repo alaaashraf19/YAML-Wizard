@@ -1,0 +1,14 @@
+{
+  "sha": "ec389f08137f88d926c3daacd69fb98256cd238f24985117e523481b22f93cbd",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2429,
+  "description": "Create a GitHub Actions workflow named Build Brew Packages that can be triggered by a workflow call or a manual dispatch with required ice_version and channel inputs. The workflow checks out the repository, sets up C++, and configures caching for two separate jobs: build-xcfranework-packages and build-brew-packages. The build-xcfranework-packages job builds XCFramework packages on macOS 15, creates zip archives, and uploads them as artifacts. The build-brew-packages job builds Homebrew packages but only runs if the channel input is 'nightly', updating and pushing a nightly tap and uploading artifacts.",
+  "tags": [
+    "brew",
+    "xcframework",
+    "macos",
+    "github-actions",
+    "workflows"
+  ]
+}

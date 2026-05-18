@@ -1,0 +1,16 @@
+{
+  "sha": "gitlab_07584",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 1763,
+  "description": "Create a GitLab CI pipeline with three stages (build, test, deploy), a cache keyed by $CI_BUILD_NAME that stores ~/.m2, and PostgreSQL variables POSTGRES_DB, POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_URL. In the test stage add acceptance-tests, db-migration-test, integration-tests, and unit-tests jobs, each using the clojure:lein-2.7.1 image and a postgres:latest service; acceptance-tests runs `DATABASE_URL=$POSTGRES_URL lein migratus reset` then `DATABASE_URL=$POSTGRES_URL lein acceptance-tests`, db-migration-test runs `DATABASE_URL=$POSTGRES_URL lein migratus migrate` and `DATABASE_URL=$POSTGRES_URL lein migratus reset`, integration-tests runs `DATABASE_URL=$POSTGRES_URL lein migratus reset` then `DATABASE_URL=$POSTGRES_URL lein integration-tests`, and unit-tests runs `lein do clean, unit-tests`. In the build stage add a build-docker-image job using the docker:latest image with the docker:dind service, a before_script `docker info`, and script steps `docker build -t finny/finny-api .`, `docker run -e FINNY_ENV=test -t --rm --name finny-api finny/finny-api lein unit-tests`, and `docker run -t alpine sh -c 'apk add --update curl && curl -XPOST -H \"Content-Type: application/json\" \"https://registry.hub.docker.com/u/finnyapp/finny-api/trigger/$DOCKER_TOKEN/\"'`. In the deploy stage add dev-db-migrate (environment dev) that runs `DATABASE_URL=$DEV_DATABASE_URL lein migratus migrate`, and dev-deploy (environment dev, only on master) that runs `apt-get update -qy`, `apt-get install -y ruby-dev`, `gem install dpl`, and `dpl --provider=heroku --app=finny-api-dev --api-key=$HEROKU_API_KEY`, while the build-docker-image job also pushes the image to Docker Hub via the trigger.",
+  "tags": [
+    "clojure",
+    "lein",
+    "postgres",
+    "docker",
+    "docker-dind",
+    "heroku",
+    "ci-cache"
+  ]
+}

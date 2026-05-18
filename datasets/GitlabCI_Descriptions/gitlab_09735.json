@@ -1,0 +1,15 @@
+{
+  "sha": "gitlab_09735",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 292,
+  "description": "Create a GitLab CI pipeline with two stages: test and build. In the test stage add a test job that uses the python:3.6-alpine3.7 image, runs pip install -r requirements.txt, then pip install flake8, and finally executes flake8, and is tagged with docker. In the build stage add a build job that uses the docker:git image with a docker:dind service, runs sh docker/build.sh, and is also tagged with docker. Use the default image python:3.6-alpine3.7 for jobs unless overridden, and configure no caches, artifacts, or special rules.",
+  "tags": [
+    "python-3.6-alpine",
+    "docker",
+    "docker-dind",
+    "flake8",
+    "pip",
+    "ci"
+  ]
+}

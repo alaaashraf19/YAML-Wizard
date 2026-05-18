@@ -1,0 +1,42 @@
+check:
+  dependencies:
+  - download-zola
+  rules:
+  - if: $CI_COMMIT_REF_NAME == "master"
+    when: never
+  - when: always
+  script:
+  - ./zola check
+  stage: build
+default:
+  image: rust:slim
+download-zola:
+  artifacts:
+    paths:
+    - zola
+  script:
+  - apt-get update && apt-get install -y build-essential libsass1 curl
+  - curl -L https://github.com/getzola/zola/releases/download/$ZOLA_VERSION/zola-$ZOLA_VERSION-x86_64-unknown-linux-gnu.tar.gz
+    > zola.tar.gz
+  - tar -xzf zola.tar.gz
+  stage: prepare
+pages:
+  artifacts:
+    paths:
+    - public
+  dependencies:
+  - download-zola
+  rules:
+  - if: $CI_COMMIT_REF_NAME == "master"
+    when: always
+  - when: never
+  script:
+  - ./zola check
+  - ./zola build
+  stage: build
+stages:
+- prepare
+- build
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+  ZOLA_VERSION: v0.21.0

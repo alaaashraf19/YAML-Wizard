@@ -1,0 +1,16 @@
+{
+  "sha": "c9fa793b22a2b5649e38e3622356cd1619fe67c543f3c70346f4c03df685a0ef",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2816,
+  "description": "Create a GitHub Actions workflow named Linux that runs on pull requests, pushes, and published releases. Use a matrix strategy to build with different compilers (gcc, clang), configurations (Release, Debug), and Ubuntu images (18.04, 20.04, 22.04). For each matrix combination, check out the repository, set up ccache, update the compiler if necessary, install dependencies, configure CMake, compile dependencies and OSP-Magnum, run unit tests, and upload the build artifact.",
+  "tags": [
+    "linux",
+    "ubuntu",
+    "gcc",
+    "clang",
+    "cmake",
+    "ccache",
+    "tests"
+  ]
+}

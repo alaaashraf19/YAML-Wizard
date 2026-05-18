@@ -1,0 +1,49 @@
+.rails_template:
+  before_script: &id001
+  - ruby -v
+  - which ruby
+  - echo $RAILS_ENV
+  - gem install bundler --no-ri --no-rdoc
+  - bundle install --jobs $(nproc) "${FLAGS[@]}"
+  - bundle exec bin/rails yarn:install
+  - bundle exec bin/rails db:mongoid:create_indexes
+  image: unused/rails-system-test
+  services: &id002
+  - mongo:latest
+  variables: &id003
+    MONGO_HOST: mongo
+    RAILS_ENV: test
+brakeman:
+  before_script:
+  - gem install brakeman --no-ri --no-rdoc
+  script: brakeman --exit-on-warn
+  stage: test
+bundle_audit:
+  before_script:
+  - gem install bundle-audit --no-ri --no-rdoc
+  script: bundle-audit check --update
+  stage: test
+cache:
+  untracked: true
+image: ruby:2.4
+rubocop:
+  before_script:
+  - gem install rubocop --no-ri --no-rdoc
+  script: rubocop -D
+  stage: test
+stages:
+- test
+system_test:
+  before_script: *id001
+  image: unused/rails-system-test
+  script: bundle exec bin/rails test:system
+  services: *id002
+  stage: test
+  variables: *id003
+test:
+  before_script: *id001
+  image: unused/rails-system-test
+  script: bundle exec bin/rails test
+  services: *id002
+  stage: test
+  variables: *id003

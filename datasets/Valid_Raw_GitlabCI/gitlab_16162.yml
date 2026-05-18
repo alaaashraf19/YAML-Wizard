@@ -1,0 +1,6 @@
+include:
+- /.gitlab-ci-coverage-runners.yml
+- /.gitlab-ci-main.yml
+variables:
+  SAMBA_CI_AUTOBUILD_ENABLE_COVERAGE: --enable-coverage
+  SAMBA_CI_FLAVOR: coverage

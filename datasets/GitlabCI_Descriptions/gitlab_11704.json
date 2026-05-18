@@ -1,0 +1,17 @@
+{
+  "sha": "gitlab_11704",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "yaml_bytes": 640,
+  "description": "Create a GitLab CI pipeline using the golang:1.7 Docker image and a before_script that sets CURRENT_BUILD_PATH to the working directory and GOPATH to $CURRENT_BUILD_PATH/gopath. Define two stages: prepare and build. In the prepare stage add a job_gopath job that runs go get -u github.com/jarcoal/httpmock and stores the gopath/ directory as an artifact. In the build stage add a job_build:linux job that depends on job_gopath, runs env GOOS=linux GOARCH=386 go build -o build/firefly-go-linux-x86 -i ./firefly/ and saves the build/ directory as an artifact. Also add a job_build:win job that depends on job_gopath, runs env GOOS=windows GOARCH=386 go build -o build/firefly-go-win-x86 -i ./firefly/ and saves the build/ directory as an artifact.",
+  "tags": [
+    "golang",
+    "go-get",
+    "go-build",
+    "linux",
+    "windows",
+    "prepare",
+    "build",
+    "artifacts"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "7c8c805f8a8f1b3b2eb4b83ea6f46a1dd731db20208bd97813ba05de00d3d388",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3722,
+  "description": "Create a GitHub Actions workflow named build that runs on push to the master branch and on pull requests. The workflow has three jobs: linux-wheels-x86-64, mac-wheels-x86-64, and win-wheels. Each job installs Python 3.9, cibuildwheel, and builds wheels for Python 3.7-3.9 using cibuildwheel. The linux and macos jobs use a matrix strategy to build for x86_64 architecture, while the windows job uses the windows-latest environment. Upload the built wheels as artifacts if the workflow is triggered on the master branch.",
+  "tags": [
+    "python",
+    "cibuildwheel",
+    "wheels",
+    "github-actions",
+    "multi-os",
+    "multi-arch"
+  ]
+}

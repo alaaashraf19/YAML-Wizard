@@ -1,0 +1,14 @@
+{
+  "sha": "03fb7f5e3530589c54d93ac578ac2828459a462abed49b42e9737eccf4a933ea",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2059,
+  "description": "Create a GitHub Actions workflow that builds binary wheels for indexed_gzip on multiple platforms and Python versions using cibuildwheel. The workflow should be triggered manually and have three jobs: build_sdist, build_wheels, and publish_to_pypi. The build_sdist job should create a source distribution, build_wheels should build wheels on different platforms, and publish_to_pypi should publish the artifacts to PyPI using a token from secrets.",
+  "tags": [
+    "python",
+    "cibuildwheel",
+    "pypi",
+    "wheels",
+    "multi-platform"
+  ]
+}

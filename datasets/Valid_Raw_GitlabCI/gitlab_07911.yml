@@ -1,0 +1,33 @@
+.cache_bundler:
+  cache: &id002
+    key: $CI_BUILD_REF_NAME
+    paths:
+    - cache/bundler/
+    untracked: true
+.setup_test_env:
+  before_script: &id001
+  - bundle install --path=cache/bundler --without production --jobs $(nproc)  "${FLAGS[@]}"
+before_script:
+- apt-get update -qq && apt-get install -y -qq postgresql postgresql-contrib libpq-dev
+  cmake
+- ruby -v
+- which ruby
+- node -v
+- gem install bundler --no-ri --no-rdoc
+- RAILS_ENV=test bundle install --jobs $(nproc) "${FLAGS[@]}" --path /vendor/bundle
+- cp config/database.yml.gitlab config/database.yml
+- cp config/application.yml.gitlab config/application.yml
+- RAILS_ENV=test bundle exec rake db:create db:schema:load
+image: ruby:2.4
+rspec:
+  before_script: *id001
+  cache: *id002
+  script:
+  - RAILS_ENV=test bundle exec rake test
+services:
+- postgres:latest
+- justinribeiro/chrome-headless:latest
+variables:
+  POSTGRES_DB: test_db
+  POSTGRES_PASSWORD: ''
+  POSTGRES_USER: runner

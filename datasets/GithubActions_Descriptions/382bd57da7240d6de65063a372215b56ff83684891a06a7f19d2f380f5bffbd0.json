@@ -1,0 +1,14 @@
+{
+  "sha": "382bd57da7240d6de65063a372215b56ff83684891a06a7f19d2f380f5bffbd0",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2720,
+  "description": "Create a GitHub Actions workflow named Ubuntu build that runs on every push to master and tags matching v*, and on pull requests. Use a matrix strategy with multiple ubuntu-latest jobs for different Linux distributions and compilers. For each job, install git, check out the repository, install dependencies, build the project, and optionally deploy or upload artifacts. Also, create a continuous release or a tagged release with generated Debian packages.",
+  "tags": [
+    "ubuntu",
+    "matrix",
+    "cross-compilation",
+    "github-release",
+    "debian"
+  ]
+}
