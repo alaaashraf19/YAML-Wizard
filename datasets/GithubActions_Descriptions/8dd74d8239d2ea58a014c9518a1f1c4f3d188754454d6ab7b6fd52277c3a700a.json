@@ -1,0 +1,16 @@
+{
+  "sha": "8dd74d8239d2ea58a014c9518a1f1c4f3d188754454d6ab7b6fd52277c3a700a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 6825,
+  "description": "Create a GitHub Actions workflow on ubuntu-22.04 that runs on every push to master and on pull requests to master. The workflow has five jobs: build_clang_meson, build_gcc_meson, build_gcc_cmake, build_gcc_meson_qt6, and build_gcc_cmake_qt6. Each job checks out the repository, installs necessary dependencies, configures and builds the project using different combinations of compilers (clang, gcc) and build systems (meson, cmake) with or without Qt6, and runs tests.",
+  "tags": [
+    "ubuntu",
+    "gcc",
+    "clang",
+    "meson",
+    "cmake",
+    "qt6",
+    "tests"
+  ]
+}

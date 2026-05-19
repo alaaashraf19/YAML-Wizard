@@ -1,0 +1,15 @@
+{
+  "sha": "90ae93328571cf471bc7fe871a494637ebf795bd505c5f7f11654b3477643989",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1265,
+  "description": "Create a GitHub Actions workflow named tests that runs on push and pull requests to the master-xsdata branch. Use a matrix strategy to test on multiple Python versions (3.7, 3.8, 3.9, 3.10) on ubuntu-latest environments. For each job, check out the code, set up the corresponding Python version, install dependencies with pip, run tests with tox, and upload coverage to Codecov.",
+  "tags": [
+    "python",
+    "tests",
+    "tox",
+    "codecov",
+    "ubuntu",
+    "matrix"
+  ]
+}

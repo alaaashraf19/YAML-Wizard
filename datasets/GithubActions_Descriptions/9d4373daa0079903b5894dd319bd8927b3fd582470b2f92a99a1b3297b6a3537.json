@@ -1,0 +1,15 @@
+{
+  "sha": "9d4373daa0079903b5894dd319bd8927b3fd582470b2f92a99a1b3297b6a3537",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2901,
+  "description": "Create a GitHub Actions workflow named Run tests that runs on every push and pull request. Use a single ubuntu-latest job with a matrix strategy across multiple Python versions. For each version, check out the repository, set up Python, install dependencies, clone the notmuch repository, build and install notmuch bindings, install Python bindings, mock the gpg module, install dependencies, and run tests with unittest.",
+  "tags": [
+    "python",
+    "tests",
+    "ubuntu",
+    "notmuch",
+    "gpg",
+    "matrix"
+  ]
+}

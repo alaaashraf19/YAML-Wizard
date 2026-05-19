@@ -1,0 +1,15 @@
+{
+  "sha": "7ef8b1a9ca7e637a548c3d43b121eba9c91f487994731833d93a85f8c82fea0e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1207,
+  "description": "Create a GitHub Actions workflow named Build source tarball that triggers on release creation and workflow dispatch. In an ubuntu-latest job, check out the repository with full history, install required build dependencies, build a source tarball using a Python script, and upload the tarball as a workflow artifact unless running in an Actions test environment. If the workflow is triggered by a release creation event, also update the release with the new artifact.",
+  "tags": [
+    "ubuntu",
+    "cmake",
+    "sdl2",
+    "tarball",
+    "release",
+    "github-actions"
+  ]
+}

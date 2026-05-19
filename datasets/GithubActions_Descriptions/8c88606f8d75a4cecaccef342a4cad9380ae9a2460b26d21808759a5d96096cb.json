@@ -1,0 +1,14 @@
+{
+  "sha": "8c88606f8d75a4cecaccef342a4cad9380ae9a2460b26d21808759a5d96096cb",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3440,
+  "description": "Create a nightly GitHub Actions workflow that publishes Docker images for multiple Rust versions and platforms. The workflow triggers on push to the master branch, on pull requests to master, and on a daily schedule. It checks out the repository, sets up QEMU, Docker Buildx, and logs in to GHCR and Docker Hub. Then, for each version and platform matrix entry, it generates Docker metadata and builds and pushes the corresponding images.",
+  "tags": [
+    "docker",
+    "rust",
+    "nightly",
+    "github-actions",
+    "multi-platform"
+  ]
+}

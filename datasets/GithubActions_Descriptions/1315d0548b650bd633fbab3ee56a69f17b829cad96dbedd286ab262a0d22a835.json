@@ -1,0 +1,14 @@
+{
+  "sha": "1315d0548b650bd633fbab3ee56a69f17b829cad96dbedd286ab262a0d22a835",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1690,
+  "description": "Create a GitHub Actions workflow named Release that can be triggered manually. Run a single ubuntu-latest job with write permission to repository contents, but only if the workflow is triggered by a specific set of actors. The job checks out the code, sets up Python 3.9, logs into the GitHub CLI, installs dependencies, bumps the version, builds a changelog, builds and validates bundles, uploads to PyPI, and then commits changes and publishes to GitHub.",
+  "tags": [
+    "python",
+    "release",
+    "pypi",
+    "github-actions",
+    "workflow-dispatch"
+  ]
+}

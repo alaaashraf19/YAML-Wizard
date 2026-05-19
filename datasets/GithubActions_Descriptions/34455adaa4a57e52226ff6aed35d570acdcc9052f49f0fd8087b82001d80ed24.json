@@ -1,0 +1,14 @@
+{
+  "sha": "34455adaa4a57e52226ff6aed35d570acdcc9052f49f0fd8087b82001d80ed24",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1620,
+  "description": "Create a GitHub Actions workflow named Test that runs on pull requests and pushes to the main branch. First, check if changes need to be tested based on the diff. If changes are detected, run tests in a matrix of environments with different C++ compilers, including g++, clang++-8, and clang++-10. For each environment, build a test Docker image, run unit tests, execute tests with make check, and check code style.",
+  "tags": [
+    "github-actions",
+    "testing",
+    "docker",
+    "c++",
+    "matrix-testing"
+  ]
+}

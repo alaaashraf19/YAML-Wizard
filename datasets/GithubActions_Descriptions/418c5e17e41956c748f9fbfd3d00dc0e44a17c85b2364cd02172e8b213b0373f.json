@@ -1,0 +1,16 @@
+{
+  "sha": "418c5e17e41956c748f9fbfd3d00dc0e44a17c85b2364cd02172e8b213b0373f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3936,
+  "description": "Create a GitHub Actions workflow named ownCloud CI that runs on every pull request and push to master and 2.7 branches. Use a matrix build job that runs on different operating systems (windows-latest, macos-latest, ubuntu-18.04) with various targets (windows-msvc2017_32-cl, windows-msvc2017_64-cl, macos-64-clang, linux-64-gcc). For each target, check out the source code, clone CraftMaster, craft unshelve, prepare, install dependencies, build, run tests, package, prepare artifacts, and upload artifacts.",
+  "tags": [
+    "owncloud",
+    "craft",
+    "windows",
+    "macos",
+    "linux",
+    "ci",
+    "github-actions"
+  ]
+}

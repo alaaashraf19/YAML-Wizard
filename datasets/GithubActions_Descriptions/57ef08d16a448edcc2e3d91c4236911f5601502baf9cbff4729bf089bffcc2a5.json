@@ -1,0 +1,14 @@
+{
+  "sha": "57ef08d16a448edcc2e3d91c4236911f5601502baf9cbff4729bf089bffcc2a5",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1325,
+  "description": "Create a GitHub Actions workflow named Deploy docker that triggers on push. In an ubuntu-latest job, check out the repository with full history, log in to GitHub Container Registry, set up Docker Buildx, build and push images to ghcr.io with dev and latest tags, log in to Azure using credentials from secrets, and deploy the latest image to an Azure Container App named webrtcstreamer in resource group deploy on port 8000.",
+  "tags": [
+    "docker",
+    "github-container-registry",
+    "azure",
+    "container-app",
+    "deploy"
+  ]
+}

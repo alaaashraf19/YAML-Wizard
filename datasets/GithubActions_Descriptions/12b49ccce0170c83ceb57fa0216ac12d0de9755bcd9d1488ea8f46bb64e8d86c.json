@@ -1,0 +1,15 @@
+{
+  "sha": "12b49ccce0170c83ceb57fa0216ac12d0de9755bcd9d1488ea8f46bb64e8d86c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1088,
+  "description": "Create a GitHub Actions workflow named check that runs when the build workflow is completed. Use a single ubuntu-latest job that checks the workflow run status, checks out the repository, updates submodules, installs pip and tool dependencies, downloads and decrypts an executable, downloads artifacts from the build workflow, and runs a Python script to check matchings.",
+  "tags": [
+    "ubuntu",
+    "pip",
+    "gpg",
+    "artifacts",
+    "decryption",
+    "github-actions"
+  ]
+}

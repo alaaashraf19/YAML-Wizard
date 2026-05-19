@@ -1,0 +1,14 @@
+{
+  "sha": "b7ce53f3b2be005c117b577e8751f37b0120a70b71089b64c4e42ee94e1818a7",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5057,
+  "description": "Create a GitHub Actions workflow named Build Notepad Next that runs on push to master and tags, and on pull requests. The workflow uses a matrix strategy to build the project on ubuntu-20.04, windows-latest, and macos-latest with different Qt versions and modules. It checks out the repository, installs Qt, and then runs QMake and compilation steps specific to each OS. The workflow also creates a draft GitHub release and uploads the build artifacts to it.",
+  "tags": [
+    "qt",
+    "notepad-next",
+    "github-release",
+    "multi-os",
+    "matrix-build"
+  ]
+}

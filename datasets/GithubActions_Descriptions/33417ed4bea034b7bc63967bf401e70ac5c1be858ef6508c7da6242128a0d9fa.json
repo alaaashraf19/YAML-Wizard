@@ -1,0 +1,14 @@
+{
+  "sha": "33417ed4bea034b7bc63967bf401e70ac5c1be858ef6508c7da6242128a0d9fa",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2513,
+  "description": "Create a GitHub Actions workflow named ci that triggers on workflow dispatch, push, and pull requests. The workflow has two jobs: build_gcc on ubuntu-22.04 and formatting-check on ubuntu-latest. The build_gcc job checks out the repository, installs system and Python libraries, and builds several C++ projects including FunctionalPlus, Eigen, json, and doctest. It then builds and tests a C++ project with unit tests and stateful tests. The formatting-check job checks out the repository and uses the clang-format-lint-action to verify code formatting.",
+  "tags": [
+    "cpp",
+    "ubuntu",
+    "clang",
+    "tests",
+    "formatting"
+  ]
+}

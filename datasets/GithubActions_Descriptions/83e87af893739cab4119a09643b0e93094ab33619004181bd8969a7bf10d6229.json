@@ -1,0 +1,15 @@
+{
+  "sha": "83e87af893739cab4119a09643b0e93094ab33619004181bd8969a7bf10d6229",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1230,
+  "description": "Create a GitHub Actions workflow named Test that runs on push to the master branch, on pull requests, and on workflow dispatch. Use an ubuntu-latest job with a matrix strategy to test multiple Python versions (3.7, 3.8, 3.9, 3.10). For each version, check out the code, set up Python, install dependencies, run mypy, and execute tests with unittest, including a wrapper test and a comprehensive test with failure analysis.",
+  "tags": [
+    "python",
+    "tests",
+    "mypy",
+    "unittest",
+    "matrix",
+    "ubuntu"
+  ]
+}

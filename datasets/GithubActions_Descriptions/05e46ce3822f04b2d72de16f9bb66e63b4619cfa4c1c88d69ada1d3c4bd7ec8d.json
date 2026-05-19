@@ -1,0 +1,14 @@
+{
+  "sha": "05e46ce3822f04b2d72de16f9bb66e63b4619cfa4c1c88d69ada1d3c4bd7ec8d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1596,
+  "description": "Create a GitHub Actions workflow named wasm that runs on push to the master branch, on pull requests to master, and on workflow dispatch. In an ubuntu-latest job, check out the code, set up Emscripten, verify the setup, install PlatformIO, build the project with Emscripten, scan for wasm/js/html artifacts, prepare artifacts for upload, and generate a timestamp and random hex. Then, upload the wasm artifacts with a uniquely generated name based on timestamp, SHA, and random hex.",
+  "tags": [
+    "wasm",
+    "emsdk",
+    "platformio",
+    "github-actions",
+    "artifacts"
+  ]
+}

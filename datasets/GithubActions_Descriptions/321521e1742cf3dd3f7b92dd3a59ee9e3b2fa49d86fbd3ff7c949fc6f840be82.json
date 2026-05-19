@@ -1,0 +1,18 @@
+{
+  "sha": "321521e1742cf3dd3f7b92dd3a59ee9e3b2fa49d86fbd3ff7c949fc6f840be82",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2380,
+  "description": "Create a GitHub Actions workflow that runs on push and pull request events for the main and vnext branches, as well as on page build and release created events. The workflow consists of two jobs: test and docs. The test job runs on a matrix of ubuntu-latest, macos-latest, and windows-latest with Python 3.7, 3.8, and 3.9, setting up Miniconda, installing the package and its dependencies, running tests with pytest, and uploading coverage to Codecov. The docs job runs on ubuntu-latest, setting up Miniconda, installing the package and its documentation dependencies, building the documentation with Sphinx, and uploading the HTML output as an artifact.",
+  "tags": [
+    "python",
+    "miniconda",
+    "pytest",
+    "sphinx",
+    "codecov",
+    "github-actions",
+    "ubuntu",
+    "macos",
+    "windows"
+  ]
+}

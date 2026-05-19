@@ -1,0 +1,15 @@
+{
+  "sha": "912377fd45dad1d66efe3b588ef3d52d03595f5f3f4c3fb65eab4401ef50a5f7",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5966,
+  "description": "Create a GitHub Actions workflow named CI that runs on push and pull request events for ros2-development and ros2-master branches. The workflow should have read-all permissions and a single job called build that runs on a matrix of ROS distributions and operating systems. The job should set up a ROS2 workspace, check copyright and line-endings, build ROS2, checkout the librealsense repository, build the RealSense SDK and ROS2 wrapper from source, install required packages, and run tests.",
+  "tags": [
+    "ros2",
+    "ci",
+    "ubuntu",
+    "tests",
+    "intel",
+    "realsense"
+  ]
+}

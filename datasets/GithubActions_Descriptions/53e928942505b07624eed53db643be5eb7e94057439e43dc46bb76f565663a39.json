@@ -1,0 +1,15 @@
+{
+  "sha": "53e928942505b07624eed53db643be5eb7e94057439e43dc46bb76f565663a39",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 6713,
+  "description": "Create a GitHub Actions workflow named Windows CI that runs on push, pull request, and workflow dispatch events. The workflow has two jobs, msvc-qmake-build and msvc-cmake-build, both running on windows-2022. Each job uses a matrix strategy to test with Qt 6.9.1 and Visual Studio 2022. The jobs install Qt, build a project using qmake or cmake, and upload the resulting package as an artifact.",
+  "tags": [
+    "windows",
+    "ci",
+    "qt",
+    "visual-studio",
+    "qmake",
+    "cmake"
+  ]
+}

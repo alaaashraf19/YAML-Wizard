@@ -1,0 +1,14 @@
+{
+  "sha": "806315e9245a884563da7edd56c5d1380305cd6fbbc602e5bfa6a285f7708f54",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 675,
+  "description": "Create a GitHub Actions workflow named Ubuntu CI that runs on every push and pull request. Use a single ubuntu-24.04 job that checks out the repository, installs build dependencies including cmake and qt6 tools, builds the project with cmake and make, creates a debian package with cpack, attempts to install the package, and uploads the resulting debian package as an artifact.",
+  "tags": [
+    "ubuntu",
+    "cmake",
+    "qt6",
+    "deb-package",
+    "ci"
+  ]
+}

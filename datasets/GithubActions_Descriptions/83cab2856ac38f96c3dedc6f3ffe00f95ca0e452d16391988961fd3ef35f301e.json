@@ -1,0 +1,14 @@
+{
+  "sha": "83cab2856ac38f96c3dedc6f3ffe00f95ca0e452d16391988961fd3ef35f301e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2160,
+  "description": "Create a nightly GitHub Actions workflow named 'Nightly Cirq compatibility test' that tests code against the latest Cirq dev release. The workflow should run on a schedule and be manually dispatchable with a debug option. Use an ubuntu-24.04 job with read-all permissions that checks out the repository, sets up Python 3.12 with pip caching, installs the latest Cirq dev version and qsim dev requirements, and runs Python tests with optional debugging.",
+  "tags": [
+    "python",
+    "cirq",
+    "tests",
+    "nightly",
+    "ubuntu"
+  ]
+}

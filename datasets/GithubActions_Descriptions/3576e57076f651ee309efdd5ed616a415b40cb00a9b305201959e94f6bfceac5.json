@@ -1,0 +1,14 @@
+{
+  "sha": "3576e57076f651ee309efdd5ed616a415b40cb00a9b305201959e94f6bfceac5",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4702,
+  "description": "Create a GitHub Actions workflow named Dev with concurrency group dev. Trigger on push to master and release/* branches, and on pull requests to those branches. The workflow has three jobs: build, test, and publish. The build job runs on ubuntu-latest, checks out the code, sets up QEMU and Docker Buildx, builds a Docker image with a custom version, and caches the image. The test job depends on build, loads the image, runs tests with Docker Compose, and dumps Docker logs on failure. The publish job depends on test, logs in to Docker Hub, loads the image, renames tags, and pushes them to Docker Hub.",
+  "tags": [
+    "docker",
+    "github-actions",
+    "ubuntu",
+    "tests",
+    "publish"
+  ]
+}

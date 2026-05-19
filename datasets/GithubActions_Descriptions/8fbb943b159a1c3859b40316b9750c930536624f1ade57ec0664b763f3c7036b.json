@@ -1,0 +1,14 @@
+{
+  "sha": "8fbb943b159a1c3859b40316b9750c930536624f1ade57ec0664b763f3c7036b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1164,
+  "description": "Create a GitHub Actions workflow named CI build check that runs on every push to main and dev branches and on pull requests to these branches. Use a single ubuntu-latest job that checks out the repository, installs .NET 5 SDK, enables problem matchers, builds the code with dotnet build, runs tests with code coverage using dotnet test, and publishes the coverage report to coveralls.io.",
+  "tags": [
+    "dotnet",
+    "ci",
+    "tests",
+    "code-coverage",
+    "coveralls"
+  ]
+}

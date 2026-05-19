@@ -1,0 +1,14 @@
+{
+  "sha": "78fbc096204b222cfcc6b72b3e75192c3a5fc1c9267bb34491a24d6306d93e3a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3328,
+  "description": "Create a GitHub Actions workflow for integration tests that runs on merge groups and when pull requests are opened or reopened. The workflow should have four jobs: compile firmware, formatting check, cppcheck, and remote testing. Each job should run on an ubuntu environment, check out the code, and perform specific tasks such as building and uploading firmware, checking code formatting, running cppcheck, and testing remotely with PlatformIO.",
+  "tags": [
+    "integration-tests",
+    "platformio",
+    "cppcheck",
+    "clang-format",
+    "ubuntu"
+  ]
+}

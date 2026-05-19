@@ -1,0 +1,16 @@
+{
+  "sha": "23f84ce9352084c3439474afc3d60dff5fbfb3fa8d4268926c7bc974a27a785c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2081,
+  "description": "Create a GitHub Actions workflow named On PRs - Linux - Static Analysis that runs on pull requests and workflow dispatches, ignoring changes to markdown files. Use an ubuntu-22.04 job to perform static analysis with PVS-Studio, Conan, and CMake. Install dependencies, configure Conan, run Conan, configure CMake, and perform static analysis. Upload the analysis report as an artifact named static_analysis with a 7-day retention.",
+  "tags": [
+    "linux",
+    "static-analysis",
+    "pvs-studio",
+    "conan",
+    "cmake",
+    "ubuntu",
+    "gcc"
+  ]
+}

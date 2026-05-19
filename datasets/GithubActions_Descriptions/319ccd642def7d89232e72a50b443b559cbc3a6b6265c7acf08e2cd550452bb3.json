@@ -1,0 +1,16 @@
+{
+  "sha": "319ccd642def7d89232e72a50b443b559cbc3a6b6265c7acf08e2cd550452bb3",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 6495,
+  "description": "Create a GitHub Actions workflow named MetaGraph CI that runs on every push. Use a Linux job with a matrix strategy to test different build configurations, including various compilers, build types, and alphabet types. For each configuration, check out the repository, install dependencies, build and test the project. Additionally, create a MacOS job to test on macOS-latest with a smaller matrix of configurations. Finally, create a Release job that triggers on tag creation, downloads the static Linux binary, and creates a release with source archives and binaries.",
+  "tags": [
+    "ci",
+    "linux",
+    "macos",
+    "cmake",
+    "make",
+    "testing",
+    "release"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "65c355754021733101f7577d711a0347724b5824ac268dd933c43874ef7cbc3b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1635,
+  "description": "Create a GitHub Actions workflow named test-p4c-fedora that runs on push to main, pull requests to main, and merge groups to main. Use a single ubuntu-latest job with a Fedora container that builds and tests p4c. The job should install git, checkout the repository with submodules, install dependencies, use ccache, build p4c with a specific configuration, and run tests while avoiding certain test suites.",
+  "tags": [
+    "fedora",
+    "linux",
+    "p4c",
+    "tests",
+    "docker",
+    "ubuntu"
+  ]
+}

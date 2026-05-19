@@ -1,0 +1,14 @@
+{
+  "sha": "0106bb01be3f66eb001141db4ed1ced343148581c5162c0e7aa5e08298c04292",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1442,
+  "description": "Create a GitHub Actions workflow named Publish that triggers on release creation. Run an ubuntu-latest job in the ci environment that checks out the repository with full history, verifies the GitHub reference points to a properly named tag, builds the package with make build-package, installs the packagecloud CLI, and publishes .deb and Docker images to packagecloud and Docker Hub respectively.",
+  "tags": [
+    "github-release",
+    "packagecloud",
+    "docker-hub",
+    "ubuntu",
+    "make"
+  ]
+}

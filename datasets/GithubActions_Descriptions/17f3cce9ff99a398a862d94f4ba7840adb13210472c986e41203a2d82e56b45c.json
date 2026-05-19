@@ -1,0 +1,14 @@
+{
+  "sha": "17f3cce9ff99a398a862d94f4ba7840adb13210472c986e41203a2d82e56b45c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1663,
+  "description": "Create a GitHub Actions workflow named Tests - E2E that runs on workflow dispatch, push to master (excluding tags starting with v), and pull requests to master. Run a matrix job with a single ubuntu-20.04 environment, setting various environment variables. The job checks out the code, sets up environment variables using a script, and then runs a series of tests in a single step by sourcing multiple scripts.",
+  "tags": [
+    "e2e-tests",
+    "ubuntu",
+    "python",
+    "matrix-job",
+    "github-actions"
+  ]
+}

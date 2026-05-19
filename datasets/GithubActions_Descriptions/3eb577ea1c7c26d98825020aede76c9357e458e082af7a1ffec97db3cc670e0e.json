@@ -1,0 +1,16 @@
+{
+  "sha": "3eb577ea1c7c26d98825020aede76c9357e458e082af7a1ffec97db3cc670e0e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2875,
+  "description": "Create a GitHub Actions workflow named Tests that runs on push and pull request events. The workflow has three jobs: unit-test, run-coverage, and upload-coverage. The unit-test job runs on a matrix of Python versions and operating systems, installing dependencies and running tests with tox. The run-coverage job runs on a matrix of Python 3.10 and operating systems, installing dependencies, running tests with tox, and generating a coverage report. The upload-coverage job depends on run-coverage, downloads the coverage artifact, combines the reports, and uploads the coverage to Coveralls.",
+  "tags": [
+    "python",
+    "tests",
+    "coverage",
+    "tox",
+    "github-actions",
+    "matrix",
+    "ci"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "3d5fac17277992c9d00870acd86788584d84407b0550697b5323c49044df8953",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 607,
+  "description": "Create a GitHub Actions workflow named update-flake-lock that updates the flake.lock file. The workflow should trigger on manual dispatch, on a monthly schedule, and on push events to the flake.nix file. It should run on an ubuntu-latest job, but only for the Alexays/Waybar repository. The job should check out the repository, install Nix with a GitHub access token, and update the flake.lock file using the update-flake-lock action.",
+  "tags": [
+    "nix",
+    "flake",
+    "github",
+    "schedule",
+    "workflow-dispatch"
+  ]
+}

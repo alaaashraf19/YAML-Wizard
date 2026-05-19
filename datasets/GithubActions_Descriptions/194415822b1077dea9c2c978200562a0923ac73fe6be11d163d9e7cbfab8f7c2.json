@@ -1,0 +1,17 @@
+{
+  "sha": "194415822b1077dea9c2c978200562a0923ac73fe6be11d163d9e7cbfab8f7c2",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 15923,
+  "description": "Create a GitHub Actions workflow named Ansible EE Image that prepares an Ansible EE image for a release or a branch. The workflow can be triggered by a workflow call with release and release tag inputs, or by a workflow dispatch with a release input. It checks out the code, determines the tag or branch, and prepares the EE image accordingly. The workflow then builds and publishes the EE image for AWX and RedHat using Docker Buildx and pushes it to GHCR.",
+  "tags": [
+    "ansible",
+    "ee",
+    "image",
+    "release",
+    "workflow-call",
+    "workflow-dispatch",
+    "docker",
+    "ghcr"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "723e8afd1638fca6679950e7a369192fcaab4ac1bbb6ef7fa1347be01719e249",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 855,
+  "description": "Create a GitHub Actions workflow named wasm compilers that runs on every push to the master branch. Use a single windows-latest job that checks out the repository, checks for changes compared to the remote master branch, installs UV with pip, builds the WASM compiler using ./wasm --build_wasm_compiler, and uploads the resulting artifacts to a GitHub release.",
+  "tags": [
+    "wasm",
+    "windows",
+    "github-release",
+    "pip",
+    "build"
+  ]
+}

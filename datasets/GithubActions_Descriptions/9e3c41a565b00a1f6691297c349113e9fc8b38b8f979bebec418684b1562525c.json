@@ -1,0 +1,15 @@
+{
+  "sha": "9e3c41a565b00a1f6691297c349113e9fc8b38b8f979bebec418684b1562525c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1726,
+  "description": "Create a GitHub Actions workflow named macOS that runs on push to all branches except those in docs/ or ChangeLog*, and on pull requests to those same branches. The workflow should also trigger on specific version tags. Use a matrix job that runs on macOS with multiple Python versions, checking out the repository, setting up Python, installing dependencies, building wheel and sdist, archiving them, and publishing to PyPI under certain conditions.",
+  "tags": [
+    "python",
+    "macos",
+    "pypi",
+    "twine",
+    "matrix",
+    "workflows"
+  ]
+}

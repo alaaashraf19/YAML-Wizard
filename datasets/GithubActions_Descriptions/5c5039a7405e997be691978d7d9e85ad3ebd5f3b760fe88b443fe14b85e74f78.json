@@ -1,0 +1,14 @@
+{
+  "sha": "5c5039a7405e997be691978d7d9e85ad3ebd5f3b760fe88b443fe14b85e74f78",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 6657,
+  "description": "Create a GitHub Actions workflow named Build_Check that runs on push events. The workflow should build and package OpenHantek on multiple operating systems (Ubuntu, macOS, Windows) using a matrix strategy. For each OS, checkout the code, configure Git, install build requirements, build the project, and upload the resulting artifacts. If the workflow is triggered by a tag, create a release with the uploaded artifacts.",
+  "tags": [
+    "github-actions",
+    "cross-platform",
+    "build",
+    "package",
+    "release"
+  ]
+}

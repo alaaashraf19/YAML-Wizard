@@ -1,0 +1,14 @@
+{
+  "sha": "350d84dac555ebb310c652455d67c5c02e7a65a75efa8e068bfe0e31f90f304c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4046,
+  "description": "Create a GitHub Actions workflow that cross-compiles and tests the fprime-community/fprime-workshop-led-blinker repository on AArch64 Linux. The workflow should trigger on push and pull request events to devel and release branches, and cancel in-progress runs if a newer run is started. It should use a reusable workflow to get the target branch, cross-compile the code, and run integration tests on a self-hosted AArch64 Linux environment.",
+  "tags": [
+    "cross-compilation",
+    "aarch64-linux",
+    "fprime",
+    "integration-tests",
+    "github-actions"
+  ]
+}

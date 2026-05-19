@@ -1,0 +1,17 @@
+{
+  "sha": "97f76c4381f2606138dc2aba512519bea63244b5a9bf8b9f9f0ced32c8e854e4",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3295,
+  "description": "Create a GitHub Actions workflow named Windows Builds that runs on push to master and github_actions branches and on pull requests to master. Use a matrix strategy to run two windows-latest jobs, one for Editor build and one for Release build, each with different configuration. For each job, clone the Godot repository and a module, load and upload the .scons_cache directory, set up Python 3.x, install scons and pywin32, compile the project with scons, and upload the resulting executable as an artifact.",
+  "tags": [
+    "windows",
+    "godot",
+    "scons",
+    "python",
+    "actions",
+    "cache",
+    "ci",
+    "builds"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "0f80f345fd0bfd05f5f559ab5420ed2a0c7981b7e1b02734591ba3bc7ee44b7e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1318,
+  "description": "Create a GitHub Actions workflow named Run Tests that runs on every push. Use a matrix job on ubuntu-latest to test with Python versions 3.8 through 3.12. For each version, check out the code, set up Python, install dependencies including ghostscript and imagemagick, run make test-ref, test with tox, generate a coverage report, and upload it to Coveralls using the COVERALLS_REPO_TOKEN from secrets.",
+  "tags": [
+    "python",
+    "tests",
+    "ubuntu",
+    "tox",
+    "coverage",
+    "coveralls"
+  ]
+}

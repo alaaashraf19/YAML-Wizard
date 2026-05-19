@@ -1,0 +1,15 @@
+{
+  "sha": "9b25cf5bb617c8ed5d8b317d36b27c4f3248f1a4b4353e4c2207c96cf8cef423",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3386,
+  "description": "Create a GitHub Actions CI workflow for Windows using Conda. The workflow triggers on push and pull request events, ignoring certain paths. It runs a build job with a matrix strategy for different compilers on Windows, and a separate check job on Ubuntu. The build job checks out the repository, sets up caching, installs Miniconda, and builds and tests a project using CMake and Ninja. The check job verifies the success of the build job.",
+  "tags": [
+    "windows",
+    "conda",
+    "cmake",
+    "ninja",
+    "ci",
+    "github-actions"
+  ]
+}

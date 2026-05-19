@@ -1,0 +1,16 @@
+{
+  "sha": "87b63b57686457a6beb5990fad0175f0633f34f20bcb455d43bd8a8351275deb",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1748,
+  "description": "Create a GitHub Actions workflow named CI Build that runs on push and pull request events. Use a matrix job strategy to build on multiple operating systems (ubuntu-18.04, ubuntu-20.04) and compilers (gcc, clang). For each job, check out the code, conditionally enable coverage if using clang, install dependencies, build and test libopenshot, and optionally upload coverage data to Codecov if using clang.",
+  "tags": [
+    "ci",
+    "ubuntu",
+    "gcc",
+    "clang",
+    "codecov",
+    "cmake",
+    "tests"
+  ]
+}

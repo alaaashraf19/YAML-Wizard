@@ -1,0 +1,15 @@
+{
+  "sha": "292d140ab79ffc5a97ca1eeba26862b37001928d192b69b8756e5b12a8f3a7f6",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2351,
+  "description": "Create a GitHub Actions workflow named ci that runs on push to the master branch and on pull requests to the master branch. Use a matrix strategy to run a job on different operating systems (ubuntu-20.04 and macos-latest) with various targets and compilers (gcc and clang). The job checks out the repository, sets up caching for ccache, runs a setup script, and then builds the project using a Python script.",
+  "tags": [
+    "ci",
+    "matrix",
+    "ubuntu",
+    "macos",
+    "gcc",
+    "clang"
+  ]
+}

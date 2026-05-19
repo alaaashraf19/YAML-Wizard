@@ -1,0 +1,15 @@
+{
+  "sha": "84e6ffb0bebd6e558bcc19a65a2c770309208fc70340f2e5c49f299187a1ed65",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 7334,
+  "description": "Create a GitHub Actions workflow named Build TWiLight Menu++ Nightly that builds TWiLightMenu++ on pushes to any branch and on pull requests to any branch, excluding README.md and .github/ISSUE_TEMPLATE/* paths. Use an ubuntu-latest job with a devkitARM container that checks out the repository, installs tools, sets up the environment, gets manual pages, builds TWiLightMenu++, creates booter and TWiLightMenu CIAs, packs 7z packages for nightly, and publishes the build to GitHub Actions. Also, send success or failure webhooks to a Discord channel.",
+  "tags": [
+    "twilight-menu",
+    "ghactions",
+    "ubuntu",
+    "docker",
+    "devkitarm",
+    "discord-webhooks"
+  ]
+}

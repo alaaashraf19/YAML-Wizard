@@ -1,0 +1,14 @@
+{
+  "sha": "12c5e8e63b56f976933340b16f9b3f052825d998741441342d145316c06f3c7b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 928,
+  "description": "Create a GitHub Actions workflow named Test that runs on push and pull request events to the dev branch. Use an ubuntu-latest job with a matrix strategy to test against Python 3.8, 3.9, and 3.10. Check out the repository, set up a netrc file for Earthdata credentials, create a Micromamba environment with ARIA-tools, and then run a test script within that environment using the TOPOAPI key from secrets.",
+  "tags": [
+    "python",
+    "tests",
+    "github-actions",
+    "micromamba",
+    "conda"
+  ]
+}

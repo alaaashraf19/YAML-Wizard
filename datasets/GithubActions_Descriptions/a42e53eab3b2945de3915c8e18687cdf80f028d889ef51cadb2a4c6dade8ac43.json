@@ -1,0 +1,19 @@
+{
+  "sha": "a42e53eab3b2945de3915c8e18687cdf80f028d889ef51cadb2a4c6dade8ac43",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5571,
+  "description": "Create a GitHub Actions workflow named Build that runs on push and pull request events. Use a matrix strategy to run a build job on windows-latest, ubuntu-latest, and macos-latest, each with a different compiler and configuration. For each job, check out the repository, install dependencies with vcpkg or package managers, configure the build with CMake, and then build the project.",
+  "tags": [
+    "cmake",
+    "vcpkg",
+    "gcc",
+    "clang",
+    "msvc",
+    "windows",
+    "ubuntu",
+    "macos",
+    "matrix",
+    "build"
+  ]
+}

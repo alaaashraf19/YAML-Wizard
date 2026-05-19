@@ -1,0 +1,16 @@
+{
+  "sha": "109f3920a0a3d10d821cb94d40da2fcbc9c4b4c0ee4300dbf4a13bbf3ce76237",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1318,
+  "description": "Create a GitHub Actions workflow named Build Configurator that runs on push to master and development branches, on pull requests to those branches, and allows manual triggering. The workflow has a matrix job that builds on windows-latest with Python 3.8 and 3.12, and on macos-latest with Python 3.11. For each job, check out the repository, run a custom build-pyinstaller action with the specified Python version, and upload the resulting artifact.",
+  "tags": [
+    "python",
+    "windows",
+    "macos",
+    "build",
+    "configurator",
+    "matrix",
+    "github-actions"
+  ]
+}

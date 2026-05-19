@@ -1,0 +1,14 @@
+{
+  "sha": "12a64fada6301b606e8e48f0edbf39a1acac7476c0a42c51c6b1a3dcf23c1e6b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2590,
+  "description": "Create a GitHub Actions workflow named ci that runs on push to the master branch and on pull requests to master. Use a windows-latest job to check out the repository, set up VCPKG with a specific hash and triplet, cache VCPKG dependencies, install dependencies if the cache misses, configure a CMake build with specific options, and then build and test the project using CTest.",
+  "tags": [
+    "windows",
+    "cmake",
+    "vcpkg",
+    "ci",
+    "testing"
+  ]
+}

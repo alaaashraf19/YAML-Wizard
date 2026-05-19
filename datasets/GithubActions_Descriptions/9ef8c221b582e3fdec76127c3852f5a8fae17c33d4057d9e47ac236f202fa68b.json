@@ -1,0 +1,15 @@
+{
+  "sha": "9ef8c221b582e3fdec76127c3852f5a8fae17c33d4057d9e47ac236f202fa68b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2089,
+  "description": "Create a GitHub Actions workflow named Test: validation that runs weekly on Saturdays at 16:00 and can be manually triggered. The workflow uses an ubuntu-latest job with a matrix strategy for mode: release, checking out two repositories, setting up ccache, and then installing a wide range of packages and Python dependencies. It then builds and tests OMNeT++ and INET using specific scripts, and runs validation tests for the release mode.",
+  "tags": [
+    "validation",
+    "test",
+    "omnetpp",
+    "ubuntu",
+    "scheduled",
+    "workflow-dispatch"
+  ]
+}

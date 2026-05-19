@@ -1,0 +1,15 @@
+{
+  "sha": "43b3c1fec1adda9b32f5f0e221559bd3a4d2671dfe0074632da9a08ae19534d0",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1245,
+  "description": "Create a GitHub Actions workflow named CI that runs on every push and pull request. Use two ubuntu-latest jobs: one for building and testing with multiple Python versions (3.8 to 3.12-dev) and another for typing checks with Python 3.11. In the build job, check out the code, set up Python, install packages, and run tests with coverage. In the typing job, check out the code, set up Python 3.11, install dependencies, and run mypy on the metar package.",
+  "tags": [
+    "python",
+    "ci",
+    "tests",
+    "ubuntu",
+    "typing",
+    "mypy"
+  ]
+}

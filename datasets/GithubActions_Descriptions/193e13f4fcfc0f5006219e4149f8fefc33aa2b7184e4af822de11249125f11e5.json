@@ -1,0 +1,18 @@
+{
+  "sha": "193e13f4fcfc0f5006219e4149f8fefc33aa2b7184e4af822de11249125f11e5",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4824,
+  "description": "Create a GitHub Actions workflow named Continuous Integration that runs on push to master branch and tags, pull requests to master, and workflow dispatch events. The workflow has two jobs: build and cppcheck. The build job runs on a matrix of Linux, macOS, and Windows environments with different compilers and shells, installing dependencies, checking out code, configuring and building with CMake, and optionally testing and uploading artifacts. The cppcheck job runs on ubuntu-24.04, installing dependencies, checking out code, configuring with CMake, and running cppcheck.",
+  "tags": [
+    "ci",
+    "cmake",
+    "cppcheck",
+    "cross-platform",
+    "linux",
+    "macos",
+    "msys2",
+    "ubuntu",
+    "windows"
+  ]
+}

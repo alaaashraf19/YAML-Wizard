@@ -1,0 +1,14 @@
+{
+  "sha": "ab9580d05568ba2767abfe8529554049a47e5b8e43d9a25f4a7bac37a796636e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2235,
+  "description": "Create a GitHub Actions workflow named Build that runs on push and pull request events. Use a single ubuntu-22.04 job with a matrix strategy for Python 3.10 on ubuntu-22.04. The job should check out the repository, set up Python, install dependencies, libemu, Tox, and Thug configuration, setup environment and ElasticSearch, test Thug with Tox, and upload the coverage report to Codecov using a CODECOV_TOKEN from secrets.",
+  "tags": [
+    "python",
+    "ubuntu",
+    "tests",
+    "elasticsearch",
+    "codecov"
+  ]
+}

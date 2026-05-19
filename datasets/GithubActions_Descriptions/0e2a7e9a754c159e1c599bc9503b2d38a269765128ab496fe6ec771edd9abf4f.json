@@ -1,0 +1,16 @@
+{
+  "sha": "0e2a7e9a754c159e1c599bc9503b2d38a269765128ab496fe6ec771edd9abf4f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 9283,
+  "description": "Create a GitHub Actions workflow named Build that runs on push to all branches except dependabot/*, on pull requests, and on workflow dispatch. The workflow has three jobs: windows, cmake, and bsd. The windows job runs on windows-latest, checks out the repository, sets up MSBuild and NuGet, restores NuGet packages, builds the project with MSBuild, prepares artifacts, and uploads them. The cmake job runs on various platforms (Ubuntu, Alpine, Fedora, macOS) with different configurations, installs dependencies, checks out the repository, runs CMake, builds the project, and uploads artifacts. The bsd job runs on ubuntu-latest, sets up a BSD environment, installs dependencies, checks out the repository, runs CMake, and builds the project.",
+  "tags": [
+    "github-actions",
+    "windows",
+    "cmake",
+    "bsd",
+    "cross-platform",
+    "msbuild",
+    "nuget"
+  ]
+}

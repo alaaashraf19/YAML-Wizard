@@ -1,0 +1,15 @@
+{
+  "sha": "535641963cd7e65267fa09743889005fc820b7b609adbd0b2eb8932f35f54bb1",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2933,
+  "description": "Create a GitHub Actions workflow named rust checks that runs on push and pull request events. The workflow consists of three jobs: clippy, fmt, and test. The clippy job runs on a matrix of ubuntu-latest, macos-latest, and windows-latest with toolchain 1.62.0, and checks code with Clippy. The fmt job runs on ubuntu-latest and checks code formatting with rustfmt. The test job runs on a matrix of ubuntu-latest, macos-latest, and windows-latest with toolchains 1.62.0 and 1.58.0, and runs tests with Cargo.",
+  "tags": [
+    "rust",
+    "clippy",
+    "rustfmt",
+    "cargo",
+    "tests",
+    "ci"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "2e13f97262002f5820518e29a608d913a8dbf67d8a296c76078aba3a33213519",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2892,
+  "description": "Create a GitHub Actions workflow named Functional Tests that runs on push to the master branch and on pull requests to master, except those targeting checkvalgrind**. The workflow runs a matrix of functional tests with different payloads on an ubuntu-22.04 environment, using a MongoDB service. For each test, it runs Mosquitto containers, then executes a functional test using a Docker image.",
+  "tags": [
+    "functional-tests",
+    "docker",
+    "mosquitto",
+    "mongodb",
+    "matrix-testing"
+  ]
+}

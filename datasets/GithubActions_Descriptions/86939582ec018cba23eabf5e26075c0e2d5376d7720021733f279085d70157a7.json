@@ -1,0 +1,15 @@
+{
+  "sha": "86939582ec018cba23eabf5e26075c0e2d5376d7720021733f279085d70157a7",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3432,
+  "description": "Create a GitHub Actions workflow named Deploy that triggers on push events with tags matching 'v*'. Run a single job on a windows-latest environment that checks out the repository with submodules, sets up MSBuild and .NET Core 3.1.301, restores dependencies, builds Impostor.Client and Impostor.Server, runs tests, zips build artifacts, creates a new release, and uploads the zipped artifacts as release assets.",
+  "tags": [
+    "dotnet",
+    "msbuild",
+    "release",
+    "windows",
+    "zip",
+    "github-release"
+  ]
+}

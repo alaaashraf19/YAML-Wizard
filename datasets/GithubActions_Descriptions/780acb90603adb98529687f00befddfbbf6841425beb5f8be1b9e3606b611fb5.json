@@ -1,0 +1,14 @@
+{
+  "sha": "780acb90603adb98529687f00befddfbbf6841425beb5f8be1b9e3606b611fb5",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4478,
+  "description": "Create a GitHub Actions workflow that tests VCPKG installation on multiple platforms. The workflow should trigger on push, pull request, and workflow dispatch events. It should use a matrix strategy to run on macOS-latest, ubuntu-20.04, and potentially windows-2022. For each job, check out the repository, install VCPKG, CMake, and Python 3.11 if necessary, configure and build the project, run tests if applicable, install the project, and upload the artifact.",
+  "tags": [
+    "vcpkg",
+    "cmake",
+    "python",
+    "multi-os",
+    "github-actions"
+  ]
+}

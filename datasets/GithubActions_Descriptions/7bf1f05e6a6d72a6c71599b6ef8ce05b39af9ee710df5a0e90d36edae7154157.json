@@ -1,0 +1,15 @@
+{
+  "sha": "7bf1f05e6a6d72a6c71599b6ef8ce05b39af9ee710df5a0e90d36edae7154157",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3175,
+  "description": "Create a GitHub Actions workflow to build and publish PyPI packages. The workflow should trigger on push and workflow dispatch events. It should have four jobs: make_wheels to build MacOS and Windows wheels, make_linux_wheels to build Linux wheels, make_sdist to build a source distribution, and two upload jobs to Test PyPI and PyPI that depend on the build jobs and upload the artifacts.",
+  "tags": [
+    "python",
+    "pypi",
+    "github-actions",
+    "build",
+    "publish",
+    "test-pypi"
+  ]
+}

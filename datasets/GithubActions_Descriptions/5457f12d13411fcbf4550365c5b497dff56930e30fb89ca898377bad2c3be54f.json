@@ -1,0 +1,14 @@
+{
+  "sha": "5457f12d13411fcbf4550365c5b497dff56930e30fb89ca898377bad2c3be54f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2626,
+  "description": "Create a GitHub Actions workflow named Golang Lint and Unit Test - collector that runs on pull requests to specific branches and paths, and allows manual triggering. The workflow should have three jobs: format, lint, and build. The format job checks out the code, sets up Go 1.18, and formats the go-client code. The lint job depends on format, checks out the code, sets up Go 1.18, and runs golangci-lint on the collector code. The build job depends on lint, checks out the code, sets up Go 1.18, and builds the collector code using make.",
+  "tags": [
+    "golang",
+    "lint",
+    "tests",
+    "ubuntu",
+    "github-actions"
+  ]
+}

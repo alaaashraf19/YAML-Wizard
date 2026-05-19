@@ -1,0 +1,15 @@
+{
+  "sha": "8babc19f5e50e5631d0f735b38c011a408cf70a694db133430046b98f225f47c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1815,
+  "description": "Create a GitHub Actions workflow named Build Linux Distributable that runs on every push to the master branch and on pull requests to master. Use a single ubuntu-latest job that checks out the repository, fetches the entire repository, caches sources and third-party dependencies, installs prerequisites with apt-get, builds with make, determines the version, creates a redistributable zip, and uploads it as an artifact.",
+  "tags": [
+    "linux",
+    "make",
+    "ubuntu",
+    "cache",
+    "artifacts",
+    "zip"
+  ]
+}

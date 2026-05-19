@@ -1,0 +1,18 @@
+{
+  "sha": "bb092a96776a0ef14f69834201fac739b0691f40eefe6ccc94168f4073c79f7c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 6082,
+  "description": "Create a GitHub Actions workflow named Build & Deploy that runs on a schedule (every Wednesday and Saturday at 00:00) and on workflow dispatch with an optional input for release builds. The workflow prepares a build, then uses the prepared build tag to conditionally run separate jobs for macOS, Linux, Linux with Docker, and Windows, each with their own build and deploy steps for different networks (TEST, BETA, LIVE).",
+  "tags": [
+    "github-actions",
+    "build",
+    "deploy",
+    "schedule",
+    "workflow-dispatch",
+    "macos",
+    "linux",
+    "docker",
+    "windows"
+  ]
+}

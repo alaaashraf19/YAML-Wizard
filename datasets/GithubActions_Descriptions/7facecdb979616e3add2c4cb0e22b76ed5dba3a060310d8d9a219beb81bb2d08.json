@@ -1,0 +1,15 @@
+{
+  "sha": "7facecdb979616e3add2c4cb0e22b76ed5dba3a060310d8d9a219beb81bb2d08",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1160,
+  "description": "Create a GitHub Actions workflow named Test that runs on every push and pull request. Use a matrix job on ubuntu-latest that tests multiple Python versions (3.9 to 3.13) in parallel, checking out the repository, setting up Python, caching pip dependencies, installing dependencies with pip, running Tox tests, and uploading coverage to Codecov.",
+  "tags": [
+    "python",
+    "tests",
+    "tox",
+    "codecov",
+    "matrix",
+    "ubuntu"
+  ]
+}

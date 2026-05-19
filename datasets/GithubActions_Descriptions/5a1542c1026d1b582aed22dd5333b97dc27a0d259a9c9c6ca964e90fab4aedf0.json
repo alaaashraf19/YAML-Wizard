@@ -1,0 +1,16 @@
+{
+  "sha": "5a1542c1026d1b582aed22dd5333b97dc27a0d259a9c9c6ca964e90fab4aedf0",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5240,
+  "description": "Create a GitHub Actions workflow named Compile examples that compiles PlatformIO examples for ESP8266 and ESP32 boards. The workflow should trigger on push and pull request events, excluding certain paths. For each board, use a matrix strategy to compile multiple examples. Cache pip and PlatformIO dependencies to improve performance. Install PlatformIO and 3rd party libraries, then run PlatformIO CI with the example source.",
+  "tags": [
+    "platformio",
+    "esp8266",
+    "esp32",
+    "arduino",
+    "examples",
+    "compile",
+    "ci"
+  ]
+}

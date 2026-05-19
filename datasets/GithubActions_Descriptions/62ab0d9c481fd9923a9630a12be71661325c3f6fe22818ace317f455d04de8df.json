@@ -1,0 +1,14 @@
+{
+  "sha": "62ab0d9c481fd9923a9630a12be71661325c3f6fe22818ace317f455d04de8df",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2877,
+  "description": "Create a GitHub Actions workflow named test that runs on every pull request opened, synchronized, or reopened. Use a matrix job on ubuntu-latest with PostgreSQL service, running Python 3.6, 3.7, 3.8, and 3.9. The job checks out the repository, creates a PostgreSQL database, installs OS and Python dependencies, caches Python dependencies, installs credentialdigger, downloads models, and runs unit, integration, and functional tests.",
+  "tags": [
+    "python",
+    "postgresql",
+    "tests",
+    "credentialdigger",
+    "github-actions"
+  ]
+}

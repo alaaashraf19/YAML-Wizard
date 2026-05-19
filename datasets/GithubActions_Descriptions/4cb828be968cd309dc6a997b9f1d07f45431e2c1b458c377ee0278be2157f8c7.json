@@ -1,0 +1,15 @@
+{
+  "sha": "4cb828be968cd309dc6a997b9f1d07f45431e2c1b458c377ee0278be2157f8c7",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1675,
+  "description": "Create a nightly GitHub Actions workflow named MemoryLeak that runs memory leak checks on the dev branch. The workflow should also be triggerable manually. Use a matrix strategy to run a job on ubuntu-22.04 with RelWithDebInfo configuration. The job should check out the repository with submodules and full history, install valgrind, conditionally switch to the dev branch, set up shared tools, cache external resources, configure and build with CMake, and run memory leak tests with xvfb on Linux.",
+  "tags": [
+    "ubuntu",
+    "memory-leak",
+    "cmake",
+    "nightly",
+    "tests",
+    "valgrind"
+  ]
+}

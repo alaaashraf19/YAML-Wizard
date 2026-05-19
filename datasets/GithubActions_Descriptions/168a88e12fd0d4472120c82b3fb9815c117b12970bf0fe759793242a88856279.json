@@ -1,0 +1,15 @@
+{
+  "sha": "168a88e12fd0d4472120c82b3fb9815c117b12970bf0fe759793242a88856279",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4290,
+  "description": "Create a GitHub Actions workflow named build that runs on push events. The workflow should have three jobs: windows, linux, and static_analysis. The windows job runs on a windows-2019 environment, checks out the repository, generates a project with genie.exe, and builds the engine with MSBuild. The linux job runs on an ubuntu-latest environment, checks out the repository, generates a project with genie, installs required packages, and builds the engine with make. The static_analysis job runs on an ubuntu-latest environment, checks out the repository, installs PVS-Studio, and performs static analysis on the engine code.",
+  "tags": [
+    "windows",
+    "linux",
+    "static-analysis",
+    "msbuild",
+    "make",
+    "pvs-studio"
+  ]
+}

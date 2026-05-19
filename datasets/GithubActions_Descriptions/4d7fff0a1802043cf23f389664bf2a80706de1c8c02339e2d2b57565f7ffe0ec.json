@@ -1,0 +1,14 @@
+{
+  "sha": "4d7fff0a1802043cf23f389664bf2a80706de1c8c02339e2d2b57565f7ffe0ec",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2741,
+  "description": "Create a GitHub Actions workflow named bazel that runs on every push to main, on pull requests to main, and on merge groups to main. The workflow has two ubuntu-latest jobs: format_bazel_files checks and formats Bazel files, while build_direct and build_indirect jobs build p4c directly and indirectly with Bazel, respectively. Both build jobs depend on the format_bazel_files job and use a Bazel cache.",
+  "tags": [
+    "bazel",
+    "ubuntu",
+    "ci",
+    "build",
+    "format"
+  ]
+}

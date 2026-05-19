@@ -1,0 +1,16 @@
+{
+  "sha": "78542f844764f31155508d3eba0eb91f16ceb7ede523efdbb215e35b9eb4ca3f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 6402,
+  "description": "Create a GitHub Actions workflow named Windows MinGW64 that triggers on push and pull request events. The workflow consists of two jobs: prepare-mingw64-libs and build-mingw64. The prepare-mingw64-libs job runs on an ubuntu-latest environment, installs dependencies, downloads library sources, and builds required 3rd-party libraries (zlib, openssl, curl, and boost) for mingw64. The build-mingw64 job depends on the prepare-mingw64-libs job, installs dependencies, checks out the repository, loads external libraries, configures the build environment, and builds the project using cmake and make.",
+  "tags": [
+    "mingw64",
+    "windows",
+    "cross-build",
+    "ubuntu",
+    "cmake",
+    "make",
+    "ccache"
+  ]
+}

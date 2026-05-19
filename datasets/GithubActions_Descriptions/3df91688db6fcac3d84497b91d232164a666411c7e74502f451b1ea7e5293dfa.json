@@ -1,0 +1,14 @@
+{
+  "sha": "3df91688db6fcac3d84497b91d232164a666411c7e74502f451b1ea7e5293dfa",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2639,
+  "description": "Create a GitHub Actions workflow named macOS that runs on every push to the master branch and on pull requests to master. Use a single macos-latest job that checks out the repository, sets up build variables, installs Qt 5.15.2, sets up dependencies, builds the project, and packages a DMG file. The job should also add an OSX certificate to the keychain, notarize the DMG package, and upload the files.",
+  "tags": [
+    "macos",
+    "qt",
+    "dmg",
+    "notarize",
+    "package"
+  ]
+}

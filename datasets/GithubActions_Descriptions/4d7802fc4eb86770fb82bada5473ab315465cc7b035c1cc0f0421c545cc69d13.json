@@ -1,0 +1,16 @@
+{
+  "sha": "4d7802fc4eb86770fb82bada5473ab315465cc7b035c1cc0f0421c545cc69d13",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1683,
+  "description": "Create a GitHub Actions workflow named auto release that triggers on push events with tags matching v*.*.*. Run a windows-latest job with PowerShell as the shell, checking out the code, installing NSIS, and extracting the version from the tag. Then, set up MSVC environments for x64 and x86 architectures, cache and set up libraries for each, and build assets for both architectures. Finally, create a draft release and upload assets using action-gh-release.",
+  "tags": [
+    "windows",
+    "release",
+    "msvc",
+    "nsis",
+    "powershell",
+    "assets",
+    "draft-release"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "sha": "244c36a9b07cdb965521608fe9c28eaeb3cb6fcfb9f0a6596584ea6126281f0d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5638,
+  "description": "Create a GitHub Actions workflow named Wheels that builds and uploads Python wheels and source distributions for the repository. The workflow triggers on push to all branches except those in docs/ and ChangeLog*, on pull requests to those branches, and on workflow dispatch. It sets up Python 3.12, builds source distributions, and uses cibuildwheel to build wheels for various platforms including Linux, macOS, and Windows. The workflow checks the built wheels and uploads them to PyPI when a tag is pushed.",
+  "tags": [
+    "python",
+    "cibuildwheel",
+    "github-actions",
+    "wheels",
+    "pypi",
+    "sdist",
+    "linux",
+    "macos",
+    "windows"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "3e91a0852b2e99a77f5a6c2b00f90a5ebfc753e63cff04f5e1e5b0d129ce7f1e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5116,
+  "description": "Create a GitHub Actions workflow named CI that runs on push to the 5.x branch and on pull requests to 5.x. The workflow uses a matrix strategy to test on ubuntu-20.04 with different libvips versions, including 8.12.0. For each job, check out the code, install dependencies, build and test the project, and optionally generate a coverage report. Additionally, create a second job to publish the Docker image to GitHub Container Registry after the CI job succeeds.",
+  "tags": [
+    "ci",
+    "ubuntu",
+    "docker",
+    "github-container-registry",
+    "libvips",
+    "coverage"
+  ]
+}

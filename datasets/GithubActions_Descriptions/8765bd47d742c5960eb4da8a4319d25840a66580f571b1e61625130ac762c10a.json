@@ -1,0 +1,16 @@
+{
+  "sha": "8765bd47d742c5960eb4da8a4319d25840a66580f571b1e61625130ac762c10a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1015,
+  "description": "Create a GitHub Actions workflow named Windows MSVC that runs on push and pull request events. Use a single windows-latest job with predefined environment variables for Qt, FFmpeg, and GStreamer versions, and configure the CMake generator and number of jobs. The job checks out the repository, installs dependencies using a batch script, and then performs build and deploy steps conditionally based on whether the workflow was triggered by a tag or not.",
+  "tags": [
+    "windows",
+    "msvc",
+    "qt",
+    "ffmpeg",
+    "gstreamer",
+    "cmake",
+    "ci"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "sha": "4e0b4708d4c6e9ffd6f57d3324f821e1603a2f6c44a3227f1c4f9d70a10cbe8d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 580,
+  "description": "Create a GitHub Actions workflow named Documentation that runs on every push to the master branch. Use an ubuntu-latest job that checks out the source code, installs Python packages wheel, setuptools, pygithub, and pygithub3, and then conditionally deploys using a GH_TOKEN from secrets if the repository is IDI-Systems/acre2 and the commit message does not contain '[ci skip]'.",
+  "tags": [
+    "python",
+    "deployment",
+    "github",
+    "documentation"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "bf9a47ed40ea0cdf8d676ef9bb99adf6ff7b9970e6e3af6cdb3b3e0a8911e99d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 861,
+  "description": "Create a nightly GitHub Actions workflow that builds and pushes Docker images for multiple Linux distributions. Run every night at midnight on an ubuntu-latest environment with a matrix strategy across alpine, archlinux, debian, fedora, gentoo, and opensuse. For each distribution, check out the repository, log in to Docker Hub using credentials from secrets, and build and push a Docker image tagged with the distribution name.",
+  "tags": [
+    "docker",
+    "dockerhub",
+    "cron",
+    "matrix",
+    "linux",
+    "nightly"
+  ]
+}

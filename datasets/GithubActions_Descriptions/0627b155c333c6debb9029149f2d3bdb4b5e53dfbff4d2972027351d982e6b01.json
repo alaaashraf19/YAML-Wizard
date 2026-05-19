@@ -1,0 +1,13 @@
+{
+  "sha": "0627b155c333c6debb9029149f2d3bdb4b5e53dfbff4d2972027351d982e6b01",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1625,
+  "description": "Create a GitHub Actions workflow named Docker Image that triggers on push to the development branch. Use an ubuntu-latest job with write permission to packages and read permission to repository contents to push a Docker image to multiple registries. The workflow should check out the repository, set up QEMU and Docker Buildx, log in to the GitHub Container registry, extract metadata for the Docker image, and build and push the image to the registry.",
+  "tags": [
+    "docker",
+    "github",
+    "container-registry",
+    "multi-platform"
+  ]
+}

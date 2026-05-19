@@ -1,0 +1,14 @@
+{
+  "sha": "b29cf66f4257e6a26806aedd74d4157416ca6d09b9a4357171867d1dfd726874",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3034,
+  "description": "Create a GitHub Actions workflow named build that runs on push to the master branch and on workflow dispatch. The workflow consists of two jobs: get-supported-boards and build. The get-supported-boards job checks out the repository, retrieves a list of supported boards by running a compile command, and uploads the list as an artifact. The build job depends on get-supported-boards, checks out the repository, downloads the supported boards list, installs the GitHub CLI, and then triggers a build for each board listed in the supported boards file by running a separate workflow with the board name as an argument.",
+  "tags": [
+    "github-actions",
+    "workflow-dispatch",
+    "supported-boards",
+    "build",
+    "github-cli"
+  ]
+}

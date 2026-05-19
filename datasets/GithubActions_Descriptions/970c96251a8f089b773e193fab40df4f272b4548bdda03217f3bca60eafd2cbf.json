@@ -1,0 +1,16 @@
+{
+  "sha": "970c96251a8f089b773e193fab40df4f272b4548bdda03217f3bca60eafd2cbf",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1557,
+  "description": "Create a GitHub Actions workflow named Linux that triggers on push events, excluding paths related to mac and windows workflows, .gitignore, and specific directories. Run a build job on ubuntu-22.04 and ubuntu-24.04, checking out code with a fetch depth of 2, installing build dependencies, autogen.sh, configure, and make. Perform additional steps like make install, make check with specific CFLAGS, and gcov on ubuntu-22.04. Upload code coverage to Codecov and artifacts on ubuntu-22.04.",
+  "tags": [
+    "linux",
+    "ubuntu",
+    "gcc",
+    "make",
+    "codecov",
+    "gcov",
+    "autotools"
+  ]
+}

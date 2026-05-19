@@ -1,0 +1,17 @@
+{
+  "sha": "16587ae2d1c34a89db839904bb69261b043cee3329b56d2e1e7c0eb66c28e98f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2078,
+  "description": "Create a GitHub Actions workflow that triggers on push and pull request events. The workflow should have read-all permissions and consist of two ubuntu-latest jobs: build and docs. The build job checks out the code, installs uv and Python 3.10, installs dependencies, installs the project, runs pre-commit hooks and unit tests, creates a source package, and uploads it as an artifact. The docs job checks out the code, installs uv and Python 3.13, installs dependencies, installs the project, builds Sphinx documentation, and uploads it as an artifact.",
+  "tags": [
+    "python",
+    "ubuntu",
+    "sphinx",
+    "documentation",
+    "source-package",
+    "pre-commit",
+    "tests",
+    "artifacts"
+  ]
+}

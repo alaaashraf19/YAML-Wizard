@@ -1,0 +1,15 @@
+{
+  "sha": "458762212d9e32259b3f8cb3ffdd1d107d4c0ef701ffc00d75a7f4f1af7537b9",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1360,
+  "description": "Create a GitHub Actions workflow named CI that runs on every pull request. Use a matrix job that tests on multiple LLVM versions and operating systems (ubuntu-18.04 and macOS-10.15). For each combination, check out the repository with submodules, then run an Ansible playbook specific to the OS, passing in the LLVM version, source directory, Git reference, and other parameters.",
+  "tags": [
+    "llvm",
+    "ansible",
+    "ubuntu",
+    "macos",
+    "ci",
+    "matrix"
+  ]
+}

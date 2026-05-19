@@ -1,0 +1,16 @@
+{
+  "sha": "93f8324e4c2a641ae6d961e5f72cb8830bef063dea1bd29097689f935e8a67b8",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 6120,
+  "description": "Create a GitHub Actions workflow named CD that runs on push to the master branch and on release creation. The workflow should cancel any previous runs, then test on ubuntu-latest, windows-2019, and macos-latest environments. After successful tests, it should build and release on Windows and macOS, and deploy a Snap package on AMD64. Finally, it should upload release assets on release creation.",
+  "tags": [
+    "cd",
+    "ubuntu",
+    "windows",
+    "macos",
+    "snap",
+    "release",
+    "github-actions"
+  ]
+}

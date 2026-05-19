@@ -1,0 +1,17 @@
+{
+  "sha": "1ce59078a2d05968dc30998078fe63bbafa05c228df757122767b2836c124470",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3093,
+  "description": "Create a GitHub Actions workflow named Linux Build that runs on push events with a concurrency group that cancels in-progress jobs. The workflow uses a matrix strategy to run a build job on different operating systems and compilers, including ubuntu-22.04 with GCC and Clang, and ubuntu-latest with Qt 6 and GCC. For each job, check out the source code, enable and set up ccache, install dependencies, build with CMake, run tests, and update coverage if applicable.",
+  "tags": [
+    "linux",
+    "build",
+    "gcc",
+    "clang",
+    "qt6",
+    "cmake",
+    "ccache",
+    "coverage"
+  ]
+}

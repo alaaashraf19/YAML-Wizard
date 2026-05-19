@@ -1,0 +1,14 @@
+{
+  "sha": "bff464cd00972a5fe9a8d3bbd172a2bd939b2671cfa5f011458576a5b6fdcc17",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2265,
+  "description": "Create a GitHub Actions workflow named Tests Runner that runs on push and pull request events. The workflow should have three jobs: linux-test, windows-test, and macos-test, each running on a different environment (ubuntu-latest, windows-latest, and macos-latest respectively). For each job, use a matrix strategy to test multiple Python versions (3.7 to 3.11). In each job, check out the code, set up the Python environment, install dependencies, build, and run tests with pytest.",
+  "tags": [
+    "python",
+    "tests",
+    "matrix",
+    "multios",
+    "pytest"
+  ]
+}

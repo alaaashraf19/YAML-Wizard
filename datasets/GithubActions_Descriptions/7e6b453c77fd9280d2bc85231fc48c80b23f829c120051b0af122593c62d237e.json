@@ -1,0 +1,14 @@
+{
+  "sha": "7e6b453c77fd9280d2bc85231fc48c80b23f829c120051b0af122593c62d237e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2508,
+  "description": "Create a GitHub Actions workflow named Continuous builds that triggers on push, pull request, and workflow dispatch events. The workflow should have two jobs: build and upload. The build job should use a matrix strategy to build on multiple platforms (x86_64, arm64, armhf) and architectures, and then upload artifacts to a release. The upload job should depend on the build job and create a release with the uploaded artifacts.",
+  "tags": [
+    "continuous-integration",
+    "docker",
+    "multi-platform",
+    "github-container-registry",
+    "release-management"
+  ]
+}

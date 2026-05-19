@@ -1,0 +1,14 @@
+{
+  "sha": "3dada26971747a779dd68fad9f833a57ebad5b5aebbdad8c33b1954b8f647321",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1134,
+  "description": "Create a GitHub Actions workflow named CI that runs on every push and pull request. Use three jobs: lint on ubuntu-20.04 that checks out the repository and runs psf/black@stable; build on ubuntu-20.04 that checks out the repository, sets up Python 3.7, installs dependencies, builds the package, and publishes to PyPI if a tag is pushed; and test on a matrix of ubuntu-20.04 and windows-2019 that checks out the repository, sets up Python 3.7, installs the package, and runs tests with ue4-docker.",
+  "tags": [
+    "python",
+    "ci",
+    "ubuntu",
+    "tests",
+    "pypi"
+  ]
+}

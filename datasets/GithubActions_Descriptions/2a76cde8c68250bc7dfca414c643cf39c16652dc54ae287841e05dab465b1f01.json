@@ -1,0 +1,13 @@
+{
+  "sha": "2a76cde8c68250bc7dfca414c643cf39c16652dc54ae287841e05dab465b1f01",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1659,
+  "description": "Create a GitHub Actions workflow named builds that runs on push and pull request events. The workflow should have read-only permissions and use two ubuntu-latest jobs in different Ubuntu containers (20.04 and 22.04). For each job, check out the repository, install system dependencies, run autogen.sh, configure with custom CFLAGS, build with make -j2, install, and perform a distribution check.",
+  "tags": [
+    "ubuntu",
+    "autotools",
+    "ci",
+    "builds"
+  ]
+}

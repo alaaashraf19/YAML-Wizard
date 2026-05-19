@@ -1,0 +1,15 @@
+{
+  "sha": "74c9dffc19558013bdf3aba3d0583a39c5e5dc233b770ea4a19127006c510720",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1488,
+  "description": "Create a GitHub Actions workflow named Stable Compilation that runs on push, pull request, and workflow dispatch events. Use a ubuntu-latest job with a matrix strategy to test compilation on multiple container images including ubuntu:18.04, debian:10, ubuntu:20.04, and ubuntu:21.04. For each image, cancel previous workflow runs, check out the code, install dependencies, compile the project with CMake and Ninja, install it, and run tests.",
+  "tags": [
+    "cmake",
+    "docker",
+    "ubuntu",
+    "debian",
+    "compilation",
+    "tests"
+  ]
+}

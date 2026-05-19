@@ -1,0 +1,16 @@
+{
+  "sha": "3a89e5166bb8ecacc7fcd9a740ddf13b074cb36fb64f87a7f6dd86a6c616c4c3",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2532,
+  "description": "Create a GitHub Actions workflow named build that runs on push to master and on pull requests to master. The workflow has four jobs: linux, cppcheck, msys2, and msvc. The linux job compiles on ubuntu-latest with a matrix of clang and gcc compilers, installs dependencies, configures, builds, and packages the project. The cppcheck job runs cppcheck on ubuntu-latest. The msys2 job builds on windows-latest with MSYS2, and the msvc job builds on windows-2019 with MSVC, both configuring, building, packaging, and uploading artifacts.",
+  "tags": [
+    "c",
+    "cpp",
+    "cmake",
+    "msvc",
+    "msys2",
+    "ubuntu",
+    "windows"
+  ]
+}

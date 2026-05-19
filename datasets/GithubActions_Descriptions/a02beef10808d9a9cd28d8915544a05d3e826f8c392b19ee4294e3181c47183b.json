@@ -1,0 +1,14 @@
+{
+  "sha": "a02beef10808d9a9cd28d8915544a05d3e826f8c392b19ee4294e3181c47183b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 461,
+  "description": "Create a GitHub Actions workflow named CI Tests that runs on both push and pull request events. Use a job matrix to run a regression test on different Ubuntu versions (18.04 and 20.04) in parallel, failing fast only if all jobs fail. For each job, check out the repository with submodules and run a Docker build on the host network, but only for Ubuntu 18.04.",
+  "tags": [
+    "ubuntu",
+    "docker",
+    "tests",
+    "matrix",
+    "ci"
+  ]
+}

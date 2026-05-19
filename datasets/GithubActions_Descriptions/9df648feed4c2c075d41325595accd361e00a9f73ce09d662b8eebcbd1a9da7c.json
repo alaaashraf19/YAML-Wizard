@@ -1,0 +1,16 @@
+{
+  "sha": "9df648feed4c2c075d41325595accd361e00a9f73ce09d662b8eebcbd1a9da7c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 967,
+  "description": "Create a GitHub Actions workflow named lint that runs on every push and pull request across all branches. Use an ubuntu-latest job with a matrix strategy to test multiple Python versions (3.9 to 3.13). In each job, check out the repository, install uv, verify the lockfile, set up Graphviz, and then run mypy and ruff linters across the project.",
+  "tags": [
+    "python",
+    "linting",
+    "mypy",
+    "ruff",
+    "uv",
+    "graphviz",
+    "github-actions"
+  ]
+}

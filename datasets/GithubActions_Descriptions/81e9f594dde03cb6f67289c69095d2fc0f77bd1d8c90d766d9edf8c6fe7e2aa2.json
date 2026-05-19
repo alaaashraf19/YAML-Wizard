@@ -1,0 +1,14 @@
+{
+  "sha": "81e9f594dde03cb6f67289c69095d2fc0f77bd1d8c90d766d9edf8c6fe7e2aa2",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1654,
+  "description": "Create a GitHub Actions workflow named Flatpak that runs on pull requests and on push to the master branch or tags matching v*. Use a matrix job strategy to build Flatpak packages on ubuntu-24.04 for x86_64 and aarch64 architectures. Checkout the repository with submodules, build Flatpak packages using the flathub-infra/flatpak-github-actions tool, and create GitHub releases for continuous builds and tagged releases.",
+  "tags": [
+    "flatpak",
+    "ubuntu",
+    "github-release",
+    "multi-arch",
+    "ci"
+  ]
+}

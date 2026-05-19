@@ -1,0 +1,13 @@
+{
+  "sha": "5632d5bb00585dc6e566d1dd8e6f6aaf423283deae21f5b2e3d85d2c13cb1b56",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 822,
+  "description": "Create a GitHub Actions workflow named Automatic Rebase that triggers on new issue comments. Check if the comment is on a pull request and contains the '/rebase' command. If so, run a job on ubuntu-latest that checks out the code and uses the cirrus-actions/rebase action with a GitHub token to rebase the pull request. Include a secondary job that always runs to prevent workflow failure when the primary job is skipped.",
+  "tags": [
+    "github-actions",
+    "rebase",
+    "pull-requests",
+    "issue-comments"
+  ]
+}

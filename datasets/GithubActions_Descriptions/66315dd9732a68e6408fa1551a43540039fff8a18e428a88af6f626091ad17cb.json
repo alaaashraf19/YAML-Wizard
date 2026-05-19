@@ -1,0 +1,16 @@
+{
+  "sha": "66315dd9732a68e6408fa1551a43540039fff8a18e428a88af6f626091ad17cb",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2328,
+  "description": "Create a GitHub Actions workflow named MacOS Qt6 that triggers on push events to all paths except README.md, LICENSE, and BUILD.md, on pull requests to those same paths, and on published releases. The workflow uses a matrix strategy to build on macOS with Qt6 in various configurations, including Release and RelWithDebInfo build types, x86_64 and arm64 architectures, and Qt 6.2.3. For each job, install Qt, checkout the repository, install required packages with Homebrew, prepare and run the build with CMake and Ninja, package the build with macdeployqt, and upload the resulting .dmg artifact.",
+  "tags": [
+    "macos",
+    "qt6",
+    "cmake",
+    "ninja",
+    "build",
+    "release",
+    "packaging"
+  ]
+}

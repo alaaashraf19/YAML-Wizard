@@ -1,0 +1,16 @@
+{
+  "sha": "873fa9aeb246b8b76bb7f4901a6f77ea8a72f22d3cca0181fd09398ca23bb587",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2543,
+  "description": "Create a GitHub Actions workflow named CI that runs on every push and pull request. The workflow has four jobs: lint, build, docs, and test. The lint job checks code formatting using black. The build job sets up Python 3.10, installs dependencies, builds a package, and publishes it to PyPI if a tag is pushed. The docs job builds and publishes documentation to GitHub Pages if the push is to the master branch. The test job runs tests on multiple platforms and Python versions.",
+  "tags": [
+    "python",
+    "ci",
+    "pypi",
+    "docs",
+    "tests",
+    "ubuntu",
+    "windows"
+  ]
+}

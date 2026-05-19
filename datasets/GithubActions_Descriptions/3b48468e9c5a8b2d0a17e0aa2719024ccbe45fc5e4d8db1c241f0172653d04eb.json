@@ -1,0 +1,16 @@
+{
+  "sha": "3b48468e9c5a8b2d0a17e0aa2719024ccbe45fc5e4d8db1c241f0172653d04eb",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1275,
+  "description": "Create a GitHub Actions workflow named Universal test that can be triggered manually. Use a matrix job strategy to run on multiple operating systems (macos-14, ubuntu-22.04, windows-2022) with different vcpkg triplets. For each job, check out the repository, build with vcpkg, configure CMake with a Debug build, and run tests with CTest.",
+  "tags": [
+    "universal",
+    "test",
+    "vcpkg",
+    "cmake",
+    "ctest",
+    "matrix",
+    "workflow-dispatch"
+  ]
+}

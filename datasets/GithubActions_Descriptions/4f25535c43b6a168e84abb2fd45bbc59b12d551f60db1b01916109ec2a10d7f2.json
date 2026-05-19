@@ -1,0 +1,19 @@
+{
+  "sha": "4f25535c43b6a168e84abb2fd45bbc59b12d551f60db1b01916109ec2a10d7f2",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3126,
+  "description": "Create a GitHub Actions workflow named shared_build that runs on push to tags v* and branch master, and on pull requests to master. The workflow should have a concurrency group that cancels in-progress jobs. Set up a Python environment with version 3.12 and specific environment variables. Run a series of jobs: test the latest Python version on ubuntu-latest, build Linux wheels, and build macOS and Windows wheels for different architectures.",
+  "tags": [
+    "python",
+    "github-actions",
+    "ci",
+    "cibuildwheel",
+    "hatch",
+    "uv",
+    "benchmark",
+    "macos",
+    "linux",
+    "windows"
+  ]
+}

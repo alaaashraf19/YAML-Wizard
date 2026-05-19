@@ -1,0 +1,15 @@
+{
+  "sha": "a522c931a73694483107537a228c99453e5e9f19ee70cafa58f5c1a46982e0ea",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3933,
+  "description": "Create a GitHub Actions workflow that deploys pre-release versions to Docker Hub and GitHub Container Registry. The workflow should be triggered manually with a choice input for the pre-release tag. It should use two ubuntu-latest jobs to build and push Docker images for the main application and an add-on, using Docker Buildx and QEMU, and login to both Docker Hub and GitHub Container Registry using secrets.",
+  "tags": [
+    "docker",
+    "github-container-registry",
+    "docker-hub",
+    "pre-release",
+    "buildx",
+    "qemu"
+  ]
+}

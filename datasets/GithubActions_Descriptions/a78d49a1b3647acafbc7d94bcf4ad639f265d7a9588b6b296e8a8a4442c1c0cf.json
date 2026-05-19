@@ -1,0 +1,16 @@
+{
+  "sha": "a78d49a1b3647acafbc7d94bcf4ad639f265d7a9588b6b296e8a8a4442c1c0cf",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2798,
+  "description": "Create a GitHub Actions workflow named Continuous builds that runs on push, pull request, and workflow dispatch events. The workflow has two jobs: build and upload. The build job uses a matrix strategy to build on multiple architectures and distributions, checking out the repository, setting up QEMU integration for Docker, building in Docker, and archiving artifacts. The upload job depends on the build job, downloads artifacts, creates a release, and uploads artifacts to a WebDAV server.",
+  "tags": [
+    "docker",
+    "multiarch",
+    "qemu",
+    "github-actions",
+    "continuous-builds",
+    "webdav",
+    "release"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "sha": "9b1366d93d1eef9e308135499c5b74ecaf191de9153a4bd376667c5fde4ecf7c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1822,
+  "description": "Create a GitHub Actions workflow that runs on push and pull request events. The workflow should have three jobs: python-build, nix-flake, and generated-docs. The python-build job should run on ubuntu-latest with a matrix of Python versions 3.8 and 3.13, install the build module, and build the package. The nix-flake job should run on ubuntu-latest with a matrix of derivations, install Nix, and build the derivations. The generated-docs job should run on ubuntu-latest, set up Python 3.13, regenerate generated docs, and compare them with the committed version.",
+  "tags": [
+    "python",
+    "nix",
+    "docs",
+    "ubuntu",
+    "github-actions",
+    "ci",
+    "build-tools"
+  ]
+}

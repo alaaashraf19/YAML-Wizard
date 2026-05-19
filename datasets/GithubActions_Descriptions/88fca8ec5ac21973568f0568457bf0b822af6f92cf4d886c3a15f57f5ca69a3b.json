@@ -1,0 +1,14 @@
+{
+  "sha": "88fca8ec5ac21973568f0568457bf0b822af6f92cf4d886c3a15f57f5ca69a3b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3305,
+  "description": "Create a GitHub Actions workflow named Docs that runs on push and pull request events. The workflow has two jobs: build and deploy. The build job checks out the repository with submodules, sets up Python 3.7, installs dependencies with tox, builds docs, and uploads the artifact. The deploy job downloads the artifact, unpacks it, and deploys the docs to a GitHub Pages repository using a personal token.",
+  "tags": [
+    "python",
+    "docs",
+    "github-pages",
+    "slack",
+    "tox"
+  ]
+}

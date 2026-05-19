@@ -1,0 +1,17 @@
+{
+  "sha": "99664dd5dc8eee202537d00c31fb674b46634f1a7d1cb943629f3cb90c3cb0de",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2420,
+  "description": "Create a GitHub Actions workflow named CI that runs on every push to main and tags, and on pull requests. The workflow has two jobs: tests and publish. The tests job runs on ubuntu-latest with a matrix of Python versions 3.9 to 3.13, checks out the repository, installs dependencies, runs pre-commit and tests with pytest, and uploads results to Codecov. The publish job depends on tests, runs on ubuntu-latest if a tag or release event occurs, checks out the repository, sets up the latest Python version, installs dependencies, and publishes the package to PyPI using flit if the tag version matches the module version.",
+  "tags": [
+    "python",
+    "ci",
+    "tests",
+    "codecov",
+    "pypi",
+    "flit",
+    "pre-commit",
+    "pytest"
+  ]
+}

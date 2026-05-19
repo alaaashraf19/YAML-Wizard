@@ -1,0 +1,14 @@
+{
+  "sha": "742ca5b0c50ee93a85d9aa99e738394ec7af0ee355bca1e62bc177f5aa6721b7",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 789,
+  "description": "Create a GitHub Actions workflow named Test that runs on every push. Use two ubuntu-latest jobs: one to install dependencies with uv, set up Python according to pyproject.toml, install the project with uv sync --dev, and run tests with uv run pytest; and another to check out the repository and build a Docker image with docker/build-push-action.",
+  "tags": [
+    "python",
+    "tests",
+    "docker",
+    "uv",
+    "github-actions"
+  ]
+}

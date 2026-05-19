@@ -1,0 +1,16 @@
+{
+  "sha": "00a8ed383cc7ddfba72826a73f4d748d853bd8a3703ef13d12419e1355dea5ea",
+  "provider": "groq",
+  "model": "llama-3.3-70b-versatile",
+  "yaml_bytes": 1696,
+  "description": "Create a GitHub Actions workflow that triggers on push to the main branch, ignoring changes to markdown files and excluding tags. The workflow should run on an ubuntu-latest environment, checking out the code, installing dependencies with pip, configuring and running Conan, building the project with CMake, running tests with ctest, and uploading coverage reports to Codecov. The workflow should also verify the integrity of the Codecov uploader.",
+  "tags": [
+    "linux",
+    "conan",
+    "cmake",
+    "gcc",
+    "coverage",
+    "codecov",
+    "ubuntu"
+  ]
+}

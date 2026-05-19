@@ -1,0 +1,15 @@
+{
+  "sha": "350938c5e620608a265d86926362f817ef9455a5e467fc58205daecea8ee7eb3",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5812,
+  "description": "Create a GitHub Actions workflow named Live that can be triggered manually with a repository and tag as inputs. The workflow should run on multiple jobs for different operating systems (macOS, Ubuntu, and Windows), each with a 90-minute timeout. For each job, check out the repository at the specified tag, install dependencies, build an artifact, and deploy it to various platforms including AWS S3, Docker Hub, and GitHub Container Registry.",
+  "tags": [
+    "github-actions",
+    "multi-os",
+    "deployment",
+    "aws-s3",
+    "docker",
+    "ghcr"
+  ]
+}

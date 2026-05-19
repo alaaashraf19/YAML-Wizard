@@ -1,0 +1,14 @@
+{
+  "sha": "75a4cbe5e1a4bfebd5df4a991c9ae4d192c070fc807302a893932f9560d5db77",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2004,
+  "description": "Create a GitHub Actions workflow named build that runs on push and pull request events. Use a matrix strategy to test on multiple Python versions from 3.5 to 3.12.0-rc.1 on ubuntu-20.04. For each version, check out the code, set up Python, install dependencies, run tests with coverage, and upload coverage artifacts. Additionally, use a separate ubuntu-latest job to download coverage artifacts, combine and annotate coverage reports, and display coverage results.",
+  "tags": [
+    "python",
+    "tests",
+    "coverage",
+    "matrix",
+    "ubuntu"
+  ]
+}

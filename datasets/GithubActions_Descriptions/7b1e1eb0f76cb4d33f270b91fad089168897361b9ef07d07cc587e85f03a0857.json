@@ -1,0 +1,15 @@
+{
+  "sha": "7b1e1eb0f76cb4d33f270b91fad089168897361b9ef07d07cc587e85f03a0857",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2416,
+  "description": "Create a GitHub Actions workflow named CI Ubuntu 18.04 that runs on every pull request. Use a matrix job that tests on multiple LLVM versions in a ubuntu:18.04 container on an ubuntu-latest runner. For each LLVM version, checkout the repository with submodules, detect the Mull version, install required software, potentially patch for LLVM 3.9/4.0, run a CI task with ansible-playbook, and for LLVM 9.0, publish a package to Bintray.",
+  "tags": [
+    "llvm",
+    "ubuntu",
+    "ansible",
+    "bintray",
+    "ci",
+    "matrix"
+  ]
+}

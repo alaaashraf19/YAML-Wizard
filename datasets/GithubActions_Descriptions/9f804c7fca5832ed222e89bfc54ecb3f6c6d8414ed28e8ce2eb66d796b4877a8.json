@@ -1,0 +1,16 @@
+{
+  "sha": "9f804c7fca5832ed222e89bfc54ecb3f6c6d8414ed28e8ce2eb66d796b4877a8",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 8712,
+  "description": "Create a comprehensive GitHub Actions CI/CD pipeline that runs on push, pull request, and workflow dispatch events. The pipeline consists of two jobs: Continuous Integration (CI) and Continuous Deployment (CD). The CI job runs on an ubuntu-20.04 environment with a matrix of Python versions (2.7, 3.6-3.9), checks out the repository, sets up Python, installs dependencies, runs tests, and uploads artifacts. The CD job deploys to PyPI and GitHub if the CI job outputs 'should_deploy' as 'true'.",
+  "tags": [
+    "python",
+    "ci-cd",
+    "github-actions",
+    "ubuntu",
+    "pypi",
+    "deployment",
+    "testing"
+  ]
+}

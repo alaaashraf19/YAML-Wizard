@@ -1,0 +1,14 @@
+{
+  "sha": "44dd5c04d349eb23928f9cb0c34ef48e289d0aa217ae41ee6e464d4bcfc748c3",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 900,
+  "description": "Create a GitHub Actions workflow named Publish rpm from master that runs on a schedule every night at 1am and on push events with tags matching a semantic version pattern. The workflow has two jobs, build-rpm-release and build-rpm-nightly, both running on ubuntu-18.04. Each job checks out the repository, sets up QEMU, and then runs a script to build and push an RPM, with the build-rpm-release job using a release configuration and the build-rpm-nightly job using a nightly configuration.",
+  "tags": [
+    "rpm",
+    "ubuntu",
+    "schedule",
+    "docker",
+    "qemu"
+  ]
+}

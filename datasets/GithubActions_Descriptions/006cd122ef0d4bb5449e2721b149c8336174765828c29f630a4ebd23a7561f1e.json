@@ -1,0 +1,15 @@
+{
+  "sha": "006cd122ef0d4bb5449e2721b149c8336174765828c29f630a4ebd23a7561f1e",
+  "provider": "groq",
+  "model": "llama-3.3-70b-versatile",
+  "yaml_bytes": 11815,
+  "description": "Create a GitHub Actions workflow named publish that triggers on workflow dispatch with a required tag_name input. The workflow has multiple jobs for different platforms (android, ios, osx, windows, linux64) that download artifacts, build, and upload plugins. The publish job depends on all other jobs, retrieves the plugin version, downloads artifacts, creates a release, and uploads the plugins as release assets. The workflow also triggers an update in the demo/upm repository.",
+  "tags": [
+    "unity",
+    "plugins",
+    "github-actions",
+    "workflow-dispatch",
+    "multi-platform",
+    "release-management"
+  ]
+}

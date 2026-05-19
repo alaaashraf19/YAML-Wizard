@@ -1,0 +1,18 @@
+{
+  "sha": "41de42b178459de31d053c473df3288548254d72ee515ea2071ccefbc0758227",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3300,
+  "description": "Create a GitHub Actions workflow named Continuous Integration that runs on push to master branch and on pull requests to master, excluding changes to markdown files and tags. Use a matrix strategy to run a build job on Linux, macOS, and Windows with different compilers and shells, and a separate cppcheck job on ubuntu-latest. Each build job installs dependencies, checks out the code, configures and builds the project with CMake and Ninja, and uploads AppImages as artifacts on Linux. The cppcheck job installs cppcheck, checks out the code, and runs cppcheck on the source code.",
+  "tags": [
+    "ci",
+    "cmake",
+    "ninja",
+    "ubuntu",
+    "macos",
+    "windows",
+    "gcc",
+    "clang",
+    "cppcheck"
+  ]
+}

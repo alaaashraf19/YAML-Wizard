@@ -1,0 +1,15 @@
+{
+  "sha": "27c72f3c544e1e2a3ef57f2f31c5a65de9f3541e8405f2ef8775a3ee2fd307ba",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1261,
+  "description": "Create a GitHub Actions workflow named CodeQL that analyzes C++ code. The workflow should trigger on push events to the master branch for .cpp, .h, and .github/workflows/codeql-analysis.yml files, on pull requests to the master branch for the same files, and on a weekly schedule. In an ubuntu-22.04 job, check out the repository with a fetch depth of 2, initialize CodeQL for C++ analysis, install required dependencies, set up qbs, build the project with qbs, and perform CodeQL analysis.",
+  "tags": [
+    "codeql",
+    "cpp",
+    "ubuntu",
+    "qbs",
+    "analysis",
+    "security"
+  ]
+}

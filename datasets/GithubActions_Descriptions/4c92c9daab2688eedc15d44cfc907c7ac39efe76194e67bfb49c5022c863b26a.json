@@ -1,0 +1,14 @@
+{
+  "sha": "4c92c9daab2688eedc15d44cfc907c7ac39efe76194e67bfb49c5022c863b26a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 891,
+  "description": "Create a GitHub Actions workflow named CI that runs on push to the master branch, on pull requests to the master branch, and on workflow dispatch. Use an ubuntu-latest job running in a custom container, which clones the FlagBrew/PKSM repository, builds the project with make, zips the output, and pushes it to a specified URL with a deploy secret and commit information.",
+  "tags": [
+    "ci",
+    "docker",
+    "make",
+    "push",
+    "github-actions"
+  ]
+}

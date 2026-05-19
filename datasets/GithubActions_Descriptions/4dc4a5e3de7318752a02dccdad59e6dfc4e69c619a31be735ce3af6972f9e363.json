@@ -1,0 +1,15 @@
+{
+  "sha": "4dc4a5e3de7318752a02dccdad59e6dfc4e69c619a31be735ce3af6972f9e363",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1148,
+  "description": "Create a GitHub Actions workflow named CrossBuild that runs on push to master branch and tags starting with 'v', and on pull requests to master. Use a single ubuntu-latest job with a matrix strategy across multiple architectures. For each architecture, check out the code, install cross-compilation tools, and then build and test the project using cmake and make, with qemu emulation for testing.",
+  "tags": [
+    "cross-build",
+    "multi-arch",
+    "cmake",
+    "make",
+    "qemu",
+    "ubuntu"
+  ]
+}

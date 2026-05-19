@@ -1,0 +1,17 @@
+{
+  "sha": "32277bb08cbd41969c264066336e9c853e06b14335fd11d233cb1ebed61f1fd2",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2467,
+  "description": "Create a GitHub Actions workflow named Build with vcpkg that runs on push to master and tags starting with v*, as well as on pull requests, for specific paths. The workflow uses a matrix strategy to build on ubuntu, macos, and windows, with Debug and Release configurations, and optional LuaJIT. It checks out the code, installs the latest CMake, enables LuaJIT if required, runs vcpkg, builds with CMake, and uploads artifacts.",
+  "tags": [
+    "vcpkg",
+    "cmake",
+    "luajit",
+    "matrix",
+    "ubuntu",
+    "macos",
+    "windows",
+    "github-actions"
+  ]
+}

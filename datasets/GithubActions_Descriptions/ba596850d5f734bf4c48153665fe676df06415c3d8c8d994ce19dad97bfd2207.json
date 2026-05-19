@@ -1,0 +1,18 @@
+{
+  "sha": "ba596850d5f734bf4c48153665fe676df06415c3d8c8d994ce19dad97bfd2207",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3493,
+  "description": "Create a GitHub Actions workflow named NoVcpkg Build Release that runs on push to the release branch and on pull requests to the release branch. Use a matrix job to build the project on ubuntu-latest, macos-latest, and windows-latest with different GCC versions, excluding some combinations. Install dependencies, checkout the code, set up GCC on Ubuntu, generate Ninja project files with CMake, build the project, and upload the artifact.",
+  "tags": [
+    "cmake",
+    "gcc",
+    "matrix",
+    "ubuntu",
+    "macos",
+    "windows",
+    "release",
+    "build",
+    "ninja"
+  ]
+}

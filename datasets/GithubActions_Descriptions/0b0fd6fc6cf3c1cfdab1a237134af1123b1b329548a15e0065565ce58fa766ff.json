@@ -1,0 +1,14 @@
+{
+  "sha": "0b0fd6fc6cf3c1cfdab1a237134af1123b1b329548a15e0065565ce58fa766ff",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2307,
+  "description": "Create a GitHub Actions workflow named Publish to TestPyPI and Sign with Sigstore. Trigger it on push to the master branch, excluding .gitignore and README.rst. The workflow should have read permissions to repository contents. It should have three jobs: build-wheel-package, publish-package, and sign-package. The build-wheel-package job should run on ubuntu-latest, check out the repository, set up Python 3.12, install dependencies with make setup-ci and make build, and upload the dist artifact. The publish-package job should download the dist artifact, publish the package to TestPyPI using pypa/gh-action-pypi-publish, and the sign-package job should download the dist artifact, sign it with Sigstore using sigstore/gh-action-sigstore-python, and upload the sigstore artifact.",
+  "tags": [
+    "python",
+    "testpypi",
+    "sigstore",
+    "github-actions",
+    "pypi-publish"
+  ]
+}

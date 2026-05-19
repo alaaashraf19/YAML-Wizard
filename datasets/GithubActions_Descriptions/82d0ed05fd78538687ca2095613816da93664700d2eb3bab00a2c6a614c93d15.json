@@ -1,0 +1,16 @@
+{
+  "sha": "82d0ed05fd78538687ca2095613816da93664700d2eb3bab00a2c6a614c93d15",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1704,
+  "description": "Create a GitHub Actions workflow named Ubuntu Build CI that runs on every push and pull request. Use two ubuntu-latest jobs: one that builds and tests the project natively, and another that builds and tests the project in an Arch Linux container. The native job checks out the repository, updates apt, installs dependencies, initializes submodules, configures the build, and runs make and make test. The container job installs dependencies, checks out the repository with submodules, disables a test, builds and tests the project with custom cmake flags, and installs the result.",
+  "tags": [
+    "ubuntu",
+    "ci",
+    "cmake",
+    "make",
+    "tests",
+    "arch-linux",
+    "container"
+  ]
+}

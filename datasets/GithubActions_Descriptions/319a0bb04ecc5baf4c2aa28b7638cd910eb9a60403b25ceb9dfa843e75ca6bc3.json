@@ -1,0 +1,16 @@
+{
+  "sha": "319a0bb04ecc5baf4c2aa28b7638cd910eb9a60403b25ceb9dfa843e75ca6bc3",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1777,
+  "description": "Create a GitHub Actions workflow named Build & publish PyPI packages that triggers on push of tags matching v[0-9]+.** and on workflow dispatch. The workflow should have a build job that runs on a matrix of OS environments, sets up Miniconda with Python, installs dependencies, builds wheels with cibuildwheel, and uploads the artifacts. Additionally, it should have two more jobs, upload_to_test_pypy and upload_to_pypi, that download the artifacts and publish them to test PyPI and PyPI respectively, with the latter only running on release events.",
+  "tags": [
+    "python",
+    "pypi",
+    "cibuildwheel",
+    "miniconda",
+    "github-actions",
+    "release",
+    "test-pypi"
+  ]
+}

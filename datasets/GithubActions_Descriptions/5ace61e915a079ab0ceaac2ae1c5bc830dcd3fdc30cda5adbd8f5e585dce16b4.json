@@ -1,0 +1,14 @@
+{
+  "sha": "5ace61e915a079ab0ceaac2ae1c5bc830dcd3fdc30cda5adbd8f5e585dce16b4",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2574,
+  "description": "Create a GitHub Actions workflow named Watch DF Steam Releases that runs on a scheduled cron job 8/10 * * * *. Use an ubuntu-latest job with a matrix strategy to check different DF Steam branches. For each branch, set up steamcmd, get the current time, fetch and save state, detect changes on the branch by querying Steam, and if changes are found, run a generate-symbols workflow with specific inputs.",
+  "tags": [
+    "steam",
+    "scheduled",
+    "github-actions",
+    "dfhack",
+    "workflows"
+  ]
+}

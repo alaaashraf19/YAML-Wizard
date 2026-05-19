@@ -1,0 +1,14 @@
+{
+  "sha": "14ce88de9c1de7e65801464f173b9b2f0ad7581cb6663a62e9307a03de1588fc",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1921,
+  "description": "Create a GitHub Actions workflow named Golang Lint and Unit Test that runs on pull requests to specific branches and paths, and can be triggered manually. The workflow has two jobs: Lint and Test, both running on ubuntu-latest. The Lint job checks out the code, sets up Go 1.18, and runs golangci-lint-action on the pegic directory. The Test job checks out the code, sets up Go 1.18, and compiles the code in the pegic directory using make.",
+  "tags": [
+    "golang",
+    "lint",
+    "tests",
+    "github-actions",
+    "make"
+  ]
+}

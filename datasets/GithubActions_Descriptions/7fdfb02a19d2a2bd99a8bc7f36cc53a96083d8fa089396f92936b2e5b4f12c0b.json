@@ -1,0 +1,16 @@
+{
+  "sha": "7fdfb02a19d2a2bd99a8bc7f36cc53a96083d8fa089396f92936b2e5b4f12c0b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1469,
+  "description": "Create a GitHub Actions workflow named CI that runs on every push to the master branch, on pull requests to the master branch, on a schedule, and on workflow dispatch. The workflow should run tests in a matrix of Python versions and platforms, including Ubuntu, macOS, and Windows, with concurrency control to cancel in-progress runs. For each job, check out the repository, set up Python with the specified version, install uv, and run tests using nox.",
+  "tags": [
+    "python",
+    "ci",
+    "tests",
+    "matrix",
+    "concurrency",
+    "schedule",
+    "workflow-dispatch"
+  ]
+}

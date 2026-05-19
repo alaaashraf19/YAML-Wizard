@@ -1,0 +1,14 @@
+{
+  "sha": "6e12c838654575594b7d61b2a7c6569b829190234976e660ea69877158c94d44",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1716,
+  "description": "Create a GitHub Actions workflow named CI that runs on push and pull request events to the master branch, and can be triggered manually. The workflow has two jobs, build and editorconfig, both running on ubuntu-latest. The build job checks out the repository, then runs a Native Melodic build using a Docker container. The editorconfig job checks out the repository and runs a .editorconfig linter.",
+  "tags": [
+    "ci",
+    "ubuntu",
+    "docker",
+    "editorconfig",
+    "linting"
+  ]
+}

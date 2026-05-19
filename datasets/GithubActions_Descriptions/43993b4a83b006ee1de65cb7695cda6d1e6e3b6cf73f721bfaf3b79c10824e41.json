@@ -1,0 +1,17 @@
+{
+  "sha": "43993b4a83b006ee1de65cb7695cda6d1e6e3b6cf73f721bfaf3b79c10824e41",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 6154,
+  "description": "Create a GitHub Actions workflow named On PRs - Windows Matrix that runs on pull requests and pushes to main, ignoring *.md files. The workflow should have a concurrency group that cancels in-progress runs. It should have three jobs: windows, msys2, and cygwin, each running on windows-2022 or windows-latest with different configurations and steps to set up the environment, build, and test.",
+  "tags": [
+    "windows",
+    "matrix",
+    "concurrency",
+    "github-actions",
+    "cmake",
+    "conan",
+    "msys2",
+    "cygwin"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "sha": "7c0230ea718f44e06028eb9f1abf5927e3e6e3cedb571a2cf8206a95af04e934",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 10205,
+  "description": "Create a GitHub Actions workflow named VCPKG Continuous Integration that runs every 6 hours on the master branch, on push to master or tags, and on pull requests. The workflow has four jobs: build_linux, build_mac, release_packages, and Docker_Linux. The build_linux job builds and tests on Linux with multiple compilers and LLVM versions, while build_mac does the same on macOS. The release_packages job creates a release with artifacts if the push event is a tag. The Docker_Linux job builds and tests a Docker image for Linux.",
+  "tags": [
+    "vcpkg",
+    "ci",
+    "linux",
+    "macos",
+    "docker",
+    "llvm",
+    "ubuntu",
+    "release"
+  ]
+}

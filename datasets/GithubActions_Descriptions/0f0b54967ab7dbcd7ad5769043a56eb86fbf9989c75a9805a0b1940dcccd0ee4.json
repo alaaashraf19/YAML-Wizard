@@ -1,0 +1,16 @@
+{
+  "sha": "0f0b54967ab7dbcd7ad5769043a56eb86fbf9989c75a9805a0b1940dcccd0ee4",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2914,
+  "description": "Create a GitHub Actions workflow named Build openSUSE that runs on push to the master branch, on pull requests to the master branch, and on workflow dispatch. The workflow should have a concurrency policy that cancels in-progress runs for non-master branches. It should use an ubuntu-latest environment with an openSUSE Tumbleweed container. The workflow consists of three jobs: CI, ruff, and pytype. The CI job should install dependencies, build the project with CMake and make, and run tests with pytest. The ruff job should install dependencies, format the code with ruff, and check for errors. The pytype job should install dependencies, create a virtual environment, build the project, and run pytype checks.",
+  "tags": [
+    "opensuse",
+    "cmake",
+    "llvm",
+    "python",
+    "pytest",
+    "ruff",
+    "pytype"
+  ]
+}

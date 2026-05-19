@@ -1,0 +1,14 @@
+{
+  "sha": "747be761575e95e2670679a741ae7e298bc2d09f5b95cf2e9b7755e1c2ca61dc",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1518,
+  "description": "Create a GitHub Actions workflow named Semgrep that scans code for security issues on push to dev and release-* branches, on pull requests to dev, and on a weekly schedule. Use an ubuntu-latest job with read permissions to repository contents and write permissions to security events. The job should check out the code, run a Semgrep scan using the project's configuration on Semgrep.dev, generate a SARIF file, and upload it.",
+  "tags": [
+    "security",
+    "semgrep",
+    "code-scanning",
+    "github-actions",
+    "sarif"
+  ]
+}

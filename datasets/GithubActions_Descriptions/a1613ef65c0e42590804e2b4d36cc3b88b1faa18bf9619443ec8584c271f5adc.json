@@ -1,0 +1,15 @@
+{
+  "sha": "a1613ef65c0e42590804e2b4d36cc3b88b1faa18bf9619443ec8584c271f5adc",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1329,
+  "description": "Create a GitHub Actions workflow named validate-p4c that runs daily at midnight UTC, on push to main, and on pull requests to main. The workflow should validate P4C compilation of P4-16 programs in parallel with normal tests. It should only run on pull requests labeled with 'run-validation' and use an ubuntu-22.04 environment with ccache and recursive submodule checkout.",
+  "tags": [
+    "validation",
+    "p4c",
+    "ctest",
+    "ubuntu",
+    "schedule",
+    "ccache"
+  ]
+}

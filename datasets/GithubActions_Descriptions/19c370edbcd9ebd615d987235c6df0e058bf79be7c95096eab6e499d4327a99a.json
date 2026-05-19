@@ -1,0 +1,14 @@
+{
+  "sha": "19c370edbcd9ebd615d987235c6df0e058bf79be7c95096eab6e499d4327a99a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2131,
+  "description": "Create a GitHub Actions workflow named deploy that triggers on push events with any tag. The workflow has two jobs, pypi and ghpages, both running on ubuntu-latest. The pypi job checks out the code, sets up Python 3.11, installs dependencies, builds the package, and publishes it to PyPI and GitHub Releases. The ghpages job checks out the code, sets up Python 3.11, installs dependencies, builds the documentation, and publishes it to GitHub Pages.",
+  "tags": [
+    "python",
+    "pypi",
+    "github-releases",
+    "github-pages",
+    "mkdocs"
+  ]
+}

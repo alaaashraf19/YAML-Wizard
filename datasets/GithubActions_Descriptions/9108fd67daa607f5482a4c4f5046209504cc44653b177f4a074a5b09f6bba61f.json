@@ -1,0 +1,14 @@
+{
+  "sha": "9108fd67daa607f5482a4c4f5046209504cc44653b177f4a074a5b09f6bba61f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3329,
+  "description": "Create a GitHub Actions workflow named CI that runs on workflow dispatch, pull requests, and pushes, excluding certain paths and branches. The workflow uses a matrix strategy to test on multiple operating systems (macOS 13, macOS 15, Ubuntu 24.04, and Windows) and Node.js versions (18, 20, 22, 24). For each job, check out the code, set up the environment, and run .NET and .NET Core tests. Generate a test report for each successful job.",
+  "tags": [
+    "dotnet",
+    "nodejs",
+    "ci",
+    "matrix",
+    "test-report"
+  ]
+}

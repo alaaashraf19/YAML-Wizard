@@ -1,0 +1,16 @@
+{
+  "sha": "a92653b300f9fc961eb221f18cff53d42ff6fba46419a157c39f085b54b2e986",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1944,
+  "description": "Create a GitHub Actions workflow named Build that triggers on push. Run a multi-job workflow with three jobs: build_docker, build_mac, and build_windows. The build_docker job uses a matrix strategy to build Docker images for multiple targets on ubuntu-latest. The build_mac job runs on macos-latest and uses cmake and ctest actions to build and test. The build_windows job uses a matrix strategy to build on windows-latest with different shared library configurations.",
+  "tags": [
+    "docker",
+    "macos",
+    "windows",
+    "cmake",
+    "ctest",
+    "matrix",
+    "multi-job"
+  ]
+}

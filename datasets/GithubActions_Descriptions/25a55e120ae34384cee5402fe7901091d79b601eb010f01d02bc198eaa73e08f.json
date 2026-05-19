@@ -1,0 +1,15 @@
+{
+  "sha": "25a55e120ae34384cee5402fe7901091d79b601eb010f01d02bc198eaa73e08f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5960,
+  "description": "Create a GitHub Actions workflow that drafts a release when a tag matching [0-9]* is created. The workflow should have two jobs for building 32-bit and 64-bit Windows installers using MXE, each depending on a draft release job that generates a changelog and creates a draft release. The build jobs should upload the resulting installers as release assets.",
+  "tags": [
+    "mxe",
+    "windows",
+    "installer",
+    "release",
+    "draft",
+    "changelog"
+  ]
+}

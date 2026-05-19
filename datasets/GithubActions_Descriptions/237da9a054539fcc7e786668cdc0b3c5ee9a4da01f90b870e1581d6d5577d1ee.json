@@ -1,0 +1,14 @@
+{
+  "sha": "237da9a054539fcc7e786668cdc0b3c5ee9a4da01f90b870e1581d6d5577d1ee",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1516,
+  "description": "Create a GitHub Actions workflow named CI that runs on push and pull request events to the master branch, and can be triggered manually. The workflow has a single ubuntu-18.04 job that skips if the commit message contains 'ci-skip'. It checks out the repository, caches and restores the bazel build directory, installs lib-numa, and runs bazel test with sandbox debug and verbose failures.",
+  "tags": [
+    "bazel",
+    "ubuntu",
+    "ci",
+    "tests",
+    "cache"
+  ]
+}

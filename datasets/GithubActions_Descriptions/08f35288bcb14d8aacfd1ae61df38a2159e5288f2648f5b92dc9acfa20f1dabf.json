@@ -1,0 +1,15 @@
+{
+  "sha": "08f35288bcb14d8aacfd1ae61df38a2159e5288f2648f5b92dc9acfa20f1dabf",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1550,
+  "description": "Create a GitHub Actions workflow named Debian build that triggers on push and pull request events. Run a matrix of jobs on an ubuntu-latest environment with a Debian container, varying by distribution (bookworm, trixie), compiler (clang, gcc, clang-15, clang-17, gcc-14), and packages. For each job, install git, check out the repository with submodules, install dependencies via a script, and then build the project using another script.",
+  "tags": [
+    "debian",
+    "clang",
+    "gcc",
+    "ubuntu",
+    "matrix",
+    "build"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "7cbfaf83665751bbc30496128ec7d811c9ec60e9b2277bf132add15166dd6557",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1559,
+  "description": "Create a GitHub Actions workflow named unreal ci that runs on workflow dispatch, push to unreal/Puerts/Source/**, and pull requests to unreal/Puerts/Source/**. The workflow should have two jobs, window_ci and android_ci, both running on windows-2019. Each job checks out the repository, sets up msys2, downloads and extracts V8 and Engine dependencies, and then builds a Unreal plugin for Windows and Android respectively.",
+  "tags": [
+    "unreal",
+    "ci",
+    "windows",
+    "android",
+    "msys2"
+  ]
+}

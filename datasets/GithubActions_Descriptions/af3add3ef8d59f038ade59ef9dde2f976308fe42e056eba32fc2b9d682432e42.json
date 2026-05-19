@@ -1,0 +1,15 @@
+{
+  "sha": "af3add3ef8d59f038ade59ef9dde2f976308fe42e056eba32fc2b9d682432e42",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2079,
+  "description": "Create a GitHub Actions workflow named Deploy that runs on push to the master branch and on a weekly schedule every Monday. Use a matrix strategy to deploy with multiple Python versions, from 3.7 to 3.12, on an ubuntu-latest environment. For each version, set up Docker Buildx, login to DockerHub, build and push Docker images with specific tags, and update the DockerHub description.",
+  "tags": [
+    "docker",
+    "python",
+    "deploy",
+    "dockerhub",
+    "schedule",
+    "matrix"
+  ]
+}

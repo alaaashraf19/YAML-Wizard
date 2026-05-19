@@ -1,0 +1,15 @@
+{
+  "sha": "45b48710f60d31a4bda32a2a6ee8a71e95c3df1444bbe2f43bf68e0f4c340a63",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1022,
+  "description": "Create a GitHub Actions workflow named Release that triggers on push events with tags matching v*. Use an ubuntu-latest job to check out the code, install Poetry, set up Python 3.11, install dependencies with Poetry if cache miss, build the project, upload distributions to PyPI using twine with TWINE_USERNAME and TWINE_PASSWORD from secrets, and create a GitHub release with files from the dist directory.",
+  "tags": [
+    "python",
+    "release",
+    "poetry",
+    "pypi",
+    "twine",
+    "github-release"
+  ]
+}

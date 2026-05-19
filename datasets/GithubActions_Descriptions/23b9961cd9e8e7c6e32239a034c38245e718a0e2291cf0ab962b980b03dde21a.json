@@ -1,0 +1,18 @@
+{
+  "sha": "23b9961cd9e8e7c6e32239a034c38245e718a0e2291cf0ab962b980b03dde21a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2796,
+  "description": "Create a comprehensive GitHub Actions workflow named CI that runs on pushes to main, branches matching *.*, tags matching v*, and non-dev, non-pre, non-post tags. Also trigger on pull requests, workflow dispatch, and a daily schedule at 07:00 UTC. The workflow has several jobs with concurrency control, including core, tests, docs, conda, and extras, utilizing reusable workflows and custom steps for various environments and testing purposes.",
+  "tags": [
+    "python",
+    "ci",
+    "tox",
+    "codecov",
+    "conda",
+    "ubuntu",
+    "tests",
+    "docs",
+    "scheduling"
+  ]
+}

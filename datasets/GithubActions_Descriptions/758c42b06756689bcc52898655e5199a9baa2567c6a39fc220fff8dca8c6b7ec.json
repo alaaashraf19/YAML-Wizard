@@ -1,0 +1,16 @@
+{
+  "sha": "758c42b06756689bcc52898655e5199a9baa2567c6a39fc220fff8dca8c6b7ec",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3877,
+  "description": "Create a GitHub Actions workflow named Dinit Regular CI that runs on push to master branch with specific path filters and on pull requests to master with the same path filters. The workflow also triggers on workflow dispatch. It has three jobs: Debian-bullseye_build, MacOS-latest_build, and Alpine-latest_build. Each job runs on a different environment (debian:bullseye, macos-latest, ubuntu-latest with alpine:latest), checks out the code, and performs a series of steps including dependency installation, build, unit tests, and integration tests.",
+  "tags": [
+    "ci",
+    "dinit",
+    "debian",
+    "macos",
+    "alpine",
+    "multi-arch",
+    "tests"
+  ]
+}

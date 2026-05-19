@@ -1,0 +1,14 @@
+{
+  "sha": "8dd4a970800b0d9fbe636292be9631ded4b08b28c412f0c499e7bb56024b3a19",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2038,
+  "description": "Create a GitHub Actions workflow named Python package that runs on push and pull request events. The workflow should have multiple jobs: lint, build, unit-tests, and integration-tests. Each job should run on an ubuntu environment, check out the code, and set up Python. The lint job should install ruff and run it on docker and tests. The build job should install build, build the package, and upload the artifact. The unit-tests job should run unit tests on multiple Python versions. The integration-tests job should run integration tests on multiple variants.",
+  "tags": [
+    "python",
+    "docker",
+    "tests",
+    "ubuntu",
+    "ci"
+  ]
+}

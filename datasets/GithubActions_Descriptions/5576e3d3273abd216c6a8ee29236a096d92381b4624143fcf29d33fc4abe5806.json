@@ -1,0 +1,16 @@
+{
+  "sha": "5576e3d3273abd216c6a8ee29236a096d92381b4624143fcf29d33fc4abe5806",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3055,
+  "description": "Create a GitHub Actions workflow that triggers on push to main, rustyfish, and tags, as well as pull requests and workflow dispatches. The workflow has read permission to repository contents and uses multiple jobs to build and upload wheels for different Python versions and targets on Linux, Windows, and macOS, and to build and upload a source distribution. A release job depends on the others and publishes the artifacts to PyPI if the workflow is triggered by a tag.",
+  "tags": [
+    "python",
+    "maturin",
+    "pypi",
+    "wheels",
+    "release",
+    "multi-os",
+    "multi-python"
+  ]
+}

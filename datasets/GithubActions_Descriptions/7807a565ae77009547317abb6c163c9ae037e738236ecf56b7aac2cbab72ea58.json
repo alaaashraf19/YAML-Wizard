@@ -1,0 +1,14 @@
+{
+  "sha": "7807a565ae77009547317abb6c163c9ae037e738236ecf56b7aac2cbab72ea58",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3329,
+  "description": "Create a GitHub Actions workflow named test-p4c-debian that runs on every push to main, on pull requests to main, and on merge groups to main. The workflow has three ubuntu jobs: test-ubuntu22, test-ubuntu22-tofino, and test-ubuntu20, each checking out the repository, using ccache, building with GCC, and running tests with ctest. The jobs differ in their environments, test configurations, and Ubuntu versions.",
+  "tags": [
+    "debian",
+    "ubuntu",
+    "gcc",
+    "ctest",
+    "p4c"
+  ]
+}

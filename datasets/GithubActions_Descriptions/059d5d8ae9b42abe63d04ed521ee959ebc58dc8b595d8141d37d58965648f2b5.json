@@ -1,0 +1,16 @@
+{
+  "sha": "059d5d8ae9b42abe63d04ed521ee959ebc58dc8b595d8141d37d58965648f2b5",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4339,
+  "description": "Create a GitHub Actions workflow that builds and publishes Docker images for a repository. The workflow should trigger on push to the master branch, on release publication, and on a workflow dispatch event with a required tag input and an optional latest input. It should handle both CPU and GPU image builds, using the Docker Buildx and QEMU actions, and push the images to the GitHub Container Registry.",
+  "tags": [
+    "docker",
+    "github-actions",
+    "container-registry",
+    "buildx",
+    "qemu",
+    "gpu",
+    "workflow-dispatch"
+  ]
+}

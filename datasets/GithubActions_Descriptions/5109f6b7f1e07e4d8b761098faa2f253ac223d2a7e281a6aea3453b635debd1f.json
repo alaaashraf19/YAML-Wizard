@@ -1,0 +1,17 @@
+{
+  "sha": "5109f6b7f1e07e4d8b761098faa2f253ac223d2a7e281a6aea3453b635debd1f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3102,
+  "description": "Create a GitHub Actions workflow named Build code on Linux that runs on push and when a pull request is opened. Use a ubuntu-latest job matrix to test with different compilers (g++-12, clang++-15) and build types (Debug, Release). For each matrix entry, check out the repository, create a build environment, prepare the Vulkan SDK, configure the build with specific compiler flags, and then build the project in parallel.",
+  "tags": [
+    "linux",
+    "c++",
+    "vulkan",
+    "cmake",
+    "ubuntu",
+    "gcc",
+    "clang",
+    "ci"
+  ]
+}

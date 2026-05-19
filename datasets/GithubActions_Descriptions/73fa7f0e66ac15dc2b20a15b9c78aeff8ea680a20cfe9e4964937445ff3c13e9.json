@@ -1,0 +1,15 @@
+{
+  "sha": "73fa7f0e66ac15dc2b20a15b9c78aeff8ea680a20cfe9e4964937445ff3c13e9",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1782,
+  "description": "Create a GitHub Actions workflow named CI that runs on every push to the master branch and on all pull requests. Use a matrix job that tests on Ubuntu, MacOS, and Windows with Python versions 3.7 through 3.12. For each job, check out the repository, set up the specified Python version, install Poetry, configure it, set up caching for virtual environments, install dependencies, generate code from proto files, and execute the test suite with pytest.",
+  "tags": [
+    "python",
+    "ci",
+    "poetry",
+    "pytest",
+    "multios",
+    "multiversion"
+  ]
+}

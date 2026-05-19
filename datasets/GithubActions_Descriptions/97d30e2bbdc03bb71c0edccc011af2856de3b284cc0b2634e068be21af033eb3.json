@@ -1,0 +1,16 @@
+{
+  "sha": "97d30e2bbdc03bb71c0edccc011af2856de3b284cc0b2634e068be21af033eb3",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5994,
+  "description": "Create a GitHub Actions workflow named Build App that triggers on push to the master branch. The workflow uses a Windows Latest job with a custom setup, checks out the repository code with submodules, sets up a development environment, caches wxWidgets builds, configures and builds wxWidgets, tests the app build, uploads the app and sccache log as GitHub Artifacts, creates an automatic release, and cleans up.",
+  "tags": [
+    "windows",
+    "github-actions",
+    "ci",
+    "build",
+    "wxwidgets",
+    "sccache",
+    "automatic-releases"
+  ]
+}

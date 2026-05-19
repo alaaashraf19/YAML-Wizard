@@ -1,0 +1,13 @@
+{
+  "sha": "81eb94972919deb072a06bed27f2dc1c2e2429d31b20d941e069c41243ba2295",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1677,
+  "description": "Create a GitHub Actions workflow named dpf that runs on push and pull request events for all branches. The workflow should have four jobs: linux, macos, windows, and source, each running on a different environment. For linux, macos, windows, and source jobs, checkout the repository with submodules, then use the distrho/dpf-makefile-action with different targets and parameters.",
+  "tags": [
+    "multi-os",
+    "matrix",
+    "github-actions",
+    "dpf"
+  ]
+}

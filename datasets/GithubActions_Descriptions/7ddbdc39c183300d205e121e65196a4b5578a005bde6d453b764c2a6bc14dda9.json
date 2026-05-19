@@ -1,0 +1,14 @@
+{
+  "sha": "7ddbdc39c183300d205e121e65196a4b5578a005bde6d453b764c2a6bc14dda9",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4951,
+  "description": "Create a GitHub Actions workflow named Lint that runs on every push to any branch and on every pull request to any branch. The workflow consists of three jobs: check-remove-before-flight, check-cpp, and check-iwyu, all running on windows-latest. The check-remove-before-flight job checks for a specific string in the source tree and reports errors. The check-cpp job downloads cpplint, runs it on C++ files changed by the pull request or all C++ files otherwise, and reports warnings. The check-iwyu job restores the Release configuration, builds sourcerer, and runs include_what_you_using_all_the_things.ps1 to check for IWYU warnings.",
+  "tags": [
+    "linting",
+    "windows",
+    "powershell",
+    "cpplint",
+    "iwyu"
+  ]
+}

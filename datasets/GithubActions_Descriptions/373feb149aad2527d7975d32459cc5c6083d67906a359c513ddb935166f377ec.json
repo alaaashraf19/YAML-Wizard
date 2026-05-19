@@ -1,0 +1,14 @@
+{
+  "sha": "373feb149aad2527d7975d32459cc5c6083d67906a359c513ddb935166f377ec",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1331,
+  "description": "Create a GitHub Actions workflow named Doxygen that runs on push and pull request events, excluding markdown files and specific configuration files, and also allows manual dispatch. The workflow uses a Windows environment with a matrix strategy to build for Win32 and x64 platforms in Release configuration. It checks out the repository, installs Doxygen 1.8.14, runs Doxygen, zips the generated files, and uploads them as artifacts.",
+  "tags": [
+    "doxygen",
+    "windows",
+    "ci",
+    "artifacts",
+    "matrix-build"
+  ]
+}

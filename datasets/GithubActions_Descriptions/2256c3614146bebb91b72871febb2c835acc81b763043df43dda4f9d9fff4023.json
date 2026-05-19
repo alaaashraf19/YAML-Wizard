@@ -1,0 +1,14 @@
+{
+  "sha": "2256c3614146bebb91b72871febb2c835acc81b763043df43dda4f9d9fff4023",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1416,
+  "description": "Create a GitHub Actions workflow named publish nuget that triggers on push events with any tag. Use an ubuntu-latest job to check out the code, set up .NET, and then for each project in the repository (DaemonRunner, App, Daemon, Test), pack the project with a version number based on the Git tag and a -beta suffix, then push the resulting NuGet packages to NuGet.org using the NUGET_API_KEY from secrets.",
+  "tags": [
+    "dotnet",
+    "nuget",
+    "packaging",
+    "tags",
+    "github-actions"
+  ]
+}

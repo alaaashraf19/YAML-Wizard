@@ -1,0 +1,17 @@
+{
+  "sha": "929ebc09bd49e9600733bdd21802af772b7ababf7c30d1f2ba961622e9c6d37a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5744,
+  "description": "Create a GitHub Actions workflow named Main that runs on push to any branch or tag matching [0-9]+.[0-9]+.[0-9]+ and on pull requests to any branch. The workflow has a concurrency group based on the GitHub reference and cancels in-progress jobs. It defines four jobs: build-windows, build-macos, build-linux, and deploy. The build jobs checkout code, set up environment, generate project files with premake5, build binaries, and upload artifacts. The deploy job runs after all build jobs, downloads artifacts, compresses binaries, creates a release, and builds and publishes a Docker image.",
+  "tags": [
+    "premake",
+    "msbuild",
+    "homebrew",
+    "llvm",
+    "docker",
+    "release",
+    "multi-os",
+    "multi-arch"
+  ]
+}

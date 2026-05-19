@@ -1,0 +1,16 @@
+{
+  "sha": "0dfe527cb8bac611df00793795260ce0bb6be1b7121db65b58743f2773cbe02d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4518,
+  "description": "Create a GitHub Actions workflow that triggers on workflow dispatch, push to master or v0.23.x branches, and pull requests to those branches, excluding certain paths. The workflow should have two jobs: build-linux and build-macos. The build-linux job runs on ubuntu-latest, sets up ccache, installs dependencies, and performs a full build, unit tests, and mini build using meson. The build-macos job runs on macos-latest, sets up ccache, installs dependencies, and performs a build and unit tests using meson.",
+  "tags": [
+    "meson",
+    "ubuntu",
+    "macos",
+    "ccache",
+    "dependencies",
+    "build",
+    "tests"
+  ]
+}

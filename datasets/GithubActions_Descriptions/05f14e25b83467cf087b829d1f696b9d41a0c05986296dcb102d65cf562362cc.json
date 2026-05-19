@@ -1,0 +1,15 @@
+{
+  "sha": "05f14e25b83467cf087b829d1f696b9d41a0c05986296dcb102d65cf562362cc",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2325,
+  "description": "Create a GitHub Actions workflow for style and syntax checks that runs on every pull request. The workflow should have two jobs: one for clang-format checks using an ubuntu-latest environment with Python 3.x, and another for codespell checks also on ubuntu-latest. The clang-format job should check out submodules, install clang-format-13, and run a style check script. The codespell job should check out the repository without submodules and run codespell with specified skips and ignore words.",
+  "tags": [
+    "clang-format",
+    "codespell",
+    "style-check",
+    "syntax-check",
+    "ubuntu",
+    "python"
+  ]
+}

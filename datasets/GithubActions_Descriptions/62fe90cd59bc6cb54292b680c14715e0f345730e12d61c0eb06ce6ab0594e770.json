@@ -1,0 +1,17 @@
+{
+  "sha": "62fe90cd59bc6cb54292b680c14715e0f345730e12d61c0eb06ce6ab0594e770",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1925,
+  "description": "Create a GitHub Actions workflow named ci that runs on push and pull request events. Use a matrix job that runs on ubuntu-latest and macOS-latest with Python versions 3.6, 3.7, and 3.8, excluding macOS-latest with Python 3.8. The job checks out the repository, sets up Python, installs dependencies, lints with flake8, tests with pytest, and uploads coverage to Codecov.",
+  "tags": [
+    "python",
+    "ci",
+    "tests",
+    "linting",
+    "codecov",
+    "matrix",
+    "ubuntu",
+    "macos"
+  ]
+}

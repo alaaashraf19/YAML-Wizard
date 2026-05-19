@@ -1,0 +1,16 @@
+{
+  "sha": "2b4c888f410a866d35a39441e6df033b22441f2c014d9ce58f6424a9c91b9e36",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1077,
+  "description": "Create a GitHub Actions workflow named Tests that runs on every push to any branch and on pull requests, excluding tag pushes. Use two ubuntu-latest jobs: one for JavaScript checks and another for Python tests across multiple Python versions. The JavaScript job checks out the repository, sets up Node.js 16.17.0, installs frontend dependencies, lints JavaScript, and builds the JS bundle. The Python job, using a matrix strategy for Python 3.7 to 3.10, checks out the repository, sets up Python, upgrades pip, installs tox, and runs tests with tox.",
+  "tags": [
+    "javascript",
+    "nodejs",
+    "python",
+    "tests",
+    "tox",
+    "ubuntu",
+    "ci"
+  ]
+}

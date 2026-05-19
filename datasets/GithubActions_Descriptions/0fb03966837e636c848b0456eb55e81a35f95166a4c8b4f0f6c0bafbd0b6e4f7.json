@@ -1,0 +1,15 @@
+{
+  "sha": "0fb03966837e636c848b0456eb55e81a35f95166a4c8b4f0f6c0bafbd0b6e4f7",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2713,
+  "description": "Create a GitHub Actions workflow named Build and Release Game that triggers on pull requests to the release branch. In a single windows-latest job, check out the code, install Python 3.12, install required packages, download Dependency Walker, build the game with Nuitka, create a game configuration and cache, and package the game files into a zip archive. Upload the archive as a release asset with a version tag based on package.json.",
+  "tags": [
+    "windows",
+    "python",
+    "nuitka",
+    "game",
+    "release",
+    "github-actions"
+  ]
+}

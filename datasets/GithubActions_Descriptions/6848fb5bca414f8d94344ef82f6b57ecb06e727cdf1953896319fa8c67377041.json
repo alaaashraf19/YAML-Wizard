@@ -1,0 +1,14 @@
+{
+  "sha": "6848fb5bca414f8d94344ef82f6b57ecb06e727cdf1953896319fa8c67377041",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2915,
+  "description": "Create a GitHub Actions workflow named OSW-FEATURE-test that runs on workflow dispatch, push, and pull requests to master and develop branches. The workflow has two jobs: Find-feature and build-OSW. The Find-feature job checks out the repository, extracts feature flags, default models, and languages, and outputs them as JSON. The build-OSW job depends on Find-feature, uses the extracted outputs to create a matrix of features, models, and languages, and builds the project using PlatformIO and Python.",
+  "tags": [
+    "github-actions",
+    "platformio",
+    "python",
+    "build",
+    "workflow-dispatch"
+  ]
+}

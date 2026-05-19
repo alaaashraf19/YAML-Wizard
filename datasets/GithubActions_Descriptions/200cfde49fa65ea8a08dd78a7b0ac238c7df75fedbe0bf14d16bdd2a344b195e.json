@@ -1,0 +1,14 @@
+{
+  "sha": "200cfde49fa65ea8a08dd78a7b0ac238c7df75fedbe0bf14d16bdd2a344b195e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1319,
+  "description": "Create a GitHub Actions workflow named Static Analyzers that runs on push and pull request events. The workflow should have two jobs, clang_format and cmake_format, both running on ubuntu-18.04. The clang_format job should install clang-format 10, set it as the default, and then run a script to check commit format. The cmake_format job should set up Python 3.x, install cmake-format, and then run a script to check cmake format.",
+  "tags": [
+    "clang",
+    "cmake",
+    "format",
+    "static-analysis",
+    "ubuntu"
+  ]
+}

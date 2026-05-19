@@ -1,0 +1,14 @@
+{
+  "sha": "5a40eef6aa57091ddeb5e38b12d58bf47e618767cbe3c6cc31670b8faa77efbc",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 483,
+  "description": "Create a GitHub Actions workflow named tests that runs on every push and pull request. Use a single macos-12 job that checks out the repository, removes the dump directory, installs dependencies with make new, runs tests with make test, and uploads coverage to Codecov using a token from secrets.",
+  "tags": [
+    "tests",
+    "macos",
+    "make",
+    "pytest",
+    "codecov"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "a695b37e9615ac0a77083f9403d90e81dc9eb2f50e1b6d958194ff0bac447e16",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 11718,
+  "description": "Create a GitHub Actions workflow to package mc_rtc. The workflow should trigger on repository dispatches with types package-master and package-release, on push to tags matching v*, and on pull requests to any branch except when pushing to specific paths. The workflow should have three jobs: check-tag, build-packages, and upload-packages. The check-tag job checks version coherency for tags and creates a release. The build-packages job builds packages for multiple ROS distributions and architectures. The upload-packages job uploads packages to Bintray. A final job, mirror-sync-and-trigger, synchronizes the Bintray mirror and triggers dependent repositories to rebuild.",
+  "tags": [
+    "ros",
+    "bintray",
+    "github-actions",
+    "package",
+    "release",
+    "mirror"
+  ]
+}

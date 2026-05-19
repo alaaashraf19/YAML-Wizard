@@ -1,0 +1,17 @@
+{
+  "sha": "42633949e8ade90ef581906c435717451fdc757188c65d3f9256a90e0639f3f1",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4113,
+  "description": "Create a GitHub Actions workflow named Test that runs on push to master, on pull requests, and on a scheduled cron job. The workflow has three jobs: check, gpu, and windows-gpu. The check job runs on a matrix of ubuntu-18.04, macos-latest, and windows-latest, and performs various R package checks and tests. The gpu and windows-gpu jobs run on self-hosted Linux and Windows environments, respectively, and perform Docker-based checks and tests with different CUDA versions.",
+  "tags": [
+    "r",
+    "github-actions",
+    "ci",
+    "cd",
+    "docker",
+    "cuda",
+    "gpu",
+    "tests"
+  ]
+}

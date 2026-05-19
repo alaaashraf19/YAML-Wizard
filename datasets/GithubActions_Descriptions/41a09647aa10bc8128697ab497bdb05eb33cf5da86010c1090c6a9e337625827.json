@@ -1,0 +1,14 @@
+{
+  "sha": "41a09647aa10bc8128697ab497bdb05eb33cf5da86010c1090c6a9e337625827",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1588,
+  "description": "Create a GitHub Actions workflow named Create Release that triggers on push events to tags matching v* but not v*-dev. The workflow should have write permissions to repository contents and run on an ubuntu-latest environment. It should wait for status checks to complete, checkout the code with submodules, prepare an archive using a script, fetch platform packages, and then upload release assets to a draft release using specific files.",
+  "tags": [
+    "release",
+    "github",
+    "ubuntu",
+    "draft-release",
+    "assets"
+  ]
+}

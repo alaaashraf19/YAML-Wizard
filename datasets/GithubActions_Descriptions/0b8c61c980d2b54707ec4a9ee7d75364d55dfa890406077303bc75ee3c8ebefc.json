@@ -1,0 +1,14 @@
+{
+  "sha": "0b8c61c980d2b54707ec4a9ee7d75364d55dfa890406077303bc75ee3c8ebefc",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3502,
+  "description": "Create a GitHub Actions workflow named C/C++ CI docker that runs on every push. Use a matrix strategy to build Docker images for multiple architectures (windows, arm64, armv6l, armv7l, amd64) using different Dockerfiles and images. For each architecture, remove unnecessary directories, check out the code, fetch tags, build a Docker image, login to the GitHub Container Registry, and push the image. Then, create a multi-arch image by combining the images for all architectures and push it to the registry.",
+  "tags": [
+    "docker",
+    "multiarch",
+    "cc",
+    "ci",
+    "github-container-registry"
+  ]
+}

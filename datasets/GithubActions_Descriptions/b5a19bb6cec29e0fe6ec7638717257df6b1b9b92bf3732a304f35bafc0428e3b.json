@@ -1,0 +1,15 @@
+{
+  "sha": "b5a19bb6cec29e0fe6ec7638717257df6b1b9b92bf3732a304f35bafc0428e3b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3327,
+  "description": "Create a GitHub Actions workflow named CI that runs on push and pull request events for devel and release branches, excluding certain paths. The workflow consists of four jobs: Framework, Ref, Integration, and Quality, all running on ubuntu-22.04. Each job checks out the repository, sets up the environment, and runs specific tests or static analysis. The workflow also archives logs for each job.",
+  "tags": [
+    "ubuntu",
+    "ci",
+    "github-actions",
+    "fprime",
+    "static-analysis",
+    "testing"
+  ]
+}

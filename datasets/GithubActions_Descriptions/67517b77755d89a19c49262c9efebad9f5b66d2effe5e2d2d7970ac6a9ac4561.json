@@ -1,0 +1,18 @@
+{
+  "sha": "67517b77755d89a19c49262c9efebad9f5b66d2effe5e2d2d7970ac6a9ac4561",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 12715,
+  "description": "Create a GitHub Actions workflow named Automated Test Build that runs on every push to the master branch and on pull requests to master. The workflow should have three jobs: build-windows, build-linux, and build-macos. The build-windows job should run on a Windows environment with a matrix strategy for different Windows versions and audio libraries, downloading and installing various dependencies, generating a Visual Studio solution with premake, and building the solution with MSBuild. The build-linux and build-macos jobs should run on Linux and macOS environments, respectively, with a matrix strategy for different operating system versions, downloading and installing dependencies, generating makefiles with premake, and building the project with make.",
+  "tags": [
+    "windows",
+    "linux",
+    "macos",
+    "premake",
+    "msbuild",
+    "make",
+    "irrlicht",
+    "miniaudio",
+    "irrklang"
+  ]
+}

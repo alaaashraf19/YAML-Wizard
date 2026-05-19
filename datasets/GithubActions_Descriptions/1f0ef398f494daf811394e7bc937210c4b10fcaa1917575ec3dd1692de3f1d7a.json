@@ -1,0 +1,14 @@
+{
+  "sha": "1f0ef398f494daf811394e7bc937210c4b10fcaa1917575ec3dd1692de3f1d7a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1249,
+  "description": "Create a GitHub Actions workflow named pytest that runs on push to main and staging branches, on pull requests to those branches, and can be manually triggered with an optional publish input. In an ubuntu-latest job, check out the code, set up dev tools with ./scripts/setup.sh, install db drivers with ./scripts/drivers.sh, and run integration tests with ./scripts/test.sh db. Upload test logs, daemon errors, and job data as artifacts.",
+  "tags": [
+    "ubuntu",
+    "tests",
+    "integration-tests",
+    "dev-tools",
+    "artifacts"
+  ]
+}

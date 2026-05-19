@@ -4,12 +4,17 @@ from fastapi.responses import JSONResponse
 from schemas.user_schema import UserCreate, UserCreateResponse, UserLogin,UserUpdate
 from core.security import hash_password, create_access_token, verify_password, get_user
 from models.user_model import User as UserModel
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
-async def signup(user: UserCreate, db):
+async def signup(user: UserCreate, db:AsyncSession):
     username = user.username.lower()
     email = user.email.lower()
     db_user = get_user(db, username)
-    email_exists = db.query(UserModel).filter(UserModel.email == email).first()
+    result = await db.execute(
+        select(UserModel).where(UserModel.email == email)
+    )
+    email_exists = result.scalar_one_or_none()
     
     if db_user:
         raise HTTPException(
@@ -30,13 +35,13 @@ async def signup(user: UserCreate, db):
         hashed_password=hashed_pw,
     )
     db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
+    await db.commit()
+    await db.refresh(new_user)
     return UserCreateResponse(msg = "User created successfully", user_id = str(new_user.id))
 
 
 
-async def login(user: UserLogin, db):
+async def login(user: UserLogin, db:AsyncSession):
 
     username = user.username
     password = user.password
@@ -44,8 +49,10 @@ async def login(user: UserLogin, db):
     if not username or not password:
         raise HTTPException(status_code=400, detail="Username and password are required")
     
-    
-    db_user = db.query(UserModel).filter(UserModel.username == username.lower()).first()
+    result = await db.execute(
+        select(UserModel).where(UserModel.username == username.lower())
+    )
+    db_user = result.scalar_one_or_none()
     hashed_pw = db_user.hashed_password if db_user else None
 
     if not db_user or not hashed_pw or not verify_password(password, hashed_pw):
@@ -72,48 +79,74 @@ async def login(user: UserLogin, db):
 
     return response
 
-async def update_user_profile(user_id:int, user_update: UserUpdate, db):
-    user = db.query(UserModel).filter(UserModel.id == user_id).first()
+
+async def update_user_profile(user_id: int, user_update: UserUpdate, db: AsyncSession):
+
+    result = await db.execute(
+        select(UserModel).where(UserModel.id == user_id)
+    )
+    user = result.scalar_one_or_none()
+
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
+
     if user_update.username:
         new_username = user_update.username.lower()
-        existing_user = db.query(UserModel).filter(
-            UserModel.username == new_username,
-            UserModel.id != user.id
-        ).first()
+
+        result = await db.execute(
+            select(UserModel).where(
+                UserModel.username == new_username,
+                UserModel.id != user.id
+            )
+        )
+        existing_user = result.scalar_one_or_none()
+
         if existing_user:
             raise HTTPException(status_code=409, detail="Username already exists")
         user.username = new_username
+
     if user_update.email:
         new_email = user_update.email.lower()
-        existing_user = db.query(UserModel).filter(
-            UserModel.email == new_email,
-            UserModel.id != user.id
-        ).first()
+
+        result = await db.execute(
+            select(UserModel).where(
+                UserModel.email == new_email,
+                UserModel.id != user.id
+            )
+        )
+        existing_user = result.scalar_one_or_none()
+
         if existing_user:
             raise HTTPException(status_code=409, detail="Email already exists")
         user.email = new_email
+
     if user_update.new_password:
         if not user_update.current_password:
             raise HTTPException(status_code=400, detail="Current password is required")
+
         if not verify_password(user_update.current_password, user.hashed_password):
             raise HTTPException(status_code=401, detail="Current password is incorrect")
+
         user.hashed_password = hash_password(user_update.new_password)
-    db.commit()
-    db.refresh(user)
+
+    await db.commit()
+    await db.refresh(user)
 
     return {
         "id": user.id,
         "username": user.username,
         "email": user.email,
         "role": user.role,
-        "msg" : "User updated successfully"
+        "msg": "User updated successfully"
     }
 
 
-async def get_user_profile(user_id: int, db):
-    user = db.query(UserModel).filter(UserModel.id == user_id).first()
+async def get_user_profile(user_id: int, db: AsyncSession):
+    result = await db.execute(
+        select(UserModel).where(UserModel.id == user_id)
+    )
+    user = result.scalar_one_or_none()
+
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 

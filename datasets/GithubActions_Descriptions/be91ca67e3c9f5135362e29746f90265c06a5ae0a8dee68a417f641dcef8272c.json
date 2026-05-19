@@ -1,0 +1,17 @@
+{
+  "sha": "be91ca67e3c9f5135362e29746f90265c06a5ae0a8dee68a417f641dcef8272c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1920,
+  "description": "Create a GitHub Actions workflow named CI Tests that runs on push to all branches, on pull requests to main and develop, on a scheduled cron job, and on workflow dispatch. The workflow should have a build job that runs in parallel on multiple environments, including Ubuntu, macOS, and Windows, with various Python versions, and checks out the code, sets up Python, installs dependencies with make install, runs tests with make test or unittest, and uploads coverage to Codecov for specific configurations.",
+  "tags": [
+    "python",
+    "ci",
+    "tests",
+    "coverage",
+    "codecov",
+    "ubuntu",
+    "macos",
+    "windows"
+  ]
+}

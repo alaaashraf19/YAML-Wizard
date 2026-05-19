@@ -1,0 +1,16 @@
+{
+  "sha": "084cb126345a62950b928c6404129f82d2723588fdd661967f1613346e516274",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1143,
+  "description": "Create a GitHub Actions workflow named Build on Ubuntu that runs on push and pull request events to the main branch. Use an ubuntu-latest job with a custom Docker container, and a matrix strategy to build with different configurations. Check out the repository with submodules, generate Ninja build files with CMake using a matrix of build configurations and compiler flags, build the project with Ninja, and run tests.",
+  "tags": [
+    "ubuntu",
+    "cmake",
+    "ninja",
+    "clang",
+    "tests",
+    "docker",
+    "matrix-build"
+  ]
+}

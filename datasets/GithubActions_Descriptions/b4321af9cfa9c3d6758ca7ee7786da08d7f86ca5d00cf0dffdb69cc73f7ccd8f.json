@@ -1,0 +1,15 @@
+{
+  "sha": "b4321af9cfa9c3d6758ca7ee7786da08d7f86ca5d00cf0dffdb69cc73f7ccd8f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1648,
+  "description": "Create a GitHub Actions workflow named lint-and-test that runs on every push to main and on pull requests to main. The workflow should have four ubuntu-latest jobs: lint-docs, lint-style, lint-typing, and test. The lint jobs should set up Python 3.12, install hatch, and run specific linting commands. The test job should use a matrix strategy to test multiple Python versions, install hatch, and run tests with coverage.",
+  "tags": [
+    "python",
+    "linting",
+    "testing",
+    "hatch",
+    "ubuntu",
+    "coverage"
+  ]
+}

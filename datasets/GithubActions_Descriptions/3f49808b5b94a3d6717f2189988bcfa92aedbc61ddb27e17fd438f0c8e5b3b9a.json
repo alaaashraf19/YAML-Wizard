@@ -1,0 +1,18 @@
+{
+  "sha": "3f49808b5b94a3d6717f2189988bcfa92aedbc61ddb27e17fd438f0c8e5b3b9a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2666,
+  "description": "Create a GitHub Actions workflow named CMake Build Matrix that runs on push and pull request events. Use a build job with a matrix strategy to run on multiple operating systems (Windows 2019, Windows 2022, macOS Latest) with different compilers (MSVC 2019, MSVC 2022, Clang, GCC 14) and configurations (with and without OpenCL and OpenMP). For each matrix entry, check out the repository, download Ninja, CMake, and CCache, configure and build the project using CMake, and run tests.",
+  "tags": [
+    "cmake",
+    "build-matrix",
+    "windows",
+    "macos",
+    "msvc",
+    "clang",
+    "gcc",
+    "opencl",
+    "openmp"
+  ]
+}

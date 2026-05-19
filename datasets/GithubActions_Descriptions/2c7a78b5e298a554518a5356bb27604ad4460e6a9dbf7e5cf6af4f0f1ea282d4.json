@@ -1,0 +1,17 @@
+{
+  "sha": "2c7a78b5e298a554518a5356bb27604ad4460e6a9dbf7e5cf6af4f0f1ea282d4",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2617,
+  "description": "Create a GitHub Actions workflow named CI for general build that runs on push to master and tags matching v*, on pull requests to master, and on release creation. The workflow uses a matrix strategy to build on ubuntu-latest, windows-latest, and macos-latest for both x64 and x86 architectures on Windows. It checks out the repository, sets up Python 3.x, configures the build for the specific OS, builds, tests, packages, and builds a Python wrapper. The workflow also uploads build artifacts and release assets to GitHub.",
+  "tags": [
+    "python",
+    "ci",
+    "build",
+    "test",
+    "package",
+    "release",
+    "github-actions",
+    "matrix-build"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "637efbfa5ebd4f91315cc966bf4f83103c11b35b84c093ec3e7fa01ef7e18768",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 9503,
+  "description": "Create a GitHub Actions CD workflow that triggers on push and pull request events. The workflow has three jobs: build-win10, build-linux-release, and macosx, each building and packaging the project for their respective platforms. A release job depends on the three build jobs and creates a GitHub release with the packaged artifacts.",
+  "tags": [
+    "cd",
+    "cross-platform",
+    "github-release",
+    "msys2",
+    "ubuntu",
+    "macos"
+  ]
+}

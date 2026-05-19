@@ -1,0 +1,18 @@
+{
+  "sha": "0ed9f16644851e488ca8924480ec91fb3e95c538a3b06437f18db931fc2dbd58",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4171,
+  "description": "Create a GitHub Actions workflow named ci that runs on push and pull request events. Use a matrix strategy to build the project on Linux, Windows, and macOS with different compilers (gcc and clang). For each job, install required packages, set up caching, check out the code, download dependencies (on Windows), generate project files with CMake, compile the source code, and archive artifacts.",
+  "tags": [
+    "ci",
+    "matrix",
+    "cross-platform",
+    "cmake",
+    "gcc",
+    "clang",
+    "ubuntu",
+    "windows",
+    "macos"
+  ]
+}

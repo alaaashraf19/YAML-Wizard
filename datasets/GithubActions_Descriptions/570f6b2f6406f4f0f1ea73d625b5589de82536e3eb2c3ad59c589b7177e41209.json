@@ -1,0 +1,15 @@
+{
+  "sha": "570f6b2f6406f4f0f1ea73d625b5589de82536e3eb2c3ad59c589b7177e41209",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1212,
+  "description": "Create a GitHub Actions workflow named Client (JS) that runs on push to specific paths and on pull requests. Use a single ubuntu-latest job that checks out the repository, sets up Node.js 12.16.1, and then for each of the WebAssets, AspNetCore.Demo, and Owin.Demo directories, it runs npm ci, npm run build, and in some cases npm test. If the push is to the main branch, also publish the WebAssets package to NPM using the NPM_TOKEN from secrets.",
+  "tags": [
+    "nodejs",
+    "npm",
+    "js",
+    "client",
+    "build",
+    "publish"
+  ]
+}

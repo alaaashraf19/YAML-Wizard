@@ -1,0 +1,16 @@
+{
+  "sha": "252431d7608f0230f7ef74c78620689d71f799eed7fd3779685faab1a86f7059",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5178,
+  "description": "Create a GitHub Actions workflow named CI build check that runs on every push to main, on pull requests to main, and on a scheduled cron job at 2 AM UTC. Use a single ubuntu-latest job with a 30-minute timeout that checks out the repository, installs .NET 9, enables problem matchers, builds the code, runs unit tests and integration tests with code coverage, generates a code coverage report, and publishes it to Coveralls and Codecov. Also, send a Discord notification on failure when the workflow runs on a schedule.",
+  "tags": [
+    "dotnet",
+    "ci",
+    "tests",
+    "code-coverage",
+    "coveralls",
+    "codecov",
+    "discord"
+  ]
+}

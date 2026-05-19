@@ -1,0 +1,14 @@
+{
+  "sha": "8621f6a4da06e27b7f18e5e4f130e3c432722afad143a523460632c44e219a7a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1202,
+  "description": "Create a GitHub Actions workflow that triggers on push and pull request events targeting the master branch. Run a job named Build IBAMR and run tests on an ubuntu-latest environment using a docker container with image dcthomp/ibamr:0.9-build-deps. The job should check out the source code, prepare the filesystem, enable sccache with caching, and then build and test IBAMR by running the script .github/test-build.",
+  "tags": [
+    "docker",
+    "ubuntu",
+    "tests",
+    "caching",
+    "sccache"
+  ]
+}

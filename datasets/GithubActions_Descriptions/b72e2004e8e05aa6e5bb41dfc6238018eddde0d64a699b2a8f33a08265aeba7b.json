@@ -1,0 +1,15 @@
+{
+  "sha": "b72e2004e8e05aa6e5bb41dfc6238018eddde0d64a699b2a8f33a08265aeba7b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2060,
+  "description": "Create a GitHub Actions workflow for testing DeFiCh/go-ethlibs that runs on push to master, pull requests to master, and workflow dispatch. The workflow should have concurrent execution with cancel-in-progress for non-master refs. It should set up an ubuntu-latest environment with specific variables, then run a series of make scripts to export vars, setup dependencies, and build binaries. The workflow should upload the binaries and shell commands as artifacts. Additionally, it should run node-rpc-tests that download the artifacts, set up permissions, and run Go tests for EVM RPC.",
+  "tags": [
+    "go",
+    "rust",
+    "tests",
+    "github-actions",
+    "defich",
+    "node-rpc"
+  ]
+}

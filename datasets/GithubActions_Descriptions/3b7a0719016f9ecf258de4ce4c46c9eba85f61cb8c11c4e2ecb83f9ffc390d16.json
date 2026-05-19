@@ -1,0 +1,14 @@
+{
+  "sha": "3b7a0719016f9ecf258de4ce4c46c9eba85f61cb8c11c4e2ecb83f9ffc390d16",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 832,
+  "description": "Create a GitHub Actions workflow named Development Coverity scan that runs on push to the dev_checks branch, on a scheduled basis twice a week, and optionally on pull requests to certain branches. Use an ubuntu-latest job that checks out the repository with submodules, configures a build with cmake, and then runs a Coverity scan using the vapier/coverity-scan-action with credentials from secrets.",
+  "tags": [
+    "coverity",
+    "cmake",
+    "ubuntu",
+    "scheduled",
+    "scanning"
+  ]
+}

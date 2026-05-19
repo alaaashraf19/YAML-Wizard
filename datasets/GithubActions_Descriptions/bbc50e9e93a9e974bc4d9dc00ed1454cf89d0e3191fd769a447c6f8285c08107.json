@@ -1,0 +1,14 @@
+{
+  "sha": "bbc50e9e93a9e974bc4d9dc00ed1454cf89d0e3191fd769a447c6f8285c08107",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1583,
+  "description": "Create a GitHub Actions workflow named changelog-validator that runs on pull requests affecting the docs/changelog.md file. The workflow should have two jobs: validate-unreleased and validate-release. The validate-unreleased job checks for an Unreleased entry in the changelog when the 'release' label is not set, while the validate-release job checks for a version entry in the changelog when the 'release' label is set, using Python 3.11 and semver for version parsing.",
+  "tags": [
+    "changelog",
+    "validation",
+    "github-actions",
+    "python",
+    "semver"
+  ]
+}

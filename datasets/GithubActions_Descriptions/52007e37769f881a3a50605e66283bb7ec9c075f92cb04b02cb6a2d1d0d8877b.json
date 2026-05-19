@@ -1,0 +1,16 @@
+{
+  "sha": "52007e37769f881a3a50605e66283bb7ec9c075f92cb04b02cb6a2d1d0d8877b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4934,
+  "description": "Create a GitHub Actions workflow named FBGEMM_GPU-CPU Nightly Build that triggers on pull requests to main, pushes to main, a nightly cron schedule, and manual dispatch. The workflow has two jobs: build_artifact and test_and_publish_artifact. The build_artifact job runs on an amazonlinux:2023 container, sets up the environment, checks out the repository, and builds FBGEMM_GPU nightly for multiple Python versions. The test_and_publish_artifact job downloads the built artifact, tests it on GPU, and pushes it to PyPI if the workflow is not triggered by a pull request or push.",
+  "tags": [
+    "fbgemm",
+    "gpu",
+    "cpu",
+    "pytorch",
+    "pypi",
+    "nightly-build",
+    "github-actions"
+  ]
+}

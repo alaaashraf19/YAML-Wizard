@@ -1,0 +1,15 @@
+{
+  "sha": "3b1ac08d51c1adfbd4c6e0151fe4bc8a3a75b36a80255e1570d35d5d153f8000",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4725,
+  "description": "Create a GitHub Actions workflow named windows that runs on every push to the master branch and on pull requests to master. The workflow has three jobs: test, package-exe, and package-msi, all running on windows-latest. The test job checks out the code, sets up build variables, installs Qt, sets up nmake and several other dependencies, builds the project, and runs tests. The package-exe and package-msi jobs depend on the test job and create executable and msi packages respectively, including downloading OpenSSL, and uploading the packages.",
+  "tags": [
+    "windows",
+    "qt",
+    "msvc",
+    "openssl",
+    "packaging",
+    "tests"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "6012b110232dc9cbe1797fa74ee7c890b4db0783baf83830a9b16e8185c0de7e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2790,
+  "description": "Create a GitHub Actions workflow named Tests that runs on workflow dispatch, push to non-tagged master branch, and pull requests to master. The workflow has concurrency control, canceling in-progress runs for non-master refs. It sets environment variables TARGET, MAKE_DEBUG, and runs two jobs: e2e-tests and rust-tests, both using the defi/ain-builder:latest container on ubuntu-latest. The jobs check out code, populate environment, install dependencies, restore build caches, build, and run tests.",
+  "tags": [
+    "tests",
+    "e2e-tests",
+    "rust-tests",
+    "ubuntu",
+    "container",
+    "make"
+  ]
+}

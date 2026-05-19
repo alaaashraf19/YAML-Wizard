@@ -1,0 +1,15 @@
+{
+  "sha": "46528f4e8342f5adb4123100fb06f1783aef101af967ba0bf6228d89b0807ce3",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 597,
+  "description": "Create a GitHub Actions workflow named sanitizer that runs on push and pull request events. Use a ubuntu-latest job with a 10-minute timeout and a matrix strategy for the clang++ compiler. Check out the repository, compile tests in the build directory with cmake and make, then run tests with ctest with a 10-second timeout.",
+  "tags": [
+    "clang",
+    "cmake",
+    "ctest",
+    "ubuntu",
+    "sanitizer",
+    "tests"
+  ]
+}

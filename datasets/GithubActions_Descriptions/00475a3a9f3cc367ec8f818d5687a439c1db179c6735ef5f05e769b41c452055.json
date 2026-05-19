@@ -1,0 +1,16 @@
+{
+  "sha": "00475a3a9f3cc367ec8f818d5687a439c1db179c6735ef5f05e769b41c452055",
+  "provider": "groq",
+  "model": "llama-3.3-70b-versatile",
+  "yaml_bytes": 7682,
+  "description": "Create a GitHub Actions workflow named Linux Builds that triggers on push to master, github_actions, and 1.2 branches, as well as on pull requests to the master branch. The workflow should use an ubuntu-20.04 environment and include a matrix of different Godot versions and configurations. Each job should clone the Godot repository and a custom module, set up a custom buildroot, load and upload a cache, and compile Godot with varying flags and options. If the job is a production build, it should upload the resulting executable as an artifact.",
+  "tags": [
+    "godot",
+    "linux",
+    "builds",
+    "matrix",
+    "cache",
+    "scons",
+    "ubuntu"
+  ]
+}

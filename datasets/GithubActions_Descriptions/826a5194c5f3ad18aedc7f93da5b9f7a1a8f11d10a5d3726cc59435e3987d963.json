@@ -1,0 +1,16 @@
+{
+  "sha": "826a5194c5f3ad18aedc7f93da5b9f7a1a8f11d10a5d3726cc59435e3987d963",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1411,
+  "description": "Create a GitHub Actions workflow named github-Linux-32bit that runs on push to the develop branch and on pull requests to files excluding markdown. The workflow should have read-all permissions and allow concurrent runs with cancel-in-progress for pull requests. Use a single ubuntu-latest job in a container, checking out the code, installing multilib support, configuring Kokkos with specific CMake flags for 32-bit builds, building the project in parallel, and running tests with output on failure.",
+  "tags": [
+    "linux",
+    "32bit",
+    "kokkos",
+    "cmake",
+    "gcc",
+    "multilib",
+    "ci"
+  ]
+}

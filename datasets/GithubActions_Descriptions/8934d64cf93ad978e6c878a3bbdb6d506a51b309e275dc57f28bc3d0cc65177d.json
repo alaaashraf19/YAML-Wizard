@@ -1,0 +1,15 @@
+{
+  "sha": "8934d64cf93ad978e6c878a3bbdb6d506a51b309e275dc57f28bc3d0cc65177d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1392,
+  "description": "Create a GitHub Actions workflow named Lint that runs on every pull request. Use an ubuntu-20.04 job that checks out the repository with a fetch depth of 2, installs clang-tidy and its dependencies, prepares a compile_commands.json file using cmake, copies prebuilt files, creates a results directory, analyzes the code changes with clang-tidy-diff, and posts a review with suggestions using platisd/clang-tidy-pr-comments.",
+  "tags": [
+    "clang-tidy",
+    "ubuntu",
+    "linting",
+    "c++",
+    "code-analysis",
+    "pr-comments"
+  ]
+}

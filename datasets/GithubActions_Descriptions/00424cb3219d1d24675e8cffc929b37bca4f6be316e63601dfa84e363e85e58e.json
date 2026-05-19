@@ -1,0 +1,20 @@
+{
+  "sha": "00424cb3219d1d24675e8cffc929b37bca4f6be316e63601dfa84e363e85e58e",
+  "provider": "groq",
+  "model": "llama-3.3-70b-versatile",
+  "yaml_bytes": 5516,
+  "description": "Create a GitHub Actions workflow named SonarCloud that runs on push events to the master branch, ignoring certain file paths, on pull request target events, and on a scheduled basis. The workflow should use a single windows-latest job to check out the code, set up environment variables, cache Sonar analysis, set up MSBuild, fetch and build with Build-Wrapper, install OpenCppCoverage, run tests, set up JDK 11, fetch SonarScanner, and analyze with SonarScanner, using various secrets and environment variables to authenticate and configure the process.",
+  "tags": [
+    "sonarcloud",
+    "windows",
+    "msbuild",
+    "cpp",
+    "java",
+    "jdk11",
+    "sonarscanner",
+    "build-wrapper",
+    "opencppcoverage",
+    "tests",
+    "coverage"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "sha": "6b68538e9a1543bc5afe5b510f87e63b777925786b2c810106c36c52c36dcdac",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2189,
+  "description": "Create a GitHub Actions workflow named Tests - DeFiCh/metachain-ts-suite that runs on push to master, pull requests to master, and workflow dispatch. The workflow should have concurrent execution with cancel-in-progress for non-master refs. It should set environment variables TARGET, MAKE_DEBUG, and CARGO_INCREMENTAL. The workflow consists of two jobs: build and test. The build job runs on ubuntu-latest with a defi/ain-builder:latest container, checks out the code, configures git, populates environment variables, sets up dependencies, restores cpp and rust build caches, builds binaries, and uploads them as an artifact. The test job runs on ubuntu-latest, depends on the build job, checks out a separate repository, downloads the binaries, sets up permissions, installs Node.js 18, installs dependencies, compiles contracts, and runs tests.",
+  "tags": [
+    "defich",
+    "metachain-ts-suite",
+    "ubuntu",
+    "rust",
+    "nodejs",
+    "tests",
+    "ci",
+    "cd"
+  ]
+}

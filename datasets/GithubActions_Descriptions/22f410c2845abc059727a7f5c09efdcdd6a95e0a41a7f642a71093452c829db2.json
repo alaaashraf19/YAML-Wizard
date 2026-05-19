@@ -1,0 +1,14 @@
+{
+  "sha": "22f410c2845abc059727a7f5c09efdcdd6a95e0a41a7f642a71093452c829db2",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2647,
+  "description": "Create a GitHub Actions workflow named Tuxemon that triggers on push to the development branch, pull requests, page builds, and workflow dispatches. The workflow consists of multiple jobs for appdata validation, flatpak, building and installing on Windows, a Python app, and publishing. The publish job depends on the flatpak and Windows build jobs, runs on ubuntu-latest, and creates a GitHub release with artifacts based on whether the workflow is triggered by a tag push or not.",
+  "tags": [
+    "github-release",
+    "flatpak",
+    "windows",
+    "python",
+    "multi-job"
+  ]
+}

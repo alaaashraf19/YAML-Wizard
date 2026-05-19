@@ -1,0 +1,16 @@
+{
+  "sha": "0e8394f2233230a2750cca949c82a5ee2ce6d83d463c8cf69e37d2797efaf6a7",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5686,
+  "description": "Create a GitHub Actions workflow named build that runs on push events. The workflow has two jobs: one for Windows and one for Linux with static analysis. The Windows job runs on a Windows 2019 environment, checks out the repository, and performs a series of steps to build the project with DX11 and DX12, including cloning plugins and building the engine. The Linux job runs on an Ubuntu 20.04 environment, checks out the repository, installs dependencies, downloads 3rd-party libraries, and performs PVS-Studio static analysis.",
+  "tags": [
+    "windows",
+    "linux",
+    "static-analysis",
+    "pvs-studio",
+    "dx11",
+    "dx12",
+    "gmake"
+  ]
+}

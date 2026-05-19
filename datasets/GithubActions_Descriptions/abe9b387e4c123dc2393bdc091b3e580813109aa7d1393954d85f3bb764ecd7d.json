@@ -1,0 +1,17 @@
+{
+  "sha": "abe9b387e4c123dc2393bdc091b3e580813109aa7d1393954d85f3bb764ecd7d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1452,
+  "description": "Create a GitHub Actions workflow named Arma that runs on push to the master branch and on pull requests. The workflow should have three jobs: validate, lint, and build. The validate job checks out the code and runs several Python scripts to validate SQF, config, headers, string formatting, and string definitions. The lint job checks out the code and runs sqflint with a continue-on-error flag. The build job checks out the code, sets up HEMTT, runs a HEMTT build, renames the build folder, and uploads the artifact.",
+  "tags": [
+    "arma",
+    "python",
+    "hemtt",
+    "sqf",
+    "linting",
+    "validation",
+    "build",
+    "github-actions"
+  ]
+}

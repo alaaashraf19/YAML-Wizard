@@ -1,0 +1,16 @@
+{
+  "sha": "0f540bb95784d07d4cbf1d9f38291076e14ed252525b070a63d32cc062357742",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1683,
+  "description": "Create a CodeQL GitHub Actions workflow that analyzes C/C++ code. The workflow should trigger on push to main, on pull requests to main (ignoring certain paths), and weekly. It should use a windows-latest job with read permissions, checking out the repository, installing Ninja, setting up the MSVC dev environment, initializing CodeQL for C/C++, configuring CMake, building with CMake, and then performing a CodeQL analysis.",
+  "tags": [
+    "codeql",
+    "c",
+    "cpp",
+    "windows",
+    "cmake",
+    "analysis",
+    "security"
+  ]
+}

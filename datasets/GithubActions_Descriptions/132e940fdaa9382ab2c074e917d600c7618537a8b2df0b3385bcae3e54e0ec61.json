@@ -1,0 +1,14 @@
+{
+  "sha": "132e940fdaa9382ab2c074e917d600c7618537a8b2df0b3385bcae3e54e0ec61",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1730,
+  "description": "Create a GitHub Actions workflow named Build and publish the Windows executable that triggers on push to specific tags and on completion of the Tag development releases workflow. In a single windows-latest job, check out the source code, determine the tag based on the branch or tag, set up Python 3.9, build the development environment, cache the pip cache, build the executable with PyInstaller, and publish it as a GitHub release with the determined tag.",
+  "tags": [
+    "windows",
+    "python",
+    "executable",
+    "github-release",
+    "tagging"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "101424b4417f05e9a83edac78bb1dde2874650c0841ce9e2094fe085fc8de5b3",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1380,
+  "description": "Create a GitHub Actions workflow named Pull actions that runs on every pull request. The workflow should have three jobs: validate, style, and a commented-out tests job. The validate job checks out the code and runs HACS and Hassfest validations on an ubuntu-latest environment. The style job checks out the code, sets up Python 3.x, installs black, and runs black . for style formatting checks.",
+  "tags": [
+    "github-actions",
+    "pull-request",
+    "validation",
+    "style-checks",
+    "python"
+  ]
+}

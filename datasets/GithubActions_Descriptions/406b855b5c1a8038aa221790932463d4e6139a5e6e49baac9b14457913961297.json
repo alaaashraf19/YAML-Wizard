@@ -1,0 +1,17 @@
+{
+  "sha": "406b855b5c1a8038aa221790932463d4e6139a5e6e49baac9b14457913961297",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 9121,
+  "description": "Create a GitHub Actions workflow named CI that runs on push to main, develop, and tags matching v*, and on pull requests. The workflow consists of multiple jobs for linting with ruff and yamllint, checking poetry lock files, building and testing with pylint and pytest across multiple Python versions, and publishing to GitHub and PyPI. The workflow also includes a job to send a notification to Slack after publication.",
+  "tags": [
+    "python",
+    "ci",
+    "cd",
+    "github",
+    "pypi",
+    "slack",
+    "docker",
+    "poetry"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "21d2925cf3550e858af751a0fe744d276f739fd8652dd79938d62b5cbc6b02db",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3835,
+  "description": "Create a GitHub Actions workflow named Windows build that triggers on push events. The workflow should have two jobs: build on a Windows 2022 environment and notify on an Ubuntu 20.04 environment if the build job fails. The build job checks out the repository, sets up a build environment, installs dependencies including Boost, configures and builds the project with CMake, and archives the build artifacts. The notify job sends a Discord notification with details of the failed build.",
+  "tags": [
+    "windows",
+    "cmake",
+    "boost",
+    "discord-notification",
+    "build",
+    "archive"
+  ]
+}

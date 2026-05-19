@@ -1,0 +1,16 @@
+{
+  "sha": "04a15186f775ce3dead25bd501cddd6f51a289ad6c2c9cb7a2e60c411a43109f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2172,
+  "description": "Create a GitHub Actions workflow named Build wheel that runs on every push to the main branch. The workflow should have three jobs: Make SDist, Build wheels on multiple OS, and Build wheels for manylinux_aarch64. The Make SDist job should check out the code, set up Python 3.8, install build and twine, build a source distribution, and upload it as an artifact. The Build wheels job should run on ubuntu-latest, windows-latest, and macos-latest, install cibuildwheel, build wheels, and upload them as artifacts. The Build wheels manylinux_aarch64 job should set up QEMU, install cibuildwheel, build wheels for aarch64, and upload them as artifacts.",
+  "tags": [
+    "python",
+    "cibuildwheel",
+    "github-actions",
+    "wheel",
+    "sdist",
+    "aarch64",
+    "manylinux"
+  ]
+}

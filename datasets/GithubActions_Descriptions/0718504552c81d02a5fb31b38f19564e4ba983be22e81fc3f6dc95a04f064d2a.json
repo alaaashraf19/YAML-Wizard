@@ -1,0 +1,14 @@
+{
+  "sha": "0718504552c81d02a5fb31b38f19564e4ba983be22e81fc3f6dc95a04f064d2a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2157,
+  "description": "Create a scheduled GitHub Actions workflow named Test: validation that runs on a cron schedule from Monday to Friday at 21:00. The workflow also accepts manual dispatch. It uses an ubuntu-latest job with a matrix strategy for mode: release, and performs validation tests. The job checks out two repositories, sets up ccache, installs dependencies, builds and tests the project, and runs validation tests.",
+  "tags": [
+    "ubuntu",
+    "validation",
+    "tests",
+    "scheduled",
+    "ccache"
+  ]
+}

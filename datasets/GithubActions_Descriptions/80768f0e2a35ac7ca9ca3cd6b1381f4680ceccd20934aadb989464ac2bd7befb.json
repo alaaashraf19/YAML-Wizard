@@ -1,0 +1,15 @@
+{
+  "sha": "80768f0e2a35ac7ca9ca3cd6b1381f4680ceccd20934aadb989464ac2bd7befb",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1705,
+  "description": "Create a GitHub Actions workflow named tests that runs on every pull request to the master branch. Use an ubuntu-22.04 job that checks out the repository with full history, sets up Python 3.12, installs Ubuntu dependencies, sets up UV package manager with caching, syncs packages, runs tests with xvfb and pytest, and prunes the UV cache. Additionally, create a dependent job combined-checks that runs after the tests job and outputs a success message.",
+  "tags": [
+    "python",
+    "tests",
+    "ubuntu",
+    "xvfb",
+    "pytest",
+    "uv"
+  ]
+}

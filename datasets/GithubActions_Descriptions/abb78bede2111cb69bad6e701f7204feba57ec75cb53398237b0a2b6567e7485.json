@@ -1,0 +1,16 @@
+{
+  "sha": "abb78bede2111cb69bad6e701f7204feba57ec75cb53398237b0a2b6567e7485",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4141,
+  "description": "Create a GitHub Actions workflow named CI that runs on every push and pull request. Use a matrix strategy to build on multiple Windows environments with different configurations, and a separate job on ubuntu-latest for fuzzing. For each Windows job, set up the environment, checkout repositories, build and copy libsodium if required, checkout libzmq, create a build directory, and build libzmq using cmake. For the fuzzing job, build fuzzers using google/oss-fuzz/infra/cifuzz.",
+  "tags": [
+    "windows",
+    "cmake",
+    "fuzzing",
+    "github-actions",
+    "ci",
+    "libsodium",
+    "libzmq"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "sha": "66062c6362c88087520378b01c09ccf5afac15d3c99ab99f1db579e7d25cf8d1",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1996,
+  "description": "Create a GitHub Actions workflow named SHARPy Tests that runs on push to specific Python files, library files, and workflow files, and on pull requests to master, develop, and rc* branches. Use an ubuntu-latest job with a matrix strategy for Python 3.10.8, checking out the code, setting up Python, GCC, and conda, pre-installing dependencies, building and testing the project with coverage, and uploading coverage to Codecov.",
+  "tags": [
+    "python",
+    "tests",
+    "coverage",
+    "codecov",
+    "ubuntu",
+    "gcc",
+    "conda"
+  ]
+}

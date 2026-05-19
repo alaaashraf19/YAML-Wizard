@@ -1,0 +1,17 @@
+{
+  "sha": "8b02373a9fc4f2b3f77439b18aaa14596cbe542100fab3e218caec7c6702cfb1",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5024,
+  "description": "Create a GitHub Actions workflow named ci that runs on push and pull request events. The workflow has three jobs: build_linux, build_osx, and build_windows. The build_linux job runs on ubuntu-latest with a matrix of GCC and Clang compilers, building with different C++ standards and build types. The build_osx job runs on macOS-latest with Clang and C++11. The build_windows job runs on windows-latest with a matrix of Visual Studio versions.",
+  "tags": [
+    "ci",
+    "ubuntu",
+    "macos",
+    "windows",
+    "gcc",
+    "clang",
+    "visual-studio",
+    "c++"
+  ]
+}

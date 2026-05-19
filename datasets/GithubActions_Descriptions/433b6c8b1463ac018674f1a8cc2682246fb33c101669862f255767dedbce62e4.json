@@ -1,0 +1,14 @@
+{
+  "sha": "433b6c8b1463ac018674f1a8cc2682246fb33c101669862f255767dedbce62e4",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1499,
+  "description": "Create a GitHub Actions workflow named GPU that runs on push events to specific paths, excluding certain branches and tags. The workflow has a single job that runs on an ubuntu-latest environment, but only if the repository is the main OpenColorIO repo. This job configures AWS credentials and then runs an AWS CodeBuild project named OpenColorIO with a custom buildspec.",
+  "tags": [
+    "github-actions",
+    "aws-codebuild",
+    "linux",
+    "gpu",
+    "centos"
+  ]
+}

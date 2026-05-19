@@ -1,0 +1,15 @@
+{
+  "sha": "106e6511e208e7cdb72cbf4d80856108a163610599aaf942d87c4494fd4b2b94",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 992,
+  "description": "Create a GitHub Actions workflow named build that runs on every push to any branch and on pull requests to any branch. Use a matrix job on ubuntu-latest that tests multiple Python versions (3.9 to 3.13), checks out the repository, installs uv, checks the lockfile, sets up Graphviz, builds a binary wheel and source tarball with uv build, and checks wheel contents.",
+  "tags": [
+    "python",
+    "build",
+    "wheel",
+    "github-actions",
+    "ci",
+    "uv"
+  ]
+}

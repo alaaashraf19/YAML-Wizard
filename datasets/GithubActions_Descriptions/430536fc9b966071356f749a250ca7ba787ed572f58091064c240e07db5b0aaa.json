@@ -1,0 +1,14 @@
+{
+  "sha": "430536fc9b966071356f749a250ca7ba787ed572f58091064c240e07db5b0aaa",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2457,
+  "description": "Create a GitHub Actions workflow named pr that triggers on push to branches matching pull-request/[0-9]+. Use a concurrency group that cancels in-progress jobs. Define a pr-builder job that depends on multiple other jobs (checks, conda-cpp-build, conda-cpp-tests, conda-python-build, conda-python-tests, docs-build, wheel-build, wheel-tests, devcontainer) and uses a shared workflow from rapidsai/shared-workflows.",
+  "tags": [
+    "github-actions",
+    "rapidsai",
+    "pr-builder",
+    "shared-workflows",
+    "ci"
+  ]
+}

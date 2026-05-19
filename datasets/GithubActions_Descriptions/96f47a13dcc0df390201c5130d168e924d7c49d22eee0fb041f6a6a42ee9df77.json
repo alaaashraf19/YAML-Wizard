@@ -1,0 +1,15 @@
+{
+  "sha": "96f47a13dcc0df390201c5130d168e924d7c49d22eee0fb041f6a6a42ee9df77",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3259,
+  "description": "Create a GitHub Actions workflow named Python that runs on push and pull requests to master and main branches when specific files like pyproject.toml, setup.cfg, Python files, or workflow YAML files change. Check if any of these files have changed, and if not, skip tests. If files have changed, set up Python, install dependencies, run checks with tox, and then test with tox on multiple Python versions and operating systems.",
+  "tags": [
+    "python",
+    "tests",
+    "tox",
+    "ci",
+    "ubuntu",
+    "macos"
+  ]
+}

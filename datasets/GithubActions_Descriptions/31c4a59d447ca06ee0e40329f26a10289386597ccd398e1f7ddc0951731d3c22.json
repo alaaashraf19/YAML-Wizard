@@ -1,0 +1,14 @@
+{
+  "sha": "31c4a59d447ca06ee0e40329f26a10289386597ccd398e1f7ddc0951731d3c22",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3287,
+  "description": "Create a GitHub Actions workflow named Create Test Release that triggers on push events with tags starting with 't*'. The workflow runs on a windows-latest environment, checks out the repository with submodules, sets up .NET 7.0.100-preview.7.22377.5, restores dependencies, downloads Dalamud, builds the project with a custom version based on the tag, and creates a release with the build artifact. Additionally, it updates a JSON file with the version, archives the build, and commits the updated JSON file to a test branch.",
+  "tags": [
+    "dotnet",
+    "release",
+    "windows",
+    "github-actions",
+    "ci"
+  ]
+}

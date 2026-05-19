@@ -1,0 +1,14 @@
+{
+  "sha": "9e5f016ae765ef0632f2f6122b10e6617c58f819d7a5ae8f251d33a0f954877f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1016,
+  "description": "Create a GitHub Actions workflow named Delete PR releases that runs when a pull request is closed. Use an ubuntu-latest job to check out the source code, determine a tag based on the pull request head reference, find the ID of a previous release with that tag via GitHub API, delete that release using a GitHub token from secrets, and finally delete the tag by force pushing to the origin.",
+  "tags": [
+    "github-api",
+    "releases",
+    "tags",
+    "pr",
+    "cleanup"
+  ]
+}

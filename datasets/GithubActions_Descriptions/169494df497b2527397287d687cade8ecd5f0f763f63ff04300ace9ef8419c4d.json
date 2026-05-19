@@ -1,0 +1,20 @@
+{
+  "sha": "169494df497b2527397287d687cade8ecd5f0f763f63ff04300ace9ef8419c4d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 6235,
+  "description": "Create a GitHub Actions workflow named compiler-build that runs on push and pull request events. The workflow has two jobs: build and test-compiler. The build job runs on a matrix of ubuntu-18.04, windows-2019, and macos-10.15, checks out the code, sets up Python 3.7, installs Conan and system requirements, configures CMake, builds the project, and uploads a build artifact. The test-compiler job runs on the same matrix, checks out the code, installs system requirements and Python packages, downloads the build artifact, and runs tests with Pytest.",
+  "tags": [
+    "github-actions",
+    "cmake",
+    "conan",
+    "python",
+    "pytest",
+    "ubuntu",
+    "windows",
+    "macos",
+    "compiler",
+    "build",
+    "test"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "sha": "b70bfaa452d8c7f55261f985c52b8db906b9b80be43db719577eee3e4242296d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1492,
+  "description": "Create a GitHub Actions workflow named tests that runs on push and pull request events. Use a matrix strategy to test with Python 3.6, 3.7, 3.8, and 3.9 on ubuntu-20.04. For each Python version, check out the code, install system and Python dependencies, run tests with pytest and mypy, and upload coverage to Coveralls. After all test jobs finish, run a final Coveralls step in a python:3-slim container on ubuntu-latest to complete the coverage report.",
+  "tags": [
+    "python",
+    "tests",
+    "coveralls",
+    "ubuntu",
+    "matrix",
+    "pytest",
+    "mypy"
+  ]
+}

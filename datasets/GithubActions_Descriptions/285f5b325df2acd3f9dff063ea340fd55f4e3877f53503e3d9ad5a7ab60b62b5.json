@@ -1,0 +1,14 @@
+{
+  "sha": "285f5b325df2acd3f9dff063ea340fd55f4e3877f53503e3d9ad5a7ab60b62b5",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4229,
+  "description": "Create a GitHub Actions workflow named ci that runs on push and pull request events to the new-test-runner branch. The workflow should have three jobs: linux, windows, and macos. The linux job runs on ubuntu-22.04 and ubuntu-20.04, installing dependencies, building, and testing. The windows job runs on windows-latest, setting up msys2, installing dependencies, building, and testing. The macos job runs on macos-14, installing dependencies with brew, building, and testing.",
+  "tags": [
+    "ci",
+    "multi-os",
+    "cmake",
+    "ninja",
+    "tests"
+  ]
+}

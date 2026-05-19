@@ -1,0 +1,16 @@
+{
+  "sha": "1255f7eaa549082af6102089039cc12d10ee206ff16005b87bc40216a8c225e7",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2522,
+  "description": "Create a GitHub Actions workflow named test that runs on pull requests, pushes to main and version tags, on workflow dispatch, and on a weekly schedule. The workflow consists of two jobs: get-envlist and test. The get-envlist job runs on ubuntu-20.04, checks out the code, installs tox-gh-matrix, and generates a tox environment list. The test job uses the generated environment list to run tests in a matrix strategy with fail-fast set to false, allowing for some tests to fail.",
+  "tags": [
+    "python",
+    "tox",
+    "tests",
+    "ubuntu",
+    "matrix",
+    "schedule",
+    "workflow-dispatch"
+  ]
+}

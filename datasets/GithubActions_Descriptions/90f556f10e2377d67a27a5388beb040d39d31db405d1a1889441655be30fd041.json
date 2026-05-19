@@ -1,0 +1,16 @@
+{
+  "sha": "90f556f10e2377d67a27a5388beb040d39d31db405d1a1889441655be30fd041",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3411,
+  "description": "Create a GitHub Actions workflow named tests that runs on push to master and on pull requests to master. The workflow has multiple jobs: pylama, mypy, docs, tests, and finish. The pylama, mypy, and docs jobs run on ubuntu-latest with Python 3.10, install dependencies with poetry, and run pylama, mypy, or pytest respectively. The tests job runs on ubuntu-latest with a matrix of Python versions from 3.7 to 3.11, installs dependencies with poetry, and runs pytest with coverage. The finish job waits for tests to complete and then notifies Coveralls.",
+  "tags": [
+    "python",
+    "tests",
+    "pyramid",
+    "mypy",
+    "pylama",
+    "pytest",
+    "coveralls"
+  ]
+}

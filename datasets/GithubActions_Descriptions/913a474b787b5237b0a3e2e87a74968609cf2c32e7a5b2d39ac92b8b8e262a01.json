@@ -1,0 +1,17 @@
+{
+  "sha": "913a474b787b5237b0a3e2e87a74968609cf2c32e7a5b2d39ac92b8b8e262a01",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3716,
+  "description": "Create a GitHub Actions workflow named Compile that runs on push and pull request events. The workflow has four jobs: build-asi, build-dotnet, build-misc, and package. The build jobs compile different parts of the project on a windows-latest environment and upload artifacts. The package job depends on the build jobs, downloads the artifacts, prepares them for distribution, and creates an installer using Inno Setup.",
+  "tags": [
+    "windows",
+    "cmake",
+    "dotnet",
+    "nodejs",
+    "innosetup",
+    "compiler",
+    "installer",
+    "artifacts"
+  ]
+}

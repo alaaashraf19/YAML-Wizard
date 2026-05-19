@@ -1,0 +1,15 @@
+{
+  "sha": "b5af6ca563bbaccb7e2b8d35b59538f72100993f492e5b1e708ab4982accd5a4",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4103,
+  "description": "Create a GitHub Actions workflow named linux that runs on push and pull request events to the master branch. The workflow has three jobs: test, package-appImage, and package-rpm. The test job runs on ubuntu-18.04, checks out the code, sets up build variables, installs Qt and dependencies, and runs tests. The package-appImage and package-rpm jobs depend on the test job and create AppImage and RPM packages respectively.",
+  "tags": [
+    "linux",
+    "ubuntu",
+    "qt",
+    "appimage",
+    "rpm",
+    "tests"
+  ]
+}

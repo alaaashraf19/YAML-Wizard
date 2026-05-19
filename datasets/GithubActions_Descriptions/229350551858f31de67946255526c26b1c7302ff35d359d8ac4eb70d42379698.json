@@ -1,0 +1,16 @@
+{
+  "sha": "229350551858f31de67946255526c26b1c7302ff35d359d8ac4eb70d42379698",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1154,
+  "description": "Create a GitHub Actions workflow named cpack-builder that runs on pull requests, pushes, and a daily schedule. The workflow should read repository contents and use a bash shell. It should build CPack in a matrix of aarch64 and amd64 architectures using ubuntu-24.04-arm and ubuntu-24.04 runners respectively. The workflow checks out the repository with submodules, sets up Miniforge3 with a dev environment, and runs a bash script to build CPack.",
+  "tags": [
+    "cpack",
+    "ubuntu",
+    "conda",
+    "miniforge",
+    "matrix",
+    "schedule",
+    "s3"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "sha": "0886c5b08a5d2b3063365a87ee104b871d22d541b762ae3cf4f69455bdab0f8d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3344,
+  "description": "Create a GitHub Actions workflow named Full Sync Tests that runs on pull requests labeled 'consensus' or 'ci/sync' to the master branch. The workflow consists of two jobs: build-binaries and sync. The build-binaries job builds Node using ./make.sh build, uploads and archives binaries, and runs on a self-hosted Linux environment. The sync job, which depends on build-binaries, uses a matrix strategy to sync and diff data across multiple datadir ranges, running in a container with a custom image and privileged options.",
+  "tags": [
+    "github-actions",
+    "self-hosted",
+    "linux",
+    "node",
+    "sync",
+    "tests",
+    "container"
+  ]
+}

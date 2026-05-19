@@ -1,0 +1,14 @@
+{
+  "sha": "162b8e23b020aeca414c89a84b3f675a85ef1a970176239a6458133184812b8d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2789,
+  "description": "Create a GitHub Actions workflow named builds that runs on every push and pull request. The workflow should have read-all permissions and set environment variables to prevent apt from asking for user input. It should then run a multi-job workflow with four jobs, each using an ubuntu-latest runner but with different container environments: AlmaLinux 9, AlmaLinux 8, Ubuntu 20.04, and Ubuntu 22.04. For each job, check out the repository, install system dependencies, run autogen.sh, configure with custom CFLAGS, and then build and test the project with make commands.",
+  "tags": [
+    "almalinux",
+    "ubuntu",
+    "autotools",
+    "multi-os",
+    "ci"
+  ]
+}

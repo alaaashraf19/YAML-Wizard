@@ -1,0 +1,16 @@
+{
+  "sha": "2c9bac3fb7c4663487ed0f0d9e48738ad1440be2572301f7837994ecfaa13beb",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5023,
+  "description": "Create a GitHub Actions workflow named Dinit Meson based CI that runs on pushes to master, when a pull request with the 'meson' label is opened, labeled, reopened, or synchronized, and on workflow dispatch. The workflow should have three jobs: Debian-bookworm_build, MacOS-latest_build, and Alpine-latest_build, each running on a different environment (ubuntu-latest with Debian Bookworm, macos-latest, and ubuntu-latest with Alpine), and executing meson setup, build, unit tests, and integration tests in a matrix of architectures.",
+  "tags": [
+    "meson",
+    "ci",
+    "ubuntu",
+    "debian",
+    "macos",
+    "alpine",
+    "tests"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "sha": "006c53f955408920eccd81c1cdcbe672bb93494327d48f05ae603501afbddaa2",
+  "provider": "groq",
+  "model": "llama-3.3-70b-versatile",
+  "yaml_bytes": 5231,
+  "description": "Create a GitHub Actions CI workflow named CI-Windows that runs on push to master, pull requests to master, and on manual dispatch. The workflow uses a Windows 2019 environment, checks out the repository, initializes submodules, caches Qt, installs Qt, and builds the project using qmake and nmake. It then packages the project, archives the artifacts, and updates the tag and release on the master branch. The workflow uses a matrix strategy to build the project with different Qt versions and architectures.",
+  "tags": [
+    "windows",
+    "ci",
+    "qt",
+    "c++",
+    "qmake",
+    "nmake",
+    "github-actions",
+    "matrix-build"
+  ]
+}

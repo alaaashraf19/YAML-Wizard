@@ -1,0 +1,15 @@
+{
+  "sha": "98e259d4605847fdc2ec362195f7c0104eb16efec9639ea81c89b4628771388f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1318,
+  "description": "Create a GitHub Actions workflow named Build OSW Emulator that runs on push and pull requests to master and develop branches, ignoring changes to markdown files and screen capture scripts. Check if the workflow should skip based on duplicate actions, then run a matrix build job on ubuntu-22.04 for Debug and Release configurations. In each job, check out the repository and submodules, update and install packages, create a build directory, run CMake, Make, and test.",
+  "tags": [
+    "ubuntu",
+    "c++",
+    "cmake",
+    "make",
+    "emulator",
+    "github-actions"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "bf3826c63f5ef2c51f3c10bfd150c83d7b79152a79bbc5bc6b89969c532168c9",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1795,
+  "description": "Create a GitHub Actions workflow named Valgrind Tests that runs on push events to branches starting with 'checkvalgrind'. The workflow uses an ubuntu-22.04 environment and runs a valgrind test in a matrix of 5 jobs with different ranges, each using a docker container with a mongo and mosquitto services. The workflow has concurrency control, cancelling any in-progress runs.",
+  "tags": [
+    "valgrind",
+    "docker",
+    "tests",
+    "ubuntu",
+    "concurrency"
+  ]
+}

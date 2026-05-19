@@ -1,0 +1,15 @@
+{
+  "sha": "33af5e000faa26579db3c8e5dbedb5915ee6b0840479744f2b26acb3b592ee1a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1904,
+  "description": "Create a GitHub Actions workflow named tox that runs on push to the master branch and on pull requests to master. The workflow has two jobs: test and check. The test job runs on ubuntu-latest with a matrix strategy across multiple Python versions (3.7 to 3.11) and tox environments, checking out the code, setting up Python, installing dependencies with pip, and running tox and coverage. The check job runs on ubuntu-latest with a matrix strategy across Python 3.11 and various tox jobs (mypy, docs, linters), performing similar steps.",
+  "tags": [
+    "python",
+    "tox",
+    "tests",
+    "coverage",
+    "ubuntu",
+    "linting"
+  ]
+}

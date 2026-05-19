@@ -1,0 +1,18 @@
+{
+  "sha": "8cbb2c7e03411ee968d962c85625bb566c5b0801a9ec0fab3ffd38c58c454303",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2271,
+  "description": "Create a GitHub Actions workflow named coverage-tests that runs on pull requests, pushes, and daily on a schedule. The workflow should have read permissions to repository contents and use a concurrency group that cancels in-progress jobs. It should set up a CODECOV_TOKEN environment variable. The workflow should have three jobs: cpp-python-coverage on ubuntu-latest, win-python-coverage on windows-latest, and macos-python-coverage on macos-latest. Each job checks out the repository with submodules, provisions a micromamba environment, displays the environment info, and runs tests with test coverage computation using a specific script for each operating system.",
+  "tags": [
+    "coverage",
+    "cpp",
+    "python",
+    "conda",
+    "micromamba",
+    "linux",
+    "windows",
+    "macos",
+    "tests"
+  ]
+}

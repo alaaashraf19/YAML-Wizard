@@ -1,0 +1,14 @@
+{
+  "sha": "0cc89c142dcb1dfa4bd870d0d8d8ec252750733a8c785dc816d9fee79eab614b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1160,
+  "description": "Create a GitHub Actions workflow named deploy that can be triggered manually with a release version input. The workflow should have two jobs: package and deploy. The package job builds and checks a Python package on ubuntu-latest using a specific version, while the deploy job depends on package, downloads the artifact, publishes it to PyPI, and creates a GitHub release with a merge pull request.",
+  "tags": [
+    "python",
+    "pypi",
+    "deploy",
+    "github-release",
+    "workflow-dispatch"
+  ]
+}

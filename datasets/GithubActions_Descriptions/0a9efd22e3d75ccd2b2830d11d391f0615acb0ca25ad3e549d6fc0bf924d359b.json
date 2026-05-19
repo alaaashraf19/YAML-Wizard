@@ -1,0 +1,14 @@
+{
+  "sha": "0a9efd22e3d75ccd2b2830d11d391f0615acb0ca25ad3e549d6fc0bf924d359b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1666,
+  "description": "Create a GitHub Actions workflow named Update AUR that triggers on push to the master branch, excluding certain paths. The workflow should run on an ubuntu-latest environment and only for the repository owned by cpeditor. It checks out the code, installs an SSH key, clones the AUR remote repository, updates files, checks PKGBUILD and .SRCINFO, and publishes changes to AUR.",
+  "tags": [
+    "aur",
+    "arch-linux",
+    "ssh",
+    "git",
+    "ci"
+  ]
+}

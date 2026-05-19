@@ -1,0 +1,17 @@
+{
+  "sha": "35f5d692943dc9bc6c5cf8a5309a15dd2b59081cc6196a0c2038e581ab3b43c8",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3005,
+  "description": "Create a GitHub Actions workflow named C/C++ CI that runs on push to main, on pull requests to main, and can be triggered manually or called by another workflow. The workflow uses a matrix strategy to build and test on multiple operating systems (ubuntu-latest, ubuntu-20.04, windows-latest, windows-2019, macos-13, macos-14) with different compilers (g++, clang++, cl) and build types (Release, Debug). For each job, check out the repository, configure CMake with the specified compiler and build type, build the project, and run tests.",
+  "tags": [
+    "c",
+    "cpp",
+    "cmake",
+    "ci",
+    "ubuntu",
+    "windows",
+    "macos",
+    "tests"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "1abdd64c2dc7dfa95c7a6a3d7988487153fa6f7bc98ca722dc78860fbe83746d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1025,
+  "description": "Create a GitHub Actions workflow named CI that runs on push, pull request, and workflow dispatch events. The workflow should have two jobs: lint and test. The lint job runs on ubuntu-latest, checks out the code, sets up Python 3.10, and runs pre-commit checks. The test job runs on a matrix of ROS 2 distributions (jazzy, kilted, rolling) on ubuntu-24.04, checks out the code to a specific path, sets up ROS, and runs ROS CI tests.",
+  "tags": [
+    "ros2",
+    "python",
+    "pre-commit",
+    "ubuntu",
+    "ci",
+    "matrix-testing"
+  ]
+}

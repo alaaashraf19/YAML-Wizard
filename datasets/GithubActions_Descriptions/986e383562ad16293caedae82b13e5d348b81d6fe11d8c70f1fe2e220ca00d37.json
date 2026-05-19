@@ -1,0 +1,15 @@
+{
+  "sha": "986e383562ad16293caedae82b13e5d348b81d6fe11d8c70f1fe2e220ca00d37",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3350,
+  "description": "Create a daily GitHub Actions workflow that triggers every day at midnight and optionally through a workflow dispatch. The workflow runs a matrix of daily builds with different compilers and configurations on ubuntu and ce environments. For each build, it cleans the directory, retrieves the previous build version, performs a Docker-based build, and uploads the output and revision to S3.",
+  "tags": [
+    "daily-build",
+    "docker",
+    "s3",
+    "ubuntu",
+    "compiler",
+    "github-actions"
+  ]
+}

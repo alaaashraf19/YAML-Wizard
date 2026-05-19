@@ -1,0 +1,16 @@
+{
+  "sha": "1b9531448fa3282acf30e2e97690220b0218df2a34da1981b511bdc49c83ef95",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 7931,
+  "description": "Create a GitHub Actions workflow named build that runs on push to the master branch, on pull requests, and on workflow dispatch. The workflow has two jobs: build-linux-macos and build-windows. The build-linux-macos job runs on ubuntu-latest and macos-latest, and the build-windows job runs on windows-latest. Both jobs depend on a prelude job that generates a build matrix based on the GitHub reference. The jobs install dependencies, build, package, and test GDL, and upload build artifacts.",
+  "tags": [
+    "gdl",
+    "github-actions",
+    "ci",
+    "build",
+    "ubuntu",
+    "macos",
+    "windows"
+  ]
+}

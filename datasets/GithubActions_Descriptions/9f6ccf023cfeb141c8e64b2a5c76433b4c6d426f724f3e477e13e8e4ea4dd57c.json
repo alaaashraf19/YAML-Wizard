@@ -1,0 +1,14 @@
+{
+  "sha": "9f6ccf023cfeb141c8e64b2a5c76433b4c6d426f724f3e477e13e8e4ea4dd57c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1821,
+  "description": "Create a GitHub Actions workflow named CI that runs on every push to the master branch and on pull requests to the master branch. The workflow should have two jobs: build-linux and build-windows. The build-linux job should run on an ubuntu-latest environment, check out the code, cache Qt, install Qt 5.15.2 with webengine module, and then run qmake and make. The build-windows job should run on a windows-latest environment, check out the code, cache Qt, install Qt 5.15.2 with webengine module, set up the MSVC development environment, and then run qmake and nmake.",
+  "tags": [
+    "qt",
+    "cross-platform",
+    "ci",
+    "ubuntu",
+    "windows"
+  ]
+}

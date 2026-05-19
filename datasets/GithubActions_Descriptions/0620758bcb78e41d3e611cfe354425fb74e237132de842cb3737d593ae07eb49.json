@@ -1,0 +1,13 @@
+{
+  "sha": "0620758bcb78e41d3e611cfe354425fb74e237132de842cb3737d593ae07eb49",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 905,
+  "description": "Create a GitHub Actions workflow named pymnn-macos that runs on push to master, feature/* branches, and on pull requests to master, but only for paths under pymnn/ and .github/workflows/pymnn_macos.yml. The workflow should run on macos-latest, checking out the code, setting up Python 3.8.10, installing numpy, opencv-python, and torch, then building and testing pymnn under these conditions, cancelling any in-progress runs for the same ref.",
+  "tags": [
+    "python",
+    "macos",
+    "tests",
+    "pymnn"
+  ]
+}

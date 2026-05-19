@@ -1,0 +1,14 @@
+{
+  "sha": "99a2313c05ae3069eff181c68daf762286e40ee056d04e7a3add8775082aba6f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 642,
+  "description": "Create a GitHub Actions workflow named update-flake-lock that updates the flake.lock file. The workflow should trigger on manual dispatch, on a monthly schedule, and on push events to flake.nix. It should run on an ubuntu-latest job, checking out the repository, installing Nix with a GitHub access token, and updating the flake.lock using the update-flake-lock action.",
+  "tags": [
+    "nix",
+    "flake-lock",
+    "github-actions",
+    "schedule",
+    "workflow-dispatch"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "068128ea0f71094b76c0e147b19910885f19d2b1fa6e2306105336bc4d7afa0b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3899,
+  "description": "Create a GitHub Actions workflow that deploys Docker images with a specified tag. The workflow should be triggered manually with a tag input and run on an ubuntu-latest environment. It checks out the repository, sets the version number in specific files, sets up QEMU and Docker Buildx, logs in to Docker Hub and GitHub Container Registry, and then builds and pushes Docker images for both the main and add-on projects with the given tag.",
+  "tags": [
+    "docker",
+    "docker-hub",
+    "github-actions",
+    "multi-platform",
+    "tag-deploy"
+  ]
+}

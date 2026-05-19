@@ -1,0 +1,15 @@
+{
+  "sha": "688fb219c221e311effb3fde6065ca46f78aadd09c22e3cc1e311ceccd3cc1ba",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3102,
+  "description": "Create a GitHub Actions workflow named 'build Antora documentation' that runs on workflow dispatch, pull request open, synchronize, reopen, and push to main branch. The workflow should check out the repository with submodules, set up Ruby 3.0, and then check out additional repositories for Vulkan-Site and antora-ui. It should then set up Node.js, install dependencies, build the UI bundle, and prepare samples. The workflow should handle concurrency by cancelling in-progress jobs.",
+  "tags": [
+    "antora",
+    "documentation",
+    "ruby",
+    "nodejs",
+    "npm",
+    "vulkan"
+  ]
+}

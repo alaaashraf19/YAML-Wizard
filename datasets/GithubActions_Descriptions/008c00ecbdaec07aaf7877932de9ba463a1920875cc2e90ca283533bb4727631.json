@@ -1,0 +1,16 @@
+{
+  "sha": "008c00ecbdaec07aaf7877932de9ba463a1920875cc2e90ca283533bb4727631",
+  "provider": "groq",
+  "model": "llama-3.3-70b-versatile",
+  "yaml_bytes": 3675,
+  "description": "Create a GitHub Actions workflow named Hostrunner tests that runs on every push to main and on pull requests to main. The workflow uses a self-hosted x64 runner, checks out the code, sets environment variables, updates the RootFS cache, checks out submodules, and configures and builds the project using CMake and Ninja. It then runs ASM tests, moves and truncates test results, and uploads the results as an artifact. The workflow uses clang and clang++ compilers and sets various environment variables for the build process.",
+  "tags": [
+    "cmake",
+    "ninja",
+    "clang",
+    "self-hosted",
+    "x64",
+    "asm-tests",
+    "github-actions"
+  ]
+}

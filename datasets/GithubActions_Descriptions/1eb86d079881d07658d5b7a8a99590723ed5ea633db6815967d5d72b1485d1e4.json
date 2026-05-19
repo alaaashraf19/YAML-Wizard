@@ -1,0 +1,14 @@
+{
+  "sha": "1eb86d079881d07658d5b7a8a99590723ed5ea633db6815967d5d72b1485d1e4",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 892,
+  "description": "Create a GitHub Actions workflow named CI that runs on every push and pull request. Use a matrix job on ubuntu-latest to test multiple Python versions (2.7, 3.6, 3.7, 3.8, 3.9). For each version, check out the repository, install Miniconda, create a test environment, install dependencies, run tests with coverage, and optionally upload coverage to Codecov for Python 3.8.",
+  "tags": [
+    "python",
+    "ci",
+    "conda",
+    "tests",
+    "coverage"
+  ]
+}

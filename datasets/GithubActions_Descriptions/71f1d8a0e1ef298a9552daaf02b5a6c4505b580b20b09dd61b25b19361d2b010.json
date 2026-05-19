@@ -1,0 +1,14 @@
+{
+  "sha": "71f1d8a0e1ef298a9552daaf02b5a6c4505b580b20b09dd61b25b19361d2b010",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1643,
+  "description": "Create a GitHub Actions workflow named Publish GEM Packages that can be triggered manually with a workflow dispatch or called by another workflow. The workflow takes two required inputs: channel and run_id. Use an ubuntu-24.04 job to download GEM artifacts from a previous workflow run, then publish them to either the nightly channel or a release channel based on the provided channel input.",
+  "tags": [
+    "gem",
+    "github-actions",
+    "ruby",
+    "nexus",
+    "rubygems"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "sha": "32b6d9eaef190f3ed17c47a9ce0857233deeddfb99560ec32ee829fbd0228979",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1696,
+  "description": "Create a GitHub Actions workflow named build-ci-2.0 that runs on every push and pull request. Use a single ubuntu-latest job that checks out the repository, sets up Python 3.x for x64 architecture, installs Arduino, PlatformIO, ESP8266, and ESP32, sets up libraries, and then builds ESP8266 arduino, ESP32 arduino, and platformIO in separate steps, allowing each build step to continue on error. Finally, perform a final check or confirmation based on build outcomes and send a notification via Discord webhook.",
+  "tags": [
+    "python",
+    "arduino",
+    "esp8266",
+    "esp32",
+    "platformio",
+    "discord",
+    "ci"
+  ]
+}

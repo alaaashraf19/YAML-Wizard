@@ -1,0 +1,14 @@
+{
+  "sha": "4e840f78795567a2e2bcf5031ee011332744b2285719a1ce398934934b791a82",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 702,
+  "description": "Create a nightly GitHub Actions workflow named nightly-opensuse-qt6 that runs on a scheduled cron job and allows manual dispatch. The workflow should set up environment variables for building with Qt6, then run a job in an opensuse/tumbleweed container on an ubuntu-latest environment. In this job, check out the source code, install dependencies by running a custom script, and perform a build using a generic build action.",
+  "tags": [
+    "opensuse",
+    "qt6",
+    "nightly",
+    "scheduled",
+    "workflow-dispatch"
+  ]
+}

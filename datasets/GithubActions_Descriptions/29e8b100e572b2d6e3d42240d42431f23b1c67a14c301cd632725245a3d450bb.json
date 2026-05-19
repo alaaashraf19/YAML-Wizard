@@ -1,0 +1,14 @@
+{
+  "sha": "29e8b100e572b2d6e3d42240d42431f23b1c67a14c301cd632725245a3d450bb",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 769,
+  "description": "Create a GitHub Actions workflow named Run bot that runs on push events to all branches except l10n_* and dependabot/**, and on pull requests. Use an ubuntu-latest job with a 10-minute timeout, testing multiple Python versions (3.8 to 3.12) in parallel without failing fast. Checkout the code, set up each Python version, download a configuration file from a pastebin, upgrade pip, install wheel and project dependencies, and then start the bot with a test command.",
+  "tags": [
+    "python",
+    "bot",
+    "tests",
+    "ubuntu",
+    "matrix-testing"
+  ]
+}

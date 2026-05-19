@@ -1,0 +1,17 @@
+{
+  "sha": "03ddd633577b9179106f1bacb5b9485158b78813fa68dad8d3c20fb273328449",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4676,
+  "description": "Create a GitHub Actions workflow named Sanitize that runs on every push to the master branch and on pull requests to master. The workflow should have two jobs, sanitize_clang and sanitize_gcc, both running on ubuntu-22.04. Each job should check out the repository, install dependencies, configure a build project with specific CMake flags, build the project, install it, and run tests with ctest, including performance tests with xvfb-run.",
+  "tags": [
+    "clang",
+    "gcc",
+    "ubuntu",
+    "cmake",
+    "ninja",
+    "asan",
+    "tests",
+    "performance"
+  ]
+}

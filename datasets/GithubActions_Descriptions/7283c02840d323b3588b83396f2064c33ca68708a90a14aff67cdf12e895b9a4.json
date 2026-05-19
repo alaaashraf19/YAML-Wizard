@@ -1,0 +1,14 @@
+{
+  "sha": "7283c02840d323b3588b83396f2064c33ca68708a90a14aff67cdf12e895b9a4",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 7236,
+  "description": "Create a nightly release workflow that can be triggered manually or called by another workflow. The workflow takes optional inputs for build number and repository URL. It sets version variables for different package types, creates a latest.json file, and uploads it to a nightly repository. The workflow then triggers multiple dependent workflows to build various packages, including Brew Bottle, C++ NuGet Package, DEB Packages, .NET Packages, GEM Packages, MATLAB Packages, Maven Packages, MSI Package, NPM Packages, PIP Packages, RPM Packages, and XCFramework Packages.",
+  "tags": [
+    "nightly-release",
+    "github-actions",
+    "workflows",
+    "packages",
+    "repository"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "b1746196936be5928defa49cdd64f8b20a1efab54c963791c0315838322a6a54",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1869,
+  "description": "Create a GitHub Actions workflow named Release Docker that builds and deploys Docker images to Dockerhub. The workflow should be triggered manually with a tag input. It uses a ubuntu-latest job matrix to deploy in Debug and Release modes. For each mode, it checks out the repository, builds a Docker image from a Dockerfile with specific arguments, logs in to Dockerhub if the repository owner is 'moves-rwth', and pushes the image to Dockerhub if the repository owner is 'moves-rwth'.",
+  "tags": [
+    "docker",
+    "dockerhub",
+    "release",
+    "deployment",
+    "matrix"
+  ]
+}

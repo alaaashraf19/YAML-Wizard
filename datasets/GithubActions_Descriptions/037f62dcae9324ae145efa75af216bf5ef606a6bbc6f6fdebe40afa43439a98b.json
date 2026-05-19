@@ -1,0 +1,17 @@
+{
+  "sha": "037f62dcae9324ae145efa75af216bf5ef606a6bbc6f6fdebe40afa43439a98b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2663,
+  "description": "Create a GitHub Actions workflow named Win Matrix on PRs that runs on pull requests and pushes to main branch but not tags. Use a windows-latest job matrix to test different build configurations including Release and Debug, shared libraries ON and OFF, and x64 and x86 platforms. For each matrix combination, check out the repository, set up the Visual Studio shell, install Ninja, Python 3.7, and Conan, restore the Conan cache, and then run Conan, build, install, and test the project.",
+  "tags": [
+    "windows",
+    "visual-studio",
+    "conan",
+    "cmake",
+    "ninja",
+    "python",
+    "tests",
+    "matrix"
+  ]
+}

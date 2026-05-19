@@ -1,0 +1,14 @@
+{
+  "sha": "5b6ed69c9daf9ec656d18da28546c2f20f9f3af4f4c2ea6c606563574d247813",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1016,
+  "description": "Create a GitHub Actions workflow named linux that runs on push and pull request events to the master branch. Use a matrix job strategy to build on both ubuntu-18.04 and ubuntu-latest, skipping workflow runs if a commit message contains '[ci skip]'. Checkout the repository with submodules, and for ubuntu-18.04, install GCC 5. Configure, build, and run tests for a project using CMake and make.",
+  "tags": [
+    "linux",
+    "cmake",
+    "gcc",
+    "tests",
+    "ubuntu"
+  ]
+}

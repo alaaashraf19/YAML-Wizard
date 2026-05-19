@@ -1,0 +1,14 @@
+{
+  "sha": "9a7ee0a74b766aeae0306f59e5c6b76b0d4d7a830413f88ae04cd72df280bdd9",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1105,
+  "description": "Create a GitHub Actions workflow named tests that runs on every push and pull request to the master and develop branches. Use an ubuntu-latest job with a matrix strategy to test with Python 3.8 and 3.9. The job checks out the repository, sets up Python, uses caching for dependencies, installs requirements with pip if cache misses, and runs tests with pytest.",
+  "tags": [
+    "python",
+    "tests",
+    "pytest",
+    "ubuntu",
+    "matrix"
+  ]
+}

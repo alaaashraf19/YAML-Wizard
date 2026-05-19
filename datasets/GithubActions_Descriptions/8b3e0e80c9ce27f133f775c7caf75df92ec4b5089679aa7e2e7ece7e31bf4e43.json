@@ -1,0 +1,14 @@
+{
+  "sha": "8b3e0e80c9ce27f133f775c7caf75df92ec4b5089679aa7e2e7ece7e31bf4e43",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1708,
+  "description": "Create a weekly GitHub Actions workflow named Weekly Build (dev) that runs every Sunday at 10:00 UTC. The workflow should have a manual dispatch option. It should use a matrix strategy to build on both ubuntu-latest and macos-latest, with a single Python version 3.14-dev. The workflow should check out the repository, set up the Python environment, install dependencies, and run tests with nox.",
+  "tags": [
+    "python",
+    "weekly",
+    "build",
+    "nox",
+    "github-actions"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "7182599cbade2a9cf5d8a0f206082cd17d4859f5742e22b9c649e5d12dec5bff",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1566,
+  "description": "Create a GitHub Actions workflow named MSVC build that runs on push to master branch, tags matching v*.*.*, and on pull requests to master, excluding certain paths. The workflow should have two jobs, x64 and x86, both running on windows-latest. Each job checks out the code, sets up MSVC development environment, caches and sets up libraries, configures CMake with Debug build type, and builds the project.",
+  "tags": [
+    "msvc",
+    "cmake",
+    "windows",
+    "x64",
+    "x86",
+    "github-actions"
+  ]
+}

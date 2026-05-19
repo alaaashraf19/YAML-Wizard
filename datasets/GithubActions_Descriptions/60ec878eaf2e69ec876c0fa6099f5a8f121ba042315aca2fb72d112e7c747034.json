@@ -1,0 +1,18 @@
+{
+  "sha": "60ec878eaf2e69ec876c0fa6099f5a8f121ba042315aca2fb72d112e7c747034",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 7196,
+  "description": "Create a GitHub Actions workflow that triggers on pull requests to build and cache HiOp with Spack on Ubuntu. The workflow should build a custom base image with gfortran, then use this image to build HiOp with various Spack specs, compilers, and BLAS providers, and push the resulting binaries to a GitHub Container Registry buildcache.",
+  "tags": [
+    "spack",
+    "hiop",
+    "github-actions",
+    "ubuntu",
+    "mpi",
+    "openblas",
+    "gcc",
+    "docker",
+    "ghcr"
+  ]
+}

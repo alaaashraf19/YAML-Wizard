@@ -1,0 +1,15 @@
+{
+  "sha": "5176103f21920ab969c2e7a73bc5c71e17fca6657a7d23c014279fc910eb3a27",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3067,
+  "description": "Create a GitHub Actions workflow named 'CI: run sanitizer tests' that runs on pushes to main and master branches, on pull request openings and synchronizations, and on workflow dispatches. The workflow checks for code changes, then runs tests with address and memory sanitizers on an ubuntu-24.04 environment with a 30-minute timeout, using a matrix strategy for different sanitizer options.",
+  "tags": [
+    "github-actions",
+    "ci",
+    "sanitizers",
+    "ubuntu",
+    "bazel",
+    "python"
+  ]
+}

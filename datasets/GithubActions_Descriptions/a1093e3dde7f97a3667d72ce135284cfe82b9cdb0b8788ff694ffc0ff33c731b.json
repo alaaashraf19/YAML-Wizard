@@ -1,0 +1,15 @@
+{
+  "sha": "a1093e3dde7f97a3667d72ce135284cfe82b9cdb0b8788ff694ffc0ff33c731b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 895,
+  "description": "Create a Windows CI GitHub Actions workflow that runs on pull requests, pushes, and a scheduled cron job. The workflow checks out the repository, sets up MSBuild and Conan on a windows-latest environment, installs libraries with Conan, runs CMake, and builds InspIRCd using MSBuild, but skips if the commit message contains '[skip windows ci]'.",
+  "tags": [
+    "windows",
+    "msbuild",
+    "conan",
+    "cmake",
+    "ci",
+    "scheduled"
+  ]
+}

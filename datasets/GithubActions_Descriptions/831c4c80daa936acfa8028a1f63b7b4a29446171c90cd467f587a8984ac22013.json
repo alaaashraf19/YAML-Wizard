@@ -1,0 +1,14 @@
+{
+  "sha": "831c4c80daa936acfa8028a1f63b7b4a29446171c90cd467f587a8984ac22013",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 6230,
+  "description": "Create a GitHub Actions workflow named Android that runs on every push and pull request. Use an ubuntu-latest job with a matrix strategy to build Android packages for different architectures and configurations. The job should check out the repository, install dependencies, build, deploy, and compress files using a Docker image. It should also perform a VirusTotal scan and upload the build to GitHub Releases under certain conditions.",
+  "tags": [
+    "android",
+    "docker",
+    "github-releases",
+    "virustotal",
+    "ci"
+  ]
+}

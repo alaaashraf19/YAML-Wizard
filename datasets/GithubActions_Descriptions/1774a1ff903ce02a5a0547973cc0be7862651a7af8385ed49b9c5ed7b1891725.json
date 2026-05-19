@@ -1,0 +1,14 @@
+{
+  "sha": "1774a1ff903ce02a5a0547973cc0be7862651a7af8385ed49b9c5ed7b1891725",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3423,
+  "description": "Create a GitHub Actions workflow named CI that runs on every pull request to the master branch. Define four ubuntu-18.04 jobs: mpi, mpi-stubs-fft, mpi-stubs-kokkos-exact-fft, and bigbig. Each job checks out the repository, configures and builds using cmake, and uploads artifacts. The mpi job also installs dependencies, tests with ctest, and makes adjustments for sh.",
+  "tags": [
+    "cmake",
+    "ubuntu",
+    "testing",
+    "artifacts",
+    "mpi"
+  ]
+}

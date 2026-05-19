@@ -1,0 +1,17 @@
+{
+  "sha": "3598ccdc61f14be6d77fb035b2634eee6c0deaad5f8943edb107db3302bff1b9",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1335,
+  "description": "Create a GitHub Actions workflow that runs on push to main and on pull requests to main. The workflow has two jobs: pre-commit and test. The pre-commit job runs on ubuntu-latest, checks out the repository with a ref to the pull request HEAD commit, sets up Python, installs dependencies from requirements-dev.txt, and runs pre-commit checks. The test job runs on a matrix of ubuntu-latest, windows-latest, and macos-latest with multiple Python versions, checks out the repository, sets up Python, installs dependencies, and runs tests with pytest.",
+  "tags": [
+    "python",
+    "pre-commit",
+    "tests",
+    "matrix",
+    "ubuntu",
+    "windows",
+    "macos",
+    "aarch64"
+  ]
+}

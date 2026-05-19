@@ -1,0 +1,15 @@
+{
+  "sha": "3b3a2aa45c57337207f4de1a476814a93b8b99d8b672e68db0d42c51cd7bc604",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1354,
+  "description": "Create a GitHub Actions workflow named Test and lint that runs on every push and pull request. The workflow has two jobs: tests and linting. The tests job runs on multiple Python versions (3.6 to 3.11-dev) on an ubuntu-latest environment, checks out the repository, sets up Python, and runs unit tests. The linting job runs on ubuntu-latest, checks out the repository, sets up Python 3, installs dependencies, and lints the implementation and tests using flake8.",
+  "tags": [
+    "python",
+    "tests",
+    "linting",
+    "flake8",
+    "ubuntu",
+    "ci"
+  ]
+}

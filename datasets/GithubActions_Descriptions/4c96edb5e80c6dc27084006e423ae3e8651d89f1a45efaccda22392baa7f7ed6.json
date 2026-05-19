@@ -1,0 +1,16 @@
+{
+  "sha": "4c96edb5e80c6dc27084006e423ae3e8651d89f1a45efaccda22392baa7f7ed6",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1987,
+  "description": "Create a GitHub Actions workflow named CI that runs on push to main and on pull requests. The workflow has three jobs: lint, test, and compatibility. The lint job runs on ubuntu-latest, checks out the code, sets up Python with caching, installs dependencies, and runs linter and type checker. The test job runs on a matrix of OS and Python versions, checks out the code, sets up Python, installs the package, and runs unit tests. The compatibility job runs on ubuntu-20.04, tests compatibility with the oldest supported Python version and various fluent.syntax versions.",
+  "tags": [
+    "python",
+    "ci",
+    "linting",
+    "testing",
+    "compatibility",
+    "matrix",
+    "ubuntu"
+  ]
+}

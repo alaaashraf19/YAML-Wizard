@@ -1,0 +1,19 @@
+{
+  "sha": "2efb730aa52398b3baa73cebf11991e3b2549837024b1786d255d66433f60fff",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 6249,
+  "description": "Create a GitHub Actions workflow named Build that runs on push and pull request events. The workflow has four jobs: build, docs, lint, and check-pr. The build job runs on a matrix of OS, GCC versions, and plugins, setting up Python, installing dependencies, and building DFHack. The docs job builds documentation, the lint job checks code style and syntax, and the check-pr job verifies that a pull request is based on the develop branch.",
+  "tags": [
+    "github-actions",
+    "ci",
+    "cd",
+    "python",
+    "gcc",
+    "cmake",
+    "ninja",
+    "ubuntu",
+    "docs",
+    "linting"
+  ]
+}

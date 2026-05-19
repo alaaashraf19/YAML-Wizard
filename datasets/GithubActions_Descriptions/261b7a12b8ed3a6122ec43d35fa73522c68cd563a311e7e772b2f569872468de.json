@@ -1,0 +1,14 @@
+{
+  "sha": "261b7a12b8ed3a6122ec43d35fa73522c68cd563a311e7e772b2f569872468de",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1115,
+  "description": "Create a GitHub Actions workflow named Create new release that can be triggered manually. The workflow should have two jobs: version_check and create_release. The version_check job runs on ubuntu-latest, checks out the code, sets up Python, installs GitPython, and runs a version check script. The create_release job depends on version_check, runs on ubuntu-latest, checks out the code, installs dependencies, runs platformio, generates a version tag, and creates a new release with artifacts using the ncipollo/release-action.",
+  "tags": [
+    "python",
+    "release",
+    "github-actions",
+    "platformio",
+    "versioning"
+  ]
+}

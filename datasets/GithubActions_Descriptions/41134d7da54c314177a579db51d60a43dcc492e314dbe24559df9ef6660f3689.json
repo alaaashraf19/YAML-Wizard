@@ -1,0 +1,14 @@
+{
+  "sha": "41134d7da54c314177a579db51d60a43dcc492e314dbe24559df9ef6660f3689",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4905,
+  "description": "Create a GitHub Actions workflow named build that runs on push to all branches except travis_ccache and on all pull requests to those branches. The workflow has three jobs: clang-format checks code formatting, build runs a matrix of builds across different platforms and generators, and a commented-out job checks markdown links. The build job uses a strategy matrix to run on different operating systems and build generators, installing dependencies and building the project with CMake.",
+  "tags": [
+    "cmake",
+    "clang-format",
+    "multi-os",
+    "matrix-build",
+    "github-actions"
+  ]
+}

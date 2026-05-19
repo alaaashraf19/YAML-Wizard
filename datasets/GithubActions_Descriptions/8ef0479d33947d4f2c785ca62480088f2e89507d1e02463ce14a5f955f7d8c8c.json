@@ -1,0 +1,16 @@
+{
+  "sha": "8ef0479d33947d4f2c785ca62480088f2e89507d1e02463ce14a5f955f7d8c8c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4563,
+  "description": "Create a GitHub Actions workflow named lint-tidier that lints C and header files in specific directories. The workflow should trigger on workflow dispatch and on pull requests affecting certain file paths. It should run on an ubuntu-latest environment, checking out the code, installing system and Python requirements, setting up Conan, and running clang-tidy to diagnose and fix files. The workflow should also save PR metadata and upload linter results as an artifact.",
+  "tags": [
+    "clang-tidy",
+    "conan",
+    "c",
+    "cpp",
+    "linter",
+    "github-actions",
+    "ubuntu"
+  ]
+}

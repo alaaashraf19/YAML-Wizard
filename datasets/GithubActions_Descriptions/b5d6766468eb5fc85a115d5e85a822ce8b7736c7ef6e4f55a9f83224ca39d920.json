@@ -1,0 +1,16 @@
+{
+  "sha": "b5d6766468eb5fc85a115d5e85a822ce8b7736c7ef6e4f55a9f83224ca39d920",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1614,
+  "description": "Create a weekly GitHub Actions workflow that runs every Sunday at 1400 UTC. The workflow should have two jobs: darglint and build_posix. The darglint job runs on ubuntu-latest with Python 3.8, installing dependencies and running nox darglint. The build_posix job runs on ubuntu-latest and macos-latest with Python 3.6, 3.7, and 3.8 in parallel, installing dependencies and running nox with specific settings.",
+  "tags": [
+    "python",
+    "weekly",
+    "build",
+    "nox",
+    "darglint",
+    "ubuntu",
+    "macos"
+  ]
+}

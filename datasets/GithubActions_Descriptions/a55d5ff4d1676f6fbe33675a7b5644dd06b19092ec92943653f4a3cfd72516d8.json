@@ -1,0 +1,14 @@
+{
+  "sha": "a55d5ff4d1676f6fbe33675a7b5644dd06b19092ec92943653f4a3cfd72516d8",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1334,
+  "description": "Create a nightly GitHub Actions workflow named Test TF Nightly that runs on a schedule, on push to the master branch, and on pull requests. Use an ubuntu-latest job that checks out the repository, sets up Python 3.7, caches pip dependencies, installs test dependencies including tf-nightly, runs tests with pytest, and uploads coverage to Codecov.",
+  "tags": [
+    "python",
+    "nightly",
+    "tests",
+    "tensorflow",
+    "codecov"
+  ]
+}

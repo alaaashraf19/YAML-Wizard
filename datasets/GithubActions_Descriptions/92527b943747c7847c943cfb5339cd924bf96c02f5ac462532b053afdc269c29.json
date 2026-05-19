@@ -1,0 +1,15 @@
+{
+  "sha": "92527b943747c7847c943cfb5339cd924bf96c02f5ac462532b053afdc269c29",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1848,
+  "description": "Create a GitHub Actions workflow named CPP CI that runs on every pull request. Use a concurrent strategy to cancel any in-progress workflow for the same PR and allow concurrent runs for different commits. Define two jobs, build_ubuntu and build_windows, each running on a different OS and using a build matrix for Debug and Release configurations. For each job, install dependencies, check out the repository with submodules, build with CMake, and run unit tests.",
+  "tags": [
+    "cpp",
+    "cmake",
+    "ubuntu",
+    "windows",
+    "tests",
+    "ci"
+  ]
+}

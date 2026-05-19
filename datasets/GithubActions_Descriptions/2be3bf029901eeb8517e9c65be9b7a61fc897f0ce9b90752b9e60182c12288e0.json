@@ -1,0 +1,16 @@
+{
+  "sha": "2be3bf029901eeb8517e9c65be9b7a61fc897f0ce9b90752b9e60182c12288e0",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3262,
+  "description": "Create a GitHub Actions workflow named build-and-test-laghos that runs on every push to the master branch and on pull requests to master. Use an ubuntu-latest job to checkout Laghos, install MPI, and then build and cache Hypre, Metis, and MFEM dependencies if necessary. Finally, build Laghos and run checks and tests in 1 and 2 processor configurations.",
+  "tags": [
+    "laghos",
+    "ubuntu",
+    "mpi",
+    "hypre",
+    "metis",
+    "mfem",
+    "tests"
+  ]
+}

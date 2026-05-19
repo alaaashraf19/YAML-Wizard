@@ -1,0 +1,14 @@
+{
+  "sha": "1ec347ae3167386094dc5e981d031da27b4b2f65748567c7392b5be65298c0e0",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 817,
+  "description": "Create a GitHub Actions workflow named CIFuzz that runs on every pull request. Use a single ubuntu-latest job with concurrency control that cancels in-progress jobs. The job builds fuzzers for the cpp-httplib project using google/oss-fuzz, runs the fuzzers for 10 minutes, and uploads crash artifacts if the build succeeds but the run fails.",
+  "tags": [
+    "fuzzing",
+    "oss-fuzz",
+    "cpp",
+    "ubuntu",
+    "crash-testing"
+  ]
+}

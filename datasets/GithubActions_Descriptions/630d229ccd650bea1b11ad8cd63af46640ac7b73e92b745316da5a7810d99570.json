@@ -1,0 +1,15 @@
+{
+  "sha": "630d229ccd650bea1b11ad8cd63af46640ac7b73e92b745316da5a7810d99570",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2792,
+  "description": "Create a nightly GitHub Actions workflow named Analysis that runs SonarCloud static analysis on pull requests to specific branches and paths, and on a scheduled cron job. The workflow uses an ubuntu-latest job with a custom Docker container, checks out the repository, installs dependencies, configures and builds OpenColorIO with specific CMake flags, runs tests and code coverage, and uploads results to SonarCloud.",
+  "tags": [
+    "sonarcloud",
+    "static-analysis",
+    "open-color-io",
+    "cmake",
+    "code-coverage",
+    "nightly-build"
+  ]
+}

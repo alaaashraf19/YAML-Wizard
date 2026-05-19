@@ -1,0 +1,16 @@
+{
+  "sha": "5a15948c58957b53d5c1af77b8d6acab3a721df820ba52355316d76174ffef43",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4651,
+  "description": "Create a GitHub Actions workflow named ci that runs on push and pull request events for specific file paths, ignoring the gh-pages branch. The workflow has a concurrency group that cancels in-progress jobs. It consists of three jobs: linux, windows, and tipi-build-linux. The linux job runs on ubuntu-latest with a matrix strategy for compiler, linker, and build type. The windows job runs on windows-2022 with a matrix strategy for build type. The tipi-build-linux job runs on ubuntu-latest in a tipi build container, testing project builds and dependency resolution.",
+  "tags": [
+    "ci",
+    "ubuntu",
+    "windows",
+    "meson",
+    "tipi",
+    "matrix",
+    "concurrency"
+  ]
+}

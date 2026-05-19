@@ -1,0 +1,16 @@
+{
+  "sha": "5c17540604037fd8503b2445d3e546570a46b764fd09acad98fb7831fa7a9541",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 922,
+  "description": "Create a GitHub Actions workflow named Tests that runs on push, pull request, and a scheduled cron job. Use an ubuntu-latest job with a matrix strategy to test multiple Python versions from 3.7 to 3.12. For each version, check out the code, set up Python, install dependencies and test dependencies, check code style with black, execute tests with pytest and coverage, and upload coverage to Coveralls.",
+  "tags": [
+    "python",
+    "tests",
+    "coverage",
+    "black",
+    "pytest",
+    "ubuntu",
+    "scheduled"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "15101ea2593c50fdd4d1fa97075c6421278cd9707b303169a153d3317731e63e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 7354,
+  "description": "Create a GitHub Actions workflow named Build - Release that triggers on published releases. The workflow should have four jobs: linux, windows, macos, and create-release. The linux, windows, and macos jobs build and package the project for their respective operating systems, and upload the artifacts. The create-release job waits for the other jobs to finish, computes the build version, cleans up the work directory, downloads the artifacts, and uploads them as a release.",
+  "tags": [
+    "release",
+    "github-actions",
+    "defichain",
+    "multi-os",
+    "docker"
+  ]
+}

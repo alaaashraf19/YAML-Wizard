@@ -1,0 +1,16 @@
+{
+  "sha": "76a3f58d692dcf0a56c611d4efc80df45a59512be045c4b01a7abb9839348c4a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5066,
+  "description": "Create a GitHub Actions workflow named Build that runs on push, pull request, tag creation, and a weekly schedule. The workflow has three jobs: build-ubuntu, build-osx, and build-windows. Each job checks out the repository, installs dependencies, generates a project with CMake, builds, and tests it. The build-ubuntu job runs on ubuntu-18.04 and ubuntu-20.04 with a matrix strategy, build-osx on macos-latest, and build-windows on windows-latest with a matrix strategy for 32-bit and 64-bit builds.",
+  "tags": [
+    "cmake",
+    "ubuntu",
+    "osx",
+    "windows",
+    "ci",
+    "build",
+    "test"
+  ]
+}

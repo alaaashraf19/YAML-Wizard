@@ -1,0 +1,13 @@
+{
+  "sha": "3fccc11c55f231539addcf575b07a1129533aa6f4b8915dfa719284799b98ad3",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1736,
+  "description": "Create a GitHub Actions workflow named Documentation Docker image that builds and pushes a Docker image to ghcr.io. The workflow triggers on workflow dispatch, push to specific branches and tags, and pull requests to certain branches. Use an ubuntu-24.04-arm job with read contents and write packages permissions. Check out the repository, log in to the Container registry using DOCKER_TOKEN from secrets, extract metadata for Docker, and build and push the Docker image with specific context, file, and labels.",
+  "tags": [
+    "docker",
+    "github-actions",
+    "container-registry",
+    "ubuntu"
+  ]
+}

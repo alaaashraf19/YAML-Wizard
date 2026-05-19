@@ -1,0 +1,17 @@
+{
+  "sha": "52c232c9fa9d3cd3cd0a52a4273901fcde70512b08ae67a91cd3cbf42eb64936",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2083,
+  "description": "Create a GitHub Actions workflow named pyudev CI that runs on push to master, on pull requests to master, and manually from the Actions tab. The workflow consists of two jobs: python-checks and development_environment_checks. The python-checks job uses a matrix strategy to test with Python 3.9.6, 3.6.8, and PyPy3, installing dependencies and running tests with make. The development_environment_checks job uses another matrix strategy to run various tasks like formatting, linting, and packaging in a Fedora 35 container.",
+  "tags": [
+    "python",
+    "ci",
+    "pyudev",
+    "ubuntu",
+    "fedora",
+    "tests",
+    "matrix",
+    "workflows"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "sha": "15cec568b419dcad611526f921420fd1a1507484b7d2f8a4e853fd0a195fda54",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2567,
+  "description": "Create a GitHub Actions workflow named Extra CI that runs on push to master, pull requests, and workflow dispatch. The workflow has two jobs: linux and clang. The linux job runs on ubuntu-latest with a matrix of different build configurations (TBB, OpenMP, noexcept, xsimd, and xsimd-TBB), while the clang job runs on windows-latest. For each job, check out the code, set up a conda environment, configure and build the project using CMake, and run tests with ctest.",
+  "tags": [
+    "cmake",
+    "conda",
+    "clang",
+    "ubuntu",
+    "windows",
+    "tests",
+    "ci",
+    "matrix-build"
+  ]
+}

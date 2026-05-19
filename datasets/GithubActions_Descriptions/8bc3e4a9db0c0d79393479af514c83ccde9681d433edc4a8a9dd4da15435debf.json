@@ -1,0 +1,14 @@
+{
+  "sha": "8bc3e4a9db0c0d79393479af514c83ccde9681d433edc4a8a9dd4da15435debf",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2135,
+  "description": "Create a GitHub Actions workflow named Docker that triggers on a scheduled cron job, on push to master and dev branches with specific tags, and on pull requests. The workflow should run on an ubuntu-latest environment, check out the repository with submodules, prepare Docker image tags based on the event type and reference, set up QEMU and Docker Buildx, login to DockerHub if not a pull request, and build and push the Docker image with the prepared tags.",
+  "tags": [
+    "docker",
+    "dockerhub",
+    "cron",
+    "schedule",
+    "tags"
+  ]
+}

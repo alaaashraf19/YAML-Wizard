@@ -1,0 +1,18 @@
+{
+  "sha": "31900dd8e7f21db9f08642c85daa424420b19dcd1c5de30d0b96b2b982054cde",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2405,
+  "description": "Create a GitHub Actions workflow named Tests that runs on push, pull request, and a weekly schedule. The workflow has a matrix job that tests multiple Python versions across various operating systems, including Ubuntu, Windows, and macOS. For each job, check out the repository, set up Python if necessary, install dependencies, run tests with tox, and upload coverage data. Additionally, have a separate job to upload coverage data to Codecov after all tests have completed.",
+  "tags": [
+    "python",
+    "tests",
+    "tox",
+    "coverage",
+    "codecov",
+    "matrix",
+    "ubuntu",
+    "windows",
+    "macos"
+  ]
+}

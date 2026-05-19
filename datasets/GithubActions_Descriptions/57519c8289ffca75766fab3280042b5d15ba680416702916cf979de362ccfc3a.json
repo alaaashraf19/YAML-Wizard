@@ -1,0 +1,17 @@
+{
+  "sha": "57519c8289ffca75766fab3280042b5d15ba680416702916cf979de362ccfc3a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4084,
+  "description": "Create a GitHub Actions workflow with three jobs: test, docs, and benchmarks. The test job runs on a matrix of OS and Python versions, checking out the repository, caching conda packages, setting up Julia and Miniconda, installing the package and running tests with pytest. The docs job builds documentation using Sphinx. The benchmarks job runs benchmarks using asv. Trigger the workflow on push or pull request to main or vnext branches, as well as on page build and release created events.",
+  "tags": [
+    "python",
+    "julia",
+    "conda",
+    "sphinx",
+    "asv",
+    "tests",
+    "benchmarks",
+    "docs"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "41ae747c0f22f0cd35fce582dafd485411f385dc48b393430bec209d4fb5e726",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3305,
+  "description": "Create a nightly GitHub Actions workflow named nightly-debian-10 that runs on a scheduled cron job and allows manual dispatch. The workflow should set up an ubuntu-latest environment in a debian:10 container, install dependencies, prepare the source code, build and install Calamares using cmake and make, and send a notification on success or failure to a Matrix room.",
+  "tags": [
+    "debian",
+    "calamares",
+    "cmake",
+    "make",
+    "nightly",
+    "matrix-notify"
+  ]
+}

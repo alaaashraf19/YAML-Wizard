@@ -1,0 +1,14 @@
+{
+  "sha": "10eedb9cfb8cc8a5d9a8bba72baf1660ff317df73ace7c8f268692e3c1faef65",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1867,
+  "description": "Create a GitHub Actions workflow named Deploy that runs on push to main and tags, pull requests to main, published releases, and workflow dispatches. The workflow has read permissions to repository contents and consists of three ubuntu-latest jobs: build-package to build and verify a Python package, release-test-pypi to publish the package to Test PyPI on main commits from a specific repository owner, and release-pypi to publish the package to PyPI on released GitHub Releases.",
+  "tags": [
+    "python",
+    "pypi",
+    "release",
+    "github-actions",
+    "deploy"
+  ]
+}

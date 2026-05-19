@@ -1,0 +1,14 @@
+{
+  "sha": "35f4391cfa135fc923eae00c1f11c6c6765a04ad7b7d4820ca3b85ed499186ce",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5429,
+  "description": "Create a GitHub Actions workflow named 'macOS' that triggers on push and workflow dispatch events. The workflow uses a matrix strategy to run on macOS-13 and macOS-15 environments with Debug, Release, DevDist, and LuaDist build types. For each job, check out the code, unshallow the Git repository if necessary, download nCine-libraries artifacts and nCine-data, configure and build with CMake, and package and push artifacts to a deployment branch.",
+  "tags": [
+    "macos",
+    "github-actions",
+    "cmake",
+    "deployment",
+    "artifacts"
+  ]
+}

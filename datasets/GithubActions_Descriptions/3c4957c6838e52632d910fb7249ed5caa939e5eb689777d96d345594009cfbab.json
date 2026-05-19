@@ -1,0 +1,15 @@
+{
+  "sha": "3c4957c6838e52632d910fb7249ed5caa939e5eb689777d96d345594009cfbab",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2648,
+  "description": "Create a GitHub Actions workflow named Static Analysis that runs on push and when a pull request is opened. Use an ubuntu-latest job in a rolling Ubuntu container with custom environment variables. Update the environment, install tools like clang-tidy and Vulkan SDK, check out the repository, configure CMake, and then run clang-tidy on C++ files in parallel, reporting errors if any.",
+  "tags": [
+    "clang-tidy",
+    "cmake",
+    "vulkan",
+    "ubuntu",
+    "static-analysis",
+    "cpp"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "5d3b471b073cb952a08590225d46ee1622ce678fa1491d564451243bc7890deb",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1901,
+  "description": "Create a GitHub Actions workflow named AMR-Wind CUDA CI that runs on push and pull request events to the development branch, specifically when changes are made to certain paths including cmake, amr-wind, submods, unit_tests, CMakeLists.txt, Dockerfile, and the workflow file itself. The workflow should use an ubuntu-latest job to check out the repository with submodules, prepare a CUDA environment, and then configure and build the project using cmake with CUDA support.",
+  "tags": [
+    "cuda",
+    "cmake",
+    "mpi",
+    "ubuntu",
+    "ci",
+    "amr-wind"
+  ]
+}

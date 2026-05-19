@@ -1,0 +1,15 @@
+{
+  "sha": "a212a6ca5dcbeb354a1549b994280d5271b6e026fb5c3acfcf763ef17842e672",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2308,
+  "description": "Create a reusable GitHub Actions workflow named Build Template that accepts board, max_size, and max_size_apa102 as inputs. The workflow should run on ubuntu-latest, checking out the code, setting up Python 3.11, and installing UV. It then compiles and checks the size of a board with Blink and Apa102 examples, inspects the binary and ELF files, generates a timestamp and random hex, and uploads the build log as an artifact. If the build fails, the workflow should exit with a non-zero status.",
+  "tags": [
+    "python",
+    "uv",
+    "compile",
+    "size-check",
+    "artifact",
+    "reusable-workflow"
+  ]
+}

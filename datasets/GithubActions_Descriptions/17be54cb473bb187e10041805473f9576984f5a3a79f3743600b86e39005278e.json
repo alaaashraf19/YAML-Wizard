@@ -1,0 +1,17 @@
+{
+  "sha": "17be54cb473bb187e10041805473f9576984f5a3a79f3743600b86e39005278e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5821,
+  "description": "Create a complex Linux build GitHub Actions workflow that runs on push and pull request events. The workflow has two jobs: 'build' and 'clang-tidy'. The 'build' job uses a matrix strategy to run multiple builds with different configurations, including various C++ compilers, standards, and build types. It checks out the code, prepares the environment, configures the build with CMake, and runs tests. The 'clang-tidy' job also uses a matrix strategy to run clang-tidy on the code with different configurations.",
+  "tags": [
+    "linux",
+    "cmake",
+    "cpp",
+    "clang",
+    "gcc",
+    "ubuntu",
+    "tests",
+    "clang-tidy"
+  ]
+}

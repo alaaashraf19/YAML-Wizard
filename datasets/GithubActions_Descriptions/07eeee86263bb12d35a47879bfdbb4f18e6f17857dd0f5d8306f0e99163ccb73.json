@@ -1,0 +1,15 @@
+{
+  "sha": "07eeee86263bb12d35a47879bfdbb4f18e6f17857dd0f5d8306f0e99163ccb73",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1776,
+  "description": "Create a GitHub Actions workflow named Build Docker Image that runs on push to non-docs paths, on pull requests to the master branch excluding docs paths, and manually via workflow dispatch. In an ubuntu-latest job, set up environment variables for the container tag and whether to push the image. Then, checkout the repository with submodules, set up Docker Buildx, log in to Docker Hub, and build and push a Docker image with a dynamic tag based on the Git reference.",
+  "tags": [
+    "docker",
+    "github-actions",
+    "workflow",
+    "build",
+    "push",
+    "dockerhub"
+  ]
+}

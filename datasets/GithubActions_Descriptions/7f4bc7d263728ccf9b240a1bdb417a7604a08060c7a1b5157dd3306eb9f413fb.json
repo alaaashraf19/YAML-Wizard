@@ -1,0 +1,13 @@
+{
+  "sha": "7f4bc7d263728ccf9b240a1bdb417a7604a08060c7a1b5157dd3306eb9f413fb",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 562,
+  "description": "Create a GitHub Actions workflow named deploy-docker that triggers on push events with tags matching v*. Run a self-hosted job that logs in to Docker, checks out the repository, and then deploys a Docker image. In the deployment step, echo the GitHub SHA, determine a tag from Git history, clone a separate TarsDocker repository, navigate to its framework directory, and execute a build-docker.sh script with the determined tag.",
+  "tags": [
+    "docker",
+    "self-hosted",
+    "deployment",
+    "tags"
+  ]
+}

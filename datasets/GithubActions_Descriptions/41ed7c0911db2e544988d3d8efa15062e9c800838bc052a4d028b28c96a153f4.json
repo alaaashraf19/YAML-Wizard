@@ -1,0 +1,15 @@
+{
+  "sha": "41ed7c0911db2e544988d3d8efa15062e9c800838bc052a4d028b28c96a153f4",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 984,
+  "description": "Create a GitHub Actions workflow named On PRs - Mac Matrix that runs on every pull request, excluding changes to markdown files. Use a macOS job matrix with two variables: build type (Release, Debug) and shared libraries (ON, OFF). For each matrix combination, check out the repository, install dependencies with Homebrew, build the project with CMake, install it, and run tests with CTest.",
+  "tags": [
+    "macos",
+    "xcode",
+    "cmake",
+    "ctest",
+    "matrix",
+    "pr"
+  ]
+}

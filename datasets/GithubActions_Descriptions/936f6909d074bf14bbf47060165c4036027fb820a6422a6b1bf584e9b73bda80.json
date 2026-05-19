@@ -1,0 +1,19 @@
+{
+  "sha": "936f6909d074bf14bbf47060165c4036027fb820a6422a6b1bf584e9b73bda80",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 8861,
+  "description": "Create a GitHub Actions workflow named HLWM CI that runs on push to master and on pull requests, ignoring changes to .mergify.yml. The workflow consists of multiple jobs: build-test-current, build-clang, build-old-32bit, diff-objects, and build-doc. Each job runs on an ubuntu-latest environment with a specific container and performs various tasks such as checking out code, caching, building, testing, and uploading artifacts.",
+  "tags": [
+    "github-actions",
+    "hlwm",
+    "ci",
+    "ubuntu",
+    "cmake",
+    "ccache",
+    "codecov",
+    "clang",
+    "static-analysis",
+    "documentation"
+  ]
+}

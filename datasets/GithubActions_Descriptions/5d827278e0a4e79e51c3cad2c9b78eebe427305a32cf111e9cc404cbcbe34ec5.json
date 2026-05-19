@@ -1,0 +1,17 @@
+{
+  "sha": "5d827278e0a4e79e51c3cad2c9b78eebe427305a32cf111e9cc404cbcbe34ec5",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2566,
+  "description": "Create a GitHub Actions workflow named build that runs on pull requests, pushes to the master branch, and manual workflow dispatches. The workflow uses a matrix strategy to test builds on multiple Python versions (3.8, 3.9, 3.10) and operating systems (ubuntu-latest, macos-latest, windows-latest). For each job, check out the code, set up Python, install DeepXDE with requirements, list the environment, and test builds with various backends (TensorFlow v1, TensorFlow, PyTorch, Jax, Paddle) on their respective environments.",
+  "tags": [
+    "python",
+    "deepxde",
+    "tensorflow",
+    "pytorch",
+    "jax",
+    "paddle",
+    "matrix",
+    "multios"
+  ]
+}

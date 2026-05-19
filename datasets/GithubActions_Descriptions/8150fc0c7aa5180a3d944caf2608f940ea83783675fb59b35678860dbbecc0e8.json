@@ -1,0 +1,16 @@
+{
+  "sha": "8150fc0c7aa5180a3d944caf2608f940ea83783675fb59b35678860dbbecc0e8",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1126,
+  "description": "Create a GitHub Actions workflow named builder that can be triggered manually, on release creation, or on a scheduled basis every Monday at midnight. The workflow should run on an ubuntu-latest environment, checking out the repository with submodules, installing Qt and required build tools, building a project from a src directory using CMake and Qt, and then uploading the resulting DEB package as a pre-release download to a GitHub release.",
+  "tags": [
+    "qt",
+    "ubuntu",
+    "cmake",
+    "build",
+    "release",
+    "deb",
+    "github-actions"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "55d11fea57d92a7303cd085525d20c075cc35aa99b43cafa9e526c978f87ea4d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2081,
+  "description": "Create a GitHub Actions workflow named MSVC Tests that runs on push and on pull requests to the master branch. The workflow has two jobs: test-cppwinrt and build-nuget. The test-cppwinrt job runs on windows-latest, uses a matrix strategy to test different architectures and configurations, checks out the repository, runs a test script, uploads test logs, and checks for test failures. The build-nuget job runs on windows-latest, checks out the repository, packages the NuGet package using a script, and uploads the package artifact.",
+  "tags": [
+    "msvc",
+    "tests",
+    "windows",
+    "nuget",
+    "cppwinrt"
+  ]
+}

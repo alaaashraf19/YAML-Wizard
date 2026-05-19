@@ -1,0 +1,14 @@
+{
+  "sha": "32aca4dbea702c5e24b6365b71953e82f67c1fc77ab6bf9fe9bfa59880c40876",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3456,
+  "description": "Create a GitHub Actions workflow named MacOS that runs on push and pull request events. Use a matrix job that runs on a MacOS environment with Qt 6.6.* installed, and performs the following steps: checks out the code with submodules, installs Qt and dependencies, builds GitQlient, creates a DMG, uploads it to GitHub Releases if the workflow is triggered by a tag, and prunes old workflow runs.",
+  "tags": [
+    "macos",
+    "qt",
+    "github-actions",
+    "build",
+    "release"
+  ]
+}

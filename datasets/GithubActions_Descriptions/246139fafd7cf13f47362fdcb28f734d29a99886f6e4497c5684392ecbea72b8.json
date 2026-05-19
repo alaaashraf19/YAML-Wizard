@@ -1,0 +1,14 @@
+{
+  "sha": "246139fafd7cf13f47362fdcb28f734d29a99886f6e4497c5684392ecbea72b8",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 6656,
+  "description": "Create a GitHub Actions workflow named release that triggers on push to tags matching 'v*' and the master branch. Run a windows-latest job that checks out the repository with submodules, determines if the workflow is running for a tag, sets up MSBuild, and builds a solution with various configurations and platforms. Create a release if the workflow is running for a tag, and upload the setup executable and artifacts to the release or as workflow artifacts.",
+  "tags": [
+    "windows",
+    "msbuild",
+    "release",
+    "artifacts",
+    "tags"
+  ]
+}

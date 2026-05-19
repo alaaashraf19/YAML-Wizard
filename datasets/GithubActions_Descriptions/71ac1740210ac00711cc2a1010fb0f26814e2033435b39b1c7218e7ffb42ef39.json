@@ -1,0 +1,14 @@
+{
+  "sha": "71ac1740210ac00711cc2a1010fb0f26814e2033435b39b1c7218e7ffb42ef39",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1172,
+  "description": "Create a GitHub Actions workflow named pr that triggers on push events to branches matching 'pull-request/[0-9]+'. Use a concurrency group that cancels in-progress jobs. Define multiple jobs that inherit secrets and use reusable workflows from rapidsai/shared-action-workflows for building and testing conda packages in C++ and Python, with dependencies between build and test jobs.",
+  "tags": [
+    "conda",
+    "cpp",
+    "python",
+    "tests",
+    "reusable-workflows"
+  ]
+}

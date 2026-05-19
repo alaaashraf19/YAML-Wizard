@@ -1,0 +1,14 @@
+{
+  "sha": "a27ea10f72395a4fcb6bb905580366823632e98fbd0a350b732af77b88f80c7c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 875,
+  "description": "Create a GitHub Actions workflow named Release that runs on push to the master branch. Use an ubuntu-latest job with write id-token permission that checks out the repository with full history, sets up Python 3.9, upgrades pip and installs wheel, setuptools, packaging, twine, and build. Then, update the version number using a Python script, build the package, and publish it to PyPI using the pypa/gh-action-pypi-publish action.",
+  "tags": [
+    "python",
+    "release",
+    "pypi",
+    "twine",
+    "django-prometheus"
+  ]
+}

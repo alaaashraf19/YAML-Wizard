@@ -1,0 +1,16 @@
+{
+  "sha": "8a3e4383eefef68226198dda2d00e9ca8957f151a62ec955277fbd64f476a5d4",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2178,
+  "description": "Create a GitHub Actions workflow named Linux that runs on push to the master branch and on pull requests to master. The workflow can also be called with inputs for extra CMake flags, extra installation, and a gtest filter. It uses a matrix strategy to build with gcc-7 and clang-6 on ubuntu-latest, installing dependencies, configuring CMake, building, starting a ClickHouse server, and running tests.",
+  "tags": [
+    "cmake",
+    "ubuntu",
+    "gcc",
+    "clang",
+    "clickhouse",
+    "tests",
+    "matrix-build"
+  ]
+}

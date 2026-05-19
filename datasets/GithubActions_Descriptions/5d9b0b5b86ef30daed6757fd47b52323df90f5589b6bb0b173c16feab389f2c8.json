@@ -1,0 +1,14 @@
+{
+  "sha": "5d9b0b5b86ef30daed6757fd47b52323df90f5589b6bb0b173c16feab389f2c8",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2051,
+  "description": "Create a GitHub Actions workflow named PyPi Release that triggers on published releases. The workflow should have three jobs: build_wheels to build wheels on multiple platforms (Linux, Windows, macOS), build_sdist to build a source distribution on ubuntu-latest, and upload_pypi to upload the artifacts to PyPI. The upload job should depend on the completion of the build jobs and only run on published releases.",
+  "tags": [
+    "python",
+    "release",
+    "pypi",
+    "github-actions",
+    "cibuildwheel"
+  ]
+}

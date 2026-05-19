@@ -1,0 +1,13 @@
+{
+  "sha": "5fc55aad95cda19b2f133fc9c7eec6886fd87b1882b22bca2467df96ac36a93b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2460,
+  "description": "Create a GitHub Actions workflow named Test - node.js client that runs on every pull request to specific branches and paths, and also allows manual dispatch. The workflow should have two jobs: one for building a server in a custom container environment and another for testing the NodeJS client that depends on the build job. The test job should install Node.js 16, download an artifact, start a Pegasus cluster, and then run tests for the NodeJS client.",
+  "tags": [
+    "nodejs",
+    "tests",
+    "github-actions",
+    "apache-pegasus"
+  ]
+}

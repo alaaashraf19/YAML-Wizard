@@ -1,0 +1,14 @@
+{
+  "sha": "13c38554bc9de2bbb394b3ec77640ebf2df4dfda9d1668f55579bb0b7c5d32ce",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1526,
+  "description": "Create a GitHub Actions workflow named Sync ML models to Proxmox VM that triggers on push to tags model-deploy-net* and model-deploy-org*. Run a matrix job Sync ML models on ubuntu-latest for environments robotoff-ml-net and robotoff-ml-org, ensuring concurrency per environment and asset. For each environment, set common and specific variables, checkout the code, and use an SSH action to download ML models to a Proxmox VM.",
+  "tags": [
+    "ml-models",
+    "proxmox",
+    "ssh",
+    "ubuntu",
+    "sync"
+  ]
+}

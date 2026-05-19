@@ -1,0 +1,14 @@
+{
+  "sha": "18a562cf5724caaba2a7105f5ee09d531eec3cd38465844fb9a43c4580c8e69c",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3048,
+  "description": "Create a GitHub Actions workflow named 'unit tests' that runs on push to master branch and on pull requests to master branch, but only for specific paths. The workflow uses a matrix strategy to run unit tests on multiple Linux distributions including Fedora, openSUSE, CentOS Stream, Debian, and Ubuntu. For each distribution, install necessary packages, checkout the code, run unit tests with pip and setup.py, and optionally generate and upload coverage reports to Codecov.",
+  "tags": [
+    "python",
+    "unit-tests",
+    "matrix",
+    "linux",
+    "codecov"
+  ]
+}

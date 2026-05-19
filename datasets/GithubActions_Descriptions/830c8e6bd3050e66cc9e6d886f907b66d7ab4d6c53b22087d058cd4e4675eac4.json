@@ -1,0 +1,18 @@
+{
+  "sha": "830c8e6bd3050e66cc9e6d886f907b66d7ab4d6c53b22087d058cd4e4675eac4",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2165,
+  "description": "Create a GitHub Actions workflow named build that runs on push to the master branch and on pull requests to master, ignoring changes to markdown files and tags. The workflow has three jobs: linux64, cppcheck, and win64_msys2. The linux64 job runs on ubuntu-latest with a matrix of clang and gcc compilers, installing dependencies, checking out code, configuring with cmake, building, and packaging. The cppcheck job runs on ubuntu-latest, installing cppcheck, checking out code, and running cppcheck on the codebase. The win64_msys2 job runs on windows-latest with MSYS2, setting up MSYS2, checking out code, configuring with cmake, building, and packaging.",
+  "tags": [
+    "c",
+    "cpp",
+    "cmake",
+    "gcc",
+    "clang",
+    "msys2",
+    "windows",
+    "ubuntu",
+    "tests"
+  ]
+}

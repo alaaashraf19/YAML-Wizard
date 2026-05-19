@@ -1,0 +1,14 @@
+{
+  "sha": "989b942028bb3e4526f643412e185a6741744590ed713e5a6dd78a87388f7bdc",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1833,
+  "description": "Create a GitHub Actions workflow named CTest (BVTs) that runs on push and pull request events to the main branch, ignoring certain files and paths. The workflow uses a matrix strategy to run on Windows 2019 and 2022, with x64-Debug and x64-Release build types, and amd64 architecture. It checks out the repository, clones a test repository, installs Ninja, sets up the MSVC development environment, configures CMake, builds the project, and runs BVTs with CTest.",
+  "tags": [
+    "windows",
+    "cmake",
+    "ctest",
+    "bvt",
+    "github-actions"
+  ]
+}

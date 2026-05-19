@@ -1,0 +1,17 @@
+{
+  "sha": "a24d362c0cd3cc3b8d317dbac853610063d47fd44e0d9dade79bcc3aa2607014",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2014,
+  "description": "Create a GitHub Actions workflow named CI that runs on every push to main and on pull requests to main. Use four jobs for different environments: build-linux on ubuntu-latest, build-windows on windows-latest, build-emscripten on ubuntu-latest, and build-macos on macos-latest. Each job checks out the repository and performs environment-specific installation, building, and testing steps.",
+  "tags": [
+    "ci",
+    "ubuntu",
+    "windows",
+    "macos",
+    "cmake",
+    "ctest",
+    "npm",
+    "python"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "sha": "6252e89a728f6cf1a6531f8db980ae78000b731f38ab85d0f7d7e917a67a3164",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5907,
+  "description": "Create a GitHub Actions workflow named Staged commit that runs on push to the auto branch. The workflow has three jobs: linux-distros, macos, and freebsd. The linux-distros job runs on multiple Linux distributions with different compilers and layers, the macos job runs on macOS, and the freebsd job runs on FreeBSD. Each job checks out the code, runs test-builds.sh, and uploads build logs as artifacts.",
+  "tags": [
+    "github-actions",
+    "ci",
+    "linux",
+    "macos",
+    "freebsd",
+    "tests",
+    "build"
+  ]
+}

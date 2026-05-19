@@ -1,0 +1,15 @@
+{
+  "sha": "750c0803548e7d7937c7e93fe3f08a607cd64e9e46f7ff4aba1847e933e55a7a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1847,
+  "description": "Create a reusable GitHub Actions workflow named Build PIP Packages that can be triggered manually or called by another workflow. The workflow should have a build job that runs on a matrix of macOS and Windows environments, checking out the repository, setting up C++, Python, and cache, installing build dependencies, updating PyPI version if specified, building PIP packages, and uploading artifacts. Additionally, create a publish job that runs on ubuntu-latest, waiting for the build job to complete, and downloads the PIP package artifacts.",
+  "tags": [
+    "python",
+    "pip",
+    "packages",
+    "build",
+    "publish",
+    "reusable-workflow"
+  ]
+}

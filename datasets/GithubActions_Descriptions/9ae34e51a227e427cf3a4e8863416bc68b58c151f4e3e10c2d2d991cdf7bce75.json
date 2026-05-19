@@ -1,0 +1,14 @@
+{
+  "sha": "9ae34e51a227e427cf3a4e8863416bc68b58c151f4e3e10c2d2d991cdf7bce75",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1286,
+  "description": "Create a GitHub Actions workflow that triggers on push events with tags matching v*. Run a job on an ubuntu-18.04 environment, checking if the workflow is triggered by a tag. The job should checkout the code, build and package using ./make.sh docker-release-git, upload the artifact, create a release, and then upload the artifact to the release.",
+  "tags": [
+    "release",
+    "ubuntu",
+    "tags",
+    "artifacts",
+    "github-release"
+  ]
+}

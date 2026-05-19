@@ -1,0 +1,14 @@
+{
+  "sha": "22a83c506e29b04ca858ba7246f7440cd70d2a0c3bc40a56f8631fba182302dd",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 542,
+  "description": "Create a GitHub Actions workflow named Upload source files to Crowdin that triggers on push to master branch when files under romfs/lang/en/ change, and also allows manual dispatch. Use an ubuntu-latest job that checks out the repository with recursive submodules and no persisted credentials, then uploads source files to Crowdin using the crowdin/github-action with credentials from secrets.",
+  "tags": [
+    "crowdin",
+    "github-action",
+    "upload",
+    "sources",
+    "workflow-dispatch"
+  ]
+}

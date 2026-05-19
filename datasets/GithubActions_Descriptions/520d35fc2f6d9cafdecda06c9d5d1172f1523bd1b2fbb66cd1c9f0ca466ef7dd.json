@@ -1,0 +1,16 @@
+{
+  "sha": "520d35fc2f6d9cafdecda06c9d5d1172f1523bd1b2fbb66cd1c9f0ca466ef7dd",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3705,
+  "description": "Create a GitHub Actions workflow named 'CI: test hardware options' that runs on push to master and main branches, on pull request open and synchronize, and on merge group checks requested. The workflow should also be dispatchable with a debug option. It uses a concurrency group that cancels in-progress jobs and runs on ubuntu-24.04 with a 30-minute timeout. The workflow consists of three jobs: find-changes, run-tests, and report-results. The run-tests job uses a matrix strategy to test different hardware and parallelism options with Bazel and Python, and reports results.",
+  "tags": [
+    "bazel",
+    "python",
+    "tests",
+    "hardware",
+    "parallelism",
+    "ubuntu",
+    "ci"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "bc6937df008e7995b5d8e6d9f443dd292485f818613d4c204a1db8af55a555d0",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1818,
+  "description": "Create a GitHub Actions workflow named Build that runs on push to the master branch and on pull requests to master. Use a matrix strategy with ubuntu-latest to test different LLVM versions, build types, and Docker images. In each job, install dependencies, checkout the code, build the project with CMake, and run tests with Pytest, optionally with coverage.",
+  "tags": [
+    "cmake",
+    "llvm",
+    "docker",
+    "ubuntu",
+    "tests",
+    "coverage"
+  ]
+}

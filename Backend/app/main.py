@@ -8,7 +8,7 @@ from routers import auth_router, github_app_router, github_connect_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    create_tables()
+    await create_tables()
     yield
 
 app = FastAPI(lifespan=lifespan)

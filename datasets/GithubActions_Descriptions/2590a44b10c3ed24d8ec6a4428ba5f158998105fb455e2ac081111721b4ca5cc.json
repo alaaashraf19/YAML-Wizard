@@ -1,0 +1,15 @@
+{
+  "sha": "2590a44b10c3ed24d8ec6a4428ba5f158998105fb455e2ac081111721b4ca5cc",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4323,
+  "description": "Create a GitHub Actions workflow named CodeQL that analyzes code on push to master and for-*.*.*/sync branches, on pull requests to those branches, and weekly on a schedule. Run an ubuntu-latest job with a matrix strategy for different languages (c-cpp and python), checking out the repository, initializing CodeQL tools, and performing CodeQL analysis. For c-cpp with manual build mode, install dependencies, update submodules, and build the project with CMake before analysis.",
+  "tags": [
+    "codeql",
+    "github-actions",
+    "security",
+    "analysis",
+    "c-cpp",
+    "python"
+  ]
+}

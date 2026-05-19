@@ -1,0 +1,15 @@
+{
+  "sha": "02180356569c194d85657206632ab677e6faac4f5e2bba6afe5ed63238056589",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2942,
+  "description": "Create a GitHub Actions workflow that runs gnss-sdr in non-x86 architectures. Trigger on push to branches matching **-archs and main, and allow manual dispatch. Use a ubuntu-latest job matrix to test across multiple architectures, distributions, and compilers. For each matrix entry, check out the code, run on a container matching the target architecture, install dependencies, build gnss-sdr with CMake, and execute a test.",
+  "tags": [
+    "gnss-sdr",
+    "non-x86",
+    "ubuntu",
+    "matrix",
+    "cmake",
+    "cross-platform"
+  ]
+}

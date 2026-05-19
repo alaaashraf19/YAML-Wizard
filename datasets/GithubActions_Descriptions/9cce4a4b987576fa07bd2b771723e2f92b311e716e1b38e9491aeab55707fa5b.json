@@ -1,0 +1,15 @@
+{
+  "sha": "9cce4a4b987576fa07bd2b771723e2f92b311e716e1b38e9491aeab55707fa5b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2450,
+  "description": "Create a GitHub Actions workflow named CI that runs on push to any branch, on pull requests to the master branch, on release creation, and manually from the Actions tab. The workflow has three jobs: build-image, build, and editorconfig. The build-image job runs on ubuntu-latest, checks out the repository, builds and compresses an image using Docker, and uploads it to a GitHub release if the ref starts with refs/tags/v. The build job runs on ubuntu-latest, checks out the repository, and performs a native Melodic build using Docker. The editorconfig job runs on ubuntu-latest, checks out the repository, and runs an .editorconfig linter.",
+  "tags": [
+    "ci",
+    "docker",
+    "github-release",
+    "ubuntu",
+    "ros",
+    "editorconfig"
+  ]
+}

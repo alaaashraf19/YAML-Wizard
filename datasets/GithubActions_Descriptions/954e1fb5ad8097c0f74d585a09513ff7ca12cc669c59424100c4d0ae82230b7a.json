@@ -1,0 +1,15 @@
+{
+  "sha": "954e1fb5ad8097c0f74d585a09513ff7ca12cc669c59424100c4d0ae82230b7a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 832,
+  "description": "Create a GitHub Actions workflow named NestedText that runs on push and pull request events. Use a matrix strategy to test on multiple operating systems (ubuntu-latest, windows-latest, macos-11) and Python versions (3.6, 3.7, 3.8, 3.9) in parallel. For each job, check out the repository with submodules, set up Python, install packages with pip, run tests with tox, and publish coverage results to Coveralls.",
+  "tags": [
+    "python",
+    "tests",
+    "coverage",
+    "tox",
+    "matrix",
+    "ci"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "sha": "6af39deaae10d953e5f58a130cb04274d1165092b7d186b7da8800605171334e",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3442,
+  "description": "Create a GitHub Actions workflow named Testing that runs on push to main and on pull requests to main. The workflow uses a matrix strategy to test with Python 3.9 and 3.10 and Ansible 2.13.* and 2.14.*. For each matrix combination, it checks out the code, sets up Python, installs prerequisites, runs pytest tests, uploads generated SVGs as artifacts, publishes a job summary, tests installation in a virtual environment, and uploads coverage to Coveralls.",
+  "tags": [
+    "python",
+    "ansible",
+    "pytest",
+    "coveralls",
+    "ubuntu",
+    "tests",
+    "matrix-testing"
+  ]
+}

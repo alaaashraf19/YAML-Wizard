@@ -1,0 +1,15 @@
+{
+  "sha": "0e1e961b4f9a4d6ab55e506739d7f81b6ad02ed4f5f7534f86a1409b0ca9d549",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2569,
+  "description": "Create a GitHub Actions workflow named Build Project that runs on pull requests and pushes to the master branch. The workflow should have three jobs: build, build_d2d, and build_android. The build job should run on multiple platforms (windows, ubuntu, macos) with different build types (Debug, Release) and configure and build a project using cmake. The build_d2d job should build a project on ubuntu with Direct To Display. The build_android job should build an Android project in a container using a gradlew script.",
+  "tags": [
+    "cmake",
+    "multi-platform",
+    "android",
+    "ubuntu",
+    "windows",
+    "macos"
+  ]
+}

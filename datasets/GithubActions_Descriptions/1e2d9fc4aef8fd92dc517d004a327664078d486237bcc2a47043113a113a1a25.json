@@ -1,0 +1,17 @@
+{
+  "sha": "1e2d9fc4aef8fd92dc517d004a327664078d486237bcc2a47043113a113a1a25",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 7141,
+  "description": "Create a GitHub Actions workflow named FBGEMM_GPU-CPU CI that runs on every push to main, on pull requests to main, on a nightly schedule, and on manual dispatch. The workflow builds and tests FBGEMM_GPU-CPU on various CPU hosts with different architectures, compilers, and Python versions, and uploads the built wheel as a GitHub Actions artifact. A second job downloads the artifact, tests it on GPU, and pushes it to PyPI if specified.",
+  "tags": [
+    "fbgemm",
+    "gpu",
+    "cpu",
+    "ci",
+    "pytorch",
+    "pypi",
+    "amazonlinux",
+    "github-actions"
+  ]
+}

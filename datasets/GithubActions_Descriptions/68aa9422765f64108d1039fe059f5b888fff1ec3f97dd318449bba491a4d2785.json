@@ -1,0 +1,14 @@
+{
+  "sha": "68aa9422765f64108d1039fe059f5b888fff1ec3f97dd318449bba491a4d2785",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3400,
+  "description": "Create a GitHub Actions workflow named MacOs build that triggers on push events. Run a macos-11 job that checks out the repository, installs dependencies including MySQL client and OpenSSL, caches or installs Boost 1.79.0, configures and builds the project using CMake, and a separate ubuntu-20.04 job that sends a Discord notification on failure.",
+  "tags": [
+    "macos",
+    "cmake",
+    "boost",
+    "discord-notification",
+    "ci"
+  ]
+}

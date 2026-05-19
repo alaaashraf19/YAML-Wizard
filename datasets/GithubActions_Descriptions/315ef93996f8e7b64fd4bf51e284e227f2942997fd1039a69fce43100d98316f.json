@@ -1,0 +1,17 @@
+{
+  "sha": "315ef93996f8e7b64fd4bf51e284e227f2942997fd1039a69fce43100d98316f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2682,
+  "description": "Create a GitHub Actions workflow named ubuntu that can be called by other workflows. The workflow builds a project on multiple Ubuntu environments with different Qt versions using a matrix strategy. It checks out the repository, caches and installs Qt, installs linuxdeploy, creates a build directory, builds the project using qmake and cmake, and then packages the project into 7z and deb files. Finally, it archives the artifacts as a GitHub release.",
+  "tags": [
+    "ubuntu",
+    "qt",
+    "cmake",
+    "qmake",
+    "linuxdeploy",
+    "appimage",
+    "deb",
+    "release"
+  ]
+}

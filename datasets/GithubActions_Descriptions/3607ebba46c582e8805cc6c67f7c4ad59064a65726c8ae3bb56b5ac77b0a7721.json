@@ -1,0 +1,15 @@
+{
+  "sha": "3607ebba46c582e8805cc6c67f7c4ad59064a65726c8ae3bb56b5ac77b0a7721",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2692,
+  "description": "Create a GitHub Actions workflow named Development Microsoft C++ Code Analysis that analyzes C++ code on pushes to the dev_checks branch, on a scheduled basis twice a week, and on workflow dispatch. The workflow should run on a windows-latest environment with read permissions to repository contents. It should check out the repository, configure and build CMake, run MSVC Code Analysis using a provided ruleset, and upload the SARIF results as an artifact.",
+  "tags": [
+    "cpp",
+    "msvc",
+    "code-analysis",
+    "cmake",
+    "windows",
+    "github-code-scanning"
+  ]
+}

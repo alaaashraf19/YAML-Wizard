@@ -1,0 +1,13 @@
+{
+  "sha": "27eebf2da58765d2217ad53c27457885d1ca078ea3da88ad74b9e173666c2495",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4689,
+  "description": "Create a GitHub Actions workflow named tests that runs on every push to the master branch and on pull requests to master. The workflow has three ubuntu-20.04 jobs for different Couchbase server versions (6.6.0, 6.0.3, and 6.5.1), each setting up a Ruby environment, installing dependencies, initializing Couchbase, compiling an extension, checking the cluster, and running tests with a 15-minute timeout. If tests fail, display any core dumps.",
+  "tags": [
+    "ruby",
+    "couchbase",
+    "tests",
+    "ubuntu"
+  ]
+}

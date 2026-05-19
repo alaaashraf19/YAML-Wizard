@@ -1,0 +1,14 @@
+{
+  "sha": "35aa6dfa4a84f584660b691df3df6f900aa46042ed7cbb2ec86b075de249720a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2531,
+  "description": "Create a GitHub Actions CD pipeline that triggers on push of tags matching v*.*.*. The pipeline consists of three jobs: ci_succeed, create_release, and publish. The ci_succeed job checks the CI status of the last master push. If successful, create_release job creates a new release with changelog and version information. If both ci_succeed and create_release jobs succeed, the publish job builds and publishes the package to PyPI using a poetry-publish action.",
+  "tags": [
+    "python",
+    "cd",
+    "pypi",
+    "release",
+    "poetry"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "sha": "001722be87762baee27dc49d5416d59566bc6432a4c881aa6725f1a6153a4677",
+  "provider": "groq",
+  "model": "llama-3.3-70b-versatile",
+  "yaml_bytes": 4202,
+  "description": "Create a GitHub Actions workflow named bazel that triggers on push and pull requests to the main branch, as well as on merge groups to main. The workflow consists of three jobs: format_bazel_files to format Bazel files, build_direct to build p4c directly, and build_indirect to build a 3rd party Bazel project depending on p4c as a subproject. Each build job uses Bazel caching, installs Flex and Bison, and calculates the build duration. The workflow also cancels any preceding run on the pull request.",
+  "tags": [
+    "bazel",
+    "github-actions",
+    "ci",
+    "formatting",
+    "build",
+    "caching",
+    "ubuntu"
+  ]
+}

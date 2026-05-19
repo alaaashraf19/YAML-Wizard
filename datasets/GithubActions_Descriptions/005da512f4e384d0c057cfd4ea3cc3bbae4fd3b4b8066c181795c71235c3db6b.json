@@ -1,0 +1,15 @@
+{
+  "sha": "005da512f4e384d0c057cfd4ea3cc3bbae4fd3b4b8066c181795c71235c3db6b",
+  "provider": "groq",
+  "model": "llama-3.3-70b-versatile",
+  "yaml_bytes": 2204,
+  "description": "Create a GitHub Actions workflow named auto release that triggers when a tag matching v*.*.* is pushed. The workflow runs on a windows-latest environment, checks out the code, installs NSIS, extracts the version from the tag, sets up x64 and x86 MSVC, caches and sets up libraries, builds assets, creates a draft release, and submits the assets. It also installs checksum, sets up the Chocolatey API, creates a Chocolatey installer, packages it as a nupkg, and pushes the package to chocolatey.org using the provided CHOCOLATEY_API_KEY.",
+  "tags": [
+    "chocolatey",
+    "release",
+    "windows",
+    "msvc",
+    "nsis",
+    "tags"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "baec41d8870c7ad0108b103059e2710275bb65664a1691e76d7a85723d3d5907",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3179,
+  "description": "Create a GitHub Actions workflow named sonarcloud scan that runs on push to master and dev branches and on pull request open, synchronize, and reopen events. Use an ubuntu-latest job that checks out the repository, sets up JDK 11, downloads and sets up sonar-scanner and build-wrapper, prepares a cfamily cache timestamp, and then installs dependencies, configures, builds with build-wrapper, and runs sonar-scanner with secrets GITHUB_TOKEN and SONAR_TOKEN.",
+  "tags": [
+    "sonarcloud",
+    "java",
+    "ubuntu",
+    "cmake",
+    "make",
+    "tests"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "sha": "6864f8dcbd989c3eaed25c6f7b9dffb722285e58fd2f90b5720651155a50dec3",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3118,
+  "description": "Create a GitHub Actions workflow named Test CUDA that runs on a schedule and can be triggered manually. The workflow checks out a repository, sets up Python 3.11 and MPI, and runs tests on CUDA using Python, TensorFlow, and PyTorch in a NVIDIA container. The workflow has two jobs: test_cuda and pass. The test_cuda job runs on an NVIDIA container and performs various tests, while the pass job depends on test_cuda and checks if all needed jobs succeeded.",
+  "tags": [
+    "cuda",
+    "python",
+    "tensorflow",
+    "pytorch",
+    "mpi",
+    "nvidia",
+    "tests"
+  ]
+}

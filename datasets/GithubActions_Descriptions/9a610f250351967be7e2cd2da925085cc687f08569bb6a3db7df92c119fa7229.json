@@ -1,0 +1,14 @@
+{
+  "sha": "9a610f250351967be7e2cd2da925085cc687f08569bb6a3db7df92c119fa7229",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1291,
+  "description": "Create a GitHub Actions workflow named GitHub Release that triggers on push to main branch when Version.txt changes. The workflow should cancel any in-progress runs for the same pull request or reference unless it's the main branch. For the p4lang/p4c repository, it checks out the code, extracts the version from Version.txt, creates a GitHub release with the version as a tag, sets up Docker Buildx, logs in to DockerHub, and builds and pushes a Docker image tagged with the version to the registry.",
+  "tags": [
+    "github-release",
+    "docker",
+    "dockerhub",
+    "p4c",
+    "versioning"
+  ]
+}

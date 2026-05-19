@@ -1,0 +1,14 @@
+{
+  "sha": "550ab022c81b30fc01937525b82d7dfa71c2030b16452007e90c2355983dc408",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 999,
+  "description": "Create a GitHub Actions workflow named WebAssembly Build that runs on every push to the master branch and on pull requests. Use an ubuntu-latest job that checks out the repository, sets up Node.js to the latest LTS version, installs Emscripten version 3.1.0, installs dependencies with npm ci, builds TypeScript with npm run build-ts, builds WebAssembly with a series of Emscripten commands and npm run build-wasm, and runs tests with npm test.",
+  "tags": [
+    "webassembly",
+    "emscripten",
+    "nodejs",
+    "typescript",
+    "tests"
+  ]
+}

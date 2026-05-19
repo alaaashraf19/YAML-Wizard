@@ -1,0 +1,17 @@
+{
+  "sha": "37815ee384285f0ccff430d3575e97b880d0266426d7217bc71c763129bec35b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5205,
+  "description": "Create a GitHub Actions workflow named build that runs on push to the master branch and on pull requests. The workflow has three jobs: linux-wheels-x86-64, mac-wheels-x86-64, and win-wheels. Each job builds wheels for Python 3.7-3.9 using cibuildwheel and uploads them to S3. The linux-wheels-x86-64 job runs on ubuntu-latest, the mac-wheels-x86-64 job runs on macos-11, and the win-wheels job runs on windows-latest.",
+  "tags": [
+    "python",
+    "cibuildwheel",
+    "wheelhouse",
+    "s3",
+    "github-actions",
+    "macos",
+    "ubuntu",
+    "windows"
+  ]
+}

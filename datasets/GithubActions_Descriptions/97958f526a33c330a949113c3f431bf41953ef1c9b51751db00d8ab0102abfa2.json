@@ -1,0 +1,14 @@
+{
+  "sha": "97958f526a33c330a949113c3f431bf41953ef1c9b51751db00d8ab0102abfa2",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2198,
+  "description": "Create a GitHub Actions workflow named Test Suite that runs on push to the master branch, on pull requests, and on workflow dispatch. The workflow has three jobs: tests, docs, and quality. The tests job runs on a matrix of OS and Python versions, checking out the repo, setting up Python, installing dependencies, and running tox. The docs and quality jobs run on ubuntu-latest, checking out the repo, setting up Python 3.8, installing dependencies, and running tox for docs and quality respectively.",
+  "tags": [
+    "python",
+    "tests",
+    "tox",
+    "github-actions",
+    "workflow"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "sha": "15cc979fac3f6ef68c97ef1d79f4b7c9078777f406954d7f3df2c147b67fb048",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2705,
+  "description": "Create a GitHub Actions workflow named CI that runs on push to master and pymem branches, on pull requests, and on releases. Use a matrix job with multiple configurations to build and test on both ubuntu-latest with GCC and macOS-latest with Clang. For each configuration, check out the repository, print environment variables, use ccache for caching, install dependencies, configure CMake, build, and test. Optionally, generate code coverage reports on ubuntu-latest.",
+  "tags": [
+    "cmake",
+    "gcc",
+    "clang",
+    "ubuntu",
+    "macos",
+    "tests",
+    "coverage"
+  ]
+}

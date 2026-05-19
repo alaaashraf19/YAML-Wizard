@@ -1,0 +1,14 @@
+{
+  "sha": "221f15801f8a4891b558b4ca0ac3b2c6d836eea807f64e91c396139089a0ee9d",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3404,
+  "description": "Create a GitHub Actions workflow named CI of mc_rtc with Docker that checks the build-and-install script on base Docker images. The workflow should trigger on push to all branches except when specific files are changed and on all pull requests. It should use a matrix strategy to run on debian_bullseye and ubuntu_22.04, checking out the repository, cloning a superbuild, freeing up space, building within Docker, and sending a Slack notification on failure.",
+  "tags": [
+    "docker",
+    "ci",
+    "github-actions",
+    "slack",
+    "notifications"
+  ]
+}

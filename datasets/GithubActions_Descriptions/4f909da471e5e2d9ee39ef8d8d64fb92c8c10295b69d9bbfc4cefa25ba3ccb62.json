@@ -1,0 +1,15 @@
+{
+  "sha": "4f909da471e5e2d9ee39ef8d8d64fb92c8c10295b69d9bbfc4cefa25ba3ccb62",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4068,
+  "description": "Create a GitHub Actions workflow named Mac CI that runs on every push and pull request. Use multiple macos-10.15 jobs to test with different sanitizers: ubsan, asan, msan, and tsan. For each job, use a Homebrew action, checkout the repository, perform setup tasks including submodule sync and update, install dependencies with Homebrew, and then run tests with the respective sanitizer enabled using cmake and make.",
+  "tags": [
+    "macos",
+    "ci",
+    "homebrew",
+    "sanitizers",
+    "cmake",
+    "tests"
+  ]
+}

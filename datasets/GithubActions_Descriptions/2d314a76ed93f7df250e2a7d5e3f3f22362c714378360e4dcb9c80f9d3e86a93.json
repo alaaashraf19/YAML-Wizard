@@ -1,0 +1,14 @@
+{
+  "sha": "2d314a76ed93f7df250e2a7d5e3f3f22362c714378360e4dcb9c80f9d3e86a93",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4467,
+  "description": "Create a GitHub Actions workflow named test-suite that runs on every push to master and develop branches, excluding docs/, and on pull requests to those branches. The workflow has two jobs: test and deploy. The test job runs tests with a matrix of Python versions (3.9, 3.10, 3.11) and testing databases (sqlite3, postgresql, mysql), and the deploy job builds and pushes a Docker image to DockerHub if the repository is evennia/evennia.",
+  "tags": [
+    "python",
+    "testing",
+    "docker",
+    "github-actions",
+    "evennia"
+  ]
+}

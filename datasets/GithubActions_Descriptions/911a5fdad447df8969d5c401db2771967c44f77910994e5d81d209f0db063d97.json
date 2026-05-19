@@ -1,0 +1,15 @@
+{
+  "sha": "911a5fdad447df8969d5c401db2771967c44f77910994e5d81d209f0db063d97",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5402,
+  "description": "Create a GitHub Actions workflow named Build Packages that runs on push to master branch or tags, pull requests to master, and workflow dispatch events. The workflow uses a matrix strategy to build packages on multiple platforms (Linux, Windows, macOS) with different toolchains and configurations. It checks out the code, installs dependencies, restores and saves vcpkg cache, configures and builds the project with CMake, packages the artifacts, and uploads them.",
+  "tags": [
+    "cmake",
+    "vcpkg",
+    "multi-platform",
+    "github-actions",
+    "release-workflow",
+    "packaging"
+  ]
+}

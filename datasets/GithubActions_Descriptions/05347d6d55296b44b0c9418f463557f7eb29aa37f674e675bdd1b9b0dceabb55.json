@@ -1,0 +1,14 @@
+{
+  "sha": "05347d6d55296b44b0c9418f463557f7eb29aa37f674e675bdd1b9b0dceabb55",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1677,
+  "description": "Create a GitHub Actions workflow named build-riderlink that runs on push to branch net202 and on pull requests to the same branch, ignoring changes to README.md. Use a matrix job that runs on Windows Latest, checking out the repository, setting up a Gradle cache, generating models with Gradle, cleaning files, building a plugin with specific configuration, and uploading the built plugin as an artifact.",
+  "tags": [
+    "windows",
+    "gradle",
+    "github-actions",
+    "plugin-build",
+    "ci"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "sha": "6136735d48a0a1bdb292c8cd62a525bd3819b594239b222d0d81f48c8a28b6db",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 992,
+  "description": "Create a GitHub Actions workflow named CI and CD that runs on push to the master branch and on workflow dispatch. The workflow has two jobs: tests and deploy. The tests job runs on ubuntu-latest, checks out the repository, logs in to the GHCR container registry, starts the environment with make start-containers, and runs tests with make params=-T tests. The deploy job runs on ubuntu-latest, depends on the tests job, checks out the repository, and runs an Ansible playbook with specific options and environment variables.",
+  "tags": [
+    "ci",
+    "cd",
+    "ubuntu",
+    "tests",
+    "deploy",
+    "ansible",
+    "docker"
+  ]
+}

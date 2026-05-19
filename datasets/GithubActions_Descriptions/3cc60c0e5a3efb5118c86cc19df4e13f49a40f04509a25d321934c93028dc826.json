@@ -1,0 +1,24 @@
+{
+  "sha": "3cc60c0e5a3efb5118c86cc19df4e13f49a40f04509a25d321934c93028dc826",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 8957,
+  "description": "Create a comprehensive GitHub Actions workflow named CI that triggers on push to main, pull requests, and tag creation. The workflow consists of multiple jobs: lint, build, emscripten, wasi, sanitize, build-wasm2c-memchecked, build-min-cmake, build-rlbox, and build-cross. Each job runs on various environments, including ubuntu-latest, macOS, and Windows, and performs tasks such as setting up Python, checking out code, installing tools, building, testing, and releasing.",
+  "tags": [
+    "ci",
+    "python",
+    "ubuntu",
+    "macos",
+    "windows",
+    "cmake",
+    "ninja",
+    "testing",
+    "asan",
+    "ubsan",
+    "fuzz",
+    "wasi",
+    "emscripten",
+    "rlbox",
+    "cross-compiling"
+  ]
+}

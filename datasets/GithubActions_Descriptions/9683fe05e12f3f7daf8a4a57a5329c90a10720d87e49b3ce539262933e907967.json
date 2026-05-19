@@ -1,0 +1,14 @@
+{
+  "sha": "9683fe05e12f3f7daf8a4a57a5329c90a10720d87e49b3ce539262933e907967",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4897,
+  "description": "Create a GitHub Actions workflow named ci/gh-actions/depends that runs on push and pull request events, excluding changes to docs and README files. The workflow uses an ubuntu-20.04 environment and runs a matrix of cross-compilation jobs for various toolchains, including RISCV, ARM, and x86 architectures. For each job, it checks out the repository, sets up ccache and apt configurations, installs dependencies, and builds the project using make depends.",
+  "tags": [
+    "cross-compilation",
+    "github-actions",
+    "ubuntu",
+    "ccache",
+    "apt"
+  ]
+}

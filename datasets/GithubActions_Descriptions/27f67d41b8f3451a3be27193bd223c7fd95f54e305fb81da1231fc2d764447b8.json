@@ -1,0 +1,14 @@
+{
+  "sha": "27f67d41b8f3451a3be27193bd223c7fd95f54e305fb81da1231fc2d764447b8",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4109,
+  "description": "Create a GitHub Actions workflow that builds and packages conda environments across multiple platforms and GPU configurations. The workflow should be triggered by a workflow call and requires the ANACONDA_API_TOKEN secret. It should run on various environments including ubuntu-latest, 4-core-ubuntu-gpu-t4, windows-2019, macos-14, and 2-core-ubuntu-arm, and use a custom build_conda action with specific labels, CUDA versions, and cuVS flags.",
+  "tags": [
+    "conda",
+    "gpu",
+    "cuda",
+    "multithreading",
+    "cross-platform"
+  ]
+}

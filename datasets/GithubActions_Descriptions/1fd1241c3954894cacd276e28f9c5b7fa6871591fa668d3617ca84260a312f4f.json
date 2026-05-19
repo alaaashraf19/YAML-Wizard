@@ -1,0 +1,14 @@
+{
+  "sha": "1fd1241c3954894cacd276e28f9c5b7fa6871591fa668d3617ca84260a312f4f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2611,
+  "description": "Create a GitHub Actions workflow named github-benchmarks that runs on push to the develop branch and on workflow calls. The workflow has read-all permissions and a single job CI that runs sequentially with a matrix strategy over different distros, compilers, and backends. For each matrix entry, it checks out the code, sets up a container with the specified distro, configures and builds Kokkos with the given compiler and backend, runs tests, gathers benchmark results, archives them as artifacts, and pushes the results to another repository if the workflow is triggered on the develop branch.",
+  "tags": [
+    "kokkos",
+    "benchmarks",
+    "github-actions",
+    "ci",
+    "cpp"
+  ]
+}

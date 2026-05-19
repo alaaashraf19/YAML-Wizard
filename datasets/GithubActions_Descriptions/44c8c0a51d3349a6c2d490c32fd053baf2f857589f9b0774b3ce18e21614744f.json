@@ -1,0 +1,14 @@
+{
+  "sha": "44c8c0a51d3349a6c2d490c32fd053baf2f857589f9b0774b3ce18e21614744f",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1909,
+  "description": "Create a GitHub Actions workflow named Update translations that runs on a schedule and on workflow dispatch. In an ubuntu-latest job, check out the repository with submodules, and use Docker to read, push, pull, write, and clean translations with Transifex. Update the repository by stashing changes, pulling the latest changes, and committing and pushing updated translations if the workflow was triggered on a schedule or dispatch.",
+  "tags": [
+    "translations",
+    "transifex",
+    "docker",
+    "schedule",
+    "workflow-dispatch"
+  ]
+}

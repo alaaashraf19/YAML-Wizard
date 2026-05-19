@@ -1,0 +1,17 @@
+{
+  "sha": "03c6341da64db43af3b261a628d49c6d94e4d133dcffb09c73dbd91e2641af03",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4912,
+  "description": "Create a GitHub Actions workflow named CI that runs on push to any branch, on pull requests to the master branch, on release creation, and manually from the Actions tab. The workflow has four jobs: build-image, documentation, build, and editorconfig. The build-image job builds and uploads a Docker image. The documentation job sets up Node.js, installs tools, runs markdownlint, checks assets, builds a GitBook, and generates PDFs. The build job runs a Native Melodic build using Docker. The editorconfig job lints .editorconfig files.",
+  "tags": [
+    "ci",
+    "docker",
+    "nodejs",
+    "gitbook",
+    "pdf",
+    "ros",
+    "editorconfig",
+    "ubuntu"
+  ]
+}

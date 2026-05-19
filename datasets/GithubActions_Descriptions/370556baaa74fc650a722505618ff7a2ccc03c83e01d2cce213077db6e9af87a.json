@@ -1,0 +1,18 @@
+{
+  "sha": "370556baaa74fc650a722505618ff7a2ccc03c83e01d2cce213077db6e9af87a",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5019,
+  "description": "Create a GitHub Actions workflow named release that triggers on push events to tags matching 'v*' and any branch. In a Windows job, install Alpine WSL, checkout the repository with submodules, determine if the workflow is running for a tag, set up MSBuild, and then build and package the project in multiple configurations, including x86, x64, and ARM64. Upload the built artifacts and symbols to GitHub Releases if the workflow is running for a tag.",
+  "tags": [
+    "windows",
+    "msbuild",
+    "wsl",
+    "alpine",
+    "github-releases",
+    "tag",
+    "ci",
+    "build",
+    "packaging"
+  ]
+}

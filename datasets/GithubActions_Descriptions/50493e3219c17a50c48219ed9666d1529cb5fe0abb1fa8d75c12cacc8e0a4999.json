@@ -1,0 +1,16 @@
+{
+  "sha": "50493e3219c17a50c48219ed9666d1529cb5fe0abb1fa8d75c12cacc8e0a4999",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2652,
+  "description": "Create a GitHub Actions workflow named CI - OSX/Linux via Conda that runs on push and pull request events. Use a matrix strategy to test on ubuntu-latest and macos-latest with Python 3.8 and 3.12 in both Release and Debug build types. For each job, check out the repository, set up a Conda environment with Python, and build and test Pinocchio using CMake and CTest. Also, include a check job that runs after the build job and verifies its success.",
+  "tags": [
+    "conda",
+    "cmake",
+    "ctest",
+    "python",
+    "osx",
+    "linux",
+    "ci"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "sha": "8f84d10ab34f2820346f5155158129bb212a88e222897c32de6b0e41439541d8",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 14561,
+  "description": "Create a comprehensive GitHub Actions workflow for mlpack/mlpack repository. The workflow should trigger on push to master and main branches, pull requests to these branches, workflow dispatch, and release events. It should have a read permission for repository contents. The workflow consists of two jobs: a matrix job for Linux and macOS that tests all bindings with various configurations, and a Windows job that tests the build with Visual Studio 2022.",
+  "tags": [
+    "mlpack",
+    "github-actions",
+    "ci",
+    "bindings",
+    "windows",
+    "linux",
+    "macos",
+    "cmake",
+    "test-matrix"
+  ]
+}

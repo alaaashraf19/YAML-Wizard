@@ -1,0 +1,15 @@
+{
+  "sha": "1946df862e9b0d1827627b8c5525c9be4374a3619c7f0d707caaf6bd52f2619b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2166,
+  "description": "Create a reusable GitHub Actions workflow named Build XCFramework Packages that can be triggered manually or called by another workflow. The workflow takes optional inputs for Ice version, repository URL, and repository username, and an optional secret for the repository password. Run a macOS job that checks out the repository, sets up C++, and caches build results. Then build XCFramework packages using make, upload the artifacts, and publish the XCFrameworks to a repository by zipping and uploading them via curl with authentication.",
+  "tags": [
+    "xcframework",
+    "make",
+    "curl",
+    "repository",
+    "macos",
+    "reusable-workflow"
+  ]
+}

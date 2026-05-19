@@ -1,0 +1,14 @@
+{
+  "sha": "3f08640301a87154d91679dfcc173e8f6bb3a0030324448d74683bb9350f0656",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2337,
+  "description": "Create a GitHub Actions workflow named CodeQL that analyzes code for security vulnerabilities on push to the master branch, on pull requests to master, and on a weekly schedule. Use an ubuntu-latest job with read permissions for actions and contents, and write permission for security events. Run CodeQL analysis in a matrix for the Python language, checking out the repository, initializing CodeQL, attempting to autobuild, and then performing the CodeQL analysis.",
+  "tags": [
+    "codeql",
+    "security",
+    "analysis",
+    "python",
+    "github"
+  ]
+}

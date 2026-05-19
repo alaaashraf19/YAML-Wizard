@@ -1,0 +1,15 @@
+{
+  "sha": "453a2b3cfd2385f481250baa2820e1c19790a5a84fae35300b56ecf19a83c0b6",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 17252,
+  "description": "Create a GitHub Actions workflow named Release that triggers on push events with tags. The workflow consists of two jobs: get-winlibs-outputs and release. The get-winlibs-outputs job sets up environment variables and outputs them. The release job uses a matrix strategy to run on different operating systems and architectures, checking out the repository, setting up Qt, installing dependencies, building, and releasing the project.",
+  "tags": [
+    "qt",
+    "release",
+    "github-actions",
+    "windows",
+    "linux",
+    "macos"
+  ]
+}

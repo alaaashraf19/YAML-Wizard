@@ -1,0 +1,16 @@
+{
+  "sha": "0f599c4524583573f0add743faddb19d829b37c5da1ebcedcfe342f0cc172a98",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1694,
+  "description": "Create a GitHub Actions workflow that tests the latest build on downstream projects. The workflow triggers on push to main and downstream-test branches, weekly at 4:00 AM UTC, and on workflow dispatch. It has two jobs: build and test-mailman. The build job runs on ubuntu-latest, checks out the code, sets up Python 3.x, installs tox, builds with make build, and uploads the latest build as an artifact. The test-mailman job runs on ubuntu-latest, clones the mailman repository, downloads the latest build artifact, sets up Python 3.9, installs tox, sets up a test environment, installs the latest build, and runs tests with nose2.",
+  "tags": [
+    "python",
+    "github-actions",
+    "testing",
+    "downstream",
+    "mailman",
+    "ci",
+    "ubuntu"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "sha": "6eb785f594e9e26ee7fcdd886886033491c173f070088cf8d75883f635a8b87b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 695,
+  "description": "Create a GitHub Actions workflow named Codecov that runs on push and pull request events to the master branch. Use an ubuntu-latest job with a matrix strategy for gcc compiler and Debug build type. The job should check out the code, install eigen dependencies, configure the build with cmake for coverage, build the project, run tests with ctest, and upload the coverage results to Codecov.",
+  "tags": [
+    "codecov",
+    "gcc",
+    "cmake",
+    "ubuntu",
+    "coverage"
+  ]
+}

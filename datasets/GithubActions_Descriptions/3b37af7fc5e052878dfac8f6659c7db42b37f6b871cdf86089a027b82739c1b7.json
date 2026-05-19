@@ -1,0 +1,15 @@
+{
+  "sha": "3b37af7fc5e052878dfac8f6659c7db42b37f6b871cdf86089a027b82739c1b7",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1802,
+  "description": "Create a GitHub Actions workflow named CI of mc_rtc with Docker that checks the build-and-install script on base Docker images. The workflow should trigger on push to all branches except when changes are made to specific files, and on pull requests to all branches. Use a job matrix to build on debian_buster and ubuntu_22.04 using an ubuntu-20.04 runner, checking out the repository with submodules, freeing up space, building within Docker, and sending a Slack notification on failure.",
+  "tags": [
+    "docker",
+    "ci",
+    "slack",
+    "matrix",
+    "ubuntu",
+    "debian"
+  ]
+}

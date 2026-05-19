@@ -1,0 +1,15 @@
+{
+  "sha": "0350e30c06e7167ed660491822f5697746924bdb11cf24c0377a7b555bd090ed",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2861,
+  "description": "Create a GitHub Actions workflow named build 32-Bit windows client that runs on push to core4, feature/* branches and on pull requests to core4 branch. The workflow should ignore changes to .github/workflows, snowballs2/, except for .github/workflows/cross-compile-client.yml. Use an ubuntu-24.04 job to check out the repository, set up reusable strings, install CMake 3.27.9, and then install dependencies including mingw-w64 and OpenSSL. Configure CMake with a mingw toolchain and Hunter, then build the project and upload the resulting 32-bit Windows client artifact.",
+  "tags": [
+    "windows",
+    "mingw",
+    "cmake",
+    "hunter",
+    "cross-compile",
+    "ubuntu"
+  ]
+}

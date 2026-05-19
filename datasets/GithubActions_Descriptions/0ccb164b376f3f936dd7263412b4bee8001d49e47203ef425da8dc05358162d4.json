@@ -1,0 +1,14 @@
+{
+  "sha": "0ccb164b376f3f936dd7263412b4bee8001d49e47203ef425da8dc05358162d4",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2015,
+  "description": "Create a GitHub Actions workflow named build that runs on push to the master branch and on workflow dispatch. It uses two ubuntu-latest jobs: one to get supported boards by running a compile command, and another to build for each board by downloading the list of supported boards, installing the GitHub CLI, and triggering a build workflow for each board using the GitHub CLI.",
+  "tags": [
+    "github-actions",
+    "build",
+    "workflow-dispatch",
+    "ubuntu",
+    "compile"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "sha": "07f4e7173d359b180da4d31bb45e7039fba085a0cd7dbc628c096141d2b8b93b",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1667,
+  "description": "Create a GitHub Actions workflow named Release that builds and publishes Python packages to PyPI. The workflow triggers on push to any branch except pre-commit-ci* and on pull requests, and also on tags. It runs on an ubuntu-20.04 environment, setting up Python 3.8, installing build packages, building releases, verifying wheels, and uploading artifacts. Additionally, it publishes to PyPI if the workflow is triggered by a tag, using credentials from secrets.",
+  "tags": [
+    "python",
+    "release",
+    "pypi",
+    "twine",
+    "tags",
+    "build",
+    "wheel"
+  ]
+}

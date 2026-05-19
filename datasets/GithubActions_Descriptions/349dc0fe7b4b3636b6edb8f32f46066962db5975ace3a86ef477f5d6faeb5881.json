@@ -1,0 +1,16 @@
+{
+  "sha": "349dc0fe7b4b3636b6edb8f32f46066962db5975ace3a86ef477f5d6faeb5881",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3907,
+  "description": "Create a GitHub Actions workflow named CI that runs on push to master and try-import branches and on pull requests. The workflow checks commits, then runs CPU and GPU tests in parallel on self-hosted runners with a container environment. If the tests pass, it auto-merges try-import into master. If tests fail on try-import, it sends a DingTalk notification.",
+  "tags": [
+    "ci",
+    "gpu",
+    "cpu",
+    "self-hosted",
+    "container",
+    "auto-merge",
+    "notifications"
+  ]
+}

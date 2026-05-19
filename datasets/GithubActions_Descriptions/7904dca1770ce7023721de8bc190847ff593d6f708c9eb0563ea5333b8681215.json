@@ -1,0 +1,16 @@
+{
+  "sha": "7904dca1770ce7023721de8bc190847ff593d6f708c9eb0563ea5333b8681215",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1645,
+  "description": "Create a GitHub Actions workflow that runs on push to release/* branches and can be manually triggered. The workflow, named Linux build, uses an ubuntu-latest job matrix to test with Python 3.9. It checks out the code, caches pip, huggingface models, and text2vec models, sets up Python, installs torch, text2vec from PyPI, and project dependencies, then runs pytest.",
+  "tags": [
+    "python",
+    "ubuntu",
+    "tests",
+    "matrix",
+    "cache",
+    "huggingface",
+    "text2vec"
+  ]
+}

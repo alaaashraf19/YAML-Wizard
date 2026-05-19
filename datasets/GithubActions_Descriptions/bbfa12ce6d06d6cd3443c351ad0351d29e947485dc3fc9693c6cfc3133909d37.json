@@ -1,0 +1,16 @@
+{
+  "sha": "bbfa12ce6d06d6cd3443c351ad0351d29e947485dc3fc9693c6cfc3133909d37",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 4261,
+  "description": "Create a GitHub Actions workflow named ci that runs on push and pull request events. The workflow has two jobs: linux and windows. The linux job runs on an ubuntu-latest container with a Debian image, using a matrix strategy to test with different compilers and compilation options. It installs dependencies, checks out the repository, and runs a series of steps to configure, build, and test the project. The windows job runs on a Windows 2022 environment, using a Docker container to install dependencies and build the project.",
+  "tags": [
+    "ci",
+    "ubuntu",
+    "windows",
+    "docker",
+    "meson",
+    "c++",
+    "testing"
+  ]
+}

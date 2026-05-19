@@ -1,0 +1,14 @@
+{
+  "sha": "383bda6559b422525226d0e26ef64e61e08c398da4d42b3d51e1c5a751362afb",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 3048,
+  "description": "Create a GitHub Actions workflow named Tests on OSX that runs on push, pull request, and workflow dispatch events. Use a macos-latest job with a matrix strategy for Python versions 3.7 through 3.10. The job should check out the repository, set up Python, install LLVM 14.0, and then install various dependencies including Boost, Z3, GMP, Ninja, Meson, Bitwuzla, Capstone, Unicorn, and LIEF. Finally, compile Triton and run unittests with ctest.",
+  "tags": [
+    "osx",
+    "python",
+    "tests",
+    "llvm",
+    "triton"
+  ]
+}

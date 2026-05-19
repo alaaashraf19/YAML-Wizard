@@ -1,0 +1,15 @@
+{
+  "sha": "27ac64c3cc152e63bdf6bc118f9d469283016accb0c900e13de5a11cdeaa5006",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5777,
+  "description": "Create a GitHub Actions workflow named Tests that runs on push to tags, master, and dev branches, and on pull requests to master and dev branches, but only for QuickOSM/ paths. The workflow has multiple jobs: flake8, test-qgis, package-commit, and release. The flake8 job sets up Python 3.10, checks out the repository, installs dependencies, and runs flake8. The test-qgis job runs tests in a Docker environment. The package-commit job packages the commit and uploads artifacts. The release job creates a release on GitHub, packages and deploys the zip, tweets about the release, and dispatches a repository event.",
+  "tags": [
+    "python",
+    "tests",
+    "github-actions",
+    "qgis",
+    "release",
+    "docker"
+  ]
+}

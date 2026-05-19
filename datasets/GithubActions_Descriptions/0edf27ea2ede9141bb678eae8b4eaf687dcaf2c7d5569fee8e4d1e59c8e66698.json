@@ -1,0 +1,14 @@
+{
+  "sha": "0edf27ea2ede9141bb678eae8b4eaf687dcaf2c7d5569fee8e4d1e59c8e66698",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1138,
+  "description": "Create a GitHub Actions workflow named Create release PR that can be triggered manually with a dispatch event. The workflow should prompt for a release level (minor or patch) and then create a release pull request based on that level. Use an ubuntu-latest job with necessary permissions, checking out the code, setting up gitsign, installing cargo-release, npm, and doctoc, and then use cargo-bins/release-pr to create the release PR.",
+  "tags": [
+    "release",
+    "pr",
+    "github-actions",
+    "cargo",
+    "npm"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "sha": "099a68706dbec2beee135178b1f3c6c9314e9e8e01a46d84e1410c3e1ac49d76",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 1981,
+  "description": "Create a GitHub Actions workflow named CI that runs on push to main, pull requests, and workflow dispatch. The workflow has two jobs: 'Format' which checks code format using pre-commit and pylint, and 'Check Python' which runs on a matrix of Python versions and runners, testing the package with pytest and uploading coverage reports to Codecov.",
+  "tags": [
+    "python",
+    "pre-commit",
+    "pylint",
+    "pytest",
+    "codecov",
+    "ci",
+    "ubuntu",
+    "windows",
+    "macos"
+  ]
+}

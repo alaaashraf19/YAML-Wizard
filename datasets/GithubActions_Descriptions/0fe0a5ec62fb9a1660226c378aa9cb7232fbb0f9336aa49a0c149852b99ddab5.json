@@ -1,0 +1,16 @@
+{
+  "sha": "0fe0a5ec62fb9a1660226c378aa9cb7232fbb0f9336aa49a0c149852b99ddab5",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5544,
+  "description": "Create a GitHub Actions workflow named linux that runs on push to master and tags matching v*. The workflow has four jobs: test-linux, package-appImage, package-rpm, and package-deb. The test-linux job runs on ubuntu-latest, checks out the code, sets up build variables, installs Qt and dependencies, and runs tests. The other jobs depend on test-linux and package the application in different formats (AppImage, RPM, DEB) on different ubuntu versions.",
+  "tags": [
+    "linux",
+    "qt",
+    "appimage",
+    "rpm",
+    "deb",
+    "github-actions",
+    "ci"
+  ]
+}

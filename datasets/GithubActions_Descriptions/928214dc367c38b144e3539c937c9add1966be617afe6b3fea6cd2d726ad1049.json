@@ -1,0 +1,15 @@
+{
+  "sha": "928214dc367c38b144e3539c937c9add1966be617afe6b3fea6cd2d726ad1049",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 2521,
+  "description": "Create a GitHub Actions workflow named 'CI: lint & format checks' that runs on push to main and master branches, on pull request open and synchronize, on merge group checks requested, and on workflow dispatch. The workflow should find changed files, then conditionally check Python file formats if changes are found or if the workflow is dispatched. Use ubuntu-24.04 jobs with Python 3.13 and cache pip dependencies from requirements.txt and dev-requirements.txt.",
+  "tags": [
+    "python",
+    "linting",
+    "formatting",
+    "github-actions",
+    "ci",
+    "ubuntu"
+  ]
+}

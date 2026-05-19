@@ -1,0 +1,16 @@
+{
+  "sha": "76468f632fcee92bc4e732fd669f7e13caf988ec94949fcefa3c42100107f8df",
+  "provider": "groq",
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "yaml_bytes": 5196,
+  "description": "Create a GitHub Actions workflow named beta-release that triggers on push to the beta-release branch. The workflow has two jobs: build on windows-latest and docker on ubuntu-latest. The build job configures Git, checks out code, sets up .NET Core SDK 9.0.x, restores NuGet packages, and performs a series of build, versioning, and publishing steps. It also creates a changelog, zips the release, and uploads it. The docker job sets up Docker, logs in to Docker Hub, and builds and pushes a Docker image. Both jobs post updates to a Discord webhook.",
+  "tags": [
+    "dotnet",
+    "docker",
+    "github-release",
+    "discord",
+    "beta-release",
+    "windows",
+    "ubuntu"
+  ]
+}
