@@ -3,23 +3,28 @@ from sqlalchemy.orm import sessionmaker
 from database.base import Base
 import os
 from dotenv import load_dotenv
+import models
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
-load_dotenv() 
+load_dotenv()
 SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL",)
 if not SQLALCHEMY_DATABASE_URL:
     raise ValueError("DATABASE_URL environment variable is not set.")
-engine = create_engine(SQLALCHEMY_DATABASE_URL)
 
-#session maker help us perform actions on our database
-#unless we specify we want to autocommit or autoflush, we need to call commit() and flush() manually after performing actions on the database
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+engine = create_async_engine(SQLALCHEMY_DATABASE_URL)
 
-def get_db():
-    db = SessionLocal() #initilaize a new session
-    try:
-        yield db
-    finally:
-        db.close()
 
-def create_tables():
-    Base.metadata.create_all(bind=engine)
+async_session = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+
+async def get_db() -> AsyncSession:  # type: ignore[misc]
+
+    async with async_session() as session:
+        try:
+            yield session
+        finally:
+            await session.close()
+
+async def create_tables():
+    async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+

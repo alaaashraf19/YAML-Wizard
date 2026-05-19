@@ -7,7 +7,7 @@ from middleware.middleware import setup_middleware
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    create_tables()
+    await create_tables()
     yield
 
 app = FastAPI(lifespan=lifespan)

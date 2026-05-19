@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
 
 from schemas.chatbot_schema import (
@@ -19,7 +19,7 @@ chatbot_service = ChatbotService()
 @router.post("/chat", response_model=ChatResponse)
 async def chat_with_bot(
         request: ChatRequest,
-        db: Session = Depends(get_db),
+        db: AsyncSession = Depends(get_db),
         current_user: User = Depends(get_current_user)
 ):
 
@@ -51,7 +51,7 @@ async def chat_with_bot(
 
 @router.get("/sessions", response_model=List[ChatSessionResponse])
 async def get_chat_sessions(
-        db: Session = Depends(get_db),
+        db: AsyncSession = Depends(get_db),
         current_user: User = Depends(get_current_user)
 ):
 
@@ -80,7 +80,7 @@ async def get_chat_sessions(
 @router.get("/sessions/{session_id}", response_model=ChatSessionDetailResponse)
 async def get_session_details(
         session_id: int,
-        db: Session = Depends(get_db),
+        db: AsyncSession = Depends(get_db),
         current_user: User = Depends(get_current_user)
 ):
 
@@ -108,7 +108,7 @@ async def get_session_details(
 @router.delete("/sessions/{session_id}")
 async def delete_session(
         session_id: int,
-        db: Session = Depends(get_db),
+        db: AsyncSession = Depends(get_db),
         current_user: User = Depends(get_current_user)
 ):
 

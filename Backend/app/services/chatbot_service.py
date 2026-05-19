@@ -7,6 +7,9 @@ from google import genai
 from google.genai import types
 
 from sqlalchemy.orm import Session,joinedload
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select,update,delete
+
 from models.chat_message_model import ChatMessage
 from models.chat_session_model import ChatSession
 
@@ -63,7 +66,7 @@ class ChatbotService:
             message: str,
             session_id: Optional[int],
             project_id : Optional[int],
-            db: Session
+            db: AsyncSession
     ) -> Dict[str, Any]:
 
 
@@ -89,8 +92,8 @@ class ChatbotService:
                 )
             if project_id is not None and session.project_id != project_id:
                 session.project_id = project_id
-                db.commit()
-                db.refresh(session)
+                await db.commit()
+                await db.refresh(session)
             # load existed chat history
             chat_history = await self.get_session_messages(
                 user_id=user_id,
@@ -125,27 +128,29 @@ class ChatbotService:
         }
 
     async def create_new_session(
-            self, user_id: int,first_message: str, db:Session,project_id : Optional[int] = None
+            self, user_id: int,first_message: str, db:AsyncSession,project_id : Optional[int] = None
     ) -> ChatSession:
         session_name = first_message[:50] + "..." if len(first_message) > 50 else first_message
         new_session = ChatSession(user_id = user_id,session_name = session_name,project_id=project_id,
                                   created_at=datetime.utcnow(),updated_at=datetime.utcnow())
         db.add(new_session)
-        db.commit()
-        db.refresh(new_session)
+        await db.commit()
+        await db.refresh(new_session)
         return new_session
 
     async def get_session_if_owned(
             self,
             user_id: int,
             session_id: int,
-            db: Session
+            db: AsyncSession
     ) -> Optional[ChatSession]:
 
-        return db.query(ChatSession).filter(
-        ChatSession.id == session_id,
-                ChatSession.user_id == user_id
-        ).first()
+        result = await db.execute(
+            select(ChatSession).where(
+                ChatSession.id == session_id,
+                ChatSession.user_id == user_id)
+        )
+        return result.scalars().one_or_none()
 
     async def save_conversation_turn(
             self,
@@ -153,10 +158,14 @@ class ChatbotService:
             session_id: int,
             user_message: str,
             bot_response: str,
-            db: Session
+            db: AsyncSession
     ) -> tuple[ChatMessage, ChatMessage]:
 
-        max_order = db.query(ChatMessage).filter(ChatMessage.chat_session_id == session_id).count()
+        result = await db.execute(
+            select(ChatMessage)
+            .where(ChatMessage.chat_session_id == session_id)
+        )
+        max_order = len(result.scalars().all())
 
         user_msg = ChatMessage(
             user_id = user_id,
@@ -175,26 +184,28 @@ class ChatbotService:
             order_index = max_order + 1
         )
         db.add(bot_msg)
-        db.query(ChatSession).filter(ChatSession.id == session_id).update({
-            "updated_at": datetime.utcnow()
-        })
-        db.commit()
-        db.refresh(user_msg)
-        db.refresh(bot_msg)
+        await db.execute(
+            update(ChatSession)
+            .where(ChatSession.id == session_id)
+            .values(updated_at=datetime.utcnow())
+        )
+        await db.commit()
+        await db.refresh(user_msg)
+        await db.refresh(bot_msg)
         return user_msg, bot_msg
 
     async def get_session_messages(
             self,
             user_id: int,
             session_id: int,
-            db: Session
+            db: AsyncSession
     ) -> List[Dict[str, Any]]:
-        messages = db.query(ChatMessage).filter(
-            ChatMessage.chat_session_id == session_id,
-            ChatMessage.user_id == user_id
-        ).order_by(
-            ChatMessage.order_index
-        ).all()
+        result = await db.execute(
+            select(ChatMessage)
+            .where(ChatMessage.chat_session_id == session_id,ChatMessage.user_id == user_id)
+            .order_by(ChatMessage.order_index)
+        )
+        messages = result.scalars().all()
         return [
             {
                 "role":msg.role,
@@ -207,35 +218,40 @@ class ChatbotService:
     async def get_user_sessions(
             self,
             user_id: int,
-            db: Session
+            db: AsyncSession
     )->List[ChatSession]:
 
-        return db.query(ChatSession).options(
-            joinedload(ChatSession.project)
-        ).filter(
-            ChatSession.user_id == user_id
-        ).order_by(ChatSession.updated_at.desc()).all()
+        results = await db.execute(
+            select(ChatSession)
+            .options(joinedload(ChatSession.project))
+            .where(ChatSession.user_id == user_id)
+            .order_by(ChatSession.updated_at.desc())
+        )
+        return results.unique().scalars().all()
 
     async def get_session_with_messages(
             self,
             user_id: int,
             session_id: int,
-            db: Session
+            db: AsyncSession
     ) -> Dict[str, Any]:
         # session = await self.get_session_if_owned(user_id,session_id,db)
-        session = db.query(ChatSession).options(
-            joinedload(ChatSession.project)
-        ).filter(
-            ChatSession.id == session_id,
-            ChatSession.user_id == user_id
-        ).first()
+        result = await db.execute(
+            select(ChatSession)
+            .options(joinedload(ChatSession.project))
+            .where(ChatSession.id == session_id,ChatSession.user_id == user_id)
+        )
+
+        session = result.scalars().one_or_none()
 
         if not session:
             raise HTTPException(
                 status_code=404,
                 detail="Chat session not found or access denied"
             )
+
         messages = await self.get_session_messages(user_id,session_id,db)
+
         return {
             "session_id": session.id,
             "session_name": session.session_name,
@@ -248,20 +264,22 @@ class ChatbotService:
             "messages": messages
         }
 
-    async def delete_session(self, user_id: int, session_id: int, db: Session) -> None:
+    async def delete_session(self, user_id: int, session_id: int, db: AsyncSession) -> None:
         session = await self.get_session_if_owned(user_id,session_id,db)
         if not session:
             raise HTTPException(status_code=404, detail="Chat session not found or access denied")
-        db.delete(session)
-        db.commit()
+        await db.delete(session)
+        await db.commit()
 
     async def get_project_sessions(
             self,
             user_id: int,
             project_id: int,
-            db: Session
+            db: AsyncSession
     ) -> List[ChatSession]:
-        return db.query(ChatSession).filter(
-            ChatSession.user_id == user_id,
-            ChatSession.project_id == project_id
-        ).order_by(ChatSession.updated_at.desc()).all()
+        results = await db.execute(
+            select(ChatSession)
+            .where(ChatSession.user_id == user_id,ChatSession.project_id == project_id)
+            .order_by(ChatSession.updated_at.desc())
+        )
+        return results.scalars().all()
