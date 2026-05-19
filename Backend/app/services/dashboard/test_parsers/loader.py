@@ -1,16 +1,14 @@
 def load_parsers():
     from .json.GenericJsonParser import GenericJSONParser
     from .json.JestJsonParser import JestJSONParser
+    from .json.MochaJsonParser import MochaJSONParser
+    from .json.PlaywrightJsonParser import PlaywrightJSONParser
+    from .json.RSpecJsonParser import RSpecJSONParser
+
     from .xml.JUnitXMLParser import JUnitXMLParser
     from .xml.MavenXMLParser import MavenXMLParser
-
-    from .json.MochaJsonParser import MochaJSONParser
     from .xml.NUnitXMLParser import NUnitXMLParser
-
-    from .json.PlaywrightJsonParser import PlaywrightJSONParser
     from .xml.PytestXMLParser import PytestXMLParser
-
-    from .json.RSpecJsonParser import RSpecJSONParser
     from .xml.TrxXMLParser import TrxXMLParser
 
     from .logs.log_parsers import UnittestLogsParser, MinitestLogsParser, RspecLogsParser, GoLogsParser, PytestLogsParser, JestLogsParser

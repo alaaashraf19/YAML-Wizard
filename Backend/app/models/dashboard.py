@@ -15,6 +15,12 @@ class Repository(Base):
 
     full_name: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
     platform: Mapped[str] = mapped_column(String(20), nullable=False, default="github")
+    #we can add an id for both gitlab and github but for now we will add only for gitlab because github repo can be identified by full_name 
+    # which is unique but in gitlab we have to use id because there can be multiple projects with same name but different namespace so we will 
+    # use id to identify the project
+    gitlab_project_id: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
+
+
     default_branch: Mapped[str] = mapped_column(String(100), nullable=False, default="main")
     url: Mapped[str] = mapped_column(String(500), nullable=False)
     last_synced_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
@@ -33,7 +39,7 @@ class PipelineRun(Base):
     
     repo_id: Mapped[int] = mapped_column(ForeignKey("repositories.id", ondelete="CASCADE"), nullable=False)
     
-    # id from the platform that is why we call it external_id
+    # id from the platform that is why we call it external_id, external_id = GitHub run id / GitLab pipeline id
     external_id: Mapped[int] = mapped_column(BigInteger, nullable=False, unique=True)
     
     commit_hash: Mapped[str] = mapped_column(String(40), nullable=False)
@@ -86,8 +92,9 @@ class TestRun(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     
     run_id: Mapped[int] = mapped_column(ForeignKey("pipeline_runs.id", ondelete="CASCADE"), nullable=False)
-    job_id: Mapped[int] = mapped_column( ForeignKey("job_timings.id", ondelete="CASCADE"), nullable=False)
 
+    #job_id nullable is true because we can parse tests from artifacts and in github artifacts are related to runs not jobs so it can be empty
+    job_id: Mapped[int] = mapped_column( ForeignKey("job_timings.id", ondelete="CASCADE"), nullable=True)
     test_name: Mapped[str] = mapped_column(String(500), nullable=False)
     
     status: Mapped[str] = mapped_column(String(20), nullable=False)
@@ -108,6 +115,10 @@ class TestRun(Base):
 
 
     run: Mapped[PipelineRun] = relationship(back_populates="tests")
-    job: Mapped[JobTiming] = relationship(back_populates="tests")
+    job: Mapped[JobTiming| None] = relationship(back_populates="tests")
+
+    # will be added laterr
+    # source_job_name: str | None
+    # artifact_name: str | None
     # Unique constraint: same test can't be recorded twice in same job 
-    __table_args__ = ( UniqueConstraint('job_id', 'framework', 'test_name', name='uq_job_framework_test_name'), )
+    __table_args__ = ( UniqueConstraint('run_id', 'framework', 'test_name', name='uq_run_framework_test_name'), )

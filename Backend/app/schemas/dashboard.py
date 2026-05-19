@@ -1,9 +1,7 @@
 from typing import Optional
-
 from pydantic import BaseModel, ConfigDict
 from datetime import datetime
 from enum import Enum
-# Repository 
 
 class RepoCreate(BaseModel):
     url: str
@@ -153,3 +151,29 @@ class TestResult(BaseModel):
     failed_count: Optional[int] = None
     skipped_count: Optional[int] = None
     total_count: Optional[int] = None
+
+
+class RepositorySchema(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: int
+    user_id: int
+    full_name: str
+    platform: str
+    gitlab_project_id: int | None
+    default_branch: str
+    url: str
+    last_synced_at: datetime | None = None
+    created_at: datetime
+
+class CollectorsRepositoryDetail(BaseModel):
+    repo: RepositorySchema
+    gitlab_project_id: int | None
+    github_owner: str | None
+    github_repo: str | None
+
+
+class CIArtifact(BaseModel):
+    id: str | None = None
+    name: str | None = None
+    download_url: str
+    provider: str  # github | gitlab
