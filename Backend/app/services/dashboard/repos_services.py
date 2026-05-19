@@ -8,7 +8,7 @@ from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from models.user_model import User
 from models.dashboard import Repository, PipelineRun
-from services.dashboard.gitlab_collector_services import GitLabCollector
+from services.dashboard.platform_collectors.gitlab_collector_services import GitLabCollector
 
 #this is for adding a repo in dashboard by pasting the url, if it's not added in our user profile aka projects field
 # will be saved in db, need to make it appear in user projects to fetch all projects from db and show them this included

@@ -33,7 +33,8 @@ async def background_sync_loop():
 
                 for repo in repos:
                     try:
-                        sync_result = await sync_repository(repo.id, db)
+                        async with async_session() as db_repo:
+                            sync_result = await sync_repository(repo.id, db_repo)
 
                         if sync_result.runs_synced > 0:
                             print(
