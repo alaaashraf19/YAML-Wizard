@@ -1,0 +1,285 @@
+import os
+from typing import List, Dict, Optional, Any
+from fastapi import HTTPException
+from datetime import datetime
+
+from google import genai
+from google.genai import types
+
+from sqlalchemy.orm import Session,joinedload
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select,update,delete
+
+from models.chat_message_model import ChatMessage
+from models.chat_session_model import ChatSession
+
+
+class ChatbotService:
+    def __init__(self):
+        self.client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+        self.model = "models/gemini-2.5-flash"
+
+    async def send_message(self, message: str, chat_history: List[Dict[str, str]] = None) -> Dict[str, str]:
+
+        if not message or not message.strip():
+            raise HTTPException(status_code=400, detail="Message cannot be empty")
+
+        if chat_history is None:
+            chat_history = []
+
+        try:
+            contents = []
+
+            for msg in chat_history:
+                role = "user" if msg["role"] == "user" else "model"
+                contents.append(types.Content(
+                    role = role,
+                    parts = [types.Part.from_text(text=msg["content"])]
+                ))
+
+            contents.append(types.Content(
+                role = "user",
+                parts = [types.Part.from_text(text=message)]
+            ))
+
+            response = self.client.models.generate_content(
+                model = self.model,
+                contents = contents,
+                config = types.GenerateContentConfig(
+                    temperature = 0.7,
+                    max_output_tokens = 2500,
+                )
+            )
+
+
+            return {
+                "role": "assistant",
+                "content": response.text.strip(),
+            }
+
+        except Exception as e:
+            raise HTTPException(status_code=502, detail=f"Gemini API error: {str(e)}")
+
+    async def process_chat_message(
+            self,
+            user_id: int,
+            message: str,
+            session_id: Optional[int],
+            project_id : Optional[int],
+            db: AsyncSession
+    ) -> Dict[str, Any]:
+
+
+        if not session_id:
+            session = await self.create_new_session(
+                user_id=user_id,
+                first_message=message,
+                project_id=project_id,
+                db=db
+            )
+            session_id = session.id
+            chat_history = []
+        else:
+            session = await self.get_session_if_owned(
+                user_id=user_id,
+                session_id=session_id,
+                db=db
+            )
+            if not session:
+                raise HTTPException(
+                    status_code=404,
+                    detail="Chat session not found or access denied"
+                )
+            if project_id is not None and session.project_id != project_id:
+                session.project_id = project_id
+                await db.commit()
+                await db.refresh(session)
+            # load existed chat history
+            chat_history = await self.get_session_messages(
+                user_id=user_id,
+                session_id=session_id,
+                db=db
+            )
+
+        result = await self.send_message(
+            message=message,
+            chat_history=chat_history
+        )
+
+        user_msg, bot_msg = await self.save_conversation_turn(
+            user_id=user_id,
+            session_id=session_id,
+            user_message=message,
+            bot_response=result["content"],
+            db=db
+        )
+
+        full_history = await self.get_session_messages(
+            user_id=user_id,
+            session_id=session_id,
+            db=db
+        )
+
+        return {
+            "session_id": session_id,
+            "bot_response": result["content"],
+            "bot_timestamp": bot_msg.timestamp,
+            "full_history": full_history
+        }
+
+    async def create_new_session(
+            self, user_id: int,first_message: str, db:AsyncSession,project_id : Optional[int] = None
+    ) -> ChatSession:
+        session_name = first_message[:50] + "..." if len(first_message) > 50 else first_message
+        new_session = ChatSession(user_id = user_id,session_name = session_name,project_id=project_id,
+                                  created_at=datetime.utcnow(),updated_at=datetime.utcnow())
+        db.add(new_session)
+        await db.commit()
+        await db.refresh(new_session)
+        return new_session
+
+    async def get_session_if_owned(
+            self,
+            user_id: int,
+            session_id: int,
+            db: AsyncSession
+    ) -> Optional[ChatSession]:
+
+        result = await db.execute(
+            select(ChatSession).where(
+                ChatSession.id == session_id,
+                ChatSession.user_id == user_id)
+        )
+        return result.scalars().one_or_none()
+
+    async def save_conversation_turn(
+            self,
+            user_id: int,
+            session_id: int,
+            user_message: str,
+            bot_response: str,
+            db: AsyncSession
+    ) -> tuple[ChatMessage, ChatMessage]:
+
+        result = await db.execute(
+            select(ChatMessage)
+            .where(ChatMessage.chat_session_id == session_id)
+        )
+        max_order = len(result.scalars().all())
+
+        user_msg = ChatMessage(
+            user_id = user_id,
+            chat_session_id = session_id,
+            role = "user",
+            content = user_message,
+            order_index= max_order
+        )
+        db.add(user_msg)
+
+        bot_msg = ChatMessage(
+            user_id = user_id,
+            chat_session_id = session_id,
+            role = "assistant",
+            content = bot_response,
+            order_index = max_order + 1
+        )
+        db.add(bot_msg)
+        await db.execute(
+            update(ChatSession)
+            .where(ChatSession.id == session_id)
+            .values(updated_at=datetime.utcnow())
+        )
+        await db.commit()
+        await db.refresh(user_msg)
+        await db.refresh(bot_msg)
+        return user_msg, bot_msg
+
+    async def get_session_messages(
+            self,
+            user_id: int,
+            session_id: int,
+            db: AsyncSession
+    ) -> List[Dict[str, Any]]:
+        result = await db.execute(
+            select(ChatMessage)
+            .where(ChatMessage.chat_session_id == session_id,ChatMessage.user_id == user_id)
+            .order_by(ChatMessage.order_index)
+        )
+        messages = result.scalars().all()
+        return [
+            {
+                "role":msg.role,
+                "content":msg.content,
+                "timestamp":msg.timestamp
+            }
+            for msg in messages
+        ]
+
+    async def get_user_sessions(
+            self,
+            user_id: int,
+            db: AsyncSession
+    )->List[ChatSession]:
+
+        results = await db.execute(
+            select(ChatSession)
+            .options(joinedload(ChatSession.project))
+            .where(ChatSession.user_id == user_id)
+            .order_by(ChatSession.updated_at.desc())
+        )
+        return results.unique().scalars().all()
+
+    async def get_session_with_messages(
+            self,
+            user_id: int,
+            session_id: int,
+            db: AsyncSession
+    ) -> Dict[str, Any]:
+        # session = await self.get_session_if_owned(user_id,session_id,db)
+        result = await db.execute(
+            select(ChatSession)
+            .options(joinedload(ChatSession.project))
+            .where(ChatSession.id == session_id,ChatSession.user_id == user_id)
+        )
+
+        session = result.scalars().one_or_none()
+
+        if not session:
+            raise HTTPException(
+                status_code=404,
+                detail="Chat session not found or access denied"
+            )
+
+        messages = await self.get_session_messages(user_id,session_id,db)
+
+        return {
+            "session_id": session.id,
+            "session_name": session.session_name,
+            "project_id": session.project_id,
+            "project" : {
+                "id": session.project_id,
+                "name": session.project.project_name,
+                "target_platform": session.project.target_platform
+            } if session.project else None,
+            "messages": messages
+        }
+
+    async def delete_session(self, user_id: int, session_id: int, db: AsyncSession) -> None:
+        session = await self.get_session_if_owned(user_id,session_id,db)
+        if not session:
+            raise HTTPException(status_code=404, detail="Chat session not found or access denied")
+        await db.delete(session)
+        await db.commit()
+
+    async def get_project_sessions(
+            self,
+            user_id: int,
+            project_id: int,
+            db: AsyncSession
+    ) -> List[ChatSession]:
+        results = await db.execute(
+            select(ChatSession)
+            .where(ChatSession.user_id == user_id,ChatSession.project_id == project_id)
+            .order_by(ChatSession.updated_at.desc())
+        )
+        return results.scalars().all()
