@@ -7,6 +7,7 @@ import { IoPerson } from "react-icons/io5";
 import { GoPerson } from "react-icons/go";
 import { FaSignOutAlt } from "react-icons/fa";
 
+
 function NavBar(){
     const [openOptions, setOpenOptions] = useState<boolean>(false)
     const optionsRef = useRef<HTMLDivElement  | null>(null);
@@ -57,6 +58,9 @@ function NavBar(){
                 username? (<>
                     <Link className={`${styles.username} ${gStyles.clickable}`} to="/profile">
                         <GoPerson/>{username}
+                    </Link>
+                    <Link className={`${styles.username} ${gStyles.clickable}`} to="/dashboard">
+                    Dashboard
                     </Link>
                     <div className={styles.optionsContainer}>
                         <button className={`${styles.optionsButton} ${gStyles.clickable}`}  ref={optionsButtonRef}

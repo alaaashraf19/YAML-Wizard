@@ -15,6 +15,7 @@ class RepoContext(Base):
     # project_id = Column(Integer, ForeignKey("projects.id", ondelete="CASCADE"), unique=True,, index=True)
 
 
+    # might remove url and platform and specify the branch
     url = Column(String, nullable=False)
     platform = Column(Enum(Platform), nullable=False)
 
@@ -32,3 +33,6 @@ class RepoContext(Base):
 
     key_files = Column(JSONB, default=dict)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    #connect it to repositoy
+    repo_id = Column(Integer, ForeignKey("repositories.id", ondelete="CASCADE"), unique=True)

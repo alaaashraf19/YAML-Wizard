@@ -12,7 +12,7 @@ GITHUB_CLIENT_ID = os.getenv("GITHUB_CLIENT_ID")
 GITHUB_CLIENT_SECRET = os.getenv("GITHUB_CLIENT_SECRET")
 GITHUB_REDIRECT_URI = os.getenv("GITHUB_REDIRECT_URI")
 
-async def github_connect_service(request, db):
+def github_connect_service(request, db):
 
     token = request.cookies.get("access_token")
     if not token:
@@ -78,8 +78,7 @@ async def github_callback_service(code, request, db):
     # link to our user in database
     user.github_id = github_id
     user.github_login = github_login
-    user.github_access_token = access_token
-    db.commit()
+    await db.commit()
 
     # Redirect back to frontend with success
     # frontend_url = "http://localhost:5173/connect?status=success"

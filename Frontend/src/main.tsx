@@ -8,11 +8,28 @@ import Login from './components/AuthForm/Login.tsx';
 import Chatbot from './components/Chatbot/Chatbot.tsx';
 import UserProfile from './components/UserProfile/UserProfile.tsx';
 
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+
+import Dashboard from './pages/Dashboard.tsx';
+import './index.css'
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 1,
+      staleTime: 30_000,
+    },
+  },
+})
+
+
 const router = createBrowserRouter([{
   element: <App />,
   children: [
     { path: "/chatbot", element: <Chatbot /> },
     { path: "/profile", element: <UserProfile/>},
+    { path: '/dashboard', element: <Dashboard /> },
     { path: "/", element: <Chatbot /> },
     // {path: "*", element: <App />}, // Handle not provided page
   ]},
@@ -22,8 +39,10 @@ const router = createBrowserRouter([{
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <AuthProvider>
-      <RouterProvider router={router} />
-    </AuthProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <RouterProvider router={router} />
+      </AuthProvider>
+    </QueryClientProvider>
   </StrictMode>,
 )

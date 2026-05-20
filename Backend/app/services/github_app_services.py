@@ -1,14 +1,11 @@
-from fastapi import  HTTPException, Request
+from fastapi import  HTTPException
 from fastapi.responses import RedirectResponse
 import httpx
-from models.user_model import User
+from sqlalchemy import select
 from agent.utils.github_auth import generate_jwt
 from core.security import get_current_user
-from models.github_installation_model import GitHubInstallation as GitHubInstallationModel
-from models.user_model import User as UserModel
-from dotenv import load_dotenv
-import os
-load_dotenv()
+from models.platforms_model import GitHubInstallation as GitHubInstallationModel
+
 
 
 # User clicks button
@@ -61,7 +58,8 @@ async def github_webhook(request, db):
         #account_type = payload["installation"]["account"]["type"] # User | Organization
         print(f"App installed: {installation_id} by {account_login}")
         
-        installation = db.query(GitHubInstallationModel).filter(GitHubInstallationModel.installation_id == installation_id).first()
+        result = await db.execute(select(GitHubInstallationModel).where(GitHubInstallationModel.installation_id == installation_id))
+        installation = result.scalar_one_or_none()
 
         if not installation:
             installation = GitHubInstallationModel(
@@ -75,17 +73,18 @@ async def github_webhook(request, db):
             # update info if already exists
             installation.account_login = account_login
             installation.account_id = account_id
-        db.commit()
+        await db.commit()
 
 
     elif event == "installation" and payload.get("action") == "deleted":
         installation_id = payload["installation"]["id"]
 
-        installation = db.query(GitHubInstallationModel).filter(GitHubInstallationModel.installation_id == installation_id).first()
+        result = await db.execute(select(GitHubInstallationModel).where(GitHubInstallationModel.installation_id == installation_id))
+        installation = result.scalar_one_or_none()
         if installation:
             # either delete OR unlink
-            db.delete(installation)
-            db.commit()
+            await db.delete(installation)
+            await db.commit()
             
     # repo = payload.get("repository", {})
 
@@ -120,35 +119,35 @@ async def setup_github_url_services(installation_id, request, db):
     # - If it is already linked to another user, we reject the request.
     # - Otherwise, we safely link this installation to the current user.
 
-    installation = db.query(GitHubInstallationModel).filter(GitHubInstallationModel.installation_id == installation_id).first()
+    result = await db.execute(select(GitHubInstallationModel).where(GitHubInstallationModel.installation_id == installation_id))
+    installation = result.scalar_one_or_none()
+
+
+    account_id = None
+    if installation:
+        account_id = installation.account_id
+    else:
+        account_id = await fetch_installation_account_id(installation_id)
+
+    if account_id != user.github_id:
+        raise HTTPException(status_code=403, detail="Wrong GitHub account")
+    
+    if installation and installation.user_id and installation.user_id != user.id:
+        raise HTTPException(status_code=400, detail="Already linked")
+    
 
     if not installation:
-        installation = GitHubInstallationModel(installation_id=installation_id)
+        installation = GitHubInstallationModel(
+            installation_id=installation_id,
+            account_id=account_id,
+            user_id=user.id
+        )
         db.add(installation)
-        db.flush() # Get the installation in DB without committing
-    
-
-    account_id = installation.account_id
-    if account_id is None:
-        account_id = await fetch_installation_account_id(installation_id)
+    else:
         installation.account_id = account_id
-        db.flush() #If an exception happens after this → transaction is rolled back
-    
-    if account_id != user.github_id:
-        raise HTTPException(
-            status_code=403, 
-            detail="This installation belongs to a different GitHub account"
-        )
-    
-    user_id = installation.user_id
-    if user_id is not None and user_id != user.id:
-        raise HTTPException(
-            status_code=400, 
-            detail="This GitHub installation is already linked to another user"
-        )
+        installation.user_id = user.id
         
-    installation.user_id = user.id
-    db.commit()
+    await db.commit()
 
     return {"message": "GitHub app setup successful"} #link to a page where he can return to user profile page or home page
 
