@@ -1,24 +1,18 @@
 import gStyles from "../../gobal.module.css"
 import styles from "./SideBar.module.css";
+import logo from "../../assets/yaml_wizard_logo.png";
+import type { Session, Message } from "../../types";
+
 import { useState, useEffect, useRef, useMemo } from "react";
+import { Link } from "react-router-dom";
+import { useAuth } from '../../Context/AuthContext';
+
 import { LuPanelRightClose  } from "react-icons/lu";
-import { MdDeleteOutline } from "react-icons/md";
-import { MdChatBubbleOutline } from "react-icons/md";
+import { MdDeleteOutline, MdChatBubbleOutline } from "react-icons/md";
 import { FaHistory } from "react-icons/fa";
-
-
-type Message = {
-    role: "user" | "assistant",
-    content: string,
-    error?: boolean
-};
-
-type Session = {
-    id: number | null;
-    session_name: string;
-    created_at: string;
-    updated_at: string;
-};
+import { FiMenu } from "react-icons/fi";
+import { GoPerson } from "react-icons/go";
+import { FaSignOutAlt } from "react-icons/fa";
 
 type sideBar_props = {
     sessionId: number | null,
@@ -31,37 +25,12 @@ type sideBar_props = {
 
 function SideBar({sessionId, setSessionId, sessions, setSessions, setMessages, isLoading}: sideBar_props) {
     const [sessionToDelete, setSessionToDelete] = useState<number | null>(null);
-    const [sidebarWidth, setSidebarWidth] = useState(300);
-    const isResizing = useRef(false);
+    const [isCompact, setIsCompact] = useState<boolean>(false);
+    const [openOptions, setOpenOptions] = useState<boolean>(false);
+    const optionsRef = useRef<HTMLDivElement  | null>(null);
+    const optionsButtonRef = useRef<HTMLButtonElement  | null>(null);
+    const { username, loading, logout } = useAuth();
     const api_url = import.meta.env.VITE_API_URL;
-    
-    // resize sidebar
-    const startResizing = () => {
-        isResizing.current = true;
-    };
-    useEffect(() => {
-        const handleMouseMove = (e: MouseEvent) => {
-            if (!isResizing.current) return;
-            var newWidth = e.clientX;
-
-            // limits not working
-            // if (newWidth < 150) newWidth = 200;
-            // if (newWidth > 400) newWidth = 400;
-
-            setSidebarWidth(newWidth);
-        };
-        const stopResizing = () => {
-            isResizing.current = false;
-        };
-
-        window.addEventListener("mousemove", handleMouseMove);
-        window.addEventListener("mouseup", stopResizing);
-
-        return () => {
-            window.removeEventListener("mousemove", handleMouseMove);
-            window.removeEventListener("mouseup", stopResizing);
-        };
-    }, []);
 
     //get all sessions
     useEffect(() => {
@@ -70,16 +39,13 @@ function SideBar({sessionId, setSessionId, sessions, setSessions, setMessages, i
                 const res = await fetch(`${api_url}/chatbot/sessions`, {
                     credentials: "include"
                 });
-
                 const data = await res.json();
 
                 if (!res.ok) {
                     console.error(data.detail);
                     return;
                 }
-
                 setSessions(data);
-
             } catch (e) {
                 console.error("Failed to load sessions:", e);
             }
@@ -105,14 +71,12 @@ function SideBar({sessionId, setSessionId, sessions, setSessions, setMessages, i
             const res = await fetch(`${api_url}/chatbot/sessions/${session_id}`, {
                 credentials: "include"
             });
-
             const data = await res.json();
 
             if (!res.ok) {
                 console.error(data.detail);
                 return;
             }
-
             setSessionId(session_id);
             sessionStorage.setItem("session_id", session_id.toString());
             setMessages(data.messages);
@@ -130,13 +94,11 @@ function SideBar({sessionId, setSessionId, sessions, setSessions, setMessages, i
             });
 
             const data = await res.json();
-            console.log("data: ", data);
 
             if (!res.ok) {
                 console.error(data.detail);
                 return;
             }
-
             setSessions(prev => prev.filter(session => session.id !== session_id));
             setSessionToDelete(null);
 
@@ -166,39 +128,126 @@ function SideBar({sessionId, setSessionId, sessions, setSessions, setMessages, i
         }
     }, []);
 
+    // Close options on outside click
+    useEffect(
+        () => {
+            function handleClickOutside(e: MouseEvent) {
+                if (optionsRef.current &&
+                        !optionsRef.current.contains(e.target as Node) && 
+                        optionsButtonRef.current && 
+                        !optionsButtonRef.current.contains(e.target as Node)) {
+                    setOpenOptions(false);
+                }
+            }
+
+            document.addEventListener("mousedown", handleClickOutside);
+            return () => {
+                document.removeEventListener("mousedown", handleClickOutside);
+            };
+        }
+    , []);
+
+    const handleSignOut = async () => {
+        try {
+            const res = await fetch(`${api_url}/auth/logout`, {
+                method: "POST",
+                credentials: "include"
+            });
+
+            if (!res.ok){
+                console.error("Logout failed");
+                return;
+            }
+
+            logout();
+        } catch (err) {
+            console.error("Server error:", err);
+        }
+    }
+
     return(<>
-        <div className={styles.sideBar} style={{ width:sidebarWidth }}>
+        <div className={`${styles.transition} ${isCompact ? styles.compact : styles.sideBar}`}>
+        {isCompact? (<>
+            <LuPanelRightClose className={`${styles.closeBarBtn} ${gStyles.clickable}`}
+                onClick={() => setIsCompact(prev => !prev)} title={"Expand"}/>
+            <img src={logo} alt="Logo" className={styles.logo}/>
+            <MdChatBubbleOutline className={gStyles.clickable} title={"New Chat"}
+                onClick={startNewSession}/>
+            <FaHistory className={gStyles.clickable} title={"Version History"}/>
+            <FiMenu className={gStyles.clickable} title={"Settings"}/>
+            <GoPerson className={`${styles.username} ${gStyles.clickable}`} title={"Profile"}/>
+        </>) : (<>
             <div className={styles.topContainer}>
                 <div className={styles.appNameContainer}>
-                    <LuPanelRightClose className={`${styles.closeBarBtn} ${gStyles.clickable}`}/>
+                    <img src={logo} alt="Logo" className={styles.logo}/>
+                    <span className={styles.appName}>YAML Wizard</span>
+                    <LuPanelRightClose className={`${styles.closeBarBtn} ${gStyles.clickable}`}
+                        onClick={() => setIsCompact(prev => !prev)} title={"Collapse"}/>
                 </div>
 
-                <button className={`${styles.actionBtn} ${gStyles.clickable}`} onClick={startNewSession}>
+                <button className={`${styles.actionBtn} ${gStyles.clickable}`} onClick={startNewSession} title={"New Chat"}>
                     <MdChatBubbleOutline/> New Chat
                 </button>
-                <button className={`${styles.actionBtn} ${gStyles.clickable}`}>
+                <button className={`${styles.actionBtn} ${gStyles.clickable}`} title={"Version History"}>
                     <FaHistory/> History
                 </button>
             </div>
-            <p className={styles.sectionStart}>Chats</p>
+
+            <p className={styles.sessionStart}>Chats</p>
             <div className={styles.sessions}>
                 {sessionsSorted.map((session: any) => (
                     <div key={session.id} className = {`${styles.session}
                         ${session.id === sessionId ? styles.active : gStyles.clickable}
                         ${(sessionToDelete && session.id === sessionToDelete) && styles.sessionToDelete}`}>
                         
-                        <span onClick={() => loadSession(session.id)} title={new Date(session.updated_at).toLocaleString()}
-                            className={styles.sessionName}>{session.session_name || "New Chat"}
+                        <span onClick={() => loadSession(session.id)} 
+                            title={session.session_name + " - " + new Date(session.updated_at).toLocaleString()}
+                            className={styles.sessionName}>{session.session_name || "New Chat"} {/*selected project*/}
                         </span>
                         
                         <button className={`${styles.deleteIcon} ${gStyles.clickable}`} 
-                            onClick={() => setSessionToDelete(session.id)}>
+                            onClick={() => setSessionToDelete(session.id)} title="Delete">
                             <MdDeleteOutline/>
                         </button>
                     </div>
                 ))}
             </div>
+            <p className={styles.sessionEnd}/>
+
+            <div className={styles.bottomContainer}>
+                <button className={`${styles.actionBtn} ${gStyles.clickable}`} 
+                    onClick={() => setOpenOptions(prev => !prev)} ref={optionsButtonRef}>
+                    <FiMenu/> Settings
+                </button>
+                {openOptions && (
+                    <div className={styles.options} ref={optionsRef}>
+                        <Link className={`${styles.option} ${gStyles.clickable}`} to="/profile">
+                            <GoPerson/>
+                            Profile
+                        </Link>
+                        <Link className={`${styles.option} ${gStyles.clickable}`} to="/" onClick={handleSignOut}>
+                            <FaSignOutAlt/>
+                            Sign out
+                        </Link>
+                    </div>
+                )}
+                {loading? null :
+                    username? (
+                        <Link className={`${styles.username} ${gStyles.clickable}`} to="/profile" title={"Profile"}>
+                            <GoPerson/>{username}
+                        </Link>
+                    ) : (<>
+                        <span className={styles.username}>
+                            Guest Mode
+                            <Link className={`${styles.signUpNow} ${gStyles.clickable}`} to="/login">
+                                Sign up to save your chats!
+                            </Link>
+                        </span>
+                </>)}
+            </div>
+        </>)}
         </div>
+
         {sessionToDelete && (
             <div className={styles.popupLayover}>
                 <div className={styles.deletePopup}>
@@ -217,8 +266,6 @@ function SideBar({sessionId, setSessionId, sessions, setSessions, setMessages, i
                 </div>
             </div>
         )}
-
-        <div className={styles.resizer} onMouseDown={startResizing}/>
     </>)
 }
 

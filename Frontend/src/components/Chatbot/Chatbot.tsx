@@ -1,22 +1,12 @@
 import gStyles from "../../gobal.module.css"
 import styles from "./Chatbot.module.css";
+import type { Session, Message } from "../../types";
+
 import { useState, useEffect, useRef } from "react";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md"
 import Projects from "./Projects";
 import SideBar from "./SideBar";
 
-
-type Message = {
-    role: "user" | "assistant",
-    content: string
-};
-
-type Session = {
-    id: number | null;
-    session_name: string;
-    created_at: string;
-    updated_at: string;
-};
 
 function Chatbot() {
     const [prompt, setPrompt] = useState("");
@@ -33,7 +23,6 @@ function Chatbot() {
     const textareaRef = useRef<HTMLTextAreaElement | null>(null);
     const menuRef = useRef<HTMLDivElement | null>(null);
     const api_url = import.meta.env.VITE_API_URL;
-    console.log("API URL:", api_url);
 
     // Auto focus on textarea
     useEffect(() => {

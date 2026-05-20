@@ -10,10 +10,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 async def signup(user: UserCreate, db:AsyncSession):
     username = user.username.lower()
     email = user.email.lower()
-    db_user = await get_user(db, username)
-
-    result_email_exists = await db.execute(select(UserModel).where(UserModel.email == email))
-    email_exists = result_email_exists.scalar_one_or_none()
+    db_user = get_user(db, username)
+    result = await db.execute(
+        select(UserModel).where(UserModel.email == email)
+    )
+    email_exists = result.scalar_one_or_none()
     
     if db_user:
         raise HTTPException(
@@ -36,8 +37,6 @@ async def signup(user: UserCreate, db:AsyncSession):
     db.add(new_user)
     await db.commit()
     await db.refresh(new_user)
-    await db.commit()
-    await db.refresh(new_user)
     return UserCreateResponse(msg = "User created successfully", user_id = str(new_user.id))
 
 
@@ -50,8 +49,9 @@ async def login(user: UserLogin, db:AsyncSession):
     if not username or not password:
         raise HTTPException(status_code=400, detail="Username and password are required")
     
-    
-    result = await db.execute(select(UserModel).where(UserModel.username == username.lower()))
+    result = await db.execute(
+        select(UserModel).where(UserModel.username == username.lower())
+    )
     db_user = result.scalar_one_or_none()
     hashed_pw = db_user.hashed_password if db_user else None
 
@@ -72,8 +72,8 @@ async def login(user: UserLogin, db:AsyncSession):
         key="access_token",
         value=access_token,
         httponly=True,
-        secure=True,        # ===========> MAKE SECURE FOR HTTPS    was true in dashboard
-        samesite="none", #was none in dashboard
+        secure=False,        # ===========> MAKE SECURE FOR HTTPS
+        samesite="Lax",
         max_age=os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES",30)
     )
 

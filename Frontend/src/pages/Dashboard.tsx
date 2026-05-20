@@ -4,14 +4,14 @@ import type { Repo, PipelineRun, TestRun } from '../types';
 import { useRuns, useRun, useInsights, useRepos } from '../api/hooks';
 import { useWebSocket } from '../api/websocket';
 
-import RepoSidebar from '../components/dashboard/RepoSidebar';
-import CommitTimeline from '../components/dashboard/CommitTimeline';
-import PipelineStages from '../components/dashboard/PipelineStages';
-import TestGrid from '../components/dashboard/TestGrid';
-import TestDetail from '../components/dashboard/TestDetail';
-import InsightsPanel from '../components/dashboard/InsightsPanel';
-import TrendChart from '../components/dashboard/TrendChart';
-import Filters from '../components/dashboard/Filters';
+import RepoSidebar from '../components/Dashboard/RepoSidebar';
+import CommitTimeline from '../components/Dashboard/CommitTimeline';
+import PipelineStages from '../components/Dashboard/PipelineStages';
+import TestGrid from '../components/Dashboard/TestGrid';
+import TestDetail from '../components/Dashboard/TestDetail';
+import InsightsPanel from '../components/Dashboard/InsightsPanel';
+import TrendChart from '../components/Dashboard/TrendChart';
+import Filters from '../components/Dashboard/Filters';
 
 import styles from './Dashboard.module.css';
 

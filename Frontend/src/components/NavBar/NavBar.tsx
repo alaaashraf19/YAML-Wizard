@@ -6,6 +6,8 @@ import { useAuth } from '../../Context/AuthContext';
 import { IoPerson } from "react-icons/io5";
 import { GoPerson } from "react-icons/go";
 import { FaSignOutAlt } from "react-icons/fa";
+import { FiMenu } from "react-icons/fi";
+
 
 function NavBar(){
     const [openOptions, setOpenOptions] = useState<boolean>(false)
@@ -63,7 +65,9 @@ function NavBar(){
                     </Link>
                     <div className={styles.optionsContainer}>
                         <button className={`${styles.optionsButton} ${gStyles.clickable}`}  ref={optionsButtonRef}
-                            onClick={() => setOpenOptions(prev => !prev)}> ≡ </button>
+                            onClick={() => setOpenOptions(prev => !prev)}>
+                            <FiMenu/>        
+                        </button>
                         {openOptions && (
                             <div className={styles.options} ref={optionsRef}>
                                 <Link className={`${styles.option} ${gStyles.clickable}`} to="/profile">
