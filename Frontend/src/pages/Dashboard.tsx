@@ -4,14 +4,14 @@ import type { Repo, PipelineRun, TestRun } from '../types';
 import { useRuns, useRun, useInsights, useRepos } from '../api/hooks';
 import { useWebSocket } from '../api/websocket';
 
-import RepoSidebar from '../components/dashboard/RepoSidebar';
-import CommitTimeline from '../components/dashboard/CommitTimeline';
-import PipelineStages from '../components/dashboard/PipelineStages';
-import TestGrid from '../components/dashboard/TestGrid';
-import TestDetail from '../components/dashboard/TestDetail';
-import InsightsPanel from '../components/dashboard/InsightsPanel';
-import TrendChart from '../components/dashboard/TrendChart';
-import Filters from '../components/dashboard/Filters';
+import RepoSidebar from '../components/Dashboard/RepoSidebar';
+import CommitTimeline from '../components/Dashboard/CommitTimeline';
+import PipelineStages from '../components/Dashboard/PipelineStages';
+import TestGrid from '../components/Dashboard/TestGrid';
+import TestDetail from '../components/Dashboard/TestDetail';
+import InsightsPanel from '../components/Dashboard/InsightsPanel';
+import TrendChart from '../components/Dashboard/TrendChart';
+import Filters from '../components/Dashboard/Filters';
 
 import styles from './Dashboard.module.css';
 
@@ -32,6 +32,7 @@ export default function Dashboard() {
   const handleWSMessage = useCallback((msg: Record<string, unknown>) => {
     if (msg.type === 'sync_complete') {
       const repoId = msg.repo_id;
+
       queryClient.invalidateQueries({ queryKey: ['runs', repoId] });
       queryClient.invalidateQueries({ queryKey: ['insights', repoId] });
       queryClient.invalidateQueries({ queryKey: ['trends', repoId] });
@@ -57,14 +58,23 @@ export default function Dashboard() {
 
   const filteredRuns = useMemo(() => {
     if (!runs) return [];
+
     let filtered = runs;
-    if (branchFilter) filtered = filtered.filter((r) => r.branch === branchFilter);
-    if (statusFilter) filtered = filtered.filter((r) => r.conclusion === statusFilter);
+
+    if (branchFilter) {
+      filtered = filtered.filter((r) => r.branch === branchFilter);
+    }
+
+    if (statusFilter) {
+      filtered = filtered.filter((r) => r.conclusion === statusFilter);
+    }
+
     return filtered;
   }, [runs, branchFilter, statusFilter]);
 
   const branches = useMemo(() => {
     if (!runs) return [];
+
     return [...new Set(runs.map((r) => r.branch).filter(Boolean))] as string[];
   }, [runs]);
 
@@ -79,7 +89,6 @@ export default function Dashboard() {
 
   return (
     <div className={styles.container}>
-
       <RepoSidebar
         repos={repos ?? []}
         isLoading={reposLoading}
@@ -88,14 +97,14 @@ export default function Dashboard() {
       />
 
       <main className={styles.main}>
-
         {!activeRepo ? (
           <div className={styles.center}>
-            <div style={{ textAlign: 'center' }}>
-              <h2 className="text-2xl font-bold mb-2">
+            <div className={styles.emptyState}>
+              <h2 className={styles.dashboardTitle}>
                 YAML Wizard Dashboard
               </h2>
-              <p className="text-gray-400">
+
+              <p className={styles.subtitle}>
                 Add a repository from the sidebar to get started.
               </p>
             </div>
@@ -104,11 +113,13 @@ export default function Dashboard() {
           <>
             <header className={styles.header}>
               <div>
-                <h2 className="text-lg font-bold whitespace-pre-line">
+                <h2 className={styles.repoTitle}>
                   {activeRepo.full_name.split('/').join('\n')}
                 </h2>
-                <span className="text-xs text-gray-400">
-                  {activeRepo.platform} · {branchFilter || activeRepo.default_branch}
+
+                <span className={styles.repoInfo}>
+                  {activeRepo.platform} ·{' '}
+                  {branchFilter || activeRepo.default_branch}
                 </span>
               </div>
 
@@ -122,16 +133,12 @@ export default function Dashboard() {
             </header>
 
             <div className={styles.content}>
-
               {runs && runs.length === 0 ? (
                 <div className={styles.center}>
-                  <div style={{ textAlign: 'center' }}>
-                    <p className="text-5xl mb-4">📭</p>
-                    <h3 className="text-lg font-semibold mb-1">
-                      No pipeline runs found
-                    </h3>
-                    <p className="text-gray-400 text-sm max-w-md">
-                      This repository has no GitHub Actions workflow runs.
+                  <div className={styles.emptyState}>
+                    <p className={styles.emptyIcon}>📭</p>
+                    <h3 className={styles.emptyTitle}>No pipeline runs found</h3>
+                    <p className={styles.emptyDescription}>This repository has no GitHub Actions workflow runs.
                     </p>
                   </div>
                 </div>
@@ -148,7 +155,7 @@ export default function Dashboard() {
                   <div className={styles.detail}>
                     {!runDetail ? (
                       <div className={styles.center}>
-                        <p className="text-gray-400">
+                        <p className={styles.subtitle}>
                           Select a run from the timeline.
                         </p>
                       </div>
@@ -172,7 +179,6 @@ export default function Dashboard() {
                             onClose={() => setSelectedTest(null)}
                           />
                         )}
-
                         <TrendChart repoId={activeRepo.id} />
                       </>
                     )}

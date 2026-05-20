@@ -1,6 +1,7 @@
 import gStyles from "../../gobal.module.css"
 import styles from "./SideBar.module.css";
 import logo from "../../assets/yaml_wizard_logo.png";
+import type { Session, Message } from "../../types";
 
 import { useState, useEffect, useRef, useMemo } from "react";
 import { Link } from "react-router-dom";
@@ -12,20 +13,6 @@ import { FaHistory } from "react-icons/fa";
 import { FiMenu } from "react-icons/fi";
 import { GoPerson } from "react-icons/go";
 import { FaSignOutAlt } from "react-icons/fa";
-
-
-type Message = {
-    role: "user" | "assistant",
-    content: string,
-    error?: boolean
-};
-
-type Session = {
-    id: number | null;
-    session_name: string;
-    created_at: string;
-    updated_at: string;
-};
 
 type sideBar_props = {
     sessionId: number | null,
@@ -182,26 +169,26 @@ function SideBar({sessionId, setSessionId, sessions, setSessions, setMessages, i
         <div className={`${styles.transition} ${isCompact ? styles.compact : styles.sideBar}`}>
         {isCompact? (<>
             <LuPanelRightClose className={`${styles.closeBarBtn} ${gStyles.clickable}`}
-                onClick={() => setIsCompact(prev => !prev)}/>
+                onClick={() => setIsCompact(prev => !prev)} title={"Expand"}/>
             <img src={logo} alt="Logo" className={styles.logo}/>
-            <MdChatBubbleOutline className={gStyles.clickable}
+            <MdChatBubbleOutline className={gStyles.clickable} title={"New Chat"}
                 onClick={startNewSession}/>
-            <FaHistory className={gStyles.clickable}/>
-            <FiMenu className={gStyles.clickable}/>
-            <GoPerson className={`${styles.username} ${gStyles.clickable}`}/>
+            <FaHistory className={gStyles.clickable} title={"Version History"}/>
+            <FiMenu className={gStyles.clickable} title={"Settings"}/>
+            <GoPerson className={`${styles.username} ${gStyles.clickable}`} title={"Profile"}/>
         </>) : (<>
             <div className={styles.topContainer}>
                 <div className={styles.appNameContainer}>
                     <img src={logo} alt="Logo" className={styles.logo}/>
                     <span className={styles.appName}>YAML Wizard</span>
                     <LuPanelRightClose className={`${styles.closeBarBtn} ${gStyles.clickable}`}
-                        onClick={() => setIsCompact(prev => !prev)}/>
+                        onClick={() => setIsCompact(prev => !prev)} title={"Collapse"}/>
                 </div>
 
-                <button className={`${styles.actionBtn} ${gStyles.clickable}`} onClick={startNewSession}>
+                <button className={`${styles.actionBtn} ${gStyles.clickable}`} onClick={startNewSession} title={"New Chat"}>
                     <MdChatBubbleOutline/> New Chat
                 </button>
-                <button className={`${styles.actionBtn} ${gStyles.clickable}`}>
+                <button className={`${styles.actionBtn} ${gStyles.clickable}`} title={"Version History"}>
                     <FaHistory/> History
                 </button>
             </div>
@@ -246,12 +233,17 @@ function SideBar({sessionId, setSessionId, sessions, setSessions, setMessages, i
                 )}
                 {loading? null :
                     username? (
-                        <Link className={`${styles.username} ${gStyles.clickable}`} to="/profile">
+                        <Link className={`${styles.username} ${gStyles.clickable}`} to="/profile" title={"Profile"}>
                             <GoPerson/>{username}
                         </Link>
-                    ) : (<></>
-
-                )}
+                    ) : (<>
+                        <span className={styles.username}>
+                            Guest Mode
+                            <Link className={`${styles.signUpNow} ${gStyles.clickable}`} to="/login">
+                                Sign up to save your chats!
+                            </Link>
+                        </span>
+                </>)}
             </div>
         </>)}
         </div>

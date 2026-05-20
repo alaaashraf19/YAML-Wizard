@@ -11,7 +11,6 @@ import UserProfile from './components/UserProfile/UserProfile.tsx';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 import Dashboard from './pages/Dashboard.tsx';
-import './index.css'
 
 const queryClient = new QueryClient({
   defaultOptions: {

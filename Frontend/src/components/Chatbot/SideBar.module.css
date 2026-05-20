@@ -47,7 +47,7 @@
     margin-left: 10px;
 }
 .closeBarBtn {
-    padding: 10px;
+    margin-bottom: 30px;
     right: 0;
 }
 
@@ -141,9 +141,9 @@
     width: fit-content;
     height: fit-content;
 
+    position: relative;
     display: flex;
     align-items: center;
-    /* justify-content: center; */
     gap: 7px;
 
     text-decoration: none;
@@ -157,6 +157,23 @@
     border: 1px solid rgba(221, 223, 251, 0.25);
     border-radius: 20px;
     cursor: pointer;
+}
+.signUpNow {
+    position: absolute;
+    display: none;
+    left: 100%;
+
+    padding: 10px 14px;
+    margin-left: 5px;
+    border-radius: 15px;
+    border: 2px solid white;
+    font-size: 16px;
+    text-decoration: 0;
+    color: inherit;
+}
+.username:hover .signUpNow, .signUpNow:hover {
+    display: block;
+    background-color: rgb(19, 5, 79);
 }
 
 .transition {
