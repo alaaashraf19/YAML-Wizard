@@ -1,3 +1,4 @@
+import gStyles from "../../gobal.module.css"
 import styles from './UserProfile.module.css'
 function UserProfile() {
     const api_url = "https://sprain-reiterate-cape.ngrok-free.dev";
@@ -19,44 +20,43 @@ function UserProfile() {
             <p className={styles.header}>Profile</p>
 
             <form className={styles.section}>
-                <p>Information</p>
-                <label>
-                    Name:
-                    <input type="text" />
+                <p className={styles.subHeader}>Information</p>
+                <label id='name' className={styles.label}>
+                    Name: 
+                    <input type="text" className={styles.input}/>
+                </label>
+                <label id='email' className={styles.label}>
+                    Email: 
+                    <input type="text" className={styles.input}/>
                 </label>
             </form>
 
             <form className={styles.section}>
-                <p className={styles.header}>Security</p>
-                <label>
-                    Password:
-                    <input type="password" />
+                <p className={styles.subHeader}>Security</p>
+                <label id='password' className={styles.label}>
+                    Password: 
+                    <input type="password" className={styles.input}/>
                 </label>
-                <label>
-                    Confirm Password:
-                    <input type="password" />
+                <label id='confirm_password' className={styles.label}>
+                    Confirm Password: 
+                    <input type="password" className={styles.input}/>
                 </label>
             </form>
 
             <form className={styles.section}>
-                <p className={styles.header}>Projects</p>
-                <label>
-                    Repository URL:
-                    <input type="text" />
-                    <button type="button" className={styles.clickable}>
-                        Add Project
-                    </button>
+                <p className={styles.subHeader}>Projects</p>
+                <label id='repo_url' className={styles.label}>
+                    Repository URL: 
+                    <input type="text" className={styles.input}/>
+                    <button className={`${gStyles.clickable}`}>Add Project</button>
                 </label>
             </form>
 
-            {/* IMPORTANT: not a form anymore */}
             <div className={styles.section}>
-                <p className={styles.header}>Connect Accounts</p>
-
-                <p className={styles.header}>Connect to GitHub</p>
-                <button onClick={handleConnectGithub} className={`${styles.clickable}`}>Connect with github account</button>
-                <button onClick={handleInstallApp} className={`${styles.clickable}`}>Install app</button> 
+                <p className={styles.subHeader}>Connect to GitHub</p>
+                <button onClick={handleConnectGithub} className={`${gStyles.clickable}`}>Connect with github account</button>
                 <button onClick={handleConnectGitlab} className={`${styles.clickable}`}>Connect with gitlab account</button>
+                <button onClick={handleInstallApp} className={`${gStyles.clickable}`}>Install app</button> 
             </div>
         </div>
     );

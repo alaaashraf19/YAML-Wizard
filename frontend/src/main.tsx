@@ -29,8 +29,8 @@ const router = createBrowserRouter([{
   children: [
     { path: "/chatbot", element: <Chatbot /> },
     { path: "/profile", element: <UserProfile/>},
-    { path: "/", element: <SignUp /> },
     { path: '/dashboard', element: <Dashboard /> },
+    { path: "/", element: <Chatbot /> },
     // {path: "*", element: <App />}, // Handle not provided page
   ]},
   { path: "/signup", element: <SignUp /> },

@@ -1,8 +1,12 @@
+.window {
+    display: flex;
+    justify-content: center;
+    height: 100vh;
+    width: 100vw;
+}
 .chatWindow {
-    position: absolute;
-    inset: 0;
+    flex: 1;
     margin: 5px auto;
-    width: 80%;
 
     display: flex;
     flex-direction: column;
@@ -10,7 +14,6 @@
     /* border: 10px solid black; */
     color: white;
 }
-
 .chatMessages {
     position: relative;
     flex: 1;
@@ -18,9 +21,10 @@
 
     width: 85%;
     padding-right: 8px;
+    padding-top: 10px;
     margin-top: 45px;
 
-    overflow-y: scroll;
+    overflow-y: auto;
     overflow-anchor:auto;
     
     display: flex;
@@ -28,35 +32,29 @@
     scrollbar-gutter: stable;
 }
 .spacer{flex: 1;}
-.emptyMessages {
-    display: flex;
-    align-items: end;
-    justify-content: center;
-    font-size: 40px;
-    margin-top: 250px;
-}
-.centerMessage {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
 .messagePack {
     position: relative;
     padding: 10px;
-    margin: 30px;
-    word-wrap: break-word;
+    margin: 10px;
+
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
+
+    word-wrap: break-word;
 }
 .message {
-    max-width: 50%;
     margin: 10px;
     padding: 10px 20px;
-    color: white;
+    max-width: 80%;
+
     border-radius: 15px;
-    font-size: larger;
+
+    color: white;
+
     white-space: pre-wrap;
+    word-wrap: break-word;
+    user-select: text;
 }
 .userMessage {
     align-self: flex-end;
@@ -66,25 +64,107 @@
 .botMessage {
     align-self: flex-start;
     text-align: left;
+    margin-bottom: 40px;
     /* background-color: rgb(10, 1, 54); */
+}
+.errorMessage {
+    align-self: center;
+    text-align: center;
+
+    background-color: rgba(255, 255, 255, 0.05);
+    color: #ffb020;
+
+    border: 1px solid #4b3816;
+    border-left: 3px solid #ffb020;
+
+    padding: 10px 15px;
+    border-radius: 10px;
+
+    max-width: 70%;
+}
+
+/* typing dots */
+.typing {
+    margin: 10px;
+    margin-left: 20px;
+    padding: 10px 20px;
+
+    width: fit-content;
+    height: 5px;
+
+    position: relative;
+    background: rgba(200, 200, 200, 0.2);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+}
+
+.typing_dot {
+    /* float: left; */
+    width: 8px;
+    height: 8px;
+    margin: 0 4px;
+    background: #8d8c91;
+    border-radius: 50%;
+    opacity: 0;
+    animation: loadingFade 1s infinite;
+}
+@keyframes loadingFade {
+    0% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 0.8;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+.typing_dot:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.typing_dot:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing_dot:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+
+.inputContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.inputCenter {
+    position: fixed;
+    width: 60%;
+    top: 10%;
+}
+.inputBelow {
+    width: 75%;
+    bottom: 0;
+}
+.emptyMessages {
+    display: flex;
+    align-items: end;
+    justify-content: center;
+    font-size: 40px;
+    margin-top: 250px;
 }
 .chatbox {
     display: flex;
     align-items: center;
-    min-width: 700px;
-}
-.chatboxCenter {
-    position: fixed;
-    width: 60%;
-    top: 40%;
-}
-.chatboxBelow {
-    width: 75%;
-    bottom: 0;
+    width: 100%;
+    margin-bottom: 30px;
 }
 .form {
     width: 80%;
-    margin: 50px auto;
     padding: 20px;
     border: 1px solid #ccc;
     border-radius: 40px;
@@ -112,12 +192,14 @@
     background-color: unset;
     color: inherit;
     font-size: 16px;
+    font-family: inherit;
 }
 .textarea:focus{
     outline: none;
 }
 .textarea::placeholder{
-    color: rgb(200, 200, 200);
+    color: rgb(200, 200, 200, 0.5);
+    font-family: Arial, Helvetica, sans-serif;
 }
 .sendButton {
     width: 90px;
@@ -126,16 +208,17 @@
     border-radius: 15px;
     background-color: rgb(19, 5, 79);
     color: inherit;
-    cursor: pointer;
 }
+.sendButton:hover {background-color: rgb(23, 8, 92);}
+
 .projectButton{
+    margin: 20px;
+    padding: 15px;
+    width: 180px;
+
     display: flex;
     align-items: center;
     justify-content: center;
-
-    margin: 20px;
-    padding: 15px;
-    width: 170px;
 
     background-color: rgb(19, 5, 79);
     box-shadow: 3px 3px 10px rgba(0,0,0,0.4);
@@ -144,81 +227,9 @@
 
     color: white;
     font-size: 16px;
-    cursor: pointer;
-}
-.menu {
-    position: fixed;
-    right: 0;
-    bottom: 0;
-    height: 100%;
-    width: 50vh;
-    padding: 10px;
 
-    overflow-y: auto;
-    overflow-wrap: break-word;
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-
-    background-color: rgb(9, 2, 41);
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.6);
-    z-index: 1000;
-    font-size: 20px;
-    
-    scrollbar-gutter: stable;
-    transition: 0.7s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
-
-.addButton {
-    padding: 10px;
-    margin-top: 40px;
-    width: 90%;
-    right: 0;
-    border: 2px solid #ccc;
-    border-radius: 10px;
-    font-size: 18px;
-    background-color: rgb(19, 5, 79);
-    color: white;
-    cursor: pointer;
-}
-.addButton:hover {background-color: rgb(23, 8, 92);}
-.searchContainer{
-        display: flex;
-        flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-}
-.searchBar {
-    position: sticky;
-    top: 20px;
-    padding: 8px;
-    margin: 20px;
-    width: 90%;
-    background-color: rgb(194, 181, 242);
-    box-sizing: border-box;
-    border: 2px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
-    color: black;
-}
-.list {
-    width: 90%;
-    margin: 0;
-}
-.menuItem{
-    color: white;
-    /* background-color: rgb(19, 5, 79); */
-    padding: 12px 16px;
-    margin: 10px;
-    cursor: pointer;
-    border-radius: 15px;
-}
-.menuItem:hover {background-color: rgb(19, 5, 79);}
-
-.menuNoProjects {
-    background-color: rgb(42, 35, 67);
-    padding: 10px 20px;
-    margin: 10px;
-    border-radius: 15px;
-}
+.projectButton:hover {background-color: rgb(23, 8, 92);}

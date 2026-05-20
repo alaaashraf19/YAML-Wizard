@@ -1,13 +1,24 @@
 body {
+    box-sizing: border-box;
     display: flex;
     align-items: center;
     justify-content: center;
+
+    margin: 0;
+    height: 100%;
+    
     background-image: linear-gradient(260deg, rgb(3, 3, 93)10% ,rgb(74, 2, 103));
     background-attachment: fixed;
-}
 
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 16px;
+}
+#root {
+    display: flex;
+}
 .clickable {
     transition:filter 0.5s ease;
+    cursor: pointer;
 }
 .clickable:hover {
     filter: brightness(1.2);
@@ -15,16 +26,17 @@ body {
 
 ::-webkit-scrollbar {
     width: 7px;
+    background-color: rgb(207, 207, 207, 0.1);
 }
 
-::-webkit-scrollbar-track {
+/* ::-webkit-scrollbar-track {
     background: transparent;
-}
+} */
 
 ::-webkit-scrollbar-thumb {
-    /* background-color: rgb(124, 80, 200); */
-    /* background-color: rgb(23, 8, 92); */
-    background: linear-gradient(180deg, rgb(23, 8, 92)50%, rgb(9, 2, 41));
-    border: 2px solid rgb(9, 2, 41,0.3);
-    height: auto;
+    background-color: rgb(124, 80, 200);
+    /* background: linear-gradient(100deg, rgb(50, 19, 201), rgb(18, 5, 63)70%); */
+    /* background: linear-gradient(270deg, rgb(0, 0, 0), rgb(18, 5, 63)70%); */
+    /* height: auto; */
+    border-radius: 15px;
 }
