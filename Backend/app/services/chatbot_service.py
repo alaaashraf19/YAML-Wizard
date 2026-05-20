@@ -51,10 +51,9 @@ class ChatbotService:
                 )
             )
 
-
             return {
                 "role": "assistant",
-                "content": response.text.strip(),
+                "content": response.text.strip()
             }
 
         except Exception as e:
@@ -64,14 +63,14 @@ class ChatbotService:
                 return{
                     "status_code": 429,
                     "role": "assistant",
-                    "content": "The chatbot has reached its limit. Please try again later.",
+                    "content": "⚠️ You've reached the usage limit. Please try again later.",
                     "error": error_text
                 }
             
             return{
                 "status_code": 500,
                 "role": "assistant",
-                "content": "Something went wrong while generating the response.",
+                "content": "⚠️ Sorry, something went wrong while generating my response. Please try sending your message again.",
                 "error": error_text
             }
 
@@ -135,6 +134,21 @@ class ChatbotService:
             session_id=session_id,
             db=db
         )
+
+        if isinstance(result, dict) and result.get("error"):
+            raise HTTPException(
+                status_code=result["status_code"],
+                detail={
+                    "session_id" : session_id,
+                    "session_name": session_name,
+                    "message": {
+                        "role": "assistant",
+                        "content": result["content"],
+                        "timestamp": bot_msg.timestamp.isoformat()
+                    },
+                    "error": result.get("error")
+                }
+            )
 
         return {
             "session_id": session_id,
