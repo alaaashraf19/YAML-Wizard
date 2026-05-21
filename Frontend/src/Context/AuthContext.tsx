@@ -1,11 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
+import type { AuthContextType } from "../types";
 
-type AuthContextType = {
-    username: string | null;
-    loading: boolean | null;
-    login: (username: string) => void;
-    logout: () => void;
-};
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
@@ -51,7 +46,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUsername(null);
         sessionStorage.clear();
         localStorage.clear();
-        window.location.reload(); //for now
+        // window.location.reload(); //for now
 
         console.log("Logged out successfully");
     };

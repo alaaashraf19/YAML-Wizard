@@ -1,11 +1,11 @@
-import gStyles from "../../gobal.module.css"
+import gStyles from "../global.module.css"
 import styles from "./Chatbot.module.css";
-import type { Session, Message } from "../../types";
+import type { Session, Message } from "../types";
 
 import { useState, useEffect, useRef } from "react";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md"
-import Projects from "./Projects";
-import SideBar from "./SideBar";
+import Projects from "../components/Chatbot/Projects";
+import SideBar from "../components/Chatbot/SideBar";
 
 
 function Chatbot() {

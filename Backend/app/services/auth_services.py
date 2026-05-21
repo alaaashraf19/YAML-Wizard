@@ -10,7 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 async def signup(user: UserCreate, db:AsyncSession):
     username = user.username.lower()
     email = user.email.lower()
-    db_user = get_user(db, username)
+    db_user = await get_user(db, username)
     result = await db.execute(
         select(UserModel).where(UserModel.email == email)
     )

@@ -1,4 +1,4 @@
-import gStyles from "../../gobal.module.css"
+import gStyles from "../../global.module.css"
 import styles from "./Projects.module.css";
 import { IoClose } from "react-icons/io5";
 import { createPortal } from "react-dom";
@@ -30,7 +30,7 @@ function Projects({setIsMenuOpen, setSelectedProject, menuRef}: projects_props) 
         <div className={styles.menu} ref={menuRef}>
             <div className={styles.projectsButtons}>
                 <button className={`${styles.closeMenuButton} ${gStyles.clickable}`}
-                    onClick={() => {setIsMenuOpen(false);}}>
+                    onClick={() => {setIsMenuOpen(false);}} title={"Close Menu"}>
                     <IoClose />
                 </button>
                 <button className={`${styles.addButton} ${gStyles.clickable}`}>

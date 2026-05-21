@@ -114,3 +114,10 @@ export interface Session {
     created_at: string;
     updated_at: string;
 };
+
+export interface AuthContextType {
+    username: string | null;
+    loading: boolean | null;
+    login: (username: string) => void;
+    logout: () => void;
+};
