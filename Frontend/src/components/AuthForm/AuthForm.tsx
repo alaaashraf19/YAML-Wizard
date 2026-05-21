@@ -1,4 +1,4 @@
-import gStyles from "../../gobal.module.css"
+import gStyles from "../../global.module.css"
 import styles from './AuthForm.module.css';
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 

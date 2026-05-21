@@ -1,20 +1,23 @@
-import gStyles from "../../gobal.module.css"
-import styles from './AuthForm.module.css';
+import gStyles from "../global.module.css"
+import styles from './SignUp.Login.module.css';
 import { useState } from "react";
-import { UsernameField, PasswordField } from "./AuthForm";
+import { UsernameField, EmailField, PasswordField, ConfirmPasswordField } from "../components/AuthForm/AuthForm";
 import { Link } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
-import { useAuth } from '../../Context/AuthContext';
 
-function Login(){
+function SignUp(){
     const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const [responseError, setResponseError] = useState("");
     const [emptyUsername, setEmptyUsername] = useState(false);
+    const [emptyEmail, setEmptyEmail] = useState(false);
     const [emptyPassword, setEmptyPassword] = useState(false);
-    const { login } = useAuth();
+    const [emptyConfirmPassword, setEmptyConfirmPassword] = useState(false);
     const navigate = useNavigate();
     const api_url = import.meta.env.VITE_API_URL;
 
@@ -24,47 +27,47 @@ function Login(){
         
         if (!username) setEmptyUsername(true);
         else setEmptyUsername(false);
+        if (!email) setEmptyEmail(true);
+        else setEmptyEmail(false);
         if (!password) setEmptyPassword(true);
         else setEmptyPassword(false);
+        if (!confirmPassword) setEmptyConfirmPassword(true);
+        else setEmptyConfirmPassword(false);
+
+        if (password !== confirmPassword)setResponseError("Passwords do not match.");
         
-        if (!username || !password) {
+        if (!username || !email || !password || !confirmPassword 
+            || password !== confirmPassword) {
             return;
         }
         
+        
         const userData = {
             username,
+            email,
             password
         };
         
         setLoading(true);
         try {
-            const res = await fetch(`${api_url}/auth/login`, {
+            const res = await fetch(`${api_url}/auth/signup`, {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
-                credentials: "include",
                 body: JSON.stringify(userData)
             });
-            
-            console.log(res);
-            console.log("api url: ",api_url);
-            console.log("ENV:", import.meta.env);
+
             const data = await res.json();
-            
+
             if (!res.ok) {
-                if(data.detail && Array.isArray(data.detail) && data.detail.length > 0) {
-                    const msg = data.detail[0].msg || "Login failed";
-                    setResponseError(msg);
-                } else {
-                    const msg = data.detail || "Login failed";
-                    setResponseError(msg);
-                }
-                console.error("Form validation error:", data);
+                const raw_message = data.detail?.[0]?.msg || "Signup failed";
+                const msg = raw_message.replace("Value error, ", "");
+                setResponseError(msg);
+                console.error("Form validation error:", raw_message);
                 return;
             }
 
-            login(username);
             console.log("Server:", data.msg);
-            navigate("/chatbot"); // Redirect to home page on successful login
+            navigate("/login");
 
         } catch (err: any) {
             const msg = err?.response?.data?.detail?.[0]?.msg || "Server Error. Please try again later.";
@@ -78,25 +81,32 @@ function Login(){
 
     return (
         <div className={styles.formContainer}>
-            <h1>Login</h1>
-            <form className={styles.form} onSubmit={handleSubmit}>
+            <h1>Sign Up</h1>
+            <form className={styles.form} onSubmit={handleSubmit} noValidate>
                 {responseError && <p className={styles.error}>{responseError}</p>}
-
                 <UsernameField username={username} setUsername={setUsername}
                     emptyUsername={emptyUsername} setEmptyUsername={setEmptyUsername}/>
+                    
+                <EmailField email={email} setEmail={setEmail} emptyEmail={emptyEmail}
+                    setEmptyEmail={setEmptyEmail}/>
+                {/* email doesn't have @ warning needs fixing */}
 
                 <PasswordField password={password} setPassword={setPassword} emptyPassword={emptyPassword}
                     setEmptyPassword={setEmptyPassword} showPassword={showPassword}
                     setShowPassword={setShowPassword} />
 
+                <ConfirmPasswordField confirmPassword={confirmPassword} setConfirmPassword={setConfirmPassword}
+                    emptyConfirmPassword={emptyConfirmPassword} setEmptyConfirmPassword={setEmptyConfirmPassword}
+                    showConfirmPassword={showConfirmPassword} setShowConfirmPassword={setShowConfirmPassword} />
+
                 <button type="submit" className={`${styles.submit} ${gStyles.clickable}`} disabled={loading}>
-                    {loading ? "Logging In..." : "Login"}
+                    {loading ? "Signing Up..." : "Sign Up"}
                 </button>
             </form>
 
-            <p>Don't have an account? <Link className={`${styles.link} ${gStyles.clickable}`} to="/signup">Sign Up</Link></p>
+            <p>Already have an account? <Link className={`${styles.link} ${gStyles.clickable}`} to="/login">Login</Link></p>
         </div>
     )
 }
 
-export default Login;
+export default SignUp;

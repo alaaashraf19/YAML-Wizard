@@ -1,7 +1,7 @@
-import gStyles from "../../gobal.module.css"
+import gStyles from "../../global.module.css"
 import styles from "./NavBar.module.css";
 import { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from '../../Context/AuthContext';
 import { IoPerson } from "react-icons/io5";
 import { GoPerson } from "react-icons/go";
@@ -14,6 +14,7 @@ function NavBar(){
     const optionsRef = useRef<HTMLDivElement  | null>(null);
     const optionsButtonRef = useRef<HTMLButtonElement  | null>(null);
     const { username, loading, logout } = useAuth();
+    const navigate = useNavigate();
     const api_url = import.meta.env.VITE_API_URL;
 
     // Close options on outside click
@@ -35,7 +36,7 @@ function NavBar(){
         }
     , []);
 
-    const handleSignOut = async () => {
+    const handleLogout = async () => {
         try {
             const res = await fetch(`${api_url}/auth/logout`, {
                 method: "POST",
@@ -48,6 +49,8 @@ function NavBar(){
             }
 
             logout();
+            navigate("/login", { replace: true });
+
         } catch (err) {
             console.error("Server error:", err);
         }
@@ -74,7 +77,7 @@ function NavBar(){
                                     <IoPerson/>
                                     Profile
                                 </Link>
-                                <Link className={`${styles.option} ${gStyles.clickable}`} to="/" onClick={handleSignOut}>
+                                <Link className={`${styles.option} ${gStyles.clickable}`} to="/" onClick={handleLogout}>
                                     <FaSignOutAlt/>
                                     Sign out
                                 </Link>

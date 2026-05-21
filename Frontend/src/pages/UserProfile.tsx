@@ -1,4 +1,4 @@
-import gStyles from "../../gobal.module.css"
+import gStyles from "../global.module.css"
 import styles from './UserProfile.module.css'
 
 
@@ -21,11 +21,13 @@ function UserProfile() {
     return(
         <div className={styles.pageContainer}>
             <div className={styles.tabsBar}>
+                <p>Search</p>
                 <p>Information</p>
                 <p>Security</p>
                 <p>Projects</p>
                 <p>Platforms</p>
             </div>
+            
             <div className={styles.formContainer}>
                 <p className={styles.header}>Profile</p>
                 <form className={styles.section}>
@@ -64,7 +66,7 @@ function UserProfile() {
                 <div className={styles.section}>
                     <p className={styles.subHeader}>Platforms</p>
                     <button onClick={handleConnectGithub} className={`${gStyles.clickable}`}>Connect with github account</button>
-                    <button onClick={handleConnectGitlab} className={`${styles.clickable}`}>Connect with gitlab account</button>
+                    <button onClick={handleConnectGitlab} className={`${gStyles.clickable}`}>Connect with gitlab account</button>
                     <button onClick={handleInstallApp} className={`${gStyles.clickable}`}>Install app</button> 
                 </div>
             </div>

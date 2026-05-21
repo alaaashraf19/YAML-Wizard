@@ -3,10 +3,10 @@ import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { AuthProvider } from './Context/AuthContext.tsx';
 import App from './App.tsx'
-import SignUp from './components/AuthForm/SignUp.tsx';
-import Login from './components/AuthForm/Login.tsx';
-import Chatbot from './components/Chatbot/Chatbot.tsx';
-import UserProfile from './components/UserProfile/UserProfile.tsx';
+import SignUp from './pages/SignUp.tsx';
+import Login from './pages/Login.tsx';
+import Chatbot from './pages/Chatbot.tsx';
+import UserProfile from './pages/UserProfile.tsx';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 

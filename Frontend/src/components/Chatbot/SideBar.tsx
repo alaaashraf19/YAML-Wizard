@@ -1,10 +1,10 @@
-import gStyles from "../../gobal.module.css"
+import gStyles from "../../global.module.css"
 import styles from "./SideBar.module.css";
 import logo from "../../assets/yaml_wizard_logo.png";
 import type { Session, Message } from "../../types";
 
 import { useState, useEffect, useRef, useMemo } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from '../../Context/AuthContext';
 
 import { LuPanelRightClose  } from "react-icons/lu";
@@ -30,6 +30,7 @@ function SideBar({sessionId, setSessionId, sessions, setSessions, setMessages, i
     const optionsRef = useRef<HTMLDivElement  | null>(null);
     const optionsButtonRef = useRef<HTMLButtonElement  | null>(null);
     const { username, loading, logout } = useAuth();
+    const navigate = useNavigate();
     const api_url = import.meta.env.VITE_API_URL;
 
     //get all sessions
@@ -147,7 +148,7 @@ function SideBar({sessionId, setSessionId, sessions, setSessions, setMessages, i
         }
     , []);
 
-    const handleSignOut = async () => {
+    const handleLogout = async () => {
         try {
             const res = await fetch(`${api_url}/auth/logout`, {
                 method: "POST",
@@ -160,6 +161,7 @@ function SideBar({sessionId, setSessionId, sessions, setSessions, setMessages, i
             }
 
             logout();
+            navigate("/login", { replace: true });
         } catch (err) {
             console.error("Server error:", err);
         }
@@ -225,7 +227,7 @@ function SideBar({sessionId, setSessionId, sessions, setSessions, setMessages, i
                             <GoPerson/>
                             Profile
                         </Link>
-                        <Link className={`${styles.option} ${gStyles.clickable}`} to="/" onClick={handleSignOut}>
+                        <Link className={`${styles.option} ${gStyles.clickable}`} to="/" onClick={handleLogout}>
                             <FaSignOutAlt/>
                             Sign out
                         </Link>
