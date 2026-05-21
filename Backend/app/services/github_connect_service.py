@@ -7,12 +7,19 @@ from dotenv import load_dotenv
 from core.security import get_current_user
 from models.platforms_model import GitHubConnection
 from sqlalchemy import select
+from cryptography.fernet import Fernet
 
 load_dotenv()
 
 GITHUB_CLIENT_ID = os.getenv("GITHUB_CLIENT_ID")
 GITHUB_CLIENT_SECRET = os.getenv("GITHUB_CLIENT_SECRET")
 GITHUB_REDIRECT_URI = os.getenv("GITHUB_REDIRECT_URI")
+FERNET_KEY=os.getenv("FERNET_KEY")
+
+if FERNET_KEY is None:
+    raise ValueError("FERNET_KEY is missing from environment variables")
+fernet = Fernet(FERNET_KEY.encode())
+
 
 async def github_connect_service(request, db):
 
@@ -85,7 +92,7 @@ async def github_callback_service(code, request, db):
     if connection:
         connection.github_user_id = github_id
         connection.github_username = github_login
-        connection.access_token = access_token
+        connection.access_token = encrypt_token(access_token)
         connection.refresh_token = None  # GitHub OAuth usually doesn't return refresh token
         connection.expires_at = None
     else:
@@ -93,7 +100,7 @@ async def github_callback_service(code, request, db):
             user_id=user.id,
             github_user_id=github_id,
             github_username=github_login,
-            access_token=access_token,
+            access_token=encrypt_token(access_token),
             refresh_token=None,
             expires_at=None
         )
@@ -118,3 +125,13 @@ async def is_github_token_valid(github_token: str) -> bool:
         return response.status_code == 200
     except:
         return False
+    
+def encrypt_token(token: str) -> str:
+    return fernet.encrypt(token.encode()).decode()
+
+def decrypt_token(token: str) -> str:
+    return fernet.decrypt(token.encode()).decode()
+
+#maybe removed if we won't store the github token anymore and only use github app install
+async def get_valid_github_token(connection):
+    return decrypt_token(connection.access_token)
