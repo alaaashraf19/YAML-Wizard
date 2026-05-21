@@ -14,25 +14,13 @@ class User(Base):
     chat_sessions = relationship("ChatSession", back_populates="user",cascade="all, delete-orphan")
 
     chat_messages = relationship("ChatMessage", back_populates="user",cascade="all, delete-orphan")
-    github_installations = relationship(
-            "GitHubInstallation",
-            back_populates="user",
-            cascade="all, delete-orphan"
-        )
+    github_installations = relationship("GitHubInstallation",back_populates="user",cascade="all, delete-orphan")
+
     #github connection
-    github_id = Column(Integer, unique=True, nullable=True, index=True)
-    github_login = Column(String, nullable=True, index=True)
+    github_connections = relationship("GitHubConnection", back_populates="user")
 
     #gitlab connection
-    gitlab_connections = relationship(
-        "GitLabConnection",
-        back_populates="user",
-        cascade="all, delete-orphan"
-    )
+    gitlab_connections = relationship("GitLabConnection",back_populates="user",cascade="all, delete-orphan")
 
     #repositories, 1 to many
-    repositories = relationship(
-        "Repository",
-        back_populates="user",
-        cascade="all, delete-orphan"
-    )
+    repositories = relationship("Repository",back_populates="user",cascade="all, delete-orphan")

@@ -5,6 +5,8 @@ import httpx
 import os
 from dotenv import load_dotenv
 from core.security import get_current_user
+from models.platforms_model import GitHubConnection
+from sqlalchemy import select
 
 load_dotenv()
 
@@ -12,13 +14,13 @@ GITHUB_CLIENT_ID = os.getenv("GITHUB_CLIENT_ID")
 GITHUB_CLIENT_SECRET = os.getenv("GITHUB_CLIENT_SECRET")
 GITHUB_REDIRECT_URI = os.getenv("GITHUB_REDIRECT_URI")
 
-def github_connect_service(request, db):
+async def github_connect_service(request, db):
 
     token = request.cookies.get("access_token")
     if not token:
         raise HTTPException(401, "Login required")
 
-    user = get_current_user(db, token)
+    user = await get_current_user(db, token)
 
     #state part will be updatedd
     state = secrets.token_urlsafe(16)
@@ -41,7 +43,7 @@ async def github_callback_service(code, request, db):
     if not token:
         raise HTTPException(401, "Login required")
 
-    user = get_current_user(db, token)
+    user = await get_current_user(db, token)
 
     async with httpx.AsyncClient() as client:
         token_res = await client.post(
@@ -74,17 +76,35 @@ async def github_callback_service(code, request, db):
 
     if not github_id:
         raise HTTPException(400, "Failed to fetch GitHub user")
+    
+    result = await db.execute(
+        select(GitHubConnection).where(GitHubConnection.user_id == user.id)
+    )
+    connection = result.scalar_one_or_none()
 
-    # link to our user in database
-    user.github_id = github_id
-    user.github_login = github_login
+    if connection:
+        connection.github_user_id = github_id
+        connection.github_username = github_login
+        connection.access_token = access_token
+        connection.refresh_token = None  # GitHub OAuth usually doesn't return refresh token
+        connection.expires_at = None
+    else:
+        connection = GitHubConnection(
+            user_id=user.id,
+            github_user_id=github_id,
+            github_username=github_login,
+            access_token=access_token,
+            refresh_token=None,
+            expires_at=None
+        )
+        db.add(connection)
+
     await db.commit()
-
     # Redirect back to frontend with success
     # frontend_url = "http://localhost:5173/connect?status=success"
     # return RedirectResponse(frontend_url)
-    return JSONResponse(content={"msg":"Github connected successfully"})
 
+    return JSONResponse(content={"msg": "GitHub connected successfully"})
 
 
 async def is_github_token_valid(github_token: str) -> bool:

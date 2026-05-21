@@ -101,7 +101,7 @@ async def setup_github_url_services(installation_id, request, db):
     token = request.cookies.get("access_token")
     if not token:
         raise HTTPException(status_code=401, detail="Unauthorized")
-    user = get_current_user(db, token)
+    user = await get_current_user(db, token)
 
     if user.github_id is None:
         raise HTTPException(
@@ -171,11 +171,16 @@ async def fetch_installation_account_id(installation_id: int) -> int:
         account_id: int = data["account"]["id"] 
         return account_id
     elif response.status_code == 404:
-        raise HTTPException(status_code=404, detail="Installation not found")
+                raise HTTPException(
+            status_code=404,
+            detail=response.text
+        )
 
     elif response.status_code == 401:
-        raise HTTPException(status_code=401, detail="Invalid GitHub App JWT")
-
+        raise HTTPException(
+            status_code=401,
+            detail=response.text
+        )
     else:
         raise HTTPException(
             status_code=400,

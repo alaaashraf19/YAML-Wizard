@@ -22,14 +22,14 @@ if FERNET_KEY is None:
 fernet = Fernet(FERNET_KEY.encode())
 
 
-def gitlab_connect_service(request, db):
+async def gitlab_connect_service(request, db):
 
     token = request.cookies.get("access_token")
     if not token:
         raise HTTPException(401, "Login required")
     
     #this user part will be updates
-    user = get_current_user(db, token)
+    user = await get_current_user(db, token)
 
     params = {
         "client_id": GITLAB_CLIENT_ID,
@@ -50,7 +50,7 @@ async def gitlab_callback_service(code, request,db):
     if not token:
         raise HTTPException(401, "Login required")
 
-    user = get_current_user(db, token)
+    user = await get_current_user(db, token)
 
 
     token_url = "https://gitlab.com/oauth/token"

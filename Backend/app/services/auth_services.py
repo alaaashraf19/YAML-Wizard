@@ -72,8 +72,8 @@ async def login(user: UserLogin, db:AsyncSession):
         key="access_token",
         value=access_token,
         httponly=True,
-        secure=False,        # ===========> MAKE SECURE FOR HTTPS
-        samesite="Lax",
+        secure=True,        # ===========> MAKE SECURE FOR HTTPS
+        samesite="none",
         max_age=os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES",30)
     )
 

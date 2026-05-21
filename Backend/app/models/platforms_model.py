@@ -9,6 +9,7 @@ class GitHubInstallation(Base):
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     installation_id: Mapped[int] = mapped_column(unique=True, index=True, nullable=False)
 
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     account_login: Mapped[str | None] = mapped_column(nullable=True)
     account_id: Mapped[int | None] = mapped_column(nullable=True)
     
@@ -37,3 +38,22 @@ class GitLabConnection(Base):
     expires_at = Column(DateTime(timezone=True), nullable=True)
 
     created_at = Column(DateTime(timezone=True),  default=lambda: datetime.now(timezone.utc))
+
+
+class GitHubConnection(Base):
+    __tablename__ = "github_connections"
+
+    id = Column(Integer, primary_key=True, index=True)
+
+    user_id = Column(Integer, ForeignKey("users.id"), unique=True)
+    user = relationship("User", back_populates="github_connections")
+
+    github_user_id = Column(Integer, index=True)
+    github_username = Column(String, index=True)
+
+    access_token = Column(String)  # encrypt this
+    refresh_token = Column(String, nullable=True)  # GitHub may not always provide this
+
+    expires_at = Column(DateTime(timezone=True), nullable=True)
+
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))

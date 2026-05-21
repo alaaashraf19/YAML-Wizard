@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from database.db_engine import get_db
 from core.security import get_current_user
 from models.user_model import User
-from models.platforms_model import GitHubInstallation,GitLabConnection
+from models.platforms_model import GitHubInstallation,GitLabConnection, GitHubConnection
 from agent.tools.repo_publisher import publish_to_repo
 from agent.utils.github_auth import get_installation_token
 from services.gitlab_connect_service import get_valid_gitlab_token
@@ -44,12 +44,14 @@ async def publish_yaml(platform: str, current_user: User = Depends(get_current_u
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
         
-        if user.github_id is None:
-            raise HTTPException(status_code=404, detail="Github Account not linked")
-        
 
+        result = await db.execute(select(GitHubConnection).where(GitHubConnection.user_id == user.id))
+        github_connection = result.scalar_one_or_none()
+
+        if not github_connection:
+            raise HTTPException(status_code=404, detail="GitHub account not linked")
         #rememeber to check if it is isntallation for user or org this query will change!
-        installation = await db.execute(select(GitHubInstallation).where(GitHubInstallation.account_id == user.github_id))
+        installation = await db.execute(select(GitHubInstallation).where(GitHubInstallation.account_id == github_connection.github_user_id))
         installation = installation.scalar_one_or_none()
 
         if not installation:
