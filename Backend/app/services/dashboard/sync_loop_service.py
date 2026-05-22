@@ -27,7 +27,7 @@ async def background_sync_loop():
 
         try:
             async with async_session() as db:
-                print("here")
+                # print("here")
 
                 repos = (await db.execute(select(Repository))).scalars().all()
 

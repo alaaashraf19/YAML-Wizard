@@ -60,7 +60,7 @@ export function PasswordField(P_props: PasswordProps) {
                 Password:
                 <div className={styles.passwordContainer}>
                     <input type={P_props.showPassword ? "text" : "password"} name='password' className={styles.input}
-                        placeholder="Enter password.." value={P_props.password}
+                        placeholder="Enter password.." value={P_props.password} style={{width: "100%"}}
                         onChange={(e) => {P_props.setPassword(e.target.value); P_props.setEmptyPassword(false)}}>
                     </input>
                     <button type="button" className={`${styles.toggle} ${gStyles.clickable}`} onClick={() => P_props.setShowPassword(!P_props.showPassword)}>
@@ -88,7 +88,7 @@ export function ConfirmPasswordField(CP_props: ConfirmPasswordProps) {
                 Confirm Password:
                 <div className={styles.passwordContainer}>
                     <input type={CP_props.showConfirmPassword ? "text" : "password"} name='confirmPassword'
-                        className={styles.input} placeholder="Confirm password.." value={CP_props.confirmPassword}
+                        className={styles.input} placeholder="Confirm password.." value={CP_props.confirmPassword} style={{width: "100%"}}
                         onChange={(e) => {CP_props.setConfirmPassword(e.target.value); CP_props.setEmptyConfirmPassword(false)}}>
                     </input>
                     <button type="button" className={`${styles.toggle} ${gStyles.clickable}`}

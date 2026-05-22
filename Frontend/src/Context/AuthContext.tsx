@@ -46,7 +46,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUsername(null);
         sessionStorage.clear();
         localStorage.clear();
-        // window.location.reload(); //for now
 
         console.log("Logged out successfully");
     };

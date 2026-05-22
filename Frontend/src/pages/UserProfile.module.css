@@ -1,20 +1,31 @@
 .pageContainer {
     display: flex;
+    width: 70vw;
     margin-top: 120px;
-    width:100%;
     color: white;
 }
 .tabsBar {
     display: flex;
     flex-direction: column;
-    width: 20%;
+    width: 25%;
     
+    background-color: rgb(9, 2, 41);
     border: 1px solid rgb(9, 2, 41);
+    border-radius: 15px;
     margin: 20px;
     padding: 20px;
 
     font-size: 20px;
 }
+.tab {
+    padding: 10px;
+    border-radius: 15px;
+    
+    transition: background-color 0.3s ease;
+}
+.tab:hover {background-color: rgb(19, 5, 79);}
+.devider {border-bottom: 1px solid rgba(255, 255, 255, 0.2);}
+
 .formContainer {
     flex: 1;
     display: flex;
@@ -24,25 +35,17 @@
     color: white;
     font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
-.header {
-    margin: 10px;
-    font-size: 50px;
-}
 .section {
     display: flex;
+    align-items: start;
+    justify-content: center;
     flex-direction: column;
     gap: 10px;
-    justify-content: center;
 }
-.subHeader {
+.header {
+    width: 100%;
     border-bottom: 3px solid rgb(9, 2, 41);
-    padding: 10px;
+    padding: 15px;
+    margin-bottom: 20px;
     font-size: 25px;
-}
-.label {
-    display:flex;
-    justify-content: end;
-}
-.input {
-
 }

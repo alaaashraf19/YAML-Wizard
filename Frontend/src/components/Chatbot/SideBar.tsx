@@ -1,18 +1,20 @@
 import gStyles from "../../global.module.css"
 import styles from "./SideBar.module.css";
 import logo from "../../assets/yaml_wizard_logo.png";
+import { useAuth } from '../../Context/AuthContext';
+import { Settings } from "./Menus";
 import type { Session, Message } from "../../types";
 
 import { useState, useEffect, useRef, useMemo } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from '../../Context/AuthContext';
+import { Link } from "react-router-dom";
 
-import { LuPanelRightClose  } from "react-icons/lu";
+import { LuPanelRightClose, LuPanelLeftClose } from "react-icons/lu";
 import { MdDeleteOutline, MdChatBubbleOutline } from "react-icons/md";
 import { FaHistory } from "react-icons/fa";
 import { FiMenu } from "react-icons/fi";
 import { GoPerson } from "react-icons/go";
-import { FaSignOutAlt } from "react-icons/fa";
+import { RiDashboardFill } from "react-icons/ri";
+
 
 type sideBar_props = {
     sessionId: number | null,
@@ -25,12 +27,14 @@ type sideBar_props = {
 
 function SideBar({sessionId, setSessionId, sessions, setSessions, setMessages, isLoading}: sideBar_props) {
     const [sessionToDelete, setSessionToDelete] = useState<number | null>(null);
-    const [isCompact, setIsCompact] = useState<boolean>(false);
-    const [openOptions, setOpenOptions] = useState<boolean>(false);
-    const optionsRef = useRef<HTMLDivElement  | null>(null);
-    const optionsButtonRef = useRef<HTMLButtonElement  | null>(null);
-    const { username, loading, logout } = useAuth();
-    const navigate = useNavigate();
+    const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
+    const [openSettings, setOpenSettings] = useState<boolean>(false);
+
+    const settingsRef = useRef<HTMLDivElement | null>(null);
+    const settingsBtnRef = useRef<HTMLDivElement | null>(null);
+    const settingsIconRef = useRef<HTMLDivElement | null>(null);
+
+    const { username, loading } = useAuth();
     const api_url = import.meta.env.VITE_API_URL;
 
     //get all sessions
@@ -133,11 +137,13 @@ function SideBar({sessionId, setSessionId, sessions, setSessions, setMessages, i
     useEffect(
         () => {
             function handleClickOutside(e: MouseEvent) {
-                if (optionsRef.current &&
-                        !optionsRef.current.contains(e.target as Node) && 
-                        optionsButtonRef.current && 
-                        !optionsButtonRef.current.contains(e.target as Node)) {
-                    setOpenOptions(false);
+                if (settingsRef.current &&
+                    !settingsRef.current.contains(e.target as Node) && 
+                    ((settingsBtnRef.current && 
+                    !settingsBtnRef.current.contains(e.target as Node)) ||
+                    (settingsIconRef.current &&
+                    !settingsIconRef.current.contains(e.target as Node)))) {
+                    setOpenSettings(false);
                 }
             }
 
@@ -148,43 +154,32 @@ function SideBar({sessionId, setSessionId, sessions, setSessions, setMessages, i
         }
     , []);
 
-    const handleLogout = async () => {
-        try {
-            const res = await fetch(`${api_url}/auth/logout`, {
-                method: "POST",
-                credentials: "include"
-            });
-
-            if (!res.ok){
-                console.error("Logout failed");
-                return;
-            }
-
-            logout();
-            navigate("/login", { replace: true });
-        } catch (err) {
-            console.error("Server error:", err);
-        }
-    }
-
     return(<>
-        <div className={`${styles.transition} ${isCompact ? styles.compact : styles.sideBar}`}>
-        {isCompact? (<>
-            <LuPanelRightClose className={`${styles.closeBarBtn} ${gStyles.clickable}`}
-                onClick={() => setIsCompact(prev => !prev)} title={"Expand"}/>
-            <img src={logo} alt="Logo" className={styles.logo}/>
-            <MdChatBubbleOutline className={gStyles.clickable} title={"New Chat"}
-                onClick={startNewSession}/>
-            <FaHistory className={gStyles.clickable} title={"Version History"}/>
-            <FiMenu className={gStyles.clickable} title={"Settings"}/>
-            <GoPerson className={`${styles.username} ${gStyles.clickable}`} title={"Profile"}/>
-        </>) : (<>
+        <div className={`${styles.sideBar} ${isCollapsed ? styles.collapsed : styles.expanded}`}>
+        {isCollapsed? (
+            <>
+                <LuPanelRightClose className={`${styles.collapsedBtn} ${gStyles.clickable}`}
+                    onClick={() => setIsCollapsed(prev => !prev)} title={"Expand"}/>
+                <img src={logo} alt="Logo" className={styles.logo}/>
+                <MdChatBubbleOutline className={`${styles.collapsedBtn} ${gStyles.clickable}`} title={"New Chat"}
+                    onClick={startNewSession}/>
+                <FaHistory className={`${styles.collapsedBtn} ${gStyles.clickable}`} title={"Version History"}/>
+                
+                <div ref={settingsIconRef} className={styles.settingsContainer}>
+                    <FiMenu className={`${styles.collapsedBtn} ${gStyles.clickable}`} title={"Settings"}
+                        onClick={() => {setOpenSettings(prev => !prev); console.log(openSettings);}}/>
+                    {openSettings && <Settings settingsRef={settingsRef}/>}
+                </div>
+                
+                <GoPerson className={`${styles.username} ${gStyles.clickable}`} title={"Profile"}/>
+            </>
+        ) : (<>
             <div className={styles.topContainer}>
                 <div className={styles.appNameContainer}>
                     <img src={logo} alt="Logo" className={styles.logo}/>
                     <span className={styles.appName}>YAML Wizard</span>
-                    <LuPanelRightClose className={`${styles.closeBarBtn} ${gStyles.clickable}`}
-                        onClick={() => setIsCompact(prev => !prev)} title={"Collapse"}/>
+                    <LuPanelLeftClose className={`${styles.closeBarBtn} ${gStyles.clickable}`}
+                        onClick={() => setIsCollapsed(prev => !prev)} title={"Collapse"}/>
                 </div>
 
                 <button className={`${styles.actionBtn} ${gStyles.clickable}`} onClick={startNewSession} title={"New Chat"}>
@@ -193,6 +188,9 @@ function SideBar({sessionId, setSessionId, sessions, setSessions, setMessages, i
                 <button className={`${styles.actionBtn} ${gStyles.clickable}`} title={"Version History"}>
                     <FaHistory/> History
                 </button>
+                <Link className={`${styles.actionBtn} ${gStyles.clickable}`} to="/dashboard" title={"Open Dashboard"}>
+                    <RiDashboardFill/> Dashboard
+                </Link>
             </div>
 
             <p className={styles.sessionStart}>Chats</p>
@@ -217,22 +215,14 @@ function SideBar({sessionId, setSessionId, sessions, setSessions, setMessages, i
             <p className={styles.sessionEnd}/>
 
             <div className={styles.bottomContainer}>
-                <button className={`${styles.actionBtn} ${gStyles.clickable}`} 
-                    onClick={() => setOpenOptions(prev => !prev)} ref={optionsButtonRef}>
-                    <FiMenu/> Settings
-                </button>
-                {openOptions && (
-                    <div className={styles.options} ref={optionsRef}>
-                        <Link className={`${styles.option} ${gStyles.clickable}`} to="/profile">
-                            <GoPerson/>
-                            Profile
-                        </Link>
-                        <Link className={`${styles.option} ${gStyles.clickable}`} to="/" onClick={handleLogout}>
-                            <FaSignOutAlt/>
-                            Sign out
-                        </Link>
-                    </div>
-                )}
+                <div ref={settingsBtnRef} className={styles.settingsContainer}>
+                    <button className={`${styles.actionBtn} ${gStyles.clickable}`} 
+                        onClick={() => setOpenSettings(prev => !prev)}>
+                        <FiMenu/> Settings
+                    </button>
+                    {openSettings && <Settings settingsRef={settingsRef}/>}
+                </div>
+
                 {loading? null :
                     username? (
                         <Link className={`${styles.username} ${gStyles.clickable}`} to="/profile" title={"Profile"}>
@@ -250,6 +240,18 @@ function SideBar({sessionId, setSessionId, sessions, setSessions, setMessages, i
         </>)}
         </div>
 
+        {/* {openSettings && (
+            <div className={styles.settingsMenu} ref={settingsRef}>
+                <Link className={`${styles.option} ${gStyles.clickable}`} to="/profile">
+                    <GoPerson/>
+                    Profile
+                </Link>
+                <Link className={`${styles.option} ${gStyles.clickable}`} to="/" onClick={handleLogout}>
+                    <FaSignOutAlt/>
+                    Sign out
+                </Link>
+            </div>
+        )} */}
         {sessionToDelete && (
             <div className={styles.popupLayover}>
                 <div className={styles.deletePopup}>

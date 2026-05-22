@@ -34,7 +34,7 @@ def publish_to_repo(yaml_content: str, repo_url: str, platform: str, token: str,
     """Publish a YAML file to a GitHub or GitLab repository.
     Can either commit directly to a branch or create a pull/merge request.
     """
-    print("here")
+    # print("here")
     platform = platform.lower()
     print(platform)
     if platform == "github":
@@ -43,7 +43,7 @@ def publish_to_repo(yaml_content: str, repo_url: str, platform: str, token: str,
             commit_message, create_pr, pr_branch,
         )
     elif platform == "gitlab":
-        print("here")
+        # print("here")
         return _publish_gitlab(
             yaml_content, repo_url, token, file_path, branch,
             commit_message, create_pr, pr_branch,

@@ -44,10 +44,7 @@ function Login(){
                 credentials: "include",
                 body: JSON.stringify(userData)
             });
-            
-            console.log(res);
-            console.log("api url: ",api_url);
-            console.log("ENV:", import.meta.env);
+
             const data = await res.json();
             
             if (!res.ok) {

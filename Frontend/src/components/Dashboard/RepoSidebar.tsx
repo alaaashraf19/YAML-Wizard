@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import type { Repo } from '../../types';
+import logo from "../../assets/yaml_wizard_logo.png";
+
 import { useAddRepo, useDeleteRepo, useSyncRepo } from '../../api/hooks';
 
 import styles from './RepoSidebar.module.css';
@@ -33,9 +35,10 @@ export default function RepoSidebar({
   return (
     <aside className={styles.repoSidebar}>
       <div className={styles.repoSidebarHeader}>
-        <h1 className={styles.repoSidebarTitle}>
-          YAML Wizard
-        </h1>
+        <div className={styles.appNameContainer}>
+            <img src={logo} alt="Logo" className={styles.logo}/>
+            <span>YAML Wizard</span>
+        </div>
 
         <div className={styles.repoSidebarInputRow}>
           <input

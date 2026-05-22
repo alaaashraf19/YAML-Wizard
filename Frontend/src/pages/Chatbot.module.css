@@ -165,13 +165,12 @@
 }
 .form {
     width: 80%;
-    padding: 20px;
+    padding: 15px;
     border: 1px solid #ccc;
     border-radius: 40px;
     
     display: flex;
     align-items: flex-end;
-    gap: 10px;
     box-shadow: 3px 3px 10px rgba(0,0,0,0.4);
 }
 .textarea {
@@ -202,14 +201,17 @@
     font-family: Arial, Helvetica, sans-serif;
 }
 .sendButton {
-    width: 90px;
-    padding: 10px;
-    border: 2px solid #ccc;
-    border-radius: 15px;
-    background-color: rgb(19, 5, 79);
+    display: flex;
+    width: fit-content;
+    height: 100%;
+    padding: 12px;
+    border: 1px solid rgb(50, 39, 96);
+    /* border: none; */
+    border-radius: 20px;
+    background-color: rgb(9, 2, 41);
     color: inherit;
 }
-.sendButton:hover {background-color: rgb(23, 8, 92);}
+/* .sendButton:hover {background-color: rgb(23, 8, 92);} */
 
 .projectButton{
     margin: 20px;
@@ -220,10 +222,10 @@
     align-items: center;
     justify-content: center;
 
-    background-color: rgb(19, 5, 79);
-    box-shadow: 3px 3px 10px rgba(0,0,0,0.4);
-    border: 2px solid #ccc;
-    border-radius: 20px;
+    background-color: rgb(9, 2, 41);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    border: 1px solid rgb(50, 39, 96);
+    border-radius: 15px;
 
     color: white;
     font-size: 16px;
@@ -232,4 +234,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
-.projectButton:hover {background-color: rgb(23, 8, 92);}
+.projectButton:hover {
+    background-color: rgb(13, 4, 55);
+    border: 1px solid rgba(220, 221, 233, 0.4);
+}

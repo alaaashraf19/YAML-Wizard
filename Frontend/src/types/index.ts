@@ -121,3 +121,11 @@ export interface AuthContextType {
     login: (username: string) => void;
     logout: () => void;
 };
+
+export interface Project {
+    id: number | null;
+    user_id: number | null;
+    name: string;
+    repo_url: string;
+    platform: Platform;
+}
