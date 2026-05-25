@@ -12,12 +12,14 @@ from sqlalchemy import select,update,delete
 
 from models.chat_message_model import ChatMessage
 from models.chat_session_model import ChatSession
+from agent.chatbot_agent import ChatbotAgent
 
 
 class ChatbotService:
     def __init__(self):
         self.client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
         self.model = "models/gemini-2.5-flash"
+        self.agent = ChatbotAgent()
 
     async def send_message(self, message: str, chat_history: List[Dict[str, str]] = None) -> Dict[str, str]:
 
@@ -42,18 +44,14 @@ class ChatbotService:
                 parts = [types.Part.from_text(text=message)]
             ))
 
-            response = self.client.models.generate_content(
-                model = self.model,
-                contents = contents,
-                config = types.GenerateContentConfig(
-                    temperature = 0.7,
-                    max_output_tokens = 2500,
-                )
+            response = await self.agent.invoke(
+                message=message,
+                chat_history=chat_history,
             )
 
             return {
                 "role": "assistant",
-                "content": response.text.strip()
+                "content":str(response)
             }
 
         except Exception as e:
