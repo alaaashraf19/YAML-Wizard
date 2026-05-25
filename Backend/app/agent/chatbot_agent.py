@@ -1,35 +1,67 @@
 import os
-from typing import TypedDict, List, Dict, Annotated
-
+from typing import TypedDict, List, Dict, Annotated, Optional
 from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import add_messages
+from langgraph.prebuilt import ToolNode, tools_condition
 from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain_core.messages import HumanMessage, AIMessage, BaseMessage
+from langchain_core.messages import HumanMessage, AIMessage, SystemMessage, BaseMessage
+from agent.tools import TOOLS
 
+
+DEFAULT_SYSTEM_PROMPT = (
+    """You are a senior DevOps engineer specialized only in writing CI/CD pipelines
+    for GitHub Actions and GitLab CI.
+
+    You have access to a set of tools whose descriptions are provided to you
+    separately. Read each tool's description carefully and call any tool whose
+    purpose matches the current user request — for example, when the user
+    describes, asks to build, modify, or explain a concrete CI/CD pipeline,
+    use whichever tool fetches real-world example YAMLs to ground your answer.
+
+    If the user is only chatting, greeting, or asking a conceptual question
+    that doesn't require any tool, answer directly without calling one."""
+)
 
 class AgentState(TypedDict):
     messages: Annotated[List[BaseMessage], add_messages]
 
 
 class ChatbotAgent:
-    def __init__(self, model: str = "gemini-2.5-flash", temperature: float = 0.7, max_output_tokens: int = 2500):
-        self.llm = ChatGoogleGenerativeAI(
+    def __init__(self, model: str = "gemini-2.5-flash", temperature: float = 0.3,
+        max_output_tokens: int = 2500, tools: Optional[list] = None,
+        system_prompt: Optional[str] = DEFAULT_SYSTEM_PROMPT,):
+        
+        self.tools = TOOLS
+        self.system_prompt = system_prompt
+
+        base_llm = ChatGoogleGenerativeAI(
             model=model,
             google_api_key=os.getenv("GEMINI_API_KEY"),
             temperature=temperature,
             max_output_tokens=max_output_tokens,
         )
+        
+        self.llm = base_llm.bind_tools(self.tools) if self.tools else base_llm
         self.graph = self.build_graph()
 
     def build_graph(self):
         workflow = StateGraph(AgentState)
         workflow.add_node("llm", self.call_llm)
+        workflow.add_node("tools", ToolNode(self.tools))
+
         workflow.add_edge(START, "llm")
-        workflow.add_edge("llm", END)
+        workflow.add_conditional_edges("llm", tools_condition,{
+            "tools": "tools", END: END
+            },
+        )
+        workflow.add_edge("tools", "llm")
         return workflow.compile()
 
     async def call_llm(self, state: AgentState) -> Dict[str, List[BaseMessage]]:
-        response = await self.llm.ainvoke(state["messages"])
+        messages = state["messages"]
+        if self.system_prompt:
+            messages = [SystemMessage(content=self.system_prompt)] + list(messages)
+        response = await self.llm.ainvoke(messages)
         return {"messages": [response]}
 
     # converts {"role": "user","content": "Hi"} to langcain message format => HumanMessage(content="Hi")
