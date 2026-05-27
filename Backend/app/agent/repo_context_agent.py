@@ -82,14 +82,16 @@ def _detect_languages(key_files: dict[str, str]) -> list[str]:
     langs: list[str] = []
     if any(f in key_files for f in ("requirements.txt", "pyproject.toml", "setup.py", "Pipfile")):
         langs.append("python")
-    if "package.json" in key_files:
-        pkg = key_files["package.json"]
-        # TypeScript: explicit dep, tsconfig file in tree, or bun/tsc usage
+    # Check root package.json AND any subdir package.json (frontend/package.json etc.)
+    pkg_keys = [k for k in key_files if k == "package.json" or k.endswith("/package.json")]
+    if pkg_keys:
+        all_pkg_content = " ".join(key_files[k] for k in pkg_keys)
         is_ts = (
-            '"typescript"' in pkg
-            or "@types/" in pkg
+            '"typescript"' in all_pkg_content
+            or '"@types/' in all_pkg_content
             or "tsconfig" in str(list(key_files.keys()))
             or "tsconfig.json" in key_files
+            or any(k.endswith("/tsconfig.json") for k in key_files)
         )
         langs.append("typescript" if is_ts else "javascript")
     if "go.mod" in key_files:
@@ -217,18 +219,25 @@ def _detect_test_runners(key_files: dict[str, str]) -> tuple[list[str], list[Tes
     for runner, ecosystem, file_key, keyword in RUNNER_SIGNATURES:
         if runner in seen:
             continue
-        # Match exact filename OR subdir variant (e.g. backend/pyproject.toml)
+        # Match exact filename OR any subdir variant (e.g. backend/pyproject.toml)
         matching_keys = [k for k in key_files if k == file_key or k.endswith("/" + file_key)]
         if not matching_keys:
             continue
-        file_content = key_files[matching_keys[0]]
-        if keyword and keyword not in file_content:
+        # Check ALL matching files — the root pyproject.toml may lack pytest
+        # while backend/pyproject.toml has it
+        matched_path = None
+        for candidate_key in matching_keys:
+            file_content = key_files[candidate_key]
+            if keyword is None or keyword in file_content:
+                matched_path = candidate_key
+                break
+        if matched_path is None:
             continue
         seen.add(runner)
         details.append(TestRunnerInfo(
             runner=runner,
             ecosystem=ecosystem,
-            detected_via=f"{file_key}" + (f" (contains '{keyword}')" if keyword else ""),
+            detected_via=matched_path + (f" (contains '{keyword}')" if keyword else ""),
         ))
 
     return sorted(seen), details
