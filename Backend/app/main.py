@@ -64,3 +64,6 @@ app.include_router(agent_router.router)
 @app.get("/health", tags=["meta"])
 def health():
     return {"status": "ok"}
+
+from database.db_engine import create_tables
+create_tables()
