@@ -1,5 +1,5 @@
 import os
-from typing import TypedDict, List, Dict, Annotated, Optional
+from typing import TypedDict, List, Dict, Annotated, Optional, Any
 from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode, tools_condition
@@ -19,7 +19,12 @@ DEFAULT_SYSTEM_PROMPT = (
     use whichever tool fetches real-world example YAMLs to ground your answer.
 
     If the user is only chatting, greeting, or asking a conceptual question
-    that doesn't require any tool, answer directly without calling one."""
+    that doesn't require any tool, answer directly without calling one.
+
+    After producing any pipeline YAML, you MUST call `validate_pipeline_tool`
+    on it with the correct target ('github' or 'gitlab'). If it returns
+    errors, fix them and re-validate before responding to the user. Only
+    return the YAML to the user once validation reports valid: true."""
 )
 
 class AgentState(TypedDict):
@@ -81,8 +86,15 @@ class ChatbotAgent:
         return messages
 
      
-    async def invoke(self, message: str, chat_history: List[Dict[str, str]] = None) -> str:
+    async def invoke(self, message: str, chat_history: List[Dict[str, str]] = None, db: Optional[Any] = None, gitlab_connection: Optional[Any] = None) -> str:
         lc_messages = self.to_lc_messages(message, chat_history)
-        result = await self.graph.ainvoke({"messages": lc_messages})
+        
+        #langchain uses the db (the active session) and gitlab_connection in the validation tool
+        #since it sends the yaml and determines the platform, it can't determine the connection token and the llm can't produce them
+        #so we send these parameters into a runnable config that propagates along the graph and is not part of the prompt (hidden from the llm and ready to use not waiting to be filled)
+        #so we are delivering request‑scoped runtime data to a tool without involving the model.
+        config = {"configurable": {"db": db, "gitlab_connection": gitlab_connection}}
+        
+        result = await self.graph.ainvoke({"messages": lc_messages}, config=config)
         last_message = result["messages"][-1]
         return last_message.content
