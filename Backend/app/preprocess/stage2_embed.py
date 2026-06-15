@@ -7,7 +7,7 @@ from sentence_transformers import SentenceTransformer
 from tqdm.auto import tqdm
 
 # Paths
-DATASETS_DIR = Path("../../../datasets")
+DATASETS_DIR = Path(__file__).resolve().parents[3] / "datasets"
 
 TARGETS = {
     "github": {
