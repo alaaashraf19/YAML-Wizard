@@ -1,54 +1,23 @@
-# # from fastapi import FastAPI
-# # from routers import auth_router
-#
-# app = FastAPI()
-# app.include_router(auth_router.router, prefix="/auth", tags=["auth"])
-#
-# import logging
-#
-# from fastapi import FastAPI
-# from fastapi.middleware.cors import CORSMiddleware
-#
-# from app.core.config import settings
-# from app.routers import agent_router, auth_router   # auth_router = existing
-#
-# logging.basicConfig(level=logging.INFO, format="%(levelname)s | %(name)s | %(message)s")
-#
-# app = FastAPI(
-#     title=settings.app_title,
-#     description="Intelligent repository context extraction for CI/CD YAML generation.",
-#     version="0.2.0",
-#     debug=settings.debug,
-# )
-#
-# app.add_middleware(
-#     CORSMiddleware,
-#     allow_origins=["*"],
-#     allow_methods=["*"],
-#     allow_headers=["*"],
-# )
-#
-# # Routers
-# app.include_router(auth_router.router, prefix="/auth", tags=["auth"])
-# app.include_router(agent_router.router)
-#
-#
-# @app.get("/health", tags=["meta"])
-# def health() -> dict:
-#     return {"status": "ok"}
-
+import logging
 import sys
 import os
-sys.path.insert(0, os.path.join(os.path.dirname(__file__)))
+
+sys.path.insert(0, os.path.dirname(__file__))
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import auth_router
-from routers import agent_router
+
+from core.config import settings
+from routers import auth_router, agent_router
+from database.db_engine import create_tables
+
+logging.basicConfig(level=logging.INFO, format="%(levelname)s | %(name)s | %(message)s")
 
 app = FastAPI(
-    title="YAML Wizard API",
-    version="0.2.0",
+    title=settings.app_title,
+    description="Intelligent repository context extraction for CI/CD YAML generation.",
+    version="0.3.0",
+    debug=settings.debug,
 )
 
 app.add_middleware(
@@ -61,9 +30,10 @@ app.add_middleware(
 app.include_router(auth_router.router, prefix="/auth", tags=["auth"])
 app.include_router(agent_router.router)
 
+
 @app.get("/health", tags=["meta"])
-def health():
+def health() -> dict:
     return {"status": "ok"}
 
-from database.db_engine import create_tables
+
 create_tables()

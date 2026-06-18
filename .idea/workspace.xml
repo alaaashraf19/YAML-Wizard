@@ -5,8 +5,29 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="fcab49c7-2e73-4634-b942-32ef3de8bd24" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/Backend/app/agent/github_agent.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Backend/app/agent/gitlab_agent.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Backend/app/agent/tools/gitlab_api_tools.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Backend/app/agent/utils/detection.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Backend/app/agent/utils/url_parser.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Backend/migrate_add_new_columns.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/app/agent/repo_context_agent.py" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/app/agent/repo_context_agent.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/.env.example" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/.env.example" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/app/agent/tools/github_mcp_tools.py" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/app/agent/tools/github_mcp_tools.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/app/agent/tools/repo_fetcher.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/app/agent/utils/helpers.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/app/core/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/app/core/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/app/database/base.py" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/app/database/base.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/app/database/db_engine.py" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/app/database/db_engine.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/app/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/app/models/repo_model.py" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/app/models/repo_model.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/app/models/user_model.py" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/app/models/user_model.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/app/routers/agent_router.py" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/app/routers/agent_router.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/app/routers/auth_router.py" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/app/routers/auth_router.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/app/schemas/context_package.py" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/app/schemas/context_package.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/app/schemas/repo_schema.py" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/app/schemas/repo_schema.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/app/schemas/user_schema.py" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/app/schemas/user_schema.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/app/services/auth_services.py" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/app/services/auth_services.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,27 +56,32 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;Python.db_engine.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;feature/Backend/Repo-Fetcher&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/DELL/Documents/GitHub/YAML-Wizard&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "Python.db_engine.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "git-widget-placeholder": "feature/Backend/Repo-Fetcher",
+    "last_opened_file_path": "C:/Users/DELL/Documents/GitHub/YAML-Wizard/Backend/app/agent/utils",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\DELL\Documents\GitHub\YAML-Wizard\Backend\app\agent\utils" />
       <recent name="C:\Users\DELL\Documents\GitHub\YAML-Wizard\Backend" />
+      <recent name="C:\Users\DELL\Documents\GitHub\YAML-Wizard\Backend\app\agent\tools" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\DELL\Documents\GitHub\YAML-Wizard\Backend\app\agent" />
     </key>
   </component>
   <component name="SharedIndexes">

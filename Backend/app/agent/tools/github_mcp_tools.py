@@ -1,12 +1,15 @@
 """
-GitHub MCP Tool Wrappers for LangChain.
+GitHub MCP Tool Wrappers — thin LangChain StructuredTool adapters over
+the @modelcontextprotocol/server-github npx server.
+
+No detection logic lives here — all detection is in agent/utils/detection.py.
 """
 from __future__ import annotations
 
 import asyncio
 import logging
-from typing import Any
 import os
+from typing import Any
 
 from langchain_core.tools import StructuredTool
 from mcp import ClientSession, StdioServerParameters
@@ -48,30 +51,32 @@ class MCPSessionManager:
                 return "\n".join(parts)
 
 
+# ── Input schemas ─────────────────────────────────────────────────────────────
+
 class GetFileContentsInput(BaseModel):
     owner: str = Field(description="Repository owner")
-    repo: str = Field(description="Repository name")
-    path: str = Field(description="File path within the repository; use '' for root listing")
-    ref: str = Field(default="HEAD", description="Git ref")
+    repo:  str = Field(description="Repository name")
+    path:  str = Field(description="File path; empty string for root listing")
+    ref:   str = Field(default="HEAD", description="Git ref")
 
 
 class ListDirectoryInput(BaseModel):
     owner: str = Field(description="Repository owner")
-    repo: str = Field(description="Repository name")
-    path: str = Field(default="", description="Directory path; empty string for root")
-    ref: str = Field(default="HEAD", description="Git ref")
+    repo:  str = Field(description="Repository name")
+    path:  str = Field(default="", description="Directory path; empty string for root")
+    ref:   str = Field(default="HEAD", description="Git ref")
 
 
 class SearchCodeInput(BaseModel):
     query: str = Field(description="Search query")
     owner: str = Field(description="Repository owner")
-    repo: str = Field(description="Repository name")
+    repo:  str = Field(description="Repository name")
 
+
+# ── Tool builder ──────────────────────────────────────────────────────────────
 
 def build_github_tools(manager: MCPSessionManager) -> list[StructuredTool]:
-
     def get_file_contents(owner: str, repo: str, path: str, ref: str = "HEAD") -> str:
-        """Fetch raw content of a file OR list a directory from a GitHub repository."""
         try:
             return manager.call_tool(
                 "get_file_contents",
@@ -81,7 +86,6 @@ def build_github_tools(manager: MCPSessionManager) -> list[StructuredTool]:
             return f"[ERROR] Could not fetch {path}: {exc}"
 
     def list_directory(owner: str, repo: str, path: str = "", ref: str = "HEAD") -> str:
-        """List files and folders in a GitHub repository directory. Use path='' for root."""
         try:
             return manager.call_tool(
                 "get_file_contents",
@@ -91,10 +95,8 @@ def build_github_tools(manager: MCPSessionManager) -> list[StructuredTool]:
             return f"[ERROR] Could not list directory {path}: {exc}"
 
     def search_code(query: str, owner: str, repo: str) -> str:
-        """Search for code patterns within a GitHub repository."""
         try:
-            scoped_query = f"{query} repo:{owner}/{repo}"
-            return manager.call_tool("search_code", {"query": scoped_query})
+            return manager.call_tool("search_code", {"query": f"{query} repo:{owner}/{repo}"})
         except Exception as exc:
             return f"[ERROR] Search failed: {exc}"
 
@@ -102,30 +104,23 @@ def build_github_tools(manager: MCPSessionManager) -> list[StructuredTool]:
         StructuredTool.from_function(
             func=list_directory,
             name="list_directory",
-            description=(
-                "List files and folders in a GitHub repository directory. "
-                "ALWAYS call this first with path='' to see the root. "
-                "Then decide which files to fetch."
-            ),
+            description="List files/folders in a GitHub repo directory. Use path='' for root.",
             args_schema=ListDirectoryInput,
         ),
         StructuredTool.from_function(
             func=get_file_contents,
             name="get_file_contents",
             description=(
-                "Get a specific file's content from a GitHub repo. "
-                "Use for Dockerfile, requirements.txt, package.json, pyproject.toml, go.mod, pom.xml, etc. "
-                "SKIP lock files (package-lock.json, poetry.lock, Pipfile.lock) and binaries."
+                "Get a file's content from a GitHub repo. "
+                "Use for Dockerfile, requirements.txt, package.json, go.mod, pom.xml, etc. "
+                "SKIP lock files and binaries."
             ),
             args_schema=GetFileContentsInput,
         ),
         StructuredTool.from_function(
             func=search_code,
             name="search_code",
-            description=(
-                "Search for code patterns inside a GitHub repository. "
-                "Useful to find environment variables, script sections, or configurations."
-            ),
+            description="Search for code patterns inside a GitHub repository.",
             args_schema=SearchCodeInput,
         ),
     ]
