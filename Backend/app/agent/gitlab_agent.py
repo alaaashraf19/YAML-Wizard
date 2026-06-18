@@ -58,6 +58,7 @@ ROOT_FILES_TO_FETCH = {
     ".env.example",
     ".env.sample",
     ".env.template",
+    ".env",
     "example.env",
 }
 
