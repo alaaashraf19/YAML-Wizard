@@ -1,5 +1,3 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 from database.base import Base
 import os
 from dotenv import load_dotenv

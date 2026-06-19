@@ -2,12 +2,22 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from database.db_engine import create_tables
 from middleware.middleware import setup_middleware
-from routers import auth_router, github_app_router, publisher_router,platfroms_connect_router, chatbot_router, project_router
+from routers import auth_router, github_app_router, publisher_router,platfroms_connect_router, chatbot_router, project_router, agent_router
 from routers.dashboard import repos_router, runs_router, tests_router, insights_router
 from realtime import websocket_router
 import asyncio
 from services.dashboard.sync_loop_service import background_sync_loop
 from services.dashboard.test_parsers.loader import load_parsers
+import logging
+import sys
+import os
+from core.config import settings
+
+
+sys.path.insert(0, os.path.dirname(__file__))
+logging.basicConfig(level=logging.INFO, format="%(levelname)s | %(name)s | %(message)s")
+
+
 
 _sync_task: asyncio.Task | None = None
 
@@ -29,7 +39,12 @@ async def lifespan(app: FastAPI):
         except asyncio.CancelledError:
             pass
 
-app = FastAPI(lifespan=lifespan)
+app = FastAPI(
+    lifespan=lifespan,
+    title=settings.app_title,
+    version="0.3.0",
+    debug=settings.debug,
+)
 
 setup_middleware(app)
 
@@ -48,3 +63,13 @@ app.include_router(tests_router.router, prefix="/dashboard", tags=["dashboard_re
 app.include_router(insights_router.router, prefix="/dashboard", tags=["dashboard_insights"])
 
 app.include_router(websocket_router.router, prefix="/realtime", tags=["realtime_updates"])
+
+app.include_router(agent_router.router)
+
+@app.get("/health", tags=["meta"])
+def health() -> dict:
+    return {"status": "ok"}
+
+
+
+
