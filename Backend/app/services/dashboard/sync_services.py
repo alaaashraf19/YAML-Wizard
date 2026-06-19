@@ -19,8 +19,8 @@ async def sync_repository(repo_id: int, db: AsyncSession) -> SyncStatus:
         raise ValueError(f"Unsupported platform: {repo_orm.platform}")
 
     collector = get_ci_collector(repo_orm.platform)
-    print(f"[sync-repo] Starting sync for repo {repo_schema.full_name} (ID: {repo_id}) on platform {repo_orm.platform}", flush=True)
-    print(f"[sync-repo] using collector: {collector.__class__.__name__}", flush=True)
+    # print(f"[sync-repo] Starting sync for repo {repo_schema.full_name} (ID: {repo_id}) on platform {repo_orm.platform}", flush=True)
+    # print(f"[sync-repo] using collector: {collector.__class__.__name__}", flush=True)
     ctx = build_ctx(repo_orm, repo_schema)
     try:
         return await collector.sync(ctx, db)
