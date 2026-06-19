@@ -14,7 +14,7 @@ from sqlalchemy.orm import Session
 
 from core.config import settings
 from database.db_engine import get_db
-from models.repo_model import RepoContext as RepoContextModel
+from models.repo_context_model import RepoContext as RepoContextModel
 from schemas.repo_schema import Platform
 
 logger = logging.getLogger(__name__)

@@ -5,7 +5,7 @@ from .ci_collector import CICollector
 from urllib.parse import quote
 from schemas.dashboard import CollectorsRepositoryDetail, CIArtifact, SyncStatus
 from sqlalchemy.ext.asyncio import AsyncSession
-from models.dashboard import JobTiming, PipelineRun
+from models.repository_model import JobTiming, PipelineRun
 from sqlalchemy import select
 from datetime import datetime, timezone
 from ..recommendations_services.processor_services import compute_job_comparison, compute_run_comparison

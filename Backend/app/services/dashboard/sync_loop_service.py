@@ -1,6 +1,6 @@
 import asyncio
 from sqlalchemy import select
-from models.dashboard import Repository
+from models.repository_model import Repository
 from .sync_services import sync_repository
 from database.db_engine import async_session
 from realtime.connection_manager import ws_manager

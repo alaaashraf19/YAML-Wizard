@@ -3,7 +3,7 @@ from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..recommendations_services.processor_services import compute_test_avg_and_color
-from models.dashboard import JobTiming, TestRun
+from models.repository_model import JobTiming, TestRun
 from schemas.dashboard import TestResult
 
 from typing import Tuple

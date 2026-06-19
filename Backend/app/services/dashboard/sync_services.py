@@ -1,5 +1,5 @@
 from schemas.dashboard import SyncStatus, RepositorySchema, CollectorsRepositoryDetail
-from models.dashboard import Repository
+from models.repository_model import Repository
 from .platform_collectors.github_collector_services import GitHubCollector
 from .platform_collectors.gitlab_collector_services import GitLabCollector
 from .platform_collectors.ci_collector import CICollector

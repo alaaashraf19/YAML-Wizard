@@ -1,4 +1,4 @@
-from models.dashboard import JobTiming, PipelineRun, TestRun
+from models.repository_model import JobTiming, PipelineRun, TestRun
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 

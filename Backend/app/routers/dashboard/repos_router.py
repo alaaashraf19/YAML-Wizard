@@ -7,7 +7,7 @@ from services.dashboard.repos_services import add_repo_service
 from services.dashboard.sync_services import sync_repository
 from models.user_model import User
 from sqlalchemy import select
-from models.dashboard import Repository
+from models.repository_model import Repository
 
 router = APIRouter()
 

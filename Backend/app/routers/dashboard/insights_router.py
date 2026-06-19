@@ -3,7 +3,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.db_engine import get_db
-from models.dashboard import PipelineRun, TestRun
+from models.repository_model import PipelineRun, TestRun
 from schemas.dashboard import Insight, TrendPoint
 from services.dashboard.recommendations_services.insights_services import generate_insights
 from services.dashboard.repos_services import get_repo_or_404
