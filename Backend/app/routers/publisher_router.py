@@ -5,7 +5,7 @@ from models.user_model import User
 from models.platforms_model import GitHubInstallation,GitLabConnection, GitHubConnection
 from agent.tools.repo_publisher import publish_to_repo
 from agent.utils.github_auth import get_installation_token
-from services.gitlab_connect_service import get_valid_gitlab_token
+from services.platform_connectors.gitlab_connect import GitLabConnector
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 router = APIRouter()
@@ -88,7 +88,8 @@ async def publish_yaml(platform: str, current_user: User = Depends(get_current_u
         gitlab_connection = result.scalar_one_or_none()
         if gitlab_connection is None:
             raise HTTPException(status_code=404, detail="Gitlab Account not linked")
-        token = await get_valid_gitlab_token(gitlab_connection, db)
+        gitlab_connector = GitLabConnector()
+        token = await gitlab_connector.get_valid_token(gitlab_connection, db)
 
     result = publish_to_repo(yaml_content=yaml_content, repo_url=repo_url, platform=platform, token=token, file_path=None, branch= "main",commit_message= "test commit message",create_pr= True, pr_branch= "test")
     print(result.success)

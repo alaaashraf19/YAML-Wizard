@@ -1,6 +1,5 @@
 from fastapi import APIRouter,Depends, Request
-from services.gitlab_connect_service import gitlab_connect_service, gitlab_callback_service
-from services.github_connect_service import github_callback_service, github_connect_service
+from services.platform_connectors.factory import get_connector
 from sqlalchemy.ext.asyncio import AsyncSession
 from database.db_engine import get_db
 
@@ -9,22 +8,14 @@ router = APIRouter()
 
 
 
-@router.get("/github/connect")
-async def github_connect(request: Request,db: AsyncSession = Depends(get_db)):
-    return await github_connect_service(request, db)
+@router.get("/{platform}/connect")
+async def connect(platform: str, request: Request, db: AsyncSession = Depends(get_db)):
+    connector = get_connector(platform)
+    return await connector.connect(request, db)
 
 
-@router.get("/github/callback")
-async def github_callback(code: str,request: Request,db: AsyncSession = Depends(get_db)):
-    return await github_callback_service(code, request, db)
-
-
-@router.get("/gitlab/connect")
-async def gitlab_connect(request: Request,db: AsyncSession = Depends(get_db)):
-    return await gitlab_connect_service(request,db)
-
-
-@router.get("/gitlab/callback")
-async def gitlab_callback( code: str,request: Request,db: AsyncSession = Depends(get_db)):
-    return await gitlab_callback_service(code,request,db)
+@router.get("/{platform}/callback")
+async def callback(platform: str, code: str, request: Request, db: AsyncSession = Depends(get_db)):
+    connector = get_connector(platform)
+    return await connector.callback(code, request, db)
     

@@ -6,26 +6,9 @@ from langgraph.prebuilt import ToolNode, tools_condition
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import HumanMessage, AIMessage, SystemMessage, BaseMessage
 from agent.tools import TOOLS
+from agent.prompts import SYSTEM_PROMPT
 
 
-DEFAULT_SYSTEM_PROMPT = (
-    """You are a senior DevOps engineer specialized only in writing CI/CD pipelines
-    for GitHub Actions and GitLab CI.
-
-    You have access to a set of tools whose descriptions are provided to you
-    separately. Read each tool's description carefully and call any tool whose
-    purpose matches the current user request — for example, when the user
-    describes, asks to build, modify, or explain a concrete CI/CD pipeline,
-    use whichever tool fetches real-world example YAMLs to ground your answer.
-
-    If the user is only chatting, greeting, or asking a conceptual question
-    that doesn't require any tool, answer directly without calling one.
-
-    After producing any pipeline YAML, you MUST call `validate_pipeline_tool`
-    on it with the correct target ('github' or 'gitlab'). If it returns
-    errors, fix them and re-validate before responding to the user. Only
-    return the YAML to the user once validation reports valid: true."""
-)
 
 class AgentState(TypedDict):
     messages: Annotated[List[BaseMessage], add_messages]
@@ -34,7 +17,7 @@ class AgentState(TypedDict):
 class ChatbotAgent:
     def __init__(self, model: str = "gemini-2.5-flash", temperature: float = 0.3,
         max_output_tokens: int = 2500, tools: Optional[list] = None,
-        system_prompt: Optional[str] = DEFAULT_SYSTEM_PROMPT,):
+        system_prompt: Optional[str] = SYSTEM_PROMPT,):
         
         self.tools = TOOLS
         self.system_prompt = system_prompt
