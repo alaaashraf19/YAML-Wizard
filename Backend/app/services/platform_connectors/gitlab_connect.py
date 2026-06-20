@@ -1,11 +1,12 @@
 from urllib.parse import urlencode
+import secrets
 import os
 from dotenv import load_dotenv
 from core.security import get_current_user
 import httpx
 from fastapi import HTTPException
 from datetime import datetime, timezone, timedelta
-from models.platforms_model import GitLabConnection
+from models.platforms_model import GitLabConnection, OAuthState
 from fastapi.responses import JSONResponse, RedirectResponse
 from sqlalchemy import select
 from .oauth_connector import oauthConnector
@@ -25,14 +26,21 @@ class GitLabConnector(oauthConnector):
         if not token:
             raise HTTPException(401, "Login required")
         
-        #this user part will be updates
         user = await get_current_user(db, token)
-
+        state = secrets.token_urlsafe(16)
+        oauth_state = OAuthState(
+                user_id=user.id,
+                provider="gitlab",
+                state=state
+            )
+        db.add(oauth_state)
+        await db.commit()
         params = {
             "client_id": GITLAB_CLIENT_ID,
             "redirect_uri": GITLAB_REDIRECT_URI,
             "response_type": "code",
             "scope": "api", #Full API access to GitLab on behalf of the user
+            "state": state
         }
 
         url = "https://gitlab.com/oauth/authorize?" + urlencode(params)
@@ -42,12 +50,29 @@ class GitLabConnector(oauthConnector):
 
 
 
-    async def callback(self, code, request, db):
+    async def callback(self, code,state, request, db):
+        
+        base_url = os.getenv("Frontend_Base_URL")
+
         token = request.cookies.get("access_token")
         if not token:
-            raise HTTPException(401, "Login required")
+            return RedirectResponse(f"{base_url}/login?error=login_required")
 
         user = await get_current_user(db, token)
+
+        #validate state
+        result = await db.execute(
+            select(OAuthState).where(
+                OAuthState.state == state,
+                OAuthState.provider == "gitlab",
+                OAuthState.user_id == user.id
+            )
+        )
+
+        oauth_state = result.scalar_one_or_none()
+
+        if not oauth_state:
+            return RedirectResponse(f"{base_url}/profile?gitlab=error&reason=invalid_state")
 
 
         token_url = "https://gitlab.com/oauth/token"
@@ -64,7 +89,7 @@ class GitLabConnector(oauthConnector):
             resp = await client.post(token_url, data=data)
 
         if resp.status_code != 200:
-            raise HTTPException(status_code=400, detail="GitLab OAuth failed")
+            return RedirectResponse(f"{base_url}/profile?gitlab=error&reason=gitlab_oAuth_failed")
 
         token_data = resp.json()
 
@@ -85,11 +110,15 @@ class GitLabConnector(oauthConnector):
             )
 
         access_token = encrypt_token(access_token)
-        refresh_token= encrypt_token(refresh_token)
+        if refresh_token:
+            refresh_token = encrypt_token(refresh_token)
         gitlab_user = user_resp.json()
-        gitlab_user_id = gitlab_user["id"]
-        gitlab_username = gitlab_user["username"]
+        gitlab_user_id = gitlab_user.get("id")
+        gitlab_username = gitlab_user.get("username")
 
+        if not gitlab_user_id:
+            return RedirectResponse(f"{base_url}/profile?gitlab=error&reason=user_fetch_failed")
+        
         result = await db.execute(select(GitLabConnection).where(GitLabConnection.user_id == user.id))
         existing = result.scalar_one_or_none()
 
@@ -110,10 +139,11 @@ class GitLabConnector(oauthConnector):
             )
             db.add(new_conn)
 
-        await db.flush()
+        await db.delete(oauth_state)
         await db.commit()
 
-        return JSONResponse(content={"msg":"Gitlab connected successfully"})
+        # Redirect back to frontend with success
+        return RedirectResponse(f"{base_url}/profile?gitlab=success")
 
 
     async def get_valid_token(self, connection, db):

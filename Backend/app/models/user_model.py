@@ -26,3 +26,6 @@ class User(Base):
 
     #repositories, 1 to many
     repositories = relationship("Repository",back_populates="user",cascade="all, delete-orphan")
+
+    #for github redirects to check if the same user connecting his profile is the same one returning from git oauth
+    oauth_states = relationship("OAuthState", back_populates="user")

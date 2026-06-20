@@ -1,11 +1,11 @@
 import secrets
 from fastapi import HTTPException
-from fastapi.responses import JSONResponse, RedirectResponse
+from fastapi.responses import RedirectResponse
 import httpx
 import os
 from dotenv import load_dotenv
 from core.security import get_current_user
-from models.platforms_model import GitHubConnection
+from models.platforms_model import GitHubConnection, OAuthState
 from sqlalchemy import select
 from services.platform_connectors.oauth_utils import encrypt_token, decrypt_token
 from .oauth_connector import oauthConnector
@@ -28,9 +28,14 @@ class GithubConnector(oauthConnector):
 
         user = await get_current_user(db, token)
 
-        #state part will be updatedd
         state = secrets.token_urlsafe(16)
-
+        oauth_state = OAuthState(
+                user_id=user.id,
+                provider="github",
+                state=state
+            )
+        db.add(oauth_state)
+        await db.commit()
         url = (
             "https://github.com/login/oauth/authorize"
             f"?client_id={GITHUB_CLIENT_ID}"
@@ -43,13 +48,30 @@ class GithubConnector(oauthConnector):
 
 
 
-    async def callback(self, code, request, db):
+    async def callback(self, code, state, request, db):
+        
+        base_url = os.getenv("Frontend_Base_URL")
 
         token = request.cookies.get("access_token")
         if not token:
-            raise HTTPException(401, "Login required")
+            return RedirectResponse(f"{base_url}/login?error=login_required")
 
         user = await get_current_user(db, token)
+
+        #validate state
+        result = await db.execute(
+            select(OAuthState).where(
+                OAuthState.state == state,
+                OAuthState.provider == "github",
+                OAuthState.user_id == user.id
+            )
+        )
+
+        oauth_state = result.scalar_one_or_none()
+
+        if not oauth_state:
+            return RedirectResponse(f"{base_url}/profile?github=error&reason=invalid_state")
+
 
         async with httpx.AsyncClient() as client:
             token_res = await client.post(
@@ -60,6 +82,7 @@ class GithubConnector(oauthConnector):
                     "client_secret": GITHUB_CLIENT_SECRET,
                     "code": code,
                     "redirect_uri": GITHUB_REDIRECT_URI,
+                    "state": state,
                 },
             )
 
@@ -67,7 +90,8 @@ class GithubConnector(oauthConnector):
         access_token = token_json.get("access_token")
 
         if not access_token:
-            raise HTTPException(400, "GitHub token exchange failed")
+            return RedirectResponse(f"{base_url}/profile?github=error&reason=github_token_exchange_failed")
+
 
         async with httpx.AsyncClient() as client:
             user_res = await client.get(
@@ -81,7 +105,8 @@ class GithubConnector(oauthConnector):
         github_login = github_user.get("login")
 
         if not github_id:
-            raise HTTPException(400, "Failed to fetch GitHub user")
+            return RedirectResponse(f"{base_url}/profile?github=error&reason=github_user_fetch_failed")
+
         
         result = await db.execute(
             select(GitHubConnection).where(GitHubConnection.user_id == user.id)
@@ -105,13 +130,11 @@ class GithubConnector(oauthConnector):
             )
             db.add(connection)
 
+        await db.delete(oauth_state)
         await db.commit()
+
         # Redirect back to frontend with success
-        # frontend_url = "http://localhost:5173/connect?status=success"
-        # return RedirectResponse(frontend_url)
-
-        return JSONResponse(content={"msg": "GitHub connected successfully"})
-
+        return RedirectResponse(f"{base_url}/profile?github=success")
 
     async def is_token_valid(self, github_token: str) -> bool:
         """Check if GitHub access token is still valid"""

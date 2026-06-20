@@ -13,14 +13,14 @@ class ParserRegistry:
             parser = parser_cls()
 
             if parser.can_parse(content, filename):
-                print(f"[test-parse] Selected parser: {parser.parser_name}", flush=True)
+                # print(f"[test-parse] Selected parser: {parser.parser_name}", flush=True)
                 return parser
 
         return None
 
     def parse(self, content: str, filename: str = "") -> list[TestResult]:
         parser = self.detect(content, filename)
-        print(f"[test-parse] Detected parser: {parser.parser_name if parser else 'None'}", flush=True)
+        # print(f"[test-parse] Detected parser: {parser.parser_name if parser else 'None'}", flush=True)
         if not parser:
             return []
         return parser.parse(content)

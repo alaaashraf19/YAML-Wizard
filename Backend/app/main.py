@@ -14,7 +14,7 @@ import os
 from core.config import settings
 
 sys.path.insert(0, os.path.dirname(__file__))
-logging.basicConfig(level=logging.INFO, format="%(levelname)s | %(name)s | %(message)s")
+# logging.basicConfig(level=logging.INFO, format="%(levelname)s | %(name)s | %(message)s")
 
 
 
