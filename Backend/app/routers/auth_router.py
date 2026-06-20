@@ -9,6 +9,7 @@ from models.user_model import User
 from sqlalchemy.ext.asyncio import AsyncSession
 router = APIRouter()
 
+
 @router.post("/signup", response_model=UserCreateResponse)
 async def signup(userCreate: UserCreate , db : AsyncSession = Depends(get_db)):
       return await signup_service(userCreate, db)

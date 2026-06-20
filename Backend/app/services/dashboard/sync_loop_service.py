@@ -1,6 +1,6 @@
 import asyncio
 from sqlalchemy import select
-from models.dashboard import Repository
+from models.repository_model import Repository
 from .sync_services import sync_repository
 from database.db_engine import async_session
 from realtime.connection_manager import ws_manager
@@ -17,9 +17,9 @@ async def background_sync_loop():
     try:
         SYNC_INTERVAL_MINUTES = int(os.getenv("SYNC_INTERVAL_MINUTES", 5))
         interval = SYNC_INTERVAL_MINUTES * 60
-        print(f"[auto-sync] Background sync started — interval: {interval}s", flush=True)
+        # print(f"[auto-sync] Background sync started — interval: {interval}s", flush=True)
     except Exception as e:
-        print(f"[auto-sync] STARTUP ERROR: {e}", flush=True)
+        # print(f"[auto-sync] STARTUP ERROR: {e}", flush=True)
         return
 
     while True:
@@ -27,7 +27,6 @@ async def background_sync_loop():
 
         try:
             async with async_session() as db:
-                # print("here")
 
                 repos = (await db.execute(select(Repository))).scalars().all()
 
@@ -37,13 +36,13 @@ async def background_sync_loop():
                             sync_result = await sync_repository(repo.id, db_repo)
 
                         if sync_result.runs_synced > 0:
-                            print(
-                                f"[auto-sync] {repo.full_name}: "
-                                f"{sync_result.runs_synced} runs, "
-                                f"{sync_result.jobs_synced} jobs, "
-                                f"{sync_result.tests_parsed} tests",
-                                flush=True
-                            )
+                            # print(
+                            #     f"[auto-sync] {repo.full_name}: "
+                            #     f"{sync_result.runs_synced} runs, "
+                            #     f"{sync_result.jobs_synced} jobs, "
+                            #     f"{sync_result.tests_parsed} tests",
+                            #     flush=True
+                            # )
 
                             await ws_manager.broadcast(repo.id, {
                                 "type": "sync_complete",
@@ -53,10 +52,12 @@ async def background_sync_loop():
                                 "tests_parsed": sync_result.tests_parsed,
                             })
                         else:
-                            print(f"[auto-sync] {repo.full_name}: up to date", flush=True)
+                            # print(f"[auto-sync] {repo.full_name}: up to date", flush=True)
+                            pass
 
                     except Exception as e:
-                        print(f"[auto-sync] ERROR repo_id={repo.id}: {e}", flush=True)
-
+                        # print(f"[auto-sync] ERROR repo_id={repo.id}: {e}", flush=True)
+                        continue
         except Exception as e:
-            print(f"[auto-sync] LOOP ERROR: {e}", flush=True)
+            # print(f"[auto-sync] LOOP ERROR: {e}", flush=True)
+            continue

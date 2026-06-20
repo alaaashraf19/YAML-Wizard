@@ -6,7 +6,7 @@ from core.security import get_current_user
 from schemas.dashboard import TestHistoryPoint
 from database.db_engine import get_db
 from models.user_model import User
-from models.dashboard import PipelineRun, TestRun
+from models.repository_model import PipelineRun, TestRun
 from services.dashboard.repos_services import get_repo_or_404
 
 router = APIRouter()

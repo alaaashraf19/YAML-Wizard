@@ -1,5 +1,3 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 from database.base import Base
 import os
 from dotenv import load_dotenv
@@ -19,10 +17,8 @@ async_session = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit
 async def get_db() -> AsyncSession:  # type: ignore[misc]
 
     async with async_session() as session:
-        try:
-            yield session
-        finally:
-            await session.close()
+        yield session
+
 
 async def create_tables():
     async with engine.begin() as conn:

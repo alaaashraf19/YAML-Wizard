@@ -13,6 +13,6 @@ def load_parsers():
 
     from .logs.log_parsers import UnittestLogsParser, MinitestLogsParser, RspecLogsParser, GoLogsParser, PytestLogsParser, JestLogsParser
     
-    print("[loader] All test parsers loaded and registered", flush=True)
+    # print("[loader] All test parsers loaded and registered", flush=True)
 
     

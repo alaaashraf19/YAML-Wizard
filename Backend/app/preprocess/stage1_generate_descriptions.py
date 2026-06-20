@@ -7,8 +7,8 @@ from pathlib import Path
 from dotenv import load_dotenv
 from tqdm.auto import tqdm
 
-DATASETS_DIR = Path("../../../datasets")
-load_dotenv("../../.env")
+DATASETS_DIR = Path(__file__).resolve().parents[3] / "datasets"
+load_dotenv(Path(__file__).resolve().parents[2] / ".env")
 
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "")
 

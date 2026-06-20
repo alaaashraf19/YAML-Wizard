@@ -3,7 +3,7 @@ from schemas.dashboard import PipelineRunOut, PipelineRunDetail, JobTimingOut, T
 from database.db_engine import get_db
 from sqlalchemy.ext.asyncio import AsyncSession
 from models.user_model import User
-from models.dashboard import PipelineRun, JobTiming, TestRun
+from models.repository_model import PipelineRun, JobTiming, TestRun
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload

@@ -19,16 +19,15 @@ async def signup(user: UserCreate, db:AsyncSession):
     if db_user:
         raise HTTPException(
             status_code=409,
-            detail=[{"loc": ["body", "username"], "msg": "Username already exists"}]
+            detail=[{"loc": ["body", "username"], "msg": "Username already exists"}],
         )
     elif email_exists:
         raise HTTPException(
             status_code=409,
-            detail=[{"loc": ["body", "email"], "msg": "Email already exists"}]
+            detail=[{"loc": ["body", "email"], "msg": "Email already exists"}],
         )
 
     hashed_pw = hash_password(user.password)
-    
     new_user = UserModel(
         username=username,
         email=email,
@@ -55,7 +54,7 @@ async def login(user: UserLogin, db:AsyncSession):
     db_user = result.scalar_one_or_none()
     hashed_pw = db_user.hashed_password if db_user else None
 
-    if not db_user or not hashed_pw or not verify_password(password, hashed_pw):
+    if not db_user or not hashed_pw or not verify_password(user.password, hashed_pw):
         raise HTTPException(status_code=403, detail="Invalid username or password")
 
     access_token = create_access_token(
@@ -72,8 +71,8 @@ async def login(user: UserLogin, db:AsyncSession):
         key="access_token",
         value=access_token,
         httponly=True,
-        secure=False,        # ===========> MAKE SECURE FOR HTTPS
-        samesite="Lax",
+        secure=True,        # ===========> MAKE SECURE FOR HTTPS
+        samesite="none",
         max_age=os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES",30)
     )
 

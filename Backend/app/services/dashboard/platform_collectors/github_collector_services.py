@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
 from ..recommendations_services.processor_services import compute_job_comparison, compute_run_comparison
-from models.dashboard import JobTiming, PipelineRun, Repository
+from models.repository_model import JobTiming, PipelineRun
 from ..test_parsers.ParserRegistry import ParserRegistry
 from .collectors_utils import parse_duration, _parse_ts, process_test_batch, extract_test_reports_from_zip
 
@@ -164,7 +164,7 @@ class GitHubCollector(CICollector):
                 #compare to previous run
                 pipeline_run.compared_to_prev_pct = await compute_run_comparison(pipeline_run, ctx.repo.id, db,)
                 
-                print(f"Run {pipeline_run.id} compared to previous run: {pipeline_run.compared_to_prev_pct}%")
+                # print(f"Run {pipeline_run.id} compared to previous run: {pipeline_run.compared_to_prev_pct}%")
 
                 #fetch jobs for the pipeline run
                 raw_jobs = await self.get_jobs(ctx, external_id)
@@ -192,9 +192,10 @@ class GitHubCollector(CICollector):
                     
                     tests_parsed += job_tests
                     
-                    print(f"[Final] Synced job {job.job_name} with {tests_parsed} tests parsed so far")
+                    # print(f"[Final] Synced job {job.job_name} with {tests_parsed} tests parsed so far")
                     if tests_parsed > 0:
-                        print(f"Job {job.job_name}: Parsed {tests_parsed} tests")
+                        # print(f"Job {job.job_name}: Parsed {tests_parsed} tests")
+                        pass
                     jobs_synced += 1
                 
                 runs_synced += 1
@@ -232,53 +233,57 @@ class GitHubCollector(CICollector):
         repo_id = ctx.repo.id
 
         try:
-            print(f"[sync-tests] Fetching artifacts for (owner={owner}, repo={repo_name}, run_id={run_id})", flush=True)
+            # print(f"[sync-tests] Fetching artifacts for (owner={owner}, repo={repo_name}, run_id={run_id})", flush=True)
             artifacts = await self.get_artifacts(ctx, run_id)
             
-            print(f"[sync-tests] Found {len(artifacts)} total artifacts", flush=True)
+            # print(f"[sync-tests] Found {len(artifacts)} total artifacts", flush=True)
             
             for artifact in artifacts:
                 artifact_name = artifact.name
-                print(f"[sync-tests] Checking artifact: {artifact_name}", flush=True)
+                # print(f"[sync-tests] Checking artifact: {artifact_name}", flush=True)
                 
                 if any(name in artifact_name.lower() for name in ["test", "report", "result", "junit", "coverage"]):
                     
                     try:
-                        print(f"[sync-tests] Downloading artifact: {artifact_name}", flush=True)
+                        # print(f"[sync-tests] Downloading artifact: {artifact_name}", flush=True)
 
                         zip_data = await self.download_artifact(artifact)
 
-                        print(f"[sync-tests] Downloaded artifact {artifact_name}", flush=True)
+                        # print(f"[sync-tests] Downloaded artifact {artifact_name}", flush=True)
                         
                         reports = extract_test_reports_from_zip(zip_data)
 
-                        print(f"[sync-tests] Extracted {len(reports)} report files from {artifact_name}", flush=True)
+                        # print(f"[sync-tests] Extracted {len(reports)} report files from {artifact_name}", flush=True)
                         
                         for filename, content, ext in reports:
-                            print(f"[sync-tests] Processing report file: {filename} (type: {ext}, size: {len(content)} bytes)", flush=True)
+                            # print(f"[sync-tests] Processing report file: {filename} (type: {ext}, size: {len(content)} bytes)", flush=True)
                             
                             try:
                                 parsed_tests = parser_registry.parse(content, filename)
 
-                                print(f"[sync-tests] Parsed {len(parsed_tests)} tests from {filename}", flush=True)
+                                # print(f"[sync-tests] Parsed {len(parsed_tests)} tests from {filename}", flush=True)
                                 
                                 tests_found += await process_test_batch(parsed_tests, run_id, repo_id, db, job = None)
                                 
-                                print(f"[sync-tests] Added test to DB. Total tests found: {tests_found}", flush=True)
+                                # print(f"[sync-tests] Added test to DB. Total tests found: {tests_found}", flush=True)
 
                             except Exception as e:
-                                print(f"[sync-tests] ERROR parsing {filename}: while snying job tests function: {str(e)}", flush=True)
+                                # print(f"[sync-tests] ERROR parsing {filename}: while snying job tests function: {str(e)}", flush=True)
+                                pass
                     
                     except Exception as e:
-                        print(f"[sync-tests] ERROR downloading/extract artifact {artifact_name}:  while snying job tests function:: {str(e)}", flush=True)
+                        # print(f"[sync-tests] ERROR downloading/extract artifact {artifact_name}:  while snying job tests function:: {str(e)}", flush=True)
+                        pass
                 else:
-                    print(f"[sync-tests] Skipping non-test artifact: {artifact_name}", flush=True)
+                    # print(f"[sync-tests] Skipping non-test artifact: {artifact_name}", flush=True)
+                    pass
         
         except Exception as e:
-            print(f"[sync-tests] ERROR fetching artifacts: {str(e)}", flush=True)
+            # print(f"[sync-tests] ERROR fetching artifacts: {str(e)}", flush=True)
+            pass
         
         #Parse logs if no test reports found
-        print(f"[sync-tests] Tests found in artifacts: {tests_found}. Will {'skip logs' if tests_found > 0 else 'parse logs'}", flush=True)
+        # print(f"[sync-tests] Tests found in artifacts: {tests_found}. Will {'skip logs' if tests_found > 0 else 'parse logs'}", flush=True)
         return tests_found
 
         
@@ -302,12 +307,14 @@ class GitHubCollector(CICollector):
                 tests_found += await process_test_batch(parsed_tests, job.run_id, repo_id, db,  job,)
 
             except Exception as e:
-                print(f"[sync-tests] ERROR parsing logs: {str(e)}", flush=True)
+                # print(f"[sync-tests] ERROR parsing logs: {str(e)}", flush=True)
+                pass
             
         except Exception as e:
-            print(f"[sync-tests] ERROR fetching logs: {str(e)}", flush=True)
+            # print(f"[sync-tests] ERROR fetching logs: {str(e)}", flush=True)
+            pass
         
-        print(f"[sync-tests] Completed sync_job_tests from logs for {job.job_name}: {tests_found} tests found", flush=True)
+        # print(f"[sync-tests] Completed sync_job_tests from logs for {job.job_name}: {tests_found} tests found", flush=True)
         
         return tests_found
 

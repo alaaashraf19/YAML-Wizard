@@ -3,7 +3,7 @@ from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..recommendations_services.processor_services import compute_test_avg_and_color
-from models.dashboard import JobTiming, TestRun
+from models.repository_model import JobTiming, TestRun
 from schemas.dashboard import TestResult
 
 from typing import Tuple
@@ -113,9 +113,11 @@ def extract_test_reports_from_zip(zip_data: bytes) -> list[Tuple[str, str, str]]
                     content = z.read(fname).decode("utf-8",errors="ignore")
                     reports.append((fname, content, ext.lstrip(".")))
                 except Exception as e:
-                    print(f"Failed reading report file {fname}: {e}", flush=True)
+                    # print(f"Failed reading report file {fname}: {e}", flush=True)
+                    pass
 
     except Exception as e:
-        print(f"Failed to extract artifact zip: {e}", flush=True)
+        # print(f"Failed to extract artifact zip: {e}", flush=True)
+        pass
 
     return reports

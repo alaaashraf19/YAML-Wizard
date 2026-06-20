@@ -1,7 +1,7 @@
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from models.dashboard import PipelineRun, TestRun
+from models.repository_model import PipelineRun, TestRun
 from schemas.dashboard import Insight
 
 

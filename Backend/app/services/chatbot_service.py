@@ -12,14 +12,17 @@ from sqlalchemy import select,update,delete
 
 from models.chat_message_model import ChatMessage
 from models.chat_session_model import ChatSession
+from models.platforms_model import GitLabConnection
+from agent.chatbot_agent import ChatbotAgent
 
 
 class ChatbotService:
     def __init__(self):
         self.client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
         self.model = "models/gemini-2.5-flash"
+        self.agent = ChatbotAgent()
 
-    async def send_message(self, message: str, chat_history: List[Dict[str, str]] = None) -> Dict[str, str]:
+    async def send_message(self, message: str, chat_history: List[Dict[str, str]] = None, db: Optional[AsyncSession] = None, user_id: Optional[int] = None) -> Dict[str, str]:
 
         if not message or not message.strip():
             raise HTTPException(status_code=400, detail="Message cannot be empty")
@@ -42,18 +45,21 @@ class ChatbotService:
                 parts = [types.Part.from_text(text=message)]
             ))
 
-            response = self.client.models.generate_content(
-                model = self.model,
-                contents = contents,
-                config = types.GenerateContentConfig(
-                    temperature = 0.7,
-                    max_output_tokens = 2500,
-                )
+            gitlab_connection = None
+            if db is not None and user_id is not None:
+                gitlab_result = await db.execute(select(GitLabConnection).where(GitLabConnection.user_id == user_id))
+                gitlab_connection = gitlab_result.scalar_one_or_none()
+
+            response = await self.agent.invoke(
+                message=message,
+                chat_history=chat_history,
+                db=db,
+                gitlab_connection=gitlab_connection,
             )
 
             return {
                 "role": "assistant",
-                "content": response.text.strip()
+                "content":str(response)
             }
 
         except Exception as e:
@@ -121,7 +127,9 @@ class ChatbotService:
 
         result = await self.send_message(
             message=message,
-            chat_history=chat_history
+            chat_history=chat_history,
+            db=db,
+            user_id=user_id
         )
 
         user_msg, bot_msg = await self.save_conversation_turn(
