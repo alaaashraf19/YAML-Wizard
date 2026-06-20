@@ -1,7 +1,7 @@
 import gStyles from "../global.module.css"
 import styles from './SignUp.Login.module.css';
 import { useState } from "react";
-import { UsernameField, EmailField, PasswordField, ConfirmPasswordField } from "../components/AuthForm/AuthForm";
+import { UsernameField, EmailField, PasswordField } from "../components/AuthForm/AuthForm";
 import { Link } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
 
@@ -84,27 +84,29 @@ function SignUp(){
             <h1>Sign Up</h1>
             <form className={styles.form} onSubmit={handleSubmit} noValidate>
                 {responseError && <p className={styles.error}>{responseError}</p>}
-                <UsernameField username={username} setUsername={setUsername}
-                    emptyUsername={emptyUsername} setEmptyUsername={setEmptyUsername}/>
-                    
-                <EmailField email={email} setEmail={setEmail} emptyEmail={emptyEmail}
-                    setEmptyEmail={setEmptyEmail}/>
-                {/* email doesn't have @ warning needs fixing */}
+                <UsernameField username={username} setUsername={setUsername} editUsername={null} setEditUsername={null}/>
+                {emptyUsername && <p className={styles.fieldError}>Username is required</p>}
 
-                <PasswordField password={password} setPassword={setPassword} emptyPassword={emptyPassword}
-                    setEmptyPassword={setEmptyPassword} showPassword={showPassword}
-                    setShowPassword={setShowPassword} />
+                <EmailField email={email} setEmail={setEmail} editEmail={null} setEditEmail={null} />
+                {emptyEmail && <p className={styles.fieldError}>Email is required</p>}
 
-                <ConfirmPasswordField confirmPassword={confirmPassword} setConfirmPassword={setConfirmPassword}
-                    emptyConfirmPassword={emptyConfirmPassword} setEmptyConfirmPassword={setEmptyConfirmPassword}
-                    showConfirmPassword={showConfirmPassword} setShowConfirmPassword={setShowConfirmPassword} />
+                <PasswordField type="Password" password={password} setPassword={setPassword}
+                    showPassword={showPassword} setShowPassword={setShowPassword} />
+                {emptyPassword && <p className={styles.fieldError}>Password is required</p>}
+
+                <PasswordField type="Confirm Password" password={confirmPassword} setPassword={setConfirmPassword}
+                    showPassword={showConfirmPassword} setShowPassword={setShowConfirmPassword} />
+                {emptyConfirmPassword && <p className={styles.fieldError}>Confirm Password is required</p>}
 
                 <button type="submit" className={`${styles.submit} ${gStyles.clickable}`} disabled={loading}>
                     {loading ? "Signing Up..." : "Sign Up"}
                 </button>
             </form>
 
-            <p>Already have an account? <Link className={`${styles.link} ${gStyles.clickable}`} to="/login">Login</Link></p>
+            <p>
+                Already have an account?
+                <Link className={`${styles.link} ${gStyles.clickable}`} to="/login">Login</Link>
+            </p>
         </div>
     )
 }

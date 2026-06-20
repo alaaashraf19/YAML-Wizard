@@ -1,20 +1,41 @@
 .section {
     display: flex;
     align-items: start;
-    justify-content: center;
     flex-direction: column;
-    gap: 10px;
+    width: 100%;
 }
 .header {
-    width: 100%;
+    width: 90%;
     border-bottom: 3px solid rgb(9, 2, 41);
     padding: 15px;
     margin-bottom: 20px;
-    font-size: 25px;
+    font-size: 22px;
 }
-.label {
-    display:flex;
-    justify-content: end;
+h2{
+    font-size: 18px;
+    padding: 10px 15px;
+    font-weight: 100;
+    width: 50%;
+    border-bottom: 1px solid rgb(155, 155, 155);
+}
+.field{
+    display: flex;
+    position: relative;
+    width: 100%;
+    padding: 20px;
+    font-size: 20px;
+    justify-content: center;
+}
+.fieldLabel {
+    display: flex;
+    gap: 5px;
+    width: 85%;
+    flex-direction: column;
+    justify-content: center;
+}
+.labelText{
+    font-family: "Inter", system-ui, sans-serif;
+    font-weight: 700;
 }
 .input {
     padding: 8px;
@@ -23,10 +44,73 @@
     border-radius: 5px;
     font-size: 16px;
 }
+.button {
+    margin: 10px;
+    padding: 15px;
+    width: fit-content;
+    border-radius: 8px;
+    background: 0;
+    
+    color: inherit;
+    font-size: 16px;
+    text-align: center;
+    justify-content: center;
+
+    box-shadow: 2px 2px 15px rgba(0,0,0,0.4);
+    border: 1px solid rgb(155, 155, 155);
+    transition: background-color 0.25s ease;
+}
+.button:hover{background-color: rgb(9, 2, 41);}
 
 .projectList {
-
+    font-size: 20px;
+    font-family: "Inter", system-ui, sans-serif;
+    list-style-type: square;
+    padding: 10px;
+    margin-top: 0;
 }
+.projectItem {
+    padding: 10px 20px;
+    margin: 10px;
+    width: fit-content;
+    border-bottom: 1px solid rgb(155, 155, 155, 0.7);
+}
+.projectItem:hover{
+    background-color: rgb(13, 2, 61);
+    border-radius: 10px;
+}
+
+input[type="radio"]{
+    appearance: none;
+
+    width: 15px;
+    height: 15px;
+
+    border: 2px solid rgb(120, 100, 255);
+    border-radius: 50%;
+
+    position: relative;
+}
+input[type="radio"]:checked::before {
+    content: "";
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+
+    width: 6px;
+    height: 6px;
+
+    background-color: rgb(120, 100, 255);
+    border-radius: 50%;
+
+    transform: translate(-50%, -50%);
+}
+.radio{
+    padding: 10px 30px;
+    width: fit-content;
+}
+
 .noProjects {
     background-color: rgb(95, 87, 124);
     padding: 10px 20px;
@@ -37,4 +121,54 @@
     font-size: 18px;
     opacity: 0.5;
     color: white;
+}
+
+.infoPopup {
+    align-items: start;
+    min-width: 40%;
+    max-width: 60%;
+    padding: 30px;
+}
+.infoBtns{
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+    width: 100%;
+}
+.infoBtn {
+    margin-left: 15px;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    
+    background: transparent;
+    border: 0;
+    border-radius: 10px;
+    font-size: 30px;
+}
+.infoBtn:hover{
+    box-shadow: 2px 5px 15px rgba(0,0,0,0.7);
+    background-color: rgb(13, 2, 61);
+}
+.infoBar{
+    display: flex;
+    gap: 10px;
+    font-size: 18px;
+}
+.infoLabel{
+    font-weight: 600;
+    padding-right: 8px;
+    border-right: 4px solid rgb(9, 2, 41);
+}
+.infoText{
+    word-break: break-all;
+    flex: 1;
+}
+.editField{
+    padding: 10px 0;
+    margin:0;
+}
+.editBtn{
+    margin-left: auto;
+    padding: 5px 10px;
 }

@@ -125,7 +125,9 @@ export interface AuthContextType {
 export interface Project {
     id: number | null;
     user_id: number | null;
-    name: string;
+    project_name: string;
     repo_url: string;
-    platform: Platform;
+    target_platform: Platform;
+    created_at: string;
+    updated_at: string;
 }

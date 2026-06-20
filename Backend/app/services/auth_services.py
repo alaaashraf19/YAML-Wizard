@@ -105,6 +105,10 @@ async def update_user_profile(user_id: int, user_update: UserUpdate, db: AsyncSe
             raise HTTPException(status_code=409, detail="Username already exists")
         user.username = new_username
 
+        access_token = create_access_token(
+            data={"sub": user.username, "role": user.role}
+        )
+
     if user_update.email:
         new_email = user_update.email.lower()
 
@@ -132,13 +136,25 @@ async def update_user_profile(user_id: int, user_update: UserUpdate, db: AsyncSe
     await db.commit()
     await db.refresh(user)
 
-    return {
-        "id": user.id,
-        "username": user.username,
-        "email": user.email,
-        "role": user.role,
-        "msg": "User updated successfully"
-    }
+    response = JSONResponse(
+        content= {
+            "id": user.id,
+            "username": user.username,
+            "email": user.email,
+            "role": user.role,
+            "msg": "User updated successfully"
+        }
+    )
+    if user_update.username:
+        response.set_cookie(
+            key="access_token",
+            value=access_token,
+            httponly=True,
+            secure=False,        # ===========> MAKE SECURE FOR HTTPS
+            samesite="Lax",
+            max_age=os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES",30)
+        )
+    return response
 
 
 async def get_user_profile(user_id: int, db: AsyncSession):

@@ -2,18 +2,19 @@ import gStyles from "../../global.module.css"
 import styles from "./SideBar.module.css";
 import logo from "../../assets/yaml_wizard_logo.png";
 import { useAuth } from '../../Context/AuthContext';
-import { Settings } from "./Menus";
 import type { Session, Message } from "../../types";
 
 import { useState, useEffect, useRef, useMemo } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
+import { IoPerson } from "react-icons/io5";
+import { FaSignOutAlt } from "react-icons/fa";
 import { LuPanelRightClose, LuPanelLeftClose } from "react-icons/lu";
 import { MdDeleteOutline, MdChatBubbleOutline } from "react-icons/md";
 import { FaHistory } from "react-icons/fa";
-import { FiMenu } from "react-icons/fi";
 import { GoPerson } from "react-icons/go";
 import { RiDashboardFill } from "react-icons/ri";
+import { Popup } from "../Popup/Popup";
 
 
 type sideBar_props = {
@@ -26,6 +27,8 @@ type sideBar_props = {
 }
 
 function SideBar({sessionId, setSessionId, sessions, setSessions, setMessages, isLoading}: sideBar_props) {
+    const [confirmMessage, setConfirmMessage] = useState<string | null>("");
+    const [warningMessage, setWarningMessage] = useState<string | null>("");
     const [sessionToDelete, setSessionToDelete] = useState<number | null>(null);
     const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
     const [openSettings, setOpenSettings] = useState<boolean>(false);
@@ -34,7 +37,8 @@ function SideBar({sessionId, setSessionId, sessions, setSessions, setMessages, i
     const settingsBtnRef = useRef<HTMLDivElement | null>(null);
     const settingsIconRef = useRef<HTMLDivElement | null>(null);
 
-    const { username, loading } = useAuth();
+    const { username, loading, logout } = useAuth();
+    const navigate = useNavigate();
     const api_url = import.meta.env.VITE_API_URL;
 
     //get all sessions
@@ -91,9 +95,9 @@ function SideBar({sessionId, setSessionId, sessions, setSessions, setMessages, i
         }
     };
     
-    const deleteSession = async (session_id: number) => {
+    const deleteSession = async () => {
         try{
-            const res = await fetch(`${api_url}/chatbot/sessions/${session_id}`, {
+            const res = await fetch(`${api_url}/chatbot/sessions/${sessionToDelete}`, {
                 method: "DELETE",
                 credentials: "include"
             });
@@ -104,11 +108,10 @@ function SideBar({sessionId, setSessionId, sessions, setSessions, setMessages, i
                 console.error(data.detail);
                 return;
             }
-            setSessions(prev => prev.filter(session => session.id !== session_id));
-            setSessionToDelete(null);
+            setSessions(prev => prev.filter(session => session.id !== sessionToDelete));
 
             // if deleted session is the active one
-            if(sessionId === session_id){
+            if(sessionId === sessionToDelete){
                 startNewSession();
             }
 
@@ -160,24 +163,39 @@ function SideBar({sessionId, setSessionId, sessions, setSessions, setMessages, i
             <>
                 <LuPanelRightClose className={`${styles.collapsedBtn} ${gStyles.clickable}`}
                     onClick={() => setIsCollapsed(prev => !prev)} title={"Expand"}/>
-                <img src={logo} alt="Logo" className={styles.logo}/>
+                <img src={logo} alt="Logo" onClick={() => navigate("/")} title="Go to home page"
+                    className={`${styles.logo} ${gStyles.clickable}`}/>
                 <MdChatBubbleOutline className={`${styles.collapsedBtn} ${gStyles.clickable}`} title={"New Chat"}
                     onClick={startNewSession}/>
                 <FaHistory className={`${styles.collapsedBtn} ${gStyles.clickable}`} title={"Version History"}/>
+                <RiDashboardFill className={`${styles.collapsedBtn} ${gStyles.clickable}`}
+                    title={"Go to Dashboard"} onClick={() => navigate("/dashboard")}/>
                 
                 <div ref={settingsIconRef} className={styles.settingsContainer}>
-                    <FiMenu className={`${styles.collapsedBtn} ${gStyles.clickable}`} title={"Settings"}
-                        onClick={() => {setOpenSettings(prev => !prev); console.log(openSettings);}}/>
-                    {openSettings && <Settings settingsRef={settingsRef}/>}
+                    <GoPerson className={`${styles.username} ${gStyles.clickable}`} title={"Open Menu"}
+                    onClick={() => {setOpenSettings(prev => !prev); console.log(openSettings);}}/>
+                    {openSettings &&
+                        <div className={styles.settingsMenu} ref={settingsRef}>
+                            <Link className={`${styles.option} ${gStyles.clickable}`} to="/profile">
+                                <IoPerson/>
+                                Profile
+                            </Link>
+                            <Link className={`${styles.option} ${gStyles.clickable}`} to="/" onClick={() => logout()}>
+                                <FaSignOutAlt/>
+                                Sign out
+                            </Link>
+                        </div>
+                    }
                 </div>
                 
-                <GoPerson className={`${styles.username} ${gStyles.clickable}`} title={"Profile"}/>
             </>
         ) : (<>
             <div className={styles.topContainer}>
-                <div className={styles.appNameContainer}>
-                    <img src={logo} alt="Logo" className={styles.logo}/>
-                    <span className={styles.appName}>YAML Wizard</span>
+                <div className={`${styles.appNameContainer} ${gStyles.clickable}`}>
+                    <img src={logo} alt="Logo" className={styles.logo} title="Go to home page"
+                        onClick={() => navigate("/")}/>
+                    <span className={styles.appName} onClick={() => navigate("/")} title="Go to home page">
+                        YAML Wizard</span>
                     <LuPanelLeftClose className={`${styles.closeBarBtn} ${gStyles.clickable}`}
                         onClick={() => setIsCollapsed(prev => !prev)} title={"Collapse"}/>
                 </div>
@@ -188,7 +206,7 @@ function SideBar({sessionId, setSessionId, sessions, setSessions, setMessages, i
                 <button className={`${styles.actionBtn} ${gStyles.clickable}`} title={"Version History"}>
                     <FaHistory/> History
                 </button>
-                <Link className={`${styles.actionBtn} ${gStyles.clickable}`} to="/dashboard" title={"Open Dashboard"}>
+                <Link className={`${styles.actionBtn} ${gStyles.clickable}`} to="/dashboard" title={"Go to Dashboard"}>
                     <RiDashboardFill/> Dashboard
                 </Link>
             </div>
@@ -205,8 +223,12 @@ function SideBar({sessionId, setSessionId, sessions, setSessions, setMessages, i
                             className={styles.sessionName}>{session.session_name || "New Chat"} {/*selected project*/}
                         </span>
                         
-                        <button className={`${styles.deleteIcon} ${gStyles.clickable}`} 
-                            onClick={() => setSessionToDelete(session.id)} title="Delete">
+                        <button className={`${styles.deleteIcon} ${gStyles.clickable}`}  title="Delete"
+                            onClick={() => {
+                                setSessionToDelete(session.id);
+                                setConfirmMessage("Delete this conversation?");
+                                setWarningMessage("This action cannot be undone");
+                            }}>
                             <MdDeleteOutline/>
                         </button>
                     </div>
@@ -215,19 +237,26 @@ function SideBar({sessionId, setSessionId, sessions, setSessions, setMessages, i
             <p className={styles.sessionEnd}/>
 
             <div className={styles.bottomContainer}>
-                <div ref={settingsBtnRef} className={styles.settingsContainer}>
-                    <button className={`${styles.actionBtn} ${gStyles.clickable}`} 
-                        onClick={() => setOpenSettings(prev => !prev)}>
-                        <FiMenu/> Settings
-                    </button>
-                    {openSettings && <Settings settingsRef={settingsRef}/>}
-                </div>
-
-                {loading? null :
+                {!loading && (
                     username? (
-                        <Link className={`${styles.username} ${gStyles.clickable}`} to="/profile" title={"Profile"}>
-                            <GoPerson/>{username}
-                        </Link>
+                        <div ref={settingsBtnRef} className={styles.settingsContainer}>
+                            <button className={`${styles.username} ${gStyles.clickable}`} title={"Open Menu"}
+                                onClick={() => setOpenSettings(prev => !prev)}>
+                                <GoPerson/>{username}
+                            </button>
+                            {openSettings && 
+                                <div className={styles.settingsMenu} ref={settingsRef}>
+                                    <Link className={`${styles.option} ${gStyles.clickable}`} to="/profile">
+                                        <IoPerson/>
+                                        Profile
+                                    </Link>
+                                    <Link className={`${styles.option} ${gStyles.clickable}`} to="/" onClick={() => logout()}>
+                                        <FaSignOutAlt/>
+                                        Sign out
+                                    </Link>
+                                </div>
+                            }
+                        </div>
                     ) : (<>
                         <span className={styles.username}>
                             Guest Mode
@@ -235,40 +264,25 @@ function SideBar({sessionId, setSessionId, sessions, setSessions, setMessages, i
                                 Sign up to save your chats!
                             </Link>
                         </span>
-                </>)}
+                </>))}
             </div>
         </>)}
         </div>
 
-        {/* {openSettings && (
-            <div className={styles.settingsMenu} ref={settingsRef}>
-                <Link className={`${styles.option} ${gStyles.clickable}`} to="/profile">
-                    <GoPerson/>
-                    Profile
-                </Link>
-                <Link className={`${styles.option} ${gStyles.clickable}`} to="/" onClick={handleLogout}>
-                    <FaSignOutAlt/>
-                    Sign out
-                </Link>
-            </div>
-        )} */}
-        {sessionToDelete && (
-            <div className={styles.popupLayover}>
-                <div className={styles.deletePopup}>
-                    <p className={styles.confirmMsg}>Delete this conversation?</p>
-                    <p className={styles.warningMsg}>This action cannot be undone.</p>
-
-                    <div className={styles.popupBtns}>
-                        <button className={`${styles.deleteBtn} ${gStyles.clickable}`} onClick={() => deleteSession(sessionToDelete)}>
-                            Delete
-                        </button>
-
-                        <button className={`${styles.deleteBtn} ${gStyles.clickable}`} onClick={() => setSessionToDelete(null)}>
-                            Cancel
-                        </button>
-                    </div>
-                </div>
-            </div>
+        {confirmMessage && (
+            <Popup
+                btnText1={"Delete"}
+                btn1Action={deleteSession}
+                btnText2={"Cancel"}
+                btn2Action={() => setSessionToDelete(null)}
+                confirmMessage={confirmMessage}
+                setConfirmMessage={setConfirmMessage}
+                warningMessage={warningMessage}
+                setWarningMessage={setWarningMessage}
+                errorMessage={null}
+                setErrorMessage={null}
+                popupRef={null}
+            />
         )}
     </>)
 }

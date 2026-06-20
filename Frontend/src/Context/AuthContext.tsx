@@ -42,12 +42,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         checkAuth();
     }, []);
 
-    const logout = () => {
-        setUsername(null);
-        sessionStorage.clear();
-        localStorage.clear();
+    const logout = async () => {
+        try {
+            const res = await fetch(`${api_url}/auth/logout`, {
+                method: "POST",
+                credentials: "include"
+            });
 
-        console.log("Logged out successfully");
+            if (!res.ok){
+                console.error("Logout failed");
+                return;
+            }
+
+            window.location.href = "/";
+            setUsername(null);
+            console.log("Logged out successfully");
+
+        } catch (err) {
+            console.error("Server error:", err);
+        }
     };
 
     return (

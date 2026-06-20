@@ -18,7 +18,7 @@ function Chatbot() {
     const [sessionId, setSessionId] = useState<number | null>(null);
     const [sessions, setSessions] = useState<Session[]>([]);
     const [selectedProject, setSelectedProject] = useState<string | React.ReactNode>(<>
-        Select Project <MdOutlineKeyboardArrowRight style={{ marginLeft: 10 }} />
+        Connect Project <MdOutlineKeyboardArrowRight style={{ marginLeft: 10 }} />
     </>);
     
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
