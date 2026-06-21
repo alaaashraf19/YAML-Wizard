@@ -25,5 +25,9 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int = 604800 #60*60*24*7 => 7days
     database_url: str = ""
 
-
+    ###############cloudinary config for avatar uploading########################
+    cloudinary_cloud_name: str = ""
+    cloudinary_api_key: str = ""
+    cloudinary_api_secret: str = ""
+    
 settings = Settings()
