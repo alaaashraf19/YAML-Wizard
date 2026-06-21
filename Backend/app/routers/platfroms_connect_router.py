@@ -5,7 +5,6 @@ from database.db_engine import get_db
 from models.platforms_model import GitHubConnection, GitLabConnection
 from core.security import get_current_user
 from sqlalchemy import select
-
 router = APIRouter()
 
 
@@ -21,6 +20,11 @@ async def callback(platform: str, code: str, state: str, request: Request, db: A
     connector = get_connector(platform)
     return await connector.callback(code, state, request, db)
     
+@router.post("/{platform}/disconnect")
+async def disconnect(platform: str, request: Request, db: AsyncSession = Depends(get_db)):
+    connector = get_connector(platform)
+    return await connector.disconnect(request, db)
+
 
 @router.get("/integration/status")
 async def integration_status(request: Request, db: AsyncSession = Depends(get_db)):
