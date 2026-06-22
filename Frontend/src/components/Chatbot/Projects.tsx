@@ -1,8 +1,11 @@
 import gStyles from "../../global.module.css"
 import styles from "./Projects.module.css";
+import { useEffect, useState } from "react";
+import type { Project } from "../../types";
+
 import { IoClose } from "react-icons/io5";
 import { createPortal } from "react-dom";
-import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 type projects_props = {
     setIsMenuOpen: React.Dispatch<React.SetStateAction<boolean>>,
@@ -11,20 +14,45 @@ type projects_props = {
 }
 
 function Projects({setIsMenuOpen, setSelectedProject, menuRef}: projects_props) {
-
-    const [projects] = useState([{ name: "Project 1" }, { name: "Project 2" }, { name: "Project 3" }, { name: "Project 4" }, { name: "Project 5" }, { name: "Project 6" }, { name: "Project 7" }, { name: "Project 8" }, { name: "Project 9" }, { name: "Project 10" }, { name: "Project 11" }, { name: "Project 12" }, { name: "Project 13" }, { name: "Project 14" }, { name: "Project 15" }, { name: "Project 16" }, { name: "Project 17" }, { name: "Project 18" }, { name: "Project 19" }, { name: "Project 20" }]);
-    // const [projects] = useState([{ name: "Project Project Project Project Project Project Project Project Project project Project Project Project 1" }, { name: "Project 2" }, { name: "Project 3" }, { name: "Project 4" }, { name: "Project 5" }, { name: "Project 6" }]);
-    // const [projects] = useState([]);
+    const [projects, setProjects] = useState<Project[]>([]);
     const [query, setQuery] = useState("");
+    const navigate = useNavigate();
+    const api_url = import.meta.env.VITE_API_URL;
 
     const filteredItems = projects ? projects
-        .filter(p => p.name.toLowerCase().includes(query.toLowerCase()))
-        .map(p => p.name) : [];
+        .filter(p => p.project_name.toLowerCase().includes(query.toLowerCase()))
+        .map(p => p.project_name) : [];
 
     const handleProjectSelect = (name: string) => {
         setSelectedProject(name);
         setIsMenuOpen(false);
     };
+
+    //get user projects
+    useEffect(() => {
+        const fetchProjects = async () => {
+            try {
+                const res = await fetch(`${api_url}/projects`, {
+                    credentials: "include",
+                    method: "GET",
+                    headers: {"Content-Type": "application/json"}
+                });
+
+                const data = await res.json();
+
+                if (!res.ok) {
+                    console.error(data.detail || data.detail.msg || "Failed to load profile");
+                    return;
+                }
+                setProjects(data);
+
+            } catch (e) {
+                console.error("Failed to load projects:", e);
+            }
+        };
+
+        fetchProjects();
+    }, []);
 
     return createPortal(
         <div className={styles.menu} ref={menuRef}>
@@ -33,7 +61,8 @@ function Projects({setIsMenuOpen, setSelectedProject, menuRef}: projects_props) 
                     onClick={() => {setIsMenuOpen(false);}} title={"Close Menu"}>
                     <IoClose />
                 </button>
-                <button className={`${styles.addButton} ${gStyles.clickable}`}>
+                <button className={`${styles.addButton} ${gStyles.clickable}`}
+                    onClick={() => navigate("/profile?tab=Projects")} title="Go to settings">
                     Add project
                 </button>
             </div>

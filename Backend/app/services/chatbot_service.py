@@ -109,10 +109,13 @@ class ChatbotService:
                     status_code=404,
                     detail="Chat session not found or access denied"
                 )
-            if project_id is not None and session.project_id != project_id:
-                session.project_id = project_id
-                await db.commit()
-                await db.refresh(session)
+            
+            # when a session has a project it is unchangeable
+            # if project_id is not None and session.project_id != project_id:
+            #     session.project_id = project_id
+            #     await db.commit()
+            #     await db.refresh(session)
+
             # load existed chat history
             chat_history = await self.get_session_messages(
                 user_id=user_id,

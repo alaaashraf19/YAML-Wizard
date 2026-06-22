@@ -1,19 +1,25 @@
 .field{
     display: flex;
     position: relative;
+    width: 100%;
     padding: 20px;
     font-size: 20px;
     justify-content: center;
 }
 .field label {
     display: flex;
+    gap: 5px;
+    width: 85%;
     flex-direction: column;
     justify-content: center;
+}
+.labelText{
+    font-family: "Inter", system-ui, sans-serif;
+    font-weight: 700;
 }
 .input {
     padding: 8px;
     margin:0 10px;
-    width: 350px;
     border: 2px solid #ccc;
     border-radius: 5px;
     font-size: 16px;
@@ -36,13 +42,17 @@
     background: none;
     font-size: 16px;
 }
-.fieldError{
-    color: rgb(255, 99, 71);
-    position: absolute;
-    margin: 0;
-    padding: 0;
-    bottom: 0;
-    width:inherit;
-    text-align: center;
-    font-size: medium;
+.icon{
+    padding: 5px;
+    font-size: 30px;
+    transition:
+        background-color 0.25s ease,
+        color 0.25s ease,
+        border 0.25s ease,
+        padding 0.25s ease;
+}
+.icon:hover{
+    color: rgb(123, 92, 255);
+    border-radius: 10px;
+    border: 1px solid rgb(155,155,155,0.4);
 }

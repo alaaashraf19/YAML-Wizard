@@ -44,10 +44,7 @@ function Login(){
                 credentials: "include",
                 body: JSON.stringify(userData)
             });
-            
-            console.log(res);
-            console.log("api url: ",api_url);
-            console.log("ENV:", import.meta.env);
+
             const data = await res.json();
             
             if (!res.ok) {
@@ -58,12 +55,12 @@ function Login(){
                     const msg = data.detail || "Login failed";
                     setResponseError(msg);
                 }
-                console.error("Form validation error:", data);
+                console.error("Form validation error:", data.detail);
                 return;
             }
 
             login(username);
-            console.log("Server:", data.msg);
+            console.log(data.msg);
             navigate("/chatbot"); // Redirect to home page on successful login
 
         } catch (err: any) {
@@ -82,12 +79,12 @@ function Login(){
             <form className={styles.form} onSubmit={handleSubmit}>
                 {responseError && <p className={styles.error}>{responseError}</p>}
 
-                <UsernameField username={username} setUsername={setUsername}
-                    emptyUsername={emptyUsername} setEmptyUsername={setEmptyUsername}/>
+                <UsernameField username={username} setUsername={setUsername} editUsername={null} setEditUsername={null}/>
+                {emptyUsername && <p className={styles.fieldError}>Username is required</p>}
 
-                <PasswordField password={password} setPassword={setPassword} emptyPassword={emptyPassword}
-                    setEmptyPassword={setEmptyPassword} showPassword={showPassword}
-                    setShowPassword={setShowPassword} />
+                <PasswordField type="Password" password={password} setPassword={setPassword}
+                    showPassword={showPassword} setShowPassword={setShowPassword} />
+                {emptyPassword && <p className={styles.fieldError}>Password is required</p>}
 
                 <button type="submit" className={`${styles.submit} ${gStyles.clickable}`} disabled={loading}>
                     {loading ? "Logging In..." : "Login"}

@@ -1,9 +1,11 @@
 import gStyles from "../global.module.css"
 import styles from "./Chatbot.module.css";
-import type { Session, Message } from "../types";
 
 import { useState, useEffect, useRef } from "react";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md"
+import { IoSend } from "react-icons/io5";
+
+import type { Session, Message } from "../types";
 import Projects from "../components/Chatbot/Projects";
 import SideBar from "../components/Chatbot/SideBar";
 
@@ -16,7 +18,7 @@ function Chatbot() {
     const [sessionId, setSessionId] = useState<number | null>(null);
     const [sessions, setSessions] = useState<Session[]>([]);
     const [selectedProject, setSelectedProject] = useState<string | React.ReactNode>(<>
-        Choose Project <MdOutlineKeyboardArrowRight style={{ marginLeft: 10 }} />
+        Connect Project <MdOutlineKeyboardArrowRight style={{ marginLeft: 10 }} />
     </>);
     
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
@@ -236,7 +238,9 @@ function Chatbot() {
                             <textarea className={styles.textarea} placeholder="Ask anything .." name="prompt" rows={1}
                                 ref = {textareaRef} value={prompt} onChange={(e) => setPrompt(e.target.value)} onKeyDown={handleKeyDown}>
                             </textarea>
-                            <button className={`${styles.sendButton} ${gStyles.clickable}`} type="submit">Send</button>
+                            <button className={`${styles.sendButton} ${gStyles.clickable}`} type="submit" title={"Send"}>
+                                <IoSend/>
+                            </button>
                         </form>
 
                         <div>
