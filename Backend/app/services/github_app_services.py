@@ -93,11 +93,62 @@ async def github_webhook(request, db):
 
             if installation:
                 await db.delete(installation)
-                installation = None
 
         await db.commit()
-    # repo = payload.get("repository", {})
 
+
+    elif event == "installation_repositories":
+
+        installation_data = payload.get("installation", {})
+        installation_id = installation_data.get("id")
+
+        repositories_added = payload.get("repositories_added", [])
+        repositories_removed = payload.get("repositories_removed", [])
+
+        #add repos
+        for repo in repositories_added:
+
+            repo_id = repo.get("id")
+            if not repo_id:
+                continue #since our db logic depend on repo id if we didnt receive it we discard 
+
+            existing = await db.execute(
+                select(GitHubInstallationRepo).where(
+                    GitHubInstallationRepo.installation_id == installation_id,
+                    GitHubInstallationRepo.repo_id == repo_id,)
+            )
+
+            if existing.scalar_one_or_none():
+                continue
+
+            db.add(
+                GitHubInstallationRepo(
+                    installation_id=installation_id,
+                    repo_id=repo_id,
+                    repo_full_name=repo.get("full_name"),
+                    repo_url=repo.get("html_url"),
+                )
+            )
+
+        #remove repos
+        for repo in repositories_removed:
+
+            repo_id = repo.get("id")
+            if not repo_id:
+                continue 
+
+            result = await db.execute(
+                select(GitHubInstallationRepo).where(
+                    GitHubInstallationRepo.installation_id == installation_id,
+                    GitHubInstallationRepo.repo_id == repo_id,)
+            )
+
+            repo_record = result.scalar_one_or_none()
+
+            if repo_record:
+                await db.delete(repo_record)
+
+        await db.commit()
     return {"ok": True}
             
 
