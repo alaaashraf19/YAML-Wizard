@@ -2,8 +2,10 @@ from __future__ import annotations
 from datetime import datetime
 from sqlalchemy import BigInteger, DateTime,Float,ForeignKey,Integer,String,Text, UniqueConstraint, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from models.project_model import Project
 from database.base import Base
 from models.user_model import User
+from models.repo_context_model import RepoContext
 
 class Repository(Base):
     __tablename__ = "repositories"
@@ -22,16 +24,17 @@ class Repository(Base):
 
 
     default_branch: Mapped[str] = mapped_column(String(100), nullable=False, default="main")
-    url: Mapped[str] = mapped_column(String(500), nullable=False)
+    url: Mapped[str] = mapped_column(String(500), nullable=False, unique=True)
+    
     last_synced_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now(), nullable=False,
-    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False,)
 
     # 1 to many with PipelineRun
     runs: Mapped[list[PipelineRun]] = relationship(back_populates="repository", cascade="all, delete-orphan")
+    project: Mapped[Project | None] = relationship("Project",back_populates="repository", uselist=False)#uselist is false to tell that it is one to one relation
+    context: Mapped[RepoContext | None] = relationship("RepoContext",back_populates="repository", uselist=False, cascade="all, delete-orphan")#if a repo is deleted its context is deleted
 
-    
+
 class PipelineRun(Base):
     __tablename__ = "pipeline_runs"
 

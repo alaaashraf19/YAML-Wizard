@@ -20,17 +20,8 @@ async def add_repo_service(body: RepoCreate, db, current_user):
     if platform not in ["github", "gitlab"]:
         raise HTTPException(status_code=400, detail="Unsupported platform. Only 'github' and 'gitlab' are supported.")
     if platform == "gitlab":
-        gitLabCollector = GitLabCollector()
-        try:
-            gitlab_project_id = await gitLabCollector.get_project_id(full_name)
-        except httpx.HTTPStatusError as e:
-            if e.response.status_code == 404:
-                raise HTTPException(404, "GitLab project not found")
-            if e.response.status_code == 403:
-                raise HTTPException(403, "Can't access GitLab project with provided token")
-        finally:
-            await gitLabCollector.close()
-
+        gitlab_project_id = await _get_gitlab_proj_id(full_name)
+        
     existing = await db.execute(select(Repository).where(Repository.full_name == full_name))
     if existing.scalar_one_or_none():
         raise HTTPException(status_code=409, detail=f"Repository '{full_name}' already tracked")
@@ -55,9 +46,9 @@ def _parse_repo_info(url: str) -> tuple[str, str]:
     
     parsed = urlparse(url)
     host = parsed.hostname or ""
-    path = parsed.path.strip("/")
-    if path.endswith(".git"):
-        path = path[:-4]
+    full_name = parsed.path.strip("/")
+    if full_name.endswith(".git"):
+        full_name = full_name[:-4]
 
     if "github" in host:
         platform = "github"
@@ -66,7 +57,7 @@ def _parse_repo_info(url: str) -> tuple[str, str]:
     else:
         platform = "github"
 
-    return path, platform
+    return full_name, platform
 
 
 async def get_repo_or_404(repo_id: int, db: AsyncSession, current_user: User):
@@ -92,3 +83,25 @@ async def get_run_or_404(run_id: int, repo_id: int, db: AsyncSession):
     if not run:
         raise HTTPException(status_code=404, detail="Run not found")
     return run
+
+def _parse_branch(url:str) ->str:
+    parts = urlparse(url).path.strip("/").split("/")
+    try:
+        i=parts.index("tree")
+        if i+1 < len(parts):
+            return parts[i+1]
+    except ValueError:
+        return None
+
+async def _get_gitlab_proj_id(full_name: str) -> int:
+    gitLabCollector = GitLabCollector()
+    try:
+        gitlab_project_id = await gitLabCollector.get_project_id(full_name)
+        return gitlab_project_id
+    except httpx.HTTPStatusError as e:
+        if e.response.status_code == 404:
+            raise HTTPException(404, "GitLab project not found")
+        if e.response.status_code == 403:
+            raise HTTPException(403, "Can't access GitLab project with provided token")
+    finally:
+        await gitLabCollector.close()

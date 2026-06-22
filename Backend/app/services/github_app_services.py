@@ -2,7 +2,7 @@ from fastapi import  HTTPException
 from fastapi.responses import RedirectResponse
 import httpx
 from sqlalchemy import select
-from agent.utils.github_auth import generate_jwt, get_installation_token
+from core.github_auth import get_installation_token, generate_jwt
 from core.security import get_current_user
 from models.platforms_model import GitHubInstallation as GitHubInstallationModel, GitHubInstallationRepo
 from schemas.github_app_schema import GitHubInstallationRepoSchema
@@ -61,15 +61,14 @@ async def github_webhook(request, db):
         account_type = account.get("type")
         repo_selection = installation_data.get("repository_selection")
 
-        print(
-            f"App installed: {installation_id} by {account_login}, "
-            f"repos selection: {repo_selection}",  f"account_type: {account_type}"
-        )
-
         result = await db.execute(select(GitHubInstallationModel).where(GitHubInstallationModel.installation_id == installation_id))
         installation = result.scalar_one_or_none()
 
         if action == "created":
+            print(
+                f"App installed: {installation_id} by {account_login}, "
+                f"repos selection: {repo_selection}",  f"account_type: {account_type}"
+            )
 
             if not installation:
                 installation = GitHubInstallationModel(
@@ -78,6 +77,7 @@ async def github_webhook(request, db):
                     account_id=account_id,
                     account_type=account_type,
                     repos_selection=repo_selection or "all",
+                    user_id=None,  # will be linked later in /setup
                 )
                 db.add(installation)
 
@@ -92,6 +92,9 @@ async def github_webhook(request, db):
         elif action == "deleted":
 
             if installation:
+                print(
+                f"App uninstalled: {installation_id} by {account_login}, "
+                f"repos selection: {repo_selection}",  f"account_type: {account_type}")
                 await db.delete(installation)
 
         await db.commit()
@@ -197,7 +200,8 @@ async def setup_github_url_services(installation_id, request, db):
         )
         db.add(installation)
     else:
-        installation.user_id = user.id
+        if installation.user_id is None:
+            installation.user_id = user.id
         if not installation.account_id or not installation.account_login or not installation.account_type:
             account_data = await fetch_installation_account_data(installation_id)
             installation.account_id = account_data.get("id")

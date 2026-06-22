@@ -92,7 +92,7 @@ async def retrieve_gitlab_token(connection: Any, db: Any,) -> Tuple[Optional[str
         return None, None, "no connected GitLab account available to obtain a token"
 
     try:
-        from services.gitlab_connect_service import get_valid_gitlab_token
+        from services.platform_connectors.gitlab_connect import get_valid_gitlab_token
 
         token = await get_valid_gitlab_token(connection, db)
     except Exception as exc: #db error

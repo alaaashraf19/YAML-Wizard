@@ -3,8 +3,8 @@ from database.db_engine import get_db
 from core.security import get_current_user
 from models.user_model import User
 from models.platforms_model import GitHubInstallation,GitLabConnection, GitHubConnection
-from agent.tools.repo_publisher import publish_to_repo
-from agent.utils.github_auth import get_installation_token
+from agent.tools.repo_publisher import publish_to_repo_tool
+from core.github_auth import get_installation_token
 from services.platform_connectors.gitlab_connect import GitLabConnector
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
@@ -91,6 +91,6 @@ async def publish_yaml(platform: str, current_user: User = Depends(get_current_u
         gitlab_connector = GitLabConnector()
         token = await gitlab_connector.get_valid_token(gitlab_connection, db)
 
-    result = publish_to_repo(yaml_content=yaml_content, repo_url=repo_url, platform=platform, token=token, file_path=None, branch= "main",commit_message= "test commit message",create_pr= True, pr_branch= "test")
+    result = publish_to_repo_tool(yaml_content=yaml_content, repo_url=repo_url, platform=platform, token=token, file_path=None, branch= "main",commit_message= "test commit message",create_pr= True, pr_branch= "test")
     print(result.success)
     
