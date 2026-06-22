@@ -232,12 +232,11 @@ class GitLabConnector(oauthConnector):
         if not connection:
             return {"status": "already_disconnected"}
 
-        # 1. Try revoke on GitLab (optional but recommended)
+        #Try revoke on GitLab
         try:
             decrypted_token = decrypt_token(connection.access_token)
             await self.revoke_gitlab_token(decrypted_token)
         except Exception:
-            # never block disconnect due to provider failure
             pass
 
         await db.delete(connection)
