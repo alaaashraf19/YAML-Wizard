@@ -20,7 +20,7 @@ export function UsernameField(User_props: UserNameProps) {
             <label id="username">
                 <span className={styles.labelText}>Username:</span>
                 {showText? (<>
-                    <span>{User_props.username}</span>
+                    <span className={styles.dataText}>{User_props.username}</span>
                     <MdEdit title="Edit" className={`${styles.icon} ${gStyles.clickable}`}
                         onClick={() => {
                             User_props.setEditUsername && User_props.setEditUsername(true);
@@ -59,7 +59,7 @@ export function EmailField(E_props: EmailProps) {
             <label id='email'>
                 <span className={styles.labelText}>Email:</span>
                 {showText? (<>
-                    <span>{E_props.email}</span>
+                    <span className={styles.dataText}>{E_props.email}</span>
                     <MdEdit title="Edit" className={`${styles.icon} ${gStyles.clickable}`}
                         onClick={() => {
                             E_props.setEditEmail && E_props.setEditEmail(true);
@@ -99,7 +99,7 @@ export function PasswordField(P_props: PasswordProps) {
                 <div className={styles.passwordContainer}>
                     <input type={P_props.showPassword ? "text" : "password"} name={P_props.type} className={styles.input}
                         placeholder={`Enter ${P_props.type.toLowerCase()}..`} value={P_props.password} style={{width: "100%"}}
-                        onChange={(e) => {P_props.setPassword(e.target.value)}}>
+                        onChange={(e) => {P_props.setPassword(e.target.value)}} autoComplete="off">
                     </input>
                     <button type="button" className={`${styles.toggle} ${gStyles.clickable}`} onClick={() => P_props.setShowPassword(!P_props.showPassword)}>
                         {P_props.showPassword ? <FaEye /> : <FaEyeSlash />}

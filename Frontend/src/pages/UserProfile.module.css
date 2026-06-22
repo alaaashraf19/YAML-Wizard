@@ -22,6 +22,7 @@
 .tabsHeader{
     font-size: 25px;
     font-weight: 500;
+    width: fit-content;
 }
 .tab {
     padding: 10px;
@@ -37,6 +38,8 @@
     display: flex;
     flex-direction: column;
     padding-left: 150px;
+    /* overflow-x: auto; */
+    min-width: 0;
 
     overflow-y: auto;
     overflow-anchor:auto;

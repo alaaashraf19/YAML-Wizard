@@ -10,8 +10,9 @@ class GitHubInstallation(Base):
     installation_id: Mapped[int] = mapped_column(unique=True, index=True, nullable=False)
 
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
-    account_login: Mapped[str | None] = mapped_column(nullable=True)
+    account_login: Mapped[str | None] = mapped_column(nullable=True) #column for org or username
     account_id: Mapped[int | None] = mapped_column(nullable=True)
+    account_type: Mapped[str | None] = mapped_column(nullable=True)
     repos_selection: Mapped[str | None] = mapped_column(nullable=True)
 
     #nullable is true since github webhook returns installation info but not user info, so we can have installations without associated users
@@ -29,6 +30,7 @@ class GitHubInstallationRepo(Base):
     
     repo_id = Column(Integer)
     repo_full_name = Column(String)
+    repo_url = Column(String)
     installation = relationship("GitHubInstallation",back_populates="repos")
 
 class GitLabConnection(Base):

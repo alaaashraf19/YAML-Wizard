@@ -12,6 +12,8 @@ class User(Base):
     email = Column(String, unique=True, index=True)
     hashed_password = Column(String)
     role = Column(String, default="user") #user as default role, can be overridden to "admin" during signup if needed
+    avatar_url = Column(String, nullable=True)
+
     projects = relationship("Project", back_populates="user",cascade="all, delete-orphan")
     chat_sessions = relationship("ChatSession", back_populates="user",cascade="all, delete-orphan")
 

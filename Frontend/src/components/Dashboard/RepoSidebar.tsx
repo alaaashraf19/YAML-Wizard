@@ -4,7 +4,9 @@ import logo from "../../assets/yaml_wizard_logo.png";
 
 import { useAddRepo, useDeleteRepo, useSyncRepo } from '../../api/hooks';
 
+import gStyles from "../../global.module.css"
 import styles from './RepoSidebar.module.css';
+import { useNavigate } from 'react-router-dom';
 
 interface Props {
   repos: Repo[];
@@ -22,7 +24,7 @@ export default function RepoSidebar({
   const addRepo = useAddRepo();
   const deleteRepo = useDeleteRepo();
   const syncRepo = useSyncRepo();
-
+  const navigate = useNavigate();
   const [url, setUrl] = useState('');
 
   const handleAdd = () => {
@@ -36,8 +38,10 @@ export default function RepoSidebar({
     <aside className={styles.repoSidebar}>
       <div className={styles.repoSidebarHeader}>
         <div className={styles.appNameContainer}>
-            <img src={logo} alt="Logo" className={styles.logo}/>
-            <span>YAML Wizard</span>
+            <img src={logo} alt="" onClick={() => navigate("/")}
+              className={`${styles.logo} ${gStyles.clickable}`}/>
+            <span className={gStyles.clickable}
+              onClick={() => navigate("/")}>YAML Wizard</span>
         </div>
 
         <div className={styles.repoSidebarInputRow}>

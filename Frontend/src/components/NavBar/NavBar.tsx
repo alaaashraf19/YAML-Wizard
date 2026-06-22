@@ -60,24 +60,31 @@ function NavBar(){
 
     const isDashboard = location.pathname === "/dashboard";
     const isChatbot = location.pathname === "/chatbot";
+    const isHistory = location.pathname === "/history";
     const isProfile = location.pathname.startsWith("/profile");
-    const isHome = location.pathname === "/";
+    const isHome = location.pathname === "/" || location.pathname === "/home";
 
     return(
         <div className={styles.navBar}>
             {loading? null : (<>
-                {!isChatbot && <img src={logo} alt="Logo" onClick={() => {if(!isHome)navigate("/")}}
+                {!isChatbot && !isDashboard && !isHistory && <img src={logo} alt="" onClick={() => {if(!isHome)navigate("/")}}
                     className={`${styles.logo} ${styles.button} ${!isHome && gStyles.clickable}`}
                     title={isHome? "YAMLWizard" : "Go to home page"}/>
                 }
                 {username? (<>
-                    {(isProfile || (isHome && username)) &&
+                    {(isProfile || isHome || isHistory) &&
                     <Link className={`${styles.button} ${gStyles.clickable}`}
                         to="/dashboard" title="Go to dashboard">
                         Dashboard
                     </Link>}
 
-                    {(isDashboard || isProfile || isHome) &&
+                    {(isProfile || isHome || isDashboard) &&
+                    <Link className={`${styles.button} ${gStyles.clickable}`}
+                        to="/history" title="Go to history">
+                        History
+                    </Link>}
+
+                    {(isDashboard || isProfile || isHome || isHistory) &&
                     <Link className={`${styles.button} ${gStyles.clickable}`}
                         to="/chatbot" title="Go to chatbot">
                         Ask Chat
@@ -89,7 +96,7 @@ function NavBar(){
                         <GoPerson/>{username}
                     </Link>}
 
-                    {(isDashboard || isProfile || isHome) &&
+                    {(isDashboard || isProfile || isHome || isHistory) &&
                     <div className={styles.optionsContainer}>
                         <button className={`${styles.optionsButton} ${gStyles.clickable}`}  ref={optionsButtonRef}
                             onClick={() => setOpenOptions(prev => !prev)} title="Open Menu">

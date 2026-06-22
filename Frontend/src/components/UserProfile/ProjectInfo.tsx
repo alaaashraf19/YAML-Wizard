@@ -3,6 +3,7 @@ import popupStyles from '../Popup/Popup.module.css'
 import styles from './Tabs.module.css'
 
 import type { Project, Platform } from "../../types";
+import { Platforms } from "../../types";
 import { Popup } from "../Popup/Popup";
 import { useRef, useState } from "react";
 
@@ -11,7 +12,7 @@ import { MdEdit } from "react-icons/md";
 import { MdDeleteOutline } from "react-icons/md";
 
 
-type ProjectInfoTabProps = {
+type ProjectInfoProps = {
     projectInfoId: number | null,
     setProjectInfoId: React.Dispatch<React.SetStateAction<number | null>>,
     selectedProject: Project | undefined,
@@ -22,7 +23,7 @@ type ProjectInfoTabProps = {
     setConfirmDelete: React.Dispatch<React.SetStateAction<string | null>>
 }
 
-export function ProjectInfoTab(PITProps : ProjectInfoTabProps){
+export function ProjectInfo(PITProps : ProjectInfoProps){
 
     const [projectName, setProjectName] = useState<string | undefined>('');
     const [repoURL, setRepoUrl] = useState<string | undefined>('');
@@ -117,8 +118,8 @@ export function ProjectInfoTab(PITProps : ProjectInfoTabProps){
                             onClick={() => setEditMode(false)} title="Discard edit"/>
                 </div>
                 <form className={styles.section} onSubmit={
-                    (e) => {handleEdit(e);
-                }}>
+                        (e) => {handleEdit(e);
+                    }}>
                     <div className={`${styles.field} ${styles.editField}`}>
                         <label id='project_name' className={styles.fieldLabel}>
                             <span className={styles.labelText}>Project name:</span>
@@ -137,17 +138,13 @@ export function ProjectInfoTab(PITProps : ProjectInfoTabProps){
                     <div className={`${styles.field} ${styles.editField}`}>
                         <label id="platform_label" className={styles.fieldLabel}>
                             <span className={styles.labelText}>Platform:</span>
-                            <label htmlFor="github" className={`${gStyles.clickable} ${styles.radio}`}>
-                                <input type="radio" id="github" name="platform" checked={targetPlatform === "github"}
-                                    onChange={() => setTargetPlatform('github' as Platform)}/>
-                                <span>GitHub</span>
-                            </label>
-
-                            <label htmlFor="gitlab" className={`${gStyles.clickable} ${styles.radio}`}>
-                                <input type="radio" id="gitlab" name="platform" checked={targetPlatform === "gitlab"}
-                                    onChange={() => setTargetPlatform('gitlab' as Platform)}/>
-                                <span>GitLab</span>
-                            </label>
+                            {Platforms.map((platform, index) => (
+                                <label key={index} htmlFor={platform} className={`${gStyles.clickable} ${styles.radio}`}>
+                                    <input type="radio" id={platform} name="platform" checked={targetPlatform === platform}
+                                        onChange={() => setTargetPlatform(platform as Platform)}/>
+                                    <span>{platform.toUpperCase()}</span>
+                                </label>
+                            ))}
                         </label>
                     </div>
 
@@ -192,7 +189,8 @@ export function ProjectInfoTab(PITProps : ProjectInfoTabProps){
                 </div>
                 <div className={styles.infoBar}>
                     <p className={styles.infoLabel}>Repository URL</p>
-                    <p className={styles.infoText}>{PITProps.selectedProject?.repo_url}</p>
+                    <a href={PITProps.selectedProject?.repo_url} className={styles.link}
+                        title="Go to repo">{PITProps.selectedProject?.repo_url}</a>
                 </div>
                 <div className={styles.infoBar}>
                     <p className={styles.infoLabel}>Platform</p>

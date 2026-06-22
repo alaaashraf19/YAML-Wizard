@@ -10,13 +10,14 @@ from sqlalchemy import select
 from services.platform_connectors.oauth_utils import encrypt_token, decrypt_token
 from .oauth_connector import oauthConnector
 from .oauth_utils import encrypt_token, decrypt_token
+import base64
 
 load_dotenv()
 
 GITHUB_CLIENT_ID = os.getenv("GITHUB_CLIENT_ID")
 GITHUB_CLIENT_SECRET = os.getenv("GITHUB_CLIENT_SECRET")
 GITHUB_REDIRECT_URI = os.getenv("GITHUB_REDIRECT_URI")
-
+GITHUB_REVOKE_URL = "https://api.github.com/applications/{client_id}/token"
 
 class GithubConnector(oauthConnector):
 
@@ -152,3 +153,51 @@ class GithubConnector(oauthConnector):
     #maybe removed if we won't store the github token anymore and only use github app install
     async def get_valid_token(self, connection):
         return decrypt_token(connection.access_token)
+    
+
+    async def revoke_github_token(self, access_token: str):
+        """Revokes a GitHub OAuth token so it becomes invalid immediately when user clicks disconnect then we delete from db his data"""
+
+        url = GITHUB_REVOKE_URL.format(client_id=GITHUB_CLIENT_ID)
+
+        auth = base64.b64encode(f"{GITHUB_CLIENT_ID}:{GITHUB_CLIENT_SECRET}".encode()).decode()
+
+        headers = {
+            "Authorization": f"Basic {auth}",
+            "Accept": "application/vnd.github+json"}
+
+        payload = {"access_token": access_token}
+
+        async with httpx.AsyncClient(timeout=10) as client:
+            res = await client.delete(url, json=payload, headers=headers)
+
+        if res.status_code == 204:
+            print("GitHub token revoked successfully.")
+        elif res.status_code == 404:
+            print("GitHub token was already invalid or not found.")
+        if res.status_code not in (204, 404):
+            raise Exception(f"GitHub revoke failed: {res.status_code} {res.text}")
+        
+    async def disconnect(self, request, db):
+        token = request.cookies.get("access_token")
+        if not token:
+            raise HTTPException(401, "Not authenticated")
+
+        user = await get_current_user(db, token)
+
+        result = await db.execute(select(GitHubConnection).where(GitHubConnection.user_id == user.id))
+        connection = result.scalar_one_or_none()
+
+        if not connection:
+            return {"status": "already_disconnected"}
+
+        try:
+            decrypted = decrypt_token(connection.access_token)
+            await self.revoke_github_token(decrypted)
+        except Exception:
+            #if github call fails we just dlete from db and return success, since the token is invalid anyway and we want to remove the connection from our db
+            pass
+
+        await db.delete(connection)
+        await db.commit()
+        return {"status": "disconnected"}

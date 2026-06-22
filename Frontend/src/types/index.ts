@@ -4,10 +4,15 @@ export type TestStatus =
     | "skip"
     | "error";
 
-export type Platform =
-    | "github"
-    | "gitlab";
+// export type Platform =
+//     | "github"
+//     | "gitlab";
 
+export const Platforms = [
+    "github",
+    "gitlab"
+] as const;
+export type Platform = typeof Platforms[number];
 
 export interface Repo {
     id: number;

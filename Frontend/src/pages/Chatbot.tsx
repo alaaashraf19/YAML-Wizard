@@ -6,7 +6,7 @@ import { MdOutlineKeyboardArrowRight } from "react-icons/md"
 import { IoSend } from "react-icons/io5";
 
 import type { Session, Message } from "../types";
-import Projects from "../components/Chatbot/Projects";
+import ChatProjects from "../components/Chatbot/ChatProjects";
 import SideBar from "../components/Chatbot/SideBar";
 
 
@@ -248,7 +248,7 @@ function Chatbot() {
                                 {selectedProject}
                             </button>
 
-                            {isMenuOpen && <Projects setIsMenuOpen={setIsMenuOpen} setSelectedProject={setSelectedProject} menuRef={menuRef}/>}
+                            {isMenuOpen && <ChatProjects setIsMenuOpen={setIsMenuOpen} setSelectedProject={setSelectedProject} menuRef={menuRef}/>}
                         </div>
                     </div>
                 </div>

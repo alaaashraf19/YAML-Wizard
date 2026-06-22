@@ -16,7 +16,7 @@ load_dotenv()
 GITLAB_CLIENT_ID = os.getenv("GITLAB_CLIENT_ID")
 GITLAB_REDIRECT_URI = os.getenv("GITLAB_REDIRECT_URI")
 GITLAB_CLIENT_SECRET = os.getenv("GITLAB_CLIENT_SECRET")
-
+GITLAB_REVOKE_URL = "https://gitlab.com/oauth/revoke"
 
 class GitLabConnector(oauthConnector):
 
@@ -196,3 +196,49 @@ class GitLabConnector(oauthConnector):
         await db.refresh(connection)
 
         return connection
+    
+    async def revoke_gitlab_token(self, access_token: str):
+
+        data = {
+            "client_id": GITLAB_CLIENT_ID,
+            "client_secret": GITLAB_CLIENT_SECRET,
+            "token": access_token,
+        }
+
+        async with httpx.AsyncClient(timeout=10) as client:
+            resp = await client.post(GITLAB_REVOKE_URL, data=data)
+
+        # GitLab returns:
+        # 200 or 204 usually success
+        # 400 if already invalid
+        if resp.status_code in (200, 204):
+            print("GitLab token revoked successfully.")
+        elif resp.status_code == 400:
+            print("GitLab token was already invalid or not found.")
+        else:
+            raise Exception(f"GitLab revoke failed: {resp.status_code} {resp.text}")
+    
+    async def disconnect(self, request, db):
+
+        token = request.cookies.get("access_token")
+        if not token:
+            raise HTTPException(401, "Not authenticated")
+
+        user = await get_current_user(db, token)
+
+        result = await db.execute(select(GitLabConnection).where(GitLabConnection.user_id == user.id))
+        connection = result.scalar_one_or_none()
+
+        if not connection:
+            return {"status": "already_disconnected"}
+
+        #Try revoke on GitLab
+        try:
+            decrypted_token = decrypt_token(connection.access_token)
+            await self.revoke_gitlab_token(decrypted_token)
+        except Exception:
+            pass
+
+        await db.delete(connection)
+        await db.commit()
+        return {"status": "disconnected"}

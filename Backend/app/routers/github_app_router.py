@@ -49,6 +49,7 @@ async def get_user_installations(request: Request, db: AsyncSession  = Depends(g
             "installation_id": i.installation_id,
             "account_login": i.account_login,
             "account_id": i.account_id,
+            "account_type": i.account_type,
             "repos_selection": i.repos_selection,
         }
         for i in installations

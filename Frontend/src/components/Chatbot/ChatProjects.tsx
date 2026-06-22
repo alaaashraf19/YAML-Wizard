@@ -1,5 +1,5 @@
 import gStyles from "../../global.module.css"
-import styles from "./Projects.module.css";
+import styles from "./ChatProjects.module.css";
 import { useEffect, useState } from "react";
 import type { Project } from "../../types";
 
@@ -13,7 +13,7 @@ type projects_props = {
     menuRef: React.Ref<HTMLDivElement> | null
 }
 
-function Projects({setIsMenuOpen, setSelectedProject, menuRef}: projects_props) {
+function ChatProjects({setIsMenuOpen, setSelectedProject, menuRef}: projects_props) {
     const [projects, setProjects] = useState<Project[]>([]);
     const [query, setQuery] = useState("");
     const navigate = useNavigate();
@@ -87,4 +87,4 @@ function Projects({setIsMenuOpen, setSelectedProject, menuRef}: projects_props) 
     , document.body)
 }
 
-export default Projects;
+export default ChatProjects;

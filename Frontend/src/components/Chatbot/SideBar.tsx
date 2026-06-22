@@ -34,8 +34,8 @@ function SideBar({sessionId, setSessionId, sessions, setSessions, setMessages, i
     const [openSettings, setOpenSettings] = useState<boolean>(false);
 
     const settingsRef = useRef<HTMLDivElement | null>(null);
-    const settingsBtnRef = useRef<HTMLDivElement | null>(null);
-    const settingsIconRef = useRef<HTMLDivElement | null>(null);
+    const avatarRef = useRef<HTMLDivElement | null>(null);
+    const avatarIconRef = useRef<HTMLDivElement | null>(null);
 
     const { username, loading, logout } = useAuth();
     const navigate = useNavigate();
@@ -142,10 +142,10 @@ function SideBar({sessionId, setSessionId, sessions, setSessions, setMessages, i
             function handleClickOutside(e: MouseEvent) {
                 if (settingsRef.current &&
                     !settingsRef.current.contains(e.target as Node) && 
-                    ((settingsBtnRef.current && 
-                    !settingsBtnRef.current.contains(e.target as Node)) ||
-                    (settingsIconRef.current &&
-                    !settingsIconRef.current.contains(e.target as Node)))) {
+                    ((avatarRef.current && 
+                    !avatarRef.current.contains(e.target as Node)) ||
+                    (avatarIconRef.current &&
+                    !avatarIconRef.current.contains(e.target as Node)))) {
                     setOpenSettings(false);
                 }
             }
@@ -159,54 +159,55 @@ function SideBar({sessionId, setSessionId, sessions, setSessions, setMessages, i
 
     return(<>
         <div className={`${styles.sideBar} ${isCollapsed ? styles.collapsed : styles.expanded}`}>
-        {isCollapsed? (
-            <>
-                <LuPanelRightClose className={`${styles.collapsedBtn} ${gStyles.clickable}`}
-                    onClick={() => setIsCollapsed(prev => !prev)} title={"Expand"}/>
-                <img src={logo} alt="Logo" onClick={() => navigate("/")} title="Go to home page"
-                    className={`${styles.logo} ${gStyles.clickable}`}/>
-                <MdChatBubbleOutline className={`${styles.collapsedBtn} ${gStyles.clickable}`} title={"New Chat"}
-                    onClick={startNewSession}/>
-                <FaHistory className={`${styles.collapsedBtn} ${gStyles.clickable}`} title={"Version History"}/>
-                <RiDashboardFill className={`${styles.collapsedBtn} ${gStyles.clickable}`}
-                    title={"Go to Dashboard"} onClick={() => navigate("/dashboard")}/>
-                
-                <div ref={settingsIconRef} className={styles.settingsContainer}>
-                    <GoPerson className={`${styles.username} ${gStyles.clickable}`} title={"Open Menu"}
-                    onClick={() => {setOpenSettings(prev => !prev); console.log(openSettings);}}/>
-                    {openSettings &&
-                        <div className={styles.settingsMenu} ref={settingsRef}>
-                            <Link className={`${styles.option} ${gStyles.clickable}`} to="/profile">
-                                <IoPerson/>
-                                Profile
-                            </Link>
-                            <Link className={`${styles.option} ${gStyles.clickable}`} to="/" onClick={() => logout()}>
-                                <FaSignOutAlt/>
-                                Sign out
-                            </Link>
-                        </div>
-                    }
-                </div>
-                
-            </>
-        ) : (<>
+        {isCollapsed? (<>
+            <LuPanelRightClose className={`${styles.collapsedBtn} ${gStyles.clickable}`}
+                onClick={() => setIsCollapsed(prev => !prev)} title={"Expand"}/>
+            <img src={logo} alt="" onClick={() => navigate("/")} title="Go to home page"
+                className={`${styles.logo} ${gStyles.clickable}`}/>
+            <MdChatBubbleOutline className={`${styles.collapsedBtn} ${gStyles.clickable}`}
+                    title={"New Chat"} onClick={startNewSession}/>
+            <FaHistory className={`${styles.collapsedBtn} ${gStyles.clickable}`}
+                title="Go to version history" onClick={() => navigate("/history")}/>
+            <RiDashboardFill className={`${styles.collapsedBtn} ${gStyles.clickable}`}
+                title={"Go to Dashboard"} onClick={() => navigate("/dashboard")}/>
+            
+            <div ref={avatarIconRef} className={styles.settingsContainer}>
+                <GoPerson className={`${styles.username} ${gStyles.clickable}`} title={"Open Menu"}
+                onClick={() => setOpenSettings(prev => !prev)}/>
+                {openSettings &&
+                    <div className={styles.settingsMenu} ref={settingsRef}>
+                        <Link className={`${styles.option} ${gStyles.clickable}`} to="/profile">
+                            <IoPerson/>
+                            Profile
+                        </Link>
+                        <Link className={`${styles.option} ${gStyles.clickable}`} to="/"
+                            onClick={() => logout()}>
+                            <FaSignOutAlt/> Sign out
+                        </Link>
+                    </div>
+                }
+            </div>
+        </>) : (<>
             <div className={styles.topContainer}>
-                <div className={`${styles.appNameContainer} ${gStyles.clickable}`}>
-                    <img src={logo} alt="Logo" className={styles.logo} title="Go to home page"
-                        onClick={() => navigate("/")}/>
-                    <span className={styles.appName} onClick={() => navigate("/")} title="Go to home page">
-                        YAML Wizard</span>
+                <div className={styles.appNameContainer}>
+                    <img src={logo} alt="" className={`${styles.logo} ${gStyles.clickable}`}
+                        title="Go to home page" onClick={() => navigate("/")}/>
+                    <span className={`${styles.appName} ${gStyles.clickable}`} onClick={() => navigate("/")}
+                        title="Go to home page">YAML Wizard</span>
                     <LuPanelLeftClose className={`${styles.closeBarBtn} ${gStyles.clickable}`}
                         onClick={() => setIsCollapsed(prev => !prev)} title={"Collapse"}/>
                 </div>
 
-                <button className={`${styles.actionBtn} ${gStyles.clickable}`} onClick={startNewSession} title={"New Chat"}>
+                <button className={`${styles.actionBtn} ${gStyles.clickable}`}
+                    onClick={startNewSession} title={"New Chat"}>
                     <MdChatBubbleOutline/> New Chat
                 </button>
-                <button className={`${styles.actionBtn} ${gStyles.clickable}`} title={"Version History"}>
-                    <FaHistory/> History
-                </button>
-                <Link className={`${styles.actionBtn} ${gStyles.clickable}`} to="/dashboard" title={"Go to Dashboard"}>
+                <Link className={`${styles.actionBtn} ${gStyles.clickable}`} to="/history"
+                    title="Go to version history">
+                    <FaHistory/> Version History
+                </Link>
+                <Link className={`${styles.actionBtn} ${gStyles.clickable}`} to="/dashboard"
+                    title={"Go to Dashboard"}>
                     <RiDashboardFill/> Dashboard
                 </Link>
             </div>
@@ -239,7 +240,7 @@ function SideBar({sessionId, setSessionId, sessions, setSessions, setMessages, i
             <div className={styles.bottomContainer}>
                 {!loading && (
                     username? (
-                        <div ref={settingsBtnRef} className={styles.settingsContainer}>
+                        <div ref={avatarRef} className={styles.settingsContainer}>
                             <button className={`${styles.username} ${gStyles.clickable}`} title={"Open Menu"}
                                 onClick={() => setOpenSettings(prev => !prev)}>
                                 <GoPerson/>{username}
@@ -250,7 +251,8 @@ function SideBar({sessionId, setSessionId, sessions, setSessions, setMessages, i
                                         <IoPerson/>
                                         Profile
                                     </Link>
-                                    <Link className={`${styles.option} ${gStyles.clickable}`} to="/" onClick={() => logout()}>
+                                    <Link className={`${styles.option} ${gStyles.clickable}`} to="/"
+                                        onClick={() => logout()}>
                                         <FaSignOutAlt/>
                                         Sign out
                                     </Link>

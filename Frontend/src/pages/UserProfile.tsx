@@ -1,13 +1,13 @@
 import gStyles from "../global.module.css"
 import styles from './UserProfile.module.css'
 import type { Project, Platform } from "../types";
-import { ProfileTab, SecurityTab, ProjectsTab, PlatformsTab, ProjectInfo } from "../components/UserProfile/Tabs";
+import { ProfileTab, SecurityTab, ProjectsTab, PlatformsTab, ProjectInfoTab } from "../components/UserProfile/Tabs";
 import { Popup } from "../components/Popup/Popup"
 import { useState, useEffect, useRef } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 
-const tabs = ["Profile", "Security", "Projects", "Platforms"];
+const tabs = ["Profile", "Platforms", "Projects", "Security"];
 
 function UserProfile() {
     const [searchParams] = useSearchParams();
@@ -35,18 +35,24 @@ function UserProfile() {
     const [confirmMessage, setConfirmMessage] = useState<string | null>("");
     const [errorMessage, setErrorMessage] = useState<string | null>("");
 
+    const navigate = useNavigate();
+    const startRef = useRef<HTMLDivElement>(null);
     const formRef = useRef<HTMLDivElement>(null);
     const infoRef = useRef<HTMLDivElement>(null);
     const popupRef = useRef<HTMLDivElement>(null);
 
     const api_url = import.meta.env.VITE_API_URL;
-    const api_url_platform = "https://sprain-reiterate-cape.ngrok-free.dev";
+
+    // Auto-scroll to top smoothly
+    useEffect(() => {
+        startRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, []);
 
     //get user info
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                const res = await fetch(`${api_url}/auth/profile`, {
+                const res = await fetch(`${api_url}/user/profile`, {
                     headers: {"Content-Type": "application/json"},
                     credentials: "include"
                 });
@@ -97,6 +103,11 @@ function UserProfile() {
         fetchProjects();
     }, []);
 
+    //get current active tab from url
+    useEffect(() => {
+        setActiveTab(searchParams.get("tab") || null);
+    }, [searchParams]);
+
     // update profile info
     const handleUpdateProfile = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -111,7 +122,7 @@ function UserProfile() {
         setErrorMessage("");
 
         try{
-            const res = await fetch(`${api_url}/auth/profile`, {
+            const res = await fetch(`${api_url}/user/profile`, {
                 method: "PUT",
                 headers: {"Content-Type": "application/json"},
                 credentials: "include",
@@ -172,7 +183,7 @@ function UserProfile() {
         setErrorMessage("");
 
         try {
-            const res = await fetch(`${api_url}/auth/profile`, {
+            const res = await fetch(`${api_url}/user/profile`, {
                 method: "PUT",
                 headers: {"Content-Type": "application/json"},
                 credentials: "include",
@@ -247,7 +258,6 @@ function UserProfile() {
             setProjects((prevProjects) => [...prevProjects, newProject]);
 
             setConfirmMessage("Project " + projectName + " added successfully");
-            console.log("Project added successfully:", newProject);
 
             setProjectName("");
             setRepoUrl("");
@@ -264,18 +274,6 @@ function UserProfile() {
             return "Some required fields are missing";
         }
         return null;
-    };
-
-    const handleConnectGithub = () => {
-        window.location.href = `${api_url_platform}/platform/github/connect`;
-    };
-
-    const handleConnectGitlab = () => {
-        window.location.href = `${api_url_platform}/platform/gitlab/connect`;
-    };
-
-    const handleInstallApp = () => {
-        window.location.href = `${api_url_platform}/github/install_app`;
     };
 
     // Close info popup on outside click
@@ -303,8 +301,9 @@ function UserProfile() {
 
     return(
         <div className={styles.pageContainer}>
+            <div ref={startRef}/>
             {projectInfoId &&
-                <ProjectInfo
+                <ProjectInfoTab
                     projectInfoId={projectInfoId}
                     setProjectInfoId={setProjectInfoId}
                     projects={projects}
@@ -314,15 +313,14 @@ function UserProfile() {
                     />
             }
             <div className={styles.tabsBar}>
-                <p className={styles.tabsHeader}>Account Settings</p>
-                <div className={styles.devider}/>
-                <p className={`${styles.tab} ${gStyles.clickable}`} onClick={() => setActiveTab(tabs[0])}>{tabs[0]}</p>
-                <div className={styles.devider}/>
-                <p className={`${styles.tab} ${gStyles.clickable}`} onClick={() => setActiveTab(tabs[1])}>{tabs[1]}</p>
-                <div className={styles.devider}/>
-                <p className={`${styles.tab} ${gStyles.clickable}`} onClick={() => setActiveTab(tabs[2])}>{tabs[2]}</p>
-                <div className={styles.devider}/>
-                <p className={`${styles.tab} ${gStyles.clickable}`} onClick={() => setActiveTab(tabs[3])}>{tabs[3]}</p>
+                <p className={`${styles.tabsHeader} ${gStyles.clickable}`}
+                    onClick={() => navigate("/profile")}>Account Settings</p>
+
+                {tabs.map(tab => (<>
+                    <div className={styles.devider}/>
+                    <p className={`${styles.tab} ${gStyles.clickable}`}
+                        onClick={() => navigate(`/profile?tab=${tab}`)}>{tab}</p>
+                </>))}
             </div>
             
             <div className={styles.formContainer} ref={formRef}>
@@ -337,6 +335,27 @@ function UserProfile() {
                 )}
 
                 {(!activeTab || activeTab === tabs[1]) && (
+                    <PlatformsTab
+                        popupRef={popupRef}
+                    />
+                )}
+
+                {(!activeTab || activeTab === tabs[2]) && (
+                    <ProjectsTab 
+                        activeTab={activeTab}
+                        projects={projects} 
+                        projectName={projectName}
+                        setProjectName={setProjectName}
+                        repoURL={repoURL}
+                        setRepoUrl={setRepoUrl}
+                        targetPlatform={targetPlatform}
+                        setTargetPlatform={setTargetPlatform}
+                        handleSubmitProject={handleAddProject}
+                        setProjectInfoId={setProjectInfoId}
+                    />
+                )}
+                
+                {(activeTab === tabs[3]) && (
                     <SecurityTab 
                         password={password} 
                         newPassword={newPassword}
@@ -351,28 +370,6 @@ function UserProfile() {
                         setShowNewPassword={setShowNewPassword}
                         setShowConfirmPassword={setShowConfirmPassword}
                         handleSubmitNewPassword={handleNewPassword}
-                    />
-                )}
-
-                {(!activeTab || activeTab === tabs[2]) && (
-                    <ProjectsTab 
-                        projects={projects} 
-                        projectName={projectName}
-                        setProjectName={setProjectName}
-                        repoURL={repoURL}
-                        setRepoUrl={setRepoUrl}
-                        targetPlatform={targetPlatform}
-                        setTargetPlatform={setTargetPlatform}
-                        handleSubmitProject={handleAddProject}
-                        setProjectInfoId={setProjectInfoId}
-                    />
-                )}
-
-                {(!activeTab || activeTab === tabs[3]) && (
-                    <PlatformsTab
-                        handleConnectGithub={handleConnectGithub}
-                        handleConnectGitlab={handleConnectGitlab}
-                        handleInstallApp={handleInstallApp}
                     />
                 )}
             </div>
