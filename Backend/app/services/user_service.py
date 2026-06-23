@@ -94,7 +94,11 @@ async def upload_avatar(file, user_id: int) -> str:
         folder="avatars",
         public_id=f"user_{user_id}",
         overwrite=True,
-        resource_type="image"
+        resource_type="image",
+        transformation=[
+        {"width": 512, "height": 512, "crop": "limit"},  # resize
+        {"quality": "auto:good"},  # auto compression
+        {"fetch_format": "auto"} ]  # converts to webp if better
     )
 
     return result["secure_url"]

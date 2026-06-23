@@ -20,7 +20,7 @@ async def callback(platform: str, code: str, state: str, request: Request, db: A
     connector = get_connector(platform)
     return await connector.callback(code, state, request, db)
     
-@router.post("/{platform}/disconnect")
+@router.get("/{platform}/disconnect")
 async def disconnect(platform: str, request: Request, db: AsyncSession = Depends(get_db)):
     connector = get_connector(platform)
     return await connector.disconnect(request, db)

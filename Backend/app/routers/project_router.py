@@ -51,7 +51,7 @@ async def get_sessions_of_project(
 async def updateProject(project_id:int, project_update:ProjectUpdate ,current_user = Depends(get_current_user),db: AsyncSession = Depends(get_db)):
     return await update_project(project_id,current_user.id,project_update,db)
 
-@router.delete("/{project_id}", response_model=ProjectResponse)
+@router.delete("/{project_id}")
 async def deleteProject(project_id: int,current_user:User = Depends(get_current_user) ,db: AsyncSession = Depends(get_db)):
     return await delete_project(project_id,current_user.id,db)
 

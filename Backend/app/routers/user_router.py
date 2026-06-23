@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from core.security import get_current_user
 from database.db_engine import get_db
 from models.user_model import User
-from services.user_service import upload_avatar
+from services.user_service import upload_avatar as upload_avatar_service
 from schemas.user_schema import UserResponse, UserUpdate
 from services.user_service import update_user_profile,get_user_profile
 
@@ -25,7 +25,7 @@ async def upload_avatar(file: UploadFile = File(...),db: AsyncSession = Depends(
     if not file.content_type.startswith("image/"):
         raise HTTPException(status_code=400, detail="File must be an image")
 
-    avatar_url = await upload_avatar(file.file, current_user.id)
+    avatar_url = await upload_avatar_service(file.file, current_user.id)
 
     current_user.avatar_url = avatar_url
     db.add(current_user)

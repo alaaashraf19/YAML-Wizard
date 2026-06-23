@@ -1,10 +1,10 @@
 from agent.prompts import GENERATE_PROMPT
 
-from schemas.repo_schema import RepoContext
 from langchain_core.tools import tool
+from schemas.context_package import ContextPackage
 
 @tool
-async def generate_yaml_tool(repo_context: RepoContext,user_prompt: str, previous_yaml: str | None = None,) -> str:
+async def generate_yaml_tool(repo_context: ContextPackage,user_prompt: str, previous_yaml: str | None = None,) -> str:
     """
     Generate a GitHub Actions or GitLab CI YAML pipeline
     based on repository context and user requirements.
@@ -37,27 +37,61 @@ async def generate_yaml_tool(repo_context: RepoContext,user_prompt: str, previou
 
 
 
-def build_context_summary(ctx: RepoContext) -> str:
+def build_context_summary(ctx: ContextPackage) -> str:
     """Build a human-readable summary of the repo context."""
+
     lines = []
+
+    # ── Core stack ─────────────────────────────────────────────
     lines.append(f"Languages: {', '.join(ctx.languages) if ctx.languages else 'unknown'}")
+
     lines.append(f"Frameworks: {', '.join(ctx.frameworks) if ctx.frameworks else 'none detected'}")
-    lines.append(f"Build tools: {', '.join(ctx.build_tools) if ctx.build_tools else 'none detected'}")
-    lines.append(f"Test runners: {', '.join(ctx.test_runners) if ctx.test_runners else 'none detected'}")
+
+    lines.append( f"Build tools: {', '.join(ctx.build_tools) if ctx.build_tools else 'none detected'}")
+
+    # ── Testing ────────────────────────────────────────────────
+    lines.append( f"Test runners: {', '.join(ctx.test_runners) if ctx.test_runners else 'none detected'}")
+    
+    lines.append(f"Test runner details: {', '.join(ctx.test_runner_details) if ctx.test_runner_details else 'none'}")
+
+    lines.append(f"Test commands: {', '.join(ctx.test_commands) if ctx.test_commands else 'none'}")
+
+    # ── Build / Runtime ────────────────────────────────────────
+    lines.append(f"Build commands: {', '.join(ctx.build_commands) if ctx.build_commands else 'none'}")
+
+    lines.append(f"Environment variables: {', '.join(ctx.env_vars) if ctx.env_vars else 'none'}")
+
+    lines.append(f"Services: {', '.join(ctx.services) if ctx.services else 'none'}")
+
+    # ── CI / Docker ────────────────────────────────────────────
     lines.append(f"Has Docker: {'yes' if ctx.has_docker else 'no'}")
     lines.append(f"Has existing CI: {'yes' if ctx.has_existing_ci else 'no'}")
 
     if ctx.existing_ci_content:
-        lines.append(f"\nExisting CI configuration:\n{ctx.existing_ci_content}")
+        truncated_ci = (
+            ctx.existing_ci_content[:5000] + "..."
+            if len(ctx.existing_ci_content) > 5000
+            else ctx.existing_ci_content
+        )
+        lines.append(f"\nExisting CI configuration:\n{truncated_ci}")
 
+    # ── Reports ────────────────────────────────────────────────
+    lines.append(f"Has test reports: {'yes' if ctx.has_test_reports else 'no'}")
+
+    lines.append(f"Report formats: {', '.join(ctx.report_formats) if ctx.report_formats else 'none'}")
+
+    # ── Structure ──────────────────────────────────────────────
     lines.append(f"\nDirectory structure:\n{ctx.directory_tree}")
 
     if ctx.key_files:
         lines.append("\nKey configuration files:")
         for filename, content in ctx.key_files.items():
             if content and content != "[empty]":
-                #truncate very long files for prompt efficiency
-                truncated = content[:3000] + "..." if len(content) > 3000 else content
+                truncated = (
+                    content[:3000] + "..."
+                    if len(content) > 3000
+                    else content
+                )
                 lines.append(f"\n--- {filename} ---\n{truncated}")
 
     return "\n".join(lines)

@@ -1,18 +1,18 @@
 from database.base import Base
-from sqlalchemy import Boolean, Column, DateTime, Enum, Integer, String, Text
+from sqlalchemy import Boolean, Column, DateTime, Enum, Integer, String, Text, ForeignKey
 from sqlalchemy.dialects.postgresql import JSONB
 from schemas.repo_schema import Platform
 from sqlalchemy.sql import func
+from sqlalchemy.orm import relationship
 
 
 class RepoContext(Base):
     __tablename__ = "repo_context"
 
     id = Column(Integer, primary_key=True, index=True)
-    url = Column(String, nullable=False)
-    platform = Column(Enum(Platform), nullable=False)
-    default_branch = Column(String, default="main")
 
+    repo_id = Column(Integer, ForeignKey('repositories.id', ondelete="CASCADE"),nullable=False, unique=True)
+    repository = relationship("Repository", back_populates="context", uselist=False)
     # ── detections ────────────────────────────────────────────────────────
     languages   = Column(JSONB, default=list)
     frameworks  = Column(JSONB, default=list)

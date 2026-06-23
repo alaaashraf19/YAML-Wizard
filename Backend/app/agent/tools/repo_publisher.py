@@ -3,36 +3,106 @@ import time
 import httpx
 from urllib.parse import urlparse, quote
 from schemas.publish_result_schema import PublishResult
+from langchain_core.tools import tool
+
 
 _RETRYABLE_STATUS_CODES = {500, 502, 503, 504}
 _MAX_RETRIES = 3
 _BACKOFF_BASE = 2  # seconds
-def _request_with_retry(method: str, url: str, **kwargs) -> httpx.Response:
-
-    """Make an HTTP request with automatic retry on transient server errors."""
-
-    last_exc: httpx.HTTPStatusError | None = None
-    for attempt in range(_MAX_RETRIES + 1):
-        resp = httpx.request(method, url, **kwargs)
-        if resp.status_code not in _RETRYABLE_STATUS_CODES:
-            resp.raise_for_status()
-            return resp
-        # Retryable error
-        if attempt < _MAX_RETRIES:
-            wait = _BACKOFF_BASE ** attempt  # 1s, 2s, 4s
-            time.sleep(wait)
-        else:
-            resp.raise_for_status()  # raise on final attempt
-    # Should never reach here, but just in case
-    raise httpx.HTTPError(f"Request failed after {_MAX_RETRIES + 1} attempts")
 
 
 
-def publish_to_repo(yaml_content: str, repo_url: str, platform: str, token: str, file_path: str | None = None,
+@tool
+def publish_to_repo_tool(yaml_content: str, repo_url: str, platform: str, token: str, file_path: str | None = None,
     branch: str = "main", commit_message: str | None = None, create_pr: bool = False, pr_branch: str = "yaml-wizard/ci-pipeline",) -> PublishResult:
     
-    """Publish a YAML file to a GitHub or GitLab repository.
-    Can either commit directly to a branch or create a pull/merge request.
+    """
+    Tool: publish_to_repo
+
+    Purpose:
+        Publishes a YAML file to a remote Git repository (GitHub or GitLab).
+        It can either commit directly to a branch or create a pull/merge request.
+
+    Inputs:
+
+        yaml_content: str (required)
+            The full YAML file content to be published.
+            This is the exact file body that will be committed to the repository.
+
+        repo_url: str (required)
+            The repository URL (GitHub or GitLab).
+            Example:
+                https://github.com/user/repo
+                https://gitlab.com/user/repo
+            Used to determine repository owner and name.
+
+        platform: str (required)
+            The Git provider platform.
+            Allowed values:
+                "github", "gitlab"
+
+        token: str (required)
+            Authentication token for the Git provider.
+            Must have permissions to:
+                - read repository
+                - write repository contents
+                - create branches / pull or merge requests (if enabled)
+
+        file_path: str | None (optional)
+            Path inside the repository where the YAML file will be written.
+            Default:
+                .github/workflows/ci.yml
+            If the file already exists, it will be updated.
+
+        branch: str (optional)
+            Target branch to commit into.
+            Default:
+                "main"
+
+        commit_message: str | None (optional)
+            Commit message for the change.
+            Default:
+                "ci: add {file_path} via YAML Wizard"
+
+        create_pr: bool (optional)
+            If True:
+                - Creates a new branch (pr_branch)
+                - Commits the file to that branch
+                - Opens a Pull Request (GitHub) or Merge Request (GitLab)
+            If False:
+                - Commits directly to the target branch.
+
+        pr_branch: str (optional)
+            Name of the branch used when create_pr is True.
+            Default:
+                "yaml-wizard/ci-pipeline"
+
+    Output:
+
+        PublishResult:
+            success: bool
+                True if the publish operation succeeded, False otherwise.
+
+            message: str
+                Human-readable result message.
+                If success:
+                    - "File committed to {branch}: {file_path}"
+                    - or "Pull request created: {url}"
+                If failure:
+                    - error description (auth failure, repo not found, conflict, etc.)
+
+            url: str | None
+                URL to the resulting resource:
+                    - If direct commit: link to the file in the repository
+                    - If PR/MR: link to the pull/merge request
+                    - If failure: None
+
+    Behavior Notes:
+
+        - This tool performs an external side effect (modifies remote repositories).
+        - It should only be called when the user explicitly requests publishing, deploying, or pushing a file.
+        - Prefer creating a pull request (create_pr=True) when safety is desired.
+        - The YAML content should already be fully generated before calling this tool.
     """
     # print("here")
     platform = platform.lower()
@@ -52,6 +122,25 @@ def publish_to_repo(yaml_content: str, repo_url: str, platform: str, token: str,
         return PublishResult(success=False, message=f"Unknown platform: {platform}")
 
 
+
+def _request_with_retry(method: str, url: str, **kwargs) -> httpx.Response:
+
+    """Make an HTTP request with automatic retry on transient server errors."""
+
+    last_exc: httpx.HTTPStatusError | None = None
+    for attempt in range(_MAX_RETRIES + 1):
+        resp = httpx.request(method, url, **kwargs)
+        if resp.status_code not in _RETRYABLE_STATUS_CODES:
+            resp.raise_for_status()
+            return resp
+        # Retryable error
+        if attempt < _MAX_RETRIES:
+            wait = _BACKOFF_BASE ** attempt  # 1s, 2s, 4s
+            time.sleep(wait)
+        else:
+            resp.raise_for_status()  # raise on final attempt
+    # Should never reach here, but just in case
+    raise httpx.HTTPError(f"Request failed after {_MAX_RETRIES + 1} attempts")
 
 
 # ── GITHUB ──────────────────────────────────────────────────────────────────
