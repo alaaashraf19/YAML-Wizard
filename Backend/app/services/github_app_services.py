@@ -244,47 +244,62 @@ async def fetch_installation_repos(current_user, db) -> list[GitHubInstallationR
 
     # Fetch the installation linked to the current user
     result = await db.execute(select(GitHubInstallationModel).where(GitHubInstallationModel.user_id == current_user.id))
-    installation = result.scalar_one_or_none()
-    if not installation:
+    installations = result.scalars().all()
+
+    if not installations:
         return []
-    installation_token = get_installation_token(installation.installation_id)
-
-    url = "https://api.github.com/installation/repositories"
-
-    headers = {
-        "Authorization": f"Bearer {installation_token}",
-        "Accept": "application/vnd.github+json"
-    }
-
-    async with httpx.AsyncClient() as client:
-        response = await client.get(url, headers=headers)
-        response.raise_for_status()
-        data = response.json()
-
-    #fetch existing repos once
-    existing = await db.execute(
-        select(GitHubInstallationRepo.repo_id).where(
-            GitHubInstallationRepo.installation_id == installation.installation_id
-        )
-    )
-    existing_ids = set(existing.scalars().all())
-
+    
     repos = []
-    for repo in data.get("repositories", []):
-        repo_id = repo.get("id")
-        repo_full_name = repo.get("full_name")
-        repo_url = repo.get("html_url")
-        repos.append(GitHubInstallationRepoSchema(repo_id=repo_id, repo_full_name=repo_full_name, repo_url=repo_url))
 
-        if repo_id not in existing_ids:
-            db.add(
-                GitHubInstallationRepo(
-                    installation_id=installation.installation_id,
+    for installation in installations:
+        installation_token = get_installation_token(
+            installation.installation_id
+        )
+
+        headers = {
+            "Authorization": f"Bearer {installation_token}",
+            "Accept": "application/vnd.github+json"
+        }
+
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
+                "https://api.github.com/installation/repositories",
+                headers=headers
+            )
+            response.raise_for_status()
+            data = response.json()
+
+        existing = await db.execute(
+            select(GitHubInstallationRepo.repo_id).where(
+                GitHubInstallationRepo.installation_id
+                == installation.installation_id
+            )
+        )
+
+        existing_ids = set(existing.scalars().all())
+
+        for repo in data.get("repositories", []):
+            repo_id = repo["id"]
+            repo_full_name = repo["full_name"]
+            repo_url = repo["html_url"]
+
+            repos.append(
+                GitHubInstallationRepoSchema(
                     repo_id=repo_id,
                     repo_full_name=repo_full_name,
-                    repo_url=repo_url,
+                    repo_url=repo_url
                 )
             )
+
+            if repo_id not in existing_ids:
+                db.add(
+                    GitHubInstallationRepo(
+                        installation_id=installation.installation_id,
+                        repo_id=repo_id,
+                        repo_full_name=repo_full_name,
+                        repo_url=repo_url,
+                    )
+                )
 
     await db.commit()
     return repos

@@ -26,9 +26,9 @@ class GitHubInstallationRepo(Base):
 
     id = Column(Integer, primary_key=True)
 
-    installation_id = Column(Integer, ForeignKey("github_installations.installation_id"))
+    installation_id = Column(Integer, ForeignKey("github_installations.installation_id"),nullable=False)#not unique since installation can have many repos
     
-    repo_id = Column(Integer)
+    repo_id = Column(Integer, nullable=False, unique=True)
     repo_full_name = Column(String)
     repo_url = Column(String)
     installation = relationship("GitHubInstallation",back_populates="repos")
