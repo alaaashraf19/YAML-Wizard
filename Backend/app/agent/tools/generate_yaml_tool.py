@@ -16,6 +16,7 @@ async def generate_yaml_tool(repo_context: ContextPackage,user_prompt: str, prev
     Returns:
         Tuple of (yaml_content, description)
     """
+    
     context_summary = build_context_summary(repo_context)
 
     previous_yaml_section = ""
@@ -26,8 +27,8 @@ async def generate_yaml_tool(repo_context: ContextPackage,user_prompt: str, prev
         )
 
     return GENERATE_PROMPT.format(
-        platform=repo_context.platform.value,
-        repo_url=repo_context.url,
+        # platform=repo_context.platform.value,
+        # repo_url=repo_context.url,
         repo_context=context_summary,
         user_prompt=user_prompt,
         previous_yaml_section=previous_yaml_section,
@@ -52,7 +53,14 @@ def build_context_summary(ctx: ContextPackage) -> str:
     # ── Testing ────────────────────────────────────────────────
     lines.append( f"Test runners: {', '.join(ctx.test_runners) if ctx.test_runners else 'none detected'}")
     
-    lines.append(f"Test runner details: {', '.join(ctx.test_runner_details) if ctx.test_runner_details else 'none'}")
+    if ctx.test_runner_details:
+        runner_details = ", ".join(
+            f"{r.runner} ({r.ecosystem}, detected via {r.detected_via})"
+            for r in ctx.test_runner_details
+        )
+        lines.append(f"Test runner details: {runner_details}")
+    else:
+        lines.append("Test runner details: none")
 
     lines.append(f"Test commands: {', '.join(ctx.test_commands) if ctx.test_commands else 'none'}")
 
