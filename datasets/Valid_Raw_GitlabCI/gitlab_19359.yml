@@ -1,9 +1,0 @@
-image: zauster/r-blogdown:latest
-pages:
-  artifacts:
-    paths:
-    - public
-  only:
-  - master
-  script:
-  - R -e "blogdown::build_site()"

@@ -1,0 +1,48 @@
+.pageContainer {
+    display: flex;
+    width: 75vw;
+    height: 80%;
+    margin-top: 80px;
+    color: white;
+}
+.tabsBar {
+    display: flex;
+    flex-direction: column;
+    width: 20%;
+    height: fit-content;
+    
+    background-color: rgb(9, 2, 41);
+    border: 1px solid rgb(9, 2, 41);
+    border-radius: 15px;
+    margin: 20px;
+    padding: 20px;
+
+    font-size: 20px;
+}
+.tabsHeader{
+    font-size: 25px;
+    font-weight: 500;
+    width: fit-content;
+}
+.tab {
+    padding: 10px;
+    border-radius: 15px;
+    
+    transition: background-color 0.25s ease;
+}
+.tab:hover {background-color: rgb(19, 5, 79);}
+.devider {border-bottom: 1px solid rgba(255, 255, 255, 0.2);}
+
+.formContainer {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding-left: 5%;
+    overflow-x: hidden;
+    min-width: 0;
+
+    overflow-y: auto;
+    overflow-anchor:auto;
+    color: white;
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}

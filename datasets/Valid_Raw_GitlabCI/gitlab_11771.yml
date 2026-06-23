@@ -1,8 +1,0 @@
-build:
-  artifacts:
-    paths:
-    - XWeb.jar
-  script:
-  - mvn clean package -B
-  - cp target/XWeb.jar XWeb.jar
-image: maven:3.3.3-jdk-8-onbuild

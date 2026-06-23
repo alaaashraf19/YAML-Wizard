@@ -1,9 +1,0 @@
-before_script:
-- apt-get update -yqq
-- apt-get install -yqq --no-install-recommends build-essential gcc cmake libgit2-dev
-  libssh2-1-dev
-image: rust:latest
-test:cargo:
-  script:
-  - rustc --version && cargo --version
-  - cargo test --all --verbose

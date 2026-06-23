@@ -1,7 +1,0 @@
-before_script:
-- apt-get update -qq && apt-get install -y -qq wget
-image: ubuntu:18.04
-test:
-  script:
-  - ./goluwa RUN_TEST
-  stage: test

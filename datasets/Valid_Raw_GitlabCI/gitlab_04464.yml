@@ -1,8 +1,0 @@
-image: yasuyuky/rust-ssl-static
-stages:
-- build
-static-build:
-  script:
-  - DEBIAN_FRONTEND=noninteractive apt-get update && apt-get -y install libssl-dev
-  - make build-static-release
-  stage: build

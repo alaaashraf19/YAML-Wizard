@@ -6,7 +6,7 @@ import pandas as pd
 from tqdm.auto import tqdm
 
 
-DATASETS_DIR = Path("../../../datasets")
+DATASETS_DIR = Path(__file__).resolve().parents[3] / "datasets"
 CHROMA_DIR = DATASETS_DIR / "chroma_db"
 
 TARGETS = {

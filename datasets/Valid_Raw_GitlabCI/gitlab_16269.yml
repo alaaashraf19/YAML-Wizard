@@ -1,9 +1,0 @@
-rubocop:
-  before_script:
-  - gem install rubocop
-  image: ruby
-  script:
-  - rubocop --except 'Metrics/BlockLength,Metrics/LineLength' Vagrantfile
-  stage: test
-stages:
-- test

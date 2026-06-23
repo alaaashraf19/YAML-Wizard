@@ -1,7 +1,0 @@
-default:
-  image: python:3.12
-lint:
-  before_script:
-  - pip install ansible
-  script:
-  - ansible-playbook --inventory playbooks/hosts.yml --syntax-check playbooks/site.yml

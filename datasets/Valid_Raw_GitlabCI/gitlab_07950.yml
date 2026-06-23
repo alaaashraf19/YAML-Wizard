@@ -1,8 +1,0 @@
-image: ruby:2.3
-stages:
-- test
-test_job:
-  script:
-  - bundle install
-  - bundle exec rake test
-  stage: test

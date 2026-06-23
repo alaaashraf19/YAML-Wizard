@@ -1,5 +1,0 @@
-image: rust:latest
-test:cargo:
-  script:
-  - rustc --version && cargo --version
-  - time cargo test --verbose --jobs 1 --release

@@ -12,14 +12,17 @@ from sqlalchemy import select,update,delete
 
 from models.chat_message_model import ChatMessage
 from models.chat_session_model import ChatSession
+from models.platforms_model import GitLabConnection
+from agent.chatbot_agent import ChatbotAgent
 
 
 class ChatbotService:
     def __init__(self):
         self.client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
         self.model = "models/gemini-2.5-flash"
+        self.agent = ChatbotAgent()
 
-    async def send_message(self, message: str, chat_history: List[Dict[str, str]] = None) -> Dict[str, str]:
+    async def send_message(self, message: str, chat_history: List[Dict[str, str]] = None, db: Optional[AsyncSession] = None, user_id: Optional[int] = None) -> Dict[str, str]:
 
         if not message or not message.strip():
             raise HTTPException(status_code=400, detail="Message cannot be empty")
@@ -42,23 +45,40 @@ class ChatbotService:
                 parts = [types.Part.from_text(text=message)]
             ))
 
-            response = self.client.models.generate_content(
-                model = self.model,
-                contents = contents,
-                config = types.GenerateContentConfig(
-                    temperature = 0.7,
-                    max_output_tokens = 2500,
-                )
-            )
+            gitlab_connection = None
+            if db is not None and user_id is not None:
+                gitlab_result = await db.execute(select(GitLabConnection).where(GitLabConnection.user_id == user_id))
+                gitlab_connection = gitlab_result.scalar_one_or_none()
 
+            response = await self.agent.invoke(
+                message=message,
+                chat_history=chat_history,
+                db=db,
+                gitlab_connection=gitlab_connection,
+            )
 
             return {
                 "role": "assistant",
-                "content": response.text.strip(),
+                "content":str(response)
             }
 
         except Exception as e:
-            raise HTTPException(status_code=502, detail=f"Gemini API error: {str(e)}")
+            error_text = str(e)
+
+            if "RESOURCE_EXHAUSTED" in error_text or "429" in error_text:
+                return{
+                    "status_code": 429,
+                    "role": "assistant",
+                    "content": "⚠️ You've reached the usage limit. Please try again later.",
+                    "error": error_text
+                }
+            
+            return{
+                "status_code": 500,
+                "role": "assistant",
+                "content": "⚠️ Sorry, something went wrong while generating my response. Please try sending your message again.",
+                "error": error_text
+            }
 
     async def process_chat_message(
             self,
@@ -68,7 +88,6 @@ class ChatbotService:
             project_id : Optional[int],
             db: AsyncSession
     ) -> Dict[str, Any]:
-
 
         if not session_id:
             session = await self.create_new_session(
@@ -90,10 +109,13 @@ class ChatbotService:
                     status_code=404,
                     detail="Chat session not found or access denied"
                 )
-            if project_id is not None and session.project_id != project_id:
-                session.project_id = project_id
-                await db.commit()
-                await db.refresh(session)
+            
+            # when a session has a project it is unchangeable
+            # if project_id is not None and session.project_id != project_id:
+            #     session.project_id = project_id
+            #     await db.commit()
+            #     await db.refresh(session)
+
             # load existed chat history
             chat_history = await self.get_session_messages(
                 user_id=user_id,
@@ -101,9 +123,13 @@ class ChatbotService:
                 db=db
             )
 
+        session_name = session.session_name
+
         result = await self.send_message(
             message=message,
-            chat_history=chat_history
+            chat_history=chat_history,
+            db=db,
+            user_id=user_id
         )
 
         user_msg, bot_msg = await self.save_conversation_turn(
@@ -120,8 +146,24 @@ class ChatbotService:
             db=db
         )
 
+        if isinstance(result, dict) and result.get("error"):
+            raise HTTPException(
+                status_code=result["status_code"],
+                detail={
+                    "session_id" : session_id,
+                    "session_name": session_name,
+                    "message": {
+                        "role": "assistant",
+                        "content": result["content"],
+                        "timestamp": bot_msg.timestamp.isoformat()
+                    },
+                    "error": result.get("error")
+                }
+            )
+
         return {
             "session_id": session_id,
+            "session_name": session_name,
             "bot_response": result["content"],
             "bot_timestamp": bot_msg.timestamp,
             "full_history": full_history
