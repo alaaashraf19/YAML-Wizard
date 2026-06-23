@@ -1,17 +1,14 @@
 import gStyles from "../../global.module.css"
 import styles from './HProjects.module.css'
 import logo from "../../assets/yaml_wizard_logo.png";
-import { useAuth } from '../../Context/AuthContext';
 import type { Project } from "../../types";
 // import Projects from "../components/Chatbot/Projects";
 
-import { useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { LuPanelRightClose, LuPanelLeftClose } from "react-icons/lu";
-import { IoPerson } from "react-icons/io5";
-import { GoPerson } from "react-icons/go";
-import { FaPlus, FaSignOutAlt } from "react-icons/fa";
+import { FaPlus } from "react-icons/fa";
 
 
 function HProjects(){
@@ -19,37 +16,9 @@ function HProjects(){
     const [projects, setProjects] = useState<Project[]>([]);
     const [query, setQuery] = useState("");
     const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
-    const [openSettings, setOpenSettings] = useState<boolean>(false);
-
-    const settingsRef = useRef<HTMLDivElement | null>(null);
-    const avatarRef = useRef<HTMLDivElement | null>(null);
-    const avatarIconRef = useRef<HTMLDivElement | null>(null);
 
     const api_url = import.meta.env.VITE_API_URL;
-    const { username, loading, logout } = useAuth();
     const navigate = useNavigate();
-
-    
-    // Close options on outside click
-    useEffect(
-        () => {
-            function handleClickOutside(e: MouseEvent) {
-                if (settingsRef.current &&
-                    !settingsRef.current.contains(e.target as Node) && 
-                    ((avatarRef.current && 
-                    !avatarRef.current.contains(e.target as Node)) ||
-                    (avatarIconRef.current &&
-                    !avatarIconRef.current.contains(e.target as Node)))) {
-                    setOpenSettings(false);
-                }
-            }
-
-            document.addEventListener("mousedown", handleClickOutside);
-            return () => {
-                document.removeEventListener("mousedown", handleClickOutside);
-            };
-        }
-    , []);
 
     //get user projects
     useEffect(() => {
@@ -87,23 +56,6 @@ function HProjects(){
                     onClick={() => setIsCollapsed(prev => !prev)} title={"Expand"}/>
                 <FaPlus className={`${styles.collapsedBtn} ${gStyles.clickable}`}
                     onClick={() => navigate("/profile?tab=Projects")} title="Add Project"/>
-
-                <div ref={avatarIconRef} className={styles.settingsContainer}>
-                    <GoPerson className={`${styles.username} ${gStyles.clickable}`} title={"Open Menu"}
-                        onClick={() => setOpenSettings(prev => !prev)}/>
-                    {openSettings &&
-                        <div className={styles.settingsMenu} ref={settingsRef}>
-                            <Link className={`${styles.option} ${gStyles.clickable}`} to="/profile">
-                                <IoPerson/>
-                                Profile
-                            </Link>
-                            <Link className={`${styles.option} ${gStyles.clickable}`} to="/"
-                                onClick={() => logout()}>
-                                <FaSignOutAlt/> Sign out
-                            </Link>
-                        </div>
-                    }
-                </div>
             </>) : (<>
                 <div className={styles.appNameContainer}>
                     <img src={logo} alt="" className={`${styles.logo} ${gStyles.clickable}`}
@@ -124,6 +76,7 @@ function HProjects(){
                         <ul className={styles.projectsList}>
                             {filteredItems.map((p, index) => (
                                 <li key={index} onMouseDown={() => setProjectId(p.id)}
+                                    title={p.project_name + '('+ p.repo_url + ')'}
                                     className={`${styles.project} ${gStyles.clickable} ${(p.id == projectId) && styles.active}`}>
                                     {p.project_name}
                                 </li>
@@ -135,33 +88,10 @@ function HProjects(){
                 </div>
 
                 <div className={styles.bottomContainer}>
-                    <div className={styles.addBtnContainer}>
-                        <button className={`${styles.addButton} ${gStyles.clickable}`}
-                            onClick={() => navigate("/profile?tab=Projects")} title="Go to settings">
-                            Add project
-                        </button>
-                    </div>
-
-                    {!loading && (
-                        <div ref={avatarRef} className={styles.settingsContainer}>
-                            <button className={`${styles.username} ${gStyles.clickable}`} title={"Open Menu"}
-                                onClick={() => setOpenSettings(prev => !prev)}>
-                                <GoPerson/>{username}
-                            </button>
-                            {openSettings && 
-                                <div className={styles.settingsMenu} ref={settingsRef}>
-                                    <Link className={`${styles.option} ${gStyles.clickable}`} to="/profile">
-                                        <IoPerson/>
-                                        Profile
-                                    </Link>
-                                    <Link className={`${styles.option} ${gStyles.clickable}`} to="/" onClick={() => logout()}>
-                                        <FaSignOutAlt/>
-                                        Sign out
-                                    </Link>
-                                </div>
-                            }
-                        </div>
-                    )}
+                    <button className={`${styles.addButton} ${gStyles.clickable}`}
+                        onClick={() => navigate("/profile?tab=Projects")} title="Go to settings">
+                        Add project
+                    </button>
                 </div>
             </>)}
         </div>

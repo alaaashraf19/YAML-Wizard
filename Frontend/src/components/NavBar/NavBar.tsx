@@ -80,7 +80,7 @@ function NavBar(){
 
                     {(isProfile || isHome || isDashboard) &&
                     <Link className={`${styles.button} ${gStyles.clickable}`}
-                        to="/history" title="Go to history">
+                        to="/history" title="Go to version history">
                         History
                     </Link>}
 
@@ -90,7 +90,7 @@ function NavBar(){
                         Ask Chat
                     </Link>}
 
-                    {(isDashboard || isHome) &&
+                    {(isDashboard || isHome || isHistory) &&
                     <Link className={`${styles.button} ${styles.username} ${gStyles.clickable}`}
                         to="/profile" title="Go to profile">
                         <GoPerson/>{username}

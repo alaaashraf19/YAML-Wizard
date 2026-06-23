@@ -1,8 +1,8 @@
 import gStyles from "../../global.module.css"
 import styles from './AuthForm.module.css';
-import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 import { IoClose } from "react-icons/io5";
+import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import { useState } from "react";
 
 type UserNameProps = {
@@ -97,12 +97,16 @@ export function PasswordField(P_props: PasswordProps) {
             <label id={P_props.type}>
                 <span className={styles.labelText}>{P_props.type}:</span>
                 <div className={styles.passwordContainer}>
-                    <input type={P_props.showPassword ? "text" : "password"} name={P_props.type} className={styles.input}
-                        placeholder={`Enter ${P_props.type.toLowerCase()}..`} value={P_props.password} style={{width: "100%"}}
+                    <input type={P_props.showPassword ? "text" : "password"} name={P_props.type}
+                        className={`${styles.input} ${styles.password}`}
+                        placeholder={`Enter ${P_props.type.toLowerCase()}..`} value={P_props.password}
                         onChange={(e) => {P_props.setPassword(e.target.value)}} autoComplete="off">
                     </input>
-                    <button type="button" className={`${styles.toggle} ${gStyles.clickable}`} onClick={() => P_props.setShowPassword(!P_props.showPassword)}>
-                        {P_props.showPassword ? <FaEye /> : <FaEyeSlash />}
+                    <button type="button" className={`${styles.toggle} ${gStyles.clickable}`}
+                        onClick={() => P_props.setShowPassword(!P_props.showPassword)}>
+                        {P_props.showPassword ?
+                            <IoMdEye className={styles.toggleIcon}/>
+                            : <IoMdEyeOff className={styles.toggleIcon}/>}
                     </button>
                 </div>
              </label>

@@ -132,7 +132,7 @@ export interface Project {
     user_id: number | null;
     project_name: string;
     repo_url: string;
-    target_platform: Platform;
+    platform: Platform;
     created_at: string;
     updated_at: string;
 }
