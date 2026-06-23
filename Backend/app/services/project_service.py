@@ -39,6 +39,8 @@ async def create_project(project: ProjectCreate,user_id:int, db: AsyncSession):
     repo_url=project_data['url'].rstrip("/")
     full_name, detected_platform = _parse_repo_info(repo_url)
     default_branch = _parse_branch(repo_url)
+    if default_branch is None:
+        default_branch = "main"
 
     if detected_platform not in ["github", "gitlab"]:
         raise HTTPException(status_code=400, detail="Unsupported platform. Only 'github' and 'gitlab' are supported.")
@@ -101,17 +103,29 @@ async def update_project(project_id: int, user_id:int, project_update: ProjectUp
     if project_update.repo_url is not None:
         repo.url = project_update.repo_url
         repo.full_name, detected_platform = _parse_repo_info(repo.url)
-        repo.default_branch = _parse_branch(repo.url)
+        default_branch = _parse_branch(repo.url)
+        if default_branch is None:
+            default_branch = "main"
+        repo.default_branch =default_branch
 
         if detected_platform not in ["github", "gitlab"]:
             raise HTTPException(status_code=400, detail="Unsupported platform. Only 'github' and 'gitlab' are supported.")
         repo.platform = detected_platform
         if detected_platform == "gitlab":
             repo.gitlab_project_id = await _get_gitlab_proj_id(repo.full_name)
+        else:
+            repo.gitlab_project_id = None
 
     
     project.updated_at = datetime.utcnow()
-    await db.commit()
+    try:
+        await db.commit()
+    except IntegrityError:
+        await db.rollback()
+        raise HTTPException(
+            status_code=409,
+            detail="Repository URL already exists"
+        )
     await db.refresh(project)
     await db.refresh(repo)
 
