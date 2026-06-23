@@ -30,38 +30,72 @@ Your job is to generate CI/CD YAML that FULLY SATISFIES the project's needs:
 
 RULES:
 - Output ONLY valid YAML — no markdown fences, no explanations mixed into the YAML
-- When asked to generate, respond with the YAML content followed by a separator "---DESCRIPTION---" and then a brief description of what the pipeline does
-- When asked to fix errors, incorporate ALL error feedback and produce corrected YAML
+- When asked to generate, respond with the YAML content followed by a description in json
+- When asked to fix errors, incorporate ALL error feedback and produce corrected YAML also in json
 - Always use specific, pinned versions for actions/images when possible
 - Include comments in the YAML to explain non-obvious configuration
 """
 
 
-RECTIFY_PROMPT = """The following YAML has validation errors. Fix ALL of them and return corrected YAML.
+GENERATE_PROMPT = """
+Generate a production-ready {platform} CI/CD pipeline YAML.
 
-YAML content:
-```yaml
-{yaml_content}
-```
-
-Errors found:
-{errors}
-
-Return ONLY the corrected YAML followed by "---DESCRIPTION---" and a brief description of what was fixed.
-"""
-
-GENERATE_PROMPT = """Generate a {platform} CI/CD pipeline YAML for the following project.
-
-Repository: {repo_url}
+Repository:
+{repo_url}
 
 Project context:
 {repo_context}
 
-User request: {user_prompt}
+User request:
+{user_prompt}
 
+Additional platform context:
 {platform_context}
 
+Existing YAML (if any):
 {previous_yaml_section}
 
-Return the complete YAML content followed by "---DESCRIPTION---" and a brief description.
+OUTPUT REQUIREMENTS (STRICT)
+
+Return ONLY valid JSON in this exact format:
+
+{
+  "yaml": "<complete CI/CD pipeline YAML>",
+  "description": "<short explanation of what this pipeline does>"
+}
+
+RULES:
+- Do NOT include markdown, backticks, or extra text
+- YAML must be production-ready and valid for the target platform
+- Include install, test, build, and deploy stages if applicable
+- Use caching where appropriate
+- Pin action/image versions when possible
+- Keep YAML clean and commented where necessary
+"""
+
+RECTIFY_PROMPT = """
+You are fixing a CI/CD pipeline YAML based on validation errors.
+
+BROKEN YAML
+{yaml_content}
+
+VALIDATION ERRORS
+{validation_report}
+
+TASK:
+
+Fix ALL issues and return a corrected CI/CD pipeline.
+
+Return ONLY valid JSON in this format:
+
+{
+  "yaml": "<fixed CI/CD pipeline YAML>",
+  "description": "<what was fixed and improved>"
+}
+
+RULES:
+- Do NOT add explanations outside JSON
+- Fix ALL validation errors completely
+- Do NOT partially fix issues
+- Ensure pipeline is production-ready
 """
