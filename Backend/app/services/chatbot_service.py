@@ -111,10 +111,15 @@ class ChatbotService:
                 )
             
             # when a session has a project it is unchangeable
-            # if project_id is not None and session.project_id != project_id:
-            #     session.project_id = project_id
-            #     await db.commit()
-            #     await db.refresh(session)
+            if project_id is not None and session.project_id:
+                raise HTTPException(
+                    status_code=403,
+                    detail="There is a project already attached to this session"
+                )
+            if project_id is not None and not session.project_id:
+                session.project_id = project_id
+                await db.commit()
+                await db.refresh(session)
 
             # load existed chat history
             chat_history = await self.get_session_messages(
