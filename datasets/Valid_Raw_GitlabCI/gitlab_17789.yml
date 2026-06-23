@@ -1,9 +1,0 @@
-compile:
-  script:
-  - nuget restore
-  - MONO_IOMAP=case xbuild /t:Build /p:Configuration="Release" /p:Platform="x64" Compiler.sln
-  stage: build
-image: mono:4.4.0.182
-stages:
-- build
-- deploy

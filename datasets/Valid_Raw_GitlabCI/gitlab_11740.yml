@@ -1,6 +1,0 @@
-unittest:
-  image: python:3.6-onbuild
-  script:
-  - pip install --no-cache-dir -r requirements.txt
-  - python -m unittest tests/*.py
-  stage: test

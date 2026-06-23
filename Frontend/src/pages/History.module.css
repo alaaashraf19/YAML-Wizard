@@ -1,0 +1,89 @@
+.window {
+    display: flex;
+    justify-content: center;
+    height: 100vh;
+    width: 100vw;
+    color: white;
+}
+.historyWindow {
+    position: relative;
+    height: 90%;
+    padding: 5px;
+    margin: 10px;
+    margin-top: auto;
+
+    display: flex;
+    flex-direction: column;
+
+    background-image: linear-gradient(260deg, rgb(3, 3, 93)10% ,rgb(74, 2, 103));
+    box-shadow: 0px 2px 18px 0px rgba(0,0,0,0.6);
+    /* border-radius: 15px; */
+    z-index: 10;
+    font-size: 18px;
+    
+    transition: width 0.5s ease, padding 0.5s ease, transform 0.5s ease;
+}
+.header{
+    padding: 10px;
+    margin: 10px 15px;
+    font-weight: 600;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+.namesContainer{
+    overflow-y: auto;
+    overflow-anchor: auto;
+}
+.scriptName{
+    padding: 10px;
+    margin: 0;
+    width: 100%;
+    
+    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    transition: background-color 0.25s ease, border 0.25s ease;
+}
+.scriptName:hover{
+    background-color: rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(181, 181, 181, 0.1);
+    border-top: 1px solid rgba(181, 181, 181, 0.1);
+}
+.filterIcon{
+    margin:10px;
+    /* margin-top: auto; */
+    bottom: 0;
+    margin-left: auto;
+
+    font-size: 20px;
+    flex-shrink: 0;
+    transition: color 0.3s ease, filter 0.3s ease, transform 0.3s ease;
+}
+.filterIcon:hover{
+    color: rgb(123, 92, 255);
+    filter: drop-shadow(0px 0px 15px rgba(123, 92, 255, 0.6));
+}
+.scriptWindow{
+    flex: 1;
+    margin-top: 110px;
+    margin-bottom: 10px;
+    display: flex;
+}
+.editBar{
+    width: fit-content;
+    padding: 5px;
+    background-color: rgba(9, 2, 41, 0.5);
+    border-radius: 10px;
+}
+.divider{height :50px}
+.line{
+
+}
+.lineBtn{
+    font-size: 15px;
+    margin: 5px;
+    transition: color 0.25s ease, transform 0.3s ease;
+}
+.lineBtn:hover{color: rgb(123, 92, 255)}
+.script{
+    flex: 1;
+}

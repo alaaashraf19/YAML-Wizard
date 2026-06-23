@@ -1,8 +1,0 @@
-build:
-  script:
-  - mkdir build
-  - cd build
-  - cmake ..
-  - make -j2
-  stage: build
-image: rikorose/gcc-cmake

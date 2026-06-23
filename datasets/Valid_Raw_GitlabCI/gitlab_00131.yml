@@ -1,8 +1,0 @@
-build:
-  artifacts:
-    paths:
-    - example.pdf
-  script:
-  - chmod +x *.sh
-  - ./export-from-container.sh example.org
-image: actondev/org-mode-docker:latest

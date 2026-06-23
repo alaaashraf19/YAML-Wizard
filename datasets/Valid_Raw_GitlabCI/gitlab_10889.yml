@@ -1,8 +1,0 @@
-build:
-  script:
-  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
-  - docker build -t $CI_REGISTRY_IMAGE:alpine-edge -f Dockerfile.alpine-edge .
-  - docker push $CI_REGISTRY_IMAGE:alpine-edge
-  services:
-  - docker:dind
-image: docker:latest

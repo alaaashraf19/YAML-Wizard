@@ -1,6 +1,0 @@
-molecule:
-  extends: .base_ansible
-  script: "docker run --rm \\\n  -v \"$(pwd)\":/tmp/$(basename \"${PWD}\"):ro \\\n\
-    \  -v /var/run/docker.sock:/var/run/docker.sock \\\n  -w /tmp/$(basename \"${PWD}\"\
-    ) \\\n  quay.io/ansible/molecule:2.19 \\\n  sudo molecule test\n"
-  stage: test

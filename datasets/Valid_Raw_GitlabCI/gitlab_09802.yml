@@ -1,8 +1,0 @@
-build:
-  only:
-  - master
-  script:
-  - docker build . -t haoict/searchable-book
-  stage: build
-stages:
-- build

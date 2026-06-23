@@ -1,9 +1,0 @@
-image: node:10.9.0
-pages:
-  artifacts:
-    paths:
-    - public
-  script:
-  - npm install
-  - npm install -g @angular/cli
-  - ng build --prod --base-href /gitlab-project-issues-with-time-gpit/

@@ -3,13 +3,6 @@ from typing import Optional
 
 from pydantic import BaseModel, Field, field_validator
 
-# class User(BaseModel):
-#     username: str
-#     email: EmailStr
-#     password : str
-#     hashed_password: str = ""
-#     role: str = "user" #default role is "user", can be overridden to "admin" during signup if needed
-
 
 def validate_username(value: str) -> str:
     if len(value) < 3 or len(value) > 20:
@@ -91,6 +84,7 @@ class UserResponse(BaseModel):
 class UserCreateResponse(BaseModel):
     msg: str
     user_id: str
+
 
 class UserLogin(BaseModel):
     username: str = Field(..., min_length=3, max_length=20)

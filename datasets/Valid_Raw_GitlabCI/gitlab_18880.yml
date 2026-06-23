@@ -1,8 +1,0 @@
-image: node
-stages:
-- test
-test:
-  script:
-  - yarn
-  - yarn build:dev & yarn test
-  stage: test

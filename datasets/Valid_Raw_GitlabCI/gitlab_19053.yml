@@ -1,8 +1,0 @@
-before_script:
-- apt-get update -yqq
-- apt-get install -yqq libcap2-dev libzmq3-dev libzmq5
-image: rustlang/rust:nightly
-test:cargo:
-  script:
-  - rustc --version && cargo --version
-  - cargo test --all --verbose

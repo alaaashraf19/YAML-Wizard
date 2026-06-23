@@ -1,9 +1,0 @@
-.private_runner_test:
-  tags:
-  - docker
-  - samba-ci-private
-.shared_runner_build:
-  variables:
-    SAMBA_SHARED_RUNNER_BUILD_DUMMY_VARIABLE: shared_runner_build
-.shared_runner_test:
-  extends: .shared_runner_build

@@ -1,8 +1,0 @@
-debian-unstable:hungry-penguins:
-  after_script:
-  - scripts/ci_after_script.sh
-  before_script:
-  - scripts/ci_before_script.sh
-  image: debian:unstable
-  script:
-  - scripts/ci_script.sh

@@ -1,7 +1,0 @@
-build:
-  script:
-  - docker build -t test .
-  stage: build
-image: docker:latest
-services:
-- docker:dind

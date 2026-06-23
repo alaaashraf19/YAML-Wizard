@@ -1,9 +1,0 @@
-before_script:
-- curl -sSf https://static.rust-lang.org/rustup.sh > rustup.sh
-- bash ./rustup.sh -y --disable-sudo
-build:
-  script:
-  - cargo build
-test:
-  script:
-  - cargo test

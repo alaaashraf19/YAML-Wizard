@@ -1,0 +1,115 @@
+.container {
+    display: flex;
+    flex-direction: column;
+}
+
+.title {
+    font-size: 14px;
+    font-weight: 600;
+    color: rgb(209 213 219);
+    margin-bottom: 8px;
+}
+
+.empty {
+    color: rgb(156 163 175);
+    font-size: 14px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+}
+
+@media (min-width: 1024px) {
+    .grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1280px) {
+    .grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+/* base card */
+.card {
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid rgb(75 85 99);
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+/* colors */
+.green {
+    background: rgba(20, 83, 45, 0.4);
+    border-color: rgb(34 197 94);
+}
+
+.green:hover {
+    background: rgba(20, 83, 45, 0.6);
+}
+
+.orange {
+    background: rgba(120, 53, 15, 0.4);
+    border-color: rgb(234 179 8);
+}
+
+.orange:hover {
+    background: rgba(120, 53, 15, 0.6);
+}
+
+.red {
+    background: rgba(127, 29, 29, 0.4);
+    border-color: rgb(239 68 68);
+}
+
+.red:hover {
+    background: rgba(127, 29, 29, 0.6);
+}
+
+.default {
+    background: rgb(31 41 55);
+}
+
+.default:hover {
+    background: rgb(55 65 81);
+}
+
+/* card layout */
+.rowTop {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+}
+
+.name {
+    font-size: 12px;
+    font-weight: 500;
+    color: rgb(229 231 235);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.rowBottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+}
+
+.muted {
+    color: rgb(156 163 175);
+}
+
+.diffGood {
+    color: rgb(156 163 175);
+}
+
+.diffBad {
+    color: rgb(250 204 21);
+}

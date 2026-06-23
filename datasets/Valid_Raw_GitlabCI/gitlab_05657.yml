@@ -1,4 +1,0 @@
-shellcheck:
-  image: koalaman/shellcheck-alpine:stable
-  script:
-  - sed 's/&|/\&/' codestats.plugin.zsh | shellcheck --shell=bash -

@@ -1,9 +1,0 @@
-before_script:
-- export PATH="$PATH":"~/.pub-cache/bin"
-- pub global activate grinder
-- pub get --no-precompile
-image: google/dart
-test:
-  script:
-  - grind test
-  stage: test

@@ -1,7 +1,0 @@
-build:
-  script: mvn compile -B
-  stage: build
-image: maven:3-jdk-8
-test:
-  script: mvn verify
-  stage: test

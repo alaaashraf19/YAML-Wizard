@@ -1,7 +1,0 @@
-Gitlab to Github:
-  image: registry.gitlab.com/nickdonnelly/horus/git-mirror:latest
-  script:
-  - git-mirror "${CI_PROJECT_DIR}" git@github.com:${GITHUB_REPOSITORY}
-  stage: mirror
-stages:
-- mirror

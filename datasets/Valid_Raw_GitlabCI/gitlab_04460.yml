@@ -1,8 +1,0 @@
-before_script:
-- apt-get update -yqq
-- apt-get install -yqq --no-install-recommends libgtk-3-dev
-image: library/rust:latest
-test:cargo:
-  script:
-  - rustc --version && cargo --version
-  - cargo test --verbose --jobs 1 --release

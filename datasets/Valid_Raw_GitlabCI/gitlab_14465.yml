@@ -1,7 +1,0 @@
-before_script:
-- pacman -Syy python2 python2-pip --needed --noconfirm
-- pip2 install -r requirements_dev.txt
-image: base/archlinux
-run_pylint:
-  script: pytest
-  stage: test

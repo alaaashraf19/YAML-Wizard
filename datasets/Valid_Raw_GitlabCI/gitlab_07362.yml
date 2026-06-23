@@ -1,9 +1,0 @@
-before_script:
-- export PATH="$PATH":"~/.pub-cache/bin"
-- pub global activate grinder
-- pub get
-image: registry.gitlab.com/santetis/open_source/santetis_image
-test:
-  script:
-  - grind test
-  stage: test

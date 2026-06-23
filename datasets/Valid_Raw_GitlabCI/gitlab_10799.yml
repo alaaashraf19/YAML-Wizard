@@ -1,9 +1,0 @@
-image: ruby:2.1
-pages:
-  artifacts:
-    paths:
-    - public
-  script:
-  - gem install jekyll
-  - jekyll build -d public/
-  stage: deploy

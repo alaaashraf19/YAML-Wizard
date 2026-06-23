@@ -1,8 +1,0 @@
-before_script:
-- which ruby
-- ruby -v
-- bundle install --jobs $(nproc) --retry 3 --quiet
-image: ruby:2.4
-rubocop:
-  script:
-  - bundle exec rubocop

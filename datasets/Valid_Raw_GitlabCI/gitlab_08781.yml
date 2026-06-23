@@ -1,6 +1,0 @@
-.with-build-token:
-  extends: .vault-integration
-  secrets:
-    SECURITY_PRIVATE_TOKEN:
-      file: false
-      vault: access_tokens/gitlab-com/gitlab-org/security/_group_access_tokens/build-token/token@ci

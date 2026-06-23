@@ -1,9 +1,0 @@
-image: silex/emacs:27.2-alpine-ci
-pages:
-  artifacts:
-    paths:
-    - public
-  only:
-  - master
-  script:
-  - emacs --quick --script publish.el --funcall=ambrevar/publish

@@ -1,7 +1,0 @@
-debian:
-  image: registry.gitlab.com/joolean/gzochi/gzochi-build:latest
-  script:
-  - ./autogen.sh
-  - ./configure
-  - make
-  - make check

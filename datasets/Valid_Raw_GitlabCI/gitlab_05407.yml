@@ -1,8 +1,0 @@
-image: clojure:latest
-pages:
-  artifacts:
-    paths:
-    - public
-  only:
-  - master
-  script: lein with-profile prod do sass4clj once, cljsbuild once
