@@ -27,7 +27,6 @@ async def chat_with_bot(
         user_id=current_user.id,
         message=request.message,
         session_id=request.session_id,
-        project_id=request.project_id,
         db=db
     )
 
@@ -70,8 +69,7 @@ async def get_chat_sessions(
             project_id=session.project_id,
             project= {
                 "id" : session.project_id,
-                "name" : session.project.project_name,
-                "target_platform" : session.project.target_platform,
+                "name" : session.project.project_name
             } if session.project else None,
         )
         for session in sessions
@@ -120,3 +118,23 @@ async def delete_session(
     )
 
     return {"message": "Session deleted successfully"}
+
+@router.post("/sessions/{session_id}/projects/{project_id}", response_model=ChatSessionResponse)
+async def link_session_to_project(
+        session_id: int,
+        project_id: int,
+        current_user: User = Depends(get_current_user),
+        db: AsyncSession = Depends(get_db)
+):
+    session = await chatbot_service.link_session_to_project(user_id=current_user.id,session_id=session_id, project_id=project_id, db=db)
+    return ChatSessionResponse(
+        id=session.id,
+        session_name=session.session_name,
+        created_at=session.created_at,
+        updated_at=session.updated_at,
+        project_id=session.project_id,
+        project = {
+            "id" : session.project_id,
+            "name" : session.project.project_name
+        } if session.project else None,
+    )

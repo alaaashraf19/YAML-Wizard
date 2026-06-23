@@ -13,6 +13,7 @@ from sqlalchemy import select,update,delete
 from models.chat_message_model import ChatMessage
 from models.chat_session_model import ChatSession
 from models.platforms_model import GitLabConnection
+from services.project_service import get_project_by_id
 from agent.chatbot_agent import ChatbotAgent
 
 
@@ -85,7 +86,6 @@ class ChatbotService:
             user_id: int,
             message: str,
             session_id: Optional[int],
-            project_id : Optional[int],
             db: AsyncSession
     ) -> Dict[str, Any]:
 
@@ -93,7 +93,6 @@ class ChatbotService:
             session = await self.create_new_session(
                 user_id=user_id,
                 first_message=message,
-                project_id=project_id,
                 db=db
             )
             session_id = session.id
@@ -109,17 +108,6 @@ class ChatbotService:
                     status_code=404,
                     detail="Chat session not found or access denied"
                 )
-            
-            # when a session has a project it is unchangeable
-            if project_id is not None and session.project_id:
-                raise HTTPException(
-                    status_code=403,
-                    detail="There is a project already attached to this session"
-                )
-            if project_id is not None and not session.project_id:
-                session.project_id = project_id
-                await db.commit()
-                await db.refresh(session)
 
             # load existed chat history
             chat_history = await self.get_session_messages(
@@ -305,8 +293,7 @@ class ChatbotService:
             "project_id": session.project_id,
             "project" : {
                 "id": session.project_id,
-                "name": session.project.project_name,
-                "target_platform": session.project.target_platform
+                "name": session.project.project_name
             } if session.project else None,
             "messages": messages
         }
@@ -330,3 +317,22 @@ class ChatbotService:
             .order_by(ChatSession.updated_at.desc())
         )
         return results.scalars().all()
+
+    async def link_session_to_project(
+            self,
+            user_id: int,
+            session_id: int,
+            project_id: int,
+            db: AsyncSession
+    ) -> ChatSession:
+        session = await self.get_session_if_owned(user_id,session_id,db)
+        if not session:
+            raise HTTPException(status_code=404, detail="Chat session not found or access denied")
+        if session.project_id:
+            raise HTTPException(status_code=403, detail="Session already linked to a project")
+        project = await get_project_by_id(project_id,user_id,db)
+        session.project_id = project.id
+        session.updated_at = datetime.utcnow()
+        await db.commit()
+        await db.refresh(session)
+        return session
