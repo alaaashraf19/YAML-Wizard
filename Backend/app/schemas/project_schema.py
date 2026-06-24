@@ -29,3 +29,6 @@ class ProjectResponse(ProjectSessionResponse):
     class Config:
         from_attributes =True
 
+class ProjectSession(BaseModel):
+    id: int
+    session_name: str

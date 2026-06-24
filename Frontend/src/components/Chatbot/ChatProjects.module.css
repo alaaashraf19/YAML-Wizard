@@ -15,7 +15,7 @@
 
     background-color: rgb(9, 2, 41);
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.6);
-    z-index: 1000;
+    z-index: 5;
     font-size: 18px;
     
     scrollbar-gutter: stable;
@@ -56,19 +56,26 @@
 }
 .addButton:hover {background-color: rgb(23, 8, 92);}
 
-.searchContainer{
+.projectsContainer{
     display: flex;
     flex-direction: column;
+
     align-items: center;
     justify-content: center;
     width: 100%;
 }
-.searchBar {
+.searchContainer{
     position: sticky;
+    top: 0;
+    display: flex;
+    width: 100%;
+}
+.searchBar {
     top: 20px;
-    padding: 5px;
+    padding: 6px;
     margin: 20px;
-    width: 89%;
+    width: 90%;
+
     background-color: rgb(170, 179, 247);
     box-sizing: border-box;
     border: 2px solid #ccc;
@@ -76,19 +83,51 @@
     font-size: 16px;
     color: black;
 }
+.deleteTextIcon{
+    position: absolute;
+    right: 0;
+    margin-right: 10%;
+    margin-top: 8%;
+    color: black;
+}
 .list {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+
     width: 90%;
     margin: 0;
+    padding: 0;
+
+    /* overflow-y: auto;
+    overflow-anchor:auto; */
 }
-.menuItem{
-    color: white;
-    /* background-color: rgb(19, 5, 79); */
+.project{
+    display: flex;
     padding: 12px 16px;
     margin: 10px;
-    border-radius: 15px;
-}
-.menuItem:hover {background-color: rgb(19, 5, 79);}
 
+    background-color: rgb(19, 5, 79);
+    border-radius: 10px;
+    border: 1px solid transparent;
+    color: white;
+
+    transition: background-color 0.3s ease, border 0.3s ease;
+}
+.project:hover {
+    background-color: rgb(28, 13, 95);
+    border: 1px solid #424077;
+}
+.projectName{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.subInfo{
+    font-size: 12px;
+    margin-left: auto;
+    opacity: 0.6;
+}
 .menuNoProjects {
     background-color: rgb(42, 35, 67);
     padding: 10px 20px;

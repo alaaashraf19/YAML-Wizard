@@ -5,27 +5,32 @@ import { useState, useEffect, useRef } from "react";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md"
 import { IoSend } from "react-icons/io5";
 
-import type { Session, Message } from "../types";
+import type { Session, Message, Project } from "../types";
 import ChatProjects from "../components/Chatbot/ChatProjects";
 import SideBar from "../components/Chatbot/SideBar";
+import { Popup } from "../components/Popup/Popup";
 
 
 function Chatbot() {
     const [prompt, setPrompt] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [messages, setMessages] = useState<Message[] | []>([]);
     const [sessionId, setSessionId] = useState<number | null>(null);
     const [sessions, setSessions] = useState<Session[]>([]);
-    const [selectedProject, setSelectedProject] = useState<string | React.ReactNode>(<>
-        Connect Project <MdOutlineKeyboardArrowRight style={{ marginLeft: 10 }} />
-    </>);
+    const [project, setProject] = useState<Project | null>(null);
+
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     
+    const [confirmMessage, setConfirmMessage] = useState<string | null>(null);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
     const textareaRef = useRef<HTMLTextAreaElement | null>(null);
     const menuRef = useRef<HTMLDivElement | null>(null);
+    const popupRef = useRef<HTMLDivElement | null>(null);
     const api_url = import.meta.env.VITE_API_URL;
-
+    
+    
     // Auto focus on textarea
     useEffect(() => {
         textareaRef.current?.focus();
@@ -101,6 +106,11 @@ function Chatbot() {
         };
     }, []);
     
+    // presist selected project on change of session id
+    useEffect(() => {
+        let session = sessions.find(s => s.id === sessionId);
+        setProject(session?.project ?? null);
+    }, [sessionId, sessions]);
 
     const handleSend = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -121,10 +131,11 @@ function Chatbot() {
         // handle new session
         if (!activeSessionId) {
             const newSession = {
-                id: activeSessionId,
+                id: null,
                 session_name: "...",
                 created_at: new Date().toISOString(),
-                updated_at: new Date().toISOString()
+                updated_at: new Date().toISOString(),
+                project: null
             }
             
             setSessions(prev => [...prev, newSession]);
@@ -244,15 +255,42 @@ function Chatbot() {
                         </form>
 
                         <div>
-                            <button onClick={() => setIsMenuOpen(prev => !prev)} className={`${styles.projectButton} ${gStyles.clickable}`}>
-                                {selectedProject}
+                            <button onClick={() => setIsMenuOpen(prev => !prev)} disabled={project !== null}
+                                className={`${styles.projectButton} ${project == null && gStyles.clickable}`}>
+                                {project? project.project_name : 
+                                    <span className={styles.connectBtn}> Connect Project 
+                                        <MdOutlineKeyboardArrowRight className={styles.arrow}/>
+                                    </span>}
                             </button>
 
-                            {isMenuOpen && <ChatProjects setIsMenuOpen={setIsMenuOpen} setSelectedProject={setSelectedProject} menuRef={menuRef}/>}
+                            {isMenuOpen &&
+                            <ChatProjects 
+                                sessionId={sessionId}
+                                setProject={setProject}
+                                setConfirmMessage={setConfirmMessage}
+                                setErrorMessage={setErrorMessage}
+                                setIsMenuOpen={setIsMenuOpen}
+                                menuRef={menuRef}
+                            />}
                         </div>
                     </div>
                 </div>
             </div>
+
+            {errorMessage &&
+            <Popup
+                btnText1={"Got it"}
+                btn1Action={null}
+                btnText2={null}
+                btn2Action={null}
+                confirmMessage={confirmMessage}
+                setConfirmMessage={setConfirmMessage}
+                errorMessage={errorMessage}
+                setErrorMessage={setErrorMessage}
+                warningMessage={null}
+                setWarningMessage={null}
+                popupRef={popupRef}
+            />}
         </div>
     )
 }

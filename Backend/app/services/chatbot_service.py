@@ -1,4 +1,5 @@
 import os
+from sqlalchemy.orm import selectinload
 from typing import List, Dict, Optional, Any
 from fastapi import HTTPException
 from datetime import datetime
@@ -321,6 +322,7 @@ class ChatbotService:
     ) -> List[ChatSession]:
         results = await db.execute(
             select(ChatSession)
+            .options(selectinload(ChatSession.project))
             .where(ChatSession.user_id == user_id,ChatSession.project_id == project_id)
             .order_by(ChatSession.updated_at.desc())
         )
