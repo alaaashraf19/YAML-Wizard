@@ -343,4 +343,4 @@ class ChatbotService:
         session.updated_at = datetime.utcnow()
         await db.commit()
         await db.refresh(session)
-        return session, project
+        return project

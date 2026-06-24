@@ -6,6 +6,7 @@ from schemas.chatbot_schema import (
     ChatRequest, ChatResponse, ChatSessionResponse,
     ChatSessionDetailResponse, ChatMessage
 )
+from schemas.project_schema import ProjectSessionResponse
 from services.chatbot_service import ChatbotService
 from database.db_engine import get_db
 from core.security import get_current_user
@@ -68,7 +69,11 @@ async def get_chat_sessions(
             project_id=session.project_id,
             project= {
                 "id" : session.project_id,
-                "name" : session.project.project_name
+                "project_name" : session.project.project_name,
+                "user_id" :  current_user.id,
+                "repo_id" : session.project.repo_id,
+                "created_at": session.project.created_at,
+                "updated_at": session.project.updated_at
             } if session.project else None,
         )
         for session in sessions
@@ -118,7 +123,7 @@ async def delete_session(
 
     return {"message": "Session deleted successfully"}
 
-@router.post("/sessions/{session_id}/projects/{project_id}", response_model=ChatSessionResponse)
+@router.post("/sessions/{session_id}/projects/{project_id}", response_model=ProjectSessionResponse)
 async def link_session_to_project(
         session_id: int,
         project_id: int,
@@ -126,14 +131,10 @@ async def link_session_to_project(
         db: AsyncSession = Depends(get_db)
 ):
     session, project = await chatbot_service.link_session_to_project(user_id=current_user.id,session_id=session_id, project_id=project_id, db=db)
-    return ChatSessionResponse(
-        id=session.id,
-        session_name=session.session_name,
-        created_at=session.created_at,
-        updated_at=session.updated_at,
-        project_id=session.project_id,
-        project = {
-            "id" : project.id,
-            "name" : project.project_name
-        } if project else None,
+    return ProjectSessionResponse(
+        id=project.id,
+        user_id=current_user.id,
+        created_at=project.created_at,
+        updated_at=project.updated_at,
+        project_id=project.id,
     )

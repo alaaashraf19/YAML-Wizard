@@ -19,9 +19,11 @@ class ProjectSchema(BaseModel):
     project_name: str
     repo_id: int
 
-class ProjectResponse(ProjectSchema):
+class ProjectSessionResponse(ProjectSchema):
     created_at: datetime
     updated_at: datetime
+    
+class ProjectResponse(ProjectSessionResponse):
     platform: str
     repo_url: str
     class Config:
