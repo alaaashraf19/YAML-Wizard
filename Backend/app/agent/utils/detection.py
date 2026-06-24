@@ -362,64 +362,94 @@ def extract_build_commands(key_files: dict[str, str]) -> list[str]:
 # Environment variable detection
 # ---------------------------------------------------------------------------
 
+# def detect_env_vars(key_files: dict[str, str]) -> list[str]:
+#     """
+#     Collect env var names from:
+#       - .env.example / .env.sample
+#       - os.getenv / process.env / ENV[] patterns in source files
+#       - env: sections in GitHub Actions / GitLab CI YAML files
+#       - ${{ secrets.X }} / ${{ vars.X }} references in workflows
+#     Returns a deduplicated sorted list.
+#     """
+#     found: set[str] = set()
+#     SKIP_NOISE = {
+#         "PATH", "HOME", "USER", "SHELL", "PWD", "TERM", "LANG", "LC_ALL",
+#         "GITHUB_TOKEN", "GITHUB_CONTEXT", "GITHUB_OUTPUT", "GITHUB_ENV",
+#         "GITHUB_REF", "GITHUB_SHA", "GITHUB_RUN_ID", "GITHUB_RUN_ATTEMPT",
+#         "GITHUB_BASE_REF", "GITHUB_HEAD_REF", "GITHUB_EVENT_NAME",
+#         "GITHUB_REPOSITORY", "GITHUB_WORKSPACE", "GITHUB_ACTOR",
+#         "CI", "DEBUG", "NODE_ENV", "CONTEXT",
+#     }
+#
+#     # .env.example / .env.sample
+#     for k in key_files:
+#         if k in (".env.example", ".env.sample", ".env.template", "example.env"):
+#             for line in key_files[k].splitlines():
+#                 line = line.strip()
+#                 if line and not line.startswith("#"):
+#                     var = line.split("=")[0].strip()
+#                     if var and re.match(r'^[A-Z_][A-Z0-9_]+$', var) and var not in SKIP_NOISE:
+#                         found.add(var)
+#
+#     # Source files: os.getenv / process.env / etc.
+#     SOURCE_EXTENSIONS = (".py", ".js", ".ts", ".go", ".rb", ".java")
+#     for k, content in key_files.items():
+#         if not any(k.endswith(ext) for ext in SOURCE_EXTENSIONS):
+#             continue
+#         for pattern in ENV_VAR_PATTERNS:
+#             for match in pattern.finditer(content):
+#                 var = match.group(1)
+#                 if var and re.match(r'^[A-Z_][A-Z0-9_]+$', var) and var not in SKIP_NOISE:
+#                     found.add(var)
+#
+#     # CI YAML files: ${{ secrets.X }} / ${{ vars.X }} references
+#     secrets_pattern = re.compile(r'\$\{\{\s*(?:secrets|vars)\.([A-Z_][A-Z0-9_]+)\s*\}\}')
+#     env_key_pattern = re.compile(r'^\s{6,12}([A-Z_][A-Z0-9_]+)\s*:\s*\S', re.MULTILINE)
+#
+#     for k, content in key_files.items():
+#         if not (k.endswith(".yml") or k.endswith(".yaml")):
+#             continue
+#         for match in secrets_pattern.finditer(content):
+#             var = match.group(1)
+#             if var not in SKIP_NOISE:
+#                 found.add(var)
+#         for match in env_key_pattern.finditer(content):
+#             var = match.group(1)
+#             if var not in SKIP_NOISE and re.match(r'^[A-Z_][A-Z0-9_]+$', var):
+#                 found.add(var)
+#
+#     return sorted(found)
+
 def detect_env_vars(key_files: dict[str, str]) -> list[str]:
-    """
-    Collect env var names from:
-      - .env.example / .env.sample
-      - os.getenv / process.env / ENV[] patterns in source files
-      - env: sections in GitHub Actions / GitLab CI YAML files
-      - ${{ secrets.X }} / ${{ vars.X }} references in workflows
-    Returns a deduplicated sorted list.
-    """
     found: set[str] = set()
-    SKIP_NOISE = {
-        "PATH", "HOME", "USER", "SHELL", "PWD", "TERM", "LANG", "LC_ALL",
-        "GITHUB_TOKEN", "GITHUB_CONTEXT", "GITHUB_OUTPUT", "GITHUB_ENV",
-        "GITHUB_REF", "GITHUB_SHA", "GITHUB_RUN_ID", "GITHUB_RUN_ATTEMPT",
-        "GITHUB_BASE_REF", "GITHUB_HEAD_REF", "GITHUB_EVENT_NAME",
-        "GITHUB_REPOSITORY", "GITHUB_WORKSPACE", "GITHUB_ACTOR",
-        "CI", "DEBUG", "NODE_ENV", "CONTEXT",
-    }
 
-    # .env.example / .env.sample
+    # 1. .env / .env.* files — keys only
     for k in key_files:
-        if k in (".env.example", ".env.sample", ".env.template", "example.env"):
-            for line in key_files[k].splitlines():
-                line = line.strip()
-                if line and not line.startswith("#"):
-                    var = line.split("=")[0].strip()
-                    if var and re.match(r'^[A-Z_][A-Z0-9_]+$', var) and var not in SKIP_NOISE:
-                        found.add(var)
-
-    # Source files: os.getenv / process.env / etc.
-    SOURCE_EXTENSIONS = (".py", ".js", ".ts", ".go", ".rb", ".java")
-    for k, content in key_files.items():
-        if not any(k.endswith(ext) for ext in SOURCE_EXTENSIONS):
+        filename = k.split("/")[-1].lower()
+        is_dotenv = (
+            filename == ".env"
+            or filename.startswith(".env.")
+            or filename in (".env.example", ".env.sample", ".env.template", "example.env")
+        )
+        if not is_dotenv:
             continue
-        for pattern in ENV_VAR_PATTERNS:
-            for match in pattern.finditer(content):
-                var = match.group(1)
-                if var and re.match(r'^[A-Z_][A-Z0-9_]+$', var) and var not in SKIP_NOISE:
-                    found.add(var)
+        for line in key_files[k].splitlines():
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            var = line.split("=")[0].strip()
+            if var and re.match(r'^[A-Z][A-Z0-9_]+$', var):
+                found.add(var)
 
-    # CI YAML files: ${{ secrets.X }} / ${{ vars.X }} references
+    # 2. CI YAML — ${{ secrets.X }} / ${{ vars.X }}
     secrets_pattern = re.compile(r'\$\{\{\s*(?:secrets|vars)\.([A-Z_][A-Z0-9_]+)\s*\}\}')
-    env_key_pattern = re.compile(r'^\s{6,12}([A-Z_][A-Z0-9_]+)\s*:\s*\S', re.MULTILINE)
-
     for k, content in key_files.items():
         if not (k.endswith(".yml") or k.endswith(".yaml")):
             continue
         for match in secrets_pattern.finditer(content):
-            var = match.group(1)
-            if var not in SKIP_NOISE:
-                found.add(var)
-        for match in env_key_pattern.finditer(content):
-            var = match.group(1)
-            if var not in SKIP_NOISE and re.match(r'^[A-Z_][A-Z0-9_]+$', var):
-                found.add(var)
+            found.add(match.group(1))
 
     return sorted(found)
-
 
 # ---------------------------------------------------------------------------
 # Service / dependency detection from docker-compose
@@ -524,6 +554,11 @@ def build_context_package(
     test_runners_flat, test_runner_details = detect_test_runners(key_files)
     has_reports, test_reports              = detect_reports(all_paths, key_files)
     env_vars       = detect_env_vars(key_files)
+    key_files = {
+        k: v for k, v in key_files.items()
+        if not (k.split("/")[-1].lower() == ".env"
+                or k.split("/")[-1].lower().startswith(".env."))
+    }
     services       = detect_services(key_files)
     test_commands  = extract_test_commands(key_files)
     build_commands = extract_build_commands(key_files)

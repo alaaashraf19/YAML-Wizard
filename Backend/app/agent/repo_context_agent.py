@@ -17,6 +17,7 @@ import json
 import logging
 import re
 import xml.etree.ElementTree as ET
+from agent.utils.detection import detect_env_vars
 from typing import TypedDict
 
 from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, SystemMessage, ToolMessage
@@ -527,6 +528,13 @@ def run_repo_context_agent(
         directory_tree=plain_tree,
         notes=f"Fetched {len(key_files)} files from {owner}/{repo}",
     )
+    env_vars = detect_env_vars(key_files)
+
+    key_files = {
+        k: v for k, v in key_files.items()
+        if not (k.split("/")[-1].lower() == ".env"
+                or k.split("/")[-1].lower().startswith(".env."))
+    }
 
     logger.info(
         "Done — languages=%s runners=%s has_test_reports=%s",
