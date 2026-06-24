@@ -23,7 +23,8 @@ class ChatbotService:
         self.model = "models/gemini-2.5-flash"
         self.agent = ChatbotAgent()
 
-    async def send_message(self, message: str, chat_history: List[Dict[str, str]] = None, db: Optional[AsyncSession] = None, user_id: Optional[int] = None) -> Dict[str, str]:
+    async def send_message(self, message: str, session_id: int, chat_history: List[Dict[str, str]] = None, 
+                           db: Optional[AsyncSession] = None,  user_id: Optional[int] = None, project_id: Optional[int] = None) -> Dict[str, str]:
 
         if not message or not message.strip():
             raise HTTPException(status_code=400, detail="Message cannot be empty")
@@ -51,11 +52,15 @@ class ChatbotService:
                 gitlab_result = await db.execute(select(GitLabConnection).where(GitLabConnection.user_id == user_id))
                 gitlab_connection = gitlab_result.scalar_one_or_none()
 
+
             response = await self.agent.invoke(
                 message=message,
                 chat_history=chat_history,
                 db=db,
                 gitlab_connection=gitlab_connection,
+                session_id = session_id,
+                user_id= user_id,
+                project_id=project_id,
             )
 
             return {
@@ -118,11 +123,14 @@ class ChatbotService:
 
         session_name = session.session_name
 
+
         result = await self.send_message(
             message=message,
+            session_id= session_id,
+            user_id=user_id,
+            project_id = session.project,
             chat_history=chat_history,
             db=db,
-            user_id=user_id
         )
 
         user_msg, bot_msg = await self.save_conversation_turn(
@@ -329,10 +337,10 @@ class ChatbotService:
         if not session:
             raise HTTPException(status_code=404, detail="Chat session not found or access denied")
         if session.project_id:
-            raise HTTPException(status_code=403, detail="Session already linked to a project")
+            raise HTTPException(status_code=409, detail="Session already linked to a project")#409 for conflict
         project = await get_project_by_id(project_id,user_id,db)
         session.project_id = project.id
         session.updated_at = datetime.utcnow()
         await db.commit()
         await db.refresh(session)
-        return session
+        return session, project

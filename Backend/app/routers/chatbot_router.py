@@ -126,7 +126,7 @@ async def link_session_to_project(
         current_user: User = Depends(get_current_user),
         db: AsyncSession = Depends(get_db)
 ):
-    session = await chatbot_service.link_session_to_project(user_id=current_user.id,session_id=session_id, project_id=project_id, db=db)
+    session, project = await chatbot_service.link_session_to_project(user_id=current_user.id,session_id=session_id, project_id=project_id, db=db)
     return ChatSessionResponse(
         id=session.id,
         session_name=session.session_name,
@@ -134,7 +134,7 @@ async def link_session_to_project(
         updated_at=session.updated_at,
         project_id=session.project_id,
         project = {
-            "id" : session.project_id,
-            "name" : session.project.project_name
+            "id" : project.id,
+            "name" : project.project_name
         } if session.project else None,
     )
