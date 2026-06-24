@@ -59,8 +59,6 @@ async def get_chat_sessions(
         user_id=current_user.id,
         db=db
     )
-    projects = await db.execute()
-
     return [
         ChatSessionResponse(
             id=session.id,
