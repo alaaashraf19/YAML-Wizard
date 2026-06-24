@@ -136,5 +136,5 @@ async def link_session_to_project(
         project = {
             "id" : project.id,
             "name" : project.project_name
-        } if session.project else None,
+        } if project else None,
     )
