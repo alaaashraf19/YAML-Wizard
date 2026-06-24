@@ -2,9 +2,11 @@ from agent.prompts import GENERATE_PROMPT
 
 from langchain_core.tools import tool
 from schemas.context_package import ContextPackage
+from langchain_core.runnables import RunnableConfig
 
 @tool
-async def generate_yaml_tool(repo_context: ContextPackage,user_prompt: str, previous_yaml: str | None = None,) -> str:
+async def generate_yaml_tool(repo_context: ContextPackage,user_prompt: str, previous_yaml: str | None = None,
+                            config: RunnableConfig = None) -> str:
     """
     Generate a GitHub Actions or GitLab CI YAML pipeline
     based on repository context and user requirements.
@@ -16,7 +18,11 @@ async def generate_yaml_tool(repo_context: ContextPackage,user_prompt: str, prev
     Returns:
         Tuple of (yaml_content, description)
     """
-    
+    configurable = (config or {}).get("configurable", {})
+    context = configurable.get("context")
+    repo_context = context.repo_context if context else None
+    repo = context.repo if context else None
+    print(repo_context)
     context_summary = build_context_summary(repo_context)
 
     previous_yaml_section = ""
@@ -27,15 +33,12 @@ async def generate_yaml_tool(repo_context: ContextPackage,user_prompt: str, prev
         )
 
     return GENERATE_PROMPT.format(
-        # platform=repo_context.platform.value,
-        # repo_url=repo_context.url,
+        platform=repo.platform,
+        repo_url=repo.url,
         repo_context=context_summary,
         user_prompt=user_prompt,
         previous_yaml_section=previous_yaml_section,
     )
-
-
-
 
 
 def build_context_summary(ctx: ContextPackage) -> str:

@@ -13,15 +13,19 @@ class ProjectUpdate(BaseModel):
     project_name: Optional[str] = None
     repo_url: Optional[str] = None
 
-
-class ProjectResponse(BaseModel):
+class ProjectSchema(BaseModel):
     id: int
     user_id: int
-    created_at: datetime
-    updated_at: datetime
     project_name: str
     repo_id: int
+
+class ProjectSessionResponse(ProjectSchema):
+    created_at: datetime
+    updated_at: datetime
+    
+class ProjectResponse(ProjectSessionResponse):
     platform: str
     repo_url: str
     class Config:
         from_attributes =True
+
