@@ -5,7 +5,6 @@ from datetime import datetime
 class ProjectInfo(BaseModel):
     id:int
     name: str
-    target_platform: str
 
 class ChatMessage(BaseModel):
     role: str
