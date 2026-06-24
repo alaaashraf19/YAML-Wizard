@@ -78,7 +78,7 @@ class ChatbotAgent:
         #so we are delivering request‑scoped runtime data to a tool without involving the model.
         context = None
         if project_id is not None:
-            context = await ContextResolver().get_project_context(session_id)
+            context = await ContextResolver().get_project_context(project_id)
 
         config = {"configurable": 
                   {
