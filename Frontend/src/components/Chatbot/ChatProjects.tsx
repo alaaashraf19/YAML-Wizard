@@ -8,24 +8,50 @@ import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 
 type projects_props = {
+    sessionId: number | null,
+    setProject: React.Dispatch<React.SetStateAction<Project | null>>,
+    setConfirmMessage: React.Dispatch<React.SetStateAction<string | null>>,
+    setErrorMessage: React.Dispatch<React.SetStateAction<string | null>>,
     setIsMenuOpen: React.Dispatch<React.SetStateAction<boolean>>,
-    setSelectedProject: React.Dispatch<React.SetStateAction<string | React.ReactNode>>,
     menuRef: React.Ref<HTMLDivElement> | null
 }
 
-function ChatProjects({setIsMenuOpen, setSelectedProject, menuRef}: projects_props) {
+function ChatProjects({ sessionId, setProject, setConfirmMessage, setErrorMessage, setIsMenuOpen, menuRef}: projects_props) {
     const [projects, setProjects] = useState<Project[]>([]);
     const [query, setQuery] = useState("");
+
     const navigate = useNavigate();
     const api_url = import.meta.env.VITE_API_URL;
 
-    const filteredItems = projects ? projects
-        .filter(p => p.project_name.toLowerCase().includes(query.toLowerCase()))
-        .map(p => p.project_name) : [];
+    const filteredProjects = projects ? projects
+        .filter(p => p.project_name.toLowerCase().includes(query.toLowerCase())) : [];
 
-    const handleProjectSelect = (name: string) => {
-        setSelectedProject(name);
-        setIsMenuOpen(false);
+
+    const handleProjectSelect = async (project: Project) => {
+        try {
+            const res = await fetch(`${api_url}/chatbot/sessions/${sessionId}/projects/${project.id}`, {
+                credentials: "include",
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                // body: JSON.stringify({})
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                const msg = data.detail?.[0]?.msg || data.detail || "Failed to connect project to this session";
+                console.error(msg);
+                setErrorMessage(msg);
+                return;
+            }
+            setProject(data);
+            setIsMenuOpen(false);
+            setConfirmMessage("here");
+
+        } catch (e) {
+            console.error("Failed to connect project to this session:", e);
+            setErrorMessage("Failed to connect project to this session");
+        }
     };
 
     //get user projects
@@ -66,16 +92,22 @@ function ChatProjects({setIsMenuOpen, setSelectedProject, menuRef}: projects_pro
                     Add project
                 </button>
             </div>
-            <div className={styles.searchContainer}>
-                <input type="text" className={styles.searchBar} name="searchBar"
-                    placeholder="Search..." onChange={(e) => setQuery(e.target.value)}/>
-                    
-                {filteredItems.length > 0? (
+
+            <div className={styles.projectsContainer}>
+                <div className={styles.searchContainer}>
+                    <input type="text" className={styles.searchBar} name="searchBar" value={query}
+                        placeholder="Search..." onChange={(e) => setQuery(e.target.value)}/>
+                    <IoClose onClick={() => setQuery("")} className={`${styles.deleteTextIcon} ${gStyles.clickable}`}/>
+                </div>
+                
+                {filteredProjects.length > 0? (
                     <ul className={styles.list}>
-                        {filteredItems.map((item, index) => (
-                            <li key={index} onMouseDown={() => handleProjectSelect(item)}
-                                className={`${styles.menuItem} ${gStyles.clickable}`}>
-                                {item}
+                        {filteredProjects.map((p, index) => (
+                            <li key={index} onMouseDown={() => handleProjectSelect(p)}
+                                className={`${styles.project} ${gStyles.clickable}`}
+                                title={p.project_name+'('+p.repo_url+')'}>
+                                <span className={styles.projectName}>{p.project_name}</span>
+                                <span className={styles.subInfo}>{p.platform.toUpperCase()}</span>
                             </li>
                         ))}
                     </ul>

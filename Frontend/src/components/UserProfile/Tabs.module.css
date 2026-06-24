@@ -105,21 +105,30 @@
 }
 
 .projectList {
+    display: flex;
+    flex-direction: column;
+
     font-size: 20px;
     font-family: "Inter", system-ui, sans-serif;
     list-style-type: square;
     padding: 10px;
-    margin-top: 0;
+    margin: 0 40px;
 }
 .projectItem {
-    padding: 10px 20px;
-    margin: 10px 50px;
-    width: fit-content;
-    justify-content: center;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+
+    padding: 5px 20px;
+    min-width: 0;
 }
 .projectName{
     padding: 10px 50px 10px 20px;
-    border-bottom: 1px solid rgb(155, 155, 155, 0.7); 
+    border-bottom: 1px solid rgb(155, 155, 155, 0.7);
+
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 .projectName:hover{
     background-color: rgb(13, 2, 61);
@@ -203,10 +212,12 @@ input[type="radio"]:checked::before {
 }
 .infoBar{
     display: flex;
+    width: 100%;
     gap: 10px;
     font-size: 18px;
 }
 .infoLabel{
+    width: 180px;
     font-weight: 600;
     padding-right: 8px;
     border-right: 4px solid rgb(9, 2, 41);
@@ -302,10 +313,34 @@ input[type="radio"]:checked::before {
     word-wrap: break-word;
     white-space: nowrap;
 }
+
+.subSectionLabel{
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+.arrow{
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    font-size: 20px;
+}
+.arrowOpen{
+    transition: transform 0.5s ease;
+    transform: rotate(90deg);
+}
+.arrowClose{
+    transition: transform 0.5s ease;
+}
 .list{
     display: flex;
     flex-direction: column;
     list-style-type: square;
+
+    overflow: hidden;
+    transition: opacity 0.25s ease, transform 0.25s ease;
 }
 .listItem{
     display: flex;
@@ -314,7 +349,35 @@ input[type="radio"]:checked::before {
     margin: 15px 0;
     border-bottom: 1px solid rgb(155, 155, 155, 0.7);
 }
-
 .insAccName{
     font-size: 22px;
+}
+
+.sessions{
+    margin-top: 10px;
+    flex: 1;
+}
+.session{
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    border-radius: 10px;
+    transition: background-color 0.3s ease;
+}
+.session:hover{
+    background-color: rgb(13, 2, 61);
+}
+.navigateIcon{
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    height: 100%;
+
+    font-size: 16px;
+}
+.navigateIcon:hover{
+    color: rgb(123, 92, 255);
+    filter: drop-shadow(0px 0px 15px rgba(123, 92, 255, 0.6));
+    transition: color 0.3s ease, filter 0.3s ease, transform 0.3s ease;
 }

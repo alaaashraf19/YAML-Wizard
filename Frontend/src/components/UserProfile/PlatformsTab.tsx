@@ -6,6 +6,7 @@ import { Platforms } from "../../types";
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { VscDebugDisconnect } from "react-icons/vsc";
+import { MdOutlineKeyboardArrowRight } from "react-icons/md"
 
 
 type PlatformConnection = {
@@ -33,6 +34,8 @@ function PlatformsTab({ setConfirmMessage, setErrorMessage }: PlatformsProps){
     const [repos, setRepos] = useState<Repo[]>([]);
     const [installations, setInstallations] = useState<Installation[]>([]);
     const [loadingPlatform, setLoadingPlatform] = useState<string>("");
+    const [openInstalls, setOpenInstalls] = useState<boolean>(false);
+    const [openRepos, setOpenRepos] = useState<boolean>(false);
 
     const [searchParams] = useSearchParams();
     const api_url = import.meta.env.VITE_API_URL;
@@ -239,34 +242,48 @@ function PlatformsTab({ setConfirmMessage, setErrorMessage }: PlatformsProps){
                     {platform === "github" &&
                     <div className={styles.platformSection}>
                         <div className={styles.p_SubSection}>
-                            <label>Your Installations</label>
+                            <label className={styles.subSectionLabel} title="Open List"
+                                onClick={() => setOpenInstalls(prev => !prev)}>
+                                Your Installations
+                                <span className={styles.arrow}> <MdOutlineKeyboardArrowRight
+                                    className={`${openInstalls ? styles.arrowOpen : styles.arrowClose}`}/></span>
+                            </label>
+
+                            {openInstalls && (
                             <ul className={styles.list}>
-                            {installations.length > 0 ? (<>
-                                {installations.map((ins, index) => (
-                                    <li key={index}>
-                                        <div className={styles.listItem}>
-                                            <span className={styles.insAccName}>{ins.account_name}</span>
-                                            {ins.repos_selection && 
-                                            <span className={styles.subInfo}>{ins.repos_selection.toUpperCase()} Repos</span>}
-                                            <span className={styles.subInfo}>{ins.account_type}</span>
-                                            <button onClick={() => handleDisconnectInstall(ins.installation_id)}
-                                            className={`${gStyles.clickable} ${styles.button} ${styles.disconnectIcon}`}
-                                            title={`Disconnect ${ins.account_name}`}>
-                                                <VscDebugDisconnect/></button>
-                                        </div>
-                                    </li>
-                                ))}
-                                <button onClick={() => handleDisconnectInstall(null)}
-                                className={`${gStyles.clickable} ${styles.button} ${styles.disconnectBtn}`}>
-                                    Disconnect All</button>
-                            </>) : (
-                                <p className={styles.noProjects}>No insatallations yet.</p>
-                            )}
-                            </ul>
+                                {installations.length > 0 ? (<>
+                                    {installations.map((ins, index) => (
+                                        <li key={index}>
+                                            <div className={styles.listItem}>
+                                                <span className={styles.insAccName}>{ins.account_name}</span>
+                                                {ins.repos_selection && 
+                                                <span className={styles.subInfo}>{ins.repos_selection.toUpperCase()} Repos</span>}
+                                                <span className={styles.subInfo}>{ins.account_type}</span>
+                                                <button onClick={() => handleDisconnectInstall(ins.installation_id)}
+                                                className={`${gStyles.clickable} ${styles.button} ${styles.disconnectIcon}`}
+                                                title={`Disconnect ${ins.account_name}`}>
+                                                    <VscDebugDisconnect/></button>
+                                            </div>
+                                        </li>
+                                    ))}
+                                    <button onClick={() => handleDisconnectInstall(null)}
+                                    className={`${gStyles.clickable} ${styles.button} ${styles.disconnectBtn}`}>
+                                        Disconnect All</button>
+                                </>) : (
+                                    <p className={styles.noProjects}>No insatallations yet.</p>
+                                )}
+                            </ul>)}
                         </div>
 
-                        <div className={styles.p_SubSection}>
-                            <label>Your Connected Repos</label>
+                        <div className={`${styles.p_SubSection} ${openRepos? styles.openSection : styles.closedSection}`}>
+                            <label className={styles.subSectionLabel} title="Open List"
+                                onClick={() => setOpenRepos(prev => !prev)}>
+                                Your Connected Repos
+                                <span className={styles.arrow}> <MdOutlineKeyboardArrowRight
+                                    className={`${openRepos ? styles.arrowOpen : styles.arrowClose}`}/></span>
+                            </label>
+                            
+                            {openRepos && (
                             <ul className={styles.list}>
                                 {repos.length > 0 ? (
                                     repos.map((repo, index) => (
@@ -279,7 +296,7 @@ function PlatformsTab({ setConfirmMessage, setErrorMessage }: PlatformsProps){
                                 ) : (
                                     <p className={styles.noProjects}>No repositories connected yet.</p>
                                 )}
-                            </ul>
+                            </ul>)}
                         </div>
                         <button onClick={handleInstallApp} className={`${gStyles.clickable} ${styles.button}`}
                             title="Install app to add more repositories" disabled={loadingPlatform === "install"}>

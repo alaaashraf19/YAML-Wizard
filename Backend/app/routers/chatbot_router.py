@@ -6,7 +6,7 @@ from schemas.chatbot_schema import (
     ChatRequest, ChatResponse, ChatSessionResponse,
     ChatSessionDetailResponse, ChatMessage
 )
-from schemas.project_schema import ProjectSessionResponse
+from schemas.project_schema import ProjectResponse, ProjectSessionResponse
 from services.chatbot_service import ChatbotService
 from database.db_engine import get_db
 from core.security import get_current_user
@@ -123,7 +123,7 @@ async def delete_session(
 
     return {"message": "Session deleted successfully"}
 
-@router.post("/sessions/{session_id}/projects/{project_id}", response_model=ProjectSessionResponse)
+@router.post("/sessions/{session_id}/projects/{project_id}", response_model=ProjectResponse)
 async def link_session_to_project(
         session_id: int,
         project_id: int,
@@ -131,7 +131,7 @@ async def link_session_to_project(
         db: AsyncSession = Depends(get_db)
 ):
     project = await chatbot_service.link_session_to_project(user_id=current_user.id,session_id=session_id, project_id=project_id, db=db)
-    return ProjectSessionResponse(
+    return ProjectResponse(
         id=project.id,
         user_id=current_user.id,
         created_at=project.created_at,

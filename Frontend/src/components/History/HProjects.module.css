@@ -18,6 +18,7 @@
     width: 250px;
     justify-content: center;
     white-space: nowrap;
+    overflow-x: hidden;
 }
 .collapsed {
     width: 50px;
@@ -77,17 +78,28 @@
     width: 100%;
     min-height: 0;
 }
+.searchContainer{
+    display: flex;
+    width: 100%;
+}
 .searchBar {
     position: sticky;
     top: 20px;
     padding: 5px;
     margin: 10px;
-    width: 90%;
+    width: 100%;
     background-color: rgb(170, 179, 247);
     box-sizing: border-box;
     border: 2px solid #ccc;
     border-radius: 5px;
     font-size: 16px;
+    color: black;
+}
+.deleteTextIcon{
+    position: absolute;
+    right: 0;
+    margin-right: 10%;
+    margin-top: 7%;
     color: black;
 }
 .projectsList {
@@ -98,12 +110,13 @@
     margin: 0;
     list-style-type: none;
     
+    overflow-x: hidden;
     overflow-y: auto;
     overflow-anchor:auto;
 }
 .project{
     color: white;
-    padding: 10px 16px;
+    padding: 7px 16px;
     border-radius: 15px;
     border: 1px solid transparent;
         

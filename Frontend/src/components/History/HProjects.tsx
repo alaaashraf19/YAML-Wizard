@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { LuPanelRightClose, LuPanelLeftClose } from "react-icons/lu";
+import { IoClose } from "react-icons/io5";
 import { FaPlus } from "react-icons/fa";
 
 
@@ -69,15 +70,18 @@ function HProjects(){
 
                 <p className={styles.projectsStart}>Your Projects</p>
                 <div className={styles.projectsContainer}>
-                    <input type="text" className={styles.searchBar} name="searchBar"
-                        placeholder="Search..." onChange={(e) => setQuery(e.target.value)}/>
-                        
+                    <div className={styles.searchContainer}>
+                        <input type="text" className={styles.searchBar} name="searchBar" value={query}
+                            placeholder="Search..." onChange={(e) => setQuery(e.target.value)}/>
+                        <IoClose onClick={() => setQuery("")} className={`${styles.deleteTextIcon} ${gStyles.clickable}`}/>
+                    </div>
+
                     {filteredItems.length > 0? (
                         <ul className={styles.projectsList}>
                             {filteredItems.map((p, index) => (
                                 <li key={index} onMouseDown={() => setProjectId(p.id)}
                                     title={p.project_name + '('+ p.repo_url + ')'}
-                                    className={`${styles.project} ${gStyles.clickable} ${(p.id == projectId) && styles.active}`}>
+                                    className={`${styles.project} ${(p.id == projectId)? styles.active : gStyles.clickable}`}>
                                     {p.project_name}
                                 </li>
                             ))}

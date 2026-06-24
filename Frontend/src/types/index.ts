@@ -118,6 +118,7 @@ export interface Session {
     session_name: string;
     created_at: string;
     updated_at: string;
+    project: Project | null;
 };
 
 export interface AuthContextType {

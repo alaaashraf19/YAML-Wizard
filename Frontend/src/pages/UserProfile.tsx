@@ -41,6 +41,15 @@ function UserProfile() {
         setActiveTab(searchParams.get("tab") || null);
     }, [searchParams]);
 
+    // check if project info id is selected
+    useEffect(() => {
+        const projectId = sessionStorage.getItem("project_id");
+
+        if(projectId){
+            setProjectInfoId(Number(projectId));
+        }
+    }, []);
+
     // Close info popup on outside click
     // useEffect(
     //     () => {

@@ -72,7 +72,7 @@ function SideBar({sessionId, setSessionId, sessions, setSessions, setMessages, i
         setMessages([]);
     };
 
-    // get session by id
+    // get session by id to make active
     const loadSession = async (session_id: number) => {
         if(isLoading) return;
         
@@ -128,11 +128,14 @@ function SideBar({sessionId, setSessionId, sessions, setSessions, setMessages, i
 
     // persist sessionsId to stay on after refresh
     useEffect(() => {
-        const currentSession = sessionStorage.getItem("session_id");
+        const currentSessionId = sessionStorage.getItem("session_id");
 
-        if (currentSession) {
-            setSessionId(Number(currentSession));
-            loadSession(Number(currentSession));
+        if (currentSessionId) {
+            setSessionId(Number(currentSessionId));
+            loadSession(Number(currentSessionId));
+        }
+        else{
+            sessionStorage.clear();
         }
     }, []);
 
