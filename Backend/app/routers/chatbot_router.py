@@ -130,7 +130,7 @@ async def link_session_to_project(
         current_user: User = Depends(get_current_user),
         db: AsyncSession = Depends(get_db)
 ):
-    session, project = await chatbot_service.link_session_to_project(user_id=current_user.id,session_id=session_id, project_id=project_id, db=db)
+    project = await chatbot_service.link_session_to_project(user_id=current_user.id,session_id=session_id, project_id=project_id, db=db)
     return ProjectSessionResponse(
         id=project.id,
         user_id=current_user.id,
