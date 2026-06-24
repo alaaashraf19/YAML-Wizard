@@ -15,7 +15,7 @@ from models.chat_session_model import ChatSession
 from models.platforms_model import GitLabConnection
 from services.project_service import get_project_by_id
 from agent.chatbot_agent import ChatbotAgent
-
+from agent.utils.context_resolver import ContextResolver
 
 class ChatbotService:
     def __init__(self):
