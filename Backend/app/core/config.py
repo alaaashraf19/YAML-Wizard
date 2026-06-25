@@ -17,13 +17,17 @@ class Settings(BaseSettings):
     default_agent_model: str = "qwen2.5:3b"
 
     # FastAPI
-    app_title: str = "YAML Wizard — Repo Context Agent"
+    app_title: str = "YAML Wizard"
     debug: bool = False
 
     # Existing fields from the project
     secret_key: str = ""
-    access_token_expire_minutes: int = 30
+    access_token_expire_minutes: int = 604800 #60*60*24*7 => 7days
     database_url: str = ""
 
-
+    ###############cloudinary config for avatar uploading########################
+    cloudinary_cloud_name: str = ""
+    cloudinary_api_key: str = ""
+    cloudinary_api_secret: str = ""
+    
 settings = Settings()

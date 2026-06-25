@@ -1,0 +1,181 @@
+/* RepoSidebar.css */
+
+.repoSidebar {
+    width: 288px;
+    /* padding-top: 64px; */
+    z-index: 10;
+    background-image: linear-gradient(260deg, rgb(3, 3, 93)10% ,rgb(74, 2, 103));
+
+    color: rgb(243 244 246);
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.6);
+
+}
+
+.repoSidebarHeader {
+    border-bottom: 1px solid rgb(55 65 81);
+}
+.appNameContainer {
+    display: flex;
+    align-items: center;
+
+    margin-bottom: 10px;
+    padding: 30px 15px;
+    gap: 10px;
+
+    font-size: 20px;
+    font-family: "Orbitron", sans-serif;
+    text-shadow: 0 3px 15px rgba(255, 255, 255, 0.5);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+.logo {
+    background: radial-gradient(
+        ellipse,
+        rgb(18, 18, 61) 20%,
+        rgba(15, 10, 70,0.1) 75%,
+        transparent
+    );
+    
+    width: 40px;
+    height: 40px;
+}
+
+.repoSidebarInputRow {
+    display: flex;
+    gap: 8px; /* 0.5rem */
+}
+
+.repoSidebarInput {
+    flex: 1;
+    background: rgb(31 41 55);
+    font-size: 14px;
+    border-radius: 4px;
+    padding: 4px 8px;
+    border: 1px solid rgb(75 85 99);
+    outline: none;
+    color: white;
+}
+
+.repoSidebarInput:focus {
+    border-color: rgb(59 130 246);
+}
+
+.repoSidebarAddBtn {
+    background: rgb(37 99 235);
+    font-size: 14px;
+    padding: 4px 12px;
+    border-radius: 4px;
+    border: none;
+    color: white;
+    cursor: pointer;
+}
+
+.repoSidebarAddBtn:hover {
+    background: rgb(59 130 246);
+}
+
+.repoSidebarAddBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.repoSidebarError {
+    color: rgb(248 113 113);
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+.repoSidebarNav {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.repoSidebarLoading {
+    padding: 16px;
+    font-size: 14px;
+    color: rgb(156 163 175);
+}
+
+.repoItem {
+    padding: 12px;
+    cursor: pointer;
+    border-bottom: 1px solid rgb(31 41 55);
+    transition: background 0.2s ease;
+}
+
+.repoItem:hover {
+    background: rgb(31 41 55);
+}
+
+.repoItemActive {
+    background: rgb(31 41 55);
+    border-left: 2px solid rgb(59 130 246);
+}
+
+.repoItemTop {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.repoItemName {
+    font-size: 14px;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.repoItemPlatform {
+    font-size: 12px;
+    color: rgb(107 114 128);
+    text-transform: uppercase;
+}
+
+.repoItemBottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 4px;
+}
+
+.repoItemSyncText {
+    font-size: 12px;
+    color: rgb(156 163 175);
+}
+
+.repoItemActions {
+    display: flex;
+    gap: 4px;
+}
+
+.repoSyncBtn {
+    font-size: 12px;
+    color: rgb(96 165 250);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.repoSyncBtn:hover {
+    color: rgb(147 197 253);
+}
+
+.repoDeleteBtn {
+    font-size: 12px;
+    color: rgb(248 113 113);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.repoDeleteBtn:hover {
+    color: rgb(252 165 165);
+}
+
+.repoSyncingText {
+    font-size: 12px;
+    color: rgb(250 204 21);
+    margin-top: 4px;
+}

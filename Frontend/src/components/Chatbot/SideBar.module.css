@@ -1,0 +1,240 @@
+.sideBar {
+    position: relative;
+    margin: 10px 10px;
+    margin-right: 0;
+    padding: 20px 20px;
+    z-index: 10;
+    
+    border-radius: 20px;
+    background-color: rgb(9, 2, 41);
+    box-shadow: 0px 3px 10px 0px rgba(0,0,0,0.6);
+    
+    display: flex;
+    flex-direction: column;
+    color: white;
+
+    transition: width 0.5s ease, padding 0.5s ease, transform 0.5s ease;
+}
+.expanded {
+    width: 300px;
+    font-size: 16px;
+    justify-content: center;
+    white-space: nowrap;
+}
+.collapsed {
+    width: 60px;
+    font-size: 20px;
+    gap: 50px;
+    align-items: center;
+}
+.collapsedBtn:hover {
+    color: rgb(123, 92, 255);
+    filter: drop-shadow(0px 0px 15px rgba(123, 92, 255, 0.6));
+    transition: color 0.3s ease, filter 0.3s ease, transform 0.3s ease;
+}
+
+.topContainer {
+    display: flex;
+    flex-direction: column;
+}
+.appNameContainer {
+    display: flex;
+    align-items: center;
+
+    margin-bottom: 10px;
+    padding: 5px;
+
+    font-size: 20px;
+    font-family: "Orbitron", sans-serif;
+    text-shadow: 0 0 20px rgba(123, 92, 255, 0.6);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+.logo {
+    background: radial-gradient(
+        ellipse,
+        rgb(18, 18, 61) 20%,
+        rgba(15, 10, 70,0.1) 75%,
+        transparent
+    );
+    
+    width: 40px;
+    height: 40px;
+    /* filter: drop-shadow(0px 0px 15px rgba(123, 92, 255, 0.6)); */
+}
+.appName {
+    margin-left: 10px;
+}
+.closeBarBtn {
+    margin-bottom: 30px;
+    margin-left: auto;
+}
+
+.actionBtn {
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 15px;
+    padding: 15px;
+
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    width: 100%;
+
+    color: inherit;
+    font-size: inherit;
+    text-decoration: none;
+
+    transition: background-color 0.25s ease, border 0.25s ease;
+}
+.actionBtn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(181, 181, 181, 0.1);
+    transition:brightness(1.5) 0.5s ease;
+}
+.sessions {
+    flex: 1;
+    overflow-y: auto;
+    overflow-anchor:auto;
+
+    display: flex;
+    flex-direction: column;
+}
+.sessionStart {
+    padding: 10px;
+    margin-top: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+.sessionEnd {
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+.session {
+    padding: 3px 10px;
+    border: 1px solid transparent;
+    border-radius: 15px;
+
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+
+    transition: background-color 0.25s ease, border 0.25s ease;
+}
+.session:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(181, 181, 181, 0.1);
+}
+
+.active{
+    background-color: rgba(255, 255, 255, 0.1)
+}
+.sessionToDelete {
+    background-color: rgba(255, 37, 37, 0.1);
+}
+.sessionName {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.deleteIcon {
+    opacity: 0;
+    display: flex;
+    align-items: center;
+
+    background: transparent;
+    box-shadow: 0px 3px 10px 0px rgba(0,0,0,0.6);
+    border: 0;
+    border-radius: 15px;
+
+    padding: 4px;
+    color: white;
+    font-size: 20px;
+}
+.session:hover .deleteIcon{
+    opacity: 1;
+}
+.deleteIcon:hover {
+    background-color: rgba(9, 2, 41, 0.7);
+}
+.bottomContainer {
+    display: flex;
+    flex-direction: column;
+}
+.settingsContainer {
+    margin-top: auto;
+    bottom: 0;
+    position: relative;
+    display: flex;
+}
+.settingsMenu {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    width: max-content;
+
+    background-color: rgb(9, 2, 41);
+    box-shadow: 0px 8px 16px 5px rgba(0,0,0,0.4);
+    bottom: 0%;
+    left: 50%;
+    
+    padding: 5px;
+    margin: 10px;
+    border: 1px solid rgb(50, 39, 96);
+    border-radius: 10px;
+    font-size: 15px;
+
+    transition: 0.7s;
+}
+.option {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+
+    text-decoration: none;
+    color: inherit;
+    width: auto;
+    margin: 5px;
+    padding: 10px 15px;
+    border-radius: 10px;
+}
+.option:hover {background-color: rgb(19, 5, 79);}
+
+.username {
+    margin: 10px;
+    padding: 10px 14px;
+    width: fit-content;
+    height: fit-content;
+
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+
+    text-decoration: none;
+    color: inherit;
+    font-size: 16px;
+
+    /* background: linear-gradient(90deg, rgb(23, 8, 92)50%, rgb(9, 2, 41)); */
+    background: linear-gradient(90deg,  rgb(9, 2, 41)0%, rgb(23, 8, 92)60%, rgb(9, 2, 41)100%);
+    font-weight: bold;
+
+    border: 1px solid rgba(221, 223, 251, 0.25);
+    border-radius: 20px;
+    cursor: pointer;
+}
+.signUpNow {
+    position: absolute;
+    display: none;
+    left: 100%;
+
+    padding: 10px 14px;
+    margin-left: 5px;
+    border-radius: 15px;
+    border: 2px solid white;
+    font-size: 16px;
+    text-decoration: 0;
+    color: inherit;
+}
+.username:hover .signUpNow, .signUpNow:hover {
+    display: block;
+    background-color: rgb(19, 5, 79);
+}
