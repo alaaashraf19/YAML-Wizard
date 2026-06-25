@@ -80,4 +80,4 @@ class ChatbotAgent:
         
         result = await self.graph.ainvoke({"messages": lc_messages}, config=config)
         last_message = result["messages"][-1]
-        return last_message.content
+        return last_message.text
