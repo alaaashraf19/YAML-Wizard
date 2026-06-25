@@ -15,6 +15,7 @@ from models.project_model import Project
 from models.chat_message_model import ChatMessage
 from models.chat_session_model import ChatSession
 from models.platforms_model import GitLabConnection
+from schemas.chatbot_schema import ChatSessionResponse
 from services.project_service import get_project_by_id
 from agent.chatbot_agent import ChatbotAgent
 from agent.utils.context_resolver import ContextResolver
@@ -292,6 +293,54 @@ class ChatbotService:
             .order_by(ChatSession.updated_at.desc())
         )
         return results.unique().scalars().all()
+
+    async def get_session_by_pipId(
+            self,
+            user_id: int,
+            pipeline_id: int,
+            db: AsyncSession
+    )->ChatSessionResponse:
+        result = await db.execute(
+            select(ChatSession)
+            .options(joinedload(ChatSession.project),
+                     joinedload(ChatSession.pipeline) )
+            .where(ChatSession.user_id == user_id,ChatSession.pipeline_id == pipeline_id)
+        )
+        session =  result.unique().scalar_one_or_none()
+        if not session:
+            raise HTTPException(
+                status_code=404,
+                detail="Chat session not found or access denied"
+            )
+        return ChatSessionResponse(
+            id=session.id,
+            session_name=session.session_name,
+            created_at=session.created_at,
+            updated_at=session.updated_at,
+            project_id=session.project_id,
+            project={
+                "id": session.project_id,
+                "project_name": session.project.project_name,
+                "user_id": user_id,
+                "repo_id": session.project.repo_id,
+                "repo_url": session.project.repository.url,
+                "platform": session.project.repository.platform,
+                "created_at": session.project.created_at,
+                "updated_at": session.project.updated_at
+            } if session.project else None,
+            pipeline={
+                "id": session.pipeline_id,
+                "name": session.pipeline.name,
+                "content": session.pipeline.content,
+                "path": session.pipeline.path,
+                "branch": session.pipeline.branch,
+                "is_generated_by_wizard": session.pipeline.is_generated_by_wizard,
+                "description": session.pipeline.description,
+                "created_at": session.pipeline.created_at,
+                "updated_at": session.pipeline.updated_at,
+                "activated_at": session.pipeline.activated_at,
+            } if session.pipeline else None,
+        )
 
     async def get_session_with_messages(
             self,
