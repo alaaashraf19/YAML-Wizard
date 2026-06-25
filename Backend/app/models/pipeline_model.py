@@ -20,3 +20,5 @@ class Pipeline(Base):
 
     project_id = Column(Integer, ForeignKey('projects.id'), nullable=False)
     project = relationship("Project", back_populates="pipelines",foreign_keys=[project_id])
+    chat_session = relationship("ChatSession",back_populates="pipeline",
+                                uselist= False, cascade="all, delete-orphan")

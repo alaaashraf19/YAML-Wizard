@@ -99,6 +99,7 @@ class ChatbotService:
             message: str,
             session_id: Optional[int],
             project_id : Optional[int],
+            pipeline_id : Optional[int],
             db: AsyncSession
     ) -> Dict[str, Any]:
 
@@ -111,11 +112,12 @@ class ChatbotService:
             )
             session_id = session.id
             chat_history = []
-            project = await get_project_by_id(project_id, user_id, db)
-            session.project_id = project.id
-            session.updated_at = datetime.utcnow()
-            await db.commit()
-            await db.refresh(session)
+            if project_id:
+                project = await get_project_by_id(project_id, user_id, db)
+                session.project_id = project.id
+                session.updated_at = datetime.utcnow()
+                await db.commit()
+                await db.refresh(session)
         else:
             session = await self.get_session_if_owned(
                 user_id=user_id,
@@ -136,7 +138,11 @@ class ChatbotService:
             )
 
         session_name = session.session_name
-
+        if pipeline_id and not session.pipeline_id:
+            session.pipeline_id = pipeline_id
+            session.updated_at = datetime.utcnow()
+            await db.commit()
+            await db.refresh(session)
 
         result = await self.send_message(
             message=message,
@@ -280,7 +286,8 @@ class ChatbotService:
 
         results = await db.execute(
             select(ChatSession)
-            .options(joinedload(ChatSession.project).joinedload(Project.repository))
+            .options(joinedload(ChatSession.project).joinedload(Project.repository),
+                     joinedload(ChatSession.pipeline))
             .where(ChatSession.user_id == user_id)
             .order_by(ChatSession.updated_at.desc())
         )
@@ -317,6 +324,18 @@ class ChatbotService:
                 "id": session.project_id,
                 "name": session.project.project_name
             } if session.project else None,
+            "pipeline":{
+                "id" : session.pipeline_id,
+                "name": session.pipeline.name,
+                "content": session.pipeline.content,
+                "path": session.pipeline.path,
+                "branch": session.pipeline.branch,
+                "is_generated_by_wizard": session.pipeline.is_generated_by_wizard,
+                "description": session.pipeline.description,
+                "created_at": session.pipeline.created_at,
+                "updated_at": session.pipeline.updated_at,
+                "activated_at": session.pipeline.activated_at,
+            } if session.pipeline else None,
             "messages": messages
         }
 

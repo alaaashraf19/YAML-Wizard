@@ -30,6 +30,7 @@ async def chat_with_bot(
         message=request.message,
         session_id=request.session_id,
         project_id = request.project_id,
+        pipeline_id = request.pipeline_id,
         db=db
     )
 
@@ -79,6 +80,18 @@ async def get_chat_sessions(
                 "created_at": session.project.created_at,
                 "updated_at": session.project.updated_at
             } if session.project else None,
+            pipeline= {
+                "id" : session.pipeline_id,
+                "name": session.pipeline.name,
+                "content": session.pipeline.content,
+                "path": session.pipeline.path,
+                "branch": session.pipeline.branch,
+                "is_generated_by_wizard": session.pipeline.is_generated_by_wizard,
+                "description": session.pipeline.description,
+                "created_at": session.pipeline.created_at,
+                "updated_at": session.pipeline.updated_at,
+                "activated_at": session.pipeline.activated_at,
+            } if session.pipeline else None,
         )
         for session in sessions
     ]
@@ -102,6 +115,7 @@ async def get_session_details(
         session_name=session_data["session_name"],
         project_id=session_data["project_id"],
         project=session_data["project"],
+        pipeline=session_data["pipeline"],
         messages=[
             ChatMessage(
                 role=msg["role"],

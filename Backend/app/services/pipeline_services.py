@@ -66,8 +66,6 @@ async def get_project_pipelines(
         .order_by(Pipeline.created_at.desc())
     )
     pipelines = result.scalars().all()
-    if not pipelines:
-        raise HTTPException(status_code=404, detail="Pipeline not found")
     response = []
     for pipeline in pipelines:
         p = PipelineSummary.model_validate(pipeline)
