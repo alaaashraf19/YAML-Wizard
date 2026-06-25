@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from database.db_engine import create_tables
 from middleware.middleware import setup_middleware
-from routers import auth_router, github_app_router, publisher_router,platfroms_connect_router, chatbot_router, project_router, agent_router, user_router
+from routers import auth_router, github_app_router, publisher_router,platfroms_connect_router, chatbot_router, project_router, agent_router, user_router, pipeline_jobs_router
 from routers.dashboard import repos_router, runs_router, tests_router, insights_router
 from realtime import websocket_router
 import asyncio
@@ -52,6 +52,7 @@ setup_middleware(app)
 app.include_router(auth_router.router, prefix="/auth", tags=["auth"])
 app.include_router(user_router.router, prefix="/user", tags=["user"])
 app.include_router(project_router.router, prefix="/projects", tags=["projects"])
+app.include_router(pipeline_jobs_router.router, prefix="/projects", tags=["pipeline_jobs"])
 app.include_router(chatbot_router.router, prefix="/chatbot", tags=["chatbot"])
 app.include_router(github_app_router.router, prefix="/github", tags=["github_app"])
 app.include_router(platfroms_connect_router.router, prefix="/platform", tags=["platform_connect"])

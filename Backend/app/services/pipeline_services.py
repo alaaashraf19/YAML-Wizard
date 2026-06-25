@@ -7,7 +7,7 @@ from fastapi import HTTPException, status
 from models.pipeline_model import Pipeline
 from models.project_model import Project
 from schemas.pipeline_schema import PipelineCreate, PipelineUpdate,PipelineSummary,PipelineResponse
-from services.project_service import get_project_by_id
+from services.project_service import get_projectModel_by_id
 
 
 async def create_pipeline(
@@ -17,7 +17,7 @@ async def create_pipeline(
         db: AsyncSession
 ) -> Pipeline:
 
-    await get_project_by_id(project_id, user_id, db)
+    await get_projectModel_by_id(project_id, user_id, db)
 
     new_pipeline = Pipeline(
         **pipeline.model_dump(),
@@ -57,7 +57,7 @@ async def get_project_pipelines(
         db: AsyncSession
 ) -> List[PipelineSummary]:
 
-    project = await get_project_by_id(project_id, user_id, db)
+    project = await get_projectModel_by_id(project_id, user_id, db)
     active_pipeline_id = project.active_pipeline_id
 
     result = await db.execute(
@@ -82,7 +82,7 @@ async def get_active_pipeline(
         db: AsyncSession
 ) -> Optional[PipelineResponse]:
 
-    project = await get_project_by_id(project_id, user_id, db)
+    project = await get_projectModel_by_id(project_id, user_id, db)
 
     if not project.active_pipeline_id:
         raise HTTPException(
@@ -94,7 +94,7 @@ async def get_active_pipeline(
         select(Pipeline).where(Pipeline.id == project.active_pipeline_id)
     )
     pipeline = result.scalar_one_or_none()
-    project = await get_project_by_id(pipeline.project_id, user_id, db)
+    project = await get_projectModel_by_id(pipeline.project_id, user_id, db)
     p = PipelineResponse.model_validate(pipeline)
     p.is_active = (pipeline.id == project.active_pipeline_id)
 
@@ -134,7 +134,7 @@ async def update_pipeline(
 ) -> PipelineResponse:
 
     pipeline = await get_pipeline_by_id(pipeline_id, user_id, db)
-    project = await get_project_by_id(project_id, user_id, db)
+    project = await get_projectModel_by_id(project_id, user_id, db)
     update_data = pipeline_update.model_dump(exclude_unset=True)
 
     for key, value in update_data.items():
@@ -157,7 +157,7 @@ async def delete_pipeline(
     pipeline = await get_pipeline_by_id(pipeline_id, user_id, db)
 
 
-    project = await get_project_by_id(pipeline.project_id, user_id, db)
+    project = await get_projectModel_by_id(pipeline.project_id, user_id, db)
 
     if project.active_pipeline_id == pipeline_id:
         await db.execute(

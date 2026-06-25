@@ -28,6 +28,7 @@ class ChatSessionDetailResponse(BaseModel):
 class ChatRequest(BaseModel):
     message: str
     session_id: Optional[int] = None
+    project_id: Optional[int] = None
 
 class ChatResponse(BaseModel):
     session_id: Optional[int] = None
