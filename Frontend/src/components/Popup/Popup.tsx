@@ -15,7 +15,7 @@ type PopupProps = {
     popupRef: React.Ref<HTMLDivElement> | null
 }
 
-export function Popup({
+function Popup({
         btnText1,
         btn1Action,
         btnText2,
@@ -62,3 +62,5 @@ export function Popup({
         </div>
     , document.body);
 }
+
+export default Popup;

@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from typing import List, Optional
 from datetime import datetime
-from schemas.project_schema import ProjectSessionResponse
+from schemas.project_schema import ProjectResponse
 class ProjectInfo(BaseModel):
     id:int
     name: str
@@ -17,7 +17,7 @@ class ChatSessionResponse(BaseModel):
     created_at: datetime
     updated_at: datetime
     project_id: Optional[int] = None
-    project: Optional[ProjectSessionResponse] = None
+    project: Optional[ProjectResponse] = None
 
 class ChatSessionDetailResponse(BaseModel):
     id:int

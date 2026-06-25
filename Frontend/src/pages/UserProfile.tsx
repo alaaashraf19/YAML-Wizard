@@ -8,7 +8,7 @@ import ProjectsTab from "../components/UserProfile/ProjectsTab";
 import ProjectInfoTab from "../components/UserProfile/ProjectInfoTab";
 import SecurityTab from "../components/UserProfile/SecurityTab";
 
-import { Popup } from "../components/Popup/Popup"
+import Popup from "../components/Popup/Popup"
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
@@ -23,6 +23,7 @@ function UserProfile() {
     const [projectInfoId, setProjectInfoId] = useState<number | null>(null);
 
     const [confirmMessage, setConfirmMessage] = useState<string | null>("");
+    const [warningMessage, setWarningMessage] = useState<string | null>("");
     const [errorMessage, setErrorMessage] = useState<string | null>("");
 
     const navigate = useNavigate();
@@ -112,6 +113,7 @@ function UserProfile() {
                 {(!activeTab || activeTab === tabs[1]) && (
                     <PlatformsTab
                         setConfirmMessage={setConfirmMessage}
+                        setWarningMessage={setWarningMessage}
                         setErrorMessage={setErrorMessage}
                     />
                 )}
@@ -144,8 +146,8 @@ function UserProfile() {
                     btn2Action={null}
                     confirmMessage={confirmMessage}
                     setConfirmMessage={setConfirmMessage}
-                    warningMessage={null}
-                    setWarningMessage={null}
+                    warningMessage={warningMessage}
+                    setWarningMessage={setWarningMessage}
                     errorMessage={errorMessage}
                     setErrorMessage={setErrorMessage}
                     popupRef={popupRef}

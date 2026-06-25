@@ -187,6 +187,7 @@ input[type="radio"]:checked::before {
     align-items: start;
     min-width: 40%;
     max-width: 60%;
+    max-height: 70%;
     padding: 30px;
 }
 .infoBtns{
@@ -353,14 +354,21 @@ input[type="radio"]:checked::before {
     font-size: 22px;
 }
 
+.infoBarSessions{
+    min-height: 0;
+}
 .sessions{
     margin-top: 10px;
     flex: 1;
+
+    overflow-y: auto;
+    overflow-anchor: auto;
 }
 .session{
     display: flex;
     align-items: center;
     padding: 10px 15px;
+
     border-radius: 10px;
     transition: background-color 0.3s ease;
 }

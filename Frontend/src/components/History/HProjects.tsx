@@ -1,23 +1,30 @@
 import gStyles from "../../global.module.css"
 import styles from './HProjects.module.css'
 import logo from "../../assets/yaml_wizard_logo.png";
-import type { Project } from "../../types";
-// import Projects from "../components/Chatbot/Projects";
+import { Platforms, type Platform, type Project } from "../../types";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { LuPanelRightClose, LuPanelLeftClose } from "react-icons/lu";
 import { IoClose } from "react-icons/io5";
 import { FaPlus } from "react-icons/fa";
+import { FiFilter } from "react-icons/fi";
 
 
-function HProjects(){
-    const [projectId, setProjectId] = useState<number | null>();
+type HPProps = {
+    projectId: number | null,
+    setProject: React.Dispatch<React.SetStateAction<Project | null>>
+}
+
+function HProjects({ projectId, setProject }: HPProps){
     const [projects, setProjects] = useState<Project[]>([]);
     const [query, setQuery] = useState("");
+    const [filterPlatfrom, setFilterPlatform] = useState<Platform | null>(null);
+    const [openFilterMenu, setOpenFilterMenu] = useState<boolean>(false);
     const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
 
+    const filterRef = useRef<HTMLDivElement | null>(null);
     const api_url = import.meta.env.VITE_API_URL;
     const navigate = useNavigate();
 
@@ -47,8 +54,15 @@ function HProjects(){
         fetchProjects();
     }, []);
 
-    const filteredItems = projects ? projects
-        .filter(p => p.project_name.toLowerCase().includes(query.toLowerCase())) : [];
+    // filter projects by query and selected platform
+    const filteredProjects = useMemo(() => {
+        return projects ? projects
+            .filter(p => {
+                return p.project_name.toLowerCase().includes(query.toLowerCase()) &&
+                (!filterPlatfrom || p.platform === filterPlatfrom)
+            })
+            .sort((a,b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()) : [];
+    }, [projects, filterPlatfrom, query]);
 
     return(
         <div className={`${styles.menu} ${isCollapsed ? styles.collapsed : styles.expanded}`}>
@@ -74,15 +88,34 @@ function HProjects(){
                         <input type="text" className={styles.searchBar} name="searchBar" value={query}
                             placeholder="Search..." onChange={(e) => setQuery(e.target.value)}/>
                         <IoClose onClick={() => setQuery("")} className={`${styles.deleteTextIcon} ${gStyles.clickable}`}/>
+
+                        <div className={styles.filterContainer} ref={filterRef}>
+                            <FiFilter className={`${styles.filterIcon} ${gStyles.clickable}`} title="Filter"
+                                onClick={() => setOpenFilterMenu(prev => !prev)} />
+                            {openFilterMenu &&
+                                <div className={styles.filterMenu}>
+                                    <span className={`${styles.option} ${filterPlatfrom? 
+                                        `${styles.notSelected} ${gStyles.clickable}` : styles.selected }`}
+                                        onClick={() => {setFilterPlatform(null); setOpenFilterMenu(false);}}>
+                                        All Platforms</span>
+                                    {Platforms.map(p => (
+                                        <span className={`${styles.option} ${p === filterPlatfrom? styles.selected 
+                                            : `${styles.notSelected} ${gStyles.clickable}`}`}
+                                            onClick={() => {setFilterPlatform(p); setOpenFilterMenu(false);}}>
+                                            {p.toUpperCase()}</span>))}
+                                </div>
+                            }
+                        </div>
                     </div>
 
-                    {filteredItems.length > 0? (
+                    {filteredProjects.length > 0? (
                         <ul className={styles.projectsList}>
-                            {filteredItems.map((p, index) => (
-                                <li key={index} onMouseDown={() => setProjectId(p.id)}
+                            {filteredProjects.map((p, index) => (
+                                <li key={index} onMouseDown={() => setProject(p)}
                                     title={p.project_name + '('+ p.repo_url + ')'}
-                                    className={`${styles.project} ${(p.id == projectId)? styles.active : gStyles.clickable}`}>
-                                    {p.project_name}
+                                    className={`${styles.project} ${(p.id === projectId)? styles.active : gStyles.clickable}`}>
+                                    <span className={styles.projectName}>{p.project_name}</span>
+                                    <span className={styles.subInfo}>{p.platform.toUpperCase()}</span>
                                 </li>
                             ))}
                         </ul>
@@ -94,7 +127,7 @@ function HProjects(){
                 <div className={styles.bottomContainer}>
                     <button className={`${styles.addButton} ${gStyles.clickable}`}
                         onClick={() => navigate("/profile?tab=Projects")} title="Go to settings">
-                        Add project
+                        Manage Projects
                     </button>
                 </div>
             </>)}

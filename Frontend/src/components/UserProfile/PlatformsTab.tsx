@@ -26,10 +26,11 @@ type Installation = {
 
 type PlatformsProps = {
     setConfirmMessage: React.Dispatch<React.SetStateAction<string | null>>,
+    setWarningMessage: React.Dispatch<React.SetStateAction<string | null>>,
     setErrorMessage: React.Dispatch<React.SetStateAction<string | null>>
 };
 
-function PlatformsTab({ setConfirmMessage, setErrorMessage }: PlatformsProps){
+function PlatformsTab({ setConfirmMessage, setWarningMessage, setErrorMessage }: PlatformsProps){
     const [connections, setConnections] = useState<Partial<Record<Platform, PlatformConnection>>>({});
     const [repos, setRepos] = useState<Repo[]>([]);
     const [installations, setInstallations] = useState<Installation[]>([]);
@@ -173,7 +174,9 @@ function PlatformsTab({ setConfirmMessage, setErrorMessage }: PlatformsProps){
                 return;
             }
             setLoadingPlatform("");
-            setConfirmMessage(`Disconnected from ${platform}`);
+            setConfirmMessage(`Disconnected from ${platform.toUpperCase()}`);
+            setWarningMessage(`Disconnecting here won't revoke ${platform.toUpperCase()} authorization.\n`
+                +`You can remove it later from ${platform.toUpperCase()} settings.`);
             checkConnected();
             
         } catch (err) {
@@ -201,8 +204,8 @@ function PlatformsTab({ setConfirmMessage, setErrorMessage }: PlatformsProps){
                 setErrorMessage("Something is wrong with disconnecting right now");
                 return;
             }
-            if(installation_id) setConfirmMessage(`Disconnected from installation`);
-            else setConfirmMessage(`Disconnected from all installations`);
+            if(installation_id) setConfirmMessage(`Installation Removed`);
+            else setConfirmMessage(`All Installations Removed`);
 
             getInstalls();
             getRepos();
@@ -300,7 +303,7 @@ function PlatformsTab({ setConfirmMessage, setErrorMessage }: PlatformsProps){
                         </div>
                         <button onClick={handleInstallApp} className={`${gStyles.clickable} ${styles.button}`}
                             title="Install app to add more repositories" disabled={loadingPlatform === "install"}>
-                            {loadingPlatform === "install" ? "Redirecting .." :"Install App & Connect Repos"}
+                            {loadingPlatform === "install" ? "Redirecting .." :"Install App & Manage Repos"}
                         </button>
                     </div>}
                 </div>

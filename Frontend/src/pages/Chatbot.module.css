@@ -230,9 +230,9 @@
     color: white;
     font-size: 16px;
 
-    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    transition: background-color 0.3s ease;
 }
 .projectButton:hover {background-color: rgb(13, 4, 55);}
 
@@ -243,3 +243,30 @@
     gap: 10px;
 }
 .arrow{font-size: 20px;}
+.infoPopup {
+    min-width: 40%;
+    max-width: 60%;
+    max-height: 70%;
+    padding: 30px;
+}
+ .infoBtns{
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+    width: 100%;
+}
+.infoBtn {
+    margin-left: 15px;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    
+    background: transparent;
+    border: 0;
+    border-radius: 10px;
+    font-size: 30px;
+}
+.infoBtn:hover{
+    box-shadow: 2px 5px 15px rgba(0,0,0,0.7);
+    background-color: rgb(13, 2, 61);
+}

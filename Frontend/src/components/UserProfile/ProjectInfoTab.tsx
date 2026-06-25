@@ -2,9 +2,9 @@ import gStyles from "../../global.module.css"
 import popupStyles from '../Popup/Popup.module.css'
 import styles from './Tabs.module.css'
 
-import { Popup } from "../Popup/Popup";
+import Popup from "../Popup/Popup";
 import type { Project, Platform, Session } from "../../types";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { IoClose, IoNavigate  } from "react-icons/io5";
@@ -35,8 +35,6 @@ function ProjectInfoTab({ projectInfoId, setProjectInfoId, projects, setProjects
     const localPopupRef = useRef<HTMLDivElement>(null);
     const navigate = useNavigate();
     const api_url = import.meta.env.VITE_API_URL;
-
-    const loadingText = "Getting Information ..";
 
     // check if project info id is selected
     useEffect(() => {
@@ -76,6 +74,12 @@ function ProjectInfoTab({ projectInfoId, setProjectInfoId, projects, setProjects
             getSessionsOfProject();
         }
     }, [projectInfoId]);
+
+    //sort sessions
+    const sortedSessions = useMemo(() => {
+        return sessions ? sessions
+            .sort((a,b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()) : [];
+    }, [sessions]);
 
     //handle delete a project
     const handleDelete = async () => {
@@ -266,56 +270,30 @@ function ProjectInfoTab({ projectInfoId, setProjectInfoId, projects, setProjects
                                 sessionStorage.removeItem("project_id");
                             }}/>
                     </div>
-                    <div className={styles.infoBar}>
-                        <p className={styles.infoLabel}>Project Name</p>
-                        <p className={styles.infoText}>{selectedProject?.project_name ?? loadingText}</p>
-                    </div>
-                    <div className={styles.infoBar}>
-                        <p className={styles.infoLabel}>Repository URL</p>
-                        {selectedProject?.repo_url ? 
-                        <a href={selectedProject?.repo_url} className={styles.link}
-                            title="Go to repo">{selectedProject?.repo_url}</a>
-                        : <p className={styles.infoText}>{loadingText}</p>}
+
+                    <ProjectSubInfo selectedProject={selectedProject}/>
+                    
+                    <div className={`${styles.infoBar} ${styles.infoBarSessions}`}>
+                        <p className={styles.infoLabel}>Connected Sessions</p>
+                        {sortedSessions.length > 0 ? (
+                        <div className={styles.sessions}>
+                            {sortedSessions.map((session, index) => (
+                                <div key={index} className={styles.session}>
+                                    <span>{session.session_name}</span>
+                                    <span className={`${styles.navigateIcon} ${gStyles.clickable}`}
+                                            title="Go to session" onClick={() => {
+                                                if(session.id) sessionStorage.setItem("session_id", session.id.toString());
+                                                else sessionStorage.removeItem("session_id");
+                                                navigate("/chatbot");
+                                            }}> <IoNavigate/> </span>
+                                </div>
+                            ))}
+                        </div>
+                        ) : (
+                            <p className={styles.noProjects}>No connected sessions yet.</p>
+                        )}
                     </div>
                 </>)}
-
-                <div className={styles.infoBar}>
-                    <p className={styles.infoLabel}>Platform</p>
-                    <p className={styles.infoText}>{selectedProject?.platform.toUpperCase() ?? loadingText}</p>
-                </div>
-
-                <div className={styles.infoBar}>
-                    <p className={styles.infoLabel}>Created</p>
-                    <p className={styles.infoText}>
-                        {selectedProject?.created_at ?
-                            new Date(selectedProject.created_at).toLocaleString(): loadingText}</p>
-                </div>
-                <div className={styles.infoBar}>
-                    <p className={styles.infoLabel}>Last Updated</p>
-                    <p className={styles.infoText}>
-                        {selectedProject?.updated_at ?
-                            new Date(selectedProject.updated_at).toLocaleString(): loadingText}</p>
-                </div>
-                <div className={styles.infoBar}>
-                    <p className={styles.infoLabel}>Connected Sessions</p>
-                    {sessions.length > 0 ? (
-                    <div className={styles.sessions}>
-                        {sessions.map((session, index) => (
-                            <div className={styles.session}>
-                                <span key={index}>{session.session_name}</span>
-                                <span className={`${styles.navigateIcon} ${gStyles.clickable}`}
-                                        title="Go to session" onClick={() => {
-                                            if(session.id) sessionStorage.setItem("session_id", session.id.toString());
-                                            else sessionStorage.removeItem("session_id");
-                                            navigate("/chatbot");
-                                        }}> <IoNavigate/> </span>
-                            </div>
-                        ))}
-                    </div>
-                    ) : (
-                        <p className={styles.noProjects}>No connected sessions yet.</p>
-                    )}
-                </div>
             </div>
             }
         </div>
@@ -324,3 +302,41 @@ function ProjectInfoTab({ projectInfoId, setProjectInfoId, projects, setProjects
 }
 
 export default ProjectInfoTab;
+
+type subProps = {
+    selectedProject: Project | null | undefined
+}
+export function ProjectSubInfo({ selectedProject }:subProps){
+    const loadingText = "Getting Information ..";
+
+    return(<>
+        <div className={styles.infoBar}>
+            <p className={styles.infoLabel}>Project Name</p>
+            <p className={styles.infoText}>{selectedProject?.project_name ?? loadingText}</p>
+        </div>
+        <div className={styles.infoBar}>
+            <p className={styles.infoLabel}>Repository URL</p>
+            {selectedProject?.repo_url ? 
+            <a href={selectedProject?.repo_url} className={styles.link}
+                title="Go to repo">{selectedProject?.repo_url}</a>
+            : <p className={styles.infoText}>{loadingText}</p>}
+        </div>
+        <div className={styles.infoBar}>
+            <p className={styles.infoLabel}>Platform</p>
+            <p className={styles.infoText}>{selectedProject?.platform?.toUpperCase() ?? loadingText}</p>
+        </div>
+
+        <div className={styles.infoBar}>
+            <p className={styles.infoLabel}>Created</p>
+            <p className={styles.infoText}>
+                {selectedProject?.created_at ?
+                    new Date(selectedProject.created_at).toLocaleString(): loadingText}</p>
+        </div>
+        <div className={styles.infoBar}>
+            <p className={styles.infoLabel}>Last Updated</p>
+            <p className={styles.infoText}>
+                {selectedProject?.updated_at ?
+                    new Date(selectedProject.updated_at).toLocaleString(): loadingText}</p>
+        </div>
+    </>);
+}

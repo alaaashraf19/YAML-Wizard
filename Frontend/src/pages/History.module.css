@@ -30,10 +30,12 @@
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 .namesContainer{
+    display: flex;
+    flex-direction: column;
     overflow-y: auto;
     overflow-anchor: auto;
 }
-.scriptName{
+.pipelineName{
     padding: 10px;
     margin: 0;
     width: 100%;
@@ -43,11 +45,23 @@
     border-top: 1px solid rgba(255, 255, 255, 0.2);
     transition: background-color 0.25s ease, border 0.25s ease;
 }
-.scriptName:hover{
+.pipelineName:hover{
     background-color: rgba(255, 255, 255, 0.1);
     border-bottom: 1px solid rgba(181, 181, 181, 0.1);
     border-top: 1px solid rgba(181, 181, 181, 0.1);
 }
+.noPipelines {
+    background-color: rgb(95, 87, 124);
+    padding: 10px 20px;
+    margin: 10px 30px;
+    width: fit-content;
+    border-radius: 10px;
+    font-family: "Inter", system-ui, sans-serif;
+    font-size: 18px;
+    opacity: 0.5;
+    color: white;
+}
+
 .filterIcon{
     margin:10px;
     /* margin-top: auto; */
@@ -84,6 +98,6 @@
     transition: color 0.25s ease, transform 0.3s ease;
 }
 .lineBtn:hover{color: rgb(123, 92, 255)}
-.script{
+.pipeline{
     flex: 1;
 }

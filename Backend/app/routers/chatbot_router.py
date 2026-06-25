@@ -74,6 +74,8 @@ async def get_chat_sessions(
                 "project_name" : session.project.project_name,
                 "user_id" :  current_user.id,
                 "repo_id" : session.project.repo_id,
+                "repo_url" : session.project.repository.url,
+                "platform" : session.project.repository.platform,
                 "created_at": session.project.created_at,
                 "updated_at": session.project.updated_at
             } if session.project else None,

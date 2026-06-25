@@ -11,6 +11,7 @@ from sqlalchemy.orm import Session,joinedload
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select,update,delete
 
+from models.project_model import Project
 from models.chat_message_model import ChatMessage
 from models.chat_session_model import ChatSession
 from models.platforms_model import GitLabConnection
@@ -279,7 +280,7 @@ class ChatbotService:
 
         results = await db.execute(
             select(ChatSession)
-            .options(joinedload(ChatSession.project))
+            .options(joinedload(ChatSession.project).joinedload(Project.repository))
             .where(ChatSession.user_id == user_id)
             .order_by(ChatSession.updated_at.desc())
         )

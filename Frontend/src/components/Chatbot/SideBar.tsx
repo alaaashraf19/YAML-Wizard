@@ -14,7 +14,7 @@ import { MdDeleteOutline, MdChatBubbleOutline } from "react-icons/md";
 import { FaHistory } from "react-icons/fa";
 import { GoPerson } from "react-icons/go";
 import { RiDashboardFill } from "react-icons/ri";
-import { Popup } from "../Popup/Popup";
+import Popup from "../Popup/Popup";
 
 
 type sideBar_props = {
