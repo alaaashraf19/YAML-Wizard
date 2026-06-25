@@ -27,6 +27,7 @@ async def chat_with_bot(
         user_id=current_user.id,
         message=request.message,
         session_id=request.session_id,
+        project_id = request.project_id,
         db=db
     )
 

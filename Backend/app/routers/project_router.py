@@ -44,8 +44,7 @@ async def get_sessions_of_project(
             project_id=session.project_id,
             project={
                 "id": session.project_id,
-                "name": session.project.project_name,
-                "target_platform": session.project.target_platform,
+                "name": session.project.project_name
             } if session.project else None,
         )
         for session in sessions

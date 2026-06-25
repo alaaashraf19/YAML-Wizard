@@ -86,6 +86,7 @@ class ChatbotService:
             user_id: int,
             message: str,
             session_id: Optional[int],
+            project_id : Optional[int],
             db: AsyncSession
     ) -> Dict[str, Any]:
 
@@ -93,10 +94,16 @@ class ChatbotService:
             session = await self.create_new_session(
                 user_id=user_id,
                 first_message=message,
+                project_id=project_id,
                 db=db
             )
             session_id = session.id
             chat_history = []
+            project = await get_project_by_id(project_id, user_id, db)
+            session.project_id = project.id
+            session.updated_at = datetime.utcnow()
+            await db.commit()
+            await db.refresh(session)
         else:
             session = await self.get_session_if_owned(
                 user_id=user_id,
