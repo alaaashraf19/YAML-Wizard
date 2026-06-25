@@ -27,8 +27,6 @@ class ProjectSessionResponse(ProjectSchema):
 class ProjectResponse(ProjectSessionResponse):
     platform: str
     repo_url: str
-    created_at: datetime
-    updated_at: datetime
     class Config:
         from_attributes =True
 

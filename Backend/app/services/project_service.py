@@ -187,10 +187,3 @@ async def get_projectModel_by_id(project_id: int,user_id: int, db: AsyncSession)
     if not project:
         raise HTTPException(status_code=404, detail="Project not found")
     return project
-
-async def _check_url_duplicates(repo_url:str, db: AsyncSession, ) :
-    result = await db.execute(select(Repository).where(Repository.url == repo_url))
-    existing_repo = result.scalar_one_or_none()
-
-    if existing_repo:
-        raise HTTPException( status_code=409,detail="Repository URL already exists")
