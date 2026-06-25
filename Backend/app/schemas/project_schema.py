@@ -7,6 +7,7 @@ class ProjectBase(BaseModel):
     url: str
 
 class ProjectCreate(ProjectBase):
+    install_id: int | None = None
     pass
 
 class ProjectUpdate(BaseModel):
@@ -26,9 +27,12 @@ class ProjectSessionResponse(ProjectSchema):
 class ProjectResponse(ProjectSessionResponse):
     platform: str
     repo_url: str
+    created_at: datetime
+    updated_at: datetime
     class Config:
         from_attributes =True
 
 class ProjectSession(BaseModel):
     id: int
     session_name: str
+    updated_at: datetime

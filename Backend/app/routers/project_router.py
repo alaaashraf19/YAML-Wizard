@@ -39,6 +39,7 @@ async def get_sessions_of_project(
         ProjectSession(
             id=session.id,
             session_name=session.session_name,
+            updated_at=session.updated_at,
         )
         for session in sessions
     ]

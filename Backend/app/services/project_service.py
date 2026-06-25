@@ -68,12 +68,14 @@ async def create_project(project: ProjectCreate,user_id:int, db: AsyncSession):
         user_id=user_id,
         repo_id=repo.id
     )
-
+    if project.install_id is not None:
+        new_project.github_installation_id = project.install_id
     new_project.created_at = datetime.utcnow()
     new_project.updated_at = datetime.utcnow()
     db.add(new_project)
     await db.commit()
     await db.refresh(new_project)
+    print("here 5")
     return ProjectResponse(
         id=new_project.id,
         user_id=user_id,

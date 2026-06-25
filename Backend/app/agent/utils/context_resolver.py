@@ -7,6 +7,7 @@ from schemas. repo_schema import RepositorySchema
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from pydantic import BaseModel
+from sqlalchemy.orm import joinedload
 
 class ContextResolverResponse(BaseModel):
     project: ProjectSchema
@@ -20,9 +21,18 @@ class ContextResolver:
     def __init__(self, db: AsyncSession):
         self.db = db
 
-    async def get_project_context(self, project_id: int):
+    async def get_project_context(self, project_id: int) -> ContextResolverResponse:
         
-        project = await self.db.scalar(select(Project).where(Project.id == project_id))
+
+
+        project = await self.db.scalar(
+            select(Project)
+            .options(
+                joinedload(Project.repository)
+                .joinedload(Repository.context)
+            )
+            .where(Project.id == project_id)
+        )
         if not project:
             raise ValueError(f"Project {project_id} not found")
         
@@ -30,7 +40,7 @@ class ContextResolver:
         if not repo:
             raise ValueError(f"Repository not found for project {project_id}")
         
-        repo_context = await self.db.scalar(select(RepoContext).where(RepoContext.repo_id == repo.id))
+        repo_context = repo.context
 
         return ContextResolverResponse(
             project=to_project_schema(project),

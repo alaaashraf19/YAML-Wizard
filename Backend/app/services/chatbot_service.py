@@ -17,6 +17,7 @@ from models.platforms_model import GitLabConnection
 from services.project_service import get_project_by_id
 from agent.chatbot_agent import ChatbotAgent
 from agent.utils.context_resolver import ContextResolver
+from schemas.project_schema import ProjectResponse
 
 class ChatbotService:
     def __init__(self):
@@ -53,6 +54,9 @@ class ChatbotService:
                 gitlab_result = await db.execute(select(GitLabConnection).where(GitLabConnection.user_id == user_id))
                 gitlab_connection = gitlab_result.scalar_one_or_none()
 
+            context = None
+            if project_id is not None:
+                context = await ContextResolver().get_project_context(project_id)
 
             response = await self.agent.invoke(
                 message=message,
@@ -62,6 +66,7 @@ class ChatbotService:
                 session_id = session_id,
                 user_id= user_id,
                 project_id=project_id,
+                context = context,
             )
 
             return {
@@ -334,7 +339,7 @@ class ChatbotService:
             session_id: int,
             project_id: int,
             db: AsyncSession
-    ) -> ChatSession:
+    ) -> ProjectResponse:
         session = await self.get_session_if_owned(user_id,session_id,db)
         if not session:
             raise HTTPException(status_code=404, detail="Chat session not found or access denied")
