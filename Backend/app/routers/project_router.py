@@ -4,7 +4,7 @@ from database.db_engine import get_db
 from schemas.project_schema import ProjectCreate,ProjectResponse,ProjectUpdate
 from schemas.pipeline_schema import PipelineCreate,PipelineResponse,PipelineUpdate,PipelineSummary
 from services.chatbot_service import ChatbotService
-from services.project_service import create_project,get_project_by_id,get_user_projects,delete_project,update_project
+from services.project_service import create_project,get_project_by_id,get_projectModel_by_id,get_user_projects,delete_project,update_project
 from services.pipeline_services import(
     create_pipeline,get_pipeline_by_id,get_project_pipelines
     ,get_active_pipeline,set_active_pipeline,
@@ -99,7 +99,7 @@ async def get_project_pipeline_by_id(
     db: AsyncSession = Depends(get_db)
 ):
     pipeline = await get_pipeline_by_id(pipeline_id, current_user.id, db)
-    project = await get_project_by_id(pipeline.project_id, current_user.id, db)
+    project = await get_projectModel_by_id(project_id, current_user.id, db)
     p = PipelineResponse.model_validate(pipeline)
     p.is_active = (pipeline.id == project.active_pipeline_id)
     return p

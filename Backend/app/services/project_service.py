@@ -176,6 +176,16 @@ async def get_project_by_id(project_id: int,user_id:int, db: AsyncSession)-> Pro
         repo_url=repo.url,
         )
 
+async def get_projectModel_by_id(project_id: int,user_id: int, db: AsyncSession)-> Project:
+    result = await db.execute(
+        select(Project).where(Project.id == project_id, Project.user_id == user_id)
+    )
+    project = result.scalars().one_or_none()
+
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+    return project
+
 async def _check_url_duplicates(repo_url:str, db: AsyncSession, ) :
     result = await db.execute(select(Repository).where(Repository.url == repo_url))
     existing_repo = result.scalar_one_or_none()
