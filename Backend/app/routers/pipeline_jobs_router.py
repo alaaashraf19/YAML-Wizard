@@ -18,8 +18,8 @@ async def get_pipeline_jobs(
     db: AsyncSession = Depends(get_db),
 ):
     
-    platform, jobs = await list_pipeline_jobs(pipeline_id, project_id, current_user.id, db)
-    return JobOrderResponse(pipeline_id=pipeline_id, platform=platform, jobs=jobs)
+    platform, jobs, content = await list_pipeline_jobs(pipeline_id, project_id, current_user.id, db)
+    return JobOrderResponse(pipeline_id=pipeline_id, platform=platform, jobs=jobs, content=content)
 
 
 #persist a new job order;

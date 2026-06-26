@@ -57,5 +57,6 @@ class GitLabPipelineEditor(PipelineEditor):
                 display_index=index,
                 stage=str(stage) if stage is not None else None,
                 needs=needs,
+                content=self.job_block(key, spec),
             ))
         return out

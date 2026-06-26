@@ -6,6 +6,7 @@ class JobView(BaseModel):
     display_index: int
     stage: str | None = None  #GitLab stage (None for GitHub)
     needs: list[str] = Field(default_factory=list)
+    content: str | None = None  # the full job block (key + spec) as YAML
 
 
 #Desired final order of job ids
@@ -17,4 +18,4 @@ class JobOrderResponse(BaseModel):
     pipeline_id: int
     platform: str
     jobs: list[JobView]
-    content: str | None = None  # populated on reorder (in put request only)
+    content: str | None = None  # full pipeline YAML

@@ -33,6 +33,12 @@ class PipelineEditor(ABC):
         self._yaml.dump(data, buf)
         return buf.getvalue()
 
+    #truns a single job (its key + spec) into a YAML block, commentedMap is the ruamel data structure that keeps the comments .
+    def job_block(self, key, spec) -> str:
+        block = CommentedMap()
+        block[key] = spec
+        return self.dump(block)
+
 
     #Returns (container, all_keys_in_container, reorderable_job_keys)
     @abstractmethod

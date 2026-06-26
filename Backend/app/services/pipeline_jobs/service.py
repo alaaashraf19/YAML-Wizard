@@ -43,14 +43,14 @@ def editor_for(platform: str):
 
 async def list_pipeline_jobs(
     pipeline_id: int, project_id: int, user_id: int, db: AsyncSession
-) -> tuple[str, list[JobView]]:
+) -> tuple[str, list[JobView], str]:
     pipeline, platform = await load_pipeline_with_platform(pipeline_id, project_id, user_id, db)
     editor = editor_for(platform)
     try:
         jobs = editor.list_jobs(pipeline.content)
     except JobsNotFound as exc:
         raise HTTPException(status_code=422, detail=str(exc))
-    return platform, jobs
+    return platform, jobs, pipeline.content
 
 
 async def set_pipeline_job_order(
