@@ -26,6 +26,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 if (!res.ok) {
                     console.log("Error:", data.detail);
                     setUsername(null);
+                    sessionStorage.clear();
+                    localStorage.clear();
                     return;
                 }
 
@@ -34,6 +36,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             } catch (err) {
                 console.error("Server error:", err);
                 setUsername(null);
+                sessionStorage.clear();
+                localStorage.clear();
             } finally {
                 setLoading(false);
             }

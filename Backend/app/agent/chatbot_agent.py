@@ -7,8 +7,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import HumanMessage, AIMessage, SystemMessage, BaseMessage
 from agent.tools import TOOLS
 from agent.prompts import SYSTEM_PROMPT
-
-
+from agent.utils.context_resolver import ContextResolverResponse
 
 class AgentState(TypedDict):
     messages: Annotated[List[BaseMessage], add_messages]
@@ -17,7 +16,7 @@ class AgentState(TypedDict):
 class ChatbotAgent:
     def __init__(self, model: str = "gemini-2.5-flash", temperature: float = 0.3,
         max_output_tokens: int = 2500, tools: Optional[list] = None,
-        system_prompt: Optional[str] = SYSTEM_PROMPT,):
+        system_prompt: Optional[str] = SYSTEM_PROMPT, ):
         
         self.tools = TOOLS
         self.system_prompt = system_prompt
@@ -28,7 +27,6 @@ class ChatbotAgent:
             temperature=temperature,
             max_output_tokens=max_output_tokens,
         )
-        
         self.llm = base_llm.bind_tools(self.tools) if self.tools else base_llm
         self.graph = self.build_graph()
 
@@ -69,14 +67,24 @@ class ChatbotAgent:
         return messages
 
      
-    async def invoke(self, message: str, chat_history: List[Dict[str, str]] = None, db: Optional[Any] = None, gitlab_connection: Optional[Any] = None) -> str:
+    async def invoke(self, message: str, session_id: int, context: ContextResolverResponse | None, chat_history: List[Dict[str, str]] = None, db: Optional[Any] = None, 
+                     gitlab_connection: Optional[Any] = None, user_id: Optional[int] = None, project_id: Optional[int] = None,) -> str:
         lc_messages = self.to_lc_messages(message, chat_history)
         
         #langchain uses the db (the active session) and gitlab_connection in the validation tool
         #since it sends the yaml and determines the platform, it can't determine the connection token and the llm can't produce them
         #so we send these parameters into a runnable config that propagates along the graph and is not part of the prompt (hidden from the llm and ready to use not waiting to be filled)
         #so we are delivering request‑scoped runtime data to a tool without involving the model.
-        config = {"configurable": {"db": db, "gitlab_connection": gitlab_connection}}
+        config = {"configurable": 
+                  {
+                    "db": db, 
+                    "gitlab_connection": gitlab_connection,
+                    "session_id": session_id,
+                    "user_id": user_id,
+                    "project_id": project_id,
+                    "context": context
+                   }
+                }
         
         result = await self.graph.ainvoke({"messages": lc_messages}, config=config)
         last_message = result["messages"][-1]

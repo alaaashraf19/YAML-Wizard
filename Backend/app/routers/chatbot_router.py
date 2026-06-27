@@ -6,10 +6,12 @@ from schemas.chatbot_schema import (
     ChatRequest, ChatResponse, ChatSessionResponse,
     ChatSessionDetailResponse, ChatMessage
 )
+from schemas.project_schema import ProjectResponse
 from services.chatbot_service import ChatbotService
 from database.db_engine import get_db
 from core.security import get_current_user
 from models.user_model import User
+from models.repository_model import Repository
 
 router = APIRouter()
 
@@ -60,7 +62,6 @@ async def get_chat_sessions(
         user_id=current_user.id,
         db=db
     )
-
     return [
         ChatSessionResponse(
             id=session.id,
@@ -70,7 +71,13 @@ async def get_chat_sessions(
             project_id=session.project_id,
             project= {
                 "id" : session.project_id,
-                "name" : session.project.project_name
+                "project_name" : session.project.project_name,
+                "user_id" :  current_user.id,
+                "repo_id" : session.project.repo_id,
+                "repo_url" : session.project.repository.url,
+                "platform" : session.project.repository.platform,
+                "created_at": session.project.created_at,
+                "updated_at": session.project.updated_at
             } if session.project else None,
         )
         for session in sessions
@@ -120,22 +127,22 @@ async def delete_session(
 
     return {"message": "Session deleted successfully"}
 
-@router.post("/sessions/{session_id}/projects/{project_id}", response_model=ChatSessionResponse)
+@router.post("/sessions/{session_id}/projects/{project_id}", response_model=ProjectResponse)
 async def link_session_to_project(
         session_id: int,
         project_id: int,
         current_user: User = Depends(get_current_user),
         db: AsyncSession = Depends(get_db)
 ):
-    session = await chatbot_service.link_session_to_project(user_id=current_user.id,session_id=session_id, project_id=project_id, db=db)
-    return ChatSessionResponse(
-        id=session.id,
-        session_name=session.session_name,
-        created_at=session.created_at,
-        updated_at=session.updated_at,
-        project_id=session.project_id,
-        project = {
-            "id" : session.project_id,
-            "name" : session.project.project_name
-        } if session.project else None,
+    project = await chatbot_service.link_session_to_project(user_id=current_user.id,session_id=session_id, project_id=project_id, db=db)
+    return ProjectResponse(
+        id=project.id,
+        user_id=current_user.id,
+        project_name=project.project_name,
+        repo_id=project.repo_id,
+        created_at=project.created_at,
+        updated_at=project.updated_at,
+        platform = project.platform,
+        repo_url=project.repo_url,
+        
     )

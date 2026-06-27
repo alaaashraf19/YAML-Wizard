@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom';
 import styles from './Popup.module.css'
 
 type PopupProps = {
@@ -14,7 +15,7 @@ type PopupProps = {
     popupRef: React.Ref<HTMLDivElement> | null
 }
 
-export function Popup({
+function Popup({
         btnText1,
         btn1Action,
         btnText2,
@@ -28,7 +29,7 @@ export function Popup({
         popupRef
     }:PopupProps){
 
-    return(
+    return createPortal(
         <div className={styles.popupLayover}>
             <div className={styles.popup} ref={popupRef}>
                 {confirmMessage && <p className={styles.confirmMsg}>{confirmMessage}</p>}
@@ -59,5 +60,7 @@ export function Popup({
                 </div>
             </div>
         </div>
-    );
+    , document.body);
 }
+
+export default Popup;

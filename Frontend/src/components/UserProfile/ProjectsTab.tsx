@@ -106,6 +106,12 @@ function ProjectsTab({ activeTab, projects, setProjects, setProjectInfoId, setCo
         return null;
     };
 
+    const openInfoTab = (pid: number | null) => {
+        if(pid){
+            setProjectInfoId(pid);
+            sessionStorage.setItem("project_id", pid.toString());
+        }
+    };
 
     return(<>
             {activeTab &&
@@ -151,10 +157,12 @@ function ProjectsTab({ activeTab, projects, setProjects, setProjectInfoId, setCo
             {(projects.length > 0) ? (
                 <ul className={styles.projectList}>
                     {projectsSorted.map((project, index) => (
-                        <li key={index} className={styles.projectItem} title="View project details">
-                            <span className={`${styles.projectName} ${gStyles.clickable}`}
-                                onClick={() => setProjectInfoId(project.id)}>{project.project_name}</span>
-                            <span className={styles.subInfo}>{project.platform}</span>
+                        <li key={index} title="View project details">
+                            <div className={styles.projectItem}>
+                                <span className={`${styles.projectName} ${gStyles.clickable}`}
+                                    onClick={() => openInfoTab(project.id)}>{project.project_name}</span>
+                                <span className={styles.subInfo}>{project.platform.toUpperCase()}</span>
+                            </div>
                         </li>
                     ))}
                 </ul>

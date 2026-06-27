@@ -1,7 +1,15 @@
 import Navbar from './components/NavBar/NavBar';
-import { Outlet } from "react-router-dom";
+import { useEffect } from 'react';
+import { Outlet, useLocation } from "react-router-dom";
 
 function App() {
+    const location = useLocation();
+
+    useEffect(() => {
+        if (!location.pathname.startsWith("/profile")) {
+            sessionStorage.removeItem("project_id");
+        }
+    }, [location.pathname]);
 
     return (
         <>

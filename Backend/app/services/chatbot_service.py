@@ -1,4 +1,5 @@
 import os
+from sqlalchemy.orm import selectinload
 from typing import List, Dict, Optional, Any
 from fastapi import HTTPException
 from datetime import datetime
@@ -10,12 +11,14 @@ from sqlalchemy.orm import Session,joinedload
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select,update,delete
 
+from models.project_model import Project
 from models.chat_message_model import ChatMessage
 from models.chat_session_model import ChatSession
 from models.platforms_model import GitLabConnection
 from services.project_service import get_project_by_id
 from agent.chatbot_agent import ChatbotAgent
-
+from agent.utils.context_resolver import ContextResolver
+from schemas.project_schema import ProjectResponse
 
 class ChatbotService:
     def __init__(self):
@@ -23,7 +26,8 @@ class ChatbotService:
         self.model = "models/gemini-2.5-flash"
         self.agent = ChatbotAgent()
 
-    async def send_message(self, message: str, chat_history: List[Dict[str, str]] = None, db: Optional[AsyncSession] = None, user_id: Optional[int] = None) -> Dict[str, str]:
+    async def send_message(self, message: str, session_id: int, chat_history: List[Dict[str, str]] = None, 
+                           db: Optional[AsyncSession] = None,  user_id: Optional[int] = None, project_id: Optional[int] = None) -> Dict[str, str]:
 
         if not message or not message.strip():
             raise HTTPException(status_code=400, detail="Message cannot be empty")
@@ -51,11 +55,19 @@ class ChatbotService:
                 gitlab_result = await db.execute(select(GitLabConnection).where(GitLabConnection.user_id == user_id))
                 gitlab_connection = gitlab_result.scalar_one_or_none()
 
+            context = None
+            if project_id is not None:
+                context = await ContextResolver().get_project_context(project_id)
+
             response = await self.agent.invoke(
                 message=message,
                 chat_history=chat_history,
                 db=db,
                 gitlab_connection=gitlab_connection,
+                session_id = session_id,
+                user_id= user_id,
+                project_id=project_id,
+                context = context,
             )
 
             return {
@@ -125,11 +137,14 @@ class ChatbotService:
 
         session_name = session.session_name
 
+
         result = await self.send_message(
             message=message,
+            session_id= session_id,
+            user_id=user_id,
+            project_id = session.project_id,
             chat_history=chat_history,
             db=db,
-            user_id=user_id
         )
 
         user_msg, bot_msg = await self.save_conversation_turn(
@@ -265,7 +280,7 @@ class ChatbotService:
 
         results = await db.execute(
             select(ChatSession)
-            .options(joinedload(ChatSession.project))
+            .options(joinedload(ChatSession.project).joinedload(Project.repository))
             .where(ChatSession.user_id == user_id)
             .order_by(ChatSession.updated_at.desc())
         )
@@ -320,6 +335,7 @@ class ChatbotService:
     ) -> List[ChatSession]:
         results = await db.execute(
             select(ChatSession)
+            .options(selectinload(ChatSession.project))
             .where(ChatSession.user_id == user_id,ChatSession.project_id == project_id)
             .order_by(ChatSession.updated_at.desc())
         )
@@ -331,15 +347,15 @@ class ChatbotService:
             session_id: int,
             project_id: int,
             db: AsyncSession
-    ) -> ChatSession:
+    ) -> ProjectResponse:
         session = await self.get_session_if_owned(user_id,session_id,db)
         if not session:
             raise HTTPException(status_code=404, detail="Chat session not found or access denied")
         if session.project_id:
-            raise HTTPException(status_code=403, detail="Session already linked to a project")
+            raise HTTPException(status_code=409, detail="Session already linked to a project")#409 for conflict
         project = await get_project_by_id(project_id,user_id,db)
         session.project_id = project.id
         session.updated_at = datetime.utcnow()
         await db.commit()
         await db.refresh(session)
-        return session
+        return project
