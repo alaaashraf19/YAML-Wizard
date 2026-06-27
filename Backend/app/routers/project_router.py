@@ -9,7 +9,6 @@ from services.pipeline_services import(
     create_pipeline,get_pipeline_by_id,get_project_pipelines
     ,get_active_pipeline,set_active_pipeline,
     update_pipeline,delete_pipeline)
-from schemas.chatbot_schema import ChatSessionResponse
 from core.security import get_current_user
 from models.user_model import User
 from typing import List

@@ -3,7 +3,7 @@ from schemas.project_schema import ProjectCreate, ProjectResponse, ProjectUpdate
 from models.project_model import Project
 from models.repository_model import Repository
 from models.repo_context_model import RepoContext as RepoContextModel
-from models.platforms_model import GitHubConnection, GitHubInstallation, GitLabConnection
+from models.platforms_model import GitHubConnection, GitHubInstallation, GitLabConnection, GitHubInstallationRepo
 from fastapi import HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -89,7 +89,58 @@ async def create_project(project: ProjectCreate, user_id: int, db: AsyncSession)
 
     if detected_platform not in ["github", "gitlab"]:
         raise HTTPException(status_code=400, detail="Unsupported platform.")
+    
+    if detected_platform == "github":
+        # First, check if the user has a GitHub OAuth connection
+        result = await db.execute(
+            select(GitHubConnection).where(
+                GitHubConnection.user_id == user_id
+            )
+        )
+        github_connection = result.scalar_one_or_none()
 
+        #ifno OAuth connection, verify the github app has access to this repo
+        if github_connection is None:
+                if project.install_id is None:
+                    raise HTTPException(
+                        status_code=403,
+                        detail="Connect your GitHub account or install the GitHub App."#both not connected
+                    )
+
+                result = await db.execute(
+                    select(GitHubInstallation).where(
+                        GitHubInstallation.installation_id == project.install_id,
+                        GitHubInstallation.user_id == user_id,
+                    )
+                )
+                installation = result.scalar_one_or_none()
+
+                if installation is None:
+                    raise HTTPException(
+                        status_code=403,
+                        detail="Invalid GitHub App installation."
+                    )
+
+                result = await db.execute(
+                    select(GitHubInstallationRepo).where(
+                        GitHubInstallationRepo.installation_id == project.install_id,
+                        GitHubInstallationRepo.repo_full_name == full_name,
+                    )
+                )
+                installation_repo = result.scalar_one_or_none()
+
+                if installation_repo is None:
+                    raise HTTPException(
+                        status_code=403,
+                        detail=f"GitHub App does not have access to '{full_name}'. Grant access to this repository."
+                    )
+
+    else:
+        result = await db.execute(select(GitLabConnection).where(GitLabConnection.user_id == user_id))
+        connection = result.scalar_one_or_none()
+
+        if connection is None:
+            raise HTTPException(status_code=403,detail="Please connect your GitLab account before adding a GitLab repository.")
     gitlab_project_id = None
     if detected_platform == "gitlab":
         gitlab_project_id = await _get_gitlab_proj_id(full_name)
@@ -111,6 +162,47 @@ async def create_project(project: ProjectCreate, user_id: int, db: AsyncSession)
         raise HTTPException(status_code=409, detail="Repository URL already exists")
     await db.refresh(repo)
 
+    # ── Fire-and-forget: fetch repo context in background ─────────────────
+    token = await _resolve_token(user_id=user_id, platform=detected_platform, db=db)
+    if not token:
+        await db.delete(repo)
+        await db.commit()
+        raise HTTPException(status_code=401,detail="No authentication token available.")
+
+    # try:
+    #     asyncio.create_task(
+    #         _fetch_and_save_repo_context(
+    #             repo_id=repo.id,
+    #             repo_url=repo_url,
+    #             platform=detected_platform,
+    #             token=token,
+    #         )
+    #     )
+    # except HTTPException:
+    #     await db.delete(repo)
+    #     await db.commit()
+    #     raise
+    # except Exception as exc:
+    #     await db.delete(repo)
+    #     await db.commit()
+    try:
+        await _fetch_and_save_repo_context(
+            repo_id=repo.id,
+            repo_url=repo_url,
+            platform=detected_platform,
+            token=token,
+        )
+    except Exception:
+        await db.delete(repo)
+        await db.commit()
+        logger.exception("Failed to fetch repository context for repo_id=%s",repo.id,)
+        raise HTTPException(
+            status_code=500,
+            detail="Failed to fetch repository context."
+        )
+        
+
+
     new_project = Project(
         project_name=project_data['project_name'],
         user_id=user_id,
@@ -124,19 +216,7 @@ async def create_project(project: ProjectCreate, user_id: int, db: AsyncSession)
     await db.commit()
     await db.refresh(new_project)
 
-    # ── Fire-and-forget: fetch repo context in background ─────────────────
-    token = await _resolve_token(user_id=user_id, platform=detected_platform, db=db)
-    if token:
-        asyncio.create_task(
-            _fetch_and_save_repo_context(
-                repo_id=repo.id,
-                repo_url=repo_url,
-                platform=detected_platform,
-                token=token,
-            )
-        )
-    else:
-        logger.warning("No token for user_id=%s platform=%s — skipping context fetch.", user_id, detected_platform)
+    
 
     return ProjectResponse(
         id=new_project.id,
