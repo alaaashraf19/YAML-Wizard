@@ -343,29 +343,36 @@ async def fetch_installation_repos(current_user, db) -> list[GitHubInstallationR
             response.raise_for_status()
             data = response.json()
 
-        existing = await db.execute(
-            select(GitHubInstallationRepo.repo_id).where(
+        # Fetch existing repo records for this installation
+        result = await db.execute(
+            select(GitHubInstallationRepo).where(
                 GitHubInstallationRepo.installation_id
                 == installation.installation_id
             )
         )
 
-        existing_ids = set(existing.scalars().all())
+        existing_repos = {
+            repo.repo_id: repo
+            for repo in result.scalars().all()
+        }
 
         for repo in data.get("repositories", []):
             repo_id = repo["id"]
             repo_full_name = repo["full_name"]
             repo_url = repo["html_url"]
+            print(repo_url, "inisde fetch installation")
 
             repos.append(
                 GitHubInstallationRepoSchema(
                     repo_id=repo_id,
                     repo_full_name=repo_full_name,
-                    repo_url=repo_url
+                    repo_url=repo_url,
                 )
             )
 
-            if repo_id not in existing_ids:
+            existing_repo = existing_repos.get(repo_id)
+
+            if existing_repo is None:
                 db.add(
                     GitHubInstallationRepo(
                         installation_id=installation.installation_id,
@@ -374,6 +381,8 @@ async def fetch_installation_repos(current_user, db) -> list[GitHubInstallationR
                         repo_url=repo_url,
                     )
                 )
+            elif existing_repo.repo_url is None:
+                existing_repo.repo_url = repo_url
 
     await db.commit()
     return repos
