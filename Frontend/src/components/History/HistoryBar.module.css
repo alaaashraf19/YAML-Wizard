@@ -1,0 +1,248 @@
+.historyBar {
+    position: relative;
+    padding: 5px;
+    margin: 10px;
+    margin-top: 0;
+    width: 20%;
+
+    display: flex;
+    flex-direction: column;
+    
+    /* background: rgb(18, 10, 60); */
+
+    background: linear-gradient(180deg,
+        rgb(16, 8, 58),
+        rgb(11, 4, 45)
+    );
+
+    /* background: rgba(18, 12, 55, 0.55);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.08); */
+
+    box-shadow: 0px 2px 18px 0px rgba(0,0,0,0.6);
+    /* border-radius: 15px; */
+    z-index: 10;
+    font-size: 18px;
+    
+    transition: width 0.5s ease, padding 0.5s ease, transform 0.5s ease;
+}
+.topContainer{
+    display: flex;
+}
+.header{
+    flex: 1;
+    padding: 10px;
+    margin: 5px 15px;
+    font-weight: 600;
+    border-bottom: 1px solid rgba(181, 181, 181, 0.4);
+}
+.syncBtn{
+    background: 0;
+    border: 0;
+    
+    color: rgb(143, 160, 255);
+    font-size: 24px;
+    flex-shrink: 0;
+    transition: color 0.3s ease, filter 0.3s ease, transform 0.3s ease;
+}
+.syncBtn:hover{
+    color: rgb(45, 62, 158);
+    filter: drop-shadow(0 0 16px rgba(184, 194, 255, 0.763));
+}
+
+.searchContainer{
+    position: sticky;
+    top: 0;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    z-index: 10;
+    width: 100%;
+}
+.searchBar {
+    top: 20px;
+    padding: 6px;
+    margin: 5px;
+    width: 90%;
+
+    background-color: rgb(170, 179, 247);
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    color: black;
+}
+.deleteTextIcon{
+    position: absolute;
+    right: 0;
+    margin-right: 30px;
+    color: black;
+}
+
+.filterContainer {
+    bottom: 0;
+    position: relative;
+    display: flex;
+    min-height: 0;
+}
+.filterMenu {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    padding: 15px;
+    margin: 10px;
+    max-height: 75vh;
+
+    top: 0%;
+    left: 100%;
+    
+    overflow: hidden;
+    
+    border: 1px solid rgb(50, 39, 96);
+    border-radius: 10px;
+    font-size: 15px;
+
+
+    /* background-color: rgb(9, 2, 41); */
+    background: linear-gradient(
+    180deg,
+    rgb(23, 13, 72),
+    rgb(15, 8, 52)
+);
+    /* box-shadow: 0px 8px 16px 5px rgba(0,0,0,0.4); */
+    box-shadow:
+    0 12px 30px rgba(0,0,0,.45),
+    0 0 18px rgba(123,92,255,.08);
+
+    transition: 0.7s;
+}
+.filterHeader {
+    display: flex;
+    margin: 10px 10px 4px;
+    padding-bottom: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    color: rgb(180, 180, 220);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+.removeFilter{
+    margin-left: auto;
+}
+.filterIcon{
+    margin:10px;
+    bottom: 0;
+    margin-left: auto;
+
+    font-size: 20px;
+    flex-shrink: 0;
+    color: white;
+    transition: color 0.3s ease, filter 0.3s ease, transform 0.3s ease;
+}
+.filterIcon:hover{
+    color: rgb(123, 92, 255);
+    filter: drop-shadow(0px 0px 15px rgba(123, 92, 255, 0.6));
+}
+.options{
+    flex: 1;
+    min-height: 0;
+
+    display: flex;
+    flex-wrap:wrap;
+    gap: 8px;
+
+    overflow-y: auto;
+    /* overflow-anchor: auto; */
+}
+.option {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 5px 10px;
+    width: fit-content;
+    max-width: 100%;
+
+    /* margin: 50px 0; */
+
+    text-decoration: none;
+    color: inherit;
+    
+    border-radius: 10px;
+    border: 1px solid rgba(181, 181, 181, 0.4);
+    transition: background-color 0.3s ease;
+}
+.notSelected:hover {background-color: rgb(19, 5, 79);}
+.selected{background-color: rgb(42, 35, 67);}
+.divider {
+    margin: 6px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.namesContainer{
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-anchor: auto;
+}
+.pipelineTab{
+    display: flex;
+    align-items: baseline;
+    /* padding: 5px; */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+
+    transition: background-color 0.3s ease;
+}
+.pipelineTab:hover, .active{
+    background-color: rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(181, 181, 181, 0.1);
+    border-top: 1px solid rgba(181, 181, 181, 0.1);
+}
+.pipelineName{
+    padding: 10px;
+    margin: 0;
+    width: 100%;
+    
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    transition: background-color 0.25s ease, border 0.25s ease;
+}
+.pipelineBtns{
+    display: flex;
+    opacity: 0;
+    padding: 0;
+}
+.subInfo{
+    font-size: 12px;
+    margin-left: auto;
+    opacity: 0.6;
+}
+.pipelineTab:hover .pipelineBtns{opacity: 1;}
+.noPipelines {
+    background-color: rgb(95, 87, 124);
+    padding: 10px 20px;
+    margin: 10px 30px;
+    width: fit-content;
+    border-radius: 10px;
+    font-family: "Inter", system-ui, sans-serif;
+    font-size: 18px;
+    opacity: 0.5;
+    color: white;
+}
+
+.filterIcon{
+    margin: 0 5px;
+    top: 0;
+    margin-left: auto;
+
+    font-size: 20px;
+    flex-shrink: 0;
+    transition: color 0.3s ease, filter 0.3s ease, transform 0.3s ease;
+}
+.filterIcon:hover{
+    color: rgb(123, 92, 255);
+    filter: drop-shadow(0px 0px 15px rgba(123, 92, 255, 0.6));
+}

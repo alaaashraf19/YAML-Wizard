@@ -11,7 +11,6 @@ import type { Session, Message, Project } from "../types";
 import ChatProjects from "../components/Chatbot/ChatProjects";
 import SideBar from "../components/Chatbot/SideBar";
 import Popup from "../components/Popup/Popup";
-// import { useNavigate } from "react-router-dom";
 import { ProjectSubInfo } from "../components/UserProfile/ProjectInfoTab";
 
 
@@ -148,14 +147,14 @@ function Chatbot() {
 
         // handle new session
         if (!activeSessionId) {
-            const newSession = {
+            const newSession: Session = {
                 id: null,
                 session_name: "...",
                 created_at: new Date().toISOString(),
                 updated_at: new Date().toISOString(),
                 project: selectedProject
             }
-            
+
             setSessions(prev => [...prev, newSession]);
         }
         else {
@@ -218,6 +217,7 @@ function Chatbot() {
         }
     };
 
+    //handle enter and shift+enter
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();

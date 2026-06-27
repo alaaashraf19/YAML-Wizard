@@ -59,7 +59,6 @@ function NavBar(){
     // }
 
     const isDashboard = location.pathname === "/dashboard";
-    const isChatbot = location.pathname === "/chatbot";
     const isHistory = location.pathname === "/history";
     const isProfile = location.pathname.startsWith("/profile");
     const isHome = location.pathname === "/" || location.pathname === "/home";
@@ -67,9 +66,10 @@ function NavBar(){
     return(
         <div className={styles.navBar}>
             {loading? null : (<>
-                {!isChatbot && !isDashboard && !isHistory && <img src={logo} alt="" onClick={() => {if(!isHome)navigate("/")}}
-                    className={`${styles.logo} ${styles.button} ${!isHome && gStyles.clickable}`}
-                    title={isHome? "YAMLWizard" : "Go to home page"}/>
+                {(isProfile || isHome) && 
+                    <img src={logo} alt="" onClick={() => {if(!isHome)navigate("/")}}
+                        className={`${styles.logo} ${styles.button} ${!isHome && gStyles.clickable}`}
+                        title={isHome? "YAMLWizard" : "Go to home page"}/>
                 }
                 {username? (<>
                     {(isProfile || isHome || isHistory) &&
@@ -81,7 +81,7 @@ function NavBar(){
                     {(isProfile || isHome || isDashboard) &&
                     <Link className={`${styles.button} ${gStyles.clickable}`}
                         to="/history" title="Go to version history">
-                        History
+                        Version History
                     </Link>}
 
                     {(isDashboard || isProfile || isHome || isHistory) &&

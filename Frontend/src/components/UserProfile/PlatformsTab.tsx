@@ -297,7 +297,7 @@ function PlatformsTab({ setConfirmMessage, setWarningMessage, setErrorMessage }:
                                         </li>
                                     ))
                                 ) : (
-                                    <p className={styles.noProjects}>No repositories connected yet.</p>
+                                    <p className={styles.noProjects}>Install application to platforms to add repositories.</p>
                                 )}
                             </ul>)}
                         </div>

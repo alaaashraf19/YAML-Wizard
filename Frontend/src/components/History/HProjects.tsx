@@ -8,51 +8,24 @@ import { useNavigate } from "react-router-dom";
 
 import { LuPanelRightClose, LuPanelLeftClose } from "react-icons/lu";
 import { IoClose } from "react-icons/io5";
-import { FaPlus } from "react-icons/fa";
+import { FaLinesLeaning } from "react-icons/fa6";
 import { FiFilter } from "react-icons/fi";
 
 
 type HPProps = {
     projectId: number | null,
-    setProject: React.Dispatch<React.SetStateAction<Project | null>>
+    setProject: React.Dispatch<React.SetStateAction<Project | null>>,
+    projects: Project[]
 }
 
-function HProjects({ projectId, setProject }: HPProps){
-    const [projects, setProjects] = useState<Project[]>([]);
+function HProjects({ projectId, setProject, projects }: HPProps){
     const [query, setQuery] = useState("");
     const [filterPlatfrom, setFilterPlatform] = useState<Platform | null>(null);
     const [openFilterMenu, setOpenFilterMenu] = useState<boolean>(false);
     const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
 
     const filterRef = useRef<HTMLDivElement | null>(null);
-    const api_url = import.meta.env.VITE_API_URL;
     const navigate = useNavigate();
-
-    //get user projects
-    useEffect(() => {
-        const fetchProjects = async () => {
-            try {
-                const res = await fetch(`${api_url}/projects`, {
-                    credentials: "include",
-                    method: "GET",
-                    headers: {"Content-Type": "application/json"}
-                });
-
-                const data = await res.json();
-
-                if (!res.ok) {
-                    console.error(data.detail || data.detail.msg || "Failed to load profile");
-                    return;
-                }
-                setProjects(data);
-
-            } catch (e) {
-                console.error("Failed to load projects:", e);
-            }
-        };
-
-        fetchProjects();
-    }, []);
 
     // filter projects by query and selected platform
     const filteredProjects = useMemo(() => {
@@ -64,13 +37,30 @@ function HProjects({ projectId, setProject }: HPProps){
             .sort((a,b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()) : [];
     }, [projects, filterPlatfrom, query]);
 
+    // Close filter menu on outside click
+    useEffect(
+        () => {
+            function handleClickOutside(e: MouseEvent) {
+                if (filterRef.current &&
+                    !filterRef.current.contains(e.target as Node)) {
+                    setOpenFilterMenu(false);
+                }
+            }
+
+            document.addEventListener("mousedown", handleClickOutside);
+            return () => {
+                document.removeEventListener("mousedown", handleClickOutside);
+            };
+        }
+    , []);
+
     return(
         <div className={`${styles.menu} ${isCollapsed ? styles.collapsed : styles.expanded}`}>
             {isCollapsed? (<>
                 <LuPanelRightClose className={`${styles.collapsedBtn} ${gStyles.clickable}`}
                     onClick={() => setIsCollapsed(prev => !prev)} title={"Expand"}/>
-                <FaPlus className={`${styles.collapsedBtn} ${gStyles.clickable}`}
-                    onClick={() => navigate("/profile?tab=Projects")} title="Add Project"/>
+                <FaLinesLeaning className={`${styles.collapsedBtn} ${gStyles.clickable}`}
+                    onClick={() => navigate("/profile?tab=Projects")} title="Manage Projects"/>
             </>) : (<>
                 <div className={styles.appNameContainer}>
                     <img src={logo} alt="" className={`${styles.logo} ${gStyles.clickable}`}
@@ -111,7 +101,11 @@ function HProjects({ projectId, setProject }: HPProps){
                     {filteredProjects.length > 0? (
                         <ul className={styles.projectsList}>
                             {filteredProjects.map((p, index) => (
-                                <li key={index} onMouseDown={() => setProject(p)}
+                                <li key={index} onMouseDown={() => {
+                                    setProject(p);
+                                    setIsCollapsed(true);
+                                    sessionStorage.setItem("project_history_id", p.id.toString());
+                                }}
                                     title={p.project_name + '('+ p.repo_url + ')'}
                                     className={`${styles.project} ${(p.id === projectId)? styles.active : gStyles.clickable}`}>
                                     <span className={styles.projectName}>{p.project_name}</span>
@@ -125,7 +119,7 @@ function HProjects({ projectId, setProject }: HPProps){
                 </div>
 
                 <div className={styles.bottomContainer}>
-                    <button className={`${styles.addButton} ${gStyles.clickable}`}
+                    <button className={`${styles.manageButton} ${gStyles.clickable}`}
                         onClick={() => navigate("/profile?tab=Projects")} title="Go to settings">
                         Manage Projects
                     </button>
