@@ -2,15 +2,15 @@ from __future__ import annotations
 
 from datetime import datetime
 
-import yaml as pyyaml
 from fastapi import HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.pipeline_model import Pipeline
+from models.platforms_model import GitLabConnection
 from models.project_model import Project
 from models.repository_model import Repository
-from schemas.pipeline_jobs_schema import JobView
+from schemas.pipeline_jobs_schema import JobView, JobEdit
 from .base import InvalidJobOrder, JobsNotFound
 from .factory import get_pipeline_editor
 
@@ -53,25 +53,46 @@ async def list_pipeline_jobs(
     return platform, jobs, pipeline.content
 
 
-async def set_pipeline_job_order(
-    pipeline_id: int, project_id: int, user_id: int, new_order: list[str], db: AsyncSession) -> tuple[str, list[JobView], str]:
+
+async def edit_pipeline_jobs(
+    pipeline_id: int, project_id: int, user_id: int, job_edits: list[JobEdit], db: AsyncSession
+) -> tuple[str, list[JobView], str, list]:
     pipeline, platform = await load_pipeline_with_platform(pipeline_id, project_id, user_id, db)
     editor = editor_for(platform)
 
+    #parse each submitted block. The block's top-level key is the job id, so renaming a job is just editing that key. id is only an optional label for error messages.
+    parsed: list[tuple[str, object]] = []
+    seen: set[str] = set()
+    for index, edit in enumerate(job_edits):
+        label = edit.id or f"#{index + 1}" #numbering the jobs in case of id is not set, the error shows job number instead of id
+        try:
+            key, spec = editor.parse_job_block(edit.content)
+        except (InvalidJobOrder, JobsNotFound) as exc:
+            raise HTTPException(status_code=400, detail=f"job {label}: {exc}")
+        except Exception as exc:  # malformed YAML in the submitted block
+            raise HTTPException(status_code=400, detail=f"job {label}: invalid YAML ({exc})")
+        if not editor.is_valid_job_id(key):
+            raise HTTPException(status_code=400, detail=f"'{key}' is not a valid job id for {platform}")
+        if key in seen:
+            raise HTTPException(status_code=400, detail=f"duplicate job id '{key}'")
+        seen.add(key)
+        parsed.append((key, spec))
+
+    #assemble the new pipeline, preserving globals/formatting
     try:
-        new_content = editor.reorder(pipeline.content, new_order)
-    except InvalidJobOrder as exc:
-        raise HTTPException(status_code=400, detail=str(exc))
-    except JobsNotFound as exc:
+        new_content = editor.assemble(pipeline.content, parsed)
+    except (InvalidJobOrder, JobsNotFound) as exc:
         raise HTTPException(status_code=422, detail=str(exc))
 
-    #reorder must still parse as valid YAML.
-    try:
-        pyyaml.safe_load(new_content)
-    except pyyaml.YAMLError as exc:
-        raise HTTPException(status_code=500, detail=f"Reorder produced invalid YAML: {exc}")
+    #validate the assembled pipeline through the agent's validation system
+    report = await validate_assembled_pipeline(new_content, platform, user_id, db)
+    if not report.get("valid", False):
+        raise HTTPException(
+            status_code=422,
+            detail={"message": "Pipeline validation failed", "report": report},
+        )
 
-    # Skip the write when nothing actually changed (for example the submitted order matches the current one) so we don't reformat.
+    #persist only if valid and actually changed
     if new_content != pipeline.content:
         pipeline.content = new_content
         pipeline.updated_at = datetime.utcnow()
@@ -79,4 +100,17 @@ async def set_pipeline_job_order(
         await db.refresh(pipeline)
 
     jobs = editor.list_jobs(pipeline.content)
-    return platform, jobs, pipeline.content
+    return platform, jobs, pipeline.content, report.get("warnings", [])
+
+
+async def validate_assembled_pipeline(content: str, platform: str, user_id: int, db: AsyncSession) -> dict:
+    from agent.tools.validate_pipeline_tool import build_report
+
+    target = (platform or "").lower()
+    connection = None
+    if target == "gitlab":
+        result = await db.execute(
+            select(GitLabConnection).where(GitLabConnection.user_id == user_id)
+        )
+        connection = result.scalar_one_or_none()
+    return await build_report(content, target, connection=connection, db=db)

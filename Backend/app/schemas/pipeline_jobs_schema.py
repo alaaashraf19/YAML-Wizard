@@ -9,9 +9,16 @@ class JobView(BaseModel):
     content: str | None = None  # the full job block (key + spec) as YAML
 
 
-#Desired final order of job ids
-class JobOrderUpdate(BaseModel):
-    order: list[str] = Field(..., min_length=1)
+#One job in a full edit. The job's identity is the content block's top-level key
+#id is an optionall and ignored except in errors.
+class JobEdit(BaseModel):
+    id: str | None = None
+    content: str = Field(..., min_length=1)  # full job block (key + spec) its top-level key is the job id
+
+
+#Full list of edited set of jobs, in order. jobs can be deleted, new jobs can be added.
+class PipelineJobsEdit(BaseModel):
+    jobs: list[JobEdit] = Field(..., min_length=1)
 
 
 class JobOrderResponse(BaseModel):
@@ -19,3 +26,4 @@ class JobOrderResponse(BaseModel):
     platform: str
     jobs: list[JobView]
     content: str | None = None  # full pipeline YAML
+    warnings: list | None = None 
