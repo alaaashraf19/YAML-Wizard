@@ -38,8 +38,8 @@ SENSITIVE_KEY_PATTERNS: list[re.Pattern] = [
 TOKEN_PATTERNS: list[re.Pattern] = [
     # JWT:  xxxxx.yyyyy.zzzzz
     re.compile(r"eyJ[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+"),
-    # GitHub classic PAT
-    re.compile(r"ghp_[a-zA-Z0-9]{36}"),
+    # GitHub classic PAT (36 chars historically, but length can vary)
+    re.compile(r"ghp_[a-zA-Z0-9]{32,}"),
     # GitHub fine-grained PAT
     re.compile(r"github_pat_[a-zA-Z0-9_]{82}"),
     # GitLab PAT
@@ -86,6 +86,14 @@ SHELL_ASSIGNMENT_RE = re.compile(
 )
 
 # Line pattern for .env / shell-export files (KEY=VALUE format).
+# KEY=value or KEY = value patterns inside flat/collapsed strings that have
+# no newlines (e.g. when ruamel folds a multi-line env block into one string).
+# Unlike SHELL_ASSIGNMENT_RE this does NOT use ^ / multiline anchors.
+FLAT_ASSIGNMENT_RE = re.compile(
+    r"(?i)(\b\w*(?:TOKEN|SECRET|KEY|PASSWORD|AUTH|CRED|PAT|ACCESS)\w*"
+    r"\s*=\s*)(\S+)"
+)
+
 ENV_LINE_RE = re.compile(
     r"^(\s*(?:export\s+)?)?"                             # optional indent + "export"
     r"([A-Za-z_][A-Za-z0-9_]*)"                         # variable name
@@ -97,6 +105,12 @@ ENV_LINE_RE = re.compile(
 # key name is itself a secret identifier. Each child is inspected by
 # _is_sensitive_key() individually so non-secret siblings are kept.
 ENV_SECTION_KEYS = {"env", "variables", "environment", "secrets"}
+
+# Sibling keys that carry the actual secret value in name/value pair lists.
+# Pattern:  - name: SECRET_KEY      ← identifier in 'name'
+#             value: actual-secret  ← secret in 'value' / 'defaultValue' etc.
+# Used by Kubernetes manifests, Docker Compose env lists, CircleCI, Jenkins.
+NAME_VALUE_SIBLINGS = {"value", "defaultValue", "default", "val"}
 
 
 def _redact_env_file(content: str) -> str:
@@ -148,7 +162,7 @@ def redact_secrets(content: str) -> str:
     Falls back to ``_redact_env_file`` if ruamel raises any exception
     (e.g. unresolved templating syntax).
     """
-    yaml = _make_yaml_parser()
+    yaml = _make_yaml_parser(content)  # pass content for sequence-indent detection
     try:
         data = yaml.load(content)
         if data is None:
@@ -222,6 +236,17 @@ def _redact_scalar(value: str) -> str:
         result,
     )
 
+    # KEY=value assignments in flat/collapsed strings (no newlines).
+    # Catches cases where ruamel folds an indented continuation block into
+    # a single string: "GITHUB_TOKEN = abc DOCKER_PASSWORD = xyz".
+    def _flat_replace(m: re.Match) -> str:
+        val = m.group(2)
+        if val.startswith("$") or _is_safe_reference(val):
+            return m.group(0)
+        return m.group(1) + REDACTED
+
+    result = FLAT_ASSIGNMENT_RE.sub(_flat_replace, result)
+
     return result
 
 
@@ -273,6 +298,30 @@ def _redact_env_section(mapping: CommentedMap) -> None:
 # ---------------------------------------------------------------------------
 
 
+def _handle_name_value_item(item: CommentedMap) -> None:
+    """
+    Redact the value in a name/value pair list item when the name is sensitive.
+
+    Handles the pattern used by Kubernetes Secret manifests, Docker Compose
+    environment lists, CircleCI, and Jenkins::
+
+        - name: SECRET_ONE          # ← sensitive identifier
+          value: "actual-secret"   # ← this gets redacted
+
+    ``valueFrom`` and other structured references (``secretKeyRef`` etc.)
+    are left untouched because they are already indirection, not raw secrets.
+    Safe references like ``${{ secrets.X }}`` in the value are also preserved.
+    """
+    name_val = str(item.get("name", ""))
+    if not _is_sensitive_key(name_val):
+        return
+    for sibling in NAME_VALUE_SIBLINGS:
+        if sibling in item:
+            v = item[sibling]
+            if isinstance(v, str) and not _is_safe_reference(v):
+                item[sibling] = REDACTED
+
+
 def _recursive_clean(obj: Any) -> None:
     """
     Walk the ruamel.yaml object tree in-place, redacting secrets.
@@ -320,6 +369,12 @@ def _recursive_clean(obj: Any) -> None:
 
     elif isinstance(obj, (CommentedSeq, list)):
         for item in obj:
+            # ── name/value pair pattern ───────────────────────────────────
+            # Check before recursing: if this list item is a dict with a
+            # 'name' key, it may use the name/value pattern where the secret
+            # identifier is in 'name' and the value is in a sibling key.
+            if isinstance(item, CommentedMap) and "name" in item:
+                _handle_name_value_item(item)
             _recursive_clean(item)
 
 
@@ -407,6 +462,29 @@ def _regex_fallback(content: str) -> str:
         content,
     )
 
+    # ── Pattern 6: name/value pair lists ─────────────────────────────────
+    # Handles:
+    #   - name: SECRET_ONE        ← sensitive identifier in name field
+    #     value: "actual-secret"  ← this gets redacted
+    # Used by Kubernetes manifests, Docker Compose env lists, CircleCI.
+    name_value_re = re.compile(
+        r"(?im)"
+        r"(name:\s*['\"]?\w*"
+        r"(?:TOKEN|SECRET|KEY|PASSWORD|AUTH|CRED|PAT|ACCESS|PASS)\w*['\"]?"
+        r"\s*\n\s*)"
+        r"(value:\s*)"
+        r"(['\"]?)([^\n#]+?)(\3)"
+        r"(?=\s*$|\s*#)"
+    )
+    content = name_value_re.sub(
+        lambda m: (
+            m.group(0) if (
+                m.group(4).strip().startswith("$") or
+                _is_safe_reference(m.group(4))
+            ) else m.group(1) + m.group(2) + m.group(3) + REDACTED + m.group(5)
+        ),
+        content,
+    )
     return content
 
 
@@ -415,9 +493,56 @@ def _regex_fallback(content: str) -> str:
 # ---------------------------------------------------------------------------
 
 
-def _make_yaml_parser() -> YAML:
-    """Return a ruamel.yaml instance configured for maximum fidelity."""
+def _detect_sequence_indent(content: str) -> tuple:
+    """
+    Detect the sequence indentation style used in *content*.
+
+    Looks for the first key:\n  - item pattern and measures how many
+    spaces precede the dash relative to its parent key. Returns
+    (sequence_indent, dash_offset) so ruamel reproduces the same style
+    on serialisation, or (None, None) when no indented list items are found.
+
+    Examples::
+
+        stages:        sequence_indent=2, dash_offset=2  ->  "  - item"
+          - test
+        stages:        sequence_indent=4, dash_offset=4  ->  "    - item"
+            - test
+        stages:        (None, None) - dash at key level, ruamel default is fine
+        - test
+    """
+    lines = content.splitlines()
+    for i, line in enumerate(lines[:-1]):
+        if not re.match(r"^(\s*)\S+.*:\s*$", line):
+            continue
+        key_indent = len(line) - len(line.lstrip())
+        for j in range(i + 1, min(i + 5, len(lines))):
+            next_line = lines[j]
+            if not next_line.strip():
+                continue
+            m = re.match(r"^(\s*)-\s", next_line)
+            if m:
+                item_indent = len(m.group(1))
+                relative = item_indent - key_indent
+                if relative > 0:
+                    return item_indent, relative
+            break
+    return None, None
+
+
+def _make_yaml_parser(content: str = "") -> YAML:
+    """
+    Return a ruamel.yaml instance configured for maximum fidelity.
+
+    When *content* is provided the sequence indentation style is detected
+    from it and applied to the parser so that yaml.dump reproduces the
+    original "  - item" vs "- item" style faithfully.
+    """
     yaml = YAML()
     yaml.preserve_quotes = True   # keeps 'single' and "double" quotes as-is
     yaml.width = 4096             # prevents unwanted line wrapping
+    seq_indent, dash_offset = _detect_sequence_indent(content)
+    if seq_indent is not None:
+        yaml.sequence_indent = seq_indent
+        yaml.sequence_dash_offset = dash_offset
     return yaml
