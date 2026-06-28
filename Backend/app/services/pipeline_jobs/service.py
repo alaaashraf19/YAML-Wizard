@@ -85,7 +85,7 @@ async def edit_pipeline_jobs(
         raise HTTPException(status_code=422, detail=str(exc))
 
     #validate the assembled pipeline through the agent's validation system
-    report = await validate_assembled_pipeline(new_content, platform, user_id, db)
+    report = await validate_assembled_pipeline(new_content, platform, user_id, db, project_id)
     if not report.get("valid", False):
         raise HTTPException(
             status_code=422,
@@ -103,14 +103,22 @@ async def edit_pipeline_jobs(
     return platform, jobs, pipeline.content, report.get("warnings", [])
 
 
-async def validate_assembled_pipeline(content: str, platform: str, user_id: int, db: AsyncSession) -> dict:
+async def validate_assembled_pipeline(content: str, platform: str, user_id: int, db: AsyncSession, project_id: int | None = None) -> dict:
     from agent.tools.validate_pipeline_tool import build_report
 
     target = (platform or "").lower()
     connection = None
+    gitlab_project_id = None
     if target == "gitlab":
         result = await db.execute(
             select(GitLabConnection).where(GitLabConnection.user_id == user_id)
         )
         connection = result.scalar_one_or_none()
-    return await build_report(content, target, connection=connection, db=db)
+        if project_id is not None:
+            repo_row = await db.execute(
+                select(Repository.gitlab_project_id)
+                .join(Project, Project.repo_id == Repository.id)
+                .where(Project.id == project_id, Project.user_id == user_id)
+            )
+            gitlab_project_id = repo_row.scalar_one_or_none()
+    return await build_report(content, target, connection=connection, db=db, project_id=gitlab_project_id)

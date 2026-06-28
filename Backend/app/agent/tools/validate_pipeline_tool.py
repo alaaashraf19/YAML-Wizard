@@ -44,12 +44,13 @@ async def validate_pipeline_tool(
         target,
         connection=configurable.get("gitlab_connection"),
         db=configurable.get("db"),
+        project_id=configurable.get("gitlab_project_id"),
     )
     log_validation_report(report, target)
     return json.dumps(report, indent=2, ensure_ascii=False)
 
 
-async def build_report(yaml_content: str, target: str, connection: Any = None, db: Any = None,) -> Dict[str, Any]:
+async def build_report(yaml_content: str, target: str, connection: Any = None, db: Any = None, project_id: Any = None,) -> Dict[str, Any]:
     if target not in ("github", "gitlab"):
         return {
             "valid": False,
@@ -103,7 +104,7 @@ async def build_report(yaml_content: str, target: str, connection: Any = None, d
     if target == "github":
         result = validate_github(yaml_content, doc)
     else:
-        result = await validate_gitlab(yaml_content, doc, connection, db)
+        result = await validate_gitlab(yaml_content, doc, connection, db, project_id)
 
     errors: List[Dict[str, Any]] = result.get("errors", [])
     warnings: List[Dict[str, Any]] = result.get("warnings", [])

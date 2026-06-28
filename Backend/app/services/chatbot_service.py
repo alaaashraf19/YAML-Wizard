@@ -13,6 +13,8 @@ from sqlalchemy import select,update,delete
 from models.chat_message_model import ChatMessage
 from models.chat_session_model import ChatSession
 from models.platforms_model import GitLabConnection
+from models.project_model import Project
+from models.repository_model import Repository
 from services.project_service import get_project_by_id
 from agent.chatbot_agent import ChatbotAgent
 
@@ -23,7 +25,7 @@ class ChatbotService:
         self.model = "models/gemini-2.5-flash"
         self.agent = ChatbotAgent()
 
-    async def send_message(self, message: str, chat_history: List[Dict[str, str]] = None, db: Optional[AsyncSession] = None, user_id: Optional[int] = None) -> Dict[str, str]:
+    async def send_message(self, message: str, chat_history: List[Dict[str, str]] = None, db: Optional[AsyncSession] = None, user_id: Optional[int] = None, project_id: Optional[int] = None) -> Dict[str, str]:
 
         if not message or not message.strip():
             raise HTTPException(status_code=400, detail="Message cannot be empty")
@@ -47,15 +49,20 @@ class ChatbotService:
             ))
 
             gitlab_connection = None
-            if db is not None and user_id is not None:
-                gitlab_result = await db.execute(select(GitLabConnection).where(GitLabConnection.user_id == user_id))
-                gitlab_connection = gitlab_result.scalar_one_or_none()
+            gitlab_project_id = None
+            if db is not None and user_id is not None and project_id is not None:
+                platform, repo_gitlab_project_id = await self.resolve_gitlab_target(project_id, user_id, db)
+                if platform == "gitlab":
+                    gitlab_result = await db.execute(select(GitLabConnection).where(GitLabConnection.user_id == user_id))
+                    gitlab_connection = gitlab_result.scalar_one_or_none()
+                    gitlab_project_id = repo_gitlab_project_id
 
             response = await self.agent.invoke(
                 message=message,
                 chat_history=chat_history,
                 db=db,
                 gitlab_connection=gitlab_connection,
+                gitlab_project_id=gitlab_project_id,
             )
 
             return {
@@ -80,6 +87,18 @@ class ChatbotService:
                 "content": "⚠️ Sorry, something went wrong while generating my response. Please try sending your message again.",
                 "error": error_text
             }
+
+    async def resolve_gitlab_target(self, project_id: int, user_id: int, db: AsyncSession) -> tuple[Optional[str], Optional[int]]:
+        row = await db.execute(
+            select(Repository.platform, Repository.gitlab_project_id)
+            .join(Project, Project.repo_id == Repository.id)
+            .where(Project.id == project_id, Project.user_id == user_id)
+        )
+        result = row.one_or_none()
+        if result is None:
+            return None, None
+        platform, gitlab_project_id = result
+        return platform, gitlab_project_id
 
     async def process_chat_message(
             self,
@@ -129,7 +148,8 @@ class ChatbotService:
             message=message,
             chat_history=chat_history,
             db=db,
-            user_id=user_id
+            user_id=user_id,
+            project_id=project_id
         )
 
         user_msg, bot_msg = await self.save_conversation_turn(
