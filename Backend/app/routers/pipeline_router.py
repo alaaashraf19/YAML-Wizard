@@ -116,7 +116,7 @@ async def commit_project_pipeline(
     return PipelineResponse.model_validate(pipeline)
 
 
-@router.post("/{project_id}/sync", response_model=List[Pipeline])
+@router.post("/{project_id}/sync", response_model=List[PipelineResponse])
 async def sync_project_pipelines(
     project_id: int,
     db: AsyncSession = Depends(get_db),
