@@ -54,12 +54,10 @@ async def list_pipeline_jobs(
 
 
 
-async def edit_pipeline_jobs(
-    pipeline_id: int, project_id: int, user_id: int, job_edits: list[JobEdit], db: AsyncSession
-) -> tuple[str, list[JobView], str, list]:
-    pipeline, platform = await load_pipeline_with_platform(pipeline_id, project_id, user_id, db)
-    editor = editor_for(platform)
-
+async def _assemble_and_validate(
+    pipeline: Pipeline, platform: str, editor, job_edits: list[JobEdit],
+    user_id: int, db: AsyncSession, project_id: int,
+) -> tuple[str, dict]:
     #parse each submitted block. The block's top-level key is the job id, so renaming a job is just editing that key. id is only an optional label for error messages.
     parsed: list[tuple[str, object]] = []
     seen: set[str] = set()
@@ -91,8 +89,50 @@ async def edit_pipeline_jobs(
             status_code=422,
             detail={"message": "Pipeline validation failed", "report": report},
         )
+    return new_content, report
 
-    #persist only if valid and actually changed
+
+async def review_pipeline_jobs(
+    pipeline_id: int, project_id: int, user_id: int, job_edits: list[JobEdit], db: AsyncSession
+) -> dict:
+    pipeline, platform = await load_pipeline_with_platform(pipeline_id, project_id, user_id, db)
+    editor = editor_for(platform)
+
+    new_content, report = await _assemble_and_validate(
+        pipeline, platform, editor, job_edits, user_id, db, project_id
+    )
+
+    #ai review (it doesn't block any processes from happening, the edited code can still be submitted)
+    from agent.pipeline_edit_ai_review import review_pipeline
+    ai = await review_pipeline(new_content, platform)
+
+    jobs = editor.list_jobs(new_content)
+    return {
+        "platform": platform,
+        "jobs": jobs,
+        "content": new_content,
+        "warnings": report.get("warnings", []),
+        "ai_warnings": ai.get("warnings", []),
+        "ai_review": {
+            "available": ai.get("available", False),
+            "model": ai.get("model"),
+            "error": ai.get("error"),
+        },
+        "committed": False,
+    }
+
+
+async def commit_pipeline_jobs(
+    pipeline_id: int, project_id: int, user_id: int, job_edits: list[JobEdit], db: AsyncSession
+) -> dict:
+    pipeline, platform = await load_pipeline_with_platform(pipeline_id, project_id, user_id, db)
+    editor = editor_for(platform)
+
+    new_content, report = await _assemble_and_validate(
+        pipeline, platform, editor, job_edits, user_id, db, project_id
+    )
+
+    #persist only if it actually changed
     if new_content != pipeline.content:
         pipeline.content = new_content
         pipeline.updated_at = datetime.utcnow()
@@ -100,7 +140,13 @@ async def edit_pipeline_jobs(
         await db.refresh(pipeline)
 
     jobs = editor.list_jobs(pipeline.content)
-    return platform, jobs, pipeline.content, report.get("warnings", [])
+    return {
+        "platform": platform,
+        "jobs": jobs,
+        "content": pipeline.content,
+        "warnings": report.get("warnings", []),
+        "committed": True,
+    }
 
 
 async def validate_assembled_pipeline(content: str, platform: str, user_id: int, db: AsyncSession, project_id: int | None = None) -> dict:

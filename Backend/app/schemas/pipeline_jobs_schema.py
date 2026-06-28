@@ -26,4 +26,7 @@ class JobOrderResponse(BaseModel):
     platform: str
     jobs: list[JobView]
     content: str | None = None  # full pipeline YAML
-    warnings: list | None = None 
+    warnings: list | None = None  # linter warnings (actionlint / gitlab-ci-lint / json-schema)
+    ai_warnings: list | None = None  # advisory warnings from ai
+    ai_review: dict | None = None  # ai review process status: {available, model, error}
+    committed: bool = False  # True only after the change has been saved to the db
