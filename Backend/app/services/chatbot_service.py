@@ -192,13 +192,19 @@ class ChatbotService:
     async def create_new_session(
             self, user_id: int,first_message: str, db:AsyncSession,project_id : Optional[int] = None
     ) -> ChatSession:
-        session_name = first_message[:50] + "..." if len(first_message) > 50 else first_message
+        from agent.chat_session_title import generate_session_title
+        title = await generate_session_title(first_message)
+        session_name = title or self.default_session_name(first_message)
         new_session = ChatSession(user_id = user_id,session_name = session_name,project_id=project_id,
                                   created_at=datetime.utcnow(),updated_at=datetime.utcnow())
         db.add(new_session)
         await db.commit()
         await db.refresh(new_session)
         return new_session
+
+    #fallback naming method in case the ai title model fails
+    def default_session_name(self, first_message: str) -> str:
+        return first_message[:50] + "..." if len(first_message) > 50 else first_message
 
     async def get_session_if_owned(
             self,
