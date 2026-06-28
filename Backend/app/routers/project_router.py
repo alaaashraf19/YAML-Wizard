@@ -13,6 +13,8 @@ from schemas.chatbot_schema import ChatSessionResponse
 from core.security import get_current_user
 from models.user_model import User
 from typing import List, Optional
+from services.dashboard import yaml_sync_service
+from schemas.yaml_sync_schema import YamlSyncResult, PipelineSyncResult
 
 router = APIRouter()
 
@@ -60,102 +62,102 @@ async def deleteProject(project_id: int,current_user:User = Depends(get_current_
 
 
 ################### PIPELINES #################
-@router.post("/{project_id}/pipelines", response_model=PipelineResponse)
-async def create_project_pipeline(
-    project_id: int,
-    pipeline: PipelineCreate,
-    current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db)
-):
-    pipeline = await create_pipeline(pipeline, project_id, current_user.id, db)
-    return PipelineResponse.model_validate(pipeline)
-
-
-@router.get("/{project_id}/pipelines", response_model=List[PipelineResponse])
-async def get_project_pipelines_list(
-    project_id: int,
-    current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db)
-):
-    pipelines =  await get_project_pipelines(project_id, current_user.id, db)
-    return [PipelineResponse.model_validate(p) for p in pipelines]
-
-
-@router.get("/{project_id}/pipelines/active", response_model=List[PipelineResponse])
-async def get_project_active_pipelines(
-    project_id: int,
-    current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db)
-):
-    pipelines = await get_active_pipelines(project_id, current_user.id, db)
-    return [PipelineResponse.model_validate(p) for p in pipelines]
-
-
-@router.get("/{project_id}/pipelines/{pipeline_id}", response_model=PipelineResponse)
-async def get_project_pipeline_by_id(
-    project_id: int,
-    pipeline_id: int,
-    current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db)
-):
-    pipeline = await get_pipeline_by_id(pipeline_id, current_user.id, db)
-    return PipelineResponse.model_validate(pipeline)
-
-
-
-@router.put("/{project_id}/pipelines/{pipeline_id}", response_model=PipelineResponse)
-async def update_project_pipeline(
-    project_id: int,
-    pipeline_id: int,
-    pipeline_update: PipelineUpdate,
-    current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db)
-):
-    pipeline = await update_pipeline(pipeline_id,project_id, pipeline_update, current_user.id, db)
-    return PipelineResponse.model_validate(pipeline)
-
-
-@router.delete("/{project_id}/pipelines/{pipeline_id}", response_model=dict)
-async def delete_project_pipeline(
-    project_id: int,
-    pipeline_id: int,
-    current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db)
-):
-    return await delete_pipeline(pipeline_id,current_user.id,db)
-
-
-@router.post("/{project_id}/pipelines/{pipeline_id}/activate", response_model=PipelineResponse)
-async def activate_project_pipeline(
-    project_id: int,
-    pipeline_id: int,
-    current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db)
-):
-    pipeline = await set_active_pipeline(pipeline_id, current_user.id, db)
-    return PipelineResponse.model_validate(pipeline)
-
-@router.post("/{project_id}/pipelines/{pipeline_id}/deactivate", response_model=PipelineResponse)
-async def deactivate_project_pipeline(
-    project_id: int,
-    pipeline_id: int,
-    current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db)
-):
-    pipeline = await deactivate_pipeline(pipeline_id, current_user.id, db)
-    return PipelineResponse.model_validate(pipeline)
-
-@router.post("{project_id}/pipelines/{pipeline_id}/commit", response_model=PipelineResponse)
-async def commit_project_pipeline(
-    project_id: int,
-    pipeline_id: int,
-    commit_hash: str,
-    commit_author: str,
-    commit_message: Optional[str] = "",
-    current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db)
-):
-    pipeline = await mark_pipeline_committed(
-        pipeline_id, current_user.id, commit_hash,
-        commit_author, db, commit_message)
-    return PipelineResponse.model_validate(pipeline)
+# @router.post("/{project_id}/pipelines", response_model=PipelineResponse)
+# async def create_project_pipeline(
+#     project_id: int,
+#     pipeline: PipelineCreate,
+#     current_user: User = Depends(get_current_user),
+#     db: AsyncSession = Depends(get_db)
+# ):
+#     pipeline = await create_pipeline(pipeline, project_id, current_user.id, db)
+#     return PipelineResponse.model_validate(pipeline)
+#
+#
+# @router.get("/{project_id}/pipelines", response_model=List[PipelineResponse])
+# async def get_project_pipelines_list(
+#     project_id: int,
+#     current_user: User = Depends(get_current_user),
+#     db: AsyncSession = Depends(get_db)
+# ):
+#     pipelines =  await get_project_pipelines(project_id, current_user.id, db)
+#     return [PipelineResponse.model_validate(p) for p in pipelines]
+#
+#
+# @router.get("/{project_id}/pipelines/active", response_model=List[PipelineResponse])
+# async def get_project_active_pipelines(
+#     project_id: int,
+#     current_user: User = Depends(get_current_user),
+#     db: AsyncSession = Depends(get_db)
+# ):
+#     pipelines = await get_active_pipelines(project_id, current_user.id, db)
+#     return [PipelineResponse.model_validate(p) for p in pipelines]
+#
+#
+# @router.get("/{project_id}/pipelines/{pipeline_id}", response_model=PipelineResponse)
+# async def get_project_pipeline_by_id(
+#     project_id: int,
+#     pipeline_id: int,
+#     current_user: User = Depends(get_current_user),
+#     db: AsyncSession = Depends(get_db)
+# ):
+#     pipeline = await get_pipeline_by_id(pipeline_id, current_user.id, db)
+#     return PipelineResponse.model_validate(pipeline)
+#
+#
+#
+# @router.put("/{project_id}/pipelines/{pipeline_id}", response_model=PipelineResponse)
+# async def update_project_pipeline(
+#     project_id: int,
+#     pipeline_id: int,
+#     pipeline_update: PipelineUpdate,
+#     current_user: User = Depends(get_current_user),
+#     db: AsyncSession = Depends(get_db)
+# ):
+#     pipeline = await update_pipeline(pipeline_id,project_id, pipeline_update, current_user.id, db)
+#     return PipelineResponse.model_validate(pipeline)
+#
+#
+# @router.delete("/{project_id}/pipelines/{pipeline_id}", response_model=dict)
+# async def delete_project_pipeline(
+#     project_id: int,
+#     pipeline_id: int,
+#     current_user: User = Depends(get_current_user),
+#     db: AsyncSession = Depends(get_db)
+# ):
+#     return await delete_pipeline(pipeline_id,current_user.id,db)
+#
+#
+# @router.post("/{project_id}/pipelines/{pipeline_id}/activate", response_model=PipelineResponse)
+# async def activate_project_pipeline(
+#     project_id: int,
+#     pipeline_id: int,
+#     current_user: User = Depends(get_current_user),
+#     db: AsyncSession = Depends(get_db)
+# ):
+#     pipeline = await set_active_pipeline(pipeline_id, current_user.id, db)
+#     return PipelineResponse.model_validate(pipeline)
+#
+# @router.post("/{project_id}/pipelines/{pipeline_id}/deactivate", response_model=PipelineResponse)
+# async def deactivate_project_pipeline(
+#     project_id: int,
+#     pipeline_id: int,
+#     current_user: User = Depends(get_current_user),
+#     db: AsyncSession = Depends(get_db)
+# ):
+#     pipeline = await deactivate_pipeline(pipeline_id, current_user.id, db)
+#     return PipelineResponse.model_validate(pipeline)
+#
+# @router.post("{project_id}/pipelines/{pipeline_id}/commit", response_model=PipelineResponse)
+# async def commit_project_pipeline(
+#     project_id: int,
+#     pipeline_id: int,
+#     commit_hash: str,
+#     commit_author: str,
+#     commit_message: Optional[str] = "",
+#     current_user: User = Depends(get_current_user),
+#     db: AsyncSession = Depends(get_db)
+# ):
+#     pipeline = await mark_pipeline_committed(
+#         pipeline_id, current_user.id, commit_hash,
+#         commit_author, db, commit_message)
+#     return PipelineResponse.model_validate(pipeline)
