@@ -11,7 +11,6 @@ from .dashboard.repos_services import _parse_repo_info, _parse_branch, _get_gitl
 from .platform_connectors.oauth_utils import decrypt_token
 from sqlalchemy.exc import IntegrityError
 from fastapi.concurrency import run_in_threadpool
-import asyncio
 import logging
 
 logger = logging.getLogger(__name__)
@@ -89,7 +88,7 @@ async def create_project(project: ProjectCreate, user_id: int, db: AsyncSession)
 
     if detected_platform not in ["github", "gitlab"]:
         raise HTTPException(status_code=400, detail="Unsupported platform.")
-    
+
     if detected_platform == "github":
         # First, check if the user has a GitHub OAuth connection
         result = await db.execute(
@@ -162,29 +161,13 @@ async def create_project(project: ProjectCreate, user_id: int, db: AsyncSession)
         raise HTTPException(status_code=409, detail="Repository URL already exists")
     await db.refresh(repo)
 
-    # ── Fire-and-forget: fetch repo context in background ─────────────────
+    # ── Fetch repo context (blocking — project creation depends on it) ─────
     token = await _resolve_token(user_id=user_id, platform=detected_platform, db=db)
     if not token:
         await db.delete(repo)
         await db.commit()
-        raise HTTPException(status_code=401,detail="No authentication token available.")
+        raise HTTPException(status_code=401, detail="No authentication token available.")
 
-    # try:
-    #     asyncio.create_task(
-    #         _fetch_and_save_repo_context(
-    #             repo_id=repo.id,
-    #             repo_url=repo_url,
-    #             platform=detected_platform,
-    #             token=token,
-    #         )
-    #     )
-    # except HTTPException:
-    #     await db.delete(repo)
-    #     await db.commit()
-    #     raise
-    # except Exception as exc:
-    #     await db.delete(repo)
-    #     await db.commit()
     try:
         await _fetch_and_save_repo_context(
             repo_id=repo.id,
@@ -192,15 +175,23 @@ async def create_project(project: ProjectCreate, user_id: int, db: AsyncSession)
             platform=detected_platform,
             token=token,
         )
-    except Exception:
+    except* PermissionError as eg:
         await db.delete(repo)
         await db.commit()
-        logger.exception("Failed to fetch repository context for repo_id=%s",repo.id,)
+        raise HTTPException(status_code=401, detail=str(eg.exceptions[0]))
+    except* FileNotFoundError as eg:
+        await db.delete(repo)
+        await db.commit()
+        raise HTTPException(status_code=404, detail=str(eg.exceptions[0]))
+    except* Exception:
+        await db.delete(repo)
+        await db.commit()
+        logger.exception("Failed to fetch repository context for repo_id=%s", repo.id)
         raise HTTPException(
             status_code=500,
-            detail="Failed to fetch repository context."
+            detail="Failed to fetch repository context. Check the URL and your access permissions.",
         )
-        
+
 
 
     new_project = Project(
@@ -216,7 +207,7 @@ async def create_project(project: ProjectCreate, user_id: int, db: AsyncSession)
     await db.commit()
     await db.refresh(new_project)
 
-    
+
 
     return ProjectResponse(
         id=new_project.id,
@@ -231,19 +222,20 @@ async def create_project(project: ProjectCreate, user_id: int, db: AsyncSession)
 
 
 async def _fetch_and_save_repo_context(repo_id: int, repo_url: str, platform: str, token: str):
-    """Background task — opens its own DB session."""
+    """Fetch repo context and persist it.  Raises on fatal errors so the
+    caller can roll back the repo row and surface a proper HTTP error."""
     from database.db_engine import async_session
 
-    try:
-        if platform == "github":
-            from agent.github_agent import run_github_agent
-            pkg = await run_in_threadpool(run_github_agent, repo_url=repo_url, github_token=token)
-        else:
-            from agent.gitlab_agent import run_gitlab_agent
-            pkg = await run_in_threadpool(run_gitlab_agent, repo_url=repo_url, gitlab_token=token)
-    except Exception as exc:
-        logger.error("Agent failed for repo_id=%s: %s", repo_id, exc, exc_info=True)
-        return
+    # Fatal errors (bad URL, bad token, repo not found, network failure)
+    # are allowed to propagate — the caller handles cleanup.
+    # Non-fatal gaps (e.g. missing optional files) are already handled
+    # gracefully inside the agents themselves.
+    if platform == "github":
+        from agent.github_agent import run_github_agent
+        pkg = await run_in_threadpool(run_github_agent, repo_url=repo_url, github_token=token)
+    else:
+        from agent.gitlab_agent import run_gitlab_agent
+        pkg = await run_in_threadpool(run_gitlab_agent, repo_url=repo_url, gitlab_token=token)
 
     context_fields = dict(
         languages           = pkg.languages,
