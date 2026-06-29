@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from datetime import datetime, timezone
 import httpx
 import yaml
-from schemas.dashboard import CIArtifact, CollectorsRepositoryDetail, SyncStatus, RepositorySchema
+from schemas.dashboard import CIArtifact, CollectorsRepositoryDetail, SyncStatus
 from .ci_collector import CICollector
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
@@ -26,7 +26,7 @@ class GitHubCollector(CICollector):
 
     def __init__(self ,token: str | None = None) -> None:
         
-        self.token = token or os.getenv("GITHUB_ACCESS_TOKEN") # to be changed not get it from env 
+        self.token = token or os.getenv("GITHUB_ACCESS_TOKEN") # to be changed not get it from env
         
         if not self.token:
             raise ValueError("GitHub access token not provided. Set GITHUB_ACCESS_TOKEN in environment variables.")
@@ -494,10 +494,19 @@ class GitHubCollector(CICollector):
                         pipeline.commit_hash = commit_info.get("commit_hash")
                         pipeline.commit_author = commit_info.get("commit_author")
                         pipeline.commit_message = commit_info.get("commit_message")
-                        if commit_info.get("committed_at"):
-                            pipeline.committed_at = datetime.fromisoformat(
-                                commit_info["committed_at"].replace("Z", "+00:00")
-                            )
+                        if commit_info and commit_info.get("committed_at"):
+                            committed_at = commit_info["committed_at"]
+                            if isinstance(committed_at, str):
+                                # Convert to naive UTC
+                                aware = datetime.fromisoformat(committed_at.replace("Z", "+00:00"))
+                                naive = aware.replace(tzinfo=None)
+                                pipeline.committed_at = naive
+                            else:
+                                # If it's already a datetime, ensure it's naive
+                                if committed_at.tzinfo is not None:
+                                    pipeline.committed_at = committed_at.replace(tzinfo=None)
+                                else:
+                                    pipeline.committed_at = committed_at
                     pipeline.is_active = True
                     if not pipeline.activated_at:
                         pipeline.activated_at = datetime.utcnow()
@@ -522,10 +531,19 @@ class GitHubCollector(CICollector):
                     new_pipe.commit_hash = commit_info.get("commit_hash")
                     new_pipe.commit_author = commit_info.get("commit_author")
                     new_pipe.commit_message = commit_info.get("commit_message")
-                    if commit_info.get("committed_at"):
-                        new_pipe.committed_at = datetime.fromisoformat(
-                            commit_info["committed_at"].replace("Z", "+00:00")
-                        )
+                    if commit_info and commit_info.get("committed_at"):
+                        committed_at = commit_info["committed_at"]
+                        if isinstance(committed_at, str):
+                            # Convert to naive UTC
+                            aware = datetime.fromisoformat(committed_at.replace("Z", "+00:00"))
+                            naive = aware.replace(tzinfo=None)
+                            new_pipe.committed_at = naive
+                        else:
+                            # If it's already a datetime, ensure it's naive
+                            if committed_at.tzinfo is not None:
+                                new_pipe.committed_at = committed_at.replace(tzinfo=None)
+                            else:
+                                new_pipe.committed_at = committed_at
                 db.add(new_pipe)
                 await db.commit()
                 await db.refresh(new_pipe)
