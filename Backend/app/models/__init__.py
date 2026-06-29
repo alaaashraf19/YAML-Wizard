@@ -5,3 +5,4 @@ from .repository_model import Repository, PipelineRun, JobTiming, TestRun
 from .project_model import Project
 from .chat_session_model import ChatSession
 from .chat_message_model import ChatMessage
+from .dry_run_model import DryRunHistory
