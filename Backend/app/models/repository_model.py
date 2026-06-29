@@ -15,14 +15,14 @@ class Repository(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
     user: Mapped["User"] = relationship("User", back_populates="repositories")
 
-    full_name: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
+    full_name: Mapped[str] = mapped_column(String(255), unique=False, nullable=False)
     platform: Mapped[str] = mapped_column(String(20), nullable=False, default="github")
     #we can add an id for both gitlab and github but for now we will add only for gitlab because github repo can be identified by full_name 
     # which is unique but in gitlab we have to use id because there can be multiple projects with same name but different namespace so we will 
     # use id to identify the project
     gitlab_project_id: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
-
-
+    github_repo_id: Mapped[int | None] = mapped_column(BigInteger,nullable=True,unique=True,index=True,)
+    installation_id: Mapped[int | None] = mapped_column(ForeignKey("github_installations.installation_id", ondelete="CASCADE"),nullable=True,)
     default_branch: Mapped[str] = mapped_column(String(100), nullable=False, default="main")
     url: Mapped[str] = mapped_column(String(500), nullable=False, unique=True)
     

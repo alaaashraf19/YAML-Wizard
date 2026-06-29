@@ -23,7 +23,7 @@ class GitLabAPIClient:
     def __init__(self, token: str, base_url: str = GITLAB_API_BASE):
         self.token = token
         self.base_url = base_url.rstrip("/")
-        self._headers = {"PRIVATE-TOKEN": token} if token else {}
+        self._headers = {"Authorization": f"Bearer {token}"} if token else {}
 
     # ── internal helpers ──────────────────────────────────────────────────
 

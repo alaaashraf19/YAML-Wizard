@@ -5,7 +5,7 @@ from fastapi import HTTPException
 from datetime import datetime
 
 from google import genai
-from google.genai import types
+# from google.genai import types
 
 from sqlalchemy.orm import Session,joinedload
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -17,13 +17,14 @@ from models.chat_session_model import ChatSession
 from models.platforms_model import GitLabConnection
 from services.project_service import get_project_by_id
 from agent.chatbot_agent import ChatbotAgent
-from agent.utils.context_resolver import ContextResolver
+from agent.utils.context_resolver import ContextResolver, build_context_summary
 from schemas.project_schema import ProjectResponse
 
 class ChatbotService:
     def __init__(self):
         self.client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
         self.model = "models/gemini-2.5-flash"
+        # self.model = "Qwen/Qwen2.5-72B-Instruct-AWQ"
         self.agent = ChatbotAgent()
 
     async def send_message(self, message: str, session_id: int, chat_history: List[Dict[str, str]] = None, 
@@ -38,17 +39,17 @@ class ChatbotService:
         try:
             contents = []
 
-            for msg in chat_history:
-                role = "user" if msg["role"] == "user" else "model"
-                contents.append(types.Content(
-                    role = role,
-                    parts = [types.Part.from_text(text=msg["content"])]
-                ))
+            # for msg in chat_history:
+            #     role = "user" if msg["role"] == "user" else "model"
+            #     contents.append(types.Content(
+            #         role = role,
+            #         parts = [types.Part.from_text(text=msg["content"])]
+            #     ))
 
-            contents.append(types.Content(
-                role = "user",
-                parts = [types.Part.from_text(text=message)]
-            ))
+            # contents.append(types.Content(
+            #     role = "user",
+            #     parts = [types.Part.from_text(text=message)]
+            # ))
 
             gitlab_connection = None
             if db is not None and user_id is not None:
@@ -56,9 +57,15 @@ class ChatbotService:
                 gitlab_connection = gitlab_result.scalar_one_or_none()
 
             context = None
+            context_summary= None
             if project_id is not None:
-                context = await ContextResolver().get_project_context(project_id)
+                print("before project context in chat")
+                context = await ContextResolver(db).get_project_context(project_id)
 
+                if context:
+                    context_summary = build_context_summary(context.repo_context)#return str
+
+            # print("context in chat",context )
             response = await self.agent.invoke(
                 message=message,
                 chat_history=chat_history,
@@ -68,8 +75,8 @@ class ChatbotService:
                 user_id= user_id,
                 project_id=project_id,
                 context = context,
+                context_summary = context_summary
             )
-
             return {
                 "role": "assistant",
                 "content":str(response)

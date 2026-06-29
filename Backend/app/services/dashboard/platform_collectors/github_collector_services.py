@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 from datetime import datetime, timezone
 import httpx
+import base64
 from schemas.dashboard import CIArtifact, CollectorsRepositoryDetail, SyncStatus
 from .ci_collector import CICollector
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -11,6 +12,7 @@ from ..recommendations_services.processor_services import compute_job_comparison
 from models.repository_model import JobTiming, PipelineRun
 from ..test_parsers.ParserRegistry import ParserRegistry
 from .collectors_utils import parse_duration, _parse_ts, process_test_batch, extract_test_reports_from_zip
+import asyncio
 
 load_dotenv()
 
@@ -42,7 +44,6 @@ class GitHubCollector(CICollector):
     async def close(self) -> None:
         await self._client.aclose()
 
-    
     #if branch is not specified github api returns runs from all branches
     async def get_runs(self, ctx: CollectorsRepositoryDetail, per_page: int = 30, page: int = 1, branch: str | None = None,) -> list[dict]:
         
@@ -302,7 +303,7 @@ class GitHubCollector(CICollector):
             try:
                 parsed_tests = parser_registry.parse(log_content, "job.log")
                 
-                print(f"[sync-tests] Parsed {len(parsed_tests)} tests from logs", flush=True)
+                # print(f"[sync-tests] Parsed {len(parsed_tests)} tests from logs", flush=True)
 
                 tests_found += await process_test_batch(parsed_tests, job.run_id, repo_id, db,  job,)
 
