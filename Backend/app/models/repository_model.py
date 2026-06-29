@@ -21,10 +21,10 @@ class Repository(Base):
     # which is unique but in gitlab we have to use id because there can be multiple projects with same name but different namespace so we will 
     # use id to identify the project
     gitlab_project_id: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
-    github_repo_id: Mapped[int | None] = mapped_column(BigInteger,nullable=True,unique=True,index=True,)
+    github_repo_id: Mapped[int | None] = mapped_column(BigInteger,nullable=True,index=True,)
     installation_id: Mapped[int | None] = mapped_column(ForeignKey("github_installations.installation_id", ondelete="CASCADE"),nullable=True,)
-    default_branch: Mapped[str] = mapped_column(String(100), nullable=False, default="main")
-    url: Mapped[str] = mapped_column(String(500), nullable=False, unique=True)
+    default_branch: Mapped[str] = mapped_column(String(100), nullable=True)
+    url: Mapped[str] = mapped_column(String(500), nullable=False)
     
     last_synced_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False,)
@@ -33,7 +33,9 @@ class Repository(Base):
     runs: Mapped[list[PipelineRun]] = relationship(back_populates="repository", cascade="all, delete-orphan")
     project: Mapped[Project | None] = relationship("Project",back_populates="repository", uselist=False)#uselist is false to tell that it is one to one relation
     context: Mapped[RepoContext | None] = relationship("RepoContext",back_populates="repository", uselist=False, cascade="all, delete-orphan")#if a repo is deleted its context is deleted
-
+    __table_args__ = (UniqueConstraint("user_id", "url", name="uq_user_repo_url"),
+        #A user cannot add the same GitHub ID twice
+        UniqueConstraint("user_id", "github_repo_id", name="uq_user_github_id"),)
 
 class PipelineRun(Base):
     __tablename__ = "pipeline_runs"
