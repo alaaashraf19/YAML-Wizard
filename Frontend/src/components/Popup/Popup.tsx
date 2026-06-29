@@ -1,18 +1,19 @@
-import { createPortal } from 'react-dom';
+import gStyles from "../../global.module.css"
 import styles from './Popup.module.css'
+import { createPortal } from 'react-dom';
 
 type PopupProps = {
-    btnText1: string,
-    btn1Action: ((e: any) => void) | null,
-    btnText2: string | null,
-    btn2Action: ((e: any) => void) | null,
-    confirmMessage: string | null,
-    setConfirmMessage: React.Dispatch<React.SetStateAction<string | null>> | null,
-    warningMessage: string | null,
-    setWarningMessage: React.Dispatch<React.SetStateAction<string | null>> | null,
-    errorMessage: string | null,
-    setErrorMessage: React.Dispatch<React.SetStateAction<string | null>> | null,
-    popupRef: React.Ref<HTMLDivElement> | null
+    btnText1?: string | null,
+    btn1Action?: ((e: any) => void) | null,
+    btnText2?: string | null,
+    btn2Action?: ((e: any) => void) | null,
+    confirmMessage?: string | null,
+    setConfirmMessage?: React.Dispatch<React.SetStateAction<string | null>> | null,
+    warningMessage?: string | null,
+    setWarningMessage?: React.Dispatch<React.SetStateAction<string | null>> | null,
+    errorMessage?: string | null,
+    setErrorMessage?: React.Dispatch<React.SetStateAction<string | null>> | null,
+    popupRef?: React.Ref<HTMLDivElement> | null
 }
 
 function Popup({
@@ -37,7 +38,7 @@ function Popup({
                 {errorMessage   && <p className={styles.errorMsg}>{errorMessage}</p>}
 
                 <div className={styles.popupBtns}>
-                    <button className={`${styles.popupBtn} ${styles.clickable}`}
+                    {btnText1 && <button className={`${styles.popupBtn} ${gStyles.clickable}`}
                         onClick={(e) => {
                             btn1Action && btn1Action(e);
                             setConfirmMessage && setConfirmMessage("");
@@ -45,9 +46,9 @@ function Popup({
                             setErrorMessage && setErrorMessage("");
                             }}>
                         {btnText1}
-                    </button>
+                    </button>}
                     {btnText2 &&
-                        <button className={`${styles.popupBtn} ${styles.clickable}`}
+                        <button className={`${styles.popupBtn} ${gStyles.clickable}`}
                             onClick={(e) => {
                                 btn2Action && btn2Action(e);
                                 setConfirmMessage && setConfirmMessage("");

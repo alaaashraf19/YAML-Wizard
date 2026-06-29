@@ -175,15 +175,15 @@ function SideBar({sessionId, setSessionId, sessions, setSessions, setMessages, i
                 title={"Go to Dashboard"} onClick={() => navigate("/dashboard")}/>
             
             <div ref={avatarIconRef} className={styles.settingsContainer}>
-                <GoPerson className={`${styles.username} ${gStyles.clickable}`} title={"Open Menu"}
+                <GoPerson className={`${styles.username} ${gStyles.gButton}`} title={"Open Menu"}
                 onClick={() => setOpenSettings(prev => !prev)}/>
                 {openSettings &&
                     <div className={styles.settingsMenu} ref={settingsRef}>
-                        <Link className={`${styles.option} ${gStyles.clickable}`} to="/profile">
+                        <Link className={`${styles.optionProfile} ${gStyles.clickable}`} to="/profile">
                             <IoPerson/>
                             Profile
                         </Link>
-                        <Link className={`${styles.option} ${gStyles.clickable}`} to="/"
+                        <Link className={`${styles.optionSignout} ${gStyles.clickable}`} to="/"
                             onClick={() => logout()}>
                             <FaSignOutAlt/> Sign out
                         </Link>
@@ -244,17 +244,17 @@ function SideBar({sessionId, setSessionId, sessions, setSessions, setMessages, i
                 {!loading && (
                     username? (
                         <div ref={avatarRef} className={styles.settingsContainer}>
-                            <button className={`${styles.username} ${gStyles.clickable}`} title={"Open Menu"}
+                            <button className={`${styles.username} ${gStyles.gButton}`} title={"Open Menu"}
                                 onClick={() => setOpenSettings(prev => !prev)}>
                                 <GoPerson/>{username}
                             </button>
                             {openSettings && 
                                 <div className={styles.settingsMenu} ref={settingsRef}>
-                                    <Link className={`${styles.option} ${gStyles.clickable}`} to="/profile">
+                                    <Link className={`${styles.optionProfile} ${gStyles.clickable}`} to="/profile">
                                         <IoPerson/>
                                         Profile
                                     </Link>
-                                    <Link className={`${styles.option} ${gStyles.clickable}`} to="/"
+                                    <Link className={`${styles.optionSignout} ${gStyles.clickable}`} to="/"
                                         onClick={() => logout()}>
                                         <FaSignOutAlt/>
                                         Sign out
@@ -284,9 +284,6 @@ function SideBar({sessionId, setSessionId, sessions, setSessions, setMessages, i
                 setConfirmMessage={setConfirmMessage}
                 warningMessage={warningMessage}
                 setWarningMessage={setWarningMessage}
-                errorMessage={null}
-                setErrorMessage={null}
-                popupRef={null}
             />
         )}
     </>)

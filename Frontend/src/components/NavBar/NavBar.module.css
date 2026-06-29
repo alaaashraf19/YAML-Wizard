@@ -40,9 +40,14 @@
     color: inherit;
     font-size: 16px;
 
-    background: rgb(9, 2, 41);
+    /* background: rgb(9, 2, 41); */
+    background: linear-gradient(
+        40deg,
+        rgb(48, 53, 150)0%,
+        rgb(13, 0, 48)
+    );
     
-    border: 1px solid rgba(221, 223, 251, 0.25);
+    /* border: 1px solid rgba(221, 223, 251, 0.25); */
     border-radius: 15px;
     transition: 0.3s;
 }
@@ -52,14 +57,10 @@
     background: linear-gradient(90deg,  rgb(9, 2, 41)0%, rgb(23, 8, 92)60%, rgb(9, 2, 41)100%);
     
     font-weight: bold;
-    border: 1px solid rgba(221, 223, 251, 0.25);
+    /* border: 1px solid rgba(221, 223, 251, 0.25); */
     border-radius: 20px;
 }
 .logo {
-    /* position: fixed;
-    left: 20px;
-    top: 15px; */
-    
     margin-right: auto;
     height: 45px;
     margin-top: 5px;
@@ -72,6 +73,14 @@
         rgba(15, 10, 70,0.1) 65%,
         transparent
     );
+    text-shadow:
+        0 0 20px rgba(101, 90, 255, 0.25),
+        0 0 45px rgba(90, 93, 255, 0.25);
+}
+.logo:hover{
+    text-shadow:
+        0 5px 25px rgba(101, 90, 255, 0.35),
+        0 0 30px rgba(90, 93, 255, 0.25);
 }
 .optionsContainer {
     position: relative;
@@ -86,13 +95,16 @@
     margin: 10px;
     padding: 7px;
 
-    border: 1px solid rgba(221, 223, 251, 0.25);
+    background: 0;
+    border: 0;
+    /* border: 1px solid rgba(113, 122, 250, 0.25); */
     border-radius: 5px;
     background-color: rgb(9, 2, 41);
     cursor: pointer;
+    transition: background-color 0.2s ease;
 }
 .optionsButton:hover {
-    background-color: rgb(14, 5, 55)
+    background-color: rgba(90, 93, 255, 0.25);
 }
 .options {
     position: absolute;
@@ -122,15 +134,15 @@
     margin: 5px;
     padding: 10px 15px;
     border-radius: 10px;
+    transition: background-color 0.25s ease;
 }
-.option:hover {background-color: rgb(19, 5, 79);}
+.option:hover {background-color: rgb(61, 3, 6);}
 
 .Link {
     margin: 10px;
     padding: 15px;
     width: 100px;
     height: fit-content;
-    /* border: 2px solid #ccc; */
     border: 0;
     border-radius: 10px;
     
@@ -142,13 +154,11 @@
     cursor: pointer;
     box-shadow: 2px 2px 10px rgba(0,0,0,0.4);
 
-    transition: background-color 0.25s ease;
+    /* transition: background-color 0.25s ease; */
 }
 
-.SignUpLink {
-    background-image: linear-gradient(to bottom, rgb(67, 34, 133)70%, rgb(58, 37, 103));
-}
 .LoginLink {
+    background: 0;
     padding: 14px;
     border: 1px solid rgb(88, 75, 114);
 }

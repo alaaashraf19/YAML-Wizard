@@ -9,20 +9,15 @@
     flex-direction: column;
     
     /* background: rgb(18, 10, 60); */
-
-    background: linear-gradient(180deg,
-        rgb(16, 8, 58),
+    background: linear-gradient(250deg,
+        rgb(22, 8, 88),
         rgb(11, 4, 45)
     );
 
-    /* background: rgba(18, 12, 55, 0.55);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.08); */
-
     box-shadow: 0px 2px 18px 0px rgba(0,0,0,0.6);
-    /* border-radius: 15px; */
     z-index: 10;
     font-size: 18px;
+    border-radius: 5px;
     
     transition: width 0.5s ease, padding 0.5s ease, transform 0.5s ease;
 }
@@ -106,11 +101,10 @@
 
     /* background-color: rgb(9, 2, 41); */
     background: linear-gradient(
-    180deg,
-    rgb(23, 13, 72),
-    rgb(15, 8, 52)
-);
-    /* box-shadow: 0px 8px 16px 5px rgba(0,0,0,0.4); */
+        180deg,
+        rgb(23, 13, 72),
+        rgb(15, 8, 52)
+    );
     box-shadow:
     0 12px 30px rgba(0,0,0,.45),
     0 0 18px rgba(123,92,255,.08);
@@ -152,7 +146,6 @@
     gap: 8px;
 
     overflow-y: auto;
-    /* overflow-anchor: auto; */
 }
 .option {
     display: flex;
@@ -169,10 +162,10 @@
     
     border-radius: 10px;
     border: 1px solid rgba(181, 181, 181, 0.4);
-    transition: background-color 0.3s ease;
+    transition: 0.3s;
 }
-.notSelected:hover {background-color: rgb(19, 5, 79);}
-.selected{background-color: rgb(42, 35, 67);}
+.notSelected:hover {background-color: rgb(23, 4, 59);}
+.selected{background-color: rgb(51, 39, 92);}
 .divider {
     margin: 6px 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.6);

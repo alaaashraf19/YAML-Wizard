@@ -21,7 +21,7 @@
     background-color: rgb(42, 34, 80);
     margin-top: 15vh;
     padding: 40px 30px;
-    width: fit-content;
+    min-width: 30%;
 
     border-radius: 15px;
     box-shadow: 10px 10px 30px rgba(0,0,0,0.4);
@@ -36,7 +36,7 @@
 .errorMsg{
     color: rgb(255, 99, 71);
     margin: 10px;
-    font-size: 20px;
+    font-size: 24px;
     align-self: center;
 }
 .confirmMsg{
@@ -54,8 +54,8 @@
 .popupBtns {
     display: flex;
     justify-content: center;
-    gap: 20%;
-    margin-top: 20px;
+    gap: 40%;
+    margin-top: 40px;
 }
 .popupBtn {
     color: white;
@@ -65,6 +65,8 @@
     border-radius: 15px;
     background-color: rgb(28, 22, 60);
     border: 2px solid rgb(63, 56, 99);
+
+    transition: transform 0.25s ease, background-color 0.25s ease;
 }
 .popupBtn:hover {
     background-color: rgb(36, 28, 75);

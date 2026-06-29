@@ -185,13 +185,8 @@ function ProjectInfoTab({ projectInfoId, setProjectInfoId, projects, setProjects
                     btnText1={"Delete"}
                     btn1Action={handleDelete}
                     btnText2={"Cancel"}
-                    btn2Action={null}
                     confirmMessage={confirmDelete}
                     setConfirmMessage={setConfirmDelete}
-                    warningMessage={null}
-                    setWarningMessage={null}
-                    errorMessage={null}
-                    setErrorMessage={null}
                     popupRef={popupRef}
                 />
                 : <div className={`${styles.infoPopup} ${popupStyles.popup}`} ref={editMode? null : infoRef}>
@@ -241,13 +236,6 @@ function ProjectInfoTab({ projectInfoId, setProjectInfoId, projects, setProjects
                     {errorEdit && (
                         <Popup 
                             btnText1={"Got it"}
-                            btn1Action={null}
-                            btnText2={null}
-                            btn2Action={null}
-                            confirmMessage={null}
-                            setConfirmMessage={null}
-                            warningMessage={null}
-                            setWarningMessage={null}
                             errorMessage={errorEdit}
                             setErrorMessage={setErrorEdit}
                             popupRef={localPopupRef}

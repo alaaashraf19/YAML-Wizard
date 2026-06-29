@@ -145,6 +145,7 @@ export interface Pipeline {
     author: string;
     commit_hash: string;
     branch: string;
+    path: string;
     content: string;
     is_active: boolean;
     created_at: Date;

@@ -141,9 +141,8 @@ function UserProfile() {
                 <Popup 
                     btnText1={"Got it"}
                     btn1Action={
-                        Platforms.find(p => searchParams.get(p) !== null)? () => navigate("/profile"): null}
-                    btnText2={null}
-                    btn2Action={null}
+                        Platforms.find(p => searchParams.get(p) !== null)
+                        ? () => navigate("/profile"): null}
                     confirmMessage={confirmMessage}
                     setConfirmMessage={setConfirmMessage}
                     warningMessage={warningMessage}

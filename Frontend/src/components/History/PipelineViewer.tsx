@@ -1,8 +1,9 @@
 import gStyles from "../../global.module.css"
 import styles from './Pipeline.module.css'
 import ChatbotBubble from './ChatbotBubble';
-import type { Job, Pipeline, Project } from '../../types';
-import { useState } from 'react';
+import type { Job, Pipeline } from '../../types';
+import { useHistoryStore } from "../../pages/History";
+import { useEffect, useRef, useState } from 'react';
 
 import { MdEdit } from "react-icons/md";
 import { MdBrightness6 } from "react-icons/md";
@@ -10,38 +11,29 @@ import { MdBrightness2 } from "react-icons/md";
 
 
 type ViewerProps = {
-    project: Project,
-    pipeline: Pipeline,
-    setIsEdit: React.Dispatch<React.SetStateAction<boolean>>,
-    isDark: boolean,
-    setIsDark: React.Dispatch<React.SetStateAction<boolean>>,
+    jobs: Job[]
 }
 
-function PipelineViewer({ project, pipeline, setIsEdit, isDark, setIsDark }: ViewerProps){
+function PipelineViewer({ jobs }:ViewerProps){
+    const {isDark, setIsDark, setIsEdit, pipeline} = useHistoryStore();
     const [isChatOpen, setIsChatOpen] = useState(false);
-    const [jobs] = useState<Job[]>([
-    {
-        id: "build",
-        content: "build:\n  stage: build\n  script:\n    - npm install\n    - npm run build"
-    },
-    {
-        id: "test",
-        content: "test:\n  stage: test\n  script:\n    - npm test"
-    },
-    {
-        id: "deploy",
-        content: "deploy:\n  stage: deploy\n  script:\n    - npm run deploy"
-    }
-    ]);
-    // const [jobs, setJobs] = useState<Job[]>([]);
+    
+    const previous = useRef<Pipeline | null>(null);
 
+    useEffect(() => {
+        console.log("same object?", previous.current === pipeline);
+        previous.current = pipeline;
+    }, [pipeline]);
+    
     let lineNumber = 1;
     return(
         <div className={`${styles.pipeline} ${isDark? styles.dark : styles.bright}`}>
+            {!pipeline?.is_active && 
             <div className={styles.btnsContainer}>
                 <MdEdit className={`${styles.editBtn} ${gStyles.clickable}`} 
-                    title="Open Editor" onClick={() => setIsEdit(true)}/>
+                    title="Open Editor" onClick={() => {setIsEdit(true); console.log(pipeline)}}/>
             </div>
+            }
 
             {jobs.map((job, jobIndex) => {
                 let lines = job.content.split("\n");
@@ -64,13 +56,11 @@ function PipelineViewer({ project, pipeline, setIsEdit, isDark, setIsDark }: Vie
             })}
 
             <div className={`${styles.themeBtn} ${isDark ? styles.dark : ""}`}
-                onClick={()=>setIsDark(prev=>!prev)} title="Change Theme">
+                onClick={()=>setIsDark(!isDark)} title="Change Theme">
                 <MdBrightness6 className={styles.sunIcon}/>
                 <MdBrightness2 className={styles.moonIcon}/>
             </div>
             <ChatbotBubble
-                project={project}
-                pipeline={pipeline}
                 isChatOpen={isChatOpen}
                 setIsChatOpen={setIsChatOpen}
             />

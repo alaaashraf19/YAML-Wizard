@@ -2,6 +2,7 @@ import gStyles from "../../global.module.css"
 import styles from "./ChatbotBubble.module.css"
 
 import Popup from "../Popup/Popup";
+import { useHistoryStore } from "../../pages/History";
 import type { Message, Pipeline, Project, Session } from "../../types";
 import { IoSend, IoClose } from "react-icons/io5";
 import { useEffect, useRef, useState } from "react";
@@ -9,13 +10,14 @@ import { VscDebugRestart } from "react-icons/vsc";
 import { RiRobot2Line } from "react-icons/ri";
 
 type ChatbotBubbleProps = {
-    project: Project,
-    pipeline: Pipeline,
     isChatOpen: boolean,
     setIsChatOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-function ChatbotBubble({ project, pipeline, isChatOpen, setIsChatOpen }:ChatbotBubbleProps){
+function ChatbotBubble({isChatOpen, setIsChatOpen }:ChatbotBubbleProps){
+    const project: Project | null = useHistoryStore(s=>s.project);
+    const pipeline: Pipeline | null = useHistoryStore(s=>s.pipeline);
+
     const [prompt, setPrompt] = useState("");
     const [messages, setMessages] = useState<Message[] | []>([]);
     const [session, setSession] = useState<Session | null>(null);
@@ -43,7 +45,7 @@ function ChatbotBubble({ project, pipeline, isChatOpen, setIsChatOpen }:ChatbotB
 
         const sessionExist: boolean = session?true:false;
 
-        console.log("at send, pipeline id:", pipeline.id);
+        console.log("at send, pipeline id:", pipeline?.id);
         setIsLoading(true);
         try{
             const res = await fetch(`${api_url}/chatbot/chat`, {
@@ -53,8 +55,8 @@ function ChatbotBubble({ project, pipeline, isChatOpen, setIsChatOpen }:ChatbotB
                 body: JSON.stringify({
                     message: userPrompt,
                     session_id: session?.id,
-                    project_id: project.id,
-                    pipeline_id: pipeline.id
+                    project_id: project?.id,
+                    pipeline_id: pipeline?.id
                 })
             })
 
@@ -106,7 +108,7 @@ function ChatbotBubble({ project, pipeline, isChatOpen, setIsChatOpen }:ChatbotB
     //load session messages
     useEffect(() => {
         const loadSession = async () => {
-            console.log("at load session", session);
+            console.log("at load session pipeline is", pipeline?.id);
             try {
                 const res = await fetch(`${api_url}/chatbot/sessions/by_pipeline/${pipeline?.id}`, {
                     credentials: "include"
@@ -232,11 +234,6 @@ function ChatbotBubble({ project, pipeline, isChatOpen, setIsChatOpen }:ChatbotB
                         btn2Action={() => setSession(null)}
                         confirmMessage={confirmMessage}
                         setConfirmMessage={setConfirmMessage}
-                        warningMessage={null}
-                        setWarningMessage={null}
-                        errorMessage={null}
-                        setErrorMessage={null}
-                        popupRef={null}
                     />
                 )}
             </div>

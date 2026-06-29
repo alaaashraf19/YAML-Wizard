@@ -275,10 +275,8 @@ function Chatbot() {
 
                         <div>
                             <button className={`${styles.projectButton} ${gStyles.clickable}`}
-                                // disabled={selectedProject !== null}
-                                title={selectedProject ? "Show project info" : undefined}
+                                title={selectedProject ? "Show project info" : "Open projects menu"}
                                 onClick={() => {!selectedProject? setIsMenuOpen(prev => !prev)
-                                    // : (sessionStorage.setItem("project_id", selectedProject?.id.toString()),navigate("/profile"))
                                     : setIsShowInfo(true)
                                 }}>
                                 {selectedProjectText}
@@ -314,15 +312,10 @@ function Chatbot() {
             {(confirmMessage || errorMessage) &&
             <Popup
                 btnText1={"Got it"}
-                btn1Action={null}
-                btnText2={null}
-                btn2Action={null}
                 confirmMessage={confirmMessage}
                 setConfirmMessage={setConfirmMessage}
                 errorMessage={errorMessage}
                 setErrorMessage={setErrorMessage}
-                warningMessage={null}
-                setWarningMessage={null}
                 popupRef={popupRef}
             />}
         </div>

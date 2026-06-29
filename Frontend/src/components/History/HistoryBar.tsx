@@ -1,6 +1,7 @@
 import gStyles from "../../global.module.css"
 import styles from './HistoryBar.module.css'
 import type { Pipeline } from "../../types";
+import { useHistoryStore } from "../../pages/History";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { FiFilter } from "react-icons/fi";
@@ -9,14 +10,24 @@ import { IoClose } from "react-icons/io5";
 import { HiOutlineDownload, HiOutlineUpload } from "react-icons/hi";
 import { MdDeleteOutline } from "react-icons/md";
 import { CgSync } from "react-icons/cg";
+import Popup from "../Popup/Popup";
+
 
 type HBProps = {
     pipelines: Pipeline[],
-    pipeline: Pipeline | null,
-    setPipeline: React.Dispatch<React.SetStateAction<Pipeline | null>>,
-
+    // pipeline: Pipeline | null,
+    // setPipeline: React.Dispatch<React.SetStateAction<Pipeline | null>>,
 }
-function HistoryBar({ pipelines, pipeline, setPipeline }: HBProps){
+
+function HistoryBar({ pipelines }: HBProps){
+    // const pipeline = useHistoryStore(s=>s.pipeline);
+    // const setPipeline = useHistoryStore(s=>s.setPipeline);
+    // const pipelines = useHistoryStore(s=>s.pipelines);
+    const {pipeline, setPipeline, isEdit, setIsEdit} = useHistoryStore();
+    const [tempPipeline, setTempPipeline] = useState<Pipeline | null>(null);
+    
+    const [confirmDiscard, setConfirmDiscard] = useState<string | null>(null);
+    const [warningDiscard, setWarningDiscard] = useState<string | null>(null);
     const [isHover, setIsHover] = useState<boolean>(false);
     const [hoverPipeline, setHoverPipeline] = useState<Pipeline | null>(null);
     
@@ -25,16 +36,17 @@ function HistoryBar({ pipelines, pipeline, setPipeline }: HBProps){
     const [filterGenerated, setFilterGenerated] = useState<boolean | null>(null);
     const [filterActive, setFilterActive] = useState<boolean | null>(null);
     const [filterAuthor, setFilterAuthor] = useState<string[]>([]);
-    const [filterBranch, setFilterBranch] = useState<string[]>([]);
+    // const [filterBranch, setFilterBranch] = useState<string[]>([]);
 
     const filterRef = useRef<HTMLDivElement | null>(null);
-    
+    const popupRef = useRef<HTMLDivElement>(null);
+
     const authors = useMemo(()=>{
         return[...new Set(pipelines.map(p => p.author))].sort();
     }, [pipelines]);
-    const branches  = useMemo(()=>{
-        return[...new Set(pipelines.map(p => p.branch))].sort();
-    }, [pipelines]);
+    // const branches  = useMemo(()=>{
+    //     return[...new Set(pipelines.map(p => p.branch))].sort();
+    // }, [pipelines]);
 
     // filter pipelines by query and selected fields
     const filteredPipelines = useMemo(() => {
@@ -43,11 +55,11 @@ function HistoryBar({ pipelines, pipeline, setPipeline }: HBProps){
                 p.name.toLowerCase().includes(query.toLowerCase()) &&
                 (filterGenerated === null || p.is_generated_by_wizard === filterGenerated) &&
                 (filterActive === null || p.is_active === filterActive) &&
-                (filterBranch.length === 0 || filterBranch.includes(p.branch)) &&
+                // (filterBranch.length === 0 || filterBranch.includes(p.branch)) &&
                 (filterAuthor.length === 0 || filterAuthor.includes(p.author))
             ))
             .sort((a,b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()) : [];
-    }, [pipelines, query, filterGenerated, filterActive, filterAuthor, filterBranch]);
+    }, [pipelines, query, filterGenerated, filterActive, filterAuthor]);
 
     // Close filter menu on outside click
     useEffect(
@@ -123,18 +135,18 @@ function HistoryBar({ pipelines, pipeline, setPipeline }: HBProps){
                                 onClick={() => {
                                     filterActive ? setFilterActive(null) : setFilterActive(true)
                                 }}>
-                                Active</span>
+                                Published</span>
                             <span className={`${styles.option} ${gStyles.clickable}
                                 ${filterActive === false? styles.selected : `${styles.notSelected}`}`}
                                 onClick={() => {
                                     (filterActive === false) ? setFilterActive(null) : setFilterActive(false)
                                 }}>
-                                Inactive</span>
+                                Not-Published</span>
                         </div>
 
                         <div className={styles.divider} />
 
-                        <div className={styles.filterHeader}>
+                        {/* <div className={styles.filterHeader}>
                             <span>Branch</span>
                             <IoClose onClick={() => setFilterBranch([])} title="Remove All"
                                 className={`${styles.removeFilter} ${gStyles.clickable}`}/>
@@ -150,7 +162,7 @@ function HistoryBar({ pipelines, pipeline, setPipeline }: HBProps){
                                     }}>
                                     {branch}</span>
                             ))}
-                        </div>
+                        </div> */}
 
                         <div className={styles.divider} />
 
@@ -186,8 +198,12 @@ function HistoryBar({ pipelines, pipeline, setPipeline }: HBProps){
 
                         <p className={`${styles.pipelineName} ${gStyles.clickable}`}
                             onClick={() => {
-                                setPipeline(p);
-                                sessionStorage.setItem("pipeline_id", p.id.toString());
+                                isEdit? (
+                                        setTempPipeline(p),
+                                        setConfirmDiscard("Changing the current pipeline will discard all changes"),
+                                        setWarningDiscard("This Action can not be undone!"),
+                                        setIsEdit(false)
+                                ): setPipeline(p);
                             }}>{p.name}</p>
 
                         {isHover && <div className={styles.pipelineBtns}>
@@ -200,11 +216,23 @@ function HistoryBar({ pipelines, pipeline, setPipeline }: HBProps){
                             <HiOutlineDownload onClick={()=>downloadYaml(p)} title="Download File"
                                 className={`${styles.filterIcon} ${gStyles.clickable}`}/>
                         </div>}
-                        <span className={styles.subInfo}>{p.branch}</span>
+                        <span className={styles.subInfo}>{p.commit_hash}</span>
                     </div>
                 );})}
             </div> 
             </> : <p className={styles.noPipelines}>No pipelines found.</p>}
+
+            {confirmDiscard && 
+                <Popup
+                    btnText1="Discard"
+                    btn1Action={() => {setPipeline(tempPipeline); setTempPipeline(null);}}
+                    btnText2="Cancel"
+                    confirmMessage={confirmDiscard}
+                    setConfirmMessage={setConfirmDiscard}
+                    warningMessage={warningDiscard}
+                    setWarningMessage={setWarningDiscard}
+                    popupRef={popupRef}
+                />}
         </div>
     );
 }
