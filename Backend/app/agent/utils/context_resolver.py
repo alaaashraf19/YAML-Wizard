@@ -45,7 +45,9 @@ class ContextResolver:
         return ContextResolverResponse(
             project=to_project_schema(project),
             repo=to_repository_schema(repo),
-            repo_context=to_context_package(repo_context, repo),
+            repo_context=to_context_package(repo_context),
+            project_id=project.id,
+            repo_id=repo.id,
         )
     
 
@@ -100,3 +102,57 @@ def to_context_package(repo_context: RepoContext) -> ContextPackage:
 
         notes="",
     )
+
+
+def build_context_summary(ctx: ContextPackage) -> str:
+    """
+    Builds a token-efficient summary of the repository context.
+    Prioritizes core stack info and truncates large blobs.
+    """
+    lines = []
+
+    # 1. Core Stack - (High Priority, keep clear)
+    lines.append(f"### CORE STACK")
+    lines.append(f"- Languages: {', '.join(ctx.languages) if ctx.languages else 'Unknown'}")
+    lines.append(f"- Frameworks: {', '.join(ctx.frameworks) if ctx.frameworks else 'None'}")
+    lines.append(f"- Build Tools: {', '.join(ctx.build_tools) if ctx.build_tools else 'None'}")
+    lines.append(f"- Default Branch: {ctx.default_branch}")
+
+    # 2. Commands & Env - (High Priority for YAML accuracy)
+    lines.append(f"\n### COMMANDS")
+    lines.append(f"- Build: {', '.join(ctx.build_commands) if ctx.build_commands else 'None'}")
+    lines.append(f"- Test: {', '.join(ctx.test_commands) if ctx.test_commands else 'None'}")
+    lines.append(f"- Env Vars Needed: {', '.join(ctx.env_vars) if ctx.env_vars else 'None'}")
+    
+    if ctx.services:
+        lines.append(f"- Required Services: {', '.join(ctx.services)}")
+
+    # 3. Existing CI - (Medium Priority, heavily truncated)
+    if ctx.has_existing_ci and ctx.existing_ci_content:
+        # We only need the first 1000 chars to see the structure
+        truncated_ci = ctx.existing_ci_content[:1000].strip()
+        lines.append(f"\n### EXISTING CI (TRUNCATED)\n```yaml\n{truncated_ci}\n```")
+
+    # 4. Directory Structure - (Aggressively truncated)
+    if ctx.directory_tree:
+        # The first 1000 chars usually cover the root and first-level folders
+        lines.append(f"\n### DIRECTORY STRUCTURE (ROOT)\n{ctx.directory_tree[:1000]}")
+
+    # 5. Key Configuration Files - (The "Token Killer", now optimized)
+    if ctx.key_files:
+        lines.append("\n### KEY FILE SNIPPETS")
+        # We only look at the first 5 files to prevent overflow
+        for i, (filename, content) in enumerate(ctx.key_files.items()):
+            if i >= 5: break # Limit number of files
+            
+            if content and content != "[empty]":
+                # We skip lock files as they are huge and useless for the LLM
+                if any(ext in filename for ext in ["lock", "sum", "bin"]):
+                    continue
+                
+                # Take only the first 600 characters of each config file
+                # This is usually enough for package.json or requirements.txt
+                snippet = content[:600].strip().replace("\n", " ")
+                lines.append(f"- {filename}: {snippet}...")
+
+    return "\n".join(lines)

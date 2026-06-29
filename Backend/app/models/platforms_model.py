@@ -4,6 +4,8 @@ from models.user_model import User
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from datetime import datetime, timezone
 from .project_model import Project
+
+
 class GitHubInstallation(Base):
     __tablename__ = "github_installations"
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
