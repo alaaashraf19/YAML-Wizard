@@ -38,6 +38,7 @@ async def validate_pipeline_tool(
          "errors": [{"source":..., "level":..., ...}], "warnings": [ ... ]}
     If "valid" is false, read the errors, fix the YAML, and call again; if true, return it to the user.
     """
+    print("i am inside validate")
     configurable = (config or {}).get("configurable", {})
     report = await build_report(
         yaml_content,
@@ -122,6 +123,8 @@ async def build_report(yaml_content: str, target: str, connection: Any = None, d
         report["api_endpoint"] = result.get("api_endpoint")
         report["jobs"] = result.get("jobs", [])
         # print(report)
+    
+    print("report in validate", report)
     return report
 
 

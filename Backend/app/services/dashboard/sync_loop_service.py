@@ -6,6 +6,9 @@ from database.db_engine import async_session
 from realtime.connection_manager import ws_manager
 import os
 from dotenv import load_dotenv
+
+from .yaml_sync_service import yaml_sync_service
+
 load_dotenv()
 
 
@@ -61,3 +64,10 @@ async def background_sync_loop():
         except Exception as e:
             # print(f"[auto-sync] LOOP ERROR: {e}", flush=True)
             continue
+
+# async def yaml_sync_loop():
+#     """
+#     Periodically sync YAML pipeline files from repositories.
+#     This runs independently of the CI/CD data sync.
+#     """
+#     await yaml_sync_service.start_background_sync()
