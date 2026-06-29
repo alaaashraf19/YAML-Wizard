@@ -19,7 +19,7 @@ class Pipeline(Base):
 
     commit_hash = Column(String(40), nullable=True)
     commit_author = Column(String(255), nullable=True)
-    commit_message = Column(String(500), nullable=True)
+    commit_message = Column(Text, nullable=True)
     committed_at = Column(DateTime, nullable=True)
 
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow())

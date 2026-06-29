@@ -528,14 +528,19 @@ class GitLabCollector(CICollector):
                         pipeline.commit_hash = commit_info.get("commit_hash")
                         pipeline.commit_author = commit_info.get("commit_author")
                         pipeline.commit_message = commit_info.get("commit_message")
-                        if commit_info.get("committed_at"):
+                        if commit_info and commit_info.get("committed_at"):
                             committed_at = commit_info["committed_at"]
                             if isinstance(committed_at, str):
-                                pipeline.committed_at = datetime.fromisoformat(
-                                    committed_at.replace("Z", "+00:00")
-                                )
+                                # Convert to naive UTC
+                                aware = datetime.fromisoformat(committed_at.replace("Z", "+00:00"))
+                                naive = aware.replace(tzinfo=None)
+                                pipeline.committed_at = naive
                             else:
-                                pipeline.committed_at = committed_at
+                                # If it's already a datetime, ensure it's naive
+                                if committed_at.tzinfo is not None:
+                                    pipeline.committed_at = committed_at.replace(tzinfo=None)
+                                else:
+                                    pipeline.committed_at = committed_at
                     pipeline.is_active = True
                     if not pipeline.activated_at:
                         pipeline.activated_at = datetime.utcnow()
@@ -560,14 +565,19 @@ class GitLabCollector(CICollector):
                     new_pipe.commit_hash = commit_info.get("commit_hash")
                     new_pipe.commit_author = commit_info.get("commit_author")
                     new_pipe.commit_message = commit_info.get("commit_message")
-                    if commit_info.get("committed_at"):
+                    if commit_info and commit_info.get("committed_at"):
                         committed_at = commit_info["committed_at"]
                         if isinstance(committed_at, str):
-                            new_pipe.committed_at = datetime.fromisoformat(
-                                committed_at.replace("Z", "+00:00")
-                            )
+                            # Convert to naive UTC
+                            aware = datetime.fromisoformat(committed_at.replace("Z", "+00:00"))
+                            naive = aware.replace(tzinfo=None)
+                            new_pipe.committed_at = naive
                         else:
-                            new_pipe.committed_at = committed_at
+                            # If it's already a datetime, ensure it's naive
+                            if committed_at.tzinfo is not None:
+                                new_pipe.committed_at = committed_at.replace(tzinfo=None)
+                            else:
+                                new_pipe.committed_at = committed_at
                 db.add(new_pipe)
                 await db.commit()
                 await db.refresh(new_pipe)

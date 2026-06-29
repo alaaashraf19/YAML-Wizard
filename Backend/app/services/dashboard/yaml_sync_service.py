@@ -9,7 +9,9 @@ from datetime import datetime, timezone
 from typing import Dict, Any
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload, joinedload
 
+from models import User
 from models.repository_model import Repository
 from models.pipeline_model import Pipeline
 from models.project_model import Project
@@ -20,6 +22,8 @@ from schemas.dashboard import CollectorsRepositoryDetail, RepositorySchema
 from schemas.yaml_sync_schema import YamlSyncResult, PipelineSyncResult
 from dotenv import load_dotenv
 from fastapi import HTTPException
+from realtime.connection_manager import ws_manager
+from ..platform_connectors.oauth_utils import decrypt_token
 
 load_dotenv()
 
@@ -53,14 +57,20 @@ class YAMLSyncService:
 
     # ---- Sync all YAML files for a repository ----
     async def sync_repository_yaml_files(
-        self,
-        repo_id: int,
-        db: AsyncSession
+            self,
+            repo_id: int,
+            db: AsyncSession
     ) -> YamlSyncResult:
-        """Sync all YAML files for a repository and store as Pipelines."""
-        # fetch repo
-        result = await db.execute(select(Repository).where(Repository.id == repo_id))
-        repo = result.scalar_one_or_none()
+        # Fetch repo with user and platform connections
+        result = await db.execute(
+            select(Repository)
+            .where(Repository.id == repo_id)
+            .options(
+                joinedload(Repository.user).selectinload(User.github_connections),
+                joinedload(Repository.user).selectinload(User.gitlab_connections),
+            )
+        )
+        repo = result.unique().scalar_one_or_none()
         if not repo:
             return YamlSyncResult(
                 repo_id=repo_id,
@@ -84,11 +94,26 @@ class YAMLSyncService:
 
         ctx = self._create_context_from_repo(repo)
 
-        # choose collector
+        # Choose collector based on platform
+        user = repo.user
         if repo.platform == "github":
-            collector = GitHubCollector()
+            github_conn = user.github_connections[0] if user.github_connections else None
+            token = github_conn.access_token if github_conn else None
+            if not token:
+                raise HTTPException(
+                    status_code=401,
+                    detail="No GitHub token provided"
+                )
+            collector = GitHubCollector(token=decrypt_token(token))
         elif repo.platform == "gitlab":
-            collector = GitLabCollector()
+            gitlab_conn = user.gitlab_connections[0] if user.gitlab_connections else None
+            token = gitlab_conn.access_token if gitlab_conn else None
+            if not token:
+                raise HTTPException(
+                    status_code=401,
+                    detail="No Gitlab token provided"
+                )
+            collector = GitLabCollector(token=decrypt_token(token))
         else:
             return YamlSyncResult(
                 repo_id=repo_id,
@@ -98,15 +123,26 @@ class YAMLSyncService:
                 message=f"Unsupported platform: {repo.platform}"
             )
 
+        repo_name = repo.full_name
+        repo_platform = repo.platform
         try:
             saved, updated = await collector.save_yaml_files(ctx, db)
-            # Update last_synced_at
-            repo.last_synced_at = datetime.now(timezone.utc)
             await db.commit()
+            # Broadcast if there were any changes
+            if saved + updated > 0:
+                await ws_manager.broadcast(repo_id, {
+                    "type": "yaml_sync_complete",
+                    "repo_id": repo_id,
+                    "files_synced": saved,
+                    "files_updated": updated,
+                    "files_found": saved + updated,
+                    "message": f"Synced {saved} new, updated {updated} existing files"
+                })
+
             return YamlSyncResult(
                 repo_id=repo_id,
-                repo_name=repo.full_name,
-                platform=repo.platform,
+                repo_name=repo_name,
+                platform=repo_platform,
                 files_synced=saved,
                 files_updated=updated,
                 files_found=saved + updated,
@@ -117,15 +153,14 @@ class YAMLSyncService:
             await db.rollback()
             return YamlSyncResult(
                 repo_id=repo_id,
-                repo_name=repo.full_name,
-                platform=repo.platform,
+                repo_name=repo_name,
+                platform=repo_platform,
                 success=False,
                 errors=[str(e)],
                 message=f"Sync failed: {str(e)}"
             )
         finally:
             await collector.close()
-
 
     async def sync_single_pipeline(
         self,
@@ -186,14 +221,19 @@ class YAMLSyncService:
                 pipeline.commit_author = file_data["commit_author"]
             if file_data.get("commit_message"):
                 pipeline.commit_message = file_data["commit_message"]
-            if file_data.get("committed_at"):
+            if file_data and file_data.get("committed_at"):
                 committed_at = file_data["committed_at"]
                 if isinstance(committed_at, str):
-                    pipeline.committed_at = datetime.fromisoformat(
-                        committed_at.replace("Z", "+00:00")
-                    )
+                    # Convert to naive UTC
+                    aware = datetime.fromisoformat(committed_at.replace("Z", "+00:00"))
+                    naive = aware.replace(tzinfo=None)
+                    pipeline.committed_at = naive
                 else:
-                    pipeline.committed_at = committed_at
+                    # If it's already a datetime, ensure it's naive
+                    if committed_at.tzinfo is not None:
+                        pipeline.committed_at = committed_at.replace(tzinfo=None)
+                    else:
+                        pipeline.committed_at = committed_at
             if not pipeline.activated_at:
                 pipeline.activated_at = datetime.utcnow()
 
