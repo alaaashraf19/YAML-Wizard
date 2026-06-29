@@ -86,13 +86,23 @@ def build_github_tools(manager: MCPSessionManager) -> list[StructuredTool]:
             return f"[ERROR] Could not fetch {path}: {exc}"
 
     def list_directory(owner: str, repo: str, path: str = "", ref: str = "HEAD") -> str:
+        # Fatal: if we can't list the root we have nothing — map MCP errors to clear exceptions
         try:
             return manager.call_tool(
                 "get_file_contents",
                 {"owner": owner, "repo": repo, "path": path, "ref": ref},
             )
-        except Exception as exc:
-            return f"[ERROR] Could not list directory {path}: {exc}"
+        except* Exception as eg:
+            # Python 3.11+: MCP errors arrive wrapped in an ExceptionGroup
+            for exc in eg.exceptions:
+                msg = str(exc).lower()
+                if "401" in msg or "unauthorized" in msg or "bad credentials" in msg:
+                    raise PermissionError("GitHub token is invalid or expired.") from exc
+                if "403" in msg or "forbidden" in msg:
+                    raise PermissionError("GitHub token does not have access to this repository.") from exc
+                if "404" in msg or "not found" in msg:
+                    raise FileNotFoundError("GitHub repository not found.") from exc
+            raise
 
     def search_code(query: str, owner: str, repo: str) -> str:
         try:
