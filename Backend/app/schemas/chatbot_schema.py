@@ -29,6 +29,7 @@ class ChatSessionResponse(BaseModel):
     session_name: str
     created_at: datetime
     updated_at: datetime
+    messages: Optional[List[ChatMessage]] = None
     project_id: Optional[int] = None
     project: Optional[ProjectResponse] = None
     pipeline: Optional[PipelineInfo] = None

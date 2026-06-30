@@ -149,6 +149,7 @@ class GitLabConnector(oauthConnector):
     async def get_valid_token(self, connection, db):
         valid= await self.is_token_valid(connection)
         if not valid:
+            print("calling refresh")
             connection = await self.refresh_gitlab_token(connection, db)
 
         return decrypt_token(connection.access_token)

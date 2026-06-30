@@ -4,11 +4,12 @@ GitHub Repo Context Agent
 Deterministic repo scanner using the @modelcontextprotocol/server-github MCP server.
 
 Steps:
-  1. List repo root via MCP
-  2. Fetch key config / dependency files
-  3. Fetch default branch from GitHub API
-  4. Delegate all detection to agent/utils/detection.py
-  5. Return a ContextPackage
+  1. Validate URL format and repo existence via GitHub API
+  2. List repo root via MCP
+  3. Fetch key config / dependency files
+  4. Fetch default branch from GitHub API
+  5. Delegate all detection to agent/utils/detection.py
+  6. Return a ContextPackage
 
 Detection logic lives exclusively in agent/utils/detection.py — nothing is
 duplicated here.
@@ -19,7 +20,12 @@ import json
 import logging
 import os
 
-from agent.tools.github_mcp_tools import MCPSessionManager, build_github_tools
+from agent.tools.github_mcp_tools import (
+    MCPSessionManager,
+    build_github_tools,
+    validate_github_url,
+    validate_repo_exists,
+)
 from agent.utils.detection import build_context_package, truncate
 from schemas.context_package import ContextPackage
 
@@ -126,8 +132,16 @@ def _get_default_branch_via_api(owner: str, repo: str, github_token: str) -> str
     """Fetch default branch directly from GitHub REST API."""
     try:
         import httpx
-        headers = {"Authorization": f"Bearer {github_token}", "Accept": "application/vnd.github+json"}
-        resp = httpx.get(f"https://api.github.com/repos/{owner}/{repo}", headers=headers, timeout=10)
+        headers = {
+            "Authorization": f"Bearer {github_token}",
+            "Accept": "application/vnd.github+json",
+            "X-GitHub-Api-Version": "2022-11-28",
+        }
+        resp = httpx.get(
+            f"https://api.github.com/repos/{owner}/{repo}",
+            headers=headers,
+            timeout=10,
+        )
         resp.raise_for_status()
         return resp.json().get("default_branch", "main")
     except Exception as exc:
@@ -149,19 +163,31 @@ def run_github_agent(
     Args:
         repo_url:     Full GitHub URL (any format).
         github_token: Personal access token with repo read access.
+
+    Raises:
+        ValueError        — malformed / non-GitHub URL
+        FileNotFoundError — repo does not exist or is not accessible
+        PermissionError   — bad token or insufficient permissions
+        RuntimeError      — unexpected GitHub API or MCP error
     """
-    # ── Parse owner/repo from URL ─────────────────────────────────────────
-    url_clean = repo_url.rstrip("/")
-    for marker in ("/tree/", "/blob/", "/commit/", "/releases", "/issues", "/pulls"):
-        if marker in url_clean:
-            url_clean = url_clean[:url_clean.index(marker)]
-    parts = url_clean.rstrip("/").split("/")
-    if len(parts) < 2:
-        raise ValueError(f"Cannot parse owner/repo from URL: {repo_url}")
-    owner, repo = parts[-2], parts[-1]
-    repo = repo.removesuffix(".git")
+    # ── Step 0: validate URL format ───────────────────────────────────────
+    try:
+        owner, repo = validate_github_url(repo_url)
+    except ValueError as exc:
+        logger.error("Invalid GitHub URL '%s': %s", repo_url, exc)
+        raise
 
     logger.info("GitHubAgent starting: %s/%s", owner, repo)
+
+    # ── Step 0b: validate repo exists on GitHub ───────────────────────────
+    # This gives a clear, fast error before spending time on MCP calls.
+    try:
+        validate_repo_exists(owner, repo, github_token)
+    except (FileNotFoundError, PermissionError, RuntimeError) as exc:
+        logger.error("Repo validation failed for %s/%s: %s", owner, repo, exc)
+        raise
+
+    logger.info("Repo validated: %s/%s", owner, repo)
 
     # ── Build MCP tools ───────────────────────────────────────────────────
     manager  = MCPSessionManager(github_token=github_token)
@@ -173,7 +199,8 @@ def run_github_agent(
         return result if isinstance(result, str) else str(result)
 
     # ── Step 1: list root ─────────────────────────────────────────────────
-    raw_root = call("list_directory", owner=owner, repo=repo, path="")
+    # Use path="." — the GitHub MCP server does not accept path=""
+    raw_root = call("list_directory", owner=owner, repo=repo, path=".")
     plain_tree, root_entries = _parse_directory_listing(raw_root)
     logger.info("Root listing: %d entries", len(root_entries))
 

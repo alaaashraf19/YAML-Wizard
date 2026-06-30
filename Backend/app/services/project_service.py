@@ -13,7 +13,6 @@ from .dashboard.repos_services import _parse_repo_info, _get_gitlab_proj_id, get
 from .platform_connectors.oauth_utils import decrypt_token
 from sqlalchemy.exc import IntegrityError
 from fastapi.concurrency import run_in_threadpool
-import asyncio
 import logging
 
 logger = logging.getLogger(__name__)
@@ -197,13 +196,13 @@ async def create_project(project: ProjectCreate, user_id: int, db: AsyncSession)
             platform=detected_platform,
             token=token,
         )
-    except Exception:
+    except* PermissionError as eg:
         await db.delete(repo)
         await db.commit()
         logger.exception("Failed to fetch repository context for repo_id=%s", repo.id)
         raise HTTPException(
             status_code=500,
-            detail="Failed to fetch repository context."
+            detail="Failed to fetch repository context. Check the URL and your access permissions.",
         )
 
     new_project = Project(
@@ -235,19 +234,20 @@ async def create_project(project: ProjectCreate, user_id: int, db: AsyncSession)
 
 
 async def _fetch_and_save_repo_context(repo_id: int, repo_url: str, platform: str, token: str):
-    """Background task — opens its own DB session."""
+    """Fetch repo context and persist it.  Raises on fatal errors so the
+    caller can roll back the repo row and surface a proper HTTP error."""
     from database.db_engine import async_session
 
-    try:
-        if platform == "github":
-            from agent.github_agent import run_github_agent
-            pkg = await run_in_threadpool(run_github_agent, repo_url=repo_url, github_token=token)
-        else:
-            from agent.gitlab_agent import run_gitlab_agent
-            pkg = await run_in_threadpool(run_gitlab_agent, repo_url=repo_url, gitlab_token=token)
-    except Exception as exc:
-        logger.error("Agent failed for repo_id=%s: %s", repo_id, exc, exc_info=True)
-        return
+    # Fatal errors (bad URL, bad token, repo not found, network failure)
+    # are allowed to propagate — the caller handles cleanup.
+    # Non-fatal gaps (e.g. missing optional files) are already handled
+    # gracefully inside the agents themselves.
+    if platform == "github":
+        from agent.github_agent import run_github_agent
+        pkg = await run_in_threadpool(run_github_agent, repo_url=repo_url, github_token=token)
+    else:
+        from agent.gitlab_agent import run_gitlab_agent
+        pkg = await run_in_threadpool(run_gitlab_agent, repo_url=repo_url, gitlab_token=token)
 
     context_fields = dict(
         languages           = pkg.languages,

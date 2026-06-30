@@ -16,5 +16,8 @@ export default defineConfig(({ mode }) => {
       react(),
       babel({ presets: [reactCompilerPreset()] })
     ],
+    server: {
+      allowedHosts: true
+    }
   }
 })

@@ -18,16 +18,17 @@ function ProjectsTab({ activeTab, projects, setProjects, setProjectInfoId, setCo
     const [projectName, setProjectName] = useState<string>('');
     const [repoURL, setRepoUrl] = useState<string>('');
     const [targetPlatform, setTargetPlatform] = useState<Platform>('github' as Platform);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const api_url = import.meta.env.VITE_API_URL;
     const navigate = useNavigate();
 
-    // sort sessions 
+    // sort sessions
     const projectsSorted = useMemo(() => {
         return [...projects].sort((a, b) =>
             new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
         )}, [projects]);
-    
+
     //get user projects
     useEffect(() => {
         const fetchProjects = async () => {
@@ -63,6 +64,7 @@ function ProjectsTab({ activeTab, projects, setProjects, setProjectInfoId, setCo
             return;
         }
         setErrorMessage("");
+        setIsLoading(true);
 
         try{
             const res = await fetch(`${api_url}/projects`, {
@@ -97,6 +99,8 @@ function ProjectsTab({ activeTab, projects, setProjects, setProjectInfoId, setCo
             console.error("Failed to add project:", e);
             const msg = e?.response?.data?.detail?.[0]?.msg || "Server Error. Please try again later.";
             setErrorMessage(msg);
+        } finally {
+            setIsLoading(false);
         }
     };
     const validateProjectAdd = () : string | null => {
@@ -149,7 +153,7 @@ function ProjectsTab({ activeTab, projects, setProjects, setProjectInfoId, setCo
                         </label>
                     </div> */}
 
-                    <button type="submit" className={`${gStyles.clickable} ${styles.button}`}>Add Project</button>
+                    <button type="submit" disabled={isLoading} className={`${gStyles.gButton} ${styles.button}`}>{isLoading ? "Adding project..." : "Add Project"}</button>
                 </form>
             }
 
@@ -171,7 +175,7 @@ function ProjectsTab({ activeTab, projects, setProjects, setProjectInfoId, setCo
             )}
 
             {!activeTab &&
-                <button className={`${gStyles.clickable} ${styles.button}`}
+                <button className={`${gStyles.gButton} ${styles.button}`}
                     onClick={() => navigate(`/profile?tab=Projects`)}>Add Project</button>}
     </>);
 }

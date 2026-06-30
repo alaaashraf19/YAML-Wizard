@@ -18,28 +18,41 @@
     to {opacity: 1;}
 }
 .popup {
-    background-color: rgb(42, 34, 80);
+    /* background-color: rgb(42, 34, 80); */
+    background: radial-gradient(
+        circle,
+        rgb(48, 53, 150)30%,
+        rgb(13, 0, 48)
+    );
     margin-top: 15vh;
     padding: 40px 30px;
-    width: fit-content;
+    min-width: 30%;
+    max-width: 80%;
 
     border-radius: 15px;
     box-shadow: 10px 10px 30px rgba(0,0,0,0.4);
     color: white;
     font-size: 20px;
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-
+    font-family: "Plus Jakarta Sans", sans-serif;
     display: flex;
     flex-direction: column;
     align-items: center;
+    text-align: center;
 }
 .errorMsg{
-    color: rgb(255, 99, 71);
+    color: rgb(255, 140, 160);
+    text-shadow: 0 0 10px rgba(255, 80, 110, 0.25);
     margin: 10px;
-    font-size: 20px;
-    align-self: center;
+    font-size: 24px;
+    text-align: center;
+}
+.questionMsg{
+    font-size: 22px;
+    margin: 10px;
+    font-weight: 600;
 }
 .confirmMsg{
+    color: rgb(110, 235, 170);
     font-size: 22px;
     margin: 10px;
     font-weight: 600;
@@ -54,8 +67,8 @@
 .popupBtns {
     display: flex;
     justify-content: center;
-    gap: 20%;
-    margin-top: 20px;
+    gap: 40%;
+    margin-top: 40px;
 }
 .popupBtn {
     color: white;
@@ -63,8 +76,12 @@
     font-size: 16px;
     
     border-radius: 15px;
-    background-color: rgb(28, 22, 60);
-    border: 2px solid rgb(63, 56, 99);
+    /* background-color: rgb(28, 22, 60); */
+    background: radial-gradient(
+        circle,
+        rgb(27, 31, 99)30%,
+        rgb(13, 0, 48)
+    );
 }
 .popupBtn:hover {
     background-color: rgb(36, 28, 75);

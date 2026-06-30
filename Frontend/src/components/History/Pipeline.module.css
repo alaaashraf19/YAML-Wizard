@@ -1,0 +1,232 @@
+.pipeline{
+    flex: 1;
+    margin: 0 15px 10px 5px;
+    padding:15px;
+    border-radius: 20px;
+    background-color: rgb(0, 0, 0);
+    /* color: black; */
+    overflow-y:auto;
+    overflow-x: hidden;
+    transition: color 0.2s ease, background-color 0.2s ease;
+}
+.bright{
+    background-color: rgb(201, 201, 201);
+    color: black;
+}
+.dark{
+    background-color: rgb(14, 14, 14);
+    color: white;
+}
+.btnsContainer{
+    position: sticky;
+    top: 0;
+    display: flex;
+    align-items: start;
+}
+.addBtn {
+    padding: 10px 20px;
+    margin-bottom: 10px;
+
+    background:local;
+    border: 1px solid rgba(111, 111, 112, 0.5);
+    border-radius: 15px;
+
+    font-size: 16px;
+    color: inherit;
+    box-shadow:0 6px 18px rgba(0,0,0,.25);
+    transition: background-color 0.3s ease;
+}
+.addBtn:hover {background-color: rgb(113, 113, 113);}
+.submitBtn {
+    background: 0;
+    border: 0;
+    color: rgb(30, 160, 56);
+    font-size: 30px;
+    transition: font-size 0.3s ease;
+}
+.discardBtn{
+    margin-left: auto;
+    background: 0;
+    border: 0;
+    color: rgb(172, 58, 58);
+    font-size: 30px;
+    transition: font-size 0.3s ease;
+}
+.submitBtn:hover, .discardBtn:hover{font-size: 32px;}
+
+.editBtn{
+    margin-left: auto;
+    background: 0;
+    border: 0;
+    font-size: 24px;
+
+    transition: font-size 0.3s ease;
+}
+.editBtn:hover{
+    font-size: 28px;
+    color: rgb(123, 92, 255);
+}
+
+.jobContainer{
+    display:flex;
+    margin-bottom:25px;
+    border-radius:15px;
+    background-color:rgba(167, 167, 167, 0.3);
+    border:1px solid rgba(255,255,255,.05);
+    transform-origin: top left;
+}
+.editBar{
+    width: 45px;
+    display: flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    flex-shrink:0;
+
+    border: 1px solid rgba(111, 111, 112, 0.5);
+    padding: 10px;
+    border-radius: 15px;
+}
+.collapseBtn{
+    font-size: 20px;
+    margin: 5px;
+    margin-bottom: auto;
+    transition: color 0.25s ease, transform 0.3s ease;
+}
+.orderBtn{
+    font-size: 20px;
+    margin: 5px;
+    transition: color 0.25s ease, transform 0.3s ease;
+}
+.deleteBtn{
+    font-size: 20px;
+    margin: 5px;
+    margin-top: auto;
+    transition: color 0.25s ease, transform 0.3s ease;
+}
+.dragBtn{
+    font-size: 16px;
+    outline: 0;
+    margin: 0 10px;
+    cursor:grab;
+    transition: color 0.25s ease, transform 0.3s ease;
+}
+.deleteBtn:hover, .orderBtn:hover, .collapseBtn:hover, .dragBtn:hover{
+    color: rgb(123,92,255);
+    transform:scale(1.1);
+}
+
+.job{
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    min-height: 0;
+    width: 100%;
+}
+
+/*--------------------viewer--------------- */
+.yamlLine{
+    display:flex;
+    align-items:center;
+    gap:15px;
+    font-family:Consolas, monospace;
+    line-height:28px;
+}
+.lineText {
+    flex: 1;
+    white-space: pre-wrap;
+    word-break: break-word;
+
+    font-family: Consolas, monospace;
+    font-size: 15px;
+    line-height: 28px;
+}
+
+.jobContent{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+.lineNumber {
+    flex-shrink: 0;
+    width: 35px;
+
+    color: rgb(140, 140, 170);
+
+    line-height: 28px;
+    text-align: right;
+    user-select: none;
+}
+.lineNumber span {
+    display: block;
+}
+.yamlInput {
+    flex: 1;
+    width: 100%;
+    /* min-height: 250px; */
+
+    background: transparent;
+    border: none;
+    outline: none;
+    resize: none;
+
+    color: inherit;
+
+    font-family: Consolas, monospace;
+    font-size: 15px;
+    line-height: 28px;
+
+    padding: 0;
+    margin: 0;
+
+    white-space: pre;
+    overflow: auto;
+    box-sizing: border-box;
+    tab-size: 2;
+}
+.yamlInput:hover{background:rgba(255,255,255,.03);}
+.yamlInput:focus{background:rgba(255,255,255,.08);}
+
+.themeBtn{
+    position:absolute;
+    bottom: 25px;
+    right: 100px;
+    width:40px;
+    height:40px;
+
+    border-radius: 50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    cursor:pointer;
+}
+.themeBtn svg{
+    position:absolute;
+    font-size:22px;
+    transition:
+        opacity .35s ease,
+        transform .35s ease,
+        filter .35s ease,
+        rotate .35s ease;
+}
+.sunIcon{
+    opacity:1;
+    transform:scale(1) rotate(0deg);
+}
+.moonIcon{
+    opacity:0;
+    transform:scale(.6) rotate(-90deg);
+}
+.dark .sunIcon{
+    opacity:0;
+    transform:scale(.6) rotate(90deg);
+}
+.dark .moonIcon{
+    opacity:1;
+    transform:scale(1) rotate(0deg);
+}
+.themeBtn:hover svg{
+    filter:drop-shadow(0 0 8px rgba(123,92,255,.5));
+    transform:scale(1.1);
+}

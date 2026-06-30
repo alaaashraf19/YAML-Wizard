@@ -95,7 +95,7 @@ function SecurityTab({ setConfirmMessage, setErrorMessage }: SecurityProps) {
                 showPassword={showConfirmPassword}
                 setShowPassword={setShowConfirmPassword}
             />
-            <button type="submit" className={`${gStyles.clickable} ${styles.button}`}>Change Password</button>
+            <button type="submit" className={`${gStyles.gButton} ${styles.button}`}>Change Password</button>
         </form>
     );
 }
