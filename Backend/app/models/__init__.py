@@ -6,3 +6,4 @@ from .project_model import Project
 from .pipeline_model import Pipeline
 from .chat_session_model import ChatSession
 from .chat_message_model import ChatMessage
+from .dry_run_model import DryRunHistory

@@ -120,10 +120,11 @@ class ChatbotAgent:
      
     async def invoke(self, message: str, session_id: int, context: ContextResolverResponse | None, 
                      context_summary :str | None, chat_history: List[Dict[str, str]] = None, db: Optional[Any] = None, 
-                     gitlab_connection: Optional[Any] = None, user_id: Optional[int] = None, project_id: Optional[int] = None,) -> str:
+                     gitlab_connection: Optional[Any] = None, user_id: Optional[int] = None, project_id: Optional[int] = None,
+                     gitlab_project_id: Optional[Any] = None) -> str:
         lc_messages = self.to_lc_messages(message, chat_history)
         
-        #langchain uses the db (the active session) and gitlab_connection in the validation tool
+        #langchain uses the db (the active session), gitlab_connection and gitlab_project_id in the validation tool
         #since it sends the yaml and determines the platform, it can't determine the connection token and the llm can't produce them
         #so we send these parameters into a runnable config that propagates along the graph and is not part of the prompt (hidden from the llm and ready to use not waiting to be filled)
         #so we are delivering request‑scoped runtime data to a tool without involving the model.
@@ -131,6 +132,7 @@ class ChatbotAgent:
                   {
                     "db": db, 
                     "gitlab_connection": gitlab_connection,
+                    "gitlab_project_id": gitlab_project_id,
                     "session_id": session_id,
                     "user_id": user_id,
                     "project_id": project_id,
