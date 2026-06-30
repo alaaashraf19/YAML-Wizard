@@ -178,8 +178,6 @@ class ChatbotService:
             project_id = session.project_id,
             chat_history=chat_history,
             db=db,
-            user_id=user_id,
-            project_id=project_id
         )
 
         user_msg, bot_msg = await self.save_conversation_turn(
@@ -336,8 +334,11 @@ class ChatbotService:
     )->ChatSessionResponse:
         result = await db.execute(
             select(ChatSession)
-            .options(joinedload(ChatSession.project),
-                     joinedload(ChatSession.pipeline) )
+            .options(
+                joinedload(ChatSession.project),
+                joinedload(ChatSession.project, Project.repository),
+                joinedload(ChatSession.pipeline),
+            )
             .where(ChatSession.user_id == user_id,ChatSession.pipeline_id == pipeline_id)
         )
         session =  result.unique().scalar_one_or_none()
@@ -346,6 +347,8 @@ class ChatbotService:
                 status_code=404,
                 detail="Chat session not found or access denied"
             )
+        messages = await self.get_session_messages(user_id,session.id,db)
+
         return ChatSessionResponse(
             id=session.id,
             session_name=session.session_name,
@@ -360,7 +363,8 @@ class ChatbotService:
                 "repo_url": session.project.repository.url,
                 "platform": session.project.repository.platform,
                 "created_at": session.project.created_at,
-                "updated_at": session.project.updated_at
+                "updated_at": session.project.updated_at,
+                "branch" : session.project.repository.default_branch,
             } if session.project else None,
             pipeline={
                 "id": session.pipeline_id,
@@ -374,6 +378,8 @@ class ChatbotService:
                 "updated_at": session.pipeline.updated_at,
                 "activated_at": session.pipeline.activated_at,
             } if session.pipeline else None,
+            messages=messages
+            
         )
 
     async def get_session_with_messages(
@@ -385,7 +391,7 @@ class ChatbotService:
         # session = await self.get_session_if_owned(user_id,session_id,db)
         result = await db.execute(
             select(ChatSession)
-            .options(joinedload(ChatSession.project))
+            .options(joinedload(ChatSession.project),joinedload(ChatSession.pipeline))
             .where(ChatSession.id == session_id,ChatSession.user_id == user_id)
         )
 

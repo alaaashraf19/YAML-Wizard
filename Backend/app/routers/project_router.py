@@ -30,7 +30,7 @@ async def getUserProjects(current_user:User = Depends(get_current_user),db: Asyn
 async def getProject(project_id:int, current_user:User = Depends(get_current_user),db: AsyncSession = Depends(get_db)):
     return await get_project_by_id(project_id,current_user.id,db)
 
-@router.get("/{project_id}/sessions",response_model=List[ChatSessionResponse])
+@router.get("/{project_id}/sessions",response_model=List[ProjectSession])
 async def get_sessions_of_project(
         project_id: int, db: AsyncSession = Depends(get_db),
         current_user: User = Depends(get_current_user)):
@@ -38,15 +38,10 @@ async def get_sessions_of_project(
     sessions = await chatbot_service.get_project_sessions(
         user_id=current_user.id,project_id=project_id,db=db )
     return [
-        ChatSessionResponse(
+        ProjectSession(
             id=session.id,
             session_name=session.session_name,
-            updated_at=session.updated_at,
-            project_id=session.project_id,
-            project={
-                "id": session.project_id,
-                "name": session.project.project_name
-            } if session.project else None,
+            updated_at=session.updated_at
         )
         for session in sessions
     ]

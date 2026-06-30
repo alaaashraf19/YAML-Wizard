@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { VscDebugDisconnect } from "react-icons/vsc";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md"
-import Popup from "../Popup/Popup";
 
 
 type PlatformConnection = {
@@ -39,37 +38,27 @@ function PlatformsTab({ setConfirmMessage, setWarningMessage, setErrorMessage }:
     const [loadingPlatform, setLoadingPlatform] = useState<string>("");
     const [openInstalls, setOpenInstalls] = useState<boolean>(true);
     const [openRepos, setOpenRepos] = useState<boolean>(true);
-    const [connectReturn, setConnectReturn] = useState<string | null>("");
 
     const [searchParams] = useSearchParams();
     const api_url = import.meta.env.VITE_API_URL;
 
     //check for url after connection to show popup
     useEffect(() => {
-        console.log('SearchParams:', searchParams.toString()); // Debug log
         const platform = Platforms.find(p => searchParams.get(p) !== null);
-        console.log('Found platform:', platform); // Debug log
-        if (!platform) {
-            console.log('No platform found in URL');
-            return;
-        }
+        
+        if (!platform) return;
 
         const connectionStatus = searchParams.get(platform);
-        const reason = searchParams.get("reason");
-        console.log('Status:', connectionStatus, 'Reason:', reason); // Debug log
 
+        localStorage.setItem('connection_result', JSON.stringify({
+            platform: platform,
+            status: connectionStatus
+        }));
+        
         if (connectionStatus === "success") {
-            console.log('Success! Posting message and setting confirm message');
-            window.opener?.postMessage(
-                { type: "connected" },
-                window.location.origin
-            );
-            setConfirmMessage(`${platform.toUpperCase()} connected successfully`);
-            // window.close();
-        }
-
-        if (connectionStatus === "error") {
-            setErrorMessage(reason ?? `Failed to connect ${platform}.`);
+            window.close();
+        } else if (connectionStatus === "error") {
+            setErrorMessage(`Failed to connect ${platform}.`);
         }
     }, [searchParams]);
 
@@ -161,50 +150,34 @@ function PlatformsTab({ setConfirmMessage, setWarningMessage, setErrorMessage }:
 
     const handleConnectPlatfrom = (platform: Platform) => {
         setLoadingPlatform(platform);
-
         const url = `${api_url}/platform/${platform.toLowerCase()}/connect`;
-        const newTab = window.open(url, "_blank", "noopener");
+        window.open(url, "_blank", "noopener");
 
-        // setTimeout(() => {
-        //     window.open(url, "_blank", "noopener")
-        // }, 100);
-
-        const timer = setInterval(() => {
-            if (newTab?.closed) {
-                clearInterval(timer);
-                checkConnected();
+        const handleStorage = (e: StorageEvent) => {
+            if (e.key === 'connection_result' && e.newValue) {
+                const data = JSON.parse(e.newValue);
+                
+                if (data.status === "success") {
+                    setConfirmMessage(`${data.platform.toUpperCase()} connected successfully`);
+                    checkConnected();
+                } else if (data.status === "error") {
+                    setErrorMessage(`Failed to connect ${data.platform}.`);
+                }
+                
+                localStorage.removeItem('connection_result');
+                window.removeEventListener('storage', handleStorage);
+                setLoadingPlatform("");
             }
-        }, 500);
+        };
 
-        setLoadingPlatform("");
+        window.addEventListener('storage', handleStorage);
     };
-    //when the redirection comeback to this page
-    useEffect(() => {
-        const handleMessage = (event: MessageEvent) => {
-            if (event.origin !== window.location.origin) return;
-
-            if (event.data.type === "connected") {
-                console.log("Connection completed!");
-                setConnectReturn("Connection Completed! You can close this window")
-            }
-        };
-
-        window.addEventListener("message", handleMessage);
-
-        return () => {
-            window.removeEventListener("message", handleMessage);
-        };
-    }, []);
     
     const handleInstallApp = () => {
         setLoadingPlatform("install");
 
         const url = `${api_url}/github/install_app`;
         const newTab = window.open(url, "_blank", "noopener");
-
-        setTimeout(() => {
-            window.open(url, "_blank", "noopener")
-        }, 100);
 
         const timer = setInterval(() => {
             if (newTab?.closed) {
@@ -213,6 +186,8 @@ function PlatformsTab({ setConfirmMessage, setWarningMessage, setErrorMessage }:
                 getRepos();
             }
         }, 500);
+        getInstalls();
+        getRepos();
 
         setLoadingPlatform("");
     };
@@ -311,7 +286,7 @@ function PlatformsTab({ setConfirmMessage, setWarningMessage, setErrorMessage }:
 
                             <ul className={styles.list}>
                                 {installations.length > 0 ? (<>
-                                    <li className={styles.subInfo}></li>
+                                    <li className={styles.subInfo}>Selected or ALL / Account Owner</li>
                                     {installations.map((ins, index) => (
                                         <li key={index}>
                                             <div className={styles.listItem}>
@@ -360,13 +335,12 @@ function PlatformsTab({ setConfirmMessage, setWarningMessage, setErrorMessage }:
                             </ul>
                         </div>
                         <button onClick={handleInstallApp} className={`${gStyles.gButton}`}
-                            title="Install app to add more repositories" disabled={loadingPlatform === "install"}>
+                            title="Install app to add repositories" disabled={loadingPlatform === "install"}>
                             {loadingPlatform === "install" ? "Connecting .." :"Install App & Manage Repos"}
                         </button>
                     </div>}
                 </div>
             </div>))}
-            {connectReturn && <Popup setConfirmMessage={setConnectReturn} />}
         </div>
     );
 }

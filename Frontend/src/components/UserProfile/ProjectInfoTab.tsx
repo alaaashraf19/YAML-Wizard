@@ -30,7 +30,7 @@ function ProjectInfoTab({ projectInfoId, setProjectInfoId, projects, setProjects
     const [errorEdit, setErrorEdit] = useState<string | null>("");
     const [editMode, setEditMode] = useState<boolean>(false);
     const [selectedProject, setSelectedProject] = useState<Project>();
-    const [confirmDelete, setConfirmDelete] = useState<string | null>("");
+    const [askDelete, setAskDelete] = useState<string | null>("");
     
     const localPopupRef = useRef<HTMLDivElement>(null);
     const navigate = useNavigate();
@@ -180,13 +180,13 @@ function ProjectInfoTab({ projectInfoId, setProjectInfoId, projects, setProjects
 
     return(
         <div className={popupStyles.popupLayover}>
-            {confirmDelete? 
+            {askDelete? 
                 <Popup
                     btnText1={"Delete"}
                     btn1Action={handleDelete}
                     btnText2={"Cancel"}
-                    confirmMessage={confirmDelete}
-                    setConfirmMessage={setConfirmDelete}
+                    questionMessage={askDelete}
+                    setQuestionMessage={setAskDelete}
                     popupRef={popupRef}
                 />
                 : <div className={`${styles.infoPopup} ${popupStyles.popup}`} ref={editMode? null : infoRef}>
@@ -228,7 +228,7 @@ function ProjectInfoTab({ projectInfoId, setProjectInfoId, projects, setProjects
                         </div> */}
 
                         <button type="submit" title="Confirm Edit"
-                            className={`${gStyles.clickable} ${styles.button} ${styles.editBtn}`}>
+                            className={`${gStyles.gButton} ${styles.button} ${styles.editBtn}`}>
                             Edit
                         </button>
                     </form>
@@ -244,7 +244,7 @@ function ProjectInfoTab({ projectInfoId, setProjectInfoId, projects, setProjects
                 </>) : (<>
                     <div className={styles.infoBtns}>
                         <MdDeleteOutline className={`${gStyles.clickable} ${styles.infoBtn}`} title="Delete Project"
-                            onClick={() => setConfirmDelete("Delete project '" + selectedProject?.project_name + "' ?")}/>
+                            onClick={() => setAskDelete("Delete project '" + selectedProject?.project_name + "' ?")}/>
                         <MdEdit className={`${gStyles.clickable} ${styles.infoBtn}`} title="Edit Info" 
                             onClick={() => {
                                 setEditMode(true);
@@ -312,6 +312,10 @@ export function ProjectSubInfo({ selectedProject }:subProps){
         <div className={styles.infoBar}>
             <p className={styles.infoLabel}>Platform</p>
             <p className={styles.infoText}>{selectedProject?.platform?.toUpperCase() ?? loadingText}</p>
+        </div>
+        <div className={styles.infoBar}>
+            <p className={styles.infoLabel}>Branch</p>
+            <p className={styles.infoText}>{selectedProject?.branch?.toUpperCase() ?? loadingText}</p>
         </div>
 
         <div className={styles.infoBar}>

@@ -1,9 +1,9 @@
 import gStyles from "../../global.module.css"
 import styles from './Pipeline.module.css'
 import ChatbotBubble from './ChatbotBubble';
-import type { Job, Pipeline } from '../../types';
+import type { Job } from '../../types';
 import { useHistoryStore } from "../../pages/History";
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 
 import { MdEdit } from "react-icons/md";
 import { MdBrightness6 } from "react-icons/md";
@@ -17,14 +17,7 @@ type ViewerProps = {
 function PipelineViewer({ jobs }:ViewerProps){
     const {isDark, setIsDark, setIsEdit, pipeline} = useHistoryStore();
     const [isChatOpen, setIsChatOpen] = useState(false);
-    
-    const previous = useRef<Pipeline | null>(null);
-
-    useEffect(() => {
-        console.log("same object?", previous.current === pipeline);
-        previous.current = pipeline;
-    }, [pipeline]);
-    
+        
     let lineNumber = 1;
     return(
         <div className={`${styles.pipeline} ${isDark? styles.dark : styles.bright}`}>

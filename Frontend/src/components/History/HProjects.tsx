@@ -18,7 +18,8 @@ import Popup from "../Popup/Popup";
 
 
 type HPProps = {
-    isEdit: boolean
+    isEdit: boolean,
+    setDiscardChanges: React.Dispatch<React.SetStateAction<boolean>>,
 }
 
 type HistoryProjectsStore={
@@ -36,9 +37,9 @@ const useHProjectsStore = create<HistoryProjectsStore>()(
     })
 )
 
-function HProjects({ isEdit }: HPProps){
+function HProjects({ isEdit, setDiscardChanges }: HPProps){
     const projectId: number | null = useHistoryStore(s=>s.project?.id ?? null);
-    const {setProject, setIsEdit} = useHistoryStore();
+    const {setProject, setPipeline, setIsEdit} = useHistoryStore();
     
     const {isCollapsed, setIsCollapsed}=useHProjectsStore();
     
@@ -48,7 +49,7 @@ function HProjects({ isEdit }: HPProps){
     const [filterPlatfrom, setFilterPlatform] = useState<Platform | null>(null);
     const [openFilterMenu, setOpenFilterMenu] = useState<boolean>(false);
     
-    const [confirmDiscard, setConfirmDiscard] = useState<string | null>(null);
+    const [askDiscard, setAskDiscard] = useState<string | null>(null);
     const [warningDiscard, setWarningDiscard] = useState<string | null>(null);
 
     const filterRef = useRef<HTMLDivElement | null>(null);
@@ -159,11 +160,13 @@ function HProjects({ isEdit }: HPProps){
                                 <li key={index} title={p.project_name + " ("+ p.repo_url + ')'}
                                     onClick={() => {
                                         isEdit? (
-                                                setTempProject(p),
-                                                setConfirmDiscard("Changing the current project will discard all changes!"),
-                                                setWarningDiscard("This Action can not be undone!"),
-                                                setIsEdit(false)
-                                        ): (setProject(p), setIsCollapsed(true))
+                                            setTempProject(p),
+                                            setAskDiscard("Changing the current project will discard all changes!"),
+                                            setWarningDiscard("Your unsaved changes cannot be recovered.")
+                                        ): (
+                                            setProject(p),
+                                            setPipeline(null),
+                                            setIsCollapsed(true))
                                     }}
                                     className={`${styles.project} ${(p.id === projectId)? styles.active : gStyles.clickable}`}>
                                     <span className={styles.projectName}>{p.project_name}</span>
@@ -184,13 +187,19 @@ function HProjects({ isEdit }: HPProps){
                 </div>
             </>)}
 
-            {confirmDiscard && 
+            {askDiscard && 
             <Popup
                 btnText1="Discard"
-                btn1Action={() => {setProject(tempProject); setTempProject(null); setIsCollapsed(true);}}
+                btn1Action={() => {
+                    setProject(tempProject);
+                    setTempProject(null);
+                    setIsCollapsed(true);
+                    setDiscardChanges(true);
+                    setIsEdit(false);
+                }}
                 btnText2="Cancel"
-                confirmMessage={confirmDiscard}
-                setConfirmMessage={setConfirmDiscard}
+                questionMessage={askDiscard}
+                setQuestionMessage={setAskDiscard}
                 warningMessage={warningDiscard}
                 setWarningMessage={setWarningDiscard}
                 popupRef={popupRef}

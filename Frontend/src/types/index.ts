@@ -133,6 +133,7 @@ export interface Project {
     id: number;
     user_id: number;
     project_name: string;
+    branch:string;
     repo_url: string;
     platform: Platform;
     created_at: string;
@@ -142,7 +143,7 @@ export interface Project {
 export interface Pipeline {
     id: number;
     name: string;
-    author: string;
+    commit_author: string;
     commit_hash: string;
     branch: string;
     path: string;

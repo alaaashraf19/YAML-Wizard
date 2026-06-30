@@ -51,8 +51,6 @@ async def install_app_services():
 
 async def github_webhook(request, db):
     payload = await request.json()
-    # print(payload)
-
     selection= payload.get("repository_selection")
     event = request.headers.get("X-GitHub-Event")
 

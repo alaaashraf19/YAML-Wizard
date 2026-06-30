@@ -9,10 +9,6 @@ function App() {
         if (!location.pathname.startsWith("/profile")) {
             sessionStorage.removeItem("project_id");
         }
-        if(!location.pathname.startsWith("/history")){
-            sessionStorage.removeItem("project_history_id");
-            sessionStorage.removeItem("pipeline_id");
-        }
     }, [location.pathname]);
 
     return (

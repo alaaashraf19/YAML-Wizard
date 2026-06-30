@@ -22,7 +22,9 @@ import Popup from "../Popup/Popup";
 
 type EditorProps = {
     initJobs: Job[],
-    setInitJobs: React.Dispatch<React.SetStateAction<Job[]>>
+    setInitJobs: React.Dispatch<React.SetStateAction<Job[]>>,
+    isDiscardChanges: boolean,
+    setDiscardChanges: React.Dispatch<React.SetStateAction<boolean>>,
 }
 
 type HistoryEntry = {
@@ -149,7 +151,7 @@ const useEditorStore = create<EditorStore>()(
     )
 );
 
-function PipelineEditor({ initJobs, setInitJobs }: EditorProps) {
+function PipelineEditor({ initJobs, isDiscardChanges, setDiscardChanges, setInitJobs }: EditorProps) {
     const MAX_SNAPSHOTS = 50;
     const {isDark, setIsDark, setIsEdit} = useHistoryStore();
 
@@ -157,7 +159,7 @@ function PipelineEditor({ initJobs, setInitJobs }: EditorProps) {
         resetEditor, initializeEditor} = useEditorStore();
 
     const [isChatOpen, setIsChatOpen] = useState(false);
-    const [confirmDiscard, setConfirmDiscard] = useState<string | null>(null);
+    const [askDiscard, setAskDiscard] = useState<string | null>(null);
     const [warningDiscard, setWarningDiscard] = useState<string | null>(null);
     const [confirmSubmit, setConfirmSubmit] = useState<string | null>(null);
     const [errorSubmit, setErrorSubmit] = useState<string | null>(null);
@@ -172,6 +174,12 @@ function PipelineEditor({ initJobs, setInitJobs }: EditorProps) {
         resetEditor();
         setIsEdit(false);
     };
+    useEffect(()=>{
+        if(isDiscardChanges){
+            handleNewEditor();
+            setDiscardChanges(false);
+        }
+    }, [isDiscardChanges]);
 
     // initialize editor only if there is no history
     useEffect(() => {
@@ -446,7 +454,7 @@ function PipelineEditor({ initJobs, setInitJobs }: EditorProps) {
                             }}> Add Job </button>
                         <button className={`${styles.discardBtn} ${gStyles.clickable}`} title="Discard Changes"
                             onClick={() => {
-                                setConfirmDiscard("Discard all changes?");
+                                setAskDiscard("Discard all changes?");
                                 setWarningDiscard("This Action can not be undone!");
                             }}><IoClose /></button>
                         <button className={`${styles.submitBtn} ${gStyles.clickable}`} title="Submit Changes"><FaCircleCheck /></button>
@@ -480,13 +488,13 @@ function PipelineEditor({ initJobs, setInitJobs }: EditorProps) {
                     <div ref={jobsEndRef} />
                 </div>
 
-                {confirmDiscard && 
+                {askDiscard && 
                 <Popup
                     btnText1="Discard"
                     btn1Action={handleNewEditor}
                     btnText2="Cancel"
-                    confirmMessage={confirmDiscard}
-                    setConfirmMessage={setConfirmDiscard}
+                    questionMessage={askDiscard}
+                    setQuestionMessage={setAskDiscard}
                     warningMessage={warningDiscard}
                     setWarningMessage={setWarningDiscard}
                     popupRef={popupRef}

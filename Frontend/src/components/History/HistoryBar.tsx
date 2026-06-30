@@ -15,21 +15,29 @@ import Popup from "../Popup/Popup";
 
 type HBProps = {
     pipelines: Pipeline[],
-    // pipeline: Pipeline | null,
-    // setPipeline: React.Dispatch<React.SetStateAction<Pipeline | null>>,
+    setPipelines: React.Dispatch<React.SetStateAction<Pipeline[]>>,
+    syncPipelines: () => Promise<boolean>,
+    setDiscardChanges: React.Dispatch<React.SetStateAction<boolean>>,
 }
 
-function HistoryBar({ pipelines }: HBProps){
-    // const pipeline = useHistoryStore(s=>s.pipeline);
-    // const setPipeline = useHistoryStore(s=>s.setPipeline);
-    // const pipelines = useHistoryStore(s=>s.pipelines);
-    const {pipeline, setPipeline, isEdit, setIsEdit} = useHistoryStore();
-    const [tempPipeline, setTempPipeline] = useState<Pipeline | null>(null);
-    
-    const [confirmDiscard, setConfirmDiscard] = useState<string | null>(null);
-    const [warningDiscard, setWarningDiscard] = useState<string | null>(null);
-    const [isHover, setIsHover] = useState<boolean>(false);
+function HistoryBar({ pipelines, setPipelines, syncPipelines, setDiscardChanges }: HBProps){
+    const {pipeline, project, setPipeline, isEdit, setIsEdit, loadingSync} = useHistoryStore();
+
+    const [selectedPipeline, setSelectedPipeline] = useState<Pipeline | null>(null);
+    const [deletedPipeline, setDeletedPipeline] = useState<Pipeline | null>(null);
+    const [publishedPipeline, setPublishedPipeline] = useState<Pipeline | null>(null);
     const [hoverPipeline, setHoverPipeline] = useState<Pipeline | null>(null);
+    const [isHover, setIsHover] = useState<boolean>(false);
+
+    const [confirmMessage, setConfirmMessage] = useState<string | null>(null);
+    const [questionMessage, setQuestionMessage] = useState<string | null>(null);
+    const [warningDiscard, setWarningMessage] = useState<string | null>(null);
+    const [errorPublish, setErrorPublish] = useState<string | null>(null);
+
+    const [syncAtEdit, setSyncAtEdit] = useState<boolean>(false);
+    const [deleteAtEdit, setDeleteAtEdit] = useState<boolean>(false);
+    const [selectAtEdit, setSelectAtEdit] = useState<boolean>(false);
+    
     
     const [query, setQuery] = useState<string>("");
     const [openFilterMenu, setOpenFilterMenu] = useState<boolean>(false);
@@ -40,6 +48,7 @@ function HistoryBar({ pipelines }: HBProps){
 
     const filterRef = useRef<HTMLDivElement | null>(null);
     const popupRef = useRef<HTMLDivElement>(null);
+    const api_url = import.meta.env.VITE_API_URL;
 
     const authors = useMemo(()=>{
         return[...new Set(pipelines.map(p => p.author))].sort();
@@ -48,7 +57,6 @@ function HistoryBar({ pipelines }: HBProps){
     //     return[...new Set(pipelines.map(p => p.branch))].sort();
     // }, [pipelines]);
 
-    // filter pipelines by query and selected fields
     const filteredPipelines = useMemo(() => {
         return pipelines ? pipelines
             .filter(p => (
@@ -60,6 +68,67 @@ function HistoryBar({ pipelines }: HBProps){
             ))
             .sort((a,b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()) : [];
     }, [pipelines, query, filterGenerated, filterActive, filterAuthor]);
+
+    const deletePipeline = async () => {
+        if(!deletedPipeline)return;
+        try{
+            const res = await fetch(`${api_url}/pipelines/${deletedPipeline.id}`, {
+                method: "DELETE",
+                credentials: "include"
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                console.error(data.detail?.[0]?.msg || data.detail || "Failed to delete pipeline");
+                return;
+            }
+
+            // if deleted pipeline is the active one
+            if(deletedPipeline === pipeline){
+                isEdit? (
+                    setQuestionMessage("Deleting the current pipeline will discard all changes"),
+                    setWarningMessage("Your unsaved changes cannot be recovered.")
+                ) : (setPipeline(null), 
+                    setPipelines(prev => prev.filter(pipeline => pipeline.id !== deletedPipeline.id)),
+                    setConfirmMessage(`Pipeline is deleted from ${project?.project_name}-project version history`))
+            }
+            else{
+                setPipelines(prev => prev.filter(pipeline => pipeline.id !== deletedPipeline.id));
+            }
+
+        } catch (e) {
+            console.error("Failed to delete pipeline:", e);
+        }
+    };
+
+    const publishPipeline = async ()=> {
+        if(!publishedPipeline)return;
+        try{
+            const res = await fetch(`${api_url}/publish/yaml/${project?.platform}`, {
+                method: "POST",
+                credentials: "include"
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                console.error(data.detail?.[0]?.msg || data.detail || "Failed to publish pipeline");
+                setErrorPublish("Something went wrong publishing this pipeline. Please try again later.")
+                return;
+            }
+
+            setPipelines(prev => prev.map(p=>p.id === publishedPipeline.id
+                ? {...p, is_active: true, activated_at: new Date()} : p));
+            setPublishedPipeline(null);
+            setConfirmMessage(`Pipeline ${publishedPipeline.name} has been successfully published to ${project?.project_name} repository`);
+            setWarningMessage(`URL: ${project?.repo_url}`);
+
+        } catch (e) {
+            console.error("Failed to delete publish:", e);
+        }
+    };
+
 
     // Close filter menu on outside click
     useEffect(
@@ -90,13 +159,31 @@ function HistoryBar({ pipelines }: HBProps){
         URL.revokeObjectURL(url);
     };
 
+    const handleSync = async ()=>{
+        const synced = await syncPipelines();
+        synced ? (setConfirmMessage("Pipelines synchronized successfully."))
+        :  setConfirmMessage("Your pipelines are already up to date.");
+    };
+
 
     return(
         <div className={styles.historyBar}>
             <div className={styles.topContainer}>
                 <p className={styles.header}>Version History</p>
-                <button className={`${styles.syncBtn} ${gStyles.clickable}`}
-                    title="Sync"><CgSync/></button>
+                {project && 
+                    <button className={`${styles.syncBtn} ${loadingSync? styles.spinner : gStyles.clickable}`} 
+                        title="Sync" disabled={loadingSync}
+                        onClick={async() => {
+                            {isEdit ? (
+                                setSyncAtEdit(true),
+                                setQuestionMessage(
+                                "The synchronization found updates to your pipelines.Continuing will discard your unsaved changes. Do you want to continue?"
+                                ),setWarningMessage("Your unsaved changes cannot be recovered.")
+                            ): handleSync()
+                            }
+                        }}><CgSync className={styles.syncIcon}/>
+                    </button>
+                }
             </div>
             <div className={styles.searchContainer}>
                 <input type="text" className={styles.searchBar} name="searchBar" value={query}
@@ -179,8 +266,8 @@ function HistoryBar({ pipelines }: HBProps){
                                         const foundAuthor = filterAuthor.includes(author);
                                         foundAuthor? setFilterAuthor(filterAuthor.filter(a=>a != author))
                                         : setFilterAuthor([...filterAuthor, author])
-                                    }}>
-                                    {author}</span>
+                                    }}
+                                >{author}</span>
                             ))}
                         </div>
                     </div>
@@ -199,40 +286,84 @@ function HistoryBar({ pipelines }: HBProps){
                         <p className={`${styles.pipelineName} ${gStyles.clickable}`}
                             onClick={() => {
                                 isEdit? (
-                                        setTempPipeline(p),
-                                        setConfirmDiscard("Changing the current pipeline will discard all changes"),
-                                        setWarningDiscard("This Action can not be undone!"),
-                                        setIsEdit(false)
-                                ): setPipeline(p);
+                                    setSelectAtEdit(true),
+                                    setSelectedPipeline(p),
+                                    setQuestionMessage("Changing the current pipeline will discard all changes"),
+                                    setWarningMessage("Your unsaved changes cannot be recovered.")
+                                ): setPipeline(p)
                             }}>{p.name}</p>
 
                         {isHover && <div className={styles.pipelineBtns}>
                             {!(hoverPipeline?.is_active) && <>
                                 <MdDeleteOutline title="Delete From History"
-                                    className={`${styles.filterIcon} ${gStyles.clickable}`}/>
-                                <HiOutlineUpload title="Activate Pipeline"
-                                    className={`${styles.filterIcon} ${gStyles.clickable}`}/>
+                                    className={`${styles.filterIcon} ${gStyles.clickable}`}
+                                    onClick={() => {
+                                        setDeletedPipeline(p),
+                                        isEdit?(
+                                            setDeleteAtEdit(true),
+                                            setQuestionMessage(`Do you want to discard changes and delete ${p.name}-pipeline?`),
+                                            setWarningMessage("Your unsaved changes cannot be recovered.")
+                                        ) : (
+                                            setQuestionMessage(`Do you want to delete ${p.name}-pipeline?`),
+                                            setWarningMessage("This action cannot be recovered, maybe download it before lost.")
+                                        )
+                                    }}/>
+                                <HiOutlineUpload title="Publish pipeline to repo"
+                                    className={`${styles.filterIcon} ${gStyles.clickable}`}
+                                    onClick={() => {
+                                        setPublishedPipeline(p);
+                                        setQuestionMessage(`Publish pipeline-${p.name} to ${project?.project_name} repository?`);
+                                        setWarningMessage(`URL: ${project?.repo_url}`);
+                                    }}/>
                             </>}
                             <HiOutlineDownload onClick={()=>downloadYaml(p)} title="Download File"
                                 className={`${styles.filterIcon} ${gStyles.clickable}`}/>
                         </div>}
-                        <span className={styles.subInfo}>{p.commit_hash}</span>
                     </div>
                 );})}
             </div> 
             </> : <p className={styles.noPipelines}>No pipelines found.</p>}
 
-            {confirmDiscard && 
-                <Popup
-                    btnText1="Discard"
-                    btn1Action={() => {setPipeline(tempPipeline); setTempPipeline(null);}}
-                    btnText2="Cancel"
-                    confirmMessage={confirmDiscard}
-                    setConfirmMessage={setConfirmDiscard}
-                    warningMessage={warningDiscard}
-                    setWarningMessage={setWarningDiscard}
-                    popupRef={popupRef}
-                />}
+            {questionMessage && 
+            <Popup
+                btnText1={deletedPipeline && !isEdit ? "Delete" : "Discard"}
+                btn1Action={() => {
+                    if(syncAtEdit || selectAtEdit || deleteAtEdit){
+                        setIsEdit(false);
+                        setDiscardChanges(true);
+                    }
+                    if(syncAtEdit){
+                        handleSync();
+                        setSyncAtEdit(false);
+                    }
+                    if(selectAtEdit){
+                        setPipeline(selectedPipeline);
+                        setSelectedPipeline(null);
+                        setSelectAtEdit(false);
+                    }
+                    if(deleteAtEdit || deletedPipeline){
+                        deletePipeline();
+                        setDeleteAtEdit(false);
+                    }
+                    if(publishedPipeline){
+                        publishPipeline();
+                    }
+                }}
+                btnText2="Cancel"
+                questionMessage={questionMessage}
+                setQuestionMessage={setQuestionMessage}
+                warningMessage={warningDiscard}
+                setWarningMessage={setWarningMessage}
+                popupRef={popupRef}
+            />}
+            {(confirmMessage || errorPublish) && <Popup
+                btnText1="Got it"
+                confirmMessage={confirmMessage}
+                setConfirmMessage={setConfirmMessage}
+                errorMessage={errorPublish}
+                setErrorMessage={setErrorPublish}
+                popupRef={popupRef}
+            />}
         </div>
     );
 }

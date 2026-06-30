@@ -23,6 +23,7 @@
 }
 .topContainer{
     display: flex;
+    align-items: center;
 }
 .header{
     flex: 1;
@@ -34,16 +35,63 @@
 .syncBtn{
     background: 0;
     border: 0;
-    
+    padding: 10px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
     color: rgb(143, 160, 255);
     font-size: 24px;
     flex-shrink: 0;
     transition: color 0.3s ease, filter 0.3s ease, transform 0.3s ease;
 }
 .syncBtn:hover{
-    color: rgb(45, 62, 158);
+    transform: rotate(-20deg);
+}
+.syncIcon{display: inline-block;}
+.syncBtn.spinner .syncIcon{
+    animation: spin 1.5s linear infinite;
+    transform-origin: center center;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(-360deg); }
+}
+
+/* .syncBtn svg, .syncBtn i {
+    transform-origin: center center;
+} */
+
+/* .syncBtn.spinner svg, .syncBtn.spinner i {
+    animation: spin 1s linear infinite;
+} */
+
+
+/* .syncBtn:hover{
+    color: rgb(255, 255, 255);
     filter: drop-shadow(0 0 16px rgba(184, 194, 255, 0.763));
 }
+.spinner{
+    animation: spin 1s linear infinite;
+}
+@keyframes spin {
+    from {transform: rotate(0deg);}
+    to {transform: rotate(360deg);}
+} */
+/* .spinner {
+    width: 22px;
+    height: 22px;
+    margin: 0 7px;
+
+    border: 4px solid rgba(123, 92, 255, 0.2);
+    border-top-color: rgb(123, 92, 255);
+
+    border-radius: 50%;
+
+    animation: spin .6s linear infinite;
+} */
 
 .searchContainer{
     position: sticky;
@@ -215,6 +263,9 @@
 }
 .pipelineTab:hover .pipelineBtns{opacity: 1;}
 .noPipelines {
+    align-self: center;
+    text-align: center;
+    
     background-color: rgb(95, 87, 124);
     padding: 10px 20px;
     margin: 10px 30px;

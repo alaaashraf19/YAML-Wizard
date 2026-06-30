@@ -25,20 +25,14 @@ type HistoryStore = {
     isDark: boolean;
     setIsDark: (isDark: boolean)=>void;
 
+    loadingSync: boolean;
+    setLoadingSync: (loadingSync: boolean)=>void;
+
     project: Project | null,
     setProject: (project: Project | null)=>void,
 
-    // projects: Project[],
-    // setProjects: (projects: Project[])=>void,
-
     pipeline: Pipeline | null,
     setPipeline: (pipeline: Pipeline | null)=>void,
-
-    // pipelines: Pipeline[],
-    // setPipelines: (pipelines: Pipeline[])=>void,
-
-    // jobs: Job[],
-    // setJobs: (jobs: Job[]) => void,
 }
 
 export const useHistoryStore = create<HistoryStore>()(
@@ -51,315 +45,150 @@ export const useHistoryStore = create<HistoryStore>()(
 
         isDark: false,
         setIsDark: isDark => set({isDark}),
+
+        loadingSync: false,
+        setLoadingSync: loadingSync => set({loadingSync}),
         
         project: null,
         setProject: project=>set({project}),
         
-        // projects: [],
-        // setProjects: projects=>set({projects}),
-        
         pipeline: null,
         setPipeline: pipeline=>set({pipeline}),
-        
-        // pipelines: [
-        //     {
-        //     "id": 0,
-        //     "name": "string",
-        //     "author": "author0",
-        //     "commit_hash": "string",
-        //     "branch": "branch0",
-        //     "path": "path0",
-        //     "content": "string",
-        //     "is_active": true,
-        //     "created_at": new Date("2026-06-25T03:47:51.317Z"),
-        //     "updated_at": new Date("2026-06-25T03:47:51.317Z"),
-        //     "activated_at": new Date("2026-06-25T03:47:51.317Z"),
-        //     "is_generated_by_wizard": false
-        //     },
-        //     {
-        //     "id": 1,
-        //     "name": "stringstringstringstring",
-        //     "author": "author1",
-        //     "commit_hash": "string",
-        //     "branch": "branch1",
-        //     "path": "path1",
-        //     "content": "string",
-        //     "is_active": true,
-        //     "created_at": new Date("2026-06-25T03:47:51.317Z"),
-        //     "updated_at": new Date("2026-06-25T03:47:51.317Z"),
-        //     "activated_at": new Date("2026-06-25T03:47:51.317Z"),
-        //     "is_generated_by_wizard": true
-        //     },
-        //     {
-        //     "id": 2,
-        //     "name": "string",
-        //     "author": "author2",
-        //     "commit_hash": "string",
-        //     "branch": "branch2",
-        //     "path": "path2",
-        //     "content": "string",
-        //     "is_active": false,
-        //     "created_at": new Date("2026-06-25T03:47:51.317Z"),
-        //     "updated_at": new Date("2026-06-25T03:47:51.317Z"),
-        //     "activated_at": new Date("2026-06-25T03:47:51.317Z"),
-        //     "is_generated_by_wizard": true
-        //     },
-        //     {
-        //     "id": 3,
-        //     "name": "string",
-        //     "author": "author3",
-        //     "commit_hash": "string",
-        //     "branch": "branch3",
-        //     "path": "path3",
-        //     "content": "string",
-        //     "is_active": false,
-        //     "created_at": new Date("2026-06-25T03:47:51.317Z"),
-        //     "updated_at": new Date("2026-06-25T03:47:51.317Z"),
-        //     "activated_at": new Date("2026-06-25T03:47:51.317Z"),
-        //     "is_generated_by_wizard": true
-        //     },
-        //     {
-        //     "id": 4,
-        //     "name": "string",
-        //     "author": "author4",
-        //     "commit_hash": "string",
-        //     "branch": "branch4",
-        //     "path": "path4",
-        //     "content": "string",
-        //     "is_active": false,
-        //     "created_at": new Date("2026-06-25T03:47:51.317Z"),
-        //     "updated_at": new Date("2026-06-25T03:47:51.317Z"),
-        //     "activated_at": new Date("2026-06-25T03:47:51.317Z"),
-        //     "is_generated_by_wizard": true
-        //     },
-        //     {
-        //     "id": 5,
-        //     "name": "string",
-        //     "author": "author5",
-        //     "commit_hash": "string",
-        //     "branch": "branch5",
-        //     "path": "path5",
-        //     "content": "string",
-        //     "is_active": false,
-        //     "created_at": new Date("2026-06-25T03:47:51.317Z"),
-        //     "updated_at": new Date("2026-06-25T03:47:51.317Z"),
-        //     "activated_at": new Date("2026-06-25T03:47:51.317Z"),
-        //     "is_generated_by_wizard": true
-        //     },
-        //     {
-        //     "id": 6,
-        //     "name": "string",
-        //     "author": "author6",
-        //     "commit_hash": "string",
-        //     "branch": "branch6",
-        //     "path": "path6",
-        //     "content": "string",
-        //     "is_active": false,
-        //     "created_at": new Date("2026-06-25T03:47:51.317Z"),
-        //     "updated_at": new Date("2026-06-25T03:47:51.317Z"),
-        //     "activated_at": new Date("2026-06-25T03:47:51.317Z"),
-        //     "is_generated_by_wizard": true
-        //     },
-        // ],
-        // setPipelines: pipelines=>set({pipelines}),
-        
-        // jobs: [
-        //     {
-        //         id: "build",
-        //         content: "build:\n  stage: build\n  script:\n    - npm install\n    - npm run build"
-        //     },
-        //     {
-        //         id: "test",
-        //         content: "test:\n  stage: test\n  script:\n    - npm test"
-        //     },
-        //     {
-        //         id: "deploy",
-        //         content: "deploy:\n  stage: deploy\n  script:\n    - npm run deploy"
-        //     }
-        // ],
-        // setJobs: jobs=>set({jobs}),
     }),{
         name: "history_store",
         storage: createJSONStorage(() => sessionStorage)
     })
 );
 
-//on project change set pipelines
+
 function History(){
-    // const isEdit = useHistoryStore(s=>s.isEdit);
-    // const isExpanded = useHistoryStore(s=>s.isExpanded);
-    // const setIsExpanded = useHistoryStore(s=>s.setIsExpanded);
-    const {isEdit, isExpanded, setIsExpanded, project, pipeline} = useHistoryStore();
+    const {isEdit, isExpanded, setIsExpanded, setLoadingSync, project, pipeline} = useHistoryStore();
 
-    // const project = useHistoryStore(s=>s.project);
-    // const pipeline = useHistoryStore(s=>s.pipeline);
-    // const setProjects = useHistoryStore(s=>s.setProjects);
-    // const setPipelines = useHistoryStore(s=>s.setPipelines);
-    // const setJobs = useHistoryStore(s=>s.setJobs);
-    const [jobs, setJobs] = useState<Job[]>([
-        {
-            id: "build",
-            content: "build:\n  stage: build\n  script:\n    - npm install\n    - npm run build"
-        },
-        {
-            id: "test",
-            content: "test:\n  stage: test\n  script:\n    - npm test"
-        },
-        {
-            id: "deploy",
-            content: "deploy:\n  stage: deploy\n  script:\n    - npm run deploy"
-        }
-    ]);
-    
-    const [pipelines, setPipelines] = useState<Pipeline[]>([
-        {
-        "id": 0,
-        "name": "string",
-        "author": "author0",
-        "commit_hash": "string",
-        "branch": "branch0",
-        "path": "path0",
-        "content": "string",
-        "is_active": true,
-        "created_at": new Date("2026-06-25T03:47:51.317Z"),
-        "updated_at": new Date("2026-06-25T03:47:51.317Z"),
-        "activated_at": new Date("2026-06-25T03:47:51.317Z"),
-        "is_generated_by_wizard": false
-        },
-        {
-        "id": 1,
-        "name": "stringstringstringstring",
-        "author": "author1",
-        "commit_hash": "string",
-        "branch": "branch1",
-        "path": "path1",
-        "content": "string",
-        "is_active": true,
-        "created_at": new Date("2026-06-25T03:47:51.317Z"),
-        "updated_at": new Date("2026-06-25T03:47:51.317Z"),
-        "activated_at": new Date("2026-06-25T03:47:51.317Z"),
-        "is_generated_by_wizard": true
-        },
-        {
-        "id": 2,
-        "name": "string",
-        "author": "author2",
-        "commit_hash": "string",
-        "branch": "branch2",
-        "path": "path2",
-        "content": "string",
-        "is_active": false,
-        "created_at": new Date("2026-06-25T03:47:51.317Z"),
-        "updated_at": new Date("2026-06-25T03:47:51.317Z"),
-        "activated_at": new Date("2026-06-25T03:47:51.317Z"),
-        "is_generated_by_wizard": true
-        },
-        {
-        "id": 3,
-        "name": "string",
-        "author": "author3",
-        "commit_hash": "string",
-        "branch": "branch3",
-        "path": "path3",
-        "content": "string",
-        "is_active": false,
-        "created_at": new Date("2026-06-25T03:47:51.317Z"),
-        "updated_at": new Date("2026-06-25T03:47:51.317Z"),
-        "activated_at": new Date("2026-06-25T03:47:51.317Z"),
-        "is_generated_by_wizard": true
-        },
-        {
-        "id": 4,
-        "name": "string",
-        "author": "author4",
-        "commit_hash": "string",
-        "branch": "branch4",
-        "path": "path4",
-        "content": "string",
-        "is_active": false,
-        "created_at": new Date("2026-06-25T03:47:51.317Z"),
-        "updated_at": new Date("2026-06-25T03:47:51.317Z"),
-        "activated_at": new Date("2026-06-25T03:47:51.317Z"),
-        "is_generated_by_wizard": true
-        },
-        {
-        "id": 5,
-        "name": "string",
-        "author": "author5",
-        "commit_hash": "string",
-        "branch": "branch5",
-        "path": "path5",
-        "content": "string",
-        "is_active": false,
-        "created_at": new Date("2026-06-25T03:47:51.317Z"),
-        "updated_at": new Date("2026-06-25T03:47:51.317Z"),
-        "activated_at": new Date("2026-06-25T03:47:51.317Z"),
-        "is_generated_by_wizard": true
-        },
-        {
-        "id": 6,
-        "name": "string",
-        "author": "author6",
-        "commit_hash": "string",
-        "branch": "branch6",
-        "path": "path6",
-        "content": "string",
-        "is_active": false,
-        "created_at": new Date("2026-06-25T03:47:51.317Z"),
-        "updated_at": new Date("2026-06-25T03:47:51.317Z"),
-        "activated_at": new Date("2026-06-25T03:47:51.317Z"),
-        "is_generated_by_wizard": true
-        },
-    ]);
-
-    //setPipeline null before sync
-    const [lastSynced, setLastSynced] = useState<Date | null>(null);
+    const [jobs, setJobs] = useState<Job[]>([]);
+    const [pipelines, setPipelines] = useState<Pipeline[]>([]);
+    const [lastSynced, setLastSynced] = useState<string | null>(null);
+    const [isDiscardChanges, setDiscardChanges] = useState<boolean> (false);
 
     const topContentRef = useRef<HTMLDivElement | null>(null);
     const api_url = import.meta.env.VITE_API_URL;
     
-    // //get project pipelines
-    // useEffect(() => {
-    //     const fetchPipelines = async () => {
-    //         try {
-    //             const res = await fetch(`${api_url}/projects/${project?.id}/pipelines`, {
-    //                 credentials: "include",
-    //                 method: "GET",
-    //                 headers: {"Content-Type": "application/json"}
-    //             });
+    // //get project pipelines, or sync if not synced
+    useEffect(() => {
+        const checkSynced = async () =>{
+            const isSynced = sessionStorage.getItem('pipelines_synced');
+            if(!isSynced){
+                await syncPipelines();
+                return true;
+            }
+            return false;
+        }
 
-    //             const data = await res.json();
+        const fetchPipelines = async () => {
+            try {
+                const res = await fetch(`${api_url}/pipelines/project/${project?.id}`, {
+                    credentials: "include",
+                    method: "GET",
+                    headers: {"Content-Type": "application/json"}
+                });
 
-    //             if (!res.ok) {
-    //                 console.error(data.detail?.[0]?.msg || data.detail || "Failed to fetch pipelines");
-    //                 return;
-    //             }
-    //             console.log("fetch pipelines:", data);
-    //             setPipelines(data);
+                const data = await res.json();
 
-    //         } catch (e) {
-    //             console.error("Failed to fetch pipelines:", e);
-    //         }
-    //     };
+                if (!res.ok) {
+                    console.error(data.detail?.[0]?.msg || data.detail || "Failed to fetch pipelines");
+                    return;
+                }
+                setPipelines(data);
+                
+            } catch (e) {
+                console.error("Failed to fetch pipelines:", e);
+            }
+        };
 
-    //     if(project) fetchPipelines();
-    // }, [project]);
+        const init = async () => {
+            const fetchedBySynced = await checkSynced();
+            if(!fetchedBySynced) await fetchPipelines();
+        };
 
-    // persist project and pipeline to stay on after refresh
-    // useEffect(() => {
-    //     const currentProjectId = sessionStorage.getItem("project_history_id");
-    //     const currentPipelineId = sessionStorage.getItem("pipeline_id");
+        console.log("Project id now is:", project?.id);
+        if(project)init();
+    }, [project]);
+    // sync and don't update pipelines if not changed  
+    const syncPipelines: ()=>Promise<boolean> = async ()=> {
+        if (!project) return false;
 
-    //     if (currentProjectId) {
-    //         const projectId = Number(currentProjectId);
-    //         setProject(projects.find(p => p.id === projectId) ?? null);
-    //     }
+        setLoadingSync(true);
+        try {
+            const res = await fetch(`${api_url}/pipelines/${project?.id}/sync`, {
+                credentials: "include",
+                method: "POST",
+                headers: {"Content-Type": "application/json"}
+            });
 
-    //     if (currentPipelineId){
-    //         const pipelineId = Number(currentPipelineId);
-    //         setPipeline(pipelines.find(p => p.id === pipelineId) ?? null);
-    //     }
-    // }, [projects, pipelines]);
+            const data = await res.json();
+
+            if (!res.ok) {
+                console.error(data.detail?.[0]?.msg || data.detail || "Failed to sync pipelines");
+                setLoadingSync(false);
+                return false;
+            }
+
+            const isSynced = sessionStorage.getItem('pipelines_synced');
+            const storedData = sessionStorage.getItem('cached_pipelines');
+
+            if(isSynced === 'true'){
+                if (JSON.stringify(data) !== storedData) {
+                    setPipelines(data);
+                    sessionStorage.setItem('cached_pipelines', JSON.stringify(data));
+                    setLastSynced(new Date().toISOString());
+                }
+                else{
+                    setLoadingSync(false);
+                    return false;
+                }
+            }else{
+                setPipelines(data);
+                sessionStorage.setItem('cached_pipelines', JSON.stringify(data));
+                sessionStorage.setItem('pipelines_synced', 'true');
+                setLastSynced(new Date().toISOString());
+            }
+            console.log("Sync Completed");
+            setLoadingSync(false);
+            return true;
+
+        } catch (e) {
+            console.error("Failed to sync pipelines:", e);
+            setLoadingSync(false);
+            return false;
+        }
+    };
+
+    //get jobs
+    useEffect(()=> {
+        if(!pipeline || !project) return;
+
+        const getJobs = async () => {
+            try {
+                const res = await fetch(`${api_url}/projects/${project.id}/pipelines/${pipeline.id}/jobs`, {
+                    credentials: "include",
+                    method: "GET",
+                    headers: {"Content-Type": "application/json"}
+                });
+
+                const data = await res.json();
+
+                if (!res.ok) {
+                    console.error(data.detail?.[0]?.msg || data.detail || "Failed to fetch pipeline script");
+                    return;
+                }
+                setJobs(data.jobs);
+            }catch(e: any){
+                console.error(`Failed to get jobs of pipeline with id: ${pipeline.id}`)
+            }
+        }
+
+        if(pipeline)getJobs();
+    },[pipeline]);
+
 
     // make top bar scroll to top on collapsing
     useEffect(()=>{
@@ -368,69 +197,43 @@ function History(){
         }
     },[isExpanded]);
 
-    //check top content height to show or hide expand button
-    // useEffect(()=>{
-    //     const checkOverflow=()=>{
-    //         const el=topContentRef.current;
-    //         if(!el)return;
-    //         const firstChild=el.firstElementChild as HTMLElement | null;
-    //         if(!firstChild)return;
-    //         const collapsedHeight=firstChild.offsetHeight;
-    //         setShowExpandBtn(el.scrollHeight > collapsedHeight + 8);
-    //     };
-
-    //     checkOverflow();
-
-    //     window.addEventListener("resize",checkOverflow);
-    //     return()=>window.removeEventListener("resize",checkOverflow);
-    // },[project,pipeline, isExpanded]);
-
-
     return(
         <div className={styles.window}>
-            {/* <HProjects projectId={project?.id ?? null} setProject={setProject} projects={projects}/> */}
-            <HProjects isEdit={isEdit}/>
+            <HProjects isEdit={isEdit} setDiscardChanges={setDiscardChanges }/>
 
             <div className={styles.historyContainer}>
                 {project && <div className={`${styles.topBar} ${isExpanded && styles.expanded}`}>
                     <div className={styles.topBarContent} ref={topContentRef}>
-                        <Link title="Go to link" 
+                        <Link title="Go to link" target="_blank"
                             className={`${styles.barTab} ${styles.barLink}`} to={project.repo_url}>
                             {project.repo_url}</Link>
-                        <span className={styles.barTab}>{lastSynced ? lastSynced.toLocaleString(): "Never Synced"}</span>
+                        <span className={styles.barTab}>
+                            {lastSynced ? "Last Synced ("+new Date(lastSynced).toLocaleString()+")" : "Never Synced"}</span>
 
                         {pipeline && <>
                             <span className={styles.barTab}>{pipeline.name}</span>
+                            <Link className={`${styles.barTab} ${styles.barLink}`} title="Go to link" target="_blank"
+                                to={`${project.repo_url}/tree/${project.branch}/${pipeline.path}`}>{pipeline.path}</Link>
+                            <span className={styles.barTab}>{project.branch}</span>
                             <span className={styles.barTab}>Commit Hash ({pipeline.commit_hash})</span>
-                            <span className={styles.barTab}>{pipeline.author}</span>
-                            <span className={styles.barTab}>{pipeline.path}</span>
+                            <span className={styles.barTab}>{pipeline.commit_author}</span>
                             <span className={styles.barTab}>{pipeline.is_active?"Published":"Not-Published"}</span>
-                            {/* {isExpanded && <> */}
                             <span className={styles.barTab}>Created ({new Date(pipeline.created_at).toLocaleString()})</span>
-                            <span className={styles.barTab}>Last Updated ({pipeline.updated_at.toLocaleString()})</span>
-                                {pipeline.is_active && 
-                                <span className={styles.barTab}>Activated ({pipeline.activated_at.toLocaleString()})</span>}
-                            {/* </>} */}
+                            <span className={styles.barTab}>Last Updated ({new Date(pipeline.updated_at).toLocaleString()})</span>
+                            {pipeline.is_active && 
+                            <span className={styles.barTab}>Published ({new Date(pipeline.activated_at).toLocaleString()})</span>}
                         </>}
                     </div>
                     <button className={styles.expandBtn} onClick={()=>setIsExpanded(!isExpanded)}>
                         <IoIosArrowDropdownCircle/> </button>
                 </div>}
                 <div className={styles.historyWindow}>
-                    <HistoryBar pipelines={pipelines}
-                        // pipelines={pipelines}
-                        // pipeline={pipeline}
-                        // setPipeline={setPipeline}
-                    />
+                    <HistoryBar pipelines={pipelines} setPipelines={setPipelines} 
+                        syncPipelines={syncPipelines} setDiscardChanges ={setDiscardChanges } />
                     {(project && pipeline)?
-                        (isEdit ? <PipelineEditor initJobs={jobs} setInitJobs={setJobs}
-                            // project={project} pipeline={pipeline} 
-                            // setIsEdit={setIsEdit} isDark={isDark} setIsDark={setIsDark} 
-                            />
-                            :<PipelineViewer jobs={jobs}
-                            // project={project} pipeline={pipeline}
-                            // setIsEdit={setIsEdit} isDark={isDark} setIsDark={setIsDark} 
-                            />
+                        (isEdit ? <PipelineEditor initJobs={jobs} setInitJobs={setJobs} 
+                            isDiscardChanges={isDiscardChanges} setDiscardChanges={setDiscardChanges}/>
+                            : <PipelineViewer jobs={jobs}/>
                     ) : <div className={styles.noPipeline}>
                         <p className={styles.noPipelineHeader}>YAML Wizard Version History</p>
                         <p className={styles.noPipelineSubHeader}>Add your project and pick a pipeline to get started.</p>

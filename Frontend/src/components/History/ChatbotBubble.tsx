@@ -22,7 +22,7 @@ function ChatbotBubble({isChatOpen, setIsChatOpen }:ChatbotBubbleProps){
     const [messages, setMessages] = useState<Message[] | []>([]);
     const [session, setSession] = useState<Session | null>(null);
 
-    const [confirmMessage, setConfirmMessage] = useState<string | null>("");
+    const [askReset, setAskReset] = useState<string | null>("");
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
@@ -108,7 +108,6 @@ function ChatbotBubble({isChatOpen, setIsChatOpen }:ChatbotBubbleProps){
     //load session messages
     useEffect(() => {
         const loadSession = async () => {
-            console.log("at load session pipeline is", pipeline?.id);
             try {
                 const res = await fetch(`${api_url}/chatbot/sessions/by_pipeline/${pipeline?.id}`, {
                     credentials: "include"
@@ -116,7 +115,9 @@ function ChatbotBubble({isChatOpen, setIsChatOpen }:ChatbotBubbleProps){
                 const data = await res.json();
 
                 if (!res.ok) {
-                    console.error(data.detail);
+                    console.log(data.detail);
+                    setSession(null);
+                    setMessages([]);
                     return;
                 }
                 console.log("loaded session", data);
@@ -187,7 +188,7 @@ function ChatbotBubble({isChatOpen, setIsChatOpen }:ChatbotBubbleProps){
                         <div className={styles.chatbotHeader}>
                             <span className={styles.headerText}>Pipeline Assistant</span>
                             {session && <VscDebugRestart className={`${styles.chatbotBtn} ${gStyles.clickable}`}
-                                onClick={() => session && setConfirmMessage("Reset this conversation?")}
+                                onClick={() => session && setAskReset("Reset this conversation?")}
                                 title="Reset Chat"/>}
                             <IoClose className={`${styles.chatbotBtn} ${gStyles.clickable}`}
                                 onClick={() => setIsChatOpen(false)} title="Close Chatbot"/> 
@@ -198,7 +199,7 @@ function ChatbotBubble({isChatOpen, setIsChatOpen }:ChatbotBubbleProps){
                             {messages.map((msg, i) => (
                                 <div key={i} className={styles.messagePack}>
                                     <p className={`${styles.message} ${msg.role === "user" ?
-                                        styles.userMessage : (isErrorMessage(msg.content)? styles.errorMessage : styles.botMessage)}`}>
+                                        styles.userMessage : (isErrorMessage(msg.content)? styles.askReset : styles.botMessage)}`}>
                                         {msg.content}
                                     </p>
                                 </div>
@@ -226,14 +227,14 @@ function ChatbotBubble({isChatOpen, setIsChatOpen }:ChatbotBubbleProps){
                     </>
                 )}
 
-                {confirmMessage && (
+                {askReset && (
                     <Popup
                         btnText1={"Reset"}
                         btn1Action={deleteSession}
                         btnText2={"Cancel"}
                         btn2Action={() => setSession(null)}
-                        confirmMessage={confirmMessage}
-                        setConfirmMessage={setConfirmMessage}
+                        questionMessage={askReset}
+                        setQuestionMessage={setAskReset}
                     />
                 )}
             </div>
