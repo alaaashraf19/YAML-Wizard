@@ -38,15 +38,10 @@ async def get_sessions_of_project(
     sessions = await chatbot_service.get_project_sessions(
         user_id=current_user.id,project_id=project_id,db=db )
     return [
-        ChatSessionResponse(
+        ProjectSession(
             id=session.id,
             session_name=session.session_name,
             updated_at=session.updated_at,
-            project_id=session.project_id,
-            project={
-                "id": session.project_id,
-                "name": session.project.project_name
-            } if session.project else None,
         )
         for session in sessions
     ]
