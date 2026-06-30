@@ -384,6 +384,8 @@ class GitHubCollector(CICollector):
 
         paths_to_check = [
             ".github/workflows",
+            ".github/actions",
+            ".github/ci",
             ".github",
         ]
 

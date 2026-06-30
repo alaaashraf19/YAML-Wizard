@@ -332,7 +332,8 @@ class GitLabCollector(CICollector):
             self,
             ctx: CollectorsRepositoryDetail,
             path: str = "",
-            ref: str = "main"
+            ref: str = "main",
+            recursive: bool = False,
     ) -> list[dict]:
         """Fetch repository files from GitLab API."""
         project_id = self._proj_id(ctx)
@@ -341,7 +342,7 @@ class GitLabCollector(CICollector):
         params = {
             "path": path,
             "ref": ref,
-            "recursive": "true" if path else "false",
+            "recursive": "true" if recursive else "false",
             "per_page": 100,
         }
 
@@ -411,7 +412,7 @@ class GitLabCollector(CICollector):
         yaml_files = []
 
         try:
-            all_files = await self.get_repository_files(ctx, ref=ref)
+            all_files = await self.get_repository_files(ctx, ref=ref,recursive=True)
 
             for file in all_files:
                 if file.get("type") == "blob":
