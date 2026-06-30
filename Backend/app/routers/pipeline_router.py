@@ -31,7 +31,7 @@ async def create_project_pipeline(
     return PipelineResponse.model_validate(pipeline)
 
 
-@router.get("/{project_id}", response_model=List[PipelineResponse])
+@router.get("/project/{project_id}", response_model=List[PipelineResponse])
 async def get_project_pipelines_list(
     project_id: int,
     current_user: User = Depends(get_current_user),

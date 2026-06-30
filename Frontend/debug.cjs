@@ -12,3 +12,5 @@ const watch = setInterval(() => {
 const child = exec('npm run dev');
 child.stdout.on('data', (data) => console.log('stdout:', data));
 child.stderr.on('data', (data) => console.log('stderr:', data));
+
+// To remove item: Remove-Item Env:VITE_API_URL

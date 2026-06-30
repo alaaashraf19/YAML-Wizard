@@ -11,7 +11,6 @@ import type { Session, Message, Project } from "../types";
 import ChatProjects from "../components/Chatbot/ChatProjects";
 import SideBar from "../components/Chatbot/SideBar";
 import Popup from "../components/Popup/Popup";
-// import { useNavigate } from "react-router-dom";
 import { ProjectSubInfo } from "../components/UserProfile/ProjectInfoTab";
 
 
@@ -148,14 +147,14 @@ function Chatbot() {
 
         // handle new session
         if (!activeSessionId) {
-            const newSession = {
+            const newSession: Session = {
                 id: null,
                 session_name: "...",
                 created_at: new Date().toISOString(),
                 updated_at: new Date().toISOString(),
                 project: selectedProject
             }
-            
+
             setSessions(prev => [...prev, newSession]);
         }
         else {
@@ -218,6 +217,7 @@ function Chatbot() {
         }
     };
 
+    //handle enter and shift+enter
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
@@ -275,10 +275,8 @@ function Chatbot() {
 
                         <div>
                             <button className={`${styles.projectButton} ${gStyles.clickable}`}
-                                // disabled={selectedProject !== null}
-                                title={selectedProject ? "Show project info" : undefined}
+                                title={selectedProject ? "Show project info" : "Open projects menu"}
                                 onClick={() => {!selectedProject? setIsMenuOpen(prev => !prev)
-                                    // : (sessionStorage.setItem("project_id", selectedProject?.id.toString()),navigate("/profile"))
                                     : setIsShowInfo(true)
                                 }}>
                                 {selectedProjectText}
@@ -314,15 +312,10 @@ function Chatbot() {
             {(confirmMessage || errorMessage) &&
             <Popup
                 btnText1={"Got it"}
-                btn1Action={null}
-                btnText2={null}
-                btn2Action={null}
                 confirmMessage={confirmMessage}
                 setConfirmMessage={setConfirmMessage}
                 errorMessage={errorMessage}
                 setErrorMessage={setErrorMessage}
-                warningMessage={null}
-                setWarningMessage={null}
                 popupRef={popupRef}
             />}
         </div>

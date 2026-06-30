@@ -8,6 +8,7 @@ class ProjectBase(BaseModel):
 
 class ProjectCreate(ProjectBase):
     install_id: int | None = None
+    github_repo_id: int | None = None
     pass
 
 class ProjectUpdate(BaseModel):
@@ -27,8 +28,7 @@ class ProjectSessionResponse(ProjectSchema):
 class ProjectResponse(ProjectSessionResponse):
     platform: str
     repo_url: str
-    created_at: datetime
-    updated_at: datetime
+    branch : str
     class Config:
         from_attributes =True
 

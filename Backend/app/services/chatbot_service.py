@@ -5,7 +5,7 @@ from fastapi import HTTPException
 from datetime import datetime
 
 from google import genai
-from google.genai import types
+# from google.genai import types
 
 from sqlalchemy.orm import Session,joinedload
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -15,16 +15,19 @@ from models.project_model import Project
 from models.chat_message_model import ChatMessage
 from models.chat_session_model import ChatSession
 from models.platforms_model import GitLabConnection
+from models.project_model import Project
+from models.repository_model import Repository
 from schemas.chatbot_schema import ChatSessionResponse
 from services.project_service import get_project_by_id
 from agent.chatbot_agent import ChatbotAgent
-from agent.utils.context_resolver import ContextResolver
+from agent.utils.context_resolver import ContextResolver, build_context_summary
 from schemas.project_schema import ProjectResponse
 
 class ChatbotService:
     def __init__(self):
         self.client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
         self.model = "models/gemini-2.5-flash"
+        # self.model = "Qwen/Qwen2.5-72B-Instruct-AWQ"
         self.agent = ChatbotAgent()
 
     async def send_message(self, message: str, session_id: int, chat_history: List[Dict[str, str]] = None, 
@@ -39,38 +42,49 @@ class ChatbotService:
         try:
             contents = []
 
-            for msg in chat_history:
-                role = "user" if msg["role"] == "user" else "model"
-                contents.append(types.Content(
-                    role = role,
-                    parts = [types.Part.from_text(text=msg["content"])]
-                ))
+            # for msg in chat_history:
+            #     role = "user" if msg["role"] == "user" else "model"
+            #     contents.append(types.Content(
+            #         role = role,
+            #         parts = [types.Part.from_text(text=msg["content"])]
+            #     ))
 
-            contents.append(types.Content(
-                role = "user",
-                parts = [types.Part.from_text(text=message)]
-            ))
+            # contents.append(types.Content(
+            #     role = "user",
+            #     parts = [types.Part.from_text(text=message)]
+            # ))
 
             gitlab_connection = None
-            if db is not None and user_id is not None:
-                gitlab_result = await db.execute(select(GitLabConnection).where(GitLabConnection.user_id == user_id))
-                gitlab_connection = gitlab_result.scalar_one_or_none()
+            gitlab_project_id = None
+            if db is not None and user_id is not None and project_id is not None:
+                platform, repo_gitlab_project_id = await self.resolve_gitlab_target(project_id, user_id, db)
+                if platform == "gitlab":
+                    gitlab_result = await db.execute(select(GitLabConnection).where(GitLabConnection.user_id == user_id))
+                    gitlab_connection = gitlab_result.scalar_one_or_none()
+                    gitlab_project_id = repo_gitlab_project_id
 
             context = None
+            context_summary= None
             if project_id is not None:
-                context = await ContextResolver().get_project_context(project_id)
+                print("before project context in chat")
+                context = await ContextResolver(db).get_project_context(project_id)
 
+                if context:
+                    context_summary = build_context_summary(context.repo_context)#return str
+
+            # print("context in chat",context )
             response = await self.agent.invoke(
                 message=message,
                 chat_history=chat_history,
                 db=db,
                 gitlab_connection=gitlab_connection,
+                gitlab_project_id=gitlab_project_id,
                 session_id = session_id,
                 user_id= user_id,
                 project_id=project_id,
                 context = context,
+                context_summary = context_summary
             )
-
             return {
                 "role": "assistant",
                 "content":str(response)
@@ -93,6 +107,18 @@ class ChatbotService:
                 "content": "⚠️ Sorry, something went wrong while generating my response. Please try sending your message again.",
                 "error": error_text
             }
+
+    async def resolve_gitlab_target(self, project_id: int, user_id: int, db: AsyncSession) -> tuple[Optional[str], Optional[int]]:
+        row = await db.execute(
+            select(Repository.platform, Repository.gitlab_project_id)
+            .join(Project, Project.repo_id == Repository.id)
+            .where(Project.id == project_id, Project.user_id == user_id)
+        )
+        result = row.one_or_none()
+        if result is None:
+            return None, None
+        platform, gitlab_project_id = result
+        return platform, gitlab_project_id
 
     async def process_chat_message(
             self,
@@ -194,13 +220,19 @@ class ChatbotService:
     async def create_new_session(
             self, user_id: int,first_message: str, db:AsyncSession,project_id : Optional[int] = None
     ) -> ChatSession:
-        session_name = first_message[:50] + "..." if len(first_message) > 50 else first_message
+        from agent.chat_session_title import generate_session_title
+        title = await generate_session_title(first_message)
+        session_name = title or self.default_session_name(first_message)
         new_session = ChatSession(user_id = user_id,session_name = session_name,project_id=project_id,
                                   created_at=datetime.utcnow(),updated_at=datetime.utcnow())
         db.add(new_session)
         await db.commit()
         await db.refresh(new_session)
         return new_session
+
+    #fallback naming method in case the ai title model fails
+    def default_session_name(self, first_message: str) -> str:
+        return first_message[:50] + "..." if len(first_message) > 50 else first_message
 
     async def get_session_if_owned(
             self,
@@ -302,8 +334,11 @@ class ChatbotService:
     )->ChatSessionResponse:
         result = await db.execute(
             select(ChatSession)
-            .options(joinedload(ChatSession.project),
-                     joinedload(ChatSession.pipeline) )
+            .options(
+                joinedload(ChatSession.project),
+                joinedload(ChatSession.project, Project.repository),
+                joinedload(ChatSession.pipeline),
+            )
             .where(ChatSession.user_id == user_id,ChatSession.pipeline_id == pipeline_id)
         )
         session =  result.unique().scalar_one_or_none()
@@ -312,6 +347,8 @@ class ChatbotService:
                 status_code=404,
                 detail="Chat session not found or access denied"
             )
+        messages = await self.get_session_messages(user_id,session.id,db)
+
         return ChatSessionResponse(
             id=session.id,
             session_name=session.session_name,
@@ -326,7 +363,8 @@ class ChatbotService:
                 "repo_url": session.project.repository.url,
                 "platform": session.project.repository.platform,
                 "created_at": session.project.created_at,
-                "updated_at": session.project.updated_at
+                "updated_at": session.project.updated_at,
+                "branch" : session.project.repository.default_branch,
             } if session.project else None,
             pipeline={
                 "id": session.pipeline_id,
@@ -340,6 +378,8 @@ class ChatbotService:
                 "updated_at": session.pipeline.updated_at,
                 "activated_at": session.pipeline.activated_at,
             } if session.pipeline else None,
+            messages=messages
+            
         )
 
     async def get_session_with_messages(
@@ -351,7 +391,7 @@ class ChatbotService:
         # session = await self.get_session_if_owned(user_id,session_id,db)
         result = await db.execute(
             select(ChatSession)
-            .options(joinedload(ChatSession.project))
+            .options(joinedload(ChatSession.project),joinedload(ChatSession.pipeline))
             .where(ChatSession.id == session_id,ChatSession.user_id == user_id)
         )
 

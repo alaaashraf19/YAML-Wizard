@@ -23,7 +23,7 @@ class GitLabAPIClient:
     def __init__(self, token: str, base_url: str = GITLAB_API_BASE):
         self.token = token
         self.base_url = base_url.rstrip("/")
-        self._headers = {"PRIVATE-TOKEN": token} if token else {}
+        self._headers = {"Authorization": f"Bearer {token}"} if token else {}
 
     # ── internal helpers ──────────────────────────────────────────────────
 
@@ -34,7 +34,15 @@ class GitLabAPIClient:
             resp.raise_for_status()
             return resp.json()
         except httpx.HTTPStatusError as exc:
-            logger.warning("GitLab API %s → %s", url, exc.response.status_code)
+            status = exc.response.status_code
+            if status == 401:
+                raise PermissionError("GitLab token is invalid or expired.") from exc
+            if status == 403:
+                raise PermissionError("GitLab token does not have access to this repository.") from exc
+            if status == 404:
+                raise FileNotFoundError("GitLab repository not found.") from exc
+            # Other HTTP errors (5xx etc.) — log and return None so we keep going
+            logger.warning("GitLab API %s → %s", url, status)
             return None
         except Exception as exc:
             logger.warning("GitLab API error %s: %s", url, exc)

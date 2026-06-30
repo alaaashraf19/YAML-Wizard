@@ -78,7 +78,8 @@ async def get_chat_sessions(
                 "repo_url" : session.project.repository.url,
                 "platform" : session.project.repository.platform,
                 "created_at": session.project.created_at,
-                "updated_at": session.project.updated_at
+                "updated_at": session.project.updated_at,
+                "branch":session.project.repository.default_branch
             } if session.project else None,
             pipeline= {
                 "id" : session.pipeline_id,
@@ -163,5 +164,6 @@ async def link_session_to_project(
         updated_at=project.updated_at,
         platform = project.platform,
         repo_url=project.repo_url,
+        branch=project.branch
         
     )

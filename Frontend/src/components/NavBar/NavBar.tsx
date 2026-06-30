@@ -5,7 +5,6 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from '../../Context/AuthContext';
 import logo from "../../assets/yaml_wizard_logo.png";
 
-// import { IoPerson } from "react-icons/io5";
 import { GoPerson } from "react-icons/go";
 import { FaSignOutAlt } from "react-icons/fa";
 import { FiMenu } from "react-icons/fi";
@@ -38,28 +37,8 @@ function NavBar(){
         }
     , []);
 
-    // const handleLogout = async () => {
-    //     try {
-    //         const res = await fetch(`${api_url}/auth/logout`, {
-    //             method: "POST",
-    //             credentials: "include"
-    //         });
-
-    //         if (!res.ok){
-    //             console.error("Logout failed");
-    //             return;
-    //         }
-
-    //         logout();
-    //         navigate("/", { replace: true });
-
-    //     } catch (err) {
-    //         console.error("Server error:", err);
-    //     }
-    // }
 
     const isDashboard = location.pathname === "/dashboard";
-    const isChatbot = location.pathname === "/chatbot";
     const isHistory = location.pathname === "/history";
     const isProfile = location.pathname.startsWith("/profile");
     const isHome = location.pathname === "/" || location.pathname === "/home";
@@ -67,31 +46,32 @@ function NavBar(){
     return(
         <div className={styles.navBar}>
             {loading? null : (<>
-                {!isChatbot && !isDashboard && !isHistory && <img src={logo} alt="" onClick={() => {if(!isHome)navigate("/")}}
-                    className={`${styles.logo} ${styles.button} ${!isHome && gStyles.clickable}`}
-                    title={isHome? "YAMLWizard" : "Go to home page"}/>
+                {(isProfile || isHome) && 
+                    <img src={logo} alt="YAML Wizard" onClick={() => {if(!isHome)navigate("/")}}
+                        className={`${styles.logo} ${styles.button} ${!isHome && gStyles.clickable}`}
+                        title={isHome? "YAMLWizard" : "Go to home page"}/>
                 }
                 {username? (<>
                     {(isProfile || isHome || isHistory) &&
-                    <Link className={`${styles.button} ${gStyles.clickable}`}
+                    <Link className={`${styles.button} ${gStyles.gButton}`}
                         to="/dashboard" title="Go to dashboard">
                         Dashboard
                     </Link>}
 
                     {(isProfile || isHome || isDashboard) &&
-                    <Link className={`${styles.button} ${gStyles.clickable}`}
+                    <Link className={`${styles.button} ${gStyles.gButton}`}
                         to="/history" title="Go to version history">
-                        History
+                        Version History
                     </Link>}
 
                     {(isDashboard || isProfile || isHome || isHistory) &&
-                    <Link className={`${styles.button} ${gStyles.clickable}`}
+                    <Link className={`${styles.button} ${gStyles.gButton}`}
                         to="/chatbot" title="Go to chatbot">
                         Ask Chat
                     </Link>}
 
                     {(isDashboard || isHome || isHistory) &&
-                    <Link className={`${styles.button} ${styles.username} ${gStyles.clickable}`}
+                    <Link className={`${styles.button} ${styles.username} ${gStyles.gButton}`}
                         to="/profile" title="Go to profile">
                         <GoPerson/>{username}
                     </Link>}
@@ -112,8 +92,8 @@ function NavBar(){
                         )}
                     </div>}
                 </>) : (<>
-                    <Link className={`${styles.Link} ${styles.LoginLink} ${gStyles.clickable}`} to="/login">Login</Link>
-                    <Link className={`${styles.Link} ${styles.SignUpLink} ${gStyles.clickable}`} to="/signup">Sign Up</Link>
+                    <Link className={`${styles.Link} ${styles.LoginLink} ${gStyles.gButton}`} to="/login">Login</Link>
+                    <Link className={`${styles.Link} ${styles.SignUpLink} ${gStyles.gButton}`} to="/signup">Sign Up</Link>
                 </>)}
             </>)}
         </div>

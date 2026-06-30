@@ -6,7 +6,7 @@ from sqlalchemy.orm import relationship
 class Project(Base):
     __tablename__ = 'projects'
     id = Column(Integer, primary_key=True)
-    project_name = Column(String,index= True,nullable=False)
+    project_name = Column(String,index= True,nullable=False, unique=True)
 
     created_at = Column(DateTime,nullable=False,default=datetime.utcnow())
     updated_at = Column(DateTime,nullable=False,default=datetime.utcnow(),onupdate=datetime.utcnow())

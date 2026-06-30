@@ -35,6 +35,15 @@ class GitLabPipelineEditor(PipelineEditor):
             and isinstance(value, dict)
         )
 
+    #a gitLab job id can't be a reserved global or a hidden (.) template key.
+    def is_valid_job_id(self, job_id: str) -> bool:
+        return (
+            isinstance(job_id, str)
+            and bool(job_id.strip())
+            and not job_id.startswith(".")
+            and job_id not in GITLAB_GLOBAL_KEYS
+        )
+
     def container_and_keys(self, data):
         if not isinstance(data, dict):
             raise JobsNotFound("Invalid GitLab CI file: expected a top-level mapping")
@@ -57,5 +66,6 @@ class GitLabPipelineEditor(PipelineEditor):
                 display_index=index,
                 stage=str(stage) if stage is not None else None,
                 needs=needs,
+                content=self.job_block(key, spec),
             ))
         return out

@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import json
-import os
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 import httpx
@@ -12,11 +11,9 @@ GITLAB_SCHEMA_PATH = SCHEMAS_DIR / "gitlab-ci.json"
 
 CI_LINT_TIMEOUT_SEC = 20
 
-GITLAB_PROJECT_ID_ENV = "GITLAB_PROJECT_ID"
-
 
 # call_gitlab_ci_lint or the schema , returns a report dict (primary_source, fallback_used/reason, api_endpoint, jobs, errors, warnings).
-async def validate_gitlab(yaml_content: str, doc: Any, connection: Any = None, db: Any = None) -> Dict[str, Any]:
+async def validate_gitlab(yaml_content: str, doc: Any, connection: Any = None, db: Any = None, project_id: Any = None) -> Dict[str, Any]:
     errors: List[Dict[str, Any]] = []
     warnings: List[Dict[str, Any]] = []
 
@@ -26,7 +23,7 @@ async def validate_gitlab(yaml_content: str, doc: Any, connection: Any = None, d
     endpoint_used: Optional[str] = None
     jobs_summary: List[Dict[str, Any]] = []
 
-    api_result, api_error, endpoint_used = await call_gitlab_ci_lint(yaml_content, connection, db)
+    api_result, api_error, endpoint_used = await call_gitlab_ci_lint(yaml_content, connection, db, project_id)
 
     if api_error is None and api_result is not None:
         for msg in api_result.get("errors", []) or []:
@@ -54,15 +51,14 @@ async def validate_gitlab(yaml_content: str, doc: Any, connection: Any = None, d
 
 
 # Sends the YAML to GitLab's project/ci/lint endpoint. it returns result,execution error,used URL.
-async def call_gitlab_ci_lint(yaml_content: str, connection: Any = None, db: Any = None) -> Tuple[Optional[Dict[str, Any]], Optional[str], Optional[str]]:
+async def call_gitlab_ci_lint(yaml_content: str, connection: Any = None, db: Any = None, project_id: Any = None) -> Tuple[Optional[Dict[str, Any]], Optional[str], Optional[str]]:
 
     token, auth_headers, token_error = await retrieve_gitlab_token(connection, db)
     if token_error is not None:
         return None, token_error, None
 
-    project_id = os.getenv(GITLAB_PROJECT_ID_ENV)
     if not project_id:
-        return None, (f"no GitLab project id set ({GITLAB_PROJECT_ID_ENV})"), None
+        return None, "no GitLab project id available for this repository", None
 
     url = f"https://gitlab.com/api/v4/projects/{project_id}/ci/lint"
     payload = {"content": yaml_content, "include_jobs": True}
@@ -92,9 +88,9 @@ async def retrieve_gitlab_token(connection: Any, db: Any,) -> Tuple[Optional[str
         return None, None, "no connected GitLab account available to obtain a token"
 
     try:
-        from services.platform_connectors.gitlab_connect import get_valid_gitlab_token
+        from services.platform_connectors.gitlab_connect import GitLabConnector
 
-        token = await get_valid_gitlab_token(connection, db)
+        token = await GitLabConnector().get_valid_token(connection, db)
     except Exception as exc: #db error
         return None, None, f"could not obtain GitLab token from connection: {exc}"
 

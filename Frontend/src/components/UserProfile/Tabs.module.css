@@ -8,7 +8,7 @@
 }
 .header {
     width: 90%;
-    border-bottom: 3px solid rgb(9, 2, 41);
+    border-bottom: 3px solid rgba(214, 204, 255, 0.316);
     padding: 15px;
     margin-bottom: 20px;
     font-size: 22px;
@@ -41,7 +41,7 @@
     border-radius: 5px;
     font-size: 16px;
 }
-.button {
+/* .button {
     margin-left: auto;
     margin-right: 10%;
     margin-bottom: 20px;
@@ -60,7 +60,36 @@
     border: 1px solid rgb(155, 155, 155);
     transition: background-color 0.25s ease;
 }
-.button:hover{background-color: rgb(9, 2, 41);}
+.button:hover{background-color: rgb(9, 2, 41);} */
+.button{
+    margin-left: auto;
+    margin-right: 10%;
+    margin-bottom: 20px;
+    padding: 8px 14px;
+    width: fit-content;
+    height: fit-content;
+
+    display: flex;
+    align-items: center;
+    gap: 7px;
+
+    text-decoration: none;
+    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    color: inherit;
+    font-size: 16px;
+
+    /* background: rgb(9, 2, 41); */
+    background: linear-gradient(
+        40deg,
+        rgb(13, 0, 48),
+        rgb(48, 53, 150),
+        rgb(13, 0, 48)
+    );
+    
+    /* border: 1px solid rgba(221, 223, 251, 0.25); */
+    border-radius: 15px;
+    transition: 0.3s;
+}
 
 .profile{
     display: flex;
@@ -91,7 +120,7 @@
     background-color: rgb(33, 28, 55);
     border: 8px solid rgb(9, 2, 41);
     border-radius: 50%;
-    box-shadow: 0px 5px 20px rgba(0,0,0,0.7);
+    box-shadow: 0px 5px 50px rgba(90, 93, 255, 0.25);
     color: rgb(9, 2, 41);
 }
 .imgBtnContainer{
@@ -101,7 +130,7 @@
     display: inline-block;
     margin: 0;
     margin-top: 20px;
-    padding: 5px 10px;
+    padding: 10px 20px;
 }
 
 .projectList {
@@ -119,21 +148,55 @@
     justify-content: start;
     align-items: center;
 
+    
+    background: linear-gradient(
+        40deg,
+        rgb(0, 0, 0, .04),
+        rgba(0, 0, 0, 0.4),
+        rgb(0, 0, 0, .04)
+    );
+
     padding: 5px 20px;
+    border-radius: 15px;
     min-width: 0;
 }
-.projectName{
-    padding: 10px 50px 10px 20px;
-    border-bottom: 1px solid rgb(155, 155, 155, 0.7);
 
+.projectName {
+    position: relative;
+    padding: 10px 20px;
+    margin-right: auto;
+    width: 50%;
+    
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    /* border-bottom: 1px solid rgb(155, 155, 155, 0.7); */
+    /* border-radius: 0; */
+    transition:  border-radius 0.3s ease, color 0.3s ease;
+}
+.projectName::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    background: linear-gradient(
+        40deg,
+        rgb(0, 0, 0),
+        rgb(8, 10, 45),
+        rgb(0, 0, 0)
+    );
+    z-index: -1;
+
+    opacity: 0;
+    transition: opacity .2s ease;
 }
 .projectName:hover{
-    background-color: rgb(13, 2, 61);
-    border-radius: 10px;
+    border-radius: 20px;
+    border-bottom: 1px solid transparent;
+    color: rgb(146, 152, 185);
 }
+.projectName:hover::before {opacity: 1;}
+
 .subInfo{
     font-size: 12px;
     margin-left: 10%;
@@ -172,6 +235,11 @@ input[type="radio"]:checked::before {
 }
 
 .noProjects {
+    justify-self: center;
+    align-self: center;
+    flex: 1;
+    height: fit-content;
+
     background-color: rgb(95, 87, 124);
     padding: 10px 20px;
     margin: 10px 60px;
@@ -230,11 +298,11 @@ input[type="radio"]:checked::before {
 .link{
     align-content: center;
     text-decoration: none;
-    color: rgb(120, 100, 255);
+    color: rgb(185, 175, 240);
     transition: color 0.2s ease;
 }
 .link:hover{
-    color:rgb(84, 43, 146);
+    color:rgb(106, 81, 188);
 }
 .editField{
     padding: 10px 0;
@@ -251,7 +319,7 @@ input[type="radio"]:checked::before {
 
     font-size: 20px;
     font-weight: 100;
-    border-bottom: 1px solid rgb(155, 155, 155);
+    border-bottom: 1px solid rgb(155, 155, 155, 0.6);
     
 }
 .platform{
@@ -263,7 +331,6 @@ input[type="radio"]:checked::before {
 .platformSection{
     display: flex;
     flex-direction: column;
-    /* align-items: center; */
 
     margin: 20px;
     margin: 5px 20px 40px 20px;
@@ -278,43 +345,63 @@ input[type="radio"]:checked::before {
 }
 .disconnectBtn{
     margin-left: auto;
-    margin-bottom: 0;
-    margin-right: 0;
-    padding: 5px 10px;
+    margin-bottom: 20px;
+    margin-right: 10px;
+    padding: 8px 10px;
 
     display: flex;
+    border: 0;
 
-    background-color: rgb(93, 15, 15);
-    transition: background-color 0.25s ease;
-}
-.disconnectBtn:hover{
-    background-color: rgb(126, 33, 33);
+    /* background-color: rgb(140, 21, 21); */
+    background: linear-gradient(
+        40deg,
+        rgb(48, 0, 0),
+        rgb(140, 21, 21),
+        rgb(48, 0, 0)
+    );
+    transition: 0.3s;
+
+    box-shadow: 5px 5px 20px 4px rgba(0,0,0,0.4);
 }
 .disconnectIcon{
     display: flex;
     justify-content: center;
-    padding: 4px 6px;
+    
+    padding: 6px 6px;
     margin-right: 0;
     margin-bottom: 0;
+    border: 0;
+    border-radius: 50%;
+    
+    /* background-color: rgb(140, 21, 21); */
+    background: linear-gradient(
+        40deg,
+        rgb(48, 0, 0),
+        rgb(140, 21, 21),
+        rgb(48, 0, 0)
+    );
+    box-shadow: 5px 5px 20px 4px rgba(0, 0, 0, 0.4);
 
-    background-color: rgb(93, 15, 15);
-    transition: background-color 0.25s ease;
+    transition: 0.25s;
 }
-.disconnectIcon:hover{
-    background-color: rgb(126, 33, 33);
+.disconnectBtn:hover, .disconnectIcon:hover{
+    background-color: rgb(98, 25, 25);
+    transform: translateY(-2px);
 }
-.p_SubSection{
-    width: 100%;
+
+.pSubSection{
+    display: flex;
+    flex-direction: column;
+
     padding: 20px;
     margin: 20px 0;
+
     background-color: rgb(13, 2, 61);
     border-radius: 15px;
 
-    overflow: hidden;
     word-wrap: break-word;
     white-space: nowrap;
 }
-
 .subSectionLabel{
     display: flex;
     align-items: center;
@@ -336,13 +423,25 @@ input[type="radio"]:checked::before {
     transition: transform 0.5s ease;
 }
 .list{
+    flex: 1;
     display: flex;
     flex-direction: column;
+
+    max-height:0;
+    margin: 0;
+    margin-top: 10px;
+
     list-style-type: square;
 
     overflow: hidden;
-    transition: opacity 0.25s ease, transform 0.25s ease;
+    transition: opacity 0.25s ease, transform 0.25s ease, max-height 0.7s ease, margin 0.1s ease;
 }
+.expanded .list{
+    max-height:350px;
+    overflow-y: auto;
+    overflow-anchor: auto;
+}
+
 .listItem{
     display: flex;
     align-items: end;
