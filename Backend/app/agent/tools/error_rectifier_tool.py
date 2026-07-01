@@ -8,12 +8,8 @@ async def rectify_yaml_tool(
     validation_report: str,
 ) -> str:
     """
-    Call this tool when `validate_pipeline_tool` returns errors.
-    It tells the LLM to fix the YAML using the validation report.
-
-    Args:
-        yaml_content: The current (invalid) YAML.
-        validation_report: The JSON/string output from validate_pipeline_tool.
+    Call this tool ONLY when `validate_pipeline_tool` returns errors.
+    It provides the context needed for the RECTIFY_PROMPT.
     """
     print("[rectify_yaml_tool] called — validation errors received")
 
@@ -21,7 +17,7 @@ async def rectify_yaml_tool(
     return (
         f"VALIDATION_FAILED\n"
         f"Current YAML:\n```yaml\n{yaml_content}\n```\n\n"
-        f"Validation Report:\n{validation_report}\n\n"
-        f"Fix ALL errors and return ONLY the corrected JSON in this format:\n"
-        f'{{"yaml": "<fixed YAML>", "description": "<what was fixed>"}}'
+        f"The YAML failed validation. Here are the errors:\n{validation_report}\n\n"
+        f"Please apply the RECTIFY_PROMPT rules now: "
+        f"Explain the fix, then provide the corrected ```yaml block."
     )
