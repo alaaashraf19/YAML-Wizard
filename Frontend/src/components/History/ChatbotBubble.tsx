@@ -177,6 +177,13 @@ function ChatbotBubble({isChatOpen, setIsChatOpen }:ChatbotBubbleProps){
         return content.startsWith("⚠️");
     };
 
+    const renderBold = (text: string) => {
+        const parts = text.split(/\*{1,2}(.*?)\*{1,2}/g);
+        return parts.map((part, i) =>
+            i % 2 === 1 ? <strong key={i}>{part}</strong> : part
+        );
+    };
+
 
     return( <div className={`${styles.chatbotWidget} ${ isChatOpen ? styles.chatbotOpen : styles.chatbotClosed}`}>
                 {!isChatOpen ? (
@@ -191,7 +198,7 @@ function ChatbotBubble({isChatOpen, setIsChatOpen }:ChatbotBubbleProps){
                                 onClick={() => session && setAskReset("Reset this conversation?")}
                                 title="Reset Chat"/>}
                             <IoClose className={`${styles.chatbotBtn} ${gStyles.clickable}`}
-                                onClick={() => setIsChatOpen(false)} title="Close Chatbot"/> 
+                                onClick={() => setIsChatOpen(false)} title="Close Chatbot"/>
                         </div>
 
                         <div className={styles.chatMessages}>
@@ -200,7 +207,7 @@ function ChatbotBubble({isChatOpen, setIsChatOpen }:ChatbotBubbleProps){
                                 <div key={i} className={styles.messagePack}>
                                     <p className={`${styles.message} ${msg.role === "user" ?
                                         styles.userMessage : (isErrorMessage(msg.content)? styles.askReset : styles.botMessage)}`}>
-                                        {msg.content}
+                                        {renderBold(msg.content)}
                                     </p>
                                 </div>
                             ))}

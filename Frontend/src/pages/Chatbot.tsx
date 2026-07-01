@@ -229,10 +229,17 @@ function Chatbot() {
         return content.startsWith("⚠️");
     };
 
+    const renderBold = (text: string) => {
+        const parts = text.split(/\*{1,2}(.*?)\*{1,2}/g);
+        return parts.map((part, i) =>
+            i % 2 === 1 ? <strong key={i}>{part}</strong> : part
+        );
+    };
+
 
     return(
         <div className={styles.window}>
-            <SideBar sessionId={sessionId} setSessionId={setSessionId} sessions={sessions} 
+            <SideBar sessionId={sessionId} setSessionId={setSessionId} sessions={sessions}
                 setSessions={setSessions} setMessages={setMessages} isLoading={isLoading}/>
 
             <div className={styles.chatWindow}>
@@ -242,7 +249,7 @@ function Chatbot() {
                         <div key={i} className={styles.messagePack}>
                             <p className={`${styles.message} ${msg.role === "user" ?
                                 styles.userMessage : (isErrorMessage(msg.content)? styles.errorMessage : styles.botMessage)}`}>
-                                {msg.content}
+                                {renderBold(msg.content)}
                             </p>
                         </div>
                     ))}
