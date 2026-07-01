@@ -1,31 +1,42 @@
 import gStyles from "../global.module.css"
 import styles from "./Chatbot.module.css";
+import popupStyles from '../components/Popup/Popup.module.css'
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md"
-import { IoSend } from "react-icons/io5";
+import { IoSend, IoClose } from "react-icons/io5";
 
-import type { Session, Message } from "../types";
+
+import type { Session, Message, Project } from "../types";
 import ChatProjects from "../components/Chatbot/ChatProjects";
 import SideBar from "../components/Chatbot/SideBar";
+import Popup from "../components/Popup/Popup";
+import { ProjectSubInfo } from "../components/UserProfile/ProjectInfoTab";
 
 
 function Chatbot() {
     const [prompt, setPrompt] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [messages, setMessages] = useState<Message[] | []>([]);
     const [sessionId, setSessionId] = useState<number | null>(null);
     const [sessions, setSessions] = useState<Session[]>([]);
-    const [selectedProject, setSelectedProject] = useState<string | React.ReactNode>(<>
-        Connect Project <MdOutlineKeyboardArrowRight style={{ marginLeft: 10 }} />
-    </>);
+    const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+
+    const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+    const [isShowInfo, setIsShowInfo] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     
+    const [confirmMessage, setConfirmMessage] = useState<string | null>(null);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
     const textareaRef = useRef<HTMLTextAreaElement | null>(null);
     const menuRef = useRef<HTMLDivElement | null>(null);
+    const popupRef = useRef<HTMLDivElement | null>(null);
+    const infoRef = useRef<HTMLDivElement | null>(null);
+    // const navigate = useNavigate();
     const api_url = import.meta.env.VITE_API_URL;
-
+    
+    
     // Auto focus on textarea
     useEffect(() => {
         textareaRef.current?.focus();
@@ -54,6 +65,9 @@ function Chatbot() {
             function handleClickOutside(e: MouseEvent) {
                 if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
                     setIsMenuOpen(false);
+                }
+                if(infoRef.current && !infoRef.current.contains(e.target as Node)){
+                    setIsShowInfo(false);
                 }
             }
 
@@ -101,6 +115,19 @@ function Chatbot() {
         };
     }, []);
     
+    // get selected project on change of session id
+    useEffect(() => {
+        const foundProject = sessions.find(s => s.id === sessionId)?.project;
+        setSelectedProject(foundProject ?? null);
+    }, [sessionId, sessions]);
+
+    //set text for select project button
+    const selectedProjectText = useMemo(() => {
+        return selectedProject? selectedProject.project_name : 
+            <span className={styles.connectBtn}> Connect Project 
+                <MdOutlineKeyboardArrowRight className={styles.arrow}/>
+            </span>
+    }, [selectedProject]);
 
     const handleSend = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -120,13 +147,14 @@ function Chatbot() {
 
         // handle new session
         if (!activeSessionId) {
-            const newSession = {
-                id: activeSessionId,
+            const newSession: Session = {
+                id: null,
                 session_name: "...",
                 created_at: new Date().toISOString(),
-                updated_at: new Date().toISOString()
+                updated_at: new Date().toISOString(),
+                project: selectedProject
             }
-            
+
             setSessions(prev => [...prev, newSession]);
         }
         else {
@@ -142,7 +170,8 @@ function Chatbot() {
                 credentials: "include",
                 body: JSON.stringify({
                     message: userPrompt,
-                    session_id: activeSessionId
+                    session_id: activeSessionId,
+                    project_id: selectedProject?.id
                 })
             })
 
@@ -188,6 +217,7 @@ function Chatbot() {
         }
     };
 
+    //handle enter and shift+enter
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
@@ -244,15 +274,50 @@ function Chatbot() {
                         </form>
 
                         <div>
-                            <button onClick={() => setIsMenuOpen(prev => !prev)} className={`${styles.projectButton} ${gStyles.clickable}`}>
-                                {selectedProject}
+                            <button className={`${styles.projectButton} ${gStyles.clickable}`}
+                                title={selectedProject ? "Show project info" : "Open projects menu"}
+                                onClick={() => {!selectedProject? setIsMenuOpen(prev => !prev)
+                                    : setIsShowInfo(true)
+                                }}>
+                                {selectedProjectText}
                             </button>
+                            
+                            {isShowInfo && 
+                            <div className={popupStyles.popupLayover}>
+                                <div className={`${styles.infoPopup} ${popupStyles.popup}`} ref={infoRef}>
+                                    <div className={styles.infoBtns}>
+                                        <IoClose className={`${gStyles.clickable} ${styles.infoBtn}`}
+                                            onClick={() => setIsShowInfo(false)} title="Close"/>
+                                    </div>
+                                    <ProjectSubInfo selectedProject={selectedProject}/>
+                                </div>
+                            </div>
+                            }
 
-                            {isMenuOpen && <ChatProjects setIsMenuOpen={setIsMenuOpen} setSelectedProject={setSelectedProject} menuRef={menuRef}/>}
+                            {isMenuOpen &&
+                            <ChatProjects 
+                                sessionId={sessionId}
+                                setProject={setSelectedProject}
+                                setSessions={setSessions}
+                                setConfirmMessage={setConfirmMessage}
+                                setErrorMessage={setErrorMessage}
+                                setIsMenuOpen={setIsMenuOpen}
+                                menuRef={menuRef}
+                            />}
                         </div>
                     </div>
                 </div>
             </div>
+
+            {(confirmMessage || errorMessage) &&
+            <Popup
+                btnText1={"Got it"}
+                confirmMessage={confirmMessage}
+                setConfirmMessage={setConfirmMessage}
+                errorMessage={errorMessage}
+                setErrorMessage={setErrorMessage}
+                popupRef={popupRef}
+            />}
         </div>
     )
 }

@@ -1,7 +1,8 @@
 import gStyles from "../global.module.css"
 import styles from './SignUp.Login.module.css';
-import { useState } from "react";
+import logo from "../assets/yaml_wizard_logo.png";
 import { UsernameField, EmailField, PasswordField } from "../components/AuthForm/AuthForm";
+import { useState } from "react";
 import { Link } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
 
@@ -81,6 +82,12 @@ function SignUp(){
 
     return (
         <div className={styles.formContainer}>
+            <div className={styles.appNameContainer}>
+                <img src={logo} alt="" className={`${styles.logo} ${gStyles.clickable}`}
+                    title="Go to home page" onClick={() => navigate("/")}/>
+                <span className={`${styles.appName} ${gStyles.clickable}`} onClick={() => navigate("/")}
+                    title="Go to home page">YAML Wizard</span>
+            </div>
             <h1>Sign Up</h1>
             <form className={styles.form} onSubmit={handleSubmit} noValidate>
                 {responseError && <p className={styles.error}>{responseError}</p>}
@@ -98,7 +105,7 @@ function SignUp(){
                     showPassword={showConfirmPassword} setShowPassword={setShowConfirmPassword} />
                 {emptyConfirmPassword && <p className={styles.fieldError}>Confirm Password is required</p>}
 
-                <button type="submit" className={`${styles.submit} ${gStyles.clickable}`} disabled={loading}>
+                <button type="submit" className={`${styles.submit} ${gStyles.gButton}`} disabled={loading}>
                     {loading ? "Signing Up..." : "Sign Up"}
                 </button>
             </form>

@@ -2,12 +2,12 @@ import gStyles from "../../global.module.css"
 import popupStyles from '../Popup/Popup.module.css'
 import styles from './Tabs.module.css'
 
-import type { Project, Platform } from "../../types";
-import { Platforms } from "../../types";
-import { Popup } from "../Popup/Popup";
-import { useEffect, useRef, useState } from "react";
+import Popup from "../Popup/Popup";
+import type { Project, Platform, Session } from "../../types";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-import { IoClose } from "react-icons/io5";
+import { IoClose, IoNavigate  } from "react-icons/io5";
 import { MdEdit } from "react-icons/md";
 import { MdDeleteOutline } from "react-icons/md";
 
@@ -21,30 +21,70 @@ type ProjectInfoTabProps = {
     popupRef: React.Ref<HTMLDivElement>
 }
 
-function ProjectInfoTab(PITProps : ProjectInfoTabProps){
+function ProjectInfoTab({ projectInfoId, setProjectInfoId, projects, setProjects, infoRef, popupRef } : ProjectInfoTabProps){
     const [projectName, setProjectName] = useState<string | undefined>('');
     const [repoURL, setRepoUrl] = useState<string | undefined>('');
     const [platform, setPlatform] = useState<Platform | null | undefined>('github' as Platform);
+    const [sessions, setSessions] = useState<Session[]>([]);
     
     const [errorEdit, setErrorEdit] = useState<string | null>("");
     const [editMode, setEditMode] = useState<boolean>(false);
     const [selectedProject, setSelectedProject] = useState<Project>();
-    const [confirmDelete, setConfirmDelete] = useState<string | null>("");
+    const [askDelete, setAskDelete] = useState<string | null>("");
     
-    const popupRef = useRef<HTMLDivElement>(null);
+    const localPopupRef = useRef<HTMLDivElement>(null);
+    const navigate = useNavigate();
     const api_url = import.meta.env.VITE_API_URL;
 
-    // get selected project on project-id change
+    // check if project info id is selected
     useEffect(() => {
-        if(PITProps.projectInfoId){
-            setSelectedProject(PITProps.projects.find(p => p.id === PITProps.projectInfoId));
+        const projectId = sessionStorage.getItem("project_id");
+
+        if(projectId){
+            setProjectInfoId(Number(projectId));
+            setSelectedProject(projects.find(p => p.id === Number(projectId)));
         }
-    }, [PITProps.projectInfoId]);
+    }, [projects]);
+
+    // get selected project and its sessions on project-id change
+    useEffect(() => {
+        const getSessionsOfProject = async () => {
+            try {
+                const res = await fetch(`${api_url}/projects/${projectInfoId}/sessions`, {
+                    credentials: "include",
+                    method: "GET",
+                    headers: {"Content-Type": "application/json"}
+                });
+
+                const data = await res.json();
+
+                if (!res.ok) {
+                    console.error(data.detail?.[0]?.msg || data.detail || "Failed to load sessions");
+                    return;
+                }
+                setSessions(data);
+
+            } catch (e) {
+                console.error("Failed to load sessions:", e);
+            }
+        }
+
+        if(projectInfoId){
+            setSelectedProject(projects.find(p => p.id === projectInfoId));
+            getSessionsOfProject();
+        }
+    }, [projectInfoId]);
+
+    //sort sessions
+    const sortedSessions = useMemo(() => {
+        return sessions ? sessions
+            .sort((a,b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()) : [];
+    }, [sessions]);
 
     //handle delete a project
     const handleDelete = async () => {
         try{
-            const res = await fetch(`${api_url}/projects/${PITProps.projectInfoId}`, {
+            const res = await fetch(`${api_url}/projects/${projectInfoId}`, {
                 method: "DELETE",
                 credentials: "include"
             });
@@ -56,8 +96,8 @@ function ProjectInfoTab(PITProps : ProjectInfoTabProps){
                 return;
             }
 
-            PITProps.setProjects(prev => prev.filter(p => p.id !== PITProps.projectInfoId));
-            PITProps.setProjectInfoId(null);
+            setProjects(prev => prev.filter(p => p.id !== projectInfoId));
+            setProjectInfoId(null);
 
         } catch(e) {
             console.log("Failed to delete project:" ,e);
@@ -76,7 +116,7 @@ function ProjectInfoTab(PITProps : ProjectInfoTabProps){
         setErrorEdit("");
 
         try{
-            const res = await fetch(`${api_url}/projects/${PITProps.projectInfoId}`, {
+            const res = await fetch(`${api_url}/projects/${projectInfoId}`, {
                 method: "PUT",
                 headers: {"Content-Type": "application/json"},
                 credentials: "include",
@@ -96,8 +136,8 @@ function ProjectInfoTab(PITProps : ProjectInfoTabProps){
             }
 
             const updatedAt = new Date().toISOString();
-            PITProps.setProjects(PITProps.projects.map(p => 
-                p.id === PITProps.projectInfoId? {
+            setProjects(projects.map(p => 
+                p.id === projectInfoId? {
                     ...p,
                     "project_name": projectName ?? "",
                     "repo_url": repoURL ?? "",
@@ -140,26 +180,22 @@ function ProjectInfoTab(PITProps : ProjectInfoTabProps){
 
     return(
         <div className={popupStyles.popupLayover}>
-            {confirmDelete? 
+            {askDelete? 
                 <Popup
                     btnText1={"Delete"}
                     btn1Action={handleDelete}
                     btnText2={"Cancel"}
-                    btn2Action={null}
-                    confirmMessage={confirmDelete}
-                    setConfirmMessage={setConfirmDelete}
-                    warningMessage={null}
-                    setWarningMessage={null}
-                    errorMessage={null}
-                    setErrorMessage={null}
-                    popupRef={PITProps.popupRef}
+                    questionMessage={askDelete}
+                    setQuestionMessage={setAskDelete}
+                    popupRef={popupRef}
                 />
-                : <div className={`${styles.infoPopup} ${popupStyles.popup}`} ref={editMode? null : PITProps.infoRef}>
+                : <div className={`${styles.infoPopup} ${popupStyles.popup}`} ref={editMode? null : infoRef}>
                 {editMode? (<>
                     <div className={styles.infoBtns}>
                             <IoClose className={`${gStyles.clickable} ${styles.infoBtn}`}
                                 onClick={() => setEditMode(false)} title="Discard edit"/>
                     </div>
+
                     <form className={`${styles.form} ${styles.infoForm}`} onSubmit={
                             (e) => {handleEdit(e);
                         }}>
@@ -192,7 +228,7 @@ function ProjectInfoTab(PITProps : ProjectInfoTabProps){
                         </div> */}
 
                         <button type="submit" title="Confirm Edit"
-                            className={`${gStyles.clickable} ${styles.button} ${styles.editBtn}`}>
+                            className={`${gStyles.gButton} ${styles.button} ${styles.editBtn}`}>
                             Edit
                         </button>
                     </form>
@@ -200,22 +236,15 @@ function ProjectInfoTab(PITProps : ProjectInfoTabProps){
                     {errorEdit && (
                         <Popup 
                             btnText1={"Got it"}
-                            btn1Action={null}
-                            btnText2={null}
-                            btn2Action={null}
-                            confirmMessage={null}
-                            setConfirmMessage={null}
-                            warningMessage={null}
-                            setWarningMessage={null}
                             errorMessage={errorEdit}
                             setErrorMessage={setErrorEdit}
-                            popupRef={popupRef}
+                            popupRef={localPopupRef}
                         />
                     )}
                 </>) : (<>
                     <div className={styles.infoBtns}>
                         <MdDeleteOutline className={`${gStyles.clickable} ${styles.infoBtn}`} title="Delete Project"
-                            onClick={() => setConfirmDelete("Delete the project '" + selectedProject?.project_name + "' ?")}/>
+                            onClick={() => setAskDelete("Delete project '" + selectedProject?.project_name + "' ?")}/>
                         <MdEdit className={`${gStyles.clickable} ${styles.infoBtn}`} title="Edit Info" 
                             onClick={() => {
                                 setEditMode(true);
@@ -223,35 +252,36 @@ function ProjectInfoTab(PITProps : ProjectInfoTabProps){
                                 setRepoUrl(selectedProject?.repo_url);
                                 setPlatform(selectedProject?.platform);
                         }}/>
-                        <IoClose className={`${gStyles.clickable} ${styles.infoBtn}`}
-                            onClick={() => PITProps.setProjectInfoId(null)} title="Close Info"/>
+                        <IoClose className={`${gStyles.clickable} ${styles.infoBtn}`}  title="Close Info"
+                            onClick={() => {
+                                setProjectInfoId(null);
+                                sessionStorage.removeItem("project_id");
+                            }}/>
                     </div>
-                    <div className={styles.infoBar}>
-                        <p className={styles.infoLabel}>Project Name</p>
-                        <p className={styles.infoText}>{selectedProject?.project_name}</p>
-                    </div>
-                    <div className={styles.infoBar}>
-                        <p className={styles.infoLabel}>Repository URL</p>
-                        <a href={selectedProject?.repo_url} className={styles.link}
-                            title="Go to repo">{selectedProject?.repo_url}</a>
-                    </div>
-                    <div className={styles.infoBar}>
-                        <p className={styles.infoLabel}>Platform</p>
-                        <p className={styles.infoText}>{selectedProject?.platform}</p>
+
+                    <ProjectSubInfo selectedProject={selectedProject}/>
+                    
+                    <div className={`${styles.infoBar} ${styles.infoBarSessions}`}>
+                        <p className={styles.infoLabel}>Connected Sessions</p>
+                        {sortedSessions.length > 0 ? (
+                        <div className={styles.sessions}>
+                            {sortedSessions.map((session, index) => (
+                                <div key={index} className={styles.session}>
+                                    <span>{session.session_name}</span>
+                                    <span className={`${styles.navigateIcon} ${gStyles.clickable}`}
+                                            title="Go to session" onClick={() => {
+                                                if(session.id) sessionStorage.setItem("session_id", session.id.toString());
+                                                else sessionStorage.removeItem("session_id");
+                                                navigate("/chatbot");
+                                            }}> <IoNavigate/> </span>
+                                </div>
+                            ))}
+                        </div>
+                        ) : (
+                            <p className={styles.noProjects}>No connected sessions yet.</p>
+                        )}
                     </div>
                 </>)}
-
-                <div className={styles.infoBar}>
-                    <p className={styles.infoLabel}>Created</p>
-                    <p className={styles.infoText}>{new Date(selectedProject?.created_at??"").toLocaleString()}</p>
-                </div>
-                <div className={styles.infoBar}>
-                    <p className={styles.infoLabel}>Last Updated</p>
-                    <p className={styles.infoText}>{new Date(selectedProject?.updated_at??"").toLocaleString()}</p>
-                </div>
-                <div className={styles.infoBar}>
-                    <p className={styles.infoLabel}>Connected Sessions</p>
-                </div>
             </div>
             }
         </div>
@@ -260,3 +290,45 @@ function ProjectInfoTab(PITProps : ProjectInfoTabProps){
 }
 
 export default ProjectInfoTab;
+
+type subProps = {
+    selectedProject: Project | null | undefined
+}
+export function ProjectSubInfo({ selectedProject }:subProps){
+    const loadingText = "Getting Information ..";
+
+    return(<>
+        <div className={styles.infoBar}>
+            <p className={styles.infoLabel}>Project Name</p>
+            <p className={styles.infoText}>{selectedProject?.project_name ?? loadingText}</p>
+        </div>
+        <div className={styles.infoBar}>
+            <p className={styles.infoLabel}>Repository URL</p>
+            {selectedProject?.repo_url ? 
+            <a href={selectedProject?.repo_url} className={styles.link}
+                title="Go to repo">{selectedProject?.repo_url}</a>
+            : <p className={styles.infoText}>{loadingText}</p>}
+        </div>
+        <div className={styles.infoBar}>
+            <p className={styles.infoLabel}>Platform</p>
+            <p className={styles.infoText}>{selectedProject?.platform?.toUpperCase() ?? loadingText}</p>
+        </div>
+        <div className={styles.infoBar}>
+            <p className={styles.infoLabel}>Branch</p>
+            <p className={styles.infoText}>{selectedProject?.branch?.toUpperCase() ?? loadingText}</p>
+        </div>
+
+        <div className={styles.infoBar}>
+            <p className={styles.infoLabel}>Created</p>
+            <p className={styles.infoText}>
+                {selectedProject?.created_at ?
+                    new Date(selectedProject.created_at).toLocaleString(): loadingText}</p>
+        </div>
+        <div className={styles.infoBar}>
+            <p className={styles.infoLabel}>Last Updated</p>
+            <p className={styles.infoText}>
+                {selectedProject?.updated_at ?
+                    new Date(selectedProject.updated_at).toLocaleString(): loadingText}</p>
+        </div>
+    </>);
+}

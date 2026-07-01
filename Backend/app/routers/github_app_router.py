@@ -74,8 +74,7 @@ async def disconnect_one(installation_id: int, request: Request, db: AsyncSessio
     if not installation:
         raise HTTPException(status_code=404, detail="Installation not found")
 
-    installation.user_id = None
-    installation.repos_selection = None
+    await db.delete(installation)
 
     await db.commit()
 
@@ -94,8 +93,7 @@ async def disconnect_all(request: Request, db: AsyncSession = Depends(get_db)):
     installations = result.scalars().all()
 
     for inst in installations:
-        inst.user_id = None
-        inst.repos_selection = None
+        await db.delete(inst)
 
     await db.commit()
 

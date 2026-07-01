@@ -118,6 +118,8 @@ export interface Session {
     session_name: string;
     created_at: string;
     updated_at: string;
+    project?: Project | null;
+    pipeline?: Pipeline | null;
 };
 
 export interface AuthContextType {
@@ -128,11 +130,35 @@ export interface AuthContextType {
 };
 
 export interface Project {
-    id: number | null;
-    user_id: number | null;
+    id: number;
+    user_id: number;
     project_name: string;
+    branch:string;
     repo_url: string;
     platform: Platform;
     created_at: string;
     updated_at: string;
+}
+
+export interface Pipeline {
+    id: number;
+    name: string;
+    commit_author: string;
+    commit_hash: string;
+    branch: string;
+    path: string;
+    content: string;
+    is_active: boolean;
+    created_at: Date;
+    updated_at: Date;
+    activated_at: Date;
+    is_generated_by_wizard: boolean;
+}
+
+export interface Job {
+    id: string;
+    display_index?: number;
+    stage?: string | null;
+    needs?: string[];
+    content: string;
 }

@@ -54,8 +54,13 @@ def build_ctx(repo_orm, repo_schema):
 
 def parse_full_name(full_name: str) -> Tuple[str, str]:
     """Parse 'owner/repo' from GitHub full name"""
-    parts = full_name.split("/")
-    if len(parts) != 2:
+    parts = full_name.strip("/").split("/")
+
+    if len(parts) < 2:
         raise ValueError(f"Invalid repository full name: {full_name}")
-    return parts[0], parts[1]
+
+    owner = parts[0]
+    repo = parts[1]
+
+    return owner, repo
 
