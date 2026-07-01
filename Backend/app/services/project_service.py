@@ -70,6 +70,7 @@ async def _resolve_token(user_id: int, platform: str, repo_url: str, db: AsyncSe
                 try:
                     from core.github_auth import get_installation_token
                     token = await run_in_threadpool(get_installation_token, authorized_repo.installation_id)
+                    print(f"Using GitHub installation token for user_id={user_id}", token)
                     logger.info("Using GitHub installation token for user_id=%s", user_id)
                     return token
                 except Exception as exc:

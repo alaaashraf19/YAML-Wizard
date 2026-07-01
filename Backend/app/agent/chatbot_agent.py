@@ -23,7 +23,9 @@ import re
 class AgentState(TypedDict):
     messages: Annotated[List[BaseMessage], add_messages]
     context: Optional[Any] # full ContextResolverResponse
-    context_summary: Optional[str]  # str
+    context_summary: Optional[str]
+    active_pipeline_msg: Optional[str]
+    rag_examples: Optional[str]
 
 
 class ChatbotAgent:
@@ -93,8 +95,18 @@ class ChatbotAgent:
         if current_summary:
             messages_to_send.append(SystemMessage(content=f"PROJECT_CONTEXT:\n{current_summary}"))
 
+        if state.get("active_pipeline_msg"):
+            messages_to_send.append(SystemMessage(content=state["active_pipeline_msg"]))
+
+        if state.get("rag_examples"):
+            rag_msg = f"### REFERENCE EXAMPLES (Use these for inspiration):\n{state['rag_examples']}"
+            messages_to_send.append(SystemMessage(content=rag_msg))
+            
         clean_history = [m for m in history if not isinstance(m, SystemMessage)]
+        if len(clean_history) > 10:
+            clean_history = clean_history[-10:]
         messages_to_send.extend(clean_history)
+        
         
         print("\n================ MESSAGES SENT TO MODEL ================")
         for m in messages_to_send:
@@ -112,7 +124,9 @@ class ChatbotAgent:
 
         return {
             "messages": [response],
-            "context_summary": current_summary
+            "context_summary": state.get("context_summary"),
+            "active_pipeline_msg": state.get("active_pipeline_msg"),
+            "rag_examples": None,  # Reset RAG examples after each LLM call
         }
 
     # converts {"role": "user","content": "Hi"} to langcain message format => HumanMessage(content="Hi")
@@ -163,41 +177,7 @@ class ChatbotAgent:
             segments.append({"type": "text", "content": text_after})
             
         return segments
-    # def extract_pipeline_data(self, content: str) -> Dict[str, str]:
-    #     """Extracts YAML and description from model response even if it contains fluff."""
-    #     # 1. Try to find a YAML code block
-    #     yaml_match = re.search(r"```yaml\n(.*?)\n```", content, re.DOTALL)
-    #     # 2. Try to find a JSON code block (in case it followed your JSON rule)
-    #     json_match = re.search(r"```json\n(.*?)\n```", content, re.DOTALL)
-        
-    #     yaml_content = ""
-    #     description = ""
 
-    #     if yaml_match:
-    #         yaml_content = yaml_match.group(1).strip()
-    #         description = content.split("```yaml")[0].strip()
-    #     elif json_match:
-    #         try:
-    #             data = json.loads(json_match.group(1))
-    #             yaml_content = data.get("yaml", "")
-    #             description = data.get("description", "")
-    #         except:
-    #             pass
-        
-    #     # Fallback: if no markdown blocks, assume the whole thing is YAML or text
-    #     if not yaml_content:
-    #         # Simple heuristic: if it contains 'name:' or 'jobs:', it's likely YAML
-    #         if "name:" in content and "jobs:" in content:
-    #             yaml_content = content
-    #             description = "Generated CI/CD Pipeline"
-    #         else:
-    #             description = content
-    #             yaml_content = ""
-
-    #     return {
-    #         "yaml": yaml_content,
-    #         "description": description
-        # }
     async def invoke(self, message: str, session_id: int, context: ContextResolverResponse | None, 
                      context_summary :str | None, chat_history: List[Dict[str, str]] = None, db: Optional[Any] = None, 
                      gitlab_connection: Optional[Any] = None, user_id: Optional[int] = None, project_id: Optional[int] = None,
@@ -232,13 +212,15 @@ class ChatbotAgent:
                     f"This is the code the user is looking at on their screen. "
                     f"Ignore other YAML files in the repo if they conflict with this one."
                 )
-                lc_messages = [SystemMessage(content=active_pipeline_msg)] + lc_messages
+                print("################################### pipeline content:", p.content)
+                # lc_messages = [SystemMessage(content=active_pipeline_msg)] + lc_messages
 
-        
+        print(lc_messages)
         initial_state = {
         "messages": lc_messages,
         "context": context,
         "context_summary": context_summary,
+        "active_pipeline_msg" : active_pipeline_msg
         }
         result = await self.graph.ainvoke(initial_state, config=config)
         last_message = result["messages"][-1]

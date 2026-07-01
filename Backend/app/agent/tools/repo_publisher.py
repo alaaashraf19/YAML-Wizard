@@ -4,98 +4,32 @@ import httpx
 from urllib.parse import urlparse, quote
 from schemas.publish_result_schema import PublishResult
 from langchain_core.tools import tool
+from langchain_core.runnables import RunnableConfig
+from services.project_service import _resolve_token
+from services.dashboard.repos_services import _parse_repo_info
+from services.dashboard.repos_services import parse_github_repo
+from sqlalchemy import select
+from models.project_model import Project
+from models.repository_model import Repository
+from typing import Optional
 
 
 _RETRYABLE_STATUS_CODES = {500, 502, 503, 504}
 _MAX_RETRIES = 3
-_BACKOFF_BASE = 2  # seconds
-
+_BACKOFF_BASE = 2  #seconds
 
 
 @tool
-def publish_to_repo_tool(yaml_content: str, repo_url: str, platform: str, token: str, file_path: str | None = None,
-    branch: str = "main", commit_message: str | None = None, create_pr: bool = False, pr_branch: str = "yaml-wizard/ci-pipeline",) -> PublishResult:
+async def publish_to_repo_tool(yaml_content: str, repo_url: Optional[str] = None, platform: Optional[str] = None,
+    file_path: str | None = None,
+    branch: str = "main", commit_message: str | None = None, create_pr: bool = False, pr_branch: str = "yaml-wizard/ci-pipeline",
+    config: RunnableConfig = None) -> PublishResult:
     
     """
     Tool: publish_to_repo
 
-    Purpose:
-        Publishes a YAML file to a remote Git repository (GitHub or GitLab).
-        It can either commit directly to a branch or create a pull/merge request.
-
-    Inputs:
-
-        yaml_content: str (required)
-            The full YAML file content to be published.
-            This is the exact file body that will be committed to the repository.
-
-        repo_url: str (required)
-            The repository URL (GitHub or GitLab).
-            Example:
-                https://github.com/user/repo
-                https://gitlab.com/user/repo
-            Used to determine repository owner and name.
-
-        platform: str (required)
-            The Git provider platform.
-            Allowed values:
-                "github", "gitlab"
-
-        token: str (required)
-            Authentication token for the Git provider.
-            Must have permissions to:
-                - read repository
-                - write repository contents
-                - create branches / pull or merge requests (if enabled)
-
-        file_path: str | None (optional)
-            Path inside the repository where the YAML file will be written.
-            Default:
-                .github/workflows/ci.yml
-            If the file already exists, it will be updated.
-
-        branch: str (optional)
-            Target branch to commit into.
-            Default:
-                "main"
-
-        commit_message: str | None (optional)
-            Commit message for the change.
-            Default:
-                "ci: add {file_path} via YAML Wizard"
-
-        create_pr: bool (optional)
-            If True:
-                - Creates a new branch (pr_branch)
-                - Commits the file to that branch
-                - Opens a Pull Request (GitHub) or Merge Request (GitLab)
-            If False:
-                - Commits directly to the target branch.
-
-        pr_branch: str (optional)
-            Name of the branch used when create_pr is True.
-            Default:
-                "yaml-wizard/ci-pipeline"
-
-    Output:
-
-        PublishResult:
-            success: bool
-                True if the publish operation succeeded, False otherwise.
-
-            message: str
-                Human-readable result message.
-                If success:
-                    - "File committed to {branch}: {file_path}"
-                    - or "Pull request created: {url}"
-                If failure:
-                    - error description (auth failure, repo not found, conflict, etc.)
-
-            url: str | None
-                URL to the resulting resource:
-                    - If direct commit: link to the file in the repository
-                    - If PR/MR: link to the pull/merge request
-                    - If failure: None
+    Publishes a YAML file to a remote Git repository (GitHub or GitLab).
+    Use this when the user explicitly asks to 'push', 'publish', or 'deploy' the generated pipeline.
 
     Behavior Notes:
 
@@ -104,7 +38,30 @@ def publish_to_repo_tool(yaml_content: str, repo_url: str, platform: str, token:
         - Prefer creating a pull request (create_pr=True) when safety is desired.
         - The YAML content should already be fully generated before calling this tool.
     """
-    # print("here")
+    configurable = config.get("configurable", {})
+    db = configurable.get("db")
+    user_id = configurable.get("user_id")
+    project_id = configurable.get("project_id")
+    repo = await db.scalar(
+        select(Repository)
+        .join(Project, Repository.id == Project.repo_id)
+        .where(Project.id == project_id)
+    )
+    if repo is None:
+        raise ValueError(f"No Repository found for this project (project_id={project_id})")
+    repo_url = repo.url
+
+    
+    try:
+        parsed_full_name, parsed_platform, parsed_branch = _parse_repo_info(repo_url)
+        # Use the parsed_platform to override/verify the LLM's platform choice
+        target_platform = parsed_platform or platform.lower()
+    except Exception as e:
+        return PublishResult(success=False, message=f"Invalid Repository URL: {str(e)}")
+    token = await _resolve_token(user_id, parsed_platform , repo_url,db)
+    if not token:
+        return PublishResult(success=False, message="No authentication token found for the platform.")
+    
     platform = platform.lower()
     print(platform)
     if platform == "github":
@@ -113,7 +70,6 @@ def publish_to_repo_tool(yaml_content: str, repo_url: str, platform: str, token:
             commit_message, create_pr, pr_branch,
         )
     elif platform == "gitlab":
-        # print("here")
         return _publish_gitlab(
             yaml_content, repo_url, token, file_path, branch,
             commit_message, create_pr, pr_branch,
@@ -133,13 +89,11 @@ def _request_with_retry(method: str, url: str, **kwargs) -> httpx.Response:
         if resp.status_code not in _RETRYABLE_STATUS_CODES:
             resp.raise_for_status()
             return resp
-        # Retryable error
         if attempt < _MAX_RETRIES:
             wait = _BACKOFF_BASE ** attempt  # 1s, 2s, 4s
             time.sleep(wait)
         else:
-            resp.raise_for_status()  # raise on final attempt
-    # Should never reach here, but just in case
+            resp.raise_for_status()  #raise on final attempt
     raise httpx.HTTPError(f"Request failed after {_MAX_RETRIES + 1} attempts")
 
 
@@ -152,7 +106,7 @@ def _publish_github(yaml_content: str,repo_url: str,token: str,file_path: str | 
     """Publish YAML to a GitHub repository via the Contents API."""
     """directly to a branch or via pull request"""
 
-    owner, repo = _parse_github_repo(repo_url)
+    owner, repo = parse_github_repo(repo_url)
     api_base = "https://api.github.com"
     headers = {
         "Authorization": f"token {token}",
@@ -248,22 +202,6 @@ def _publish_github(yaml_content: str,repo_url: str,token: str,file_path: str | 
 
     except ValueError as e:
         return PublishResult(success=False, message=str(e))
-    
-
-
-
-def _parse_github_repo(repo_url: str) -> tuple[str, str]:
-
-    """Extract owner/repo from a GitHub URL."""
-
-    parsed = urlparse(repo_url)
-    path = parsed.path.strip("/")
-    if path.endswith(".git"):
-        path = path[:-4]
-    parts = path.split("/")
-    if len(parts) >= 2:
-        return parts[0], parts[1]
-    raise ValueError(f"Cannot parse GitHub repo from URL: {repo_url}")
 
 
 
