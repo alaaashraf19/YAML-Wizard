@@ -3,10 +3,12 @@
     justify-content: center;
     height: 100vh;
     width: 100vw;
+    overflow-x: hidden;
     background-image: linear-gradient(260deg, rgb(3, 3, 93)10% ,rgb(74, 2, 103));
 }
 .chatWindow {
     flex: 1;
+    min-width: 0;
     margin: 5px auto;
 
     display: flex;
@@ -18,6 +20,7 @@
 .chatMessages {
     position: relative;
     flex: 1;
+    min-width: 0;
     height: 100%;
 
     width: 85%;
@@ -27,7 +30,7 @@
 
     overflow-y: auto;
     overflow-anchor:auto;
-    
+
     display: flex;
     flex-direction: column;
     scrollbar-gutter: stable;
@@ -37,6 +40,8 @@
     position: relative;
     padding: 10px;
     margin: 10px;
+    width: 100%;
+    min-width: 0;
 
     display: flex;
     flex-direction: column;
@@ -48,6 +53,7 @@
     margin: 10px;
     padding: 10px 20px;
     max-width: 80%;
+    min-width: 0;
 
     border-radius: 15px;
 

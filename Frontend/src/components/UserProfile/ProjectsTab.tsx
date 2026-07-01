@@ -4,6 +4,7 @@ import styles from './Tabs.module.css'
 import type { Project, Platform } from "../../types";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import ProjectLoadingIndicator from "./ProjectLoadingIndicator";
 
 type ProjectsProps = {
     activeTab: string | null,
@@ -154,6 +155,8 @@ function ProjectsTab({ activeTab, projects, setProjects, setProjectInfoId, setCo
                     </div> */}
 
                     <button type="submit" disabled={isLoading} className={`${gStyles.gButton} ${styles.button}`}>{isLoading ? "Adding project..." : "Add Project"}</button>
+
+                    {isLoading && <ProjectLoadingIndicator />}
                 </form>
             }
 

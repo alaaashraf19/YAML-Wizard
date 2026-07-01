@@ -12,6 +12,7 @@ import ChatProjects from "../components/Chatbot/ChatProjects";
 import SideBar from "../components/Chatbot/SideBar";
 import Popup from "../components/Popup/Popup";
 import { ProjectSubInfo } from "../components/UserProfile/ProjectInfoTab";
+import CodeBlock from "../components/History/CodeBlock";
 
 
 function Chatbot() {
@@ -24,7 +25,7 @@ function Chatbot() {
     const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
     const [isShowInfo, setIsShowInfo] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    
+
     const [confirmMessage, setConfirmMessage] = useState<string | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -35,8 +36,8 @@ function Chatbot() {
     const infoRef = useRef<HTMLDivElement | null>(null);
     // const navigate = useNavigate();
     const api_url = import.meta.env.VITE_API_URL;
-    
-    
+
+
     // Auto focus on textarea
     useEffect(() => {
         textareaRef.current?.focus();
@@ -58,7 +59,7 @@ function Chatbot() {
         window.addEventListener("keydown", handleKeyDown);
         return () => {window.removeEventListener("keydown", handleKeyDown)};
     }, []);
-    
+
     // Close menu on outside click
     useEffect(
         () => {
@@ -78,22 +79,22 @@ function Chatbot() {
             };
         }
     , []);
-    
+
     // Auto-scroll smoothly
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
 
-    
+
     // Control Textarea Height
     const MAX_HEIGHT = 300;
     const resizeTextarea = () => {
         const textarea = textareaRef.current;
         if (!textarea) return;
-        
+
         textarea.style.height = "auto";
         textarea.style.overflowY = "hidden";
-        
+
         if(textarea.scrollHeight <= MAX_HEIGHT) {
             textarea.style.height = textarea.scrollHeight + "px";
         }
@@ -109,12 +110,12 @@ function Chatbot() {
     }, [prompt]);
     useEffect(() => {
         window.addEventListener("resize", resizeTextarea);
-        
+
         return () => {
             window.removeEventListener("resize", resizeTextarea);
         };
     }, []);
-    
+
     // get selected project on change of session id
     useEffect(() => {
         const foundProject = sessions.find(s => s.id === sessionId)?.project;
@@ -123,8 +124,8 @@ function Chatbot() {
 
     //set text for select project button
     const selectedProjectText = useMemo(() => {
-        return selectedProject? selectedProject.project_name : 
-            <span className={styles.connectBtn}> Connect Project 
+        return selectedProject? selectedProject.project_name :
+            <span className={styles.connectBtn}> Connect Project
                 <MdOutlineKeyboardArrowRight className={styles.arrow}/>
             </span>
     }, [selectedProject]);
@@ -177,7 +178,7 @@ function Chatbot() {
 
             const data = await res.json();
             let text: string;
-            
+
             if (!res.ok){
                 console.error("Error with status code(", res.status, "):", data?.detail?.error);
                 text = data.detail?.message?.content || "⚠️ Something went Wrong. Please try again later.";
@@ -199,7 +200,7 @@ function Chatbot() {
 
                 setSessions(prev => prev.map(s => s.id === activeSessionId
                     ? { ...s, id: session_id, session_name: session_name } : s));
-                
+
                 setSessionId(session_id)
                 sessionStorage.setItem("session_id", session_id.toString());
             }
@@ -229,10 +230,51 @@ function Chatbot() {
         return content.startsWith("⚠️");
     };
 
+    // splits a message into plain-text chunks and ```lang ... ``` code chunks,
+    // rendering code chunks with the CodeBlock component
+    const renderMessageContent = (content: string) => {
+        const codeFenceRegex = /```(\w+)?\n?([\s\S]*?)```/g;
+        const nodes: React.ReactNode[] = [];
+        let lastIndex = 0;
+        let match: RegExpExecArray | null;
+        let key = 0;
+
+        while ((match = codeFenceRegex.exec(content)) !== null) {
+            if (match.index > lastIndex) {
+                const textChunk = content.slice(lastIndex, match.index);
+                if (textChunk.trim()) {
+                    nodes.push(<span key={key++}>{renderBold(textChunk)}</span>);
+                }
+            }
+            const language = match[1];
+            const code = match[2].replace(/\n$/, "");
+            nodes.push(<CodeBlock key={key++} language={language} code={code} />);
+            lastIndex = codeFenceRegex.lastIndex;
+        }
+
+        if (lastIndex < content.length) {
+            const textChunk = content.slice(lastIndex);
+            if (textChunk.trim()) {
+                nodes.push(<span key={key++}>{renderBold(textChunk)}</span>);
+            }
+        }
+
+        return nodes.length ? nodes : renderBold(content);
+    };
+
+    const renderBold = (text: string) => {
+        // const withoutBulletMarkers = text.replace(/^[ \t]*[*-][ \t]+/gm, "");
+        const withoutBulletMarkers = text.replace(/^([ \t]*)[*-][ \t]+/gm, "$1");
+        const parts = withoutBulletMarkers.split(/\*{1,2}(.*?)\*{1,2}/g);
+        return parts.map((part, i) =>
+            i % 2 === 1 ? <strong key={i}>{part}</strong> : part
+        );
+    };
+
 
     return(
         <div className={styles.window}>
-            <SideBar sessionId={sessionId} setSessionId={setSessionId} sessions={sessions} 
+            <SideBar sessionId={sessionId} setSessionId={setSessionId} sessions={sessions}
                 setSessions={setSessions} setMessages={setMessages} isLoading={isLoading}/>
 
             <div className={styles.chatWindow}>
@@ -240,10 +282,10 @@ function Chatbot() {
                     <div className={styles.spacer}/>
                     {messages.map((msg, i) => (
                         <div key={i} className={styles.messagePack}>
-                            <p className={`${styles.message} ${msg.role === "user" ?
+                            <div className={`${styles.message} ${msg.role === "user" ?
                                 styles.userMessage : (isErrorMessage(msg.content)? styles.errorMessage : styles.botMessage)}`}>
-                                {msg.content}
-                            </p>
+                                {renderMessageContent(msg.content)}
+                            </div>
                         </div>
                     ))}
                     {isLoading && (
