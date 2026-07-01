@@ -178,7 +178,9 @@ function ChatbotBubble({isChatOpen, setIsChatOpen }:ChatbotBubbleProps){
     };
 
     const renderBold = (text: string) => {
-        const parts = text.split(/\*{1,2}(.*?)\*{1,2}/g);
+        // const withoutBulletMarkers = text.replace(/^[ \t]*[*-][ \t]+/gm, "");
+        const withoutBulletMarkers = text.replace(/^([ \t]*)[*-][ \t]+/gm, "$1");
+        const parts = withoutBulletMarkers.split(/\*{1,2}(.*?)\*{1,2}/g);
         return parts.map((part, i) =>
             i % 2 === 1 ? <strong key={i}>{part}</strong> : part
         );
