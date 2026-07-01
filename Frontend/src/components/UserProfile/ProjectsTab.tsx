@@ -153,7 +153,7 @@ function ProjectsTab({ activeTab, projects, setProjects, setProjectInfoId, setCo
                         </label>
                     </div> */}
 
-                    <button type="submit" disabled={isLoading} className={`${gStyles.clickable} ${styles.button}`}>{isLoading ? "Adding project..." : "Add Project"}</button>
+                    <button type="submit" disabled={isLoading} className={`${gStyles.gButton} ${styles.button}`}>{isLoading ? "Adding project..." : "Add Project"}</button>
                 </form>
             }
 
@@ -175,7 +175,7 @@ function ProjectsTab({ activeTab, projects, setProjects, setProjectInfoId, setCo
             )}
 
             {!activeTab &&
-                <button className={`${gStyles.clickable} ${styles.button}`}
+                <button className={`${gStyles.gButton} ${styles.button}`}
                     onClick={() => navigate(`/profile?tab=Projects`)}>Add Project</button>}
     </>);
 }

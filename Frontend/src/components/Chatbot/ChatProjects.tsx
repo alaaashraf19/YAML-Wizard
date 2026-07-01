@@ -21,7 +21,7 @@ type projects_props = {
 
 function ChatProjects({ sessionId, setProject, setSessions, setConfirmMessage, setErrorMessage, setIsMenuOpen, menuRef}: projects_props) {
     const [projects, setProjects] = useState<Project[]>([]);
-    const [query, setQuery] = useState("");
+    const [query, setQuery] = useState<string>("");
     const [filterPlatfrom, setFilterPlatform] = useState<Platform | null>(null);
     const [openFilterMenu, setOpenFilterMenu] = useState<boolean>(false);
 
@@ -128,7 +128,7 @@ function ChatProjects({ sessionId, setProject, setSessions, setConfirmMessage, s
                     onClick={() => {setIsMenuOpen(false);}} title={"Close Menu"}>
                     <IoClose />
                 </button>
-                <button className={`${styles.addButton} ${gStyles.clickable}`}
+                <button className={`${styles.manageButton} ${gStyles.gButton}`}
                     onClick={() => navigate("/profile?tab=Projects")} title="Go to settings">
                     Manage Projects
                 </button>
@@ -164,7 +164,7 @@ function ChatProjects({ sessionId, setProject, setSessions, setConfirmMessage, s
                         {filteredProjects.map((p, index) => (
                             <li key={index} onMouseDown={() => handleProjectSelect(p)}
                                 className={`${styles.project} ${gStyles.clickable}`}
-                                title={p.project_name+'('+p.repo_url+')'}>
+                                title={p.project_name+" ("+p.repo_url+")"}>
                                 <span className={styles.projectName}>{p.project_name}</span>
                                 <span className={styles.subInfo}>{p.platform.toUpperCase()}</span>
                             </li>

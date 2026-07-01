@@ -2,12 +2,13 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from database.db_engine import create_tables
 from middleware.middleware import setup_middleware
-from routers import auth_router, github_app_router, publisher_router,platfroms_connect_router, chatbot_router, project_router, agent_router, user_router, pipeline_jobs_router
+from routers import auth_router, github_app_router, publisher_router,platfroms_connect_router, chatbot_router, project_router, agent_router, user_router, pipeline_jobs_router,pipeline_router , pipeline_jobs_router, dry_run_router
 from routers.dashboard import repos_router, runs_router, tests_router, insights_router
 from realtime import websocket_router
 import asyncio
 from services.dashboard.sync_loop_service import background_sync_loop
 from services.dashboard.test_parsers.loader import load_parsers
+from services.dashboard.yaml_sync_service import yaml_sync_service
 import logging
 import sys
 import os
@@ -19,17 +20,20 @@ sys.path.insert(0, os.path.dirname(__file__))
 
 
 _sync_task: asyncio.Task | None = None
-
+_yaml_sync_task: asyncio.Task | None = None
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    
+
     """Startup: init DB tables, start background sync. Shutdown: cleanup."""
-    
-    global _sync_task
+
+    global _sync_task, _yaml_sync_task
     await create_tables()
     load_parsers()
+
     _sync_task = asyncio.create_task(background_sync_loop())
+
+    await yaml_sync_service.start_background_sync()
     yield
     if _sync_task:
         _sync_task.cancel()
@@ -37,6 +41,7 @@ async def lifespan(app: FastAPI):
             await _sync_task
         except asyncio.CancelledError:
             pass
+    await yaml_sync_service.stop_background_sync()
 
 app = FastAPI(
     lifespan=lifespan,
@@ -52,11 +57,13 @@ setup_middleware(app)
 app.include_router(auth_router.router, prefix="/auth", tags=["auth"])
 app.include_router(user_router.router, prefix="/user", tags=["user"])
 app.include_router(project_router.router, prefix="/projects", tags=["projects"])
+app.include_router(pipeline_router.router, prefix="/pipelines", tags=["pipelines"])
 app.include_router(pipeline_jobs_router.router, prefix="/projects", tags=["pipeline_jobs"])
 app.include_router(chatbot_router.router, prefix="/chatbot", tags=["chatbot"])
 app.include_router(github_app_router.router, prefix="/github", tags=["github_app"])
 app.include_router(platfroms_connect_router.router, prefix="/platform", tags=["platform_connect"])
 app.include_router(publisher_router.router, prefix="/publish", tags=["publish_yaml"])
+app.include_router(dry_run_router.router, prefix="/dry-run", tags=["dry_run"])
 
 app.include_router(repos_router.router, prefix="/dashboard", tags=["dashboard_repositories"])
 app.include_router(runs_router.router, prefix="/dashboard", tags=["dashboard_repo_runs"])
@@ -66,10 +73,6 @@ app.include_router(insights_router.router, prefix="/dashboard", tags=["dashboard
 app.include_router(websocket_router.router, prefix="/realtime", tags=["realtime_updates"])
 
 app.include_router(agent_router.router)
-
-@app.get("/health", tags=["meta"])
-def health() -> dict:
-    return {"status": "ok"}
 
 
 

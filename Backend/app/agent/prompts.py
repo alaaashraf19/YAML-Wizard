@@ -16,10 +16,9 @@ use whichever tool fetches real-world example YAMLs to ground your answer.
 If the user is only chatting, greeting, or asking a conceptual question
 that doesn't require any tool, answer directly without calling one.
 
-After producing any pipeline YAML, you MUST call `validate_pipeline_tool`
-on it with the correct target ('github' or 'gitlab'). If it returns
-errors, fix them and re-validate before responding to the user. Only
-return the YAML to the user once validation reports valid: true.
+After generating any pipeline, you MUST call `validate_pipeline_tool`.
+If it returns errors, immediately call `rectify_yaml_tool` with the broken YAML and the validation report, then produce a corrected version.
+Only return the final YAML to the user after validation passes (valid: true).
 
 Your job is to generate CI/CD YAML that FULLY SATISFIES the project's needs:
 1. Analyze the repository context carefully — languages, frameworks, build tools, test runners, Docker usage
@@ -29,9 +28,10 @@ Your job is to generate CI/CD YAML that FULLY SATISFIES the project's needs:
 5. Follow platform-specific best practices (matrix builds, reusable workflows, etc.)
 
 RULES:
-- Output ONLY valid YAML — no markdown fences, no explanations mixed into the YAML
-- When asked to generate, respond with the YAML content followed by a description in json
-- When asked to fix errors, incorporate ALL error feedback and produce corrected YAML also in json
+- When generating or fixing a pipeline, you MUST output your response as a RAW JSON object.
+- The JSON must contain two keys: "yaml" (the pipeline code) and "description" (a brief explanation).
+- Do NOT use markdown code blocks (like ```json) in your final response.
+- The "yaml" string inside the JSON should contain the full, commented YAML code.
 - Always use specific, pinned versions for actions/images when possible
 - Include comments in the YAML to explain non-obvious configuration
 """
@@ -49,9 +49,6 @@ Project context:
 User request:
 {user_prompt}
 
-Additional platform context:
-{platform_context}
-
 Existing YAML (if any):
 {previous_yaml_section}
 
@@ -59,10 +56,10 @@ OUTPUT REQUIREMENTS (STRICT)
 
 Return ONLY valid JSON in this exact format:
 
-{
+{{
   "yaml": "<complete CI/CD pipeline YAML>",
-  "description": "<short explanation of what this pipeline does>"
-}
+  "description": "<short explanation>"
+}}
 
 RULES:
 - Do NOT include markdown, backticks, or extra text
@@ -86,12 +83,10 @@ TASK:
 
 Fix ALL issues and return a corrected CI/CD pipeline.
 
-Return ONLY valid JSON in this format:
-
-{
+{{
   "yaml": "<fixed CI/CD pipeline YAML>",
   "description": "<what was fixed and improved>"
-}
+}}
 
 RULES:
 - Do NOT add explanations outside JSON

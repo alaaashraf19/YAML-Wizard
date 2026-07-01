@@ -30,6 +30,7 @@ async def chat_with_bot(
         message=request.message,
         session_id=request.session_id,
         project_id = request.project_id,
+        pipeline_id = request.pipeline_id,
         db=db
     )
 
@@ -77,8 +78,21 @@ async def get_chat_sessions(
                 "repo_url" : session.project.repository.url,
                 "platform" : session.project.repository.platform,
                 "created_at": session.project.created_at,
-                "updated_at": session.project.updated_at
+                "updated_at": session.project.updated_at,
+                "branch":session.project.repository.default_branch
             } if session.project else None,
+            pipeline= {
+                "id" : session.pipeline_id,
+                "name": session.pipeline.name,
+                "content": session.pipeline.content,
+                "path": session.pipeline.path,
+                "branch": session.pipeline.branch,
+                "is_generated_by_wizard": session.pipeline.is_generated_by_wizard,
+                "description": session.pipeline.description,
+                "created_at": session.pipeline.created_at,
+                "updated_at": session.pipeline.updated_at,
+                "activated_at": session.pipeline.activated_at,
+            } if session.pipeline else None,
         )
         for session in sessions
     ]
@@ -102,6 +116,7 @@ async def get_session_details(
         session_name=session_data["session_name"],
         project_id=session_data["project_id"],
         project=session_data["project"],
+        pipeline=session_data["pipeline"],
         messages=[
             ChatMessage(
                 role=msg["role"],
@@ -111,6 +126,11 @@ async def get_session_details(
             for msg in session_data["messages"]
         ]
     )
+@router.get("/sessions/by_pipeline/{pipeline_id}", response_model=ChatSessionResponse)
+async def get_session_by_pipeline_id(
+        pipeline_id: int, db: AsyncSession = Depends(get_db),
+        current_user: User = Depends(get_current_user)):
+    return await chatbot_service.get_session_by_pipId(pipeline_id=pipeline_id, db=db,user_id=current_user.id)
 
 @router.delete("/sessions/{session_id}")
 async def delete_session(
@@ -144,5 +164,6 @@ async def link_session_to_project(
         updated_at=project.updated_at,
         platform = project.platform,
         repo_url=project.repo_url,
+        branch=project.branch
         
     )

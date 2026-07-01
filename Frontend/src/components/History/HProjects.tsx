@@ -2,31 +2,87 @@ import gStyles from "../../global.module.css"
 import styles from './HProjects.module.css'
 import logo from "../../assets/yaml_wizard_logo.png";
 import { Platforms, type Platform, type Project } from "../../types";
+import { useHistoryStore } from "../../pages/History";
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { LuPanelRightClose, LuPanelLeftClose } from "react-icons/lu";
 import { IoClose } from "react-icons/io5";
-import { FaPlus } from "react-icons/fa";
+import { FaLinesLeaning } from "react-icons/fa6";
 import { FiFilter } from "react-icons/fi";
+
+import { create } from "zustand";
+import {persist,createJSONStorage} from "zustand/middleware";
+import Popup from "../Popup/Popup";
 
 
 type HPProps = {
-    projectId: number | null,
-    setProject: React.Dispatch<React.SetStateAction<Project | null>>
+    isEdit: boolean,
+    setDiscardChanges: React.Dispatch<React.SetStateAction<boolean>>,
 }
 
-function HProjects({ projectId, setProject }: HPProps){
+type HistoryProjectsStore={
+    isCollapsed: boolean,
+    setIsCollapsed: (isCollapsed: boolean) => void
+}
+
+const useHProjectsStore = create<HistoryProjectsStore>()(
+    persist((set)=>({
+        isCollapsed: false,
+        setIsCollapsed: isCollapsed => set({isCollapsed})
+    }),{
+        name: "history_projects_store",
+        storage: createJSONStorage(() => sessionStorage)
+    })
+)
+
+function HProjects({ isEdit, setDiscardChanges }: HPProps){
+    const projectId: number | null = useHistoryStore(s=>s.project?.id ?? null);
+    const {setProject, setPipeline, setIsEdit} = useHistoryStore();
+    
+    const {isCollapsed, setIsCollapsed}=useHProjectsStore();
+    
     const [projects, setProjects] = useState<Project[]>([]);
-    const [query, setQuery] = useState("");
+    const [tempProject, setTempProject] = useState<Project | null>(null);
+    const [query, setQuery] = useState<string>("");
     const [filterPlatfrom, setFilterPlatform] = useState<Platform | null>(null);
     const [openFilterMenu, setOpenFilterMenu] = useState<boolean>(false);
-    const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
+    
+    const [askDiscard, setAskDiscard] = useState<string | null>(null);
+    const [warningDiscard, setWarningDiscard] = useState<string | null>(null);
 
     const filterRef = useRef<HTMLDivElement | null>(null);
-    const api_url = import.meta.env.VITE_API_URL;
+    const popupRef = useRef<HTMLDivElement>(null);
     const navigate = useNavigate();
+    const api_url = import.meta.env.VITE_API_URL;
+
+    // filter projects by query and selected platform
+    const filteredProjects = useMemo(() => {
+        return projects ? projects
+            .filter(p => {
+                return p.project_name.toLowerCase().includes(query.toLowerCase()) &&
+                (!filterPlatfrom || p.platform === filterPlatfrom)
+            })
+            .sort((a,b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()) : [];
+    }, [projects, filterPlatfrom, query]);
+
+    // Close filter menu on outside click
+    useEffect(
+        () => {
+            function handleClickOutside(e: MouseEvent) {
+                if (filterRef.current &&
+                    !filterRef.current.contains(e.target as Node)) {
+                    setOpenFilterMenu(false);
+                }
+            }
+
+            document.addEventListener("mousedown", handleClickOutside);
+            return () => {
+                document.removeEventListener("mousedown", handleClickOutside);
+            };
+        }
+    , []);
 
     //get user projects
     useEffect(() => {
@@ -54,23 +110,13 @@ function HProjects({ projectId, setProject }: HPProps){
         fetchProjects();
     }, []);
 
-    // filter projects by query and selected platform
-    const filteredProjects = useMemo(() => {
-        return projects ? projects
-            .filter(p => {
-                return p.project_name.toLowerCase().includes(query.toLowerCase()) &&
-                (!filterPlatfrom || p.platform === filterPlatfrom)
-            })
-            .sort((a,b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()) : [];
-    }, [projects, filterPlatfrom, query]);
-
     return(
         <div className={`${styles.menu} ${isCollapsed ? styles.collapsed : styles.expanded}`}>
             {isCollapsed? (<>
                 <LuPanelRightClose className={`${styles.collapsedBtn} ${gStyles.clickable}`}
-                    onClick={() => setIsCollapsed(prev => !prev)} title={"Expand"}/>
-                <FaPlus className={`${styles.collapsedBtn} ${gStyles.clickable}`}
-                    onClick={() => navigate("/profile?tab=Projects")} title="Add Project"/>
+                    onClick={() => setIsCollapsed(!isCollapsed)} title={"Expand"}/>
+                <FaLinesLeaning className={`${styles.collapsedBtn} ${gStyles.clickable}`}
+                    onClick={() => navigate("/profile?tab=Projects")} title="Manage Projects"/>
             </>) : (<>
                 <div className={styles.appNameContainer}>
                     <img src={logo} alt="" className={`${styles.logo} ${gStyles.clickable}`}
@@ -79,7 +125,7 @@ function HProjects({ projectId, setProject }: HPProps){
                         title="Go to home page" onClick={() => navigate("/")}>
                         YAML Wizard</span>
                     <LuPanelLeftClose className={`${styles.closeBarBtn} ${gStyles.clickable}`}
-                        onClick={() => setIsCollapsed(prev => !prev)} title={"Collapse"}/>
+                        onClick={() => setIsCollapsed(!isCollapsed)} title={"Collapse"}/>
                 </div>
 
                 <p className={styles.projectsStart}>Your Projects</p>
@@ -111,8 +157,17 @@ function HProjects({ projectId, setProject }: HPProps){
                     {filteredProjects.length > 0? (
                         <ul className={styles.projectsList}>
                             {filteredProjects.map((p, index) => (
-                                <li key={index} onMouseDown={() => setProject(p)}
-                                    title={p.project_name + '('+ p.repo_url + ')'}
+                                <li key={index} title={p.project_name + " ("+ p.repo_url + ')'}
+                                    onClick={() => {
+                                        isEdit? (
+                                            setTempProject(p),
+                                            setAskDiscard("Changing the current project will discard all changes!"),
+                                            setWarningDiscard("Your unsaved changes cannot be recovered.")
+                                        ): (
+                                            setProject(p),
+                                            setPipeline(null),
+                                            setIsCollapsed(true))
+                                    }}
                                     className={`${styles.project} ${(p.id === projectId)? styles.active : gStyles.clickable}`}>
                                     <span className={styles.projectName}>{p.project_name}</span>
                                     <span className={styles.subInfo}>{p.platform.toUpperCase()}</span>
@@ -125,12 +180,30 @@ function HProjects({ projectId, setProject }: HPProps){
                 </div>
 
                 <div className={styles.bottomContainer}>
-                    <button className={`${styles.addButton} ${gStyles.clickable}`}
+                    <button className={`${styles.manageButton} ${gStyles.gButton}`}
                         onClick={() => navigate("/profile?tab=Projects")} title="Go to settings">
                         Manage Projects
                     </button>
                 </div>
             </>)}
+
+            {askDiscard && 
+            <Popup
+                btnText1="Discard"
+                btn1Action={() => {
+                    setProject(tempProject);
+                    setTempProject(null);
+                    setIsCollapsed(true);
+                    setDiscardChanges(true);
+                    setIsEdit(false);
+                }}
+                btnText2="Cancel"
+                questionMessage={askDiscard}
+                setQuestionMessage={setAskDiscard}
+                warningMessage={warningDiscard}
+                setWarningMessage={setWarningDiscard}
+                popupRef={popupRef}
+            />}
         </div>
     );
 }

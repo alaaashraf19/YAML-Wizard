@@ -34,9 +34,10 @@ function PlatformsTab({ setConfirmMessage, setWarningMessage, setErrorMessage }:
     const [connections, setConnections] = useState<Partial<Record<Platform, PlatformConnection>>>({});
     const [repos, setRepos] = useState<Repo[]>([]);
     const [installations, setInstallations] = useState<Installation[]>([]);
+
     const [loadingPlatform, setLoadingPlatform] = useState<string>("");
-    const [openInstalls, setOpenInstalls] = useState<boolean>(false);
-    const [openRepos, setOpenRepos] = useState<boolean>(false);
+    const [openInstalls, setOpenInstalls] = useState<boolean>(true);
+    const [openRepos, setOpenRepos] = useState<boolean>(true);
 
     const [searchParams] = useSearchParams();
     const api_url = import.meta.env.VITE_API_URL;
@@ -44,18 +45,20 @@ function PlatformsTab({ setConfirmMessage, setWarningMessage, setErrorMessage }:
     //check for url after connection to show popup
     useEffect(() => {
         const platform = Platforms.find(p => searchParams.get(p) !== null);
-
+        
         if (!platform) return;
 
         const connectionStatus = searchParams.get(platform);
-        const reason = searchParams.get("reason");
 
+        localStorage.setItem('connection_result', JSON.stringify({
+            platform: platform,
+            status: connectionStatus
+        }));
+        
         if (connectionStatus === "success") {
-            setConfirmMessage(`${platform.toUpperCase()} connected successfully`);
-        }
-
-        if (connectionStatus === "error") {
-            setErrorMessage(reason ?? `Failed to connect ${platform}.`);
+            window.close();
+        } else if (connectionStatus === "error") {
+            setErrorMessage(`Failed to connect ${platform}.`);
         }
     }, [searchParams]);
 
@@ -147,16 +150,46 @@ function PlatformsTab({ setConfirmMessage, setWarningMessage, setErrorMessage }:
 
     const handleConnectPlatfrom = (platform: Platform) => {
         setLoadingPlatform(platform);
-        setTimeout(() => {
-            window.location.href = `${api_url}/platform/${platform.toLowerCase()}/connect`;
-        }, 100);
+        const url = `${api_url}/platform/${platform.toLowerCase()}/connect`;
+        window.open(url, "_blank", "noopener");
+
+        const handleStorage = (e: StorageEvent) => {
+            if (e.key === 'connection_result' && e.newValue) {
+                const data = JSON.parse(e.newValue);
+                
+                if (data.status === "success") {
+                    setConfirmMessage(`${data.platform.toUpperCase()} connected successfully`);
+                    checkConnected();
+                } else if (data.status === "error") {
+                    setErrorMessage(`Failed to connect ${data.platform}.`);
+                }
+                
+                localStorage.removeItem('connection_result');
+                window.removeEventListener('storage', handleStorage);
+                setLoadingPlatform("");
+            }
+        };
+
+        window.addEventListener('storage', handleStorage);
     };
     
     const handleInstallApp = () => {
         setLoadingPlatform("install");
-        setTimeout(() => {
-            window.location.assign(`${api_url}/github/install_app`);
-        }, 100);
+
+        const url = `${api_url}/github/install_app`;
+        const newTab = window.open(url, "_blank", "noopener");
+
+        const timer = setInterval(() => {
+            if (newTab?.closed) {
+                clearInterval(timer);
+                getInstalls();
+                getRepos();
+            }
+        }, 500);
+        getInstalls();
+        getRepos();
+
+        setLoadingPlatform("");
     };
 
     const handleDisconnectPlatfrom = async (platform: Platform) => {
@@ -223,7 +256,6 @@ function PlatformsTab({ setConfirmMessage, setWarningMessage, setErrorMessage }:
             {Platforms.map((platform, index) => (<div key={index}>
                 <h2 className={styles.platformHeader}>{platform.toUpperCase()}</h2>
                 <div className={styles.platform}>
-
                     {connections[platform]?.connected ? (
                         <div className={styles.platformSection}>
                             <label>Username:</label>
@@ -231,20 +263,20 @@ function PlatformsTab({ setConfirmMessage, setWarningMessage, setErrorMessage }:
                             <button onClick={() => {handleDisconnectPlatfrom(platform); }}
                                 className={`${gStyles.clickable} ${styles.button} ${styles.disconnectBtn}`}
                                 disabled={loadingPlatform === platform} title={`Disconnect from ${platform}`}>
-                                {loadingPlatform === platform ? "Redirecting .." :`Disconnect`}
+                                {loadingPlatform === platform ? "Connecting .." :`Disconnect`}
                             </button>
                         </div>
                     ) : (
                         <button onClick={() => {handleConnectPlatfrom(platform); }}
-                            className={`${gStyles.clickable} ${styles.button}`}
+                            className={`${gStyles.gButton}`}
                             disabled={loadingPlatform === platform}>
-                            {loadingPlatform === platform ? "Redirecting .." :`Connect with ${platform} account`}
+                            {loadingPlatform === platform ? "Connecting .." :`Connect with ${platform} account`}
                         </button>
                     )}
 
                     {platform === "github" &&
                     <div className={styles.platformSection}>
-                        <div className={styles.p_SubSection}>
+                        <div className={`${styles.pSubSection} ${openInstalls && styles.expanded}`}>
                             <label className={styles.subSectionLabel} title="Open List"
                                 onClick={() => setOpenInstalls(prev => !prev)}>
                                 Your Installations
@@ -252,16 +284,18 @@ function PlatformsTab({ setConfirmMessage, setWarningMessage, setErrorMessage }:
                                     className={`${openInstalls ? styles.arrowOpen : styles.arrowClose}`}/></span>
                             </label>
 
-                            {openInstalls && (
                             <ul className={styles.list}>
                                 {installations.length > 0 ? (<>
+                                    <li className={styles.subInfo}>Selected or ALL / Account Owner</li>
                                     {installations.map((ins, index) => (
                                         <li key={index}>
                                             <div className={styles.listItem}>
                                                 <span className={styles.insAccName}>{ins.account_name}</span>
                                                 {ins.repos_selection && 
-                                                <span className={styles.subInfo}>{ins.repos_selection.toUpperCase()} Repos</span>}
-                                                <span className={styles.subInfo}>{ins.account_type}</span>
+                                                <span className={styles.subInfo} title="Selected or ALL">
+                                                    {ins.repos_selection.toUpperCase()} Repos</span>}
+                                                <span className={styles.subInfo} title="Account Owner">
+                                                    {ins.account_type}</span>
                                                 <button onClick={() => handleDisconnectInstall(ins.installation_id)}
                                                 className={`${gStyles.clickable} ${styles.button} ${styles.disconnectIcon}`}
                                                 title={`Disconnect ${ins.account_name}`}>
@@ -272,13 +306,13 @@ function PlatformsTab({ setConfirmMessage, setWarningMessage, setErrorMessage }:
                                     <button onClick={() => handleDisconnectInstall(null)}
                                     className={`${gStyles.clickable} ${styles.button} ${styles.disconnectBtn}`}>
                                         Disconnect All</button>
-                                </>) : (
+                                </>) : (<>
                                     <p className={styles.noProjects}>No insatallations yet.</p>
-                                )}
-                            </ul>)}
+                                </>)}
+                            </ul>
                         </div>
 
-                        <div className={`${styles.p_SubSection} ${openRepos? styles.openSection : styles.closedSection}`}>
+                        <div className={`${styles.pSubSection} ${openRepos && styles.expanded}`}>
                             <label className={styles.subSectionLabel} title="Open List"
                                 onClick={() => setOpenRepos(prev => !prev)}>
                                 Your Connected Repos
@@ -286,7 +320,6 @@ function PlatformsTab({ setConfirmMessage, setWarningMessage, setErrorMessage }:
                                     className={`${openRepos ? styles.arrowOpen : styles.arrowClose}`}/></span>
                             </label>
                             
-                            {openRepos && (
                             <ul className={styles.list}>
                                 {repos.length > 0 ? (
                                     repos.map((repo, index) => (
@@ -297,33 +330,17 @@ function PlatformsTab({ setConfirmMessage, setWarningMessage, setErrorMessage }:
                                         </li>
                                     ))
                                 ) : (
-                                    <p className={styles.noProjects}>No repositories connected yet.</p>
+                                    <p className={styles.noProjects}>Install platform application to add repositories.</p>
                                 )}
-                            </ul>)}
+                            </ul>
                         </div>
-                        <button onClick={handleInstallApp} className={`${gStyles.clickable} ${styles.button}`}
-                            title="Install app to add more repositories" disabled={loadingPlatform === "install"}>
-                            {loadingPlatform === "install" ? "Redirecting .." :"Install App & Manage Repos"}
+                        <button onClick={handleInstallApp} className={`${gStyles.gButton}`}
+                            title="Install app to add repositories" disabled={loadingPlatform === "install"}>
+                            {loadingPlatform === "install" ? "Connecting .." :"Install App & Manage Repos"}
                         </button>
                     </div>}
                 </div>
             </div>))}
-
-            {/* {(errorMessage || confirmMessage) && 
-                <Popup 
-                    btnText1={"Got it"}
-                    btn1Action={() => {navigate("/profile", { replace: true });}}
-                    btnText2={null}
-                    btn2Action={null}
-                    confirmMessage={confirmMessage}
-                    setConfirmMessage={setConfirmMessage}
-                    warningMessage={null}
-                    setWarningMessage={null}
-                    errorMessage={errorMessage}
-                    setErrorMessage={setErrorMessage}
-                    popupRef={popupRef}
-                />
-            } */}
         </div>
     );
 }
