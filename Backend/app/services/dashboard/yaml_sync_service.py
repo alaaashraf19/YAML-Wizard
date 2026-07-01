@@ -244,8 +244,6 @@ class YAMLSyncService:
                         pipeline.committed_at = committed_at.replace(tzinfo=None)
                     else:
                         pipeline.committed_at = committed_at
-            if not pipeline.activated_at:
-                pipeline.activated_at = datetime.utcnow()
 
             await db.commit()
             await db.refresh(pipeline)

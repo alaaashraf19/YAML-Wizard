@@ -366,7 +366,7 @@ class ChatbotService:
                 "updated_at": session.project.updated_at,
                 "branch" : session.project.repository.default_branch,
             } if session.project else None,
-            pipeline={
+            pipeline= {
                 "id": session.pipeline_id,
                 "name": session.pipeline.name,
                 "content": session.pipeline.content,
@@ -376,7 +376,7 @@ class ChatbotService:
                 "description": session.pipeline.description,
                 "created_at": session.pipeline.created_at,
                 "updated_at": session.pipeline.updated_at,
-                "activated_at": session.pipeline.activated_at,
+                "committed_at": session.pipeline.committed_at,
             } if session.pipeline else None,
             messages=messages
             
@@ -423,7 +423,7 @@ class ChatbotService:
                 "description": session.pipeline.description,
                 "created_at": session.pipeline.created_at,
                 "updated_at": session.pipeline.updated_at,
-                "activated_at": session.pipeline.activated_at,
+                "committed_at": session.pipeline.committed_at,
             } if session.pipeline else None,
             "messages": messages
         }

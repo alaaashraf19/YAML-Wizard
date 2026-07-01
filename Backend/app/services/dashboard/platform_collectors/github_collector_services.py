@@ -510,8 +510,7 @@ class GitHubCollector(CICollector):
                                 else:
                                     pipeline.committed_at = committed_at
                     pipeline.is_active = True
-                    if not pipeline.activated_at:
-                        pipeline.activated_at = datetime.utcnow()
+
                     await db.commit()
                     await db.refresh(pipeline)
                     updated += 1
@@ -527,7 +526,6 @@ class GitHubCollector(CICollector):
                     project_id=project.id,
                     created_at=datetime.utcnow(),
                     updated_at=datetime.utcnow(),
-                    activated_at=datetime.utcnow(),
                 )
                 if commit_info:
                     new_pipe.commit_hash = commit_info.get("commit_hash")

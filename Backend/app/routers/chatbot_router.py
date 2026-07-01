@@ -91,7 +91,7 @@ async def get_chat_sessions(
                 "description": session.pipeline.description,
                 "created_at": session.pipeline.created_at,
                 "updated_at": session.pipeline.updated_at,
-                "activated_at": session.pipeline.activated_at,
+                "committed_at": session.pipeline.committed_at,
             } if session.pipeline else None,
         )
         for session in sessions
