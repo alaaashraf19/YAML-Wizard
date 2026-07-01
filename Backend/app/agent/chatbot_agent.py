@@ -4,11 +4,11 @@ from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode, tools_condition
 
-# from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_google_genai import ChatGoogleGenerativeAI
 # from langchain_openai import ChatOpenAI 
-from langchain_groq import ChatGroq
+# from langchain_groq import ChatGroq
 
-from langchain_core.messages import HumanMessage, AIMessage, SystemMessage, BaseMessage
+from langchain_core.messages import HumanMessage, AIMessage, SystemMessage, BaseMessage, ToolMessage
 from agent.tools import TOOLS
 from agent.prompts import SYSTEM_PROMPT
 from agent.utils.context_resolver import ContextResolverResponse
@@ -28,8 +28,8 @@ class AgentState(TypedDict):
 
 class ChatbotAgent:
     def __init__(self, 
-                 model: str = os.getenv("GROQ_MODEL", "openai/gpt-oss-120b"),
-                #  model :str = "models/gemini-2.5-flash",
+                #  model: str = os.getenv("GROQ_MODEL", "openai/gpt-oss-120b"),
+                 model :str = "models/gemini-2.5-flash",
                 #  model: str = "Qwen/Qwen2.5-72B-Instruct-AWQ", 
                  temperature: float = 0.3,
         max_output_tokens: int = 2500, tools: Optional[list] = None,
@@ -37,12 +37,12 @@ class ChatbotAgent:
         
         self.tools = TOOLS
         self.system_prompt = system_prompt
-        # base_llm = ChatGoogleGenerativeAI(
-        #     model=model,
-        #     google_api_key=os.getenv("GEMINI_API_KEY"),
-        #     temperature=temperature,
-        #     max_output_tokens=max_output_tokens,
-        # )
+        base_llm = ChatGoogleGenerativeAI(
+            model=model,
+            google_api_key=os.getenv("GEMINI_API_KEY"),
+            temperature=temperature,
+            max_output_tokens=max_output_tokens,
+        )
         # base_llm = ChatOpenAI(####################check if we will add max output tokens############################
         #     model=model,
         #     openai_api_key="token-not-needed", # vLLM doesn't require a key usually
@@ -52,12 +52,12 @@ class ChatbotAgent:
         #     # Matches your 300s timeout from the test script
         #     timeout=300, 
         # )
-        base_llm = ChatGroq(
-            model=model,
-            api_key=os.getenv("GROQ_API_KEY"),
-            temperature=temperature,
-            max_tokens=max_output_tokens,
-        )
+        # base_llm = ChatGroq(
+        #     model=model,
+        #     api_key=os.getenv("GROQ_API_KEY"),
+        #     temperature=temperature,
+        #     max_tokens=max_output_tokens,
+        # )
         self.llm = base_llm.bind_tools(self.tools) if self.tools else base_llm
         #print("\n========== LLM CREATED ==========")
         #print(self.llm)
@@ -77,40 +77,43 @@ class ChatbotAgent:
         return workflow.compile()
 
     async def call_llm(self, state: AgentState) -> Dict[str, List[BaseMessage]]:
-        messages = list(state["messages"])          # work on a copy
+
+        history = list(state["messages"])
         
         # Inject context once as a system message (only on first turn)
-        if state.get("context_summary"):
-                already_injected = any(
-                    "PROJECT_CONTEXT" in getattr(m, "content", "")
-                    for m in messages if isinstance(m, SystemMessage)
-                )
-                if not already_injected:
-                    context_msg = SystemMessage(
-                        content=f"PROJECT_CONTEXT:\n{state['context_summary']}"
-                    )
-                    messages = [context_msg] + messages
+        current_summary = state.get("context_summary")
+        if history and isinstance(history[-1], ToolMessage):
+            if "REPO_CONTEXT_SUMMARY:" in history[-1].content:
+                # Extract the fresh summary from the tool output
+                current_summary = history[-1].content.split("REPO_CONTEXT_SUMMARY:\n")[-1]
 
+        
+        messages_to_send = [SystemMessage(content=self.system_prompt)]
+        
+        if current_summary:
+            messages_to_send.append(SystemMessage(content=f"PROJECT_CONTEXT:\n{current_summary}"))
 
-    # Ensure system prompt exists
-        if self.system_prompt and not any(isinstance(m, SystemMessage) for m in messages):
-            messages = [SystemMessage(content=self.system_prompt)] + messages
-            
+        clean_history = [m for m in history if not isinstance(m, SystemMessage)]
+        messages_to_send.extend(clean_history)
+        
         print("\n================ MESSAGES SENT TO MODEL ================")
-        for m in messages:
+        for m in messages_to_send:
             print(f"Role: {type(m).__name__}")
             print(f"Content: {m.content}")
             print("-" * 30)
         
-        # 2. CALL THE LLM WITH THE FULL MESSAGE LIST (NOT HARDCODED)
-        response = await self.llm.ainvoke(messages)
+
+        response = await self.llm.ainvoke(messages_to_send)
 
         print("\n================ MODEL RESPONSE ================")
         print(f"Content: {response.content}")
         print(f"Tool Calls: {response.tool_calls}")
         print("================================================\n")
 
-        return {"messages": [response]}
+        return {
+            "messages": [response],
+            "context_summary": current_summary
+        }
 
     # converts {"role": "user","content": "Hi"} to langcain message format => HumanMessage(content="Hi")
     @staticmethod
@@ -127,6 +130,8 @@ class ChatbotAgent:
 
         messages.append(HumanMessage(content=message))
         return messages
+    
+
     def parse_full_response(self, content: str):
         # Regex to find all markdown code blocks
         # Group 1: language (e.g. yaml), Group 2: the code
@@ -227,9 +232,9 @@ class ChatbotAgent:
                     f"This is the code the user is looking at on their screen. "
                     f"Ignore other YAML files in the repo if they conflict with this one."
                 )
-        #add to the system messages
-        if active_pipeline_msg:
-            lc_messages = [SystemMessage(content=active_pipeline_msg)] + lc_messages
+                lc_messages = [SystemMessage(content=active_pipeline_msg)] + lc_messages
+
+        
         initial_state = {
         "messages": lc_messages,
         "context": context,

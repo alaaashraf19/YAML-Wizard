@@ -31,6 +31,13 @@ If the user is asking questions like "Explain this" or "What does this do?":
 - Use the code in the "USER IS CURRENTLY VIEWING" section.
 - Do not call validation or generation tools unless they specifically ask for a fix/change.
 
+### REPOSITORY DISCOVERY:
+- If a user provides a URL (e.g., github.com/... or gitlab.com/...) and hasn't loaded a project yet:
+  1. Call `fetch_repo_context_tool` with that URL.
+  2. Once the tool returns the summary, explain to the user what you found (Languages, Build tools, etc.).
+  3. Ask them if they would like you to generate a production-ready pipeline for this new repository.
+
+  
 After generating any pipeline, you MUST call `validate_pipeline_tool`.
 If it returns errors, immediately call `rectify_yaml_tool` with the broken YAML and the validation report, then produce a corrected version.
 Only return the final YAML to the user after validation passes (valid: true).

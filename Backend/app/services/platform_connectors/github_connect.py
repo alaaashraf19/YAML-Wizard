@@ -41,7 +41,7 @@ class GithubConnector(oauthConnector):
             "https://github.com/login/oauth/authorize"
             f"?client_id={GITHUB_CLIENT_ID}"
             f"&redirect_uri={GITHUB_REDIRECT_URI}"
-            f"&scope=read:user user:email"
+            f"&scope=repo workflow read:user user:email"
             f"&state={state}"
         )
 
