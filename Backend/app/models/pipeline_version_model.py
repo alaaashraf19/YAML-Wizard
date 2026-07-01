@@ -4,8 +4,8 @@ from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Text, Bool
 from sqlalchemy.orm import relationship
 
 
-class Pipeline(Base):
-    __tablename__ = 'pipelines'
+class PipelineVersion(Base):
+    __tablename__ = 'pipeline_versions'
 
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
@@ -22,13 +22,11 @@ class Pipeline(Base):
     commit_message = Column(Text, nullable=True)
     committed_at = Column(DateTime, nullable=True)
 
-    created_at = Column(DateTime, nullable=False, default=datetime.utcnow())
-    updated_at = Column(DateTime, nullable=False, default=datetime.utcnow(), onupdate=datetime.utcnow())
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+    updated_at = Column(DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
     activated_at = Column(DateTime, nullable=True)
 
     project_id = Column(Integer, ForeignKey('projects.id'), nullable=False)
-    project = relationship("Project", back_populates="pipelines", foreign_keys= [project_id])
-    chat_session = relationship("ChatSession", back_populates="pipeline", uselist= False, cascade="all, delete-orphan")
-    versions = relationship("PipelineVersion", back_populates="pipeline",
-                            cascade="all, delete-orphan", order_by="PipelineVersion.id",
-                            foreign_keys="PipelineVersion.pipeline_id")
+
+    pipeline_id = Column(Integer, ForeignKey('pipelines.id', ondelete="CASCADE"), nullable=False, index=True)
+    pipeline = relationship("Pipeline", back_populates="versions", foreign_keys=[pipeline_id])
