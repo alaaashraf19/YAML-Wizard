@@ -89,13 +89,15 @@ class ChatbotService:
                 context = context,
                 context_summary = context_summary
             )
+            print("response type", type(response))
             return {
                 "role": "assistant",
-                "content":str(response)
+                "content":response
             }
 
         except Exception as e:
             error_text = str(e)
+            print(error_text)
 
             if "RESOURCE_EXHAUSTED" in error_text or "429" in error_text:
                 return{

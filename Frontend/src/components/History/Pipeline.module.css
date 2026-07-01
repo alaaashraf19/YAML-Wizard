@@ -21,11 +21,13 @@
     position: sticky;
     top: 0;
     display: flex;
-    align-items: start;
+    align-items: center;
+    justify-content: end;
 }
 .addBtn {
     padding: 10px 20px;
     margin-bottom: 10px;
+    margin-right: auto;
 
     background:local;
     border: 1px solid rgba(111, 111, 112, 0.5);
@@ -37,22 +39,92 @@
     transition: background-color 0.3s ease;
 }
 .addBtn:hover {background-color: rgb(113, 113, 113);}
+
+.submitBtn, 
+.discardBtn, 
+.logsBtn, 
+.validBtn{
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    background: none;
+    border: 1px solid transparent;
+    border-radius: 20px;
+    cursor: pointer;
+    
+    gap: 0;
+    overflow: hidden;
+    padding: 5px 10px;
+
+    transition:
+        gap .25s ease,
+        transform .25s ease,
+        font-size .25s ease,
+        border-color 0.25 ease;
+}
 .submitBtn {
-    background: 0;
-    border: 0;
-    color: rgb(30, 160, 56);
-    font-size: 30px;
-    transition: font-size 0.3s ease;
+    margin: -2px;
+    padding: 10px;
+    color: rgb(22, 130, 44);
+    font-size: 22px;
 }
 .discardBtn{
-    margin-left: auto;
-    background: 0;
-    border: 0;
     color: rgb(172, 58, 58);
     font-size: 30px;
-    transition: font-size 0.3s ease;
 }
-.submitBtn:hover, .discardBtn:hover{font-size: 32px;}
+.logsBtn{
+    margin: 4px;
+    color: rgb(56, 64, 184);
+    font-size: 22px;
+}
+.validBtn{
+    color: rgb(182, 113, 45);
+    padding: 9px;
+    font-size: 22px;
+}
+.validBtn:disabled{
+    color: rgba(99, 54, 8, 0.5);
+    cursor: default;
+}
+.validBtn:disabled:hover .btnText{
+    border-color: transparent;
+    max-width: 130px;
+    margin-right: 5px;
+    opacity: 1;
+    transform: translateX(0);
+}
+.btnText{
+    max-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    opacity: 0;
+
+    transition:
+        max-width .3s ease,
+        opacity .2s ease,
+        margin-right .3s ease;
+
+    font-size: 16px;
+    font-weight: 500;
+}
+.submitBtn:hover ,
+.logsBtn:hover ,
+.validBtn:hover ,
+.discardBtn:hover {
+    border-color: inherit;
+}
+.submitBtn:hover .btnText,
+.logsBtn:hover .btnText,
+.validBtn:hover .btnText,
+.discardBtn:hover .btnText{
+    border: 1px dashed inherit;
+    max-width: 200px;
+    margin-right: 5px;
+    opacity: 1;
+    transform: translateX(0);
+}
+
 
 .editBtn{
     margin-left: auto;
@@ -189,7 +261,7 @@
 
 .themeBtn{
     position:absolute;
-    bottom: 25px;
+    bottom: 30px;
     right: 100px;
     width:40px;
     height:40px;

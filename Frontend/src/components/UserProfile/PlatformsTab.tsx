@@ -58,7 +58,7 @@ function PlatformsTab({ setConfirmMessage, setWarningMessage, setErrorMessage }:
         if (connectionStatus === "success") {
             window.close();
         } else if (connectionStatus === "error") {
-            setErrorMessage(`Failed to connect ${platform}.`);
+            setErrorMessage(`Failed to connect ${platform}.sjdbkchbsdjh`);
         }
     }, [searchParams]);
 
@@ -261,7 +261,8 @@ function PlatformsTab({ setConfirmMessage, setWarningMessage, setErrorMessage }:
                             <label>Username:</label>
                             <p>{connections[platform]?.username}</p>
                             <button onClick={() => {handleDisconnectPlatfrom(platform); }}
-                                className={`${gStyles.clickable} ${styles.button} ${styles.disconnectBtn}`}
+                                className={`${loadingPlatform === platform && gStyles.clickable} 
+                                    ${styles.button} ${styles.disconnectBtn}`}
                                 disabled={loadingPlatform === platform} title={`Disconnect from ${platform}`}>
                                 {loadingPlatform === platform ? "Connecting .." :`Disconnect`}
                             </button>

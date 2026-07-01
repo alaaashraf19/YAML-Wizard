@@ -3,6 +3,7 @@ import styles from './History.module.css'
 import PipelineEditor from "../components/History/PipelineEditor";
 import PipelineViewer from "../components/History/PipelineViewer";
 import HProjects from "../components/History/HProjects";
+import Popup from '../components/Popup/Popup';
 
 import type { Job, Pipeline, Project } from "../types";
 import { useEffect, useRef, useState } from "react";
@@ -66,16 +67,35 @@ function History(){
 
     const [jobs, setJobs] = useState<Job[]>([]);
     const [pipelines, setPipelines] = useState<Pipeline[]>([]);
-    const [lastSynced, setLastSynced] = useState<string | null>(null);
     const [isDiscardChanges, setDiscardChanges] = useState<boolean> (false);
+    const [confirmSync, setConfirmSync] = useState<string | null>(null);
 
     const topContentRef = useRef<HTMLDivElement | null>(null);
+    const popupRef = useRef<HTMLDivElement>(null);
     const api_url = import.meta.env.VITE_API_URL;
     
+
+    const currentProjectIdRef = useRef<number | null>(null);
+    
+    // Load cached pipelines if syncing
+    useEffect(()=> {
+        currentProjectIdRef.current = project?.id || null;
+        if(project && sessionStorage.getItem(`${project.id}_syncing`)){
+            setLoadingSync(true);
+            setPipelines(JSON.parse(sessionStorage.getItem(`${project.id}_cached_ pipelines`) || "[]"));
+        } else if(project){
+            setLoadingSync(false);
+        }
+    }, [project?.id]);
+
     // //get project pipelines, or sync if not synced
     useEffect(() => {
-        const checkSynced = async () =>{
-            const isSynced = sessionStorage.getItem('pipelines_synced');
+        const checkSynced = async (currentProjectId: number) =>{
+            if (!currentProjectId) return false;
+
+            const syncKey = `${currentProjectId}_pipelines_synced`;
+            const isSynced = sessionStorage.getItem(syncKey);
+
             if(!isSynced){
                 await syncPipelines();
                 return true;
@@ -83,9 +103,10 @@ function History(){
             return false;
         }
 
-        const fetchPipelines = async () => {
+        const fetchPipelines = async (currentProjectId: number) => {
+            
             try {
-                const res = await fetch(`${api_url}/pipelines/project/${project?.id}`, {
+                const res = await fetch(`${api_url}/pipelines/project/${currentProjectId}`, {
                     credentials: "include",
                     method: "GET",
                     headers: {"Content-Type": "application/json"}
@@ -97,7 +118,7 @@ function History(){
                     console.error(data.detail?.[0]?.msg || data.detail || "Failed to fetch pipelines");
                     return;
                 }
-                setPipelines(data);
+                if(currentProjectId === project?.id) setPipelines(data);
                 
             } catch (e) {
                 console.error("Failed to fetch pipelines:", e);
@@ -105,17 +126,24 @@ function History(){
         };
 
         const init = async () => {
-            const fetchedBySynced = await checkSynced();
-            if(!fetchedBySynced) await fetchPipelines();
+            const currentProjectId = project?.id;
+            if(!currentProjectId)return;
+
+            const fetchedBySynced = await checkSynced(currentProjectId);
+            if(!fetchedBySynced) await fetchPipelines(currentProjectId);
         };
 
-        console.log("Project id now is:", project?.id);
         if(project)init();
     }, [project]);
     // sync and don't update pipelines if not changed  
     const syncPipelines: ()=>Promise<boolean> = async ()=> {
         if (!project) return false;
+        
+        const syncingProjectId = currentProjectIdRef.current;
+        const syncingKey = `${syncingProjectId}_syncing`;
+        sessionStorage.setItem(syncingKey, true.toString());
 
+        console.log("...Syncing project :", syncingProjectId);
         setLoadingSync(true);
         try {
             const res = await fetch(`${api_url}/pipelines/${project?.id}/sync`, {
@@ -132,32 +160,45 @@ function History(){
                 return false;
             }
 
-            const isSynced = sessionStorage.getItem('pipelines_synced');
-            const storedData = sessionStorage.getItem('cached_pipelines');
+            const currentProjectId = currentProjectIdRef.current;
+
+            const syncKey = `${syncingProjectId}_pipelines_synced`;
+            const cacheKey = `${syncingProjectId}_cached_pipelines`;
+            const lastSyncedKey  = `${syncingProjectId}_last_synced`;
+
+            const isSynced = sessionStorage.getItem(syncKey);
+            const storedData = sessionStorage.getItem(cacheKey);
 
             if(isSynced === 'true'){
                 if (JSON.stringify(data) !== storedData) {
-                    setPipelines(data);
-                    sessionStorage.setItem('cached_pipelines', JSON.stringify(data));
-                    setLastSynced(new Date().toISOString());
+                    syncingProjectId === currentProjectId && setPipelines(data);
+                    sessionStorage.setItem(cacheKey, JSON.stringify(data));
+                    sessionStorage.setItem(lastSyncedKey, new Date().toISOString());
                 }
                 else{
                     setLoadingSync(false);
+                    sessionStorage.removeItem(syncingKey);
+                    setConfirmSync(`Pipelines of project ${project?.project_name} are already up to date.`)
                     return false;
                 }
             }else{
-                setPipelines(data);
-                sessionStorage.setItem('cached_pipelines', JSON.stringify(data));
-                sessionStorage.setItem('pipelines_synced', 'true');
-                setLastSynced(new Date().toISOString());
+                syncingProjectId === currentProjectId && setPipelines(data);
+                sessionStorage.setItem(cacheKey, JSON.stringify(data));
+                sessionStorage.setItem(syncKey, 'true');
+                sessionStorage.setItem(lastSyncedKey, new Date().toISOString());
             }
-            console.log("Sync Completed");
+            
+            setConfirmSync(`Pipelines of project ${project?.project_name} have been synced successfully.`)
+            console.log("Sync Completed for project:", syncingProjectId);
+            
+            sessionStorage.removeItem(syncingKey);
             setLoadingSync(false);
             return true;
 
         } catch (e) {
             console.error("Failed to sync pipelines:", e);
             setLoadingSync(false);
+            sessionStorage.removeItem(syncingKey);
             return false;
         }
     };
@@ -165,29 +206,27 @@ function History(){
     //get jobs
     useEffect(()=> {
         if(!pipeline || !project) return;
-
         const getJobs = async () => {
             try {
-                const res = await fetch(`${api_url}/projects/${project.id}/pipelines/${pipeline.id}/jobs`, {
+                const res = await fetch(`${api_url}/projects/${project?.id}/pipelines/${pipeline?.id}/jobs`, {
                     credentials: "include",
                     method: "GET",
                     headers: {"Content-Type": "application/json"}
                 });
-
+    
                 const data = await res.json();
-
+    
                 if (!res.ok) {
                     console.error(data.detail?.[0]?.msg || data.detail || "Failed to fetch pipeline script");
                     return;
                 }
                 setJobs(data.jobs);
             }catch(e: any){
-                console.error(`Failed to get jobs of pipeline with id: ${pipeline.id}`)
+                console.error(`Failed to get jobs of pipeline with id: ${pipeline?.id}`)
             }
         }
-
-        if(pipeline)getJobs();
-    },[pipeline]);
+        getJobs();
+    },[pipeline?.id]);
 
 
     // make top bar scroll to top on collapsing
@@ -196,6 +235,12 @@ function History(){
             topContentRef.current?.scrollTo({ top: 0, behavior:"smooth"});
         }
     },[isExpanded]);
+
+    const getLastSyncedText = () => {
+        const lastSyncedKey =`${project?.id}_last_synced`;
+        const lastSynced = sessionStorage.getItem(lastSyncedKey);
+        return (lastSynced ? "Last Synced ("+new Date(lastSynced).toLocaleString()+")" : "Never Synced")
+    }
 
     return(
         <div className={styles.window}>
@@ -207,8 +252,7 @@ function History(){
                         <Link title="Go to link" target="_blank"
                             className={`${styles.barTab} ${styles.barLink}`} to={project.repo_url}>
                             {project.repo_url}</Link>
-                        <span className={styles.barTab}>
-                            {lastSynced ? "Last Synced ("+new Date(lastSynced).toLocaleString()+")" : "Never Synced"}</span>
+                        <span className={styles.barTab}>{getLastSyncedText()}</span>
 
                         {pipeline && <>
                             <span className={styles.barTab}>{pipeline.name}</span>
@@ -241,6 +285,12 @@ function History(){
                         
                 </div>
             </div>
+            {confirmSync && <Popup
+                btnText1="Got it"
+                confirmMessage={confirmSync}
+                setConfirmMessage={setConfirmSync}
+                popupRef={popupRef}
+            />}
         </div>
     );
 }

@@ -230,8 +230,6 @@ function Chatbot() {
         return content.startsWith("⚠️");
     };
 
-    // splits a message into plain-text chunks and ```lang ... ``` code chunks,
-    // rendering code chunks with the CodeBlock component
     const renderMessageContent = (content: string) => {
         const codeFenceRegex = /```(\w+)?\n?([\s\S]*?)```/g;
         const nodes: React.ReactNode[] = [];
