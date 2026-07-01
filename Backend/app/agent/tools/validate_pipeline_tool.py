@@ -14,7 +14,11 @@ from agent.tools.validators import parse_yaml, validate_github, validate_gitlab
 @tool
 async def validate_pipeline_tool(
     yaml_content: str, target: Literal["github", "gitlab"], config: RunnableConfig = None) -> str:
-    """Validate a CI/CD pipeline YAML both syntactically and semantically. Call this on
+    """
+    Diagnostic Tool: Call this FIRST if a user provides an existing YAML and asks 
+    to 'fix' it, 'check' it, or reports that it is not working. 
+
+    Validate a CI/CD pipeline YAML both syntactically and semantically. Call this on
     every pipeline YAML you produce before returning it to the user.
 
     Two layers:

@@ -23,15 +23,18 @@ from agent.chatbot_agent import ChatbotAgent
 from agent.utils.context_resolver import ContextResolver, build_context_summary
 from schemas.project_schema import ProjectResponse
 
+from langchain_groq import ChatGroq
+
 class ChatbotService:
     def __init__(self):
         self.client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
-        self.model = "models/gemini-2.5-flash"
+        # self.model = "models/gemini-2.5-flash"
         # self.model = "Qwen/Qwen2.5-72B-Instruct-AWQ"
-        self.agent = ChatbotAgent()
+        self.model = os.getenv("GROQ_MODEL", "openai/gpt-oss-120b")
+        self.agent = ChatbotAgent(model=self.model)
 
     async def send_message(self, message: str, session_id: int, chat_history: List[Dict[str, str]] = None, 
-                           db: Optional[AsyncSession] = None,  user_id: Optional[int] = None, project_id: Optional[int] = None) -> Dict[str, str]:
+                           db: Optional[AsyncSession] = None,  user_id: Optional[int] = None, project_id: Optional[int] = None, pipeline_id : Optional[int] = None,) -> Dict[str, str]:
 
         if not message or not message.strip():
             raise HTTPException(status_code=400, detail="Message cannot be empty")
@@ -82,6 +85,7 @@ class ChatbotService:
                 session_id = session_id,
                 user_id= user_id,
                 project_id=project_id,
+                pipeline_id=pipeline_id,
                 context = context,
                 context_summary = context_summary
             )
@@ -176,8 +180,10 @@ class ChatbotService:
             session_id= session_id,
             user_id=user_id,
             project_id = session.project_id,
+            pipeline_id = pipeline_id,
             chat_history=chat_history,
             db=db,
+            
         )
 
         user_msg, bot_msg = await self.save_conversation_turn(

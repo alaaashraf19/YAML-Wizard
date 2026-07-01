@@ -8,40 +8,23 @@ from langchain_core.runnables import RunnableConfig
 async def generate_yaml_tool(user_prompt: str, previous_yaml: str | None = None,
                             config: RunnableConfig = None) -> str:
     """
-    Call this tool FIRST whenever the user asks to generate, modify, or explain
-    a CI/CD pipeline / YAML workflow.
-
-    The full repository context has already been injected into the conversation
-    as a system message. This tool simply confirms that you should now generate
-    the pipeline using that context + the GENERATE_PROMPT rules.
+    Call this to generate a NEW pipeline from scratch or to add NEW features 
+    to an existing pipeline. 
+    Do NOT call this to fix errors in existing code; use validate_pipeline_tool first for that.
     """
     try:
-
-        print("[generate_yaml_tool] called - context already available in system message")
-
         previous_section = ""
         if previous_yaml:
-            previous_section = f"\n\nExisting YAML to base changes on:\n```yaml\n{previous_yaml}\n```"
+            previous_section = f"\n\nExisting YAML to modify:\n```yaml\n{previous_yaml}\n```"
 
         return (
             f"REPO_CONTEXT_ALREADY_LOADED\n"
             f"User request: {user_prompt}"
             f"{previous_section}\n\n"
-            f"Now generate the pipeline following the GENERATE_PROMPT rules. "
-            f"Return ONLY the required JSON object."
+            f"Now generate/modify the pipeline. Follow the OUTPUT STRUCTURE: "
+            f"Provide a brief description, then the YAML inside a ```yaml block."
         )
     except Exception as e:
         import traceback
         traceback.print_exc()
         raise
-
-
-
-
-import json
-import re
-def parse_response(content: str) -> tuple[str, str]:
-    # Remove markdown code blocks if the LLM accidentally included them
-    clean_content = re.sub(r"```json\s?|```", "", content).strip()
-    data = json.loads(clean_content)
-    return data["yaml"].strip(), data["description"].strip()
