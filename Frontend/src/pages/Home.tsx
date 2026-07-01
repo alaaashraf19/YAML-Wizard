@@ -10,6 +10,7 @@ import { RiFolderChartLine } from "react-icons/ri";
 import { TbTimelineEventText } from "react-icons/tb";
 import { TbShieldLockFilled } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
+import CodeWindowMockup from "../components/Home/CodeWindowMockup";
 
 
 function Home() {
@@ -67,7 +68,7 @@ function Home() {
                 "Powered by GitHub Apps and modern integration practices. Access only the repositories you choose while keeping permissions minimal and transparent."
         }
     ];
-    const featuresIcons = [ 
+    const featuresIcons = [
         <SiGithubactions size={200} className={styles.icon}/>,
         <MdVerified size={200} className={styles.icon}/>,
         <MdOutlineHistoryEdu size={200} className={styles.icon}/>,
@@ -126,31 +127,37 @@ function Home() {
             {/* Hero */}
             <section className={styles.heroSection}>
                 <div className={styles.heroOverlay}>
-                    <h1 className={styles.heroTitle}>
-                        Generate <span className={styles.gradientTitle}>Production-Ready CI/CD Pipelines</span> in Seconds
-                    </h1>
+                    <div className={styles.heroTextCol}>
+                        <h1 className={styles.heroTitle}>
+                            Generate <span className={styles.gradientTitle}>Production-Ready CI/CD Pipelines</span> in Seconds
+                        </h1>
 
-                    <p className={styles.heroDescription}>
-                        Connect your repository, let us analyze your project,
-                        and instantly generate validated GitHub Actions and
-                        GitLab CI configurations tailored to your stack.
-                    </p>
+                        <p className={styles.heroDescription}>
+                            Connect your repository, let us analyze your project,
+                            and instantly generate validated GitHub Actions and
+                            GitLab CI configurations tailored to your stack.
+                        </p>
 
-                <div className={styles.heroButtons}>
-                    <button
-                        className={`${styles.heroButton} ${gStyles.clickable}`}
-                        onClick={()=>navigate("/chatbot")}
-                    >
-                        Start Generating YAML
-                    </button>
+                        <div className={styles.heroButtons}>
+                            <button
+                                className={`${styles.heroButton} ${gStyles.clickable}`}
+                                onClick={()=>navigate("/chatbot")}
+                            >
+                                Start Generating YAML
+                            </button>
 
-                    <button
-                        className={`${styles.heroButton} ${gStyles.clickable}`}
-                        onClick={()=>navigate("/profile?tab=Platforms")}
-                    >
-                        Connect Your First Repository
-                    </button>
-                </div>
+                            <button
+                                className={`${styles.heroButton} ${gStyles.clickable}`}
+                                onClick={()=>navigate("/profile?tab=Platforms")}
+                            >
+                                Connect Your First Repository
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className={styles.heroMockup}>
+                        <CodeWindowMockup/>
+                    </div>
                 </div>
             </section>
 
@@ -219,25 +226,6 @@ function Home() {
                             className={`${styles.featureShowcase}
                             ${index % 2 === 1 ? styles.reverse : ""}`}
                         >
-                            {/* <div className={styles.featurePreview}>
-                                <svg width="0" height="0">
-                                    <defs>
-                                        <linearGradient id="iconGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                            <stop offset="0%" stopColor="#ffffff" />
-                                            <stop offset="50%" stopColor="#c0b0ff" />
-                                            <stop offset="100%" stopColor="#7b5cff" />
-                                        </linearGradient>
-                                        <linearGradient id="iconGradientHover" x1="0%" y1="0%" x2="100%" y2="100%">
-                                            <stop offset="0%" stopColor="#ff6b6b" />
-                                            <stop offset="50%" stopColor="#ffa94d" />
-                                            <stop offset="100%" stopColor="#ffd93d" />
-                                        </linearGradient>
-                                    </defs>
-                                </svg>
-                                <div className={styles.iconWrapper}>
-                                    {featuresIcons[index]}
-                                </div>
-                            </div> */}
                             <div className={styles.featurePreview}>
                                 <div className={styles.iconWrapper}>
                                     {featuresIcons[index]}

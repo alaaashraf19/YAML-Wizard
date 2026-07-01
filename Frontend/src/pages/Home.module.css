@@ -44,8 +44,19 @@
 }
 
 .heroOverlay {
-    width: min(900px, 90%);
-    text-align: center;
+    width: min(1300px, 92%);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 3rem;
+}
+
+.heroTextCol {
+    flex: 1;
+    min-width: 320px;
+    text-align: left;
 }
 
 .heroTitle {
@@ -75,7 +86,7 @@
 }
 .heroButtons {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
 
     gap: 1.2rem;
@@ -83,7 +94,16 @@
     flex-wrap: wrap;
 
     margin-top: 1rem;
-}.heroButton {
+}
+.heroMockup {
+    flex: 1;
+    min-width: 320px;
+
+    display: flex;
+    justify-content: center;
+    margin-top: 0;
+}
+.heroButton {
     border: none;
 
     padding: 1rem 2.5rem;
@@ -121,6 +141,23 @@
 
 .heroButton:active {
     transform: translateY(-1px) scale(.98);
+}
+
+/* Hero responsive: stack columns on smaller screens */
+@media (max-width: 900px) {
+    .heroOverlay {
+        flex-direction: column;
+        text-align: center;
+    }
+    .heroTextCol {
+        text-align: center;
+    }
+    .heroButtons {
+        justify-content: center;
+    }
+    .heroMockup {
+        margin-top: 2rem;
+    }
 }
 
 /* ================= COMMON ================= */

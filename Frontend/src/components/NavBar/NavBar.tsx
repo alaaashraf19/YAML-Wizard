@@ -8,6 +8,7 @@ import logo from "../../assets/yaml_wizard_logo.png";
 import { GoPerson } from "react-icons/go";
 import { FaSignOutAlt } from "react-icons/fa";
 import { FiMenu } from "react-icons/fi";
+import { IoHomeOutline } from "react-icons/io5";
 
 
 function NavBar(){
@@ -23,8 +24,8 @@ function NavBar(){
         () => {
             function handleClickOutside(e: MouseEvent) {
                 if (optionsRef.current &&
-                        !optionsRef.current.contains(e.target as Node) && 
-                        optionsButtonRef.current && 
+                        !optionsRef.current.contains(e.target as Node) &&
+                        optionsButtonRef.current &&
                         !optionsButtonRef.current.contains(e.target as Node)) {
                     setOpenOptions(false);
                 }
@@ -46,12 +47,18 @@ function NavBar(){
     return(
         <div className={styles.navBar}>
             {loading? null : (<>
-                {(isProfile || isHome) && 
+                {(isProfile || isHome) &&
                     <img src={logo} alt="YAML Wizard" onClick={() => {if(!isHome)navigate("/")}}
                         className={`${styles.logo} ${styles.button} ${!isHome && gStyles.clickable}`}
                         title={isHome? "YAMLWizard" : "Go to home page"}/>
                 }
                 {username? (<>
+                    {!isHome &&
+                    <Link className={`${styles.button} ${gStyles.gButton}`}
+                        to="/" title="Go to home page">
+                        <IoHomeOutline className={styles.homeIcon}/>
+                    </Link>}
+
                     {(isProfile || isHome || isHistory) &&
                     <Link className={`${styles.button} ${gStyles.gButton}`}
                         to="/dashboard" title="Go to dashboard">
