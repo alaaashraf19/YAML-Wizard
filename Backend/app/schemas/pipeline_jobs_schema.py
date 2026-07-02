@@ -27,6 +27,9 @@ class JobOrderResponse(BaseModel):
     platform: str
     jobs: list[JobView]
     content: str | None = None  # full pipeline YAML
+    valid: bool = True  # False when the linter/semantic validation failed
+    errors: list | None = None  # linter errors
+    report: dict | None = None  # full validation report 
     warnings: list | None = None  # linter warnings (actionlint / gitlab-ci-lint / json-schema)
     ai_warnings: list | None = None  # advisory warnings from ai
     ai_review: dict | None = None  # ai review process status: {available, model, error}
