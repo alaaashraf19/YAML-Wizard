@@ -230,9 +230,51 @@ function Chatbot() {
         return content.startsWith("⚠️");
     };
 
+    // Undo Python's str()-style escaping (\n, \t, \', \\) so legacy payloads
+    // read like normal text instead of literal backslash-n sequences.
+    const unescapePythonString = (raw: string) => {
+        return raw
+            .replace(/\\n/g, "\n")
+            .replace(/\\t/g, "\t")
+            .replace(/\\"/g, "\"")
+            .replace(/\\'/g, "'")
+            .replace(/\\\\/g, "\\");
+    };
+
+    // Backwards-compat shim: older backend responses were produced by calling
+    // Python's str() on a list of segment dicts, e.g.
+    //   "[{'type': 'text', 'content': '...'}, {'type': 'code', 'language': 'yaml', 'content': '...'}]"
+    // instead of returning proper markdown. If we detect that shape, rebuild
+    // it into normal ```lang ... ``` markdown so renderMessageContent can
+    // handle it exactly like any other message. Anything that doesn't match
+    // this legacy pattern is returned untouched.
+    const normalizeLegacyContent = (content: string) => {
+        const trimmed = content.trim();
+        if (!/^\[\s*\{\s*'type':/.test(trimmed)) return content;
+
+        const segmentRegex =
+            /\{\s*'type':\s*'(\w+)'\s*(?:,\s*'language':\s*'([\w.+-]*)')?\s*,\s*'content':\s*'((?:\\.|[^'\\])*)'\s*\}/g;
+
+        const parts: string[] = [];
+        let match: RegExpExecArray | null;
+
+        while ((match = segmentRegex.exec(trimmed)) !== null) {
+            const [, type, language, rawText] = match;
+            const text = unescapePythonString(rawText);
+            parts.push(
+                type === "code" ? "```" + (language || "") + "\n" + text + "\n```" : text
+            );
+        }
+
+        // If nothing matched, don't risk mangling a legitimate message -
+        // fall back to the original content.
+        return parts.length ? parts.join("\n\n") : content;
+    };
+
     // splits a message into plain-text chunks and ```lang ... ``` code chunks,
     // rendering code chunks with the CodeBlock component
     const renderMessageContent = (content: string) => {
+        content = normalizeLegacyContent(content);
         const codeFenceRegex = /```(\w+)?\n?([\s\S]*?)```/g;
         const nodes: React.ReactNode[] = [];
         let lastIndex = 0;
