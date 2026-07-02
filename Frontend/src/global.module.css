@@ -5,7 +5,6 @@ html, body, #root {
     margin: 0;
     width: 100%;
     height: 100%;
-    overflow-x: hidden;
 }
 body {
     display: flex;
@@ -13,6 +12,27 @@ body {
     
     /* background-image: linear-gradient(260deg, rgb(3, 3, 93)10% ,rgb(74, 2, 103)); */
     background-color: rgb(10, 4, 81);
+    background-image:
+        radial-gradient(
+            circle 700px at 15% 20%,
+            rgba(94, 72, 255, 0.12) 0%,
+            rgba(94, 72, 255, 0.06) 35%,
+            transparent 70%
+        ),
+
+        radial-gradient(
+            circle 850px at 85% 30%,
+            rgba(70, 200, 255, 0.10) 0%,
+            rgba(70, 200, 255, 0.04) 40%,
+            transparent 75%
+        ),
+
+        radial-gradient(
+            circle 900px at 50% 95%,
+            rgba(40, 55, 180, 0.14) 0%,
+            rgba(40, 55, 180, 0.06) 35%,
+            transparent 75%
+        );
     background-attachment: fixed;
 
     font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;

@@ -327,7 +327,10 @@ function Chatbot() {
     const renderBold = (text: string) => {
         // const withoutBulletMarkers = text.replace(/^[ \t]*[*-][ \t]+/gm, "");
         const withoutBulletMarkers = text.replace(/^([ \t]*)[*-][ \t]+/gm, "$1");
-        const parts = withoutBulletMarkers.split(/\*{1,2}(.*?)\*{1,2}/g);
+        // Strip markdown heading markers (#, ##, ### ...) so raw "### Title"
+        // text never leaks into the chat bubble - render headings as bold text.
+        const withoutHeadingMarkers = withoutBulletMarkers.replace(/^[ \t]*#{1,6}[ \t]+(.*)$/gm, "**$1**");
+        const parts = withoutHeadingMarkers.split(/\*{1,2}(.*?)\*{1,2}/g);
         return parts.map((part, i) =>
             i % 2 === 1 ? <strong key={i}>{part}</strong> : part
         );
