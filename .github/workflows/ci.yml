@@ -1,20 +1,50 @@
+name: Python CI
 
-    name: CI Pipeline
+on:
+  push:
+    branches:
+      - main
+      - feature/**
+  pull_request:
+    branches:
+      - main
 
-    on:
-      push:
-        branches: [ main ]
-    jobs:
-      build:
-        runs-on: ubuntu-latest
-        steps:
-          - uses: actions/checkout@v2
-          - name: Set up Python
-            uses: actions/setup-python@v2
-            with:
-              python-version: '3.x'
-          - name: Install dependencies
-            run: |
-              python -m pip install --upgrade pip
-              pip install -r requirements.txt
-    
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x' # Use the latest 3.x version
+
+      - name: Cache Python dependencies
+        id: cache-pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('Backend/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r Backend/requirements.txt
+        working-directory: Backend/ # Run commands from the Backend directory
+
+      - name: Lint with Flake8
+        run: |
+          pip install flake8
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=120 --statistics
+        working-directory: Backend/ # Run commands from the Backend directory
+
+      - name: Test with Pytest
+        run: |
+          pip install pytest
+          pytest
+        working-directory: Backend/ # Run commands from the Backend directory
