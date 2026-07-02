@@ -4,7 +4,7 @@ import asyncio
 from datetime import datetime
 
 from fastapi import HTTPException
-from sqlalchemy import select, func
+from sqlalchemy import select, func, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.pipeline_model import Pipeline
@@ -360,7 +360,7 @@ def swap_version_into_pipeline(pipeline: Pipeline, version: PipelineVersion) -> 
     pipeline.updated_at = datetime.utcnow()
 
 
-#push a saved edit version's YAML to the repo, then mark it active and the overridden pipeline inactive.
+#push a saved edit version's YAML to the repo, then approve it and make sure there is one active version for the pipeline
 async def push_pipeline_version(
     pipeline_id: int, project_id: int, version_id: int, user_id: int, db: AsyncSession,
     commit_message: str | None = None,
@@ -373,15 +373,30 @@ async def push_pipeline_version(
     if not getattr(result, "success", False):
         raise HTTPException(status_code=502, detail=f"Publish failed: {getattr(result, 'message', 'unknown error')}")
 
-    #record the push on the pushed version and mark it the ctive one
+    #if the push succeeded we approve it, swap the pushed version into the pipelines row and old main into the version row
+    #I didn't use approve because of redundant db queries
+    swap_version_into_pipeline(pipeline, version)
+
+    #the pipelines row now holds the pushed content and is the single live/active one
     now = datetime.utcnow()
-    version.is_active = True
-    version.commit_message = message
-    version.committed_at = now
-    version.activated_at = now
-    version.commit_hash = None
-    version.commit_author = None
-    pipeline.is_active = False #the overridden pipeline row is no longer the active/live one
+    pipeline.is_active = True
+    pipeline.commit_message = message
+    pipeline.committed_at = now
+    pipeline.activated_at = now 
+    pipeline.commit_hash = None
+    pipeline.commit_author = None
+    version.is_active = False  # the demoted old main (now in the version row) is not active
+
+    #enforce exactly one active version per pipeline across both tables, deactivate every other version
+    await db.execute(
+        update(PipelineVersion)
+        .where(
+            PipelineVersion.pipeline_id == pipeline_id,
+            PipelineVersion.id != version_id,
+        )
+        .values(is_active=False)
+        .execution_options(synchronize_session=False)
+    )
 
     await db.commit()
     await db.refresh(pipeline)
