@@ -24,7 +24,6 @@ class PipelineVersion(Base):
 
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
     updated_at = Column(DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
-    activated_at = Column(DateTime, nullable=True)
 
     project_id = Column(Integer, ForeignKey('projects.id'), nullable=False)
 

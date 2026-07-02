@@ -185,7 +185,6 @@ async def save_pipeline_version(pipeline: Pipeline, content: str, db: AsyncSessi
         commit_author=None,
         commit_message=None,
         committed_at=None,
-        activated_at=None,
         project_id=pipeline.project_id,
         pipeline_id=pipeline.id,
     )
@@ -347,7 +346,7 @@ async def push_version_to_repo(
 SWAPPED_VERSION_FIELDS = (
     "content", "path", "branch", "is_generated_by_wizard", "description",
     "is_active", "commit_hash", "commit_author", "commit_message",
-    "committed_at", "created_at", "activated_at",
+    "committed_at", "created_at",
 )
 
 
@@ -382,7 +381,6 @@ async def push_pipeline_version(
     pipeline.is_active = True
     pipeline.commit_message = message
     pipeline.committed_at = now
-    pipeline.activated_at = now 
     pipeline.commit_hash = None
     pipeline.commit_author = None
     version.is_active = False  # the demoted old main (now in the version row) is not active

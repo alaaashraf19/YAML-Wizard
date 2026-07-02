@@ -53,7 +53,6 @@ class PipelineVersionView(BaseModel):
     committed_at: datetime | None = None
     created_at: datetime
     updated_at: datetime
-    activated_at: datetime | None = None
 
     class Config:
         from_attributes = True
