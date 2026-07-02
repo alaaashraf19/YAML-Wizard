@@ -25,13 +25,13 @@ class GitLabCollector(CICollector):
 
     def __init__(self, token: str | None = None) -> None:
         
-        self.token = token or os.getenv("GITLAB_ACCESS_TOKEN")
-
-        if not self.token:
+        self.token = token
+        
+        if not self.token:        
             raise ValueError("GitLab access token not provided.")
 
         self.headers = {
-            "PRIVATE-TOKEN": self.token,
+            "Authorization": f"Bearer {self.token}",
         }
 
         self._client = httpx.AsyncClient(headers=self.headers, timeout=30.0)

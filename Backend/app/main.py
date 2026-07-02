@@ -33,7 +33,7 @@ async def lifespan(app: FastAPI):
 
     _sync_task = asyncio.create_task(background_sync_loop())
 
-    await yaml_sync_service.start_background_sync()
+    # await yaml_sync_service.start_background_sync()
     yield
     if _sync_task:
         _sync_task.cancel()

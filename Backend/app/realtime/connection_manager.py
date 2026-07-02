@@ -14,6 +14,11 @@ class ConnectionManager:
 
         await websocket.accept()
         self._connections[repo_id].append(websocket)
+        print(
+        "Connected",
+        repo_id,
+        len(self._connections[repo_id]),
+    )
 
     def disconnect(self, websocket: WebSocket, repo_id: int) -> None:
         
@@ -24,7 +29,8 @@ class ConnectionManager:
     async def broadcast(self, repo_id: int, data: dict) -> None:
 
         """Send data to all clients watching a repository."""
-
+        print(f"Broadcasting to repo {repo_id}")
+        print(f"Connections: {len(self._connections[repo_id])}")
         message = json.dumps(data)
         dead: list[WebSocket] = []
         for ws in self._connections[repo_id]:

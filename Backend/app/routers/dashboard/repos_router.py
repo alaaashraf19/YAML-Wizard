@@ -52,4 +52,4 @@ async def sync_repo(repo_id: int, db: AsyncSession = Depends(get_db), current_us
     if not repo:
         raise HTTPException(status_code=404, detail="Repository not found")
     
-    return await sync_repository(repo.id, db)
+    return await sync_repository(current_user.id, repo, db)

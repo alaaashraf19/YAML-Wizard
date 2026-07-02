@@ -51,7 +51,7 @@ async def _resolve_token(user_id: int, platform: str, repo_url: str, db: AsyncSe
             from services.github_app_services import fetch_installation_repos
             user_result = await db.execute(select(User).where(User.id == user_id))
             user = user_result.scalar_one_or_none()
-            await fetch_installation_repos(current_user=user, db=db)
+            # await fetch_installation_repos(current_user=user, db=db)
 
             result = await db.execute(
                 select(GitHubInstallationRepo)

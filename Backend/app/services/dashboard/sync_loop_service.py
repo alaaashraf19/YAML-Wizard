@@ -8,6 +8,7 @@ import os
 from dotenv import load_dotenv
 
 from .yaml_sync_service import yaml_sync_service
+import traceback
 
 load_dotenv()
 
@@ -20,9 +21,9 @@ async def background_sync_loop():
     try:
         SYNC_INTERVAL_MINUTES = int(os.getenv("SYNC_INTERVAL_MINUTES", 5))
         interval = SYNC_INTERVAL_MINUTES * 60
-        # print(f"[auto-sync] Background sync started — interval: {interval}s", flush=True)
+        print(f"[auto-sync] Background sync started — interval: {interval}s", flush=True)
     except Exception as e:
-        # print(f"[auto-sync] STARTUP ERROR: {e}", flush=True)
+        print(f"[auto-sync] STARTUP ERROR: {e}", flush=True)
         return
 
     while True:
@@ -36,16 +37,16 @@ async def background_sync_loop():
                 for repo in repos:
                     try:
                         async with async_session() as db_repo:
-                            sync_result = await sync_repository(repo.id, db_repo)
+                            sync_result = await sync_repository(repo.user_id,repo, db_repo)
 
                         if sync_result.runs_synced > 0:
-                            # print(
-                            #     f"[auto-sync] {repo.full_name}: "
-                            #     f"{sync_result.runs_synced} runs, "
-                            #     f"{sync_result.jobs_synced} jobs, "
-                            #     f"{sync_result.tests_parsed} tests",
-                            #     flush=True
-                            # )
+                            print(
+                                f"[auto-sync] {repo.full_name}: "
+                                f"{sync_result.runs_synced} runs, "
+                                f"{sync_result.jobs_synced} jobs, "
+                                f"{sync_result.tests_parsed} tests",
+                                flush=True
+                            )
 
                             await ws_manager.broadcast(repo.id, {
                                 "type": "sync_complete",
@@ -59,15 +60,8 @@ async def background_sync_loop():
                             pass
 
                     except Exception as e:
-                        # print(f"[auto-sync] ERROR repo_id={repo.id}: {e}", flush=True)
-                        continue
+                        print(f"Error syncing repo {repo.id}: {e}")
+                        traceback.print_exc()
         except Exception as e:
-            # print(f"[auto-sync] LOOP ERROR: {e}", flush=True)
-            continue
+            traceback.print_exc()
 
-# async def yaml_sync_loop():
-#     """
-#     Periodically sync YAML pipeline files from repositories.
-#     This runs independently of the CI/CD data sync.
-#     """
-#     await yaml_sync_service.start_background_sync()
