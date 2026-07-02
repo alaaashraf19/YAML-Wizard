@@ -24,6 +24,7 @@ from dotenv import load_dotenv
 from fastapi import HTTPException
 from realtime.connection_manager import ws_manager
 from ..platform_connectors.oauth_utils import decrypt_token
+from services.pipeline_services import get_pipeline_by_id
 
 load_dotenv()
 
@@ -170,30 +171,39 @@ class YAMLSyncService:
     ) -> Dict[str, Any]:
 
 
-        result = await db.execute(
-            select(Pipeline)
-            .join(Project, Pipeline.project_id == Project.id)
-            .where(Pipeline.id == pipeline_id, Project.user_id == user_id)
-        )
-        pipeline = result.scalar_one_or_none()
-        if not pipeline:
-            raise HTTPException(status_code=404, detail="Pipeline not found")
+        pipeline = await get_pipeline_by_id(pipeline_id,user_id,db)
 
         project = await db.get(Project, pipeline.project_id)
         if not project or not project.repo_id:
             raise HTTPException(status_code=400, detail="Project has no connected repository")
 
-        repo = await db.get(Repository, project.repo_id)
+        repo_result = await db.execute(
+            select(Repository)
+            .where(Repository.id == project.repo_id)
+            .options(
+                joinedload(Repository.user).selectinload(User.github_connections),
+                joinedload(Repository.user).selectinload(User.gitlab_connections),
+            )
+        )
+        repo = repo_result.unique().scalar_one_or_none()
         if not repo:
             raise HTTPException(status_code=404, detail="Repository not found")
 
         ctx = self._create_context_from_repo(repo)
 
-
+        user = repo.user
         if repo.platform == "github":
-            collector = GitHubCollector()
+            github_conn = user.github_connections[0] if user.github_connections else None
+            token = github_conn.access_token if github_conn else None
+            if not token:
+                raise HTTPException(status_code=401, detail="No GitHub token provided")
+            collector = GitHubCollector(token=decrypt_token(token))
         elif repo.platform == "gitlab":
-            collector = GitLabCollector()
+            gitlab_conn = user.gitlab_connections[0] if user.gitlab_connections else None
+            token = gitlab_conn.access_token if gitlab_conn else None
+            if not token:
+                raise HTTPException(status_code=401, detail="No GitLab token provided")
+            collector = GitLabCollector(token=decrypt_token(token))
         else:
             raise HTTPException(status_code=400, detail=f"Unsupported platform: {repo.platform}")
 
@@ -234,8 +244,6 @@ class YAMLSyncService:
                         pipeline.committed_at = committed_at.replace(tzinfo=None)
                     else:
                         pipeline.committed_at = committed_at
-            if not pipeline.activated_at:
-                pipeline.activated_at = datetime.utcnow()
 
             await db.commit()
             await db.refresh(pipeline)

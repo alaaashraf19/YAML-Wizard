@@ -15,6 +15,7 @@ class PipelineBase(BaseModel):
 
 class PipelineCreate(PipelineBase):
     is_active: bool = False
+    committed_at: Optional[datetime] = None
 
 
 class PipelineUpdate(BaseModel):
@@ -29,7 +30,6 @@ class PipelineUpdate(BaseModel):
 class PipelineResponse(PipelineBase):
     id: int
     is_active: bool
-    activated_at: Optional[datetime]
     created_at: datetime
     updated_at: datetime
     project_id: int
