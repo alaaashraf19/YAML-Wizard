@@ -5,6 +5,8 @@ import styles from "./CodeBlock.module.css";
 type CodeBlockProps = {
     language?: string;
     code: string;
+    editable?: boolean;
+    onChangeCode?: (value: string) => void;
 };
 
 // map common language names to file extensions for the download button
@@ -22,7 +24,7 @@ const extensionMap: Record<string, string> = {
     rust: "rs", php: "php",
 };
 
-function CodeBlock({ language, code }: CodeBlockProps) {
+function CodeBlock({ language, code, editable = false, onChangeCode }: CodeBlockProps) {
     const [copied, setCopied] = useState(false);
 
     const handleCopy = async () => {
@@ -61,9 +63,18 @@ function CodeBlock({ language, code }: CodeBlockProps) {
                     </button>
                 </div>
             </div>
-            <pre className={styles.codeContent}>
-                <code>{code}</code>
-            </pre>
+            {editable ? (
+                <textarea
+                    className={`${styles.codeContent} ${styles.codeTextarea}`}
+                    value={code}
+                    spellCheck={false}
+                    onChange={(e) => onChangeCode?.(e.target.value)}
+                />
+            ) : (
+                <pre className={styles.codeContent}>
+                    <code>{code}</code>
+                </pre>
+            )}
         </div>
     );
 }

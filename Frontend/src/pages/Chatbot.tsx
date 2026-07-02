@@ -13,6 +13,7 @@ import SideBar from "../components/Chatbot/SideBar";
 import Popup from "../components/Popup/Popup";
 import { ProjectSubInfo } from "../components/UserProfile/ProjectInfoTab";
 import CodeBlock from "../components/History/CodeBlock";
+import PipelineApproval from "../components/History/PipelineApproval";
 
 
 function Chatbot() {
@@ -272,8 +273,10 @@ function Chatbot() {
     };
 
     // splits a message into plain-text chunks and ```lang ... ``` code chunks,
-    // rendering code chunks with the CodeBlock component
-    const renderMessageContent = (content: string) => {
+    // rendering code chunks with the CodeBlock component. Assistant-generated
+    // YAML pipelines get an Approve/Edit action bar underneath so the user can
+    // review, tweak, and save the pipeline to their project's database.
+    const renderMessageContent = (content: string, role: Message["role"], msgIndex: number) => {
         content = normalizeLegacyContent(content);
         const codeFenceRegex = /```(\w+)?\n?([\s\S]*?)```/g;
         const nodes: React.ReactNode[] = [];
@@ -290,7 +293,24 @@ function Chatbot() {
             }
             const language = match[1];
             const code = match[2].replace(/\n$/, "");
-            nodes.push(<CodeBlock key={key++} language={language} code={code} />);
+            const isYamlPipeline = role === "assistant" && !!language && ["yaml", "yml"].includes(language.toLowerCase());
+
+            if (isYamlPipeline) {
+                nodes.push(
+                    <PipelineApproval
+                        key={`${msgIndex}-${key++}`}
+                        code={code}
+                        language={language}
+                        projectId={selectedProject?.id ?? null}
+                        branch={selectedProject?.branch}
+                        apiUrl={api_url}
+                        setConfirmMessage={setConfirmMessage}
+                        setErrorMessage={setErrorMessage}
+                    />
+                );
+            } else {
+                nodes.push(<CodeBlock key={key++} language={language} code={code} />);
+            }
             lastIndex = codeFenceRegex.lastIndex;
         }
 
@@ -326,7 +346,7 @@ function Chatbot() {
                         <div key={i} className={styles.messagePack}>
                             <div className={`${styles.message} ${msg.role === "user" ?
                                 styles.userMessage : (isErrorMessage(msg.content)? styles.errorMessage : styles.botMessage)}`}>
-                                {renderMessageContent(msg.content)}
+                                {renderMessageContent(msg.content, msg.role, i)}
                             </div>
                         </div>
                     ))}
