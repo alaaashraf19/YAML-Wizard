@@ -12,7 +12,7 @@ import ChatProjects from "../components/Chatbot/ChatProjects";
 import SideBar from "../components/Chatbot/SideBar";
 import Popup from "../components/Popup/Popup";
 import { ProjectSubInfo } from "../components/UserProfile/ProjectInfoTab";
-import CodeBlock from "../components/History/CodeBlock";
+import CodeBlock from "../components/Chatbot/CodeBlock";
 
 
 function Chatbot() {

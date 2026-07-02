@@ -145,15 +145,14 @@ export interface Pipeline {
     pipeline_id?: number;
     name: string;
     commit_author: string;
-    commit_hash: string;
+    commit_hash?: string;
     branch: string;
     path: string;
     content: string;
     is_active: boolean;
     created_at: Date;
     updated_at: Date;
-    activated_at: Date;
-    // commited_at: Date;
+    commited_at: Date;
     is_generated_by_wizard: boolean;
 }
 

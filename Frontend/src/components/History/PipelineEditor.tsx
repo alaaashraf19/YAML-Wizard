@@ -50,6 +50,8 @@ type HistoryState = {
 };
 
 type EditorStore = {
+    pipelineId: number | null,
+
     jobs: Job[],
     setJobs: (jobs: Job[]) => void,
     
@@ -65,12 +67,13 @@ type EditorStore = {
     hasChanges: boolean;
     setHasChanges: (hasChanges: boolean) => void,
 
-    resetEditorState: (newJobs: Job[]) => void
+    resetEditorState: (newJobs: Job[], pipelineId: number | null) => void
 }
 
 export const useEditorStore = create<EditorStore>()(
     persist(
         (set) => ({
+            pipelineId: null,
             jobs: [],
             setJobs: (jobs) => set({ jobs }),
             
@@ -86,13 +89,14 @@ export const useEditorStore = create<EditorStore>()(
             hasChanges: false,
             setHasChanges: (hasChanges) => set({ hasChanges }),
 
-            resetEditorState: (newJobs: Job[]) => {
+            resetEditorState: (newJobs: Job[], pipelineId: number | null) => {
                 const initialSnapshot: HistoryEntry = {
                     jobs: structuredClone(newJobs),
                     type: 'structural'
                 };
                 
                 set({
+                    pipelineId,
                     jobs: structuredClone(newJobs),
                     originalJobs: structuredClone(newJobs),
                     history: {
@@ -108,7 +112,13 @@ export const useEditorStore = create<EditorStore>()(
         {
             name: "editor_store",
             storage: createJSONStorage(() => sessionStorage),
-            partialize: (state) => ({history: state.history}),
+            partialize: (state) => ({
+                pipelineId: state.pipelineId,
+                history: state.history,
+                jobs: state.jobs,
+                hasChanges: state.hasChanges,
+                review: state.review,
+            }),
         }
     )
 );
@@ -118,7 +128,7 @@ function PipelineEditor({ initJobs, isDiscardChanges, setDiscardChanges, setInit
     const {isDark, setIsDark, setIsEdit, project, pipeline, setPipeline} = useHistoryStore();
 
     const {jobs, setJobs, history, setHistory, hasChanges, setHasChanges,
-        resetEditorState, review, setReview} = useEditorStore();
+        resetEditorState, review, setReview, pipelineId} = useEditorStore();
 
     const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
     const [isReviewOpen, setIsReviewOpen] = useState<boolean>(false);
@@ -147,40 +157,46 @@ function PipelineEditor({ initJobs, isDiscardChanges, setDiscardChanges, setInit
             originalJobsRef.current = structuredClone(initJobs);
             console.log("Initialized original jobs");
         }
-    }, []);
+    }, [initJobs]);
 
-    // ONLY handle pipeline changes - with first load support
+    // handle pipeline changes with first load support
     useEffect(() => {
-        if (initJobs.length === 0) return;
-
         const currentPipelineId = pipeline?.id || null;
-        const isNewPipeline = currentPipelineIdRef.current !== null && 
-            currentPipelineIdRef.current !== currentPipelineId;
-        
-        // Reset on: first load OR pipeline change
-        if (currentPipelineIdRef.current === null || isNewPipeline) {
-            console.log(`${currentPipelineIdRef.current === null ? '📝 First load' : '🔄 Switching pipeline'}: ${currentPipelineId}`);
-            
-            // Update ref
-            currentPipelineIdRef.current = currentPipelineId;
-            originalJobsRef.current = structuredClone(initJobs);
-            
-            // Reset editor with new pipeline's jobs
-            sessionStorage.removeItem('editor_store');
-            resetEditorState(initJobs);
+        if (!pipeline || initJobs.length === 0) {
+            if (currentPipelineIdRef.current !== null) {
+                console.log("No pipeline selected or jobs empty. Closing editor.");
+                currentPipelineIdRef.current = null;
+                setIsEdit(false);
+            }
+            return;
         }
-    }, [initJobs, pipeline?.id, resetEditorState]);
+
+        if (pipelineId !== currentPipelineId) {
+            console.log(`Pipeline changed from ${pipelineId} to ${currentPipelineId}. Resetting state.`);
+            
+            originalJobsRef.current = structuredClone(initJobs);
+            currentPipelineIdRef.current = currentPipelineId;
+            
+            resetEditorState(initJobs, currentPipelineId);
+        } else {
+            currentPipelineIdRef.current = currentPipelineId;
+            if (originalJobsRef.current.length === 0) {
+                originalJobsRef.current = structuredClone(initJobs);
+            }
+        }
+        
+    }, [initJobs, pipeline, pipelineId, resetEditorState, setIsEdit]);
 
     //Handle discard changes
     useEffect(() => {
         if (isDiscardChanges) {
-            console.log("🗑️ Discarding changes - resetting to original jobs");
+            console.log("Discarding changes - resetting to original jobs");
             
             const originalJobs = originalJobsRef.current;
+            const currentPipelineId = pipeline?.id || null;
             
             if (originalJobs.length > 0) {
-                sessionStorage.removeItem('editor_store');
-                resetEditorState(originalJobs);
+                resetEditorState(originalJobs, currentPipelineId);
                 setInitJobs(originalJobs);
             }
             
@@ -188,7 +204,7 @@ function PipelineEditor({ initJobs, isDiscardChanges, setDiscardChanges, setInit
             setDiscardChanges(false);
             setReview(null);
         }
-    }, [isDiscardChanges, resetEditorState, setIsEdit, setDiscardChanges, setReview, setInitJobs]);
+    }, [isDiscardChanges, resetEditorState, setIsEdit, setDiscardChanges, setReview, setInitJobs, pipeline?.id]);
     
     const getStorageSize = () => {
         let total = 0;
@@ -249,7 +265,7 @@ function PipelineEditor({ initJobs, isDiscardChanges, setDiscardChanges, setInit
     const updateJobContent = useCallback((jobIndex: number, content: string) => {
         if (isRestoringFromHistory.current) return;
         
-        const newJobs = [...jobs];
+        const newJobs = structuredClone(jobs);
         newJobs[jobIndex] = { ...newJobs[jobIndex], content };
         saveTextChange(newJobs, jobIndex, content);
     }, [jobs, saveTextChange]);
@@ -338,7 +354,7 @@ function PipelineEditor({ initJobs, isDiscardChanges, setDiscardChanges, setInit
             const newValue = value.slice(0, selectionStart) + tab + value.slice(selectionEnd);
             const textAfter = newValue;
             
-            const newJobs = [...jobs];
+            const newJobs = structuredClone(jobs);
             newJobs[jobIndex] = { ...newJobs[jobIndex], content: newValue };
             
             saveTabChange(newJobs, jobIndex, selectionStart, selectionEnd, textBefore, textAfter);
@@ -461,8 +477,10 @@ function PipelineEditor({ initJobs, isDiscardChanges, setDiscardChanges, setInit
                 console.error(data.detail?.[0]?.msg || data.detail || "Failed to submit changes");
                 return;
             }
-            setInitJobs(jobs);
+            // setInitJobs(jobs);
+            setConfirmSubmit("Submitted successfully, You can find the new version in history version");
             setPipeline(pipeline && {...pipeline, updated_at:new Date()});
+            setDiscardChanges(true);
 
         }catch(e: any){
             console.error(`Failed to submit changes of pipeline with id: ${pipeline.id}`)

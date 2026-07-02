@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { BiMessageSquareError, BiX, BiCheckCircle, BiInfoCircle } from 'react-icons/bi';
 import { FiAlertTriangle } from 'react-icons/fi';
 import styles from './PipelineReview.module.css';
+import { useHistoryStore } from '../../pages/History';
 
 interface ReviewProps {
   review: any;
@@ -11,6 +12,7 @@ interface ReviewProps {
 }
 
 export default function PipelineReview({ review, isReviewOpen, setIsReviewOpen, handleSubmit }: ReviewProps) {
+    const { pipeline } = useHistoryStore();
   const popupRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
@@ -89,18 +91,16 @@ export default function PipelineReview({ review, isReviewOpen, setIsReviewOpen, 
                 <span className={styles.infoValue}>{review.platform || 'N/A'}</span>
               </div>
               <div className={styles.infoItem}>
-                <span className={styles.infoLabel}>Pipeline ID</span>
-                <span className={styles.infoValue}>#{review.pipeline_id}</span>
+                <span className={styles.infoLabel}>Author</span>
+                <span className={styles.infoValue}>{pipeline?.commit_author || 'N/A'}</span>
+              </div>
+              <div className={styles.infoItem}>
+                <span className={styles.infoLabel}>Branch</span>
+                <span className={styles.infoValue}>{pipeline?.branch || 'N/A'}</span>
               </div>
               <div className={styles.infoItem}>
                 <span className={styles.infoLabel}>Jobs</span>
                 <span className={styles.infoValue}>{review.jobs?.length || 0}</span>
-              </div>
-              <div className={styles.infoItem}>
-                <span className={styles.infoLabel}>Committed</span>
-                <span className={`${styles.infoValue} ${review.committed ? styles.committed : styles.uncommitted}`}>
-                  {review.committed ? 'Yes' : 'No'}
-                </span>
               </div>
             </div>
 

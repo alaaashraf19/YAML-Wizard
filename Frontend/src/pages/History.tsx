@@ -63,7 +63,7 @@ export const useHistoryStore = create<HistoryStore>()(
 
 
 function History(){
-    const {isEdit, isExpanded, setIsExpanded, setLoadingSync, project, pipeline} = useHistoryStore();
+    const {isEdit, isExpanded, setIsExpanded, setLoadingSync, project, pipeline, setPipeline} = useHistoryStore();
 
     const [jobs, setJobs] = useState<Job[]>([]);
     const [pipelines, setPipelines] = useState<Pipeline[]>([]);
@@ -87,6 +87,12 @@ function History(){
             setLoadingSync(false);
         }
     }, [project?.id]);
+
+    // clear pipeline if project or pipelines are not available
+    useEffect(()=> {
+        if(!project || !pipelines) setPipeline(null);
+        console.log("Project or pipelines not available, clearing pipeline");
+    }, [pipelines]);
 
     // //get project pipelines, or sync if not synced
     useEffect(() => {
@@ -259,13 +265,13 @@ function History(){
                             <Link className={`${styles.barTab} ${styles.barLink}`} title="Go to link" target="_blank"
                                 to={`${project.repo_url}/tree/${project.branch}/${pipeline.path}`}>{pipeline.path}</Link>
                             <span className={styles.barTab}>{project.branch}</span>
-                            <span className={styles.barTab}>Commit Hash ({pipeline.commit_hash})</span>
+                            {/* <span className={styles.barTab}>Commit Hash ({pipeline.commit_hash})</span> */}
                             <span className={styles.barTab}>{pipeline.commit_author}</span>
                             <span className={styles.barTab}>{pipeline.is_active?"Published":"Not-Published"}</span>
                             <span className={styles.barTab}>Created ({new Date(pipeline.created_at).toLocaleString()})</span>
                             <span className={styles.barTab}>Last Updated ({new Date(pipeline.updated_at).toLocaleString()})</span>
                             {pipeline.is_active && 
-                            <span className={styles.barTab}>Published ({new Date(pipeline.activated_at).toLocaleString()})</span>}
+                            <span className={styles.barTab}>Published ({new Date(pipeline.commited_at).toLocaleString()})</span>}
                         </>}
                     </div>
                     <button className={styles.expandBtn} onClick={()=>setIsExpanded(!isExpanded)}>

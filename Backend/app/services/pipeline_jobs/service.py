@@ -174,7 +174,7 @@ async def save_pipeline_version(pipeline: Pipeline, content: str, db: AsyncSessi
     edit_number = (result.scalar_one() or 0) + 1
 
     version = PipelineVersion(
-        name=f"edit_{edit_number}_pipeline_{pipeline.id}",
+        name=f"edit_{edit_number}_pipeline_{pipeline.name}",
         content=content,
         path=pipeline.path,
         branch=pipeline.branch,

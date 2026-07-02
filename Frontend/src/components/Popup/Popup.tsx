@@ -80,11 +80,11 @@ function Popup({
                     {btnText2 && questionMessage &&
                         <button className={`${styles.popupBtn} ${gStyles.gButton}`}
                             onClick={(e) => {
-                                btn2Action && btn2Action(e);
                                 setQuestionMessage && setQuestionMessage("");
                                 setConfirmMessage && setConfirmMessage("");
                                 setWarningMessage && setWarningMessage("");
                                 setErrorMessage && setErrorMessage("");
+                                btn2Action && btn2Action(e);
                                 }}>
                             {btnText2}
                         </button>
