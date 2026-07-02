@@ -23,7 +23,7 @@ from agent.chatbot_agent import ChatbotAgent
 from agent.utils.context_resolver import ContextResolver, build_context_summary
 from schemas.project_schema import ProjectResponse
 
-# from langchain_groq import ChatGroq
+from langchain_groq import ChatGroq
 
 class ChatbotService:
     def __init__(self):
@@ -89,6 +89,7 @@ class ChatbotService:
                 context = context,
                 context_summary = context_summary
             )
+
             return {
                 "role": "assistant",
                 "content":str(response)
@@ -96,6 +97,7 @@ class ChatbotService:
 
         except Exception as e:
             error_text = str(e)
+            print("error texttttttttttttttt",error_text, )
 
             if "RESOURCE_EXHAUSTED" in error_text or "429" in error_text:
                 return{
@@ -214,7 +216,6 @@ class ChatbotService:
                     "error": result.get("error")
                 }
             )
-
         return {
             "session_id": session_id,
             "session_name": session_name,
