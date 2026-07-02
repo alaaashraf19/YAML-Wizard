@@ -69,6 +69,16 @@ class PipelineVersionsResponse(BaseModel):
     versions: list[PipelineVersionView]
 
 
+#Jobs list and full YAML of a single saved edit version
+class VersionJobsResponse(BaseModel):
+    pipeline_id: int
+    version_id: int
+    name: str
+    platform: str
+    jobs: list[JobView]
+    content: str | None = None  # full YAML of this version
+
+
 #Optional body for publishing a version (custom commit message)
 class PublishVersionRequest(BaseModel):
     commit_message: str | None = None

@@ -69,6 +69,20 @@ async def list_pipeline_versions(
     return platform, list(versions)
 
 
+#returns the jobs list and full YAML of a single saved edit version of a pipeline
+async def list_pipeline_version_jobs(
+    pipeline_id: int, project_id: int, version_id: int, user_id: int, db: AsyncSession
+) -> tuple[str, PipelineVersion, list[JobView]]:
+    _, platform = await load_pipeline_with_platform(pipeline_id, project_id, user_id, db)
+    version = await load_version_for_pipeline(pipeline_id, version_id, db)
+    editor = editor_for(platform)
+    try:
+        jobs = editor.list_jobs(version.content)
+    except JobsNotFound as exc:
+        raise HTTPException(status_code=422, detail=str(exc))
+    return platform, version, jobs
+
+
 #delete one saved edit version of a pipeline
 async def delete_pipeline_version(
     pipeline_id: int, project_id: int, version_id: int, user_id: int, db: AsyncSession
