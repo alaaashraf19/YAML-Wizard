@@ -69,6 +69,20 @@ async def list_pipeline_versions(
     return platform, list(versions)
 
 
+#returns the jobs list and full YAML of a single saved edit version of a pipeline
+async def list_pipeline_version_jobs(
+    pipeline_id: int, project_id: int, version_id: int, user_id: int, db: AsyncSession
+) -> tuple[str, PipelineVersion, list[JobView]]:
+    _, platform = await load_pipeline_with_platform(pipeline_id, project_id, user_id, db)
+    version = await load_version_for_pipeline(pipeline_id, version_id, db)
+    editor = editor_for(platform)
+    try:
+        jobs = editor.list_jobs(version.content)
+    except JobsNotFound as exc:
+        raise HTTPException(status_code=422, detail=str(exc))
+    return platform, version, jobs
+
+
 #delete one saved edit version of a pipeline
 async def delete_pipeline_version(
     pipeline_id: int, project_id: int, version_id: int, user_id: int, db: AsyncSession
@@ -127,12 +141,15 @@ async def _assemble_and_validate(
 
     #validate the assembled pipeline through the agent's validation system
     report = await validate_assembled_pipeline(new_content, platform, user_id, db, project_id)
-    if not report.get("valid", False):
-        raise HTTPException(
-            status_code=422,
-            detail={"message": "Pipeline validation failed", "report": report},
-        )
     return new_content, report
+
+
+#return [] instead of raising, so a rejected pipeline can still send a response
+def safe_list_jobs(editor, content: str) -> list[JobView]:
+    try:
+        return editor.list_jobs(content)
+    except Exception:
+        return []
 
 
 async def review_pipeline_jobs(
@@ -145,6 +162,25 @@ async def review_pipeline_jobs(
         pipeline, platform, editor, job_edits, user_id, db, project_id
     )
 
+    #if the linter says the assembled pipeline is invalid, return the errors without running AI review
+    if not report.get("valid", False):
+        return {
+            "platform": platform,
+            "jobs": safe_list_jobs(editor, new_content),
+            "content": new_content,
+            "valid": False,
+            "errors": report.get("errors", []),
+            "warnings": report.get("warnings", []),
+            "report": report,
+            "ai_warnings": [],
+            "ai_review": {
+                "available": False,
+                "model": None,
+                "error": "Skipped because pipeline validation failed",
+            },
+            "committed": False,
+        }
+
     #ai review (it doesn't block any processes from happening, the edited code can still be submitted)
     from agent.pipeline_edit_ai_review import review_pipeline
     ai = await review_pipeline(new_content, platform)
@@ -154,6 +190,7 @@ async def review_pipeline_jobs(
         "platform": platform,
         "jobs": jobs,
         "content": new_content,
+        "valid": True,
         "warnings": report.get("warnings", []),
         "ai_warnings": ai.get("warnings", []),
         "ai_review": {
@@ -202,6 +239,21 @@ async def commit_pipeline_jobs(
         pipeline, platform, editor, job_edits, user_id, db, project_id
     )
 
+    #if the linter says the assembled pipeline is invalid, return the errors and don't save version
+    if not report.get("valid", False):
+        return {
+            "platform": platform,
+            "jobs": safe_list_jobs(editor, new_content),
+            "content": new_content,
+            "valid": False,
+            "errors": report.get("errors", []),
+            "warnings": report.get("warnings", []),
+            "report": report,
+            "committed": False,
+            "version": None,
+            "version_id": None,
+        }
+
     #keep the original pipeline and store the edit as a new numbered version
     version = None
     if new_content != pipeline.content:
@@ -214,6 +266,7 @@ async def commit_pipeline_jobs(
         "platform": platform,
         "jobs": jobs,
         "content": new_content,
+        "valid": True,
         "warnings": report.get("warnings", []),
         "committed": True,
         "version": version.name if version is not None else None,

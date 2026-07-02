@@ -11,12 +11,14 @@ from schemas.pipeline_jobs_schema import (
     PushVersionResponse,
     ApproveVersionResponse,
     DeleteVersionResponse,
+    VersionJobsResponse,
 )
 from services.pipeline_jobs.service import (
     list_pipeline_jobs,
     review_pipeline_jobs,
     commit_pipeline_jobs,
     list_pipeline_versions,
+    list_pipeline_version_jobs,
     push_pipeline_version,
     approve_pipeline_version,
     delete_pipeline_version,
@@ -51,6 +53,31 @@ async def get_pipeline_versions(
         platform=platform,
         count=len(versions),
         versions=versions,
+    )
+
+
+#get the jobs list and full yaml content of a single saved edit version of a pipeline
+@router.get(
+    "/{project_id}/pipelines/{pipeline_id}/versions/{version_id}/jobs",
+    response_model=VersionJobsResponse,
+)
+async def get_pipeline_version_jobs_endpoint(
+    project_id: int,
+    pipeline_id: int,
+    version_id: int,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    platform, version, jobs = await list_pipeline_version_jobs(
+        pipeline_id, project_id, version_id, current_user.id, db
+    )
+    return VersionJobsResponse(
+        pipeline_id=pipeline_id,
+        version_id=version.id,
+        name=version.name,
+        platform=platform,
+        jobs=jobs,
+        content=version.content,
     )
 
 
