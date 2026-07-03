@@ -18,7 +18,7 @@ async def benchmark(
     user_prompt: str = "Set up a complete CI/CD pipeline with linting, testing, and building",
     current_user:User = Depends(get_current_user) ,db: AsyncSession = Depends(get_db)
 ):
-    token = await _resolve_token(current_user.id, "github", db)
+    token, _ = await _resolve_token(current_user.id, "github", db)
     report = await run_benchmark(
         token,
         model_name=model_name,

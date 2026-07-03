@@ -6,7 +6,7 @@ from langgraph.prebuilt import ToolNode, tools_condition
 
 from langchain_google_genai import ChatGoogleGenerativeAI
 # from langchain_openai import ChatOpenAI 
-# from langchain_groq import ChatGroq
+from langchain_groq import ChatGroq
 
 from langchain_core.messages import HumanMessage, AIMessage, SystemMessage, BaseMessage, ToolMessage
 from agent.tools import TOOLS
@@ -121,7 +121,7 @@ class ChatbotAgent:
         print(f"Content: {response.content}")
         print(f"Tool Calls: {response.tool_calls}")
         print("================================================\n")
-
+        print("[ChatbotAgent.call_llm] response type:", type(response))
         return {
             "messages": [response],
             "context_summary": state.get("context_summary"),
@@ -132,6 +132,7 @@ class ChatbotAgent:
     # converts {"role": "user","content": "Hi"} to langcain message format => HumanMessage(content="Hi")
     @staticmethod
     def to_lc_messages(message: str, chat_history: List[Dict[str, str]] = None) -> List[BaseMessage]:
+        print("[ChatbotAgent.to_lc_messages] called")
         if chat_history is None:
             chat_history = []
 
@@ -147,20 +148,33 @@ class ChatbotAgent:
     
 
     def parse_full_response(self, content: str):
-        # Regex to find all markdown code blocks
+        print("[ChatbotAgent.parse_full_response] called")
+        
+        if isinstance(content, list):
+            # Extract text from list of blocks (common in LangChain/Multi-modal)
+            text_parts = []
+            for block in content:
+                if isinstance(block, dict) and "text" in block:
+                    text_parts.append(block["text"])
+                elif isinstance(block, str):
+                    text_parts.append(block)
+            content = "\n".join(text_parts)
+        
+        if not isinstance(content, str):
+            content = str(content) #must be str to enter regex parsing below
+
+        #anz code is surrounded by ```code```
         # Group 1: language (e.g. yaml), Group 2: the code
-        pattern = r"(\w+)?\n(.*?)\n"
+        pattern = r"```(\w+)?\n(.*?)\n```"
         
         segments = []
         last_end = 0
         
         for match in re.finditer(pattern, content, re.DOTALL):
-            # 1. Capture the text BEFORE the code block
             text_before = content[last_end:match.start()].strip()
             if text_before:
                 segments.append({"type": "text", "content": text_before})
                 
-            # 2. Capture the CODE block itself
             language = match.group(1) or "text"
             code_content = match.group(2).strip()
             segments.append({
@@ -171,17 +185,18 @@ class ChatbotAgent:
             
             last_end = match.end()
             
-        # 3. Capture any text AFTER the last code block
         text_after = content[last_end:].strip()
         if text_after:
             segments.append({"type": "text", "content": text_after})
             
         return segments
+
     async def invoke(self, message: str, session_id: int, context: ContextResolverResponse | None, 
                      context_summary :str | None, chat_history: List[Dict[str, str]] = None, db: Optional[Any] = None, 
                      gitlab_connection: Optional[Any] = None, user_id: Optional[int] = None, project_id: Optional[int] = None,
                      pipeline_id : Optional[int] = None ,gitlab_project_id: Optional[Any] = None) -> str:
         lc_messages = self.to_lc_messages(message, chat_history)
+        print("after lc")
         
         #langchain uses the db (the active session), gitlab_connection and gitlab_project_id in the validation tool
         #since it sends the yaml and determines the platform, it can't determine the connection token and the llm can't produce them
@@ -199,6 +214,7 @@ class ChatbotAgent:
                     "context_summary" : context_summary # str for LLM + tools
                    }
                 }
+        print("[ChatbotAgent.invoke] config:", config)
         active_pipeline_msg = ""
         if pipeline_id and db:
             result = await db.execute(select(Pipeline).where(Pipeline.id == pipeline_id))
@@ -207,13 +223,13 @@ class ChatbotAgent:
                 active_pipeline_msg = (
                     f"\n### USER IS CURRENTLY VIEWING THIS PIPELINE (PRIORITY):\n"
                     f"Name: {p.name}\n"
-                    f"Content:\nyaml\n{p.content}\n```\n"
+                    f"Content:\n```yaml\n{p.content}\n```\n"
                     f"This is the code the user is looking at on their screen. "
                     f"Ignore other YAML files in the repo if they conflict with this one."
                 )
-                print("active_pipeline_msg:" ,active_pipeline_msg)
-                lc_messages = [SystemMessage(content=active_pipeline_msg)] + lc_messages
+                print("[ChatbotAgent.invoke] active_pipeline_msg:", active_pipeline_msg)
 
+                # lc_messages = [SystemMessage(content=active_pipeline_msg)] + lc_messages
         print(lc_messages)
         initial_state = {
         "messages": lc_messages,
@@ -227,4 +243,5 @@ class ChatbotAgent:
         # parsed_data = self.extract_pipeline_data(last_message.content)
         # return json.dumps(parsed_data) 
         segments = self.parse_full_response(last_message.content)
+        print("[ChatbotAgent.invoke] Parsed segments:", segments)
         return segments #returns a list of dicts

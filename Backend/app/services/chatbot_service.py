@@ -22,8 +22,8 @@ from services.project_service import get_project_by_id
 from agent.chatbot_agent import ChatbotAgent
 from agent.utils.context_resolver import ContextResolver, build_context_summary
 from schemas.project_schema import ProjectResponse
-
-# from langchain_groq import ChatGroq
+from agent.utils.yaml_cleaner import redact_secrets
+from langchain_groq import ChatGroq
 
 class ChatbotService:
     def __init__(self):
@@ -76,8 +76,9 @@ class ChatbotService:
                     context_summary = build_context_summary(context.repo_context)#return str
 
             # print("context in chat",context )
+            message_to_send = redact_secrets(message)
             response = await self.agent.invoke(
-                message=message,
+                message=message_to_send,
                 chat_history=chat_history,
                 db=db,
                 gitlab_connection=gitlab_connection,
@@ -89,15 +90,15 @@ class ChatbotService:
                 context = context,
                 context_summary = context_summary
             )
-            print("response type", type(response))
+
             return {
                 "role": "assistant",
-                "content":response
+                "content":str(response)
             }
 
         except Exception as e:
             error_text = str(e)
-            print(error_text)
+            print("error texttttttttttttttt",error_text, )
 
             if "RESOURCE_EXHAUSTED" in error_text or "429" in error_text:
                 return{
@@ -216,7 +217,6 @@ class ChatbotService:
                     "error": result.get("error")
                 }
             )
-
         return {
             "session_id": session_id,
             "session_name": session_name,

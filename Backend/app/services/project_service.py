@@ -41,7 +41,7 @@ async def get_user_projects(user_id: int, db: AsyncSession):
     ]
 
 
-async def _resolve_token(user_id: int, platform: str, repo_url: str, db: AsyncSession) -> str | None:
+async def _resolve_token(user_id: int, platform: str, repo_url: str, db: AsyncSession) -> tuple[str | None, str | None]:
     if platform == "github":
         inst_result = await db.execute(
             select(GitHubInstallation).where(GitHubInstallation.user_id == user_id).limit(1)
@@ -51,7 +51,7 @@ async def _resolve_token(user_id: int, platform: str, repo_url: str, db: AsyncSe
             from services.github_app_services import fetch_installation_repos
             user_result = await db.execute(select(User).where(User.id == user_id))
             user = user_result.scalar_one_or_none()
-            await fetch_installation_repos(current_user=user, db=db)
+            # await fetch_installation_repos(current_user=user, db=db)
 
             result = await db.execute(
                 select(GitHubInstallationRepo)
@@ -70,19 +70,18 @@ async def _resolve_token(user_id: int, platform: str, repo_url: str, db: AsyncSe
                 try:
                     from core.github_auth import get_installation_token
                     token = await run_in_threadpool(get_installation_token, authorized_repo.installation_id)
-                    print(f"Using GitHub installation token for user_id={user_id}", token)
+                    
                     logger.info("Using GitHub installation token for user_id=%s", user_id)
-                    return token
+                    return token, "installation"
                 except Exception as exc:
                     logger.warning("Installation token failed: %s", exc)
 
         conn_result = await db.execute(
-            select(GitHubConnection).where(GitHubConnection.user_id == user_id)
-        )
+            select(GitHubConnection).where(GitHubConnection.user_id == user_id))
         connection = conn_result.scalar_one_or_none()
         if connection and connection.access_token:
             try:
-                return decrypt_token(connection.access_token)
+                return decrypt_token(connection.access_token), "connection"
             except Exception as exc:
                 logger.warning("Decrypt GitHub token failed: %s", exc)
 
@@ -94,11 +93,11 @@ async def _resolve_token(user_id: int, platform: str, repo_url: str, db: AsyncSe
         if connection and connection.access_token:
             try:
                 gitlab_connector = GitLabConnector()
-                return await gitlab_connector.get_valid_token(connection, db)
+                return await gitlab_connector.get_valid_token(connection, db), "connection"
             except Exception as exc:
                 logger.warning("Decrypt GitLab token failed: %s", exc)
 
-    return None
+    return None, None
 
 
 async def create_project(project: ProjectCreate, user_id: int, db: AsyncSession):
@@ -116,13 +115,13 @@ async def create_project(project: ProjectCreate, user_id: int, db: AsyncSession)
     result = await db.execute(existing_stmt)
     if result.scalar_one_or_none():
         raise HTTPException(status_code=409, detail="You have already added this repository.")
-
-    try:    
+        
+    try:
         full_name, detected_platform, parsed_branch = _parse_repo_info(repo_url)
     except ValueError:
         raise HTTPException(
             status_code=400,
-            detail="Entered URL is invalid."
+            detail="Entered URL is invalid"
         )
     default_branch = parsed_branch
 
@@ -131,7 +130,7 @@ async def create_project(project: ProjectCreate, user_id: int, db: AsyncSession)
     github_repo_id = None
 
     if detected_platform not in ["github", "gitlab"]:
-        raise HTTPException(status_code=400, detail="Unsupported platform.")
+        raise HTTPException(status_code=400, detail="Unsupported platform")
 
     if detected_platform == "github":
         user_result = await db.execute(select(User).where(User.id == user_id))
@@ -202,7 +201,7 @@ async def create_project(project: ProjectCreate, user_id: int, db: AsyncSession)
         raise HTTPException(status_code=409, detail="Repository URL already exists")
     await db.refresh(repo)
 
-    token = await _resolve_token(user_id=user_id, platform=detected_platform, repo_url=repo_url, db=db)
+    token, _ = await _resolve_token(user_id=user_id, platform=detected_platform, repo_url=repo_url, db=db)
     if not token:
         await db.delete(repo)
         await db.commit()
@@ -333,20 +332,14 @@ async def update_project(project_id: int, user_id: int, project_update: ProjectU
 
         repo.url = project_update.repo_url
 
-        try:    
-            full_name, detected_platform, parsed_branch = _parse_repo_info(repo.url)
-        except ValueError:
-            raise HTTPException(
-                status_code=400,
-                detail="Entered URL is invalid."
-            )
+        full_name, detected_platform, parsed_branch = _parse_repo_info(repo.url)
         repo.full_name=full_name
         if detected_platform not in ["github", "gitlab"]:
             raise HTTPException(status_code=400, detail="Unsupported platform.")
         
         repo.platform = detected_platform
 
-        token = await _resolve_token(user_id=user_id, platform=detected_platform, repo_url=repo.url, db=db)
+        token, _ = await _resolve_token(user_id=user_id, platform=detected_platform, repo_url=repo.url, db=db)
         if not token:
             await db.delete(repo)
             await db.commit()

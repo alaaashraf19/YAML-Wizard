@@ -20,8 +20,8 @@ async def fetch_repo_context_tool(repo_url: str, config: RunnableConfig = None) 
     user_id = configurable.get("user_id")
     
     parsed_repo_url= parse_repo_url(repo_url)
-    token = await _resolve_token(user_id, parsed_repo_url.platform , repo_url,db)
-    print("#############", token)
+    token, _  = await _resolve_token(user_id, parsed_repo_url.platform , repo_url,db)
+
     if parsed_repo_url.platform == "github":
         from agent.github_agent import run_github_agent
         pkg = await run_in_threadpool(run_github_agent, repo_url=repo_url, github_token=token)
@@ -30,10 +30,8 @@ async def fetch_repo_context_tool(repo_url: str, config: RunnableConfig = None) 
         pkg = await run_in_threadpool(run_gitlab_agent, repo_url=repo_url, gitlab_token=token)
 
     context_summary = build_context_summary(pkg) #str
-
     return (
         f"SUCCESS: Context fetched for {repo_url}\n\n"
-        f"REPO_CONTEXT_SUMMARY:\n{context_summary}\n\n"
+        f"REPO_CONTEXT_LOADED:\n{context_summary}\n\n"
         "You now have the repository details. You can now answer questions about it "
-        "or proceed to generate a pipeline using 'generate_yaml_tool'."
     )

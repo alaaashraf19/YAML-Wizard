@@ -26,19 +26,19 @@ class GitHubCollector(CICollector):
 
     BASE_URL = "https://api.github.com"
 
-    def __init__(self ,token: str | None = None) -> None:
+    def __init__(self ,token: str) -> None:
         
-        self.token = token or os.getenv("GITHUB_ACCESS_TOKEN") # to be changed not get it from env
+        self.token = token
         
         if not self.token:
             raise ValueError("GitHub access token not provided. Set GITHUB_ACCESS_TOKEN in environment variables.")
         
-        auth_prefix = "Bearer" if self.token.startswith("github_pat_") else "token"
         self.headers = {
-            "Authorization": f"{auth_prefix} {self.token}",
-            "Accept": "application/vnd.github.v3+json",
+            "Authorization": f"Bearer {self.token}",
+            "Accept": "application/vnd.github+json",
             "X-GitHub-Api-Version": "2022-11-28",
         }
+
         self._client = httpx.AsyncClient(headers=self.headers, timeout=30.0)
 
 
@@ -204,8 +204,8 @@ class GitHubCollector(CICollector):
                     jobs_synced += 1
                 
                 runs_synced += 1
-                ctx.repo.last_synced_at = datetime.now(timezone.utc)
-                await db.commit()
+            ctx.repo.last_synced_at = datetime.now(timezone.utc)
+            await db.commit()
 
                     
         except Exception as e:
@@ -373,7 +373,7 @@ class GitHubCollector(CICollector):
             return None
 
         except Exception as e:
-            print(f"[GitHubCollector] Error fetching file {file_path}: {e}")
+            # print(f"[GitHubCollector] Error fetching file {file_path}: {e}")
             return None
 
     async def find_yaml_files(
@@ -419,7 +419,7 @@ class GitHubCollector(CICollector):
                                         "branch": ctx.repo.default_branch or "main",
                                     })
             except Exception as e:
-                print(f"[GitHubCollector] Error finding YAML files in {path}: {e}")
+                # print(f"[GitHubCollector] Error finding YAML files in {path}: {e}")
                 continue
 
         return yaml_files
@@ -630,5 +630,5 @@ class GitHubCollector(CICollector):
             return result
 
         except Exception as e:
-            print(f"[GitHubCollector] Error fetching file with commit info {file_path}: {e}")
+            # print(f"[GitHubCollector] Error fetching file with commit info {file_path}: {e}")
             return None

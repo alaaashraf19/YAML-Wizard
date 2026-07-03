@@ -2,105 +2,34 @@ import base64
 import time
 import httpx
 from urllib.parse import urlparse, quote
-from typing import Optional, Literal
-
-from pydantic import BaseModel, field_validator
 from schemas.publish_yaml_schema import PublishResult
-from langchain_core.tools import tool
-from langchain_core.runnables import RunnableConfig
-from services.project_service import _resolve_token
-from services.dashboard.repos_services import _parse_repo_info, get_github_default_branch, parse_github_repo, _get_gitlab_proj_id
-from sqlalchemy import select
-from models.project_model import Project
-from models.repository_model import Repository
-from typing import Optional
-
+import uuid
 
 _RETRYABLE_STATUS_CODES = {500, 502, 503, 504}
 _MAX_RETRIES = 3
-_BACKOFF_BASE = 2  #seconds
+_BACKOFF_BASE = 2  # seconds
 
 
-@tool
-async def publish_to_repo_tool(yaml_content: str, repo_url: Optional[str] = None,
-    file_path: str | None = None,
-    branch: str | None = None, commit_message: str | None = None, 
-    publish_mode: Literal["pr", "direct"] = "pr", pr_branch: str = "yaml-wizard/ci-pipeline",
-    config: RunnableConfig = None) -> PublishResult:
-    
-    """
-    Tool: publish_to_repo
 
-    Publishes a YAML file to a remote Git repository (GitHub or GitLab).
-    Use this when the user explicitly asks to 'push', 'publish', or 'deploy' the generated pipeline.
+def publish_to_repo_tool(yaml_content: str, repo_url: str, platform: str, token: str, commit_message: str,file_path: str | None = None,
+    branch: str = "main" , create_pr: bool = True, pr_branch: str | None = None,) -> PublishResult:
 
-    Behavior Notes:
+    platform = platform.lower()
 
-        - This tool performs an external side effect (modifies remote repositories).
-        - It should only be called when the user explicitly requests publishing, deploying, or pushing a file.
-        - Prefer creating a pull request (create_pr=True) when safety is desired.
-        - The YAML content should already be fully generated before calling this tool.
+    if pr_branch is None and create_pr:
+        pr_branch = f"{branch}-yaml-wizard-{uuid.uuid4().hex[:8]}"
 
-    """
-    create_pr = publish_mode == "pr"
-    configurable = config.get("configurable", {})
-    
-    db = configurable.get("db")
-    user_id = configurable.get("user_id")
-    project_id = configurable.get("project_id")
-    gitlab_project_id = configurable.get("gitlab_project_id")
-
-    if project_id:
-        repo = await db.scalar(
-            select(Repository)
-            .join(Project, Repository.id == Project.repo_id)
-            .where(Project.id == project_id)
-        )
-        
-        if not repo:
-            print("[publish_to_repo_tool] no repository found for project_id:", project_id)
-            raise ValueError(f"No Repository found for this project (project_id={project_id})")
-        repo_url = repo.url
-
-    print("[publish_to_repo_tool] repo_url:", repo_url)
-
-    
-    try:
-        parsed_full_name, parsed_platform, parsed_branch = _parse_repo_info(repo_url)
-
-        # Use the parsed_platform to override/verify the LLM's platform choice
-        target_platform = parsed_platform.lower()
-    except Exception as e:
-        print("[publish_to_repo_tool] invalid repository URL:", str(e))
-        return PublishResult(success=False, message=f"Invalid Repository URL: {str(e)}")
-    token, _ = await _resolve_token(user_id, target_platform , repo_url,db)
-    if not token:
-        print("[publish_to_repo_tool] no authentication token found")
-        return PublishResult(success=False, message="No authentication token found for the platform.")
-    
-    if parsed_branch is None:
-        parsed_branch = await get_github_default_branch(repo_url, token)
-    if target_platform == "github":
+    if platform == "github":
         return _publish_github(
-            yaml_content, repo_url, token, file_path, parsed_branch,
-            commit_message, create_pr, pr_branch,
-        )
-    elif target_platform == "gitlab":
-        print("[publish_to_repo_tool] entering gitlab publish flow")
-        if gitlab_project_id is None:
-            print("[publish_to_repo_tool] gitlab_project_id missing, resolving from repo URL")
-            # Attempt to parse the GitLab project ID from the repo URL if not provided
-            gitlab_project_id = await _get_gitlab_proj_id(parsed_full_name)
-            print("[publish_to_repo_tool] parsed gitlab_project_id:", gitlab_project_id)
-        else:
-            print("[publish_to_repo_tool] using provided gitlab_project_id:", gitlab_project_id)
+            yaml_content, repo_url, token, file_path, branch,
+            commit_message, create_pr, pr_branch,)
+    
+    elif platform == "gitlab":
         return _publish_gitlab(
             yaml_content, repo_url, token, file_path, branch,
-            commit_message, create_pr, pr_branch,
-            gitlab_project_id
-        )
+            commit_message, create_pr, pr_branch,)
     else:
-        return PublishResult(success=False, message=f"Unknown platform: {target_platform}")
+        return PublishResult(success=False, message=f"Unknown platform: {platform}")
 
 
 
@@ -114,11 +43,12 @@ def _request_with_retry(method: str, url: str, **kwargs) -> httpx.Response:
         if resp.status_code not in _RETRYABLE_STATUS_CODES:
             resp.raise_for_status()
             return resp
+        # Retryable error
         if attempt < _MAX_RETRIES:
             wait = _BACKOFF_BASE ** attempt  # 1s, 2s, 4s
             time.sleep(wait)
         else:
-            resp.raise_for_status()  #raise on final attempt
+            resp.raise_for_status()  # raise on final attempt
     raise httpx.HTTPError(f"Request failed after {_MAX_RETRIES + 1} attempts")
 
 
@@ -131,15 +61,7 @@ def _publish_github(yaml_content: str,repo_url: str,token: str,file_path: str | 
     """Publish YAML to a GitHub repository via the Contents API."""
     """directly to a branch or via pull request"""
 
-    print("[_publish_github] starting GitHub publish")
-    print("[_publish_github] repo_url:", repo_url)
-    print("[_publish_github] branch:", branch)
-    print("[_publish_github] create_pr:", create_pr)
-    print("[_publish_github] pr_branch:", pr_branch)
-
-    owner, repo = parse_github_repo(repo_url)
-    print("[_publish_github] owner:", owner)
-    print("[_publish_github] repo:", repo)
+    owner, repo = _parse_github_repo(repo_url)
     api_base = "https://api.github.com"
     headers = {
         "Authorization": f"token {token}",
@@ -149,29 +71,21 @@ def _publish_github(yaml_content: str,repo_url: str,token: str,file_path: str | 
 
     if file_path is None:
         file_path = ".github/workflows/ci.yml"
-    print("[_publish_github] file_path:", file_path)
 
-    if commit_message is None:
-        commit_message = f"ci: add {file_path} via YAML Wizard"
-    print("[_publish_github] commit_message:", commit_message)
 
     target_branch = pr_branch if create_pr else branch
-    print("[_publish_github] target_branch:", target_branch)
 
     try:
         # If creating a PR, first create the branch from the base
         if create_pr:
-            print("[_publish_github] creating branch from", branch, "to", pr_branch)
             _github_create_branch(api_base, headers, owner, repo, branch, pr_branch)
 
         # Check if file already exists (to get its SHA for updates)
-        print("[_publish_github] checking existing file sha")
         existing_sha = _github_get_file_sha(
             api_base, headers, owner, repo, file_path, target_branch,
         )
 
         # Create or update the file
-        print("[_publish_github] encoding YAML content")
         content_b64 = base64.b64encode(yaml_content.encode()).decode()
         payload: dict = {
             "message": commit_message,
@@ -180,11 +94,7 @@ def _publish_github(yaml_content: str,repo_url: str,token: str,file_path: str | 
         }
         if existing_sha:
             payload["sha"] = existing_sha
-            print("[_publish_github] existing_sha found:", existing_sha)
-        else:
-            print("[_publish_github] no existing_sha found, creating new file")
 
-        print("[_publish_github] sending GitHub contents API request")
         resp = _request_with_retry(
             "PUT",
             f"{api_base}/repos/{owner}/{repo}/contents/{file_path}",
@@ -193,11 +103,9 @@ def _publish_github(yaml_content: str,repo_url: str,token: str,file_path: str | 
             timeout=30.0,
         )
         file_url = resp.json().get("content", {}).get("html_url", "")
-        print("[_publish_github] response file_url:", file_url)
 
         # Create PR if requested
         if create_pr:
-            print("[_publish_github] creating pull request")
             pr_result = _github_create_pr(
                 api_base, headers, owner, repo,
                 head=pr_branch, base=branch,
@@ -242,14 +150,27 @@ def _publish_github(yaml_content: str,repo_url: str,token: str,file_path: str | 
             return PublishResult(success=False, message=f"HTTP error {status}: {error_body}")
 
     except httpx.RequestError as e:
+        # Covers network issues (DNS, timeout, connection refused, etc.)
         return PublishResult(success=False, message=f"Network error: {str(e)}")
 
     except ValueError as e:
         return PublishResult(success=False, message=str(e))
     
-    except Exception as e:
-        print(f"DEBUG: Caught custom exception: {str(e)}") 
-        return PublishResult(success=False, message=str(e))
+
+
+
+def _parse_github_repo(repo_url: str) -> tuple[str, str]:
+
+    """Extract owner/repo from a GitHub URL."""
+
+    parsed = urlparse(repo_url)
+    path = parsed.path.strip("/")
+    if path.endswith(".git"):
+        path = path[:-4]
+    parts = path.split("/")
+    if len(parts) >= 2:
+        return parts[0], parts[1]
+    raise ValueError(f"Cannot parse GitHub repo from URL: {repo_url}")
 
 
 
@@ -259,40 +180,26 @@ def _github_create_branch(
     
     """Create a new branch from a source branch."""
 
-    print("[_github_create_branch] starting branch creation")
-    print("[_github_create_branch] source_branch:", source_branch)
-    print("[_github_create_branch] new_branch:", new_branch)
-
     # Get the SHA of the source branch
-    try:
-        resp = httpx.get(f"{api_base}/repos/{owner}/{repo}/git/ref/heads/{source_branch}", headers=headers)
-        resp.raise_for_status()
-    except httpx.HTTPStatusError as e:
-        if e.response.status_code == 404:
-            raise Exception(f"Source branch '{source_branch}' not found in '{owner}/{repo}'. (Note: Check if the branch is 'main' or 'master')")
-        raise e
-
+    resp = httpx.get(
+        f"{api_base}/repos/{owner}/{repo}/git/ref/heads/{source_branch}",
+        headers=headers,
+        timeout=15.0,
+    )
+    resp.raise_for_status()
     sha = resp.json()["object"]["sha"]
-    print("[_github_create_branch] source sha:", sha)
 
     # Create the new branch
-    print("[_github_create_branch] creating new branch ref")
-    try:
-        resp = _request_with_retry(
-            "POST",
-            f"{api_base}/repos/{owner}/{repo}/git/refs",
-            json={"ref": f"refs/heads/{new_branch}", "sha": sha},
-            headers=headers,
-            timeout=15.0,
-        )
-        print("[_github_create_branch] branch creation succeeded or already existed")
-
-
-    except httpx.HTTPStatusError as e:
-        if e.response.status_code in (403, 404):
-            # We treat 404 on a POST as a permission issue if we know the repo exists
-            raise Exception("PERMISSION_DENIED: You do not have write access to this repository. Please provide a repository where you have owner or collaborator permissions.")
-
+    resp = _request_with_retry(
+        "POST",
+        f"{api_base}/repos/{owner}/{repo}/git/refs",
+        json={"ref": f"refs/heads/{new_branch}", "sha": sha},
+        headers=headers,
+        timeout=15.0,
+    )
+    # 422 = branch already exists, which is fine
+    if resp.status_code not in (201, 422):
+        resp.raise_for_status()
 
 
 def _github_get_file_sha(
@@ -341,10 +248,9 @@ def _publish_gitlab(
     token: str,
     file_path: str | None,
     branch: str,
-    commit_message: str | None,
+    commit_message: str,
     create_pr: bool,
-    pr_branch: str,
-    gitlab_project_id = int | None) -> PublishResult:
+    pr_branch: str,) -> PublishResult:
 
     """Publish YAML to a GitLab repository via the Repository Files API."""
     """directly to a branch or via merge request"""
@@ -355,23 +261,20 @@ def _publish_gitlab(
     #GitLab has multiple hosts so we extract it from repos, companies can have diff host than the public one
     gitlab_host = f"{parsed.scheme}://{parsed.hostname}"
     
+    project_id = _parse_gitlab_project(repo_url)
     api_base = f"{gitlab_host}/api/v4" #GitLab API version 4 is the standard REST API base.
     headers = {"Authorization": f"Bearer {token}"}
     
     if file_path is None:
         file_path = ".gitlab-ci.yml"
 
-    if commit_message is None:
-        commit_message = f"ci: add {file_path} via YAML Wizard"
-
     target_branch = pr_branch if create_pr else branch
-    print("PROJECT ID:", gitlab_project_id)
-    #print("TARGET BRANCH:", target_branch)
+
     try:
         # Create branch if making merge request
         if create_pr:
             httpx.post(
-                f"{api_base}/projects/{gitlab_project_id}/repository/branches",
+                f"{api_base}/projects/{project_id}/repository/branches",
                 params={"branch": pr_branch, "ref": branch},
                 headers=headers,
                 timeout=15.0,
@@ -380,7 +283,7 @@ def _publish_gitlab(
 
 
         # Check if file exists
-        file_exists = _gitlab_file_exists(api_base, headers, gitlab_project_id, file_path, target_branch)
+        file_exists = _gitlab_file_exists(api_base, headers, project_id, file_path, target_branch)
         print("FILE EXISTS:", file_exists)
         # Create or update file
         encoded_path = file_path.replace("/", "%2F")
@@ -392,14 +295,14 @@ def _publish_gitlab(
 
         if file_exists:
             resp = httpx.put(
-                f"{api_base}/projects/{gitlab_project_id}/repository/files/{encoded_path}",
+                f"{api_base}/projects/{project_id}/repository/files/{encoded_path}",
                 json=payload,
                 headers=headers,
                 timeout=30.0,
             )
         else:
             resp = httpx.post(
-                f"{api_base}/projects/{gitlab_project_id}/repository/files/{encoded_path}",
+                f"{api_base}/projects/{project_id}/repository/files/{encoded_path}",
                 json=payload,
                 headers=headers,
                 timeout=30.0,
@@ -409,7 +312,7 @@ def _publish_gitlab(
         # Create merge request if requested
         if create_pr:
             mr_resp = httpx.post(
-                f"{api_base}/projects/{gitlab_project_id}/merge_requests",
+                f"{api_base}/projects/{project_id}/merge_requests",
                 json={
                     "source_branch": pr_branch,
                     "target_branch": branch,
@@ -489,3 +392,15 @@ def _gitlab_file_exists(api_base: str, headers: dict, project_id: str, path: str
         return False
     raise Exception(f"GitLab file check failed: {resp.status_code} - {resp.text}")
     
+def _parse_gitlab_project(repo_url: str) -> str:
+
+    """Extract URL-encoded project path from a GitLab URL."""
+
+    # GitLab API does NOT use raw paths like:group/project
+    # It requires URL-encoded project path:(group%2Fproject)<- our output
+
+    parsed = urlparse(repo_url)
+    path = parsed.path.strip("/")
+    if path.endswith(".git"):
+        path = path[:-4]
+    return path.replace("/", "%2F")

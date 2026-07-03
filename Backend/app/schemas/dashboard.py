@@ -19,8 +19,9 @@ class RepoOut(BaseModel):
     url: str
     last_synced_at: datetime | None
     created_at: datetime
-
-
+    
+class RepositoryDeleteStatus(BaseModel):
+    can_delete: bool
 ##pipeline run
 
 class PipelineRunOut(BaseModel):
@@ -160,9 +161,12 @@ class RepositorySchema(BaseModel):
     full_name: str
     platform: str
     gitlab_project_id: int | None
+    github_repo_id: int | None
+    installation_id: int | None
     default_branch: str
+    last_synced_at: datetime | None
     url: str
-    last_synced_at: datetime | None = None
+    _at: datetime | None = None
     created_at: datetime
 
 class CollectorsRepositoryDetail(BaseModel):
@@ -177,3 +181,5 @@ class CIArtifact(BaseModel):
     name: str | None = None
     download_url: str
     provider: str  # github | gitlab
+
+
