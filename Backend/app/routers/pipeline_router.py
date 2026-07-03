@@ -161,7 +161,7 @@ async def sync_project_pipelines(
     if not project.repo_id:
         raise HTTPException(400, "Project has no connected repository")
     # Run sync for that repo
-    result = await yaml_sync_service.sync_repository_yaml_files(project.repo_id, db)
+    result = await yaml_sync_service.sync_repository_yaml_files(current_user.id,project.repo_id, db)
     if not result.success:
         raise HTTPException(500, detail=result.message)
     # Return updated list
@@ -181,7 +181,7 @@ async def sync_all_user_repositories(
     for repo in repos:
         # use fresh session per repo to avoid cross-commit issues
         async with async_session() as repo_db:
-            res = await yaml_sync_service.sync_repository_yaml_files(repo.id, repo_db)
+            res = await yaml_sync_service.sync_repository_yaml_files(current_user.id, repo.id, repo_db)
             results.append(res)
     return results
 
@@ -201,6 +201,6 @@ async def sync_single_pipeline_manual(
     if pipeline.project_id != project_id:
         raise HTTPException(404, "Pipeline not in this project")
     # call service
-    updated_data = await yaml_sync_service.sync_single_pipeline(pipeline_id, current_user.id, db)
+    updated_data = await yaml_sync_service.sync_single_pipeline(current_user.id, pipeline_id, current_user.id, db)
     return PipelineResponse(**updated_data)
 

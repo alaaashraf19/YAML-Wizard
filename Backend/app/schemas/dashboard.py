@@ -160,6 +160,8 @@ class RepositorySchema(BaseModel):
     full_name: str
     platform: str
     gitlab_project_id: int | None
+    github_repo_id: int | None
+    installation_id: int | None
     default_branch: str
     url: str
     last_synced_at: datetime | None = None

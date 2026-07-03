@@ -24,6 +24,7 @@ from dotenv import load_dotenv
 from fastapi import HTTPException
 from realtime.connection_manager import ws_manager
 from ..platform_connectors.oauth_utils import decrypt_token
+from ..project_service import _resolve_token
 
 load_dotenv()
 
@@ -42,6 +43,8 @@ class YAMLSyncService:
             full_name=repo.full_name,
             platform=repo.platform,
             gitlab_project_id=repo.gitlab_project_id,
+            github_repo_id = repo.github_repo_id,
+            installation_id = repo.installation_id,
             default_branch=repo.default_branch,
             url=repo.url,
             last_synced_at=repo.last_synced_at,
@@ -58,19 +61,13 @@ class YAMLSyncService:
     # ---- Sync all YAML files for a repository ----
     async def sync_repository_yaml_files(
             self,
+            user_id:int,
             repo_id: int,
             db: AsyncSession
     ) -> YamlSyncResult:
         # Fetch repo with user and platform connections
-        result = await db.execute(
-            select(Repository)
-            .where(Repository.id == repo_id)
-            .options(
-                joinedload(Repository.user).selectinload(User.github_connections),
-                joinedload(Repository.user).selectinload(User.gitlab_connections),
-            )
-        )
-        repo = result.unique().scalar_one_or_none()
+        result = await db.execute(select(Repository).where(Repository.id == repo_id))
+        repo = result.scalar_one_or_none()
         if not repo:
             return YamlSyncResult(
                 repo_id=repo_id,
@@ -94,26 +91,15 @@ class YAMLSyncService:
 
         ctx = self._create_context_from_repo(repo)
 
+        token, _ = await _resolve_token(user_id, repo.platform, repo.url, db)
+        if token is None:
+            raise HTTPException(status_code=401, detail="No authentication token available.")
         # Choose collector based on platform
-        user = repo.user
         if repo.platform == "github":
-            github_conn = user.github_connections[0] if user.github_connections else None
-            token = github_conn.access_token if github_conn else None
-            if not token:
-                raise HTTPException(
-                    status_code=401,
-                    detail="No GitHub token provided"
-                )
-            collector = GitHubCollector(token=decrypt_token(token))
+            collector = GitHubCollector(token)
         elif repo.platform == "gitlab":
-            gitlab_conn = user.gitlab_connections[0] if user.gitlab_connections else None
-            token = gitlab_conn.access_token if gitlab_conn else None
-            if not token:
-                raise HTTPException(
-                    status_code=401,
-                    detail="No Gitlab token provided"
-                )
-            collector = GitLabCollector(token=decrypt_token(token))
+
+            collector = GitLabCollector(token)
         else:
             return YamlSyncResult(
                 repo_id=repo_id,
@@ -189,11 +175,14 @@ class YAMLSyncService:
 
         ctx = self._create_context_from_repo(repo)
 
-
+        token, _ = await _resolve_token(user_id, repo.platform, repo.url, db)
+        if token is None:
+            raise HTTPException(status_code=401, detail="No authentication token available.")
+        
         if repo.platform == "github":
-            collector = GitHubCollector()
+            collector = GitHubCollector(token)
         elif repo.platform == "gitlab":
-            collector = GitLabCollector()
+            collector = GitLabCollector(token)
         else:
             raise HTTPException(status_code=400, detail=f"Unsupported platform: {repo.platform}")
 

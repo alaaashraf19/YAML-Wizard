@@ -25,9 +25,9 @@ class GitHubCollector(CICollector):
 
     BASE_URL = "https://api.github.com"
 
-    def __init__(self ,token: str | None = None) -> None:
+    def __init__(self ,token: str) -> None:
         
-        self.token = token or os.getenv("GITHUB_ACCESS_TOKEN") # to be changed not get it from env
+        self.token = token
         
         if not self.token:
             raise ValueError("GitHub access token not provided. Set GITHUB_ACCESS_TOKEN in environment variables.")
