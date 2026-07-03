@@ -25,13 +25,13 @@ class GitLabCollector(CICollector):
 
     def __init__(self, token: str | None = None) -> None:
         
-        self.token = token or os.getenv("GITLAB_ACCESS_TOKEN")
-
-        if not self.token:
+        self.token = token
+        
+        if not self.token:        
             raise ValueError("GitLab access token not provided.")
 
         self.headers = {
-            "PRIVATE-TOKEN": self.token,
+            "Authorization": f"Bearer {self.token}",
         }
 
         self._client = httpx.AsyncClient(headers=self.headers, timeout=30.0)
@@ -219,8 +219,8 @@ class GitLabCollector(CICollector):
                     jobs_synced += 1
                 
                 runs_synced += 1
-                ctx.repo.last_synced_at = datetime.now(timezone.utc)
-                await db.commit()
+            ctx.repo.last_synced_at = datetime.now(timezone.utc)
+            await db.commit()
 
                     
         except Exception as e:

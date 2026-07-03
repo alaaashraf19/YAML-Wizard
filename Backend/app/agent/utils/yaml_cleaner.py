@@ -36,6 +36,10 @@ SENSITIVE_KEY_PATTERNS: list[re.Pattern] = [
 # Well-known token formats — matched with .search() so they're found
 # anywhere inside a longer string (e.g. "Bearer <token>").
 TOKEN_PATTERNS: list[re.Pattern] = [
+    # Postgres Connection Strings (URI)
+    re.compile(r"postgres(?:ql)?://[^\s'\"#]+", re.I),
+    # PEM Private Keys (Standard format, matches multiline if searched in multiline mode)
+    re.compile(r"-----BEGIN [A-Z ]+PRIVATE KEY-----[^-]+-----END [A-Z ]+PRIVATE KEY-----", re.I | re.S),
     # JWT:  xxxxx.yyyyy.zzzzz
     re.compile(r"eyJ[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+"),
     # GitHub classic PAT (36 chars historically, but length can vary)
@@ -258,9 +262,13 @@ def _redact_multiline(value: str) -> str:
     plus Authorization headers. Safe references like ``${{ secrets.X }}``
     and ``$VAR`` are preserved even when the key name matches.
     """
+    if any(p.search(value) for p in TOKEN_PATTERNS if "PRIVATE KEY" in p.pattern):
+        for pattern in TOKEN_PATTERNS:
+            if "PRIVATE KEY" in pattern.pattern:
+                value = pattern.sub(REDACTED, value)
+
     def _replace(m: re.Match) -> str:
         lead, name, eq, q1, val, q2 = m.groups()
-        # Preserve variable references — these are not real credentials
         if SAFE_REFERENCE_RE.fullmatch(val.strip()):
             return m.group(0)
         return f"{lead}{name}{eq}{q1}{REDACTED}{q2}"
@@ -404,7 +412,26 @@ def _regex_fallback(content: str) -> str:
         if SAFE_REFERENCE_RE.search(m.group(0)):
             return m.group(0)
         return repl_fn(m)
+    
 
+
+        # Patterns updated to include Postgres URIs and PEM keys
+    p_named_tokens = re.compile(
+        r"postgres(?:ql)?://[^\s'\"#]+"                             # Postgres
+        r"|-----BEGIN [A-Z ]+PRIVATE KEY-----[^-]+-----END [A-Z ]+PRIVATE KEY-----" # PEM
+        r"|eyJ[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+"       # JWT
+        r"|ghp_[a-zA-Z0-9]{36}"                                     # GitHub classic
+        r"|glpat-[a-zA-Z0-9_\-]{20}"                                # GitLab
+        r"|AKIA[0-9A-Z]{16}"                                         # AWS
+        r"|AIza[0-9A-Za-z_\-]{35}"                                  # Google
+        r"|sk-ant-[a-zA-Z0-9_\-]{40,}"                              # Anthropic
+        r"|sk-[a-zA-Z0-9]{32,}",                                     # OpenAI
+        re.I | re.S
+    )
+    content = p_named_tokens.sub(
+        lambda m: m.group(0) if SAFE_REFERENCE_RE.search(m.group(0)) else REDACTED,
+        content,
+    )
     # ── Pattern 1: full key name contains a sensitive word ────────────────
     # Matches: SECRET_TOKEN: value, API_KEY=value, DOCKER_PASSWORD: 'value'
     # Preserves the full key name; replaces only the value.

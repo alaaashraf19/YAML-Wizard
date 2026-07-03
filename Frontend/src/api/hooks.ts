@@ -20,7 +20,13 @@ export function useDeleteRepo() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ['repos'] }),
   });
 }
-
+export function useRepoDeleteStatus(repoId: number | null) {
+  return useQuery({
+    queryKey: ['repoDeleteStatus', repoId],
+    queryFn: () => api.getRepoDeleteStatus(repoId!),
+    enabled: !!repoId,
+  });
+}
 export function useSyncRepo() {
   const qc = useQueryClient();
   return useMutation({
@@ -29,6 +35,7 @@ export function useSyncRepo() {
       qc.invalidateQueries({ queryKey: ['runs', id] });
       qc.invalidateQueries({ queryKey: ['insights', id], exact: false });
       qc.invalidateQueries({ queryKey: ['trends', id] });
+      qc.invalidateQueries({ queryKey: ['branches', id] });
       qc.invalidateQueries({ queryKey: ['repos'] });
     },
   });
@@ -47,6 +54,14 @@ export function useLatestRun(repoId: number | null) {
   return useQuery({
     queryKey: ['latestRun', repoId],
     queryFn: () => api.getLatestRun(repoId!),
+    enabled: !!repoId,
+  });
+}
+
+export function useBranches(repoId: number | null) {
+  return useQuery({
+    queryKey: ['branches', repoId],
+    queryFn: () => api.getBranches(repoId!),
     enabled: !!repoId,
   });
 }
