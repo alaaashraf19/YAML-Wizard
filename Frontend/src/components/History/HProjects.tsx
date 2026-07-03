@@ -3,6 +3,7 @@ import styles from './HProjects.module.css'
 import logo from "../../assets/yaml_wizard_logo.png";
 import { Platforms, type Platform, type Project } from "../../types";
 import { useHistoryStore } from "../../pages/History";
+import { useEditorStore } from "../History/PipelineEditor";
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -39,7 +40,8 @@ const useHProjectsStore = create<HistoryProjectsStore>()(
 
 function HProjects({ isEdit, setDiscardChanges }: HPProps){
     const projectId: number | null = useHistoryStore(s=>s.project?.id ?? null);
-    const {setProject, setPipeline, setIsEdit} = useHistoryStore();
+    const {setProject, setPipeline} = useHistoryStore();
+    const { hasChanges } = useEditorStore();
     
     const {isCollapsed, setIsCollapsed}=useHProjectsStore();
     
@@ -53,7 +55,6 @@ function HProjects({ isEdit, setDiscardChanges }: HPProps){
     const [warningDiscard, setWarningDiscard] = useState<string | null>(null);
 
     const filterRef = useRef<HTMLDivElement | null>(null);
-    const popupRef = useRef<HTMLDivElement>(null);
     const navigate = useNavigate();
     const api_url = import.meta.env.VITE_API_URL;
 
@@ -159,14 +160,17 @@ function HProjects({ isEdit, setDiscardChanges }: HPProps){
                             {filteredProjects.map((p, index) => (
                                 <li key={index} title={p.project_name + " ("+ p.repo_url + ')'}
                                     onClick={() => {
-                                        isEdit? (
-                                            setTempProject(p),
-                                            setAskDiscard("Changing the current project will discard all changes!"),
-                                            setWarningDiscard("Your unsaved changes cannot be recovered.")
-                                        ): (
-                                            setProject(p),
-                                            setPipeline(null),
-                                            setIsCollapsed(true))
+                                        p.id !== projectId && (
+                                            isEdit && hasChanges ? (
+                                                setTempProject(p),
+                                                setAskDiscard("Changing the current project will discard all changes!"),
+                                                setWarningDiscard("Your unsaved changes cannot be recovered.")
+                                            ): (
+                                                setProject(p),
+                                                setPipeline(null),
+                                                setIsCollapsed(true))
+
+                                        )
                                     }}
                                     className={`${styles.project} ${(p.id === projectId)? styles.active : gStyles.clickable}`}>
                                     <span className={styles.projectName}>{p.project_name}</span>
@@ -195,14 +199,14 @@ function HProjects({ isEdit, setDiscardChanges }: HPProps){
                     setTempProject(null);
                     setIsCollapsed(true);
                     setDiscardChanges(true);
-                    setIsEdit(false);
+                    setAskDiscard(null);
+                    setWarningDiscard(null);
                 }}
                 btnText2="Cancel"
                 questionMessage={askDiscard}
                 setQuestionMessage={setAskDiscard}
                 warningMessage={warningDiscard}
                 setWarningMessage={setWarningDiscard}
-                popupRef={popupRef}
             />}
         </div>
     );

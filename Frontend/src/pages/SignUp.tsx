@@ -5,6 +5,8 @@ import { UsernameField, EmailField, PasswordField } from "../components/AuthForm
 import { useState } from "react";
 import { Link } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
+import { useAuth } from '../Context/AuthContext';
+
 
 function SignUp(){
     const [username, setUsername] = useState("");
@@ -19,6 +21,7 @@ function SignUp(){
     const [emptyEmail, setEmptyEmail] = useState(false);
     const [emptyPassword, setEmptyPassword] = useState(false);
     const [emptyConfirmPassword, setEmptyConfirmPassword] = useState(false);
+    const { login } = useAuth();
     const navigate = useNavigate();
     const api_url = import.meta.env.VITE_API_URL;
 
@@ -67,8 +70,9 @@ function SignUp(){
                 return;
             }
 
-            console.log("Server:", data.msg);
-            navigate("/login");
+            login(username);
+            console.log(data.msg);
+            navigate("/chatbot");
 
         } catch (err: any) {
             const msg = err?.response?.data?.detail?.[0]?.msg || "Server Error. Please try again later.";

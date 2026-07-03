@@ -6,7 +6,7 @@ from langgraph.prebuilt import ToolNode, tools_condition
 
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_openai import ChatOpenAI 
-from langchain_groq import ChatGroq
+# from langchain_groq import ChatGroq
 
 from langchain_core.messages import HumanMessage, AIMessage, SystemMessage, BaseMessage, ToolMessage
 from agent.tools import TOOLS
@@ -30,8 +30,8 @@ class AgentState(TypedDict):
 class ChatbotAgent:
     def __init__(self, 
                 #  model: str = os.getenv("GROQ_MODEL", "openai/gpt-oss-120b"),
-                #  model :str = "models/gemini-2.5-flash",
-                 model: str = "Qwen/Qwen2.5-72B-Instruct-AWQ", 
+                 model :str = "models/gemini-2.5-flash",
+                #  model: str = "Qwen/Qwen2.5-72B-Instruct-AWQ", 
                  temperature: float = 0.3,
         max_output_tokens: int = 2500, tools: Optional[list] = None,
         system_prompt: Optional[str] = SYSTEM_PROMPT, ):

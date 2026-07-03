@@ -7,9 +7,9 @@ from datetime import datetime
 from google import genai
 # from google.genai import types
 
-from sqlalchemy.orm import Session,joinedload
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select,update,delete
+from sqlalchemy import select, update, delete
 
 from models.project_model import Project
 from models.chat_message_model import ChatMessage
@@ -23,7 +23,7 @@ from agent.chatbot_agent import ChatbotAgent
 from agent.utils.context_resolver import ContextResolver, build_context_summary
 from schemas.project_schema import ProjectResponse
 from agent.utils.yaml_cleaner import redact_secrets
-from langchain_groq import ChatGroq
+
 
 class ChatbotService:
     def __init__(self):
@@ -33,8 +33,34 @@ class ChatbotService:
         # self.model = os.getenv("GROQ_MODEL", "openai/gpt-oss-120b")
         self.agent = ChatbotAgent(model=self.model)
 
-    async def send_message(self, message: str, session_id: int, chat_history: List[Dict[str, str]] = None, 
-                           db: Optional[AsyncSession] = None,  user_id: Optional[int] = None, project_id: Optional[int] = None, pipeline_id : Optional[int] = None,) -> Dict[str, str]:
+    def _format_response_content(self, response: Any) -> str:
+        """
+        agent.invoke() returns either a plain string, or a list of segment
+        dicts like {"type": "text", "content": ...} / {"type": "code", "language": ..., "content": ...}.
+        This turns that back into a single markdown string (with proper ``` fences)
+        so the frontend can render it correctly, instead of str()-ing the raw list/dicts.
+        """
+        if isinstance(response, list):
+            parts = []
+            for seg in response:
+                if isinstance(seg, dict):
+                    if seg.get("type") == "code":
+                        language = seg.get("language") or ""
+                        code = seg.get("content", "")
+                        parts.append(f"```{language}\n{code}\n```")
+                    else:
+                        text = seg.get("content", "")
+                        if text:
+                            parts.append(text)
+                else:
+                    parts.append(str(seg))
+            return "\n\n".join(parts)
+
+        return str(response)
+
+    async def send_message(self, message: str, session_id: int, chat_history: List[Dict[str, str]] = None,
+                           db: Optional[AsyncSession] = None, user_id: Optional[int] = None,
+                           project_id: Optional[int] = None, pipeline_id: Optional[int] = None, ) -> Dict[str, str]:
 
         if not message or not message.strip():
             raise HTTPException(status_code=400, detail="Message cannot be empty")
@@ -62,18 +88,19 @@ class ChatbotService:
             if db is not None and user_id is not None and project_id is not None:
                 platform, repo_gitlab_project_id = await self.resolve_gitlab_target(project_id, user_id, db)
                 if platform == "gitlab":
-                    gitlab_result = await db.execute(select(GitLabConnection).where(GitLabConnection.user_id == user_id))
+                    gitlab_result = await db.execute(
+                        select(GitLabConnection).where(GitLabConnection.user_id == user_id))
                     gitlab_connection = gitlab_result.scalar_one_or_none()
                     gitlab_project_id = repo_gitlab_project_id
 
             context = None
-            context_summary= None
+            context_summary = None
             if project_id is not None:
                 print("before project context in chat")
                 context = await ContextResolver(db).get_project_context(project_id)
 
                 if context:
-                    context_summary = build_context_summary(context.repo_context)#return str
+                    context_summary = build_context_summary(context.repo_context)  # return str
 
             # print("context in chat",context )
             message_to_send = redact_secrets(message)
@@ -83,39 +110,38 @@ class ChatbotService:
                 db=db,
                 gitlab_connection=gitlab_connection,
                 gitlab_project_id=gitlab_project_id,
-                session_id = session_id,
-                user_id= user_id,
+                session_id=session_id,
+                user_id=user_id,
                 project_id=project_id,
                 pipeline_id=pipeline_id,
-                context = context,
-                context_summary = context_summary
+                context=context,
+                context_summary=context_summary
             )
-
             return {
                 "role": "assistant",
-                "content":str(response)
+                "content": self._format_response_content(response)
             }
 
         except Exception as e:
             error_text = str(e)
-            print("error texttttttttttttttt",error_text, )
 
             if "RESOURCE_EXHAUSTED" in error_text or "429" in error_text:
-                return{
+                return {
                     "status_code": 429,
                     "role": "assistant",
                     "content": "⚠️ You've reached the usage limit. Please try again later.",
                     "error": error_text
                 }
-            
-            return{
+
+            return {
                 "status_code": 500,
                 "role": "assistant",
                 "content": "⚠️ Sorry, something went wrong while generating my response. Please try sending your message again.",
                 "error": error_text
             }
 
-    async def resolve_gitlab_target(self, project_id: int, user_id: int, db: AsyncSession) -> tuple[Optional[str], Optional[int]]:
+    async def resolve_gitlab_target(self, project_id: int, user_id: int, db: AsyncSession) -> tuple[
+        Optional[str], Optional[int]]:
         row = await db.execute(
             select(Repository.platform, Repository.gitlab_project_id)
             .join(Project, Project.repo_id == Repository.id)
@@ -132,8 +158,8 @@ class ChatbotService:
             user_id: int,
             message: str,
             session_id: Optional[int],
-            project_id : Optional[int],
-            pipeline_id : Optional[int],
+            project_id: Optional[int],
+            pipeline_id: Optional[int],
             db: AsyncSession
     ) -> Dict[str, Any]:
 
@@ -180,13 +206,13 @@ class ChatbotService:
 
         result = await self.send_message(
             message=message,
-            session_id= session_id,
+            session_id=session_id,
             user_id=user_id,
-            project_id = session.project_id,
-            pipeline_id = pipeline_id,
+            project_id=session.project_id,
+            pipeline_id=pipeline_id,
             chat_history=chat_history,
             db=db,
-            
+
         )
 
         user_msg, bot_msg = await self.save_conversation_turn(
@@ -207,7 +233,7 @@ class ChatbotService:
             raise HTTPException(
                 status_code=result["status_code"],
                 detail={
-                    "session_id" : session_id,
+                    "session_id": session_id,
                     "session_name": session_name,
                     "message": {
                         "role": "assistant",
@@ -226,19 +252,19 @@ class ChatbotService:
         }
 
     async def create_new_session(
-            self, user_id: int,first_message: str, db:AsyncSession,project_id : Optional[int] = None
+            self, user_id: int, first_message: str, db: AsyncSession, project_id: Optional[int] = None
     ) -> ChatSession:
         from agent.chat_session_title import generate_session_title
         title = await generate_session_title(first_message)
         session_name = title or self.default_session_name(first_message)
-        new_session = ChatSession(user_id = user_id,session_name = session_name,project_id=project_id,
-                                  created_at=datetime.utcnow(),updated_at=datetime.utcnow())
+        new_session = ChatSession(user_id=user_id, session_name=session_name, project_id=project_id,
+                                  created_at=datetime.utcnow(), updated_at=datetime.utcnow())
         db.add(new_session)
         await db.commit()
         await db.refresh(new_session)
         return new_session
 
-    #fallback naming method in case the ai title model fails
+    # fallback naming method in case the ai title model fails
     def default_session_name(self, first_message: str) -> str:
         return first_message[:50] + "..." if len(first_message) > 50 else first_message
 
@@ -272,20 +298,20 @@ class ChatbotService:
         max_order = len(result.scalars().all())
 
         user_msg = ChatMessage(
-            user_id = user_id,
-            chat_session_id = session_id,
-            role = "user",
-            content = user_message,
-            order_index= max_order
+            user_id=user_id,
+            chat_session_id=session_id,
+            role="user",
+            content=user_message,
+            order_index=max_order
         )
         db.add(user_msg)
 
         bot_msg = ChatMessage(
-            user_id = user_id,
-            chat_session_id = session_id,
-            role = "assistant",
-            content = bot_response,
-            order_index = max_order + 1
+            user_id=user_id,
+            chat_session_id=session_id,
+            role="assistant",
+            content=bot_response,
+            order_index=max_order + 1
         )
         db.add(bot_msg)
         await db.execute(
@@ -306,15 +332,15 @@ class ChatbotService:
     ) -> List[Dict[str, Any]]:
         result = await db.execute(
             select(ChatMessage)
-            .where(ChatMessage.chat_session_id == session_id,ChatMessage.user_id == user_id)
+            .where(ChatMessage.chat_session_id == session_id, ChatMessage.user_id == user_id)
             .order_by(ChatMessage.order_index)
         )
         messages = result.scalars().all()
         return [
             {
-                "role":msg.role,
-                "content":msg.content,
-                "timestamp":msg.timestamp
+                "role": msg.role,
+                "content": msg.content,
+                "timestamp": msg.timestamp
             }
             for msg in messages
         ]
@@ -323,7 +349,7 @@ class ChatbotService:
             self,
             user_id: int,
             db: AsyncSession
-    )->List[ChatSession]:
+    ) -> List[ChatSession]:
 
         results = await db.execute(
             select(ChatSession)
@@ -339,7 +365,7 @@ class ChatbotService:
             user_id: int,
             pipeline_id: int,
             db: AsyncSession
-    )->ChatSessionResponse:
+    ) -> ChatSessionResponse:
         result = await db.execute(
             select(ChatSession)
             .options(
@@ -347,15 +373,15 @@ class ChatbotService:
                 joinedload(ChatSession.project, Project.repository),
                 joinedload(ChatSession.pipeline),
             )
-            .where(ChatSession.user_id == user_id,ChatSession.pipeline_id == pipeline_id)
+            .where(ChatSession.user_id == user_id, ChatSession.pipeline_id == pipeline_id)
         )
-        session =  result.unique().scalar_one_or_none()
+        session = result.unique().scalar_one_or_none()
         if not session:
             raise HTTPException(
                 status_code=404,
                 detail="Chat session not found or access denied"
             )
-        messages = await self.get_session_messages(user_id,session.id,db)
+        messages = await self.get_session_messages(user_id, session.id, db)
 
         return ChatSessionResponse(
             id=session.id,
@@ -372,7 +398,7 @@ class ChatbotService:
                 "platform": session.project.repository.platform,
                 "created_at": session.project.created_at,
                 "updated_at": session.project.updated_at,
-                "branch" : session.project.repository.default_branch,
+                "branch": session.project.repository.default_branch,
             } if session.project else None,
             pipeline= {
                 "id": session.pipeline_id,
@@ -387,7 +413,7 @@ class ChatbotService:
                 "committed_at": session.pipeline.committed_at,
             } if session.pipeline else None,
             messages=messages
-            
+
         )
 
     async def get_session_with_messages(
@@ -399,8 +425,8 @@ class ChatbotService:
         # session = await self.get_session_if_owned(user_id,session_id,db)
         result = await db.execute(
             select(ChatSession)
-            .options(joinedload(ChatSession.project),joinedload(ChatSession.pipeline))
-            .where(ChatSession.id == session_id,ChatSession.user_id == user_id)
+            .options(joinedload(ChatSession.project), joinedload(ChatSession.pipeline))
+            .where(ChatSession.id == session_id, ChatSession.user_id == user_id)
         )
 
         session = result.scalars().one_or_none()
@@ -411,18 +437,18 @@ class ChatbotService:
                 detail="Chat session not found or access denied"
             )
 
-        messages = await self.get_session_messages(user_id,session_id,db)
+        messages = await self.get_session_messages(user_id, session_id, db)
 
         return {
             "session_id": session.id,
             "session_name": session.session_name,
             "project_id": session.project_id,
-            "project" : {
+            "project": {
                 "id": session.project_id,
                 "name": session.project.project_name
             } if session.project else None,
-            "pipeline":{
-                "id" : session.pipeline_id,
+            "pipeline": {
+                "id": session.pipeline_id,
                 "name": session.pipeline.name,
                 "content": session.pipeline.content,
                 "path": session.pipeline.path,
@@ -437,7 +463,7 @@ class ChatbotService:
         }
 
     async def delete_session(self, user_id: int, session_id: int, db: AsyncSession) -> None:
-        session = await self.get_session_if_owned(user_id,session_id,db)
+        session = await self.get_session_if_owned(user_id, session_id, db)
         if not session:
             raise HTTPException(status_code=404, detail="Chat session not found or access denied")
         await db.delete(session)
@@ -452,7 +478,7 @@ class ChatbotService:
         results = await db.execute(
             select(ChatSession)
             .options(selectinload(ChatSession.project))
-            .where(ChatSession.user_id == user_id,ChatSession.project_id == project_id)
+            .where(ChatSession.user_id == user_id, ChatSession.project_id == project_id)
             .order_by(ChatSession.updated_at.desc())
         )
         return results.scalars().all()
@@ -464,12 +490,12 @@ class ChatbotService:
             project_id: int,
             db: AsyncSession
     ) -> ProjectResponse:
-        session = await self.get_session_if_owned(user_id,session_id,db)
+        session = await self.get_session_if_owned(user_id, session_id, db)
         if not session:
             raise HTTPException(status_code=404, detail="Chat session not found or access denied")
         if session.project_id:
-            raise HTTPException(status_code=409, detail="Session already linked to a project")#409 for conflict
-        project = await get_project_by_id(project_id,user_id,db)
+            raise HTTPException(status_code=409, detail="Session already linked to a project")  # 409 for conflict
+        project = await get_project_by_id(project_id, user_id, db)
         session.project_id = project.id
         session.updated_at = datetime.utcnow()
         await db.commit()

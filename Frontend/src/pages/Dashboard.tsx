@@ -13,6 +13,8 @@ import InsightsPanel from '../components/Dashboard/InsightsPanel';
 import TrendChart from '../components/Dashboard/TrendChart';
 import Filters from '../components/Dashboard/Filters';
 
+import { RiInboxUnarchiveLine } from 'react-icons/ri';
+
 import styles from './Dashboard.module.css';
 
 export default function Dashboard() {
@@ -136,7 +138,7 @@ export default function Dashboard() {
               {runs && runs.length === 0 ? (
                 <div className={styles.center}>
                   <div className={styles.emptyState}>
-                    <p className={styles.emptyIcon}>📭</p>
+                    <RiInboxUnarchiveLine className={styles.emptyIcon} />
                     <h3 className={styles.emptyTitle}>No pipeline runs found</h3>
                     <p className={styles.emptyDescription}>This repository has no GitHub Actions workflow runs.
                     </p>

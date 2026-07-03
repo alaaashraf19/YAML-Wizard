@@ -40,7 +40,6 @@
     position: relative;
     padding: 10px;
     margin: 10px;
-    width: 100%;
     min-width: 0;
 
     display: flex;
@@ -52,7 +51,7 @@
 .message {
     margin: 10px;
     padding: 10px 20px;
-    max-width: 80%;
+    
     min-width: 0;
 
     border-radius: 15px;
@@ -63,15 +62,21 @@
     word-wrap: break-word;
     user-select: text;
 }
+.messageText{
+    width: 80%;
+    display: flex;
+}
 .userMessage {
+    max-width: 70%;
     align-self: flex-end;
-    text-align: right;
+    text-align: left;
     background-color: rgb(50, 19, 201);
 }
 .botMessage {
     align-self: flex-start;
     text-align: left;
     margin-bottom: 40px;
+    width: 100%;
     /* background-color: rgb(10, 1, 54); */
 }
 .errorMessage {
@@ -175,7 +180,7 @@
     padding: 15px;
     border: 1px solid #ccc;
     border-radius: 40px;
-    
+
     display: flex;
     align-items: flex-end;
     box-shadow: 3px 3px 10px rgba(0,0,0,0.4);
@@ -267,7 +272,7 @@
     padding: 5px;
     display: flex;
     align-items: center;
-    
+
     background: transparent;
     border: 0;
     border-radius: 10px;
@@ -276,4 +281,63 @@
 .infoBtn:hover{
     box-shadow: 2px 5px 15px rgba(0,0,0,0.7);
     background-color: rgb(13, 2, 61);
+}
+
+.wrapper {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    margin: -30px 0 30px 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.actionsBar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    /* margin-top: 10px; */
+    margin: 0;
+    width: 80%;
+    align-self: left;
+}
+
+.actionBtn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 12px;
+    border: 1px solid rgb(50, 39, 96);
+    background-color: rgb(9, 2, 41);
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, filter 0.3s ease, opacity 0.3s ease;
+}
+
+.actionBtn:hover:not(:disabled) {
+    background-color: rgb(13, 4, 55);
+    filter: brightness(1.15);
+}
+
+.actionBtn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.approveBtn {
+    background: linear-gradient(
+        135deg,
+        rgba(61, 220, 151, 0.35),
+        rgb(9, 2, 41)
+    );
+    border-color: rgba(61, 220, 151, 0.5);
+}
+
+.approveBtn:hover:not(:disabled) {
+    filter: brightness(1.2);
 }
