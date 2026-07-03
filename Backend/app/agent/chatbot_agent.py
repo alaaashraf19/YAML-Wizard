@@ -38,12 +38,12 @@ class ChatbotAgent:
         
         self.tools = TOOLS
         self.system_prompt = system_prompt
-        base_llm = ChatGoogleGenerativeAI(
-            model=model,
-            google_api_key=os.getenv("GEMINI_API_KEY"),
-            temperature=temperature,
-            max_output_tokens=max_output_tokens,
-        )
+        # base_llm = ChatGoogleGenerativeAI(
+        #     model=model,
+        #     google_api_key=os.getenv("GEMINI_API_KEY"),
+        #     temperature=temperature,
+        #     max_output_tokens=max_output_tokens,
+        # )
         base_llm = ChatOpenAI(####################check if we will add max output tokens############################
             model=model,
             openai_api_key="token-not-needed", # vLLM doesn't require a key usually

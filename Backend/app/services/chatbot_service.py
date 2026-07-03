@@ -27,7 +27,7 @@ from langchain_groq import ChatGroq
 
 class ChatbotService:
     def __init__(self):
-        self.client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+        # self.client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
         # self.model = "models/gemini-2.5-flash"
         self.model = "Qwen/Qwen2.5-72B-Instruct-AWQ"
         # self.model = os.getenv("GROQ_MODEL", "openai/gpt-oss-120b")
