@@ -50,7 +50,6 @@ async def validate_pipeline_tool(
     Use the 'valid' boolean to decide whether to provide the YAML to the user (if true) 
     or to call the rectification tool (if false).
     """
-    print("i am inside validate")
     configurable = (config or {}).get("configurable", {})
     report = await build_report(
         yaml_content,
@@ -59,7 +58,16 @@ async def validate_pipeline_tool(
         db=configurable.get("db"),
         project_id=configurable.get("gitlab_project_id"),
     )
+
     log_validation_report(report, target)
+    if len(report["errors"]) > 3:
+        shortened_errors = report["errors"][:3] # Keep only the first 3
+        return json.dumps({
+            "valid": False,
+            "summary": f"Found {len(report['errors'])} errors. Highlighting the first 3 to save space.",
+            "errors": shortened_errors,
+            "target": report.get("target")
+        })
     return json.dumps(report, indent=2, ensure_ascii=False)
 
 

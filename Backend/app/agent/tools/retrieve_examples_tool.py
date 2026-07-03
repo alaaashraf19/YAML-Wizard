@@ -40,7 +40,7 @@ def get_embedding_model():
         embed_model = SentenceTransformer(
             EMBED_MODEL,
             device=EMBED_DEVICE,
-            model_kwargs={"torch_dtype": EMBED_DTYPE},
+            model_kwargs={"dtype": EMBED_DTYPE},
         )
     return embed_model
 
