@@ -26,11 +26,13 @@ async def add_repo_service(body: RepoCreate, db, current_user):
     
     if platform not in ["github", "gitlab"]:
         raise HTTPException(status_code=400, detail="Unsupported platform. Only 'github' and 'gitlab' are supported.")
+    
+    from services.project_service import _resolve_token
+    token, _ = await _resolve_token(user_id=current_user.id, platform=platform, repo_url=body.url, db=db)
+    if not token:
+            raise HTTPException(status_code=401, detail=f"Connect your {platform} account first ")
+    
     if platform == "gitlab":
-        from services.project_service import _resolve_token
-        token, _ = await _resolve_token(user_id=current_user.id, platform=detected_platform, repo_url=body.url, db=db)
-        if not token:
-            raise HTTPException(status_code=401, detail="connect your gitlab account first ")
         gitlab_project_id = await _get_gitlab_proj_id(full_name, token)
         
     existing = await db.execute(select(Repository).where(Repository.full_name == full_name))
