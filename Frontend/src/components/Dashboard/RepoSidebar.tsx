@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import type { Repo } from '../../types';
 import logo from "../../assets/yaml_wizard_logo.png";
 
@@ -7,6 +7,11 @@ import { useAddRepo, useDeleteRepo, useSyncRepo } from '../../api/hooks';
 import gStyles from "../../global.module.css"
 import styles from './RepoSidebar.module.css';
 import { useNavigate } from 'react-router-dom';
+
+import { FiPlus, FiSearch } from 'react-icons/fi';
+import { IoClose } from 'react-icons/io5';
+import { MdDeleteOutline } from 'react-icons/md';
+import { CgSync } from 'react-icons/cg';
 
 interface Props {
   repos: Repo[];
@@ -26,6 +31,7 @@ export default function RepoSidebar({
   const syncRepo = useSyncRepo();
   const navigate = useNavigate();
   const [url, setUrl] = useState('');
+  const [query, setQuery] = useState('');
 
   const handleAdd = () => {
     if (!url.trim()) return;
@@ -33,6 +39,17 @@ export default function RepoSidebar({
     addRepo.mutate(url.trim());
     setUrl('');
   };
+
+  const filteredRepos = useMemo(() => {
+    if (!repos) return [];
+    if (!query.trim()) return repos;
+
+    const q = query.trim().toLowerCase();
+    return repos.filter((repo) =>
+      repo.full_name.toLowerCase().includes(q) ||
+      repo.platform.toLowerCase().includes(q)
+    );
+  }, [repos, query]);
 
   return (
     <aside className={styles.repoSidebar}>
@@ -57,8 +74,9 @@ export default function RepoSidebar({
             className={styles.repoSidebarAddBtn}
             onClick={handleAdd}
             disabled={addRepo.isPending}
+            title="Add repository"
           >
-            +
+            <FiPlus className={styles.btnIcon} />
           </button>
         </div>
 
@@ -67,6 +85,25 @@ export default function RepoSidebar({
             {(addRepo.error as Error).message}
           </p>
         )}
+
+        <div className={styles.repoSidebarSearchRow}>
+          <FiSearch className={styles.searchIcon} />
+
+          <input
+            className={styles.repoSidebarSearch}
+            placeholder="Search repos..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+
+          {query && (
+            <IoClose
+              className={`${styles.searchClearIcon} ${gStyles.clickable}`}
+              onClick={() => setQuery('')}
+              title="Clear search"
+            />
+          )}
+        </div>
       </div>
 
       <nav className={styles.repoSidebarNav}>
@@ -76,7 +113,13 @@ export default function RepoSidebar({
           </p>
         )}
 
-        {repos?.map((repo) => (
+        {!isLoading && repos.length > 0 && filteredRepos.length === 0 && (
+          <p className={styles.repoSidebarLoading}>
+            No repos match "{query}".
+          </p>
+        )}
+
+        {filteredRepos.map((repo) => (
           <div
             key={repo.id}
             className={`${styles.repoItem} ${
@@ -105,14 +148,19 @@ export default function RepoSidebar({
 
               <div className={styles.repoItemActions}>
                 <button
-                  className={styles.repoSyncBtn}
+                  className={`${styles.repoSyncBtn} ${
+                    syncRepo.isPending && syncRepo.variables === repo.id
+                      ? styles.spinning
+                      : ''
+                  }`}
                   onClick={(e) => {
                     e.stopPropagation();
                     syncRepo.mutate(repo.id);
                   }}
+                  disabled={syncRepo.isPending && syncRepo.variables === repo.id}
                   title="Sync now"
                 >
-                  🔄
+                  <CgSync className={styles.btnIcon} />
                 </button>
 
                 <button
@@ -123,7 +171,7 @@ export default function RepoSidebar({
                   }}
                   title="Remove"
                 >
-                  ✕
+                  <MdDeleteOutline className={styles.btnIcon} />
                 </button>
               </div>
             </div>

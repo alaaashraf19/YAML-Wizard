@@ -3,16 +3,84 @@
     flex-direction: column;
 }
 
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+}
+
 .title {
     font-size: 14px;
     font-weight: 600;
     color: rgb(209 213 219);
-    margin-bottom: 8px;
+    white-space: nowrap;
+}
+
+.searchRow {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-width: 180px;
+}
+
+.searchIcon {
+    position: absolute;
+    left: 8px;
+    font-size: 13px;
+    color: rgb(156 163 175);
+    pointer-events: none;
+}
+
+.searchInput {
+    width: 100%;
+    background: rgb(31 41 55);
+    color: rgb(229 231 235);
+    font-size: 12px;
+    border-radius: 4px;
+    padding: 5px 26px;
+    border: 1px solid rgb(75 85 99);
+    outline: none;
+}
+
+.searchInput:focus {
+    border-color: rgb(59 130 246);
+}
+
+.clearIcon {
+    position: absolute;
+    right: 8px;
+    font-size: 13px;
+    color: rgb(156 163 175);
+    cursor: pointer;
+}
+
+.clearIcon:hover {
+    color: rgb(229 231 235);
 }
 
 .empty {
     color: rgb(156 163 175);
     font-size: 14px;
+}
+
+.statusDot {
+    font-size: 10px;
+    flex-shrink: 0;
+}
+
+.dotGreen {
+    color: rgb(34 197 94);
+}
+
+.dotOrange {
+    color: rgb(234 179 8);
+}
+
+.dotRed {
+    color: rgb(239 68 68);
 }
 
 .grid {
