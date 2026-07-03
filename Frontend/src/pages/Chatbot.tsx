@@ -38,6 +38,8 @@ function Chatbot() {
     const [confirmMessage, setConfirmMessage] = useState<string | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+    const [chatURL, setChatURL] = useState<string>();
+
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
     const textareaRef = useRef<HTMLTextAreaElement | null>(null);
     const menuRef = useRef<HTMLDivElement | null>(null);
@@ -45,7 +47,6 @@ function Chatbot() {
     const infoRef = useRef<HTMLDivElement | null>(null);
     // const navigate = useNavigate();
     const api_url = import.meta.env.VITE_API_URL;
-    let chat_url: string = 'chatbot/chat';
 
     // Auto focus on textarea
     useEffect(() => {
@@ -199,7 +200,7 @@ function Chatbot() {
 
         setIsLoading(true);
         try{
-            const res = await fetch(`${api_url}/${chat_url}`, {
+            const res = await fetch(`${api_url}/${chatURL}`, {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
                 credentials: "include",
@@ -264,8 +265,6 @@ function Chatbot() {
         return content.startsWith("⚠️");
     };
 
-    // Undo Python's str()-style escaping (\n, \t, \', \\) so legacy payloads
-    // read like normal text instead of literal backslash-n sequences.
     const unescapePythonString = (raw: string) => {
         return raw
             .replace(/\\n/g, "\n")
@@ -275,13 +274,6 @@ function Chatbot() {
             .replace(/\\\\/g, "\\");
     };
 
-    // Backwards-compat shim: older backend responses were produced by calling
-    // Python's str() on a list of segment dicts, e.g.
-    //   "[{'type': 'text', 'content': '...'}, {'type': 'code', 'language': 'yaml', 'content': '...'}]"
-    // instead of returning proper markdown. If we detect that shape, rebuild
-    // it into normal ```lang ... ``` markdown so renderMessageContent can
-    // handle it exactly like any other message. Anything that doesn't match
-    // this legacy pattern is returned untouched.
     const normalizeLegacyContent = (content: string) => {
         const trimmed = content.trim();
         if (!/^\[\s*\{\s*'type':/.test(trimmed)) return content;
@@ -305,10 +297,6 @@ function Chatbot() {
         return parts.length ? parts.join("\n\n") : content;
     };
 
-    // splits a message into plain-text chunks and ```lang ... ``` code chunks,
-    // rendering code chunks with the CodeBlock component. Assistant-generated
-    // YAML pipelines get an Approve/Edit action bar underneath so the user can
-    // review, tweak, and save the pipeline to their project's database.
     const renderMessageContent = (content: string, role: Message["role"], msgIndex: number) => {
         content = normalizeLegacyContent(content);
         const codeFenceRegex = /```(\w+)?\n?([\s\S]*?)```/g;
@@ -360,8 +348,6 @@ function Chatbot() {
     const renderBold = (text: string) => {
         // const withoutBulletMarkers = text.replace(/^[ \t]*[*-][ \t]+/gm, "");
         const withoutBulletMarkers = text.replace(/^([ \t]*)[*-][ \t]+/gm, "$1");
-        // Strip markdown heading markers (#, ##, ### ...) so raw "### Title"
-        // text never leaks into the chat bubble - render headings as bold text.
         const withoutHeadingMarkers = withoutBulletMarkers.replace(/^[ \t]*#{1,6}[ \t]+(.*)$/gm, "**$1**");
         const parts = withoutHeadingMarkers.split(/\*{1,2}(.*?)\*{1,2}/g);
         return parts.map((part, i) =>
@@ -389,7 +375,7 @@ function Chatbot() {
 
     const handleModelChange = (selectedModel: Model)=> {
         setSelectedModel(selectedModel);
-        chat_url = selectedModel.label === "Main Model" ? 'chatbot/chat' : 'chatbot/generate'
+        setChatURL(selectedModel.label === "Main Model" ? 'chatbot/chat' : 'chatbot/generate');
     };
 
 
