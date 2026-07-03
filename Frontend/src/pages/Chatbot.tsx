@@ -5,7 +5,7 @@ import popupStyles from '../components/Popup/Popup.module.css'
 import { useState, useEffect, useRef, useMemo } from "react";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md"
 import { IoSend, IoClose } from "react-icons/io5";
-
+import { BsFillPatchCheckFill } from "react-icons/bs";
 
 import type { Session, Message, Project } from "../types";
 import ChatProjects from "../components/Chatbot/ChatProjects";
@@ -13,6 +13,8 @@ import SideBar from "../components/Chatbot/SideBar";
 import Popup from "../components/Popup/Popup";
 import { ProjectSubInfo } from "../components/UserProfile/ProjectInfoTab";
 import CodeBlock from "../components/Chatbot/CodeBlock";
+import { useNavigate } from "react-router-dom";
+import { useHistoryStore } from "./History";
 
 export interface Model {
     id?: string,
@@ -30,6 +32,8 @@ function Chatbot() {
     const [selectedProject, setSelectedProject] = useState<Project | null>(null);
     const [status, setStatus] = useState<Status>("idle");
 
+    const { setProject }= useHistoryStore();
+
     const [models, setModels] = useState<Model[]>([]);
     const [selectedModel, setSelectedModel] = useState<Model | null>(models[0]);
 
@@ -37,6 +41,7 @@ function Chatbot() {
     const [isShowInfo, setIsShowInfo] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
+    const [askAfterApprove, setAskAfterApprove] = useState<string | null>(null);
     const [confirmMessage, setConfirmMessage] = useState<string | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -47,7 +52,7 @@ function Chatbot() {
     const menuRef = useRef<HTMLDivElement | null>(null);
     const popupRef = useRef<HTMLDivElement | null>(null);
     const infoRef = useRef<HTMLDivElement | null>(null);
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
     const api_url = import.meta.env.VITE_API_URL;
 
     // Auto focus on textarea
@@ -309,7 +314,7 @@ function Chatbot() {
 
         setStatus("saving");
         try {
-            const res = await fetch(`${api_url}/pipelines/${selectedProject.id}`, {
+            const res = await fetch(`${api_url}/pipelines/${selectedProject.id}/approve`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 credentials: "include",
@@ -331,17 +336,14 @@ function Chatbot() {
             }
 
             setStatus("approved");
-            setConfirmMessage(`Pipeline is saved to your project with name ${data.name}.`);
+            setAskAfterApprove(`Pipeline is saved to your project with name '${data.name}'.\n
+                To Edit or Publish this script go to Version History.`);
 
         } catch (e) {
             console.error("Approve pipeline failed:", e);
             setStatus("idle");
             setErrorMessage(e instanceof Error ? e.message : "Failed to save the pipeline. Please try again.");
         }
-    };
-
-    const handlePublish = async () => {
-
     };
 
     const renderMessageContent = (content: string, role: Message["role"]) => {
@@ -365,18 +367,16 @@ function Chatbot() {
 
             if (isYamlPipeline) {
                 nodes.push(
-                    <div className={styles.wrapper}>
-                        <CodeBlock key={key++} language={language} code={code} />
+                    <div key={key++} className={styles.wrapper}>
+                        <CodeBlock language={language} code={code} />
                         <div className={styles.actionsBar}>
                             <button
                                 type="button"
                                 className={`${styles.actionBtn} ${styles.approveBtn}`}
-                                onClick={() => {
-                                    status === "approved" ? handlePublish() : handleApprove(code) 
-                                }}
+                                onClick={() => {handleApprove(code)}}
                                 title={"Save this pipeline to your project"}
                             >
-                                {status === "saving" ? "Saving..." : status === "approved" ? "Publish" : ""}
+                                <BsFillPatchCheckFill/>
                             </button>
                             
                         </div>
@@ -413,7 +413,6 @@ function Chatbot() {
     // get saved model from sessionStorage
     useEffect(() => {
         if (models.length === 0)return;
-        console.log(typeof(models));
 
         const savedModelLabel = sessionStorage.getItem("selected_model");
         if (savedModelLabel) {
@@ -445,8 +444,8 @@ function Chatbot() {
                     <div className={styles.spacer}/>
                     {messages.map((msg, i) => (
                         <div key={i} className={styles.messagePack}>
-                            <div className={`${styles.message} ${msg.role === "user" ?
-                                styles.userMessage : (isErrorMessage(msg.content)? styles.errorMessage : styles.botMessage)}`}>
+                            <div className={`${styles.message} ${msg.role === "user" ? styles.userMessage 
+                                :(isErrorMessage(msg.content)? styles.errorMessage : styles.botMessage)}`}>
                                 {renderMessageContent(msg.content, msg.role)}
                             </div>
                         </div>
@@ -521,6 +520,18 @@ function Chatbot() {
                 setConfirmMessage={setConfirmMessage}
                 errorMessage={errorMessage}
                 setErrorMessage={setErrorMessage}
+                popupRef={popupRef}
+            />}
+            {(askAfterApprove) &&
+            <Popup
+                btnText1={"Go to Version History"}
+                btn1Action={() => {
+                    setProject(selectedProject);
+                    navigate("/history");
+                }}
+                btnText2="Close"
+                questionMessage={askAfterApprove}
+                setQuestionMessage={setAskAfterApprove}
                 popupRef={popupRef}
             />}
         </div>
