@@ -55,7 +55,6 @@ function HProjects({ isEdit, setDiscardChanges }: HPProps){
     const [warningDiscard, setWarningDiscard] = useState<string | null>(null);
 
     const filterRef = useRef<HTMLDivElement | null>(null);
-    const popupRef = useRef<HTMLDivElement>(null);
     const navigate = useNavigate();
     const api_url = import.meta.env.VITE_API_URL;
 

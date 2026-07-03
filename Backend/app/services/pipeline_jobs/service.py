@@ -319,7 +319,7 @@ async def load_pipeline_and_repo(
 async def github_installation_id(repo: Repository, user_id: int, db: AsyncSession) -> int | None:
     by_repo = await db.execute(
         select(GitHubInstallationRepo.installation_id)
-        .where(GitHubInstallationRepo.repo_full_name == repo.full_name)
+        .where(GitHubInstallationRepo.repo_url == repo.url)
     )
     installation_id = by_repo.scalars().first()
     if installation_id:
@@ -397,7 +397,7 @@ async def push_version_to_repo(
 
 #fields carried between the pipelines row and a version row on a swap. id, name, pipeline_id, project_id and updated_at are intentionally not swapped.
 SWAPPED_VERSION_FIELDS = (
-    "content", "path", "branch", "is_generated_by_wizard", "description",
+    "name", "content", "path", "branch", "is_generated_by_wizard", "description",
     "is_active", "commit_hash", "commit_author", "commit_message",
     "committed_at", "created_at",
 )

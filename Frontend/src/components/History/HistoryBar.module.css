@@ -219,16 +219,20 @@
     transition: background-color 0.25s ease, border 0.25s ease;
 }
 .pipelineBtns{
-    display: flex;
+    display: none;
     opacity: 0;
     padding: 0;
+}
+.pipelineTab:hover .pipelineBtns{
+    opacity: 1;
+    display: flex;
 }
 .subInfo{
     font-size: 12px;
     margin-left: auto;
     opacity: 0.6;
 }
-.pipelineTab:hover .pipelineBtns{opacity: 1;}
+
 .noPipelines {
     align-self: center;
     text-align: center;

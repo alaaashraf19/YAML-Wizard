@@ -34,6 +34,9 @@ type HistoryStore = {
 
     pipeline: Pipeline | null,
     setPipeline: (pipeline: Pipeline | null)=>void,
+
+    version: Pipeline | null,
+    setVersion: (pipeline: Pipeline | null)=>void,
 }
 
 export const useHistoryStore = create<HistoryStore>()(
@@ -55,6 +58,9 @@ export const useHistoryStore = create<HistoryStore>()(
         
         pipeline: null,
         setPipeline: pipeline=>set({pipeline}),
+        
+        version: null,
+        setVersion: version=>set({version}),
     }),{
         name: "history_store",
         storage: createJSONStorage(() => sessionStorage)
@@ -63,7 +69,7 @@ export const useHistoryStore = create<HistoryStore>()(
 
 
 function History(){
-    const {isEdit, isExpanded, setIsExpanded, setLoadingSync, project, pipeline, setPipeline} = useHistoryStore();
+    const {isEdit, isExpanded, setIsExpanded, setLoadingSync, project, pipeline, version, setPipeline} = useHistoryStore();
 
     const [jobs, setJobs] = useState<Job[]>([]);
     const [pipelines, setPipelines] = useState<Pipeline[]>([]);
@@ -248,6 +254,8 @@ function History(){
         return (lastSynced ? "Last Synced ("+new Date(lastSynced).toLocaleString()+")" : "Never Synced")
     }
 
+    let currentActive: Pipeline | null  = pipeline ? pipeline : version ? version : null;
+
     return(
         <div className={styles.window}>
             <HProjects isEdit={isEdit} setDiscardChanges={setDiscardChanges }/>
@@ -260,27 +268,31 @@ function History(){
                             {project.repo_url}</Link>
                         <span className={styles.barTab}>{getLastSyncedText()}</span>
 
-                        {pipeline && <>
-                            <span className={styles.barTab}>{pipeline.name}</span>
+                        {currentActive && <>
+                            <span className={styles.barTab}>{currentActive.name}</span>
+                            <span className={styles.barTab}>{currentActive.is_active?"Published":"Not-Published"}</span>
                             <Link className={`${styles.barTab} ${styles.barLink}`} title="Go to link" target="_blank"
-                                to={`${project.repo_url}/tree/${project.branch}/${pipeline.path}`}>{pipeline.path}</Link>
-                            <span className={styles.barTab}>{project.branch}</span>
-                            {/* <span className={styles.barTab}>Commit Hash ({pipeline.commit_hash})</span> */}
-                            <span className={styles.barTab}>{pipeline.commit_author}</span>
-                            <span className={styles.barTab}>{pipeline.is_active?"Published":"Not-Published"}</span>
-                            <span className={styles.barTab}>Created ({new Date(pipeline.created_at).toLocaleString()})</span>
-                            <span className={styles.barTab}>Last Updated ({new Date(pipeline.updated_at).toLocaleString()})</span>
-                            {pipeline.is_active && 
-                            <span className={styles.barTab}>Published ({new Date(pipeline.commited_at).toLocaleString()})</span>}
+                                to={`${project.repo_url}/tree/${project.branch}/${currentActive.path}`}>
+                                {currentActive.path ?? "Path Unknown"}</Link>
+                            <span className={styles.barTab}>{project.branch ?? "Branch Unknown"}</span>
+                            {/* <span className={styles.barTab}>Commit Hash ({currentActive.commit_hash})</span> */}
+                            <span className={styles.barTab}>{currentActive.commit_author ?? "Author Unknown"}</span>
+                            <span className={styles.barTab}>Created ({
+                            new Date(currentActive.created_at).toLocaleString() ?? "Unknown"})</span>
+                            <span className={styles.barTab}>Last Updated ({
+                                new Date(currentActive.updated_at).toLocaleString() ?? "Unknown"})</span>
+                            {currentActive.is_active && 
+                            <span className={styles.barTab}>Published ({
+                                new Date(currentActive.commited_at).toLocaleString() ?? "Unknown"})</span>}
                         </>}
                     </div>
                     <button className={styles.expandBtn} onClick={()=>setIsExpanded(!isExpanded)}>
                         <IoIosArrowDropdownCircle/> </button>
                 </div>}
                 <div className={styles.historyWindow}>
-                    <HistoryBar pipelines={pipelines} setPipelines={setPipelines} 
+                    <HistoryBar pipelines={pipelines} setPipelines={setPipelines} setJobs={setJobs}
                         syncPipelines={syncPipelines} setDiscardChanges ={setDiscardChanges } />
-                    {(project && pipeline)?
+                    {(project && currentActive)?
                         (isEdit ? <PipelineEditor initJobs={jobs} setInitJobs={setJobs} 
                             isDiscardChanges={isDiscardChanges} setDiscardChanges={setDiscardChanges}/>
                             : <PipelineViewer jobs={jobs}/>

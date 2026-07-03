@@ -31,8 +31,10 @@ export default function PipelineReview({ review, isReviewOpen, setIsReviewOpen, 
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isReviewOpen, setIsReviewOpen]);
 
+  const hasErrors = review.errors?.length > 0;
   const hasWarnings = review.warnings?.length > 0 || review.ai_warnings?.length > 0;
   const totalWarnings = (review.warnings?.length || 0) + (review.ai_warnings?.length || 0);
+  const totalErrors = review.errors?.length || 0;
 
   const getWarningIcon = (level: string) => {
     if (level === 'error') return <BiX className={styles.errorIcon} />;
@@ -44,14 +46,18 @@ export default function PipelineReview({ review, isReviewOpen, setIsReviewOpen, 
     <div className={styles.container}>
       <button 
         ref={buttonRef}
-        className={`${styles.logsBtn} ${hasWarnings ? styles.hasWarnings : ''}`}
+        className={`${styles.logsBtn} ${hasWarnings || hasErrors ? styles.hasWarnings : ''}`}
         onClick={() => setIsReviewOpen(!isReviewOpen)}
       >
         <span className={styles.btnText}>
-          {hasWarnings ? `${totalWarnings} Warnings` : 'Review'}
+          {hasErrors ? `${totalErrors} Errors` : hasWarnings ? `${totalWarnings} Warnings` : 'Review'}
         </span>
         <BiMessageSquareError />
-        {hasWarnings && <span className={styles.warningBadge}>{totalWarnings}</span>}
+        {(hasWarnings || hasErrors) && (
+          <span className={`${styles.warningBadge} ${hasErrors ? styles.errorBadge : ''}`}>
+            {hasErrors ? totalErrors : totalWarnings}
+          </span>
+        )}
       </button>
 
       {isReviewOpen && (
@@ -81,6 +87,9 @@ export default function PipelineReview({ review, isReviewOpen, setIsReviewOpen, 
                 {review.ai_review?.model && (
                   <span className={styles.model}>({review.ai_review.model})</span>
                 )}
+                {review.ai_review?.error && (
+                  <span className={styles.aiError}>({review.ai_review.error})</span>
+                )}
               </div>
             </div>
 
@@ -103,6 +112,27 @@ export default function PipelineReview({ review, isReviewOpen, setIsReviewOpen, 
                 <span className={styles.infoValue}>{review.jobs?.length || 0}</span>
               </div>
             </div>
+
+            {/* Errors Section */}
+            {hasErrors && (
+              <div className={styles.errorsContainer}>
+                <h3 className={styles.errorsTitle}>
+                  <BiX className={styles.errorIconLarge} />
+                  Errors ({totalErrors}) - Cannot Submit
+                </h3>
+                {review.errors?.map((error: any, index: number) => (
+                  <div key={`e-${index}`} className={styles.errorItem}>
+                    <div className={styles.errorHeader}>
+                      <BiX className={styles.errorIcon} />
+                      <span className={styles.errorTitle}>{error.title || 'Error'}</span>
+                    </div>
+                    {error.message && (
+                      <p className={styles.errorMsg}>{error.message}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
 
             {/* Warnings */}
             <div className={styles.warningsContainer}>
@@ -142,17 +172,22 @@ export default function PipelineReview({ review, isReviewOpen, setIsReviewOpen, 
                     </div>
                   ))}
                 </>
-              ) : (
+              ) : !hasErrors && (
                 <div className={styles.noWarnings}>
                   <BiCheckCircle className={styles.successIcon} />
-                  <span>All good! No warnings found.</span>
+                  <span>All good! No warnings or errors found.</span>
                 </div>
               )}
             </div>
 
             <div className={styles.actions}>
-              <button className={styles.submitBtn} onClick={handleSubmit}>
-                Submit Pipeline
+              <button 
+                className={`${styles.submitBtn} ${hasErrors ? styles.submitDisabled : ''}`}
+                onClick={handleSubmit}
+                disabled={hasErrors}
+                title={hasErrors ? 'Cannot submit - pipeline has errors' : 'Submit pipeline'}
+              >
+                {hasErrors ? 'Cannot Submit - Fix Errors First' : 'Submit Pipeline'}
               </button>
             </div>
           </div>

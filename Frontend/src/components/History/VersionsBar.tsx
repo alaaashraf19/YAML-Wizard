@@ -1,6 +1,6 @@
 import gStyles from "../../global.module.css"
 import styles from './VersionsBar.module.css'
-import type { Pipeline } from "../../types";
+import type { Job, Pipeline } from "../../types";
 import { useHistoryStore } from "../../pages/History";
 import { useEditorStore } from "./PipelineEditor";
 
@@ -15,6 +15,7 @@ import Popup from "../Popup/Popup";
 
 type VersionsBarProps = {
     mainPipeline: Pipeline | null,
+    setJobs: React.Dispatch<React.SetStateAction<Job[]>>,
     setPipelines: React.Dispatch<React.SetStateAction<Pipeline[]>>,
     setMainPipeline: React.Dispatch<React.SetStateAction<Pipeline | null>>,
     setOpenVersionsMenu: React.Dispatch<React.SetStateAction<boolean>>,
@@ -24,6 +25,7 @@ type VersionsBarProps = {
 
 function VersionsBar({
     mainPipeline,
+    setJobs,
     setPipelines,
     setMainPipeline, 
     setOpenVersionsMenu,
@@ -31,16 +33,12 @@ function VersionsBar({
     downloadYaml
 
 }: VersionsBarProps) {
-    const { project, isEdit, setIsEdit } = useHistoryStore();
-    const { hasChanges, setJobs } = useEditorStore();
+    const { version, setVersion, project, setPipeline, isEdit, setIsEdit } = useHistoryStore();
+    const { hasChanges } = useEditorStore();
 
     const [versions, setVersions] = useState<Pipeline[]>([]);
-    const [version, setVersion] = useState<Pipeline | null>(null);
 
     const [query, setQuery] = useState<string>("");
-    const [hoverVersion, setHoverVersion] = useState<Pipeline | null>(null);
-    const [isHover, setIsHover] = useState<boolean>(false);
-
     const [selectedAtEdit, setSelectAtEdit] = useState<boolean>(false);
     const [selectedVersion, setSelectedVersion] = useState<Pipeline | null>(null);
     const [deletedVersion, setDeletedVersion] = useState<Pipeline | null>(null);
@@ -93,17 +91,46 @@ function VersionsBar({
         if(mainPipeline) fetchVersions();
     }, [mainPipeline]);
 
-    //set jobs on change of version
+    //get version jobs on change of version
     useEffect(()=> {
+        if(!project || !mainPipeline || !version)return;
+        const getVersionJobs = async () => {
+            try {
+                const res = await fetch(`${api_url}/projects/${project?.id}
+                    /pipelines/${mainPipeline?.id}/versions/${version.id}/jobs`, {
+                    credentials: "include",
+                    method: "GET",
+                    headers: {"Content-Type": "application/json"}
+                });
+    
+                const data = await res.json();
+    
+                if (!res.ok) {
+                    console.error(data.detail?.[0]?.msg || data.detail || "Failed to fetch version script");
+                    return;
+                }
 
-        // if(version) setJobs(version.)
+                setJobs(data.jobs);
+            }catch(e: any){
+                console.error(`Failed to get jobs of version with id: ${version?.id}`)
+            }
+        }
 
-    },[version?.id]);
+        if(version){
+            setPipeline(null);
+            getVersionJobs();
+        }
+
+    },[version?.id, mainPipeline?.id, project?.id]);
 
     const handleSwitchingVersion = (oldVersion: Pipeline, newVersion: Pipeline) => {
-        if(!mainPipeline || !project) return;
+        if(!mainPipeline || !project || ! version) return;
+
         setPipelines(prev => [...prev.filter(pipeline => pipeline.id !== oldVersion.id), newVersion]);
         setVersions(prev => [...prev.filter(version => version.id !== newVersion.id), oldVersion]);
+        
+        setPipeline(newVersion);
+        setVersion(oldVersion);
     };
 
     const approveVersion = async ()=> {
@@ -129,6 +156,7 @@ function VersionsBar({
             setConfirmMessage(`Version ${approvedVersion.name} has been successfully approved`);
             setWarningMessage(`Previous pipeline ${mainPipeline?.name} can be found in version history.\nURL: ${project?.repo_url}`);
             setApprovedVersion(null);
+            setOpenVersionsMenu(false);
 
         } catch (e) {
             console.error("Failed to delete publish:", e);
@@ -187,10 +215,12 @@ function VersionsBar({
             }
 
             // if deleted pipeline is the active one
-            if(deletedVersion.id === version?.id) setVersion(null);
+            console.log("deleted version id:", deletedVersion.id, "current version id:", version?.id)
+            if(deletedVersion.id === version?.id){ setVersion(null);}
 
             setVersions(prev => prev.filter(pipeline => pipeline.id !== deletedVersion.id));
             setDeletedVersion(null);
+            setDiscardChanges(true);
 
         } catch (e) {
             console.error("Failed to delete pipeline:", e);
@@ -209,7 +239,7 @@ function VersionsBar({
             <div className={styles.topContainer}>
                 <p className={styles.header}>Edit Versions of "{mainPipeline?.name}"</p>
                 <button className={`${styles.returnIcon} ${gStyles.clickable}`} 
-                    onClick={() => (setOpenVersionsMenu(false), setMainPipeline(null))} title="Return">
+                    onClick={() => (setOpenVersionsMenu(false), setMainPipeline(null), setVersion(null))} title="Return">
                     <FaArrowRightLong />
                 </button>
             </div>
@@ -223,9 +253,7 @@ function VersionsBar({
             {filteredVersions.length > 0 ? <>
                 {filteredVersions.map((p, index) => (
                     <div key={index} className={`${styles.pipelineTab} 
-                        ${(p.id === version?.id)? styles.active : gStyles.clickable}`}
-                        onPointerOver={()=>{setHoverVersion(p);setIsHover(true);}}
-                        onPointerLeave={()=>{setHoverVersion(null);setIsHover(false);}}>
+                        ${(p.id === version?.id)? styles.active : gStyles.clickable}`}>
 
                         <p className={`${styles.pipelineName} ${version?.id !== p.id && gStyles.clickable}`}
                             onClick={() => {
@@ -238,41 +266,40 @@ function VersionsBar({
                                             setWarningMessage("Your unsaved changes cannot be recovered.")
                                         ) : (setVersion(p), setIsEdit(false))
                                     ) : setVersion(p)
+                                    , console.log("Version Selected with id:", p?.id)
                                 )
                             }}>{p.name}</p>
 
-                        {isHover && hoverVersion && 
-                            <div className={styles.pipelineBtns}>
-                                <MdDeleteOutline title="Delete"
-                                    className={`${styles.icon} ${gStyles.clickable}`}
-                                    onClick={() => {
-                                        setDeletedVersion(p),
-                                        setQuestionMessage(`Do you want to delete version ${p.name} ?`),
-                                        setWarningMessage("This action cannot be recovered, maybe download it before lost.")
-                                    }}/>
+                        <div className={styles.pipelineBtns}>
+                            <MdDeleteOutline title="Delete"
+                                className={`${styles.icon} ${gStyles.clickable}`}
+                                onClick={() => {
+                                    setDeletedVersion(p),
+                                    setQuestionMessage(`Do you want to delete version ${p.name} ?`),
+                                    setWarningMessage("This action cannot be recovered, maybe download it before lost.")
+                                }}/>
 
-                                <HiOutlineUpload title="Publish"
-                                    className={`${styles.icon} ${gStyles.clickable}`}
-                                    onClick={() => {
-                                        setPublishedVersion(p);
-                                        setQuestionMessage(`Publish version ${p.name} to ${project?.project_name} repository ?`);
-                                        setWarningMessage(`This will override the existing pipeline on repository with the same name.\n
-                                            Current pipeline will be saved in version history.\nURL: ${project?.repo_url}`);
-                                    }}/>
+                            <HiOutlineUpload title="Publish"
+                                className={`${styles.icon} ${gStyles.clickable}`}
+                                onClick={() => {
+                                    setPublishedVersion(p);
+                                    setQuestionMessage(`Publish version ${p.name} to ${project?.project_name} repository ?`);
+                                    setWarningMessage(`This will override the existing pipeline on repository with the same name.\n
+                                        Current pipeline will be saved in version history.\nURL: ${project?.repo_url}`);
+                                }}/>
 
-                                <TbArrowBarRight title="Approve"
-                                    className={`${styles.icon} ${gStyles.clickable}`}
-                                    onClick={() => {
-                                        setApprovedVersion(p);
-                                        setQuestionMessage(`Approve version ${p.name}?`);
-                                        setWarningMessage(`This version will be set as the active one.
-                                            \n Current pipeline ${mainPipeline?.name} will be inserted in history instead.`);
-                                    }}/>
+                            <TbArrowBarRight title="Approve"
+                                className={`${styles.icon} ${gStyles.clickable}`}
+                                onClick={() => {
+                                    setApprovedVersion(p);
+                                    setQuestionMessage(`Approve version ${p.name}?`);
+                                    setWarningMessage(`This version will be set as the active one.
+                                        \n Current pipeline ${mainPipeline?.name} will be inserted in history instead.`);
+                                }}/>
 
-                                <HiOutlineDownload onClick={()=>downloadYaml(p)} title="Download File"
-                                    className={`${styles.icon} ${gStyles.clickable}`}/>
-                            </div>
-                        }
+                            <HiOutlineDownload onClick={()=>downloadYaml(p)} title="Download File"
+                                className={`${styles.icon} ${gStyles.clickable}`}/>
+                        </div>
                     </div>
                 ))}
             </> : <p className={styles.noPipelines}>No edits made to pipeline {mainPipeline?.name} found.</p>}

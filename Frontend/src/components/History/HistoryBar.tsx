@@ -1,6 +1,6 @@
 import gStyles from "../../global.module.css"
 import styles from './HistoryBar.module.css'
-import type { Pipeline } from "../../types";
+import type { Job, Pipeline } from "../../types";
 import { useHistoryStore } from "../../pages/History";
 import { useEditorStore } from "../History/PipelineEditor";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -21,9 +21,10 @@ type HBProps = {
     setPipelines: React.Dispatch<React.SetStateAction<Pipeline[]>>,
     syncPipelines: () => Promise<boolean>,
     setDiscardChanges: React.Dispatch<React.SetStateAction<boolean>>,
+    setJobs: React.Dispatch<React.SetStateAction<Job[]>>,
 }
 
-function HistoryBar({ pipelines, setPipelines, syncPipelines, setDiscardChanges }: HBProps){
+function HistoryBar({ pipelines, setPipelines, syncPipelines, setDiscardChanges, setJobs }: HBProps){
     const {pipeline, project, setPipeline, isEdit, setIsEdit, loadingSync} = useHistoryStore();
     const { hasChanges } = useEditorStore();
 
@@ -31,8 +32,6 @@ function HistoryBar({ pipelines, setPipelines, syncPipelines, setDiscardChanges 
     const [deletedPipeline, setDeletedPipeline] = useState<Pipeline | null>(null);
     const [publishedPipeline, setPublishedPipeline] = useState<Pipeline | null>(null);
     const [mainPipeline, setMainPipeline] = useState<Pipeline | null>(null);
-
-    const [hoverPipeline, setHoverPipeline] = useState<Pipeline | null>(null);
 
     const [confirmMessage, setConfirmMessage] = useState<string | null>(null);
     const [questionMessage, setQuestionMessage] = useState<string | null>(null);
@@ -253,25 +252,27 @@ function HistoryBar({ pipelines, setPipelines, syncPipelines, setDiscardChanges 
                             ))}
                         </div> */}
 
-                        <div className={styles.divider} />
+                        {authors.length > 0 && <>
+                            <div className={styles.divider} />
 
-                        <div className={styles.filterHeader}>
-                            <span>Author</span> 
-                            <IoClose onClick={() => setFilterAuthor([])} title="Remove All"
-                                className={`${styles.removeFilter} ${gStyles.clickable}`}/>
-                        </div>
-                        <div className={styles.options}>
-                            {authors.map(author => (
-                                <span key={author} className={`${styles.option} ${gStyles.clickable}
-                                    ${filterAuthor.find(a => author === a) ? styles.selected : `${styles.notSelected}`}`}
-                                    onClick={() => {
-                                        const foundAuthor = filterAuthor.includes(author);
-                                        foundAuthor? setFilterAuthor(filterAuthor.filter(a=>a != author))
-                                        : setFilterAuthor([...filterAuthor, author])
-                                    }}
-                                >{author}</span>
-                            ))}
-                        </div>
+                            <div className={styles.filterHeader}>
+                                <span>Author</span> 
+                                <IoClose onClick={() => setFilterAuthor([])} title="Remove All"
+                                    className={`${styles.removeFilter} ${gStyles.clickable}`}/>
+                            </div>
+                            <div className={styles.options}>
+                                {authors.map((author, index) => (
+                                    <span key={index} className={`${styles.option} ${gStyles.clickable}
+                                        ${filterAuthor.find(a => author === a) ? styles.selected : `${styles.notSelected}`}`}
+                                        onClick={() => {
+                                            const foundAuthor = filterAuthor.includes(author);
+                                            foundAuthor? setFilterAuthor(filterAuthor.filter(a=>a != author))
+                                            : setFilterAuthor([...filterAuthor, author])
+                                        }}
+                                    >{author}</span>
+                                ))}
+                            </div>
+                        </>}
                     </div>
                 )}
                 </div>
@@ -281,13 +282,7 @@ function HistoryBar({ pipelines, setPipelines, syncPipelines, setDiscardChanges 
                 {filteredPipelines.map((p, index) => {
                     return(<>
                     <div key={index} className={`${styles.pipelineTab} 
-                        ${(p.id === pipeline?.id)? styles.active : gStyles.clickable}`}
-                        onPointerOver={(e)=>{
-                            if (e.target === e.currentTarget) setHoverPipeline(p);
-                        }}
-                        onPointerLeave={(e)=>{
-                            if (e.target === e.currentTarget) setHoverPipeline(null);
-                        }}>
+                        ${(p.id === pipeline?.id)? styles.active : gStyles.clickable}`}>
 
                         <p className={`${styles.pipelineName} ${pipeline?.id !== p.id && gStyles.clickable}`}
                             onClick={() => {
@@ -303,21 +298,8 @@ function HistoryBar({ pipelines, setPipelines, syncPipelines, setDiscardChanges 
                                 )
                             }}>{p.name}</p>
 
-                        {hoverPipeline && <div className={styles.pipelineBtns}>
-                            {!(hoverPipeline?.is_active) && <>
-                                <MdDeleteOutline title="Delete From History"
-                                    className={`${styles.icon} ${gStyles.clickable}`}
-                                    onClick={() => {
-                                        setDeletedPipeline(p),
-                                        isEdit && hasChanges?(
-                                            setDeleteAtEdit(true),
-                                            setQuestionMessage(`Do you want to discard changes and delete ${p.name}-pipeline?`),
-                                            setWarningMessage("Your unsaved changes cannot be recovered.")
-                                        ) : (
-                                            setQuestionMessage(`Do you want to delete ${p.name}-pipeline?`),
-                                            setWarningMessage("This action cannot be recovered, maybe download it before lost.")
-                                        )
-                                    }}/>
+                        <div className={styles.pipelineBtns}>
+                            {!(p?.is_active) && 
                                 <HiOutlineUpload title="Publish"
                                     className={`${styles.icon} ${gStyles.clickable}`}
                                     onClick={() => {
@@ -325,29 +307,47 @@ function HistoryBar({ pipelines, setPipelines, syncPipelines, setDiscardChanges 
                                         setQuestionMessage(`Publish pipeline-${p.name} to ${project?.project_name} repository?`);
                                         setWarningMessage(`URL: ${project?.repo_url}`);
                                     }}/>
-                            </>}
+                            }
+
+                            <MdDeleteOutline title="Delete From History"
+                                className={`${styles.icon} ${gStyles.clickable}`}
+                                onClick={() => {
+                                    setDeletedPipeline(p),
+                                    isEdit && hasChanges?(
+                                        setDeleteAtEdit(true),
+                                        setQuestionMessage(`Do you want to discard changes and delete ${p.name}-pipeline?`),
+                                        setWarningMessage("Your unsaved changes cannot be recovered.")
+                                    ) : (
+                                        setQuestionMessage(`Do you want to delete ${p.name}-pipeline?`),
+                                        setWarningMessage("This action cannot be recovered, maybe download it before lost.")
+                                    )
+                                }}/>
 
                             <HiOutlineDownload onClick={()=>downloadYaml(p)} title="Download File"
                                 className={`${styles.icon} ${gStyles.clickable}`}/>
 
                             <FaHistory className={`${styles.versionsIcon} ${gStyles.clickable}`} title="Open Edited Versions"
-                                onClick={() => {setMainPipeline(hoverPipeline); setOpenVersionsMenu(true);}} />
-                        </div>}
-
+                                onClick={() => {setMainPipeline(p); setOpenVersionsMenu(true); 
+                                    console.log("opened verion history for pipeline", p.name)}} />
                         </div>
-                        {openVersionsMenu && 
-                            <VersionsBar
-                                mainPipeline={mainPipeline}
-                                setPipelines={setPipelines}
-                                setMainPipeline={setMainPipeline}
-                                setOpenVersionsMenu={setOpenVersionsMenu}
-                                setDiscardChanges={setDiscardChanges}
-                                downloadYaml={downloadYaml}
-                            />}
+                    </div>
+
                     </>);
                 })}
             </div> 
             </> : <p className={styles.noPipelines}>No pipelines found.</p>}
+
+            {openVersionsMenu && 
+                <VersionsBar
+                    mainPipeline={mainPipeline}
+                    setJobs={setJobs}
+                    setPipelines={setPipelines}
+                    setMainPipeline={setMainPipeline}
+                    setOpenVersionsMenu={setOpenVersionsMenu}
+                    setDiscardChanges={setDiscardChanges}
+                    downloadYaml={downloadYaml}
+                />
+            }
 
             {questionMessage && 
             <Popup

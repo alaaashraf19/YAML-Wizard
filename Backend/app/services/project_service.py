@@ -116,8 +116,14 @@ async def create_project(project: ProjectCreate, user_id: int, db: AsyncSession)
     result = await db.execute(existing_stmt)
     if result.scalar_one_or_none():
         raise HTTPException(status_code=409, detail="You have already added this repository.")
-        
-    full_name, detected_platform, parsed_branch = _parse_repo_info(repo_url)
+
+    try:    
+        full_name, detected_platform, parsed_branch = _parse_repo_info(repo_url)
+    except ValueError:
+        raise HTTPException(
+            status_code=400,
+            detail="Entered URL is invalid."
+        )
     default_branch = parsed_branch
 
     gitlab_project_id = None
@@ -327,7 +333,13 @@ async def update_project(project_id: int, user_id: int, project_update: ProjectU
 
         repo.url = project_update.repo_url
 
-        full_name, detected_platform, parsed_branch = _parse_repo_info(repo.url)
+        try:    
+            full_name, detected_platform, parsed_branch = _parse_repo_info(repo.url)
+        except ValueError:
+            raise HTTPException(
+                status_code=400,
+                detail="Entered URL is invalid."
+            )
         repo.full_name=full_name
         if detected_platform not in ["github", "gitlab"]:
             raise HTTPException(status_code=400, detail="Unsupported platform.")

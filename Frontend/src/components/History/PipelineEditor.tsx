@@ -508,11 +508,20 @@ function PipelineEditor({ initJobs, isDiscardChanges, setDiscardChanges, setInit
                             }}> Add Job </button>
 
                         {review && 
-                            <button className={`${styles.submitBtn} ${gStyles.clickable}`} title="Submit Changes"
+                            <button 
+                                className={`${styles.submitBtn} ${gStyles.clickable} ${!review.valid ? styles.submitDisabled : ''}`} 
+                                title={!review.valid ? "Fix errors to submit" : "Submit Changes"}
                                 onClick={() => {
-                                    handleSubmit();
-                                    }}><span className={styles.btnText}>Save changes to history</span>
-                                <FaCircleCheck /></button>
+                                    if (review.valid) {
+                                        handleSubmit();
+                                    }
+                                }}
+                                disabled={!review.valid}>
+                                <span className={styles.btnText}>
+                                    {!review.valid ? 'Fix errors to submit' : 'Save changes to history'}
+                                </span>
+                                <FaCircleCheck />
+                            </button>
                         }
 
                         {review && hasChanges &&
@@ -520,9 +529,15 @@ function PipelineEditor({ initJobs, isDiscardChanges, setDiscardChanges, setInit
                             setIsReviewOpen={setIsReviewOpen} handleSubmit={handleSubmit}/>
                         }
 
-                        {hasChanges && <button className={`${styles.validBtn} ${gStyles.clickable}`}
-                            onClick={reviewJobs} disabled={isReviewing}>
-                            <span className={styles.btnText}>{isReviewing ? "Checking..." : "Check for Errors"}</span><MdFactCheck/></button>}
+                        {hasChanges && 
+                            <button className={`${styles.validBtn} ${gStyles.clickable}`}
+                                onClick={reviewJobs} disabled={isReviewing}>
+                                <span className={styles.btnText}>
+                                    {isReviewing ? "Checking..." : "Check for Errors"}
+                                </span>
+                                <MdFactCheck/>
+                            </button>
+                        }
 
                         <button className={`${styles.discardBtn} ${gStyles.clickable}`} title="Discard Changes"
                             onClick={() => {

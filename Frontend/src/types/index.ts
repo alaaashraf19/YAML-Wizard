@@ -169,6 +169,8 @@ export interface JobReview {
     platform: string;
     jobs: Job[];
     content: string;
+    valid: boolean;
+    errors: string[];
     warnings: string[];
     ai_warnings: string[];
     ai_review: {
