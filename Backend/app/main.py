@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from database.db_engine import create_tables
 from middleware.middleware import setup_middleware
-from routers import auth_router, github_app_router, publisher_router,platfroms_connect_router, chatbot_router, project_router, agent_router, user_router, pipeline_jobs_router, benchmark_router,pipeline_router , pipeline_jobs_router, dry_run_router
+from routers import auth_router, github_app_router, publisher_router,platfroms_connect_router, chatbot_router, project_router, agent_router, user_router, pipeline_jobs_router, benchmark_router,pipeline_router , pipeline_jobs_router, dry_run_router, finetuned_chat_router
 from routers.dashboard import repos_router, runs_router, tests_router, insights_router
 from realtime import websocket_router
 import asyncio
@@ -60,6 +60,7 @@ app.include_router(project_router.router, prefix="/projects", tags=["projects"])
 app.include_router(pipeline_router.router, prefix="/pipelines", tags=["pipelines"])
 app.include_router(pipeline_jobs_router.router, prefix="/projects", tags=["pipeline_jobs"])
 app.include_router(chatbot_router.router, prefix="/chatbot", tags=["chatbot"])
+app.include_router(finetuned_chat_router.router, prefix="/chatbot", tags=["finetuned_generation"])
 app.include_router(github_app_router.router, prefix="/github", tags=["github_app"])
 app.include_router(platfroms_connect_router.router, prefix="/platform", tags=["platform_connect"])
 app.include_router(publisher_router.router, prefix="/publish", tags=["publish_yaml"])
