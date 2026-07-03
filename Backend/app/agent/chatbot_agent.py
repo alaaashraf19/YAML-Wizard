@@ -165,7 +165,7 @@ class ChatbotAgent:
 
         #anz code is surrounded by ```code```
         # Group 1: language (e.g. yaml), Group 2: the code
-        pattern = r"(\w+)?\n(.*?)\n"
+        pattern = r"```(\w+)?\n(.*?)\n```"
         
         segments = []
         last_end = 0
@@ -190,6 +190,7 @@ class ChatbotAgent:
             segments.append({"type": "text", "content": text_after})
             
         return segments
+
     async def invoke(self, message: str, session_id: int, context: ContextResolverResponse | None, 
                      context_summary :str | None, chat_history: List[Dict[str, str]] = None, db: Optional[Any] = None, 
                      gitlab_connection: Optional[Any] = None, user_id: Optional[int] = None, project_id: Optional[int] = None,
@@ -222,7 +223,7 @@ class ChatbotAgent:
                 active_pipeline_msg = (
                     f"\n### USER IS CURRENTLY VIEWING THIS PIPELINE (PRIORITY):\n"
                     f"Name: {p.name}\n"
-                    f"Content:\nyaml\n{p.content}\n```\n"
+                    f"Content:\n```yaml\n{p.content}\n```\n"
                     f"This is the code the user is looking at on their screen. "
                     f"Ignore other YAML files in the repo if they conflict with this one."
                 )
