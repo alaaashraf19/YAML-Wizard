@@ -179,8 +179,8 @@ async def get_gitlab_default_branch(repo_url: str, token: str | None = None):
     return response.json()["default_branch"]
 
 
-async def _get_gitlab_proj_id(full_name: str) -> int:
-    gitLabCollector = GitLabCollector()
+async def _get_gitlab_proj_id(full_name: str,token:str) -> int:
+    gitLabCollector = GitLabCollector(token = token)
     try:
         gitlab_project_id = await gitLabCollector.get_project_id(full_name)
         return gitlab_project_id
