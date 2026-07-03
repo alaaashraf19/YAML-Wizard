@@ -4,8 +4,9 @@ import logo from "../assets/yaml_wizard_logo.png";
 import { UsernameField, EmailField, PasswordField } from "../components/AuthForm/AuthForm";
 import { useState } from "react";
 import { Link } from 'react-router-dom';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from '../Context/AuthContext';
+import type { LoginRedirectState } from "../types";
 
 
 function SignUp(){
@@ -23,12 +24,19 @@ function SignUp(){
     const [emptyConfirmPassword, setEmptyConfirmPassword] = useState(false);
     const { login } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
     const api_url = import.meta.env.VITE_API_URL;
+
+    // Keep passing the same { from, allowGuest } through signup, so that
+    // after signing up the person still lands back where they originally
+    // started (e.g. "Connect Your First Repository") instead of always /chatbot.
+    const redirectState = (location.state ?? null) as LoginRedirectState | null;
+    const redirectTo = redirectState?.from?.pathname || "/chatbot";
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setResponseError("");
-        
+
         if (!username) setEmptyUsername(true);
         else setEmptyUsername(false);
         if (!email) setEmptyEmail(true);
@@ -39,19 +47,19 @@ function SignUp(){
         else setEmptyConfirmPassword(false);
 
         if (password !== confirmPassword)setResponseError("Passwords do not match.");
-        
-        if (!username || !email || !password || !confirmPassword 
+
+        if (!username || !email || !password || !confirmPassword
             || password !== confirmPassword) {
             return;
         }
-        
-        
+
+
         const userData = {
             username,
             email,
             password
         };
-        
+
         setLoading(true);
         try {
             const res = await fetch(`${api_url}/auth/signup`, {
@@ -72,7 +80,7 @@ function SignUp(){
 
             login(username);
             console.log(data.msg);
-            navigate("/chatbot");
+            navigate(redirectTo);
 
         } catch (err: any) {
             const msg = err?.response?.data?.detail?.[0]?.msg || "Server Error. Please try again later.";
@@ -116,7 +124,7 @@ function SignUp(){
 
             <p>
                 Already have an account?
-                <Link className={`${styles.link} ${gStyles.clickable}`} to="/login">Login</Link>
+                <Link className={`${styles.link} ${gStyles.clickable}`} to="/login" state={redirectState}>Login</Link>
             </p>
         </div>
     )
