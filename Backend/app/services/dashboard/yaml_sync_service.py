@@ -24,6 +24,7 @@ from dotenv import load_dotenv
 from fastapi import HTTPException
 from realtime.connection_manager import ws_manager
 from ..platform_connectors.oauth_utils import decrypt_token
+from services.pipeline_services import get_pipeline_by_id
 from ..project_service import _resolve_token
 
 load_dotenv()
@@ -156,20 +157,21 @@ class YAMLSyncService:
     ) -> Dict[str, Any]:
 
 
-        result = await db.execute(
-            select(Pipeline)
-            .join(Project, Pipeline.project_id == Project.id)
-            .where(Pipeline.id == pipeline_id, Project.user_id == user_id)
-        )
-        pipeline = result.scalar_one_or_none()
-        if not pipeline:
-            raise HTTPException(status_code=404, detail="Pipeline not found")
+        pipeline = await get_pipeline_by_id(pipeline_id,user_id,db)
 
         project = await db.get(Project, pipeline.project_id)
         if not project or not project.repo_id:
             raise HTTPException(status_code=400, detail="Project has no connected repository")
 
-        repo = await db.get(Repository, project.repo_id)
+        repo_result = await db.execute(
+            select(Repository)
+            .where(Repository.id == project.repo_id)
+            .options(
+                joinedload(Repository.user).selectinload(User.github_connections),
+                joinedload(Repository.user).selectinload(User.gitlab_connections),
+            )
+        )
+        repo = repo_result.unique().scalar_one_or_none()
         if not repo:
             raise HTTPException(status_code=404, detail="Repository not found")
 
@@ -223,8 +225,6 @@ class YAMLSyncService:
                         pipeline.committed_at = committed_at.replace(tzinfo=None)
                     else:
                         pipeline.committed_at = committed_at
-            if not pipeline.activated_at:
-                pipeline.activated_at = datetime.utcnow()
 
             await db.commit()
             await db.refresh(pipeline)

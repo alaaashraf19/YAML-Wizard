@@ -121,7 +121,7 @@ async def create_project(project: ProjectCreate, user_id: int, db: AsyncSession)
     except ValueError:
         raise HTTPException(
             status_code=400,
-            detail="Entered URL is invalid."
+            detail="Entered URL is invalid"
         )
     default_branch = parsed_branch
 
@@ -130,7 +130,7 @@ async def create_project(project: ProjectCreate, user_id: int, db: AsyncSession)
     github_repo_id = None
 
     if detected_platform not in ["github", "gitlab"]:
-        raise HTTPException(status_code=400, detail="Unsupported platform.")
+        raise HTTPException(status_code=400, detail="Unsupported platform")
 
     if detected_platform == "github":
         user_result = await db.execute(select(User).where(User.id == user_id))

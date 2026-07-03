@@ -16,7 +16,7 @@ class PipelineInfo(BaseModel):
     description: Optional[str] = None
     created_at: datetime
     updated_at: datetime
-    activated_at: Optional[datetime] = None
+    committed_at: Optional[datetime] = None
 
 
 class ChatMessage(BaseModel):
