@@ -13,7 +13,6 @@ import SideBar from "../components/Chatbot/SideBar";
 import Popup from "../components/Popup/Popup";
 import { ProjectSubInfo } from "../components/UserProfile/ProjectInfoTab";
 import CodeBlock from "../components/Chatbot/CodeBlock";
-import PipelineApproval from "../components/Chatbot/PipelineApproval";
 
 export interface Model {
     id?: string,
@@ -21,12 +20,15 @@ export interface Model {
     available?: boolean
 }
 
+type Status = "idle" | "saving" | "approved";
+
 function Chatbot() {
     const [prompt, setPrompt] = useState("");
     const [messages, setMessages] = useState<Message[] | []>([]);
     const [sessionId, setSessionId] = useState<number | null>(null);
     const [sessions, setSessions] = useState<Session[]>([]);
     const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+    const [status, setStatus] = useState<Status>("idle");
 
     const [models, setModels] = useState<Model[]>([]);
     const [selectedModel, setSelectedModel] = useState<Model | null>(models[0]);
@@ -297,7 +299,52 @@ function Chatbot() {
         return parts.length ? parts.join("\n\n") : content;
     };
 
-    const renderMessageContent = (content: string, role: Message["role"], msgIndex: number) => {
+    const handleApprove = async (code: string) => {
+        if (status === "saving") return;
+
+        if (!selectedProject) {
+            setErrorMessage("Connect a project first so this pipeline can be saved.");
+            return;
+        }
+
+        setStatus("saving");
+        try {
+            const res = await fetch(`${api_url}/pipelines/${selectedProject.id}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify({
+                    name: "generated-pipeline",
+                    description: "",
+                    branch: selectedProject.branch,
+                    content: code,
+                    is_generated_by_wizard: true,
+                    "is_active": false
+                }),
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                console.error(data.detail || data.detail.msg || "Failed to load profile");
+                return;
+            }
+
+            setStatus("approved");
+            setConfirmMessage(`Pipeline is saved to your project with name ${data.name}.`);
+
+        } catch (e) {
+            console.error("Approve pipeline failed:", e);
+            setStatus("idle");
+            setErrorMessage(e instanceof Error ? e.message : "Failed to save the pipeline. Please try again.");
+        }
+    };
+
+    const handlePublish = async () => {
+
+    };
+
+    const renderMessageContent = (content: string, role: Message["role"]) => {
         content = normalizeLegacyContent(content);
         const codeFenceRegex = /```(\w+)?\n?([\s\S]*?)```/g;
         const nodes: React.ReactNode[] = [];
@@ -309,7 +356,7 @@ function Chatbot() {
             if (match.index > lastIndex) {
                 const textChunk = content.slice(lastIndex, match.index);
                 if (textChunk.trim()) {
-                    nodes.push(<span key={key++}>{renderBold(textChunk)}</span>);
+                    nodes.push(<span className={styles.messageText} key={key++}>{renderBold(textChunk)}</span>);
                 }
             }
             const language = match[1];
@@ -318,19 +365,27 @@ function Chatbot() {
 
             if (isYamlPipeline) {
                 nodes.push(
-                    <PipelineApproval
-                        key={`${msgIndex}-${key++}`}
-                        code={code}
-                        language={language}
-                        projectId={selectedProject?.id ?? null}
-                        branch={selectedProject?.branch}
-                        apiUrl={api_url}
-                        setConfirmMessage={setConfirmMessage}
-                        setErrorMessage={setErrorMessage}
-                    />
+                    <div className={styles.wrapper}>
+                        <CodeBlock key={key++} language={language} code={code} />
+                        <div className={styles.actionsBar}>
+                            <button
+                                type="button"
+                                className={`${styles.actionBtn} ${styles.approveBtn}`}
+                                onClick={() => {
+                                    status === "approved" ? handlePublish() : handleApprove(code) 
+                                }}
+                                title={"Save this pipeline to your project"}
+                            >
+                                {status === "saving" ? "Saving..." : status === "approved" ? "Publish" : ""}
+                            </button>
+                            
+                        </div>
+                    </div>
                 );
             } else {
-                nodes.push(<CodeBlock key={key++} language={language} code={code} />);
+                nodes.push(
+                    <CodeBlock key={key++} language={language} code={code} />
+                );
             }
             lastIndex = codeFenceRegex.lastIndex;
         }
@@ -392,7 +447,7 @@ function Chatbot() {
                         <div key={i} className={styles.messagePack}>
                             <div className={`${styles.message} ${msg.role === "user" ?
                                 styles.userMessage : (isErrorMessage(msg.content)? styles.errorMessage : styles.botMessage)}`}>
-                                {renderMessageContent(msg.content, msg.role, i)}
+                                {renderMessageContent(msg.content, msg.role)}
                             </div>
                         </div>
                     ))}

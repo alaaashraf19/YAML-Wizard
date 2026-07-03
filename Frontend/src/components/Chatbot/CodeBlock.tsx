@@ -5,8 +5,6 @@ import styles from "./CodeBlock.module.css";
 type CodeBlockProps = {
     language?: string;
     code: string;
-    editable?: boolean;
-    onChangeCode?: (value: string) => void;
     compact?: boolean;
 };
 
@@ -25,7 +23,7 @@ const extensionMap: Record<string, string> = {
     rust: "rs", php: "php",
 };
 
-function CodeBlock({ language, code, editable = false, onChangeCode, compact = false }: CodeBlockProps) {
+function CodeBlock({ language, code, compact = false }: CodeBlockProps) {
     const [copied, setCopied] = useState(false);
     const [isLight, setIsLight] = useState(false);
 
@@ -65,18 +63,10 @@ function CodeBlock({ language, code, editable = false, onChangeCode, compact = f
                     </button>
                 </div>
             </div>
-            {editable ? (
-                <textarea
-                    className={`${styles.codeContent} ${styles.codeTextarea}`}
-                    value={code}
-                    spellCheck={false}
-                    onChange={(e) => onChangeCode?.(e.target.value)}
-                />
-            ) : (
-                <pre className={styles.codeContent}>
-                    <code>{code}</code>
-                </pre>
-            )}
+
+            <pre className={styles.codeContent}>
+                <code>{code}</code>
+            </pre>
 
             <div className={styles.codeFooter}>
                 <button className={styles.themeToggleBtn} onClick={() => setIsLight((prev) => !prev)}
