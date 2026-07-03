@@ -13,6 +13,7 @@ import SideBar from "../components/Chatbot/SideBar";
 import Popup from "../components/Popup/Popup";
 import { ProjectSubInfo } from "../components/UserProfile/ProjectInfoTab";
 import CodeBlock from "../components/Chatbot/CodeBlock";
+import PipelineApproval from "../components/Chatbot/PipelineApproval";
 
 export interface Model {
     id?: string,
@@ -263,7 +264,53 @@ function Chatbot() {
         return content.startsWith("⚠️");
     };
 
-    const renderMessageContent = (content: string) => {
+    // Undo Python's str()-style escaping (\n, \t, \', \\) so legacy payloads
+    // read like normal text instead of literal backslash-n sequences.
+    const unescapePythonString = (raw: string) => {
+        return raw
+            .replace(/\\n/g, "\n")
+            .replace(/\\t/g, "\t")
+            .replace(/\\"/g, "\"")
+            .replace(/\\'/g, "'")
+            .replace(/\\\\/g, "\\");
+    };
+
+    // Backwards-compat shim: older backend responses were produced by calling
+    // Python's str() on a list of segment dicts, e.g.
+    //   "[{'type': 'text', 'content': '...'}, {'type': 'code', 'language': 'yaml', 'content': '...'}]"
+    // instead of returning proper markdown. If we detect that shape, rebuild
+    // it into normal ```lang ... ``` markdown so renderMessageContent can
+    // handle it exactly like any other message. Anything that doesn't match
+    // this legacy pattern is returned untouched.
+    const normalizeLegacyContent = (content: string) => {
+        const trimmed = content.trim();
+        if (!/^\[\s*\{\s*'type':/.test(trimmed)) return content;
+
+        const segmentRegex =
+            /\{\s*'type':\s*'(\w+)'\s*(?:,\s*'language':\s*'([\w.+-]*)')?\s*,\s*'content':\s*'((?:\\.|[^'\\])*)'\s*\}/g;
+
+        const parts: string[] = [];
+        let match: RegExpExecArray | null;
+
+        while ((match = segmentRegex.exec(trimmed)) !== null) {
+            const [, type, language, rawText] = match;
+            const text = unescapePythonString(rawText);
+            parts.push(
+                type === "code" ? "```" + (language || "") + "\n" + text + "\n```" : text
+            );
+        }
+
+        // If nothing matched, don't risk mangling a legitimate message -
+        // fall back to the original content.
+        return parts.length ? parts.join("\n\n") : content;
+    };
+
+    // splits a message into plain-text chunks and ```lang ... ``` code chunks,
+    // rendering code chunks with the CodeBlock component. Assistant-generated
+    // YAML pipelines get an Approve/Edit action bar underneath so the user can
+    // review, tweak, and save the pipeline to their project's database.
+    const renderMessageContent = (content: string, role: Message["role"], msgIndex: number) => {
+        content = normalizeLegacyContent(content);
         const codeFenceRegex = /```(\w+)?\n?([\s\S]*?)```/g;
         const nodes: React.ReactNode[] = [];
         let lastIndex = 0;
@@ -279,7 +326,24 @@ function Chatbot() {
             }
             const language = match[1];
             const code = match[2].replace(/\n$/, "");
-            nodes.push(<CodeBlock key={key++} language={language} code={code} />);
+            const isYamlPipeline = role === "assistant" && !!language && ["yaml", "yml"].includes(language.toLowerCase());
+
+            if (isYamlPipeline) {
+                nodes.push(
+                    <PipelineApproval
+                        key={`${msgIndex}-${key++}`}
+                        code={code}
+                        language={language}
+                        projectId={selectedProject?.id ?? null}
+                        branch={selectedProject?.branch}
+                        apiUrl={api_url}
+                        setConfirmMessage={setConfirmMessage}
+                        setErrorMessage={setErrorMessage}
+                    />
+                );
+            } else {
+                nodes.push(<CodeBlock key={key++} language={language} code={code} />);
+            }
             lastIndex = codeFenceRegex.lastIndex;
         }
 
@@ -296,7 +360,10 @@ function Chatbot() {
     const renderBold = (text: string) => {
         // const withoutBulletMarkers = text.replace(/^[ \t]*[*-][ \t]+/gm, "");
         const withoutBulletMarkers = text.replace(/^([ \t]*)[*-][ \t]+/gm, "$1");
-        const parts = withoutBulletMarkers.split(/\*{1,2}(.*?)\*{1,2}/g);
+        // Strip markdown heading markers (#, ##, ### ...) so raw "### Title"
+        // text never leaks into the chat bubble - render headings as bold text.
+        const withoutHeadingMarkers = withoutBulletMarkers.replace(/^[ \t]*#{1,6}[ \t]+(.*)$/gm, "**$1**");
+        const parts = withoutHeadingMarkers.split(/\*{1,2}(.*?)\*{1,2}/g);
         return parts.map((part, i) =>
             i % 2 === 1 ? <strong key={i}>{part}</strong> : part
         );
@@ -339,7 +406,7 @@ function Chatbot() {
                         <div key={i} className={styles.messagePack}>
                             <div className={`${styles.message} ${msg.role === "user" ?
                                 styles.userMessage : (isErrorMessage(msg.content)? styles.errorMessage : styles.botMessage)}`}>
-                                {renderMessageContent(msg.content)}
+                                {renderMessageContent(msg.content, msg.role, i)}
                             </div>
                         </div>
                     ))}
