@@ -8,6 +8,9 @@ from database.db_engine import get_db
 from core.security import get_current_user
 from models.user_model import User
 from services.project_service import _resolve_token
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 router = APIRouter(prefix="/benchmark", tags=["Benchmark"])
 
@@ -18,9 +21,7 @@ async def benchmark(
     user_prompt: str = "Set up a complete CI/CD pipeline with linting, testing, and building",
     current_user:User = Depends(get_current_user) ,db: AsyncSession = Depends(get_db)
 ):
-    token, _ = await _resolve_token(current_user.id, "github", db)
     report = await run_benchmark(
-        token,
         model_name=model_name,
         user_prompt=user_prompt,
     )

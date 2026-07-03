@@ -11,6 +11,8 @@ from .comparator import ComparisonResult, compare_yaml
 from .scorer import ScoreBreakdown, score_yaml
 from schemas.benchmark_schema import BenchmarkContext
 from schemas.context_package import ContextPackage
+from agent.utils.context_resolver import ContextResolver, build_context_summary
+
 import os
 from dotenv import load_dotenv
 load_dotenv()
@@ -87,10 +89,10 @@ class BenchmarkReport:
 
 DEFAULT_BENCHMARK_REPOS: list[dict[str, str]] = [
     {"url": "https://github.com/alaaashraf19/YAML-Wizard", "platform": "github"},
-    # {"url": "https://github.com/psf/requests.git", "platform": "github"},
-    # {"url": "https://github.com/pallets/flask.git", "platform": "github"},
-    # {"url": "https://github.com/expressjs/express.git", "platform": "github"},
-    # {"url": "https://github.com/spring-projects/spring-petclinic.git", "platform": "github"},
+    {"url": "https://github.com/psf/requests.git", "platform": "github"},
+    {"url": "https://github.com/pallets/flask.git", "platform": "github"},
+    {"url": "https://github.com/expressjs/express.git", "platform": "github"},
+    {"url": "https://github.com/spring-projects/spring-petclinic.git", "platform": "github"},
 ]
 
 
@@ -112,10 +114,9 @@ def extract_platform(repo_url: str) -> str:
     return "unknown"
 
 async def evaluate_repo(
-    token: str,
     repo_url: str,
+    model_name: str,
     platform: str = "github",
-    model_name: str = "gemini-2.5-flash",
     user_prompt: str = "Set up a complete CI/CD pipeline with linting, testing, and building",
 ) -> EvalResult:
     """Evaluate YAML generation quality for a single repo."""
@@ -124,7 +125,7 @@ async def evaluate_repo(
         try:
             if platform == "github":
                 from agent.github_agent import run_github_agent
-                pkg = await run_in_threadpool(run_github_agent, repo_url=repo_url, github_token= token)
+                pkg = await run_in_threadpool(run_github_agent, repo_url=repo_url, github_token= os.getenv("GITHUB_ACCESS_TOKEN"))
             else:
                 from agent.gitlab_agent import run_gitlab_agent
                 pkg = await run_in_threadpool(run_gitlab_agent, repo_url=repo_url, gitlab_token= os.getenv("GITLAB_ACCESS_TOKEN"))
@@ -168,17 +169,37 @@ async def evaluate_repo(
             ),
             repo_context=hidden_context,
         )
+        context_summary = build_context_summary(hidden_context)
         # 4. Use the new ChatbotAgent to generate the YAML
         agent = ChatbotAgent(model=model_name)
-        # print("before invoke")
-        # print("full,", full_context)
-        # print(hidden_context)
-        generated_yaml = await agent.invoke(
+
+        generated_response = await agent.invoke(
             message=user_prompt,
-            session_id=0,                    # benchmark doesn't need real session
+            session_id=0,
             context=context_wrapper,
-            # db, gitlab_connection, etc. can stay None for benchmark
+            context_summary=context_summary,
         )
+
+        generated_yaml = ""
+
+        if isinstance(generated_response, list):
+            for segment in generated_response:
+                if (
+                    segment.get("type") == "code"
+                    and segment.get("language", "").lower() in {"yaml", "yml"}
+                ):
+                    generated_yaml = segment["content"]
+                    break
+
+            # Fallback: first code block if no yaml language specified
+            if not generated_yaml:
+                for segment in generated_response:
+                    if segment.get("type") == "code":
+                        generated_yaml = segment["content"]
+                        break
+        else:
+            generated_yaml = generated_response
+
         print("i am before score yaml")
         print(generated_yaml)
         # Score the generated YAML
@@ -211,9 +232,8 @@ async def evaluate_repo(
 
 
 async def run_benchmark(
-    token:str,
+    model_name: str,
     repos: list[dict[str, str]] | None = None,
-    model_name: str = "gemini-2.5-flash",
     user_prompt: str = "Set up a complete CI/CD pipeline with linting, testing, and building",
 ) -> BenchmarkReport:
     """Run evaluation across a set of benchmark repos."""
@@ -224,7 +244,6 @@ async def run_benchmark(
 
     for repo_info in repos:
         result = await evaluate_repo(
-            token,
             repo_url=repo_info["url"],
             platform=repo_info.get("platform", "github"),
             model_name=model_name,

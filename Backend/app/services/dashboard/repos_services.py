@@ -10,17 +10,28 @@ from models.user_model import User
 from models.repository_model import Repository, PipelineRun
 from services.dashboard.platform_collectors.gitlab_collector_services import GitLabCollector
 
+
 #this is for adding a repo in dashboard by pasting the url, if it's not added in our user profile aka projects field
 # will be saved in db, need to make it appear in user projects to fetch all projects from db and show them this included
 async def add_repo_service(body: RepoCreate, db, current_user):
     
-    full_name, detected_platform , _= _parse_repo_info(body.url)
+    try:
+        full_name, detected_platform, parsed_branch = _parse_repo_info(body.url)
+    except ValueError:
+        raise HTTPException(
+            status_code=400,
+            detail="Entered URL is invalid"
+        )
     platform = body.platform or detected_platform
     
     if platform not in ["github", "gitlab"]:
         raise HTTPException(status_code=400, detail="Unsupported platform. Only 'github' and 'gitlab' are supported.")
     if platform == "gitlab":
-        gitlab_project_id = await _get_gitlab_proj_id(full_name)
+        from services.project_service import _resolve_token
+        token, _ = await _resolve_token(user_id=current_user.id, platform=detected_platform, repo_url=body.url, db=db)
+        if not token:
+            raise HTTPException(status_code=401, detail="connect your gitlab account first ")
+        gitlab_project_id = await _get_gitlab_proj_id(full_name, token)
         
     existing = await db.execute(select(Repository).where(Repository.full_name == full_name))
     if existing.scalar_one_or_none():
