@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from models.user_model import User
 from models.repository_model import PipelineRun, JobTiming, TestRun
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.orm import selectinload
 from services.dashboard.repos_services import get_repo_or_404, get_run_or_404
 
@@ -66,6 +66,21 @@ async def get_latest_run(repo_id: int, db: AsyncSession = Depends(get_db), curre
         return None
     return run
 
+
+@router.get("/repos/{repo_id}/branches", response_model=list[str])
+async def get_repo_branches(repo_id: int, db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_user)):
+    
+    await get_repo_or_404(repo_id, db, current_user)
+    
+    result = await db.execute(
+        select(PipelineRun.branch)
+        .where(PipelineRun.repo_id == repo_id, PipelineRun.branch.isnot(None))
+        .distinct()
+        .order_by(PipelineRun.branch)
+    )
+    
+    branches = result.scalars().all()
+    return sorted(list(set(branches)))
 
 
 @router.get("/repos/{repo_id}/runs/{run_id}/jobs", response_model=list[JobTimingOut])

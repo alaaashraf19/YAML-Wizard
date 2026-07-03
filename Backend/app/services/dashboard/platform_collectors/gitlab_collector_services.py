@@ -219,8 +219,8 @@ class GitLabCollector(CICollector):
                     jobs_synced += 1
                 
                 runs_synced += 1
-                ctx.repo.last_synced_at = datetime.now(timezone.utc)
-                await db.commit()
+            ctx.repo.last_synced_at = datetime.now(timezone.utc)
+            await db.commit()
 
                     
         except Exception as e:
