@@ -105,54 +105,46 @@ def to_context_package(repo_context: RepoContext) -> ContextPackage:
 
 
 def build_context_summary(ctx: ContextPackage) -> str:
-    """
-    Builds a token-efficient summary of the repository context.
-    Prioritizes core stack info and truncates large blobs.
-    """
     lines = []
 
-    # 1. Core Stack - (High Priority, keep clear)
+    # 1. Core Stack
     lines.append(f"### CORE STACK")
-    lines.append(f"- Languages: {', '.join(ctx.languages) if ctx.languages else 'Unknown'}")
-    lines.append(f"- Frameworks: {', '.join(ctx.frameworks) if ctx.frameworks else 'None'}")
-    lines.append(f"- Build Tools: {', '.join(ctx.build_tools) if ctx.build_tools else 'None'}")
-    lines.append(f"- Default Branch: {ctx.default_branch}")
+    lines.append(f"- Languages: {', '.join(ctx.languages) or 'Unknown'}")
+    lines.append(f"- Frameworks: {', '.join(ctx.frameworks) or 'None'}")
+    lines.append(f"- Build Tools: {', '.join(ctx.build_tools) or 'None'}")
 
-    # 2. Commands & Env - (High Priority for YAML accuracy)
+    # 2. Commands (Critical for YAML)
     lines.append(f"\n### COMMANDS")
-    lines.append(f"- Build: {', '.join(ctx.build_commands) if ctx.build_commands else 'None'}")
-    lines.append(f"- Test: {', '.join(ctx.test_commands) if ctx.test_commands else 'None'}")
-    lines.append(f"- Env Vars Needed: {', '.join(ctx.env_vars) if ctx.env_vars else 'None'}")
-    
-    if ctx.services:
-        lines.append(f"- Required Services: {', '.join(ctx.services)}")
+    if ctx.build_commands: lines.append(f"- Build: {', '.join(ctx.build_commands)}")
+    if ctx.test_commands: lines.append(f"- Test: {', '.join(ctx.test_commands)}")
+    if ctx.env_vars: lines.append(f"- Env: {', '.join(ctx.env_vars)}")
 
-    # 3. Existing CI - (Medium Priority, heavily truncated)
+    # 3. Existing CI (Redundancy Check)
     if ctx.has_existing_ci and ctx.existing_ci_content:
-        # We only need the first 1000 chars to see the structure
-        truncated_ci = ctx.existing_ci_content[:1000].strip()
-        lines.append(f"\n### EXISTING CI (TRUNCATED)\n```yaml\n{truncated_ci}\n```")
+        # Only include if it's short; if it's long, the LLM will see it in active_pipeline_msg anyway
+        ci_snippet = ctx.existing_ci_content[:500].strip()
+        lines.append(f"\n### EXISTING CI SNIPPET\n```yaml\n{ci_snippet}\n```")
 
-    # 4. Directory Structure - (Aggressively truncated)
+    # 4. Directory Structure (Tightened)
     if ctx.directory_tree:
-        # The first 1000 chars usually cover the root and first-level folders
-        lines.append(f"\n### DIRECTORY STRUCTURE (ROOT)\n{ctx.directory_tree[:1000]}")
+        # 800 chars is usually plenty for the root structure
+        lines.append(f"\n### DIR TREE\n{ctx.directory_tree[:800]}")
 
-    # 5. Key Configuration Files - (The "Token Killer", now optimized)
+    # 5. Key Configuration Files (Aggressively cleaned)
     if ctx.key_files:
-        lines.append("\n### KEY FILE SNIPPETS")
-        # We only look at the first 5 files to prevent overflow
-        for i, (filename, content) in enumerate(ctx.key_files.items()):
-            if i >= 5: break # Limit number of files
+        lines.append("\n### CONFIG FILES")
+        count = 0
+        for filename, content in ctx.key_files.items():
+            if count >= 4: break # Limit to top 4 files
+            if not content or content == "[empty]": continue
             
-            if content and content != "[empty]":
-                # We skip lock files as they are huge and useless for the LLM
-                if any(ext in filename for ext in ["lock", "sum", "bin"]):
-                    continue
-                
-                # Take only the first 600 characters of each config file
-                # This is usually enough for package.json or requirements.txt
-                snippet = content[:600].strip().replace("\n", " ")
-                lines.append(f"- {filename}: {snippet}...")
+            # Skip massive or binary-adjacent files
+            if any(x in filename.lower() for x in ["lock", "sum", "license", "xlsx", "csv"]):
+                continue
+            
+            # Take only 400 chars and strip newlines to save vertical space/tokens
+            snippet = content[:400].replace("\n", " ").strip()
+            lines.append(f"- {filename}: {snippet}...")
+            count += 1
 
     return "\n".join(lines)
