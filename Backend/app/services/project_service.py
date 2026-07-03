@@ -116,7 +116,13 @@ async def create_project(project: ProjectCreate, user_id: int, db: AsyncSession)
     if result.scalar_one_or_none():
         raise HTTPException(status_code=409, detail="You have already added this repository.")
         
-    full_name, detected_platform, parsed_branch = _parse_repo_info(repo_url)
+    try:
+        full_name, detected_platform, parsed_branch = _parse_repo_info(repo_url)
+    except ValueError:
+        raise HTTPException(
+            status_code=400,
+            detail="Entered URL is invalid."
+        )
     default_branch = parsed_branch
 
     gitlab_project_id = None
