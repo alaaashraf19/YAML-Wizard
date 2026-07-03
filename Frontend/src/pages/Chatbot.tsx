@@ -14,6 +14,11 @@ import Popup from "../components/Popup/Popup";
 import { ProjectSubInfo } from "../components/UserProfile/ProjectInfoTab";
 import CodeBlock from "../components/Chatbot/CodeBlock";
 
+export interface Model {
+    id?: string,
+    label: string,
+    available?: boolean
+}
 
 function Chatbot() {
     const [prompt, setPrompt] = useState("");
@@ -21,6 +26,9 @@ function Chatbot() {
     const [sessionId, setSessionId] = useState<number | null>(null);
     const [sessions, setSessions] = useState<Session[]>([]);
     const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+
+    const [models, setModels] = useState<Model[]>([]);
+    const [selectedModel, setSelectedModel] = useState<Model | null>(models[0]);
 
     const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
     const [isShowInfo, setIsShowInfo] = useState<boolean>(false);
@@ -36,7 +44,7 @@ function Chatbot() {
     const infoRef = useRef<HTMLDivElement | null>(null);
     // const navigate = useNavigate();
     const api_url = import.meta.env.VITE_API_URL;
-
+    let chat_url: string = 'chatbot/chat';
 
     // Auto focus on textarea
     useEffect(() => {
@@ -85,7 +93,6 @@ function Chatbot() {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
 
-
     // Control Textarea Height
     const MAX_HEIGHT = 300;
     const resizeTextarea = () => {
@@ -114,6 +121,32 @@ function Chatbot() {
         return () => {
             window.removeEventListener("resize", resizeTextarea);
         };
+    }, []);
+
+    // get models
+    useEffect(()=> {
+        const fetchModels = async () => {
+            try {
+                const res = await fetch(`${api_url}/chatbot/models`, {
+                    credentials: "include",
+                    method: "GET",
+                    headers: {"Content-Type": "application/json"}
+                });
+
+                const data = await res.json();
+
+                if (!res.ok) {
+                    console.error(data.detail || data.detail.msg || "Failed to load models");
+                    return;
+                }
+                setModels(data.engines);
+
+            } catch (e) {
+                console.error("Failed to load models:", e);
+            }
+        }
+
+        fetchModels();
     }, []);
 
     // get selected project on change of session id
@@ -165,7 +198,7 @@ function Chatbot() {
 
         setIsLoading(true);
         try{
-            const res = await fetch(`${api_url}/chatbot/chat`, {
+            const res = await fetch(`${api_url}/${chat_url}`, {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
                 credentials: "include",
@@ -269,11 +302,35 @@ function Chatbot() {
         );
     };
 
+    // get saved model from sessionStorage
+    useEffect(() => {
+        if (models.length === 0)return;
+        console.log(typeof(models));
+
+        const savedModelLabel = sessionStorage.getItem("selected_model");
+        if (savedModelLabel) {
+            const foundModel:Model | undefined = models.find(model => model.label === savedModelLabel);
+            if (foundModel) {
+                setSelectedModel(foundModel);
+            }
+        } else {
+            setSelectedModel(models[0]);
+            sessionStorage.setItem("selected_model", models[0]?.label);
+        }
+    }, [models, selectedModel]);
+
+
+    const handleModelChange = (selectedModel: Model)=> {
+        setSelectedModel(selectedModel);
+        chat_url = selectedModel.label === "Main Model" ? 'chatbot/chat' : 'chatbot/generate'
+    };
+
 
     return(
         <div className={styles.window}>
             <SideBar sessionId={sessionId} setSessionId={setSessionId} sessions={sessions}
-                setSessions={setSessions} setMessages={setMessages} isLoading={isLoading}/>
+                setSessions={setSessions} setMessages={setMessages} isLoading={isLoading}
+                models={models} onModelChange={handleModelChange}/>
 
             <div className={styles.chatWindow}>
                 <div className={styles.chatMessages}>

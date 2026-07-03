@@ -111,7 +111,7 @@ function PipelineViewer({ jobs }:ViewerProps){
 
             setIsTestRunning(false);
             setResult(data);
-            setIsResultOpen(true);
+            // setIsResultOpen(true);
 
             setConfirmDryrun(`Dry-run testing of pipeline ${pipeline.name} has completed.\n
                 close this and see "Test Result" to see the results`);

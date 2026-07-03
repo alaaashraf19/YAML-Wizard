@@ -23,8 +23,8 @@ generation_service = FinetunedGenerationService()
 @router.get("/models", response_model=ModelsResponse)
 async def list_models(current_user: User = Depends(get_current_user)):
     return ModelsResponse(engines=[
-        ModelEngine(id="agent", label="Agent (Gemini)", available=True),
-        ModelEngine(id="finetuned", label="Finetuned (Qwen CI)", available=is_configured()),
+        ModelEngine(id="agent", label="Main Model", available=True),
+        ModelEngine(id="finetuned", label="WIZARD Model", available=is_configured()),
     ])
 
 
