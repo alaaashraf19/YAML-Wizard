@@ -38,7 +38,7 @@ function Chatbot() {
     const [confirmMessage, setConfirmMessage] = useState<string | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-    const [chatURL, setChatURL] = useState<string>();
+    const [chatURL, setChatURL] = useState<string>(`chatbot/chat`);
 
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
     const textareaRef = useRef<HTMLTextAreaElement | null>(null);
@@ -200,7 +200,7 @@ function Chatbot() {
 
         setIsLoading(true);
         try{
-            const res = await fetch(`${api_url}/${chatURL}`, {
+            const res = await fetch(`${api_url}/${chatURL ?? 'chatbot/chat'}`, {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
                 credentials: "include",

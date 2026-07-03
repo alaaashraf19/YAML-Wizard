@@ -23,7 +23,6 @@ from agent.chatbot_agent import ChatbotAgent
 from agent.utils.context_resolver import ContextResolver, build_context_summary
 from schemas.project_schema import ProjectResponse
 from agent.utils.yaml_cleaner import redact_secrets
-from langchain_groq import ChatGroq
 
 
 class ChatbotService:
