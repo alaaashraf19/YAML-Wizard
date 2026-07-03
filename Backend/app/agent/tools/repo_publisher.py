@@ -90,7 +90,7 @@ async def publish_to_repo_tool(yaml_content: str, repo_url: Optional[str] = None
         if gitlab_project_id is None:
             print("[publish_to_repo_tool] gitlab_project_id missing, resolving from repo URL")
             # Attempt to parse the GitLab project ID from the repo URL if not provided
-            gitlab_project_id = await _get_gitlab_proj_id(parsed_full_name)
+            gitlab_project_id = await _get_gitlab_proj_id(parsed_full_name, token)
             print("[publish_to_repo_tool] parsed gitlab_project_id:", gitlab_project_id)
         else:
             print("[publish_to_repo_tool] using provided gitlab_project_id:", gitlab_project_id)

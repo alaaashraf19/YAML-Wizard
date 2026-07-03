@@ -73,7 +73,7 @@ async def score_yaml(
     if data and isinstance(data, dict):
         _score_completeness(data, platform, repo_context, breakdown)
         _score_best_practices(data, platform, breakdown)
-        _score_project_fit(data, platform, repo_context, breakdown)
+        _score_project_fit(data, repo_context, breakdown)
 
     return breakdown
 

@@ -63,7 +63,7 @@ export default function RepoSidebar({
         <div className={styles.repoSidebarInputRow}>
           <input
             className={styles.repoSidebarInput}
-            placeholder="GitHub repo URL..."
+            placeholder="Enter repo URL..."
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
