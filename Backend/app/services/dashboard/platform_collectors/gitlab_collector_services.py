@@ -2,6 +2,8 @@ import os
 import base64
 import httpx
 from dotenv import load_dotenv
+
+from models import PipelineVersion
 from .ci_collector import CICollector
 from urllib.parse import quote
 from schemas.dashboard import CollectorsRepositoryDetail, CIArtifact, SyncStatus
@@ -219,8 +221,8 @@ class GitLabCollector(CICollector):
                     jobs_synced += 1
                 
                 runs_synced += 1
-                ctx.repo.last_synced_at = datetime.now(timezone.utc)
-                await db.commit()
+            ctx.repo.last_synced_at = datetime.now(timezone.utc)
+            await db.commit()
 
                     
         except Exception as e:
@@ -332,7 +334,8 @@ class GitLabCollector(CICollector):
             self,
             ctx: CollectorsRepositoryDetail,
             path: str = "",
-            ref: str = "main"
+            ref: str = "main",
+            recursive: bool = False,
     ) -> list[dict]:
         """Fetch repository files from GitLab API."""
         project_id = self._proj_id(ctx)
@@ -341,7 +344,7 @@ class GitLabCollector(CICollector):
         params = {
             "path": path,
             "ref": ref,
-            "recursive": "true" if path else "false",
+            "recursive": "true" if recursive else "false",
             "per_page": 100,
         }
 
@@ -411,7 +414,7 @@ class GitLabCollector(CICollector):
         yaml_files = []
 
         try:
-            all_files = await self.get_repository_files(ctx, ref=ref)
+            all_files = await self.get_repository_files(ctx, ref=ref,recursive=True)
 
             for file in all_files:
                 if file.get("type") == "blob":
@@ -513,40 +516,50 @@ class GitLabCollector(CICollector):
                     Pipeline.branch == yf.get("ref", ref)
                 )
             )
+            existing_version = await db.execute(
+                select(PipelineVersion).where(
+                    PipelineVersion.project_id == project.id,
+                    PipelineVersion.path == yf["path"],
+                    PipelineVersion.branch == yf.get("ref", ref),
+                    PipelineVersion.is_active == True
+                )
+            )
             pipeline = existing.scalar_one_or_none()
-
+            active_version = existing_version.scalar_one_or_none()
             if pipeline:
-                # Update if content changed or commit hash changed
-                if (pipeline.content != yf["content"]) or (
-                        commit_info and pipeline.commit_hash != commit_info.get("commit_hash")
-                ):
-                    pipeline.content = yf["content"]
-                    pipeline.updated_at = datetime.utcnow()
-                    pipeline.name = yf["name"]
-                    pipeline.description = self._extract_description(yf["content"])
-                    if commit_info:
-                        pipeline.commit_hash = commit_info.get("commit_hash")
-                        pipeline.commit_author = commit_info.get("commit_author")
-                        pipeline.commit_message = commit_info.get("commit_message")
-                        if commit_info and commit_info.get("committed_at"):
-                            committed_at = commit_info["committed_at"]
-                            if isinstance(committed_at, str):
-                                # Convert to naive UTC
-                                aware = datetime.fromisoformat(committed_at.replace("Z", "+00:00"))
-                                naive = aware.replace(tzinfo=None)
-                                pipeline.committed_at = naive
-                            else:
-                                # If it's already a datetime, ensure it's naive
-                                if committed_at.tzinfo is not None:
-                                    pipeline.committed_at = committed_at.replace(tzinfo=None)
+                if active_version:
+                    continue
+                else:
+                    # Update if content changed or commit hash changed
+                    if (pipeline.content != yf["content"]) or (
+                            commit_info and pipeline.commit_hash != commit_info.get("commit_hash")
+                    ):
+                        pipeline.content = yf["content"]
+                        pipeline.updated_at = datetime.utcnow()
+                        pipeline.name = yf["name"]
+                        pipeline.description = self._extract_description(yf["content"])
+                        if commit_info:
+                            pipeline.commit_hash = commit_info.get("commit_hash")
+                            pipeline.commit_author = commit_info.get("commit_author")
+                            pipeline.commit_message = commit_info.get("commit_message")
+                            if commit_info and commit_info.get("committed_at"):
+                                committed_at = commit_info["committed_at"]
+                                if isinstance(committed_at, str):
+                                    # Convert to naive UTC
+                                    aware = datetime.fromisoformat(committed_at.replace("Z", "+00:00"))
+                                    naive = aware.replace(tzinfo=None)
+                                    pipeline.committed_at = naive
                                 else:
-                                    pipeline.committed_at = committed_at
-                    pipeline.is_active = True
-                    if not pipeline.activated_at:
-                        pipeline.activated_at = datetime.utcnow()
-                    await db.commit()
-                    await db.refresh(pipeline)
-                    updated += 1
+                                    # If it's already a datetime, ensure it's naive
+                                    if committed_at.tzinfo is not None:
+                                        pipeline.committed_at = committed_at.replace(tzinfo=None)
+                                    else:
+                                        pipeline.committed_at = committed_at
+                        pipeline.is_active = True
+
+                        await db.commit()
+                        await db.refresh(pipeline)
+                        updated += 1
             else:
                 new_pipe = Pipeline(
                     name=yf["name"],
@@ -559,7 +572,6 @@ class GitLabCollector(CICollector):
                     project_id=project.id,
                     created_at=datetime.utcnow(),
                     updated_at=datetime.utcnow(),
-                    activated_at=datetime.utcnow(),
                 )
                 if commit_info:
                     new_pipe.commit_hash = commit_info.get("commit_hash")

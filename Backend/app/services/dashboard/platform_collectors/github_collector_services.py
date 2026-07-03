@@ -13,6 +13,7 @@ from ..recommendations_services.processor_services import compute_job_comparison
 from models.repository_model import JobTiming, PipelineRun, Repository
 from models.pipeline_model import Pipeline
 from models.project_model import Project
+from models.pipeline_version_model import PipelineVersion
 from ..test_parsers.ParserRegistry import ParserRegistry
 from .collectors_utils import parse_duration, _parse_ts, process_test_batch, extract_test_reports_from_zip
 import asyncio
@@ -32,12 +33,12 @@ class GitHubCollector(CICollector):
         if not self.token:
             raise ValueError("GitHub access token not provided. Set GITHUB_ACCESS_TOKEN in environment variables.")
         
-        auth_prefix = "Bearer" if self.token.startswith("github_pat_") else "token"
         self.headers = {
-            "Authorization": f"{auth_prefix} {self.token}",
-            "Accept": "application/vnd.github.v3+json",
+            "Authorization": f"Bearer {self.token}",
+            "Accept": "application/vnd.github+json",
             "X-GitHub-Api-Version": "2022-11-28",
         }
+
         self._client = httpx.AsyncClient(headers=self.headers, timeout=30.0)
 
 
@@ -203,8 +204,8 @@ class GitHubCollector(CICollector):
                     jobs_synced += 1
                 
                 runs_synced += 1
-                ctx.repo.last_synced_at = datetime.now(timezone.utc)
-                await db.commit()
+            ctx.repo.last_synced_at = datetime.now(timezone.utc)
+            await db.commit()
 
                     
         except Exception as e:
@@ -372,7 +373,7 @@ class GitHubCollector(CICollector):
             return None
 
         except Exception as e:
-            print(f"[GitHubCollector] Error fetching file {file_path}: {e}")
+            # print(f"[GitHubCollector] Error fetching file {file_path}: {e}")
             return None
 
     async def find_yaml_files(
@@ -384,6 +385,8 @@ class GitHubCollector(CICollector):
 
         paths_to_check = [
             ".github/workflows",
+            ".github/actions",
+            ".github/ci",
             ".github",
         ]
 
@@ -416,7 +419,7 @@ class GitHubCollector(CICollector):
                                         "branch": ctx.repo.default_branch or "main",
                                     })
             except Exception as e:
-                print(f"[GitHubCollector] Error finding YAML files in {path}: {e}")
+                # print(f"[GitHubCollector] Error finding YAML files in {path}: {e}")
                 continue
 
         return yaml_files
@@ -480,39 +483,49 @@ class GitHubCollector(CICollector):
                     Pipeline.branch == branch
                 )
             )
+            existing_version = await db.execute(
+                select(PipelineVersion).where(
+                    PipelineVersion.project_id == project.id,
+                    PipelineVersion.path == yf["path"],
+                    PipelineVersion.branch == branch,
+                    PipelineVersion.is_active == True
+                )
+            )
             pipeline = existing.scalar_one_or_none()
-
+            active_version = existing_version.scalar_one_or_none()
             if pipeline:
-                # update if content changed or commit hash changed
-                if (pipeline.content != yf["content"]) or (
-                        commit_info and pipeline.commit_hash != commit_info.get("commit_hash")):
-                    pipeline.content = yf["content"]
-                    pipeline.updated_at = datetime.utcnow()
-                    pipeline.name = yf["name"]
-                    pipeline.description = self._extract_description(yf["content"])
-                    if commit_info:
-                        pipeline.commit_hash = commit_info.get("commit_hash")
-                        pipeline.commit_author = commit_info.get("commit_author")
-                        pipeline.commit_message = commit_info.get("commit_message")
-                        if commit_info and commit_info.get("committed_at"):
-                            committed_at = commit_info["committed_at"]
-                            if isinstance(committed_at, str):
-                                # Convert to naive UTC
-                                aware = datetime.fromisoformat(committed_at.replace("Z", "+00:00"))
-                                naive = aware.replace(tzinfo=None)
-                                pipeline.committed_at = naive
-                            else:
-                                # If it's already a datetime, ensure it's naive
-                                if committed_at.tzinfo is not None:
-                                    pipeline.committed_at = committed_at.replace(tzinfo=None)
+                if active_version:
+                    continue
+                else:
+                    # update if content changed or commit hash changed
+                    if (pipeline.content != yf["content"]) or (
+                            commit_info and pipeline.commit_hash != commit_info.get("commit_hash")):
+                        pipeline.content = yf["content"]
+                        pipeline.updated_at = datetime.utcnow()
+                        pipeline.name = yf["name"]
+                        pipeline.description = self._extract_description(yf["content"])
+                        if commit_info:
+                            pipeline.commit_hash = commit_info.get("commit_hash")
+                            pipeline.commit_author = commit_info.get("commit_author")
+                            pipeline.commit_message = commit_info.get("commit_message")
+                            if commit_info and commit_info.get("committed_at"):
+                                committed_at = commit_info["committed_at"]
+                                if isinstance(committed_at, str):
+                                    # Convert to naive UTC
+                                    aware = datetime.fromisoformat(committed_at.replace("Z", "+00:00"))
+                                    naive = aware.replace(tzinfo=None)
+                                    pipeline.committed_at = naive
                                 else:
-                                    pipeline.committed_at = committed_at
-                    pipeline.is_active = True
-                    if not pipeline.activated_at:
-                        pipeline.activated_at = datetime.utcnow()
-                    await db.commit()
-                    await db.refresh(pipeline)
-                    updated += 1
+                                    # If it's already a datetime, ensure it's naive
+                                    if committed_at.tzinfo is not None:
+                                        pipeline.committed_at = committed_at.replace(tzinfo=None)
+                                    else:
+                                        pipeline.committed_at = committed_at
+                        pipeline.is_active = True
+
+                        await db.commit()
+                        await db.refresh(pipeline)
+                        updated += 1
             else:
                 new_pipe = Pipeline(
                     name=yf["name"],
@@ -525,7 +538,6 @@ class GitHubCollector(CICollector):
                     project_id=project.id,
                     created_at=datetime.utcnow(),
                     updated_at=datetime.utcnow(),
-                    activated_at=datetime.utcnow(),
                 )
                 if commit_info:
                     new_pipe.commit_hash = commit_info.get("commit_hash")
@@ -618,5 +630,5 @@ class GitHubCollector(CICollector):
             return result
 
         except Exception as e:
-            print(f"[GitHubCollector] Error fetching file with commit info {file_path}: {e}")
+            # print(f"[GitHubCollector] Error fetching file with commit info {file_path}: {e}")
             return None

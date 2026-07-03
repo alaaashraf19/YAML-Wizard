@@ -18,7 +18,7 @@ export default function ErrorPage() {
 
                 <div className={styles.actions}>
                     <button
-                        className={gStyles.gButton}
+                        className={`${styles.secondaryBtn} ${gStyles.gButton}`}
                         onClick={() => window.history.back()}
                     >
                         Go Back

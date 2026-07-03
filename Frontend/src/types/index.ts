@@ -142,16 +142,17 @@ export interface Project {
 
 export interface Pipeline {
     id: number;
+    pipeline_id?: number;
     name: string;
     commit_author: string;
-    commit_hash: string;
+    commit_hash?: string;
     branch: string;
     path: string;
     content: string;
     is_active: boolean;
     created_at: Date;
     updated_at: Date;
-    activated_at: Date;
+    commited_at: Date;
     is_generated_by_wizard: boolean;
 }
 
@@ -161,4 +162,21 @@ export interface Job {
     stage?: string | null;
     needs?: string[];
     content: string;
+}
+
+export interface JobReview {
+    pipeline_id: number;
+    platform: string;
+    jobs: Job[];
+    content: string;
+    valid: boolean;
+    errors: string[];
+    warnings: string[];
+    ai_warnings: string[];
+    ai_review: {
+        available: boolean,
+        model: string,
+        error: string
+    }
+    commited: boolean;
 }

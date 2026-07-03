@@ -2,7 +2,9 @@ import gStyles from "../../global.module.css"
 import styles from "./SideBar.module.css";
 import logo from "../../assets/yaml_wizard_logo.png";
 import { useAuth } from '../../Context/AuthContext';
+import ModelSwitch from "./ModelSwitch";
 import type { Session, Message } from "../../types";
+import type { Model } from "./../../pages/Chatbot";
 
 import { useState, useEffect, useRef, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -23,10 +25,21 @@ type sideBar_props = {
     sessions: Session[],
     setSessions: React.Dispatch<React.SetStateAction<Session[] | []>>,
     setMessages: React.Dispatch<React.SetStateAction<Message[] | []>>,
-    isLoading: boolean
+    isLoading: boolean,
+    models: Model[],
+    onModelChange: (model: Model) => void
 }
 
-function SideBar({sessionId, setSessionId, sessions, setSessions, setMessages, isLoading}: sideBar_props) {
+function SideBar({
+    sessionId,
+    setSessionId,
+    sessions,
+    setSessions,
+    setMessages,
+    isLoading,
+    models,
+    onModelChange,
+}: sideBar_props) {
     const [askDelete, setAskDelete] = useState<string | null>("");
     const [warningMessage, setWarningMessage] = useState<string | null>("");
     const [sessionToDelete, setSessionToDelete] = useState<number | null>(null);
@@ -239,6 +252,13 @@ function SideBar({sessionId, setSessionId, sessions, setSessions, setMessages, i
                 ))}
             </div>
             <p className={styles.sessionEnd}/>
+
+            <div className={styles.modelSwitchWrapper}>
+                <ModelSwitch 
+                    models={models} 
+                    onModelChange={onModelChange}
+                />
+            </div>
 
             <div className={styles.bottomContainer}>
                 {!loading && (

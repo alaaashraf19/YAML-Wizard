@@ -24,8 +24,10 @@ class Pipeline(Base):
 
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow())
     updated_at = Column(DateTime, nullable=False, default=datetime.utcnow(), onupdate=datetime.utcnow())
-    activated_at = Column(DateTime, nullable=True)
 
     project_id = Column(Integer, ForeignKey('projects.id'), nullable=False)
     project = relationship("Project", back_populates="pipelines", foreign_keys= [project_id])
     chat_session = relationship("ChatSession", back_populates="pipeline", uselist= False, cascade="all, delete-orphan")
+    versions = relationship("PipelineVersion", back_populates="pipeline",
+                            cascade="all, delete-orphan", order_by="PipelineVersion.id",
+                            foreign_keys="PipelineVersion.pipeline_id")

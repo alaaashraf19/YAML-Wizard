@@ -5,8 +5,8 @@ from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode, tools_condition
 
 from langchain_google_genai import ChatGoogleGenerativeAI
-# from langchain_openai import ChatOpenAI 
-from langchain_groq import ChatGroq
+from langchain_openai import ChatOpenAI 
+# from langchain_groq import ChatGroq
 
 from langchain_core.messages import HumanMessage, AIMessage, SystemMessage, BaseMessage, ToolMessage
 from agent.tools import TOOLS
@@ -25,7 +25,6 @@ class AgentState(TypedDict):
     context: Optional[Any] # full ContextResolverResponse
     context_summary: Optional[str]
     active_pipeline_msg: Optional[str]
-    rag_examples: Optional[str]
 
 
 class ChatbotAgent:
@@ -84,12 +83,19 @@ class ChatbotAgent:
         
         # Inject context once as a system message (only on first turn)
         current_summary = state.get("context_summary")
+        rag_content = None
+
         if history and isinstance(history[-1], ToolMessage):
+            # Check if the tool that just ran was the retrieval tool
+            # (Assuming your tool is named 'retrieve_examples_tool')
+            if history[-1].name == "retrieve_examples_tool":
+                rag_content = history[-1].content
+            
+            # Also update summary if the repo context tool ran
             if "REPO_CONTEXT_SUMMARY:" in history[-1].content:
-                # Extract the fresh summary from the tool output
                 current_summary = history[-1].content.split("REPO_CONTEXT_SUMMARY:\n")[-1]
 
-        
+
         messages_to_send = [SystemMessage(content=self.system_prompt)]
         
         if current_summary:
@@ -98,13 +104,14 @@ class ChatbotAgent:
         if state.get("active_pipeline_msg"):
             messages_to_send.append(SystemMessage(content=state["active_pipeline_msg"]))
 
-        if state.get("rag_examples"):
-            rag_msg = f"### REFERENCE EXAMPLES (Use these for inspiration):\n{state['rag_examples']}"
-            messages_to_send.append(SystemMessage(content=rag_msg))
-            
+        if rag_content:
+            messages_to_send.append(SystemMessage(content=f"### REFERENCE EXAMPLES:\n{rag_content}"))
+
+
         clean_history = [m for m in history if not isinstance(m, SystemMessage)]
-        if len(clean_history) > 10:
-            clean_history = clean_history[-10:]
+        if len(clean_history) > 6:
+            clean_history = clean_history[-6:]
+            
         messages_to_send.extend(clean_history)
         
         
@@ -121,18 +128,15 @@ class ChatbotAgent:
         print(f"Content: {response.content}")
         print(f"Tool Calls: {response.tool_calls}")
         print("================================================\n")
-        print("[ChatbotAgent.call_llm] response type:", type(response))
         return {
             "messages": [response],
             "context_summary": state.get("context_summary"),
             "active_pipeline_msg": state.get("active_pipeline_msg"),
-            "rag_examples": None,  # Reset RAG examples after each LLM call
         }
 
     # converts {"role": "user","content": "Hi"} to langcain message format => HumanMessage(content="Hi")
     @staticmethod
     def to_lc_messages(message: str, chat_history: List[Dict[str, str]] = None) -> List[BaseMessage]:
-        print("[ChatbotAgent.to_lc_messages] called")
         if chat_history is None:
             chat_history = []
 
@@ -148,7 +152,6 @@ class ChatbotAgent:
     
 
     def parse_full_response(self, content: str):
-        print("[ChatbotAgent.parse_full_response] called")
         
         if isinstance(content, list):
             # Extract text from list of blocks (common in LangChain/Multi-modal)
@@ -196,7 +199,6 @@ class ChatbotAgent:
                      gitlab_connection: Optional[Any] = None, user_id: Optional[int] = None, project_id: Optional[int] = None,
                      pipeline_id : Optional[int] = None ,gitlab_project_id: Optional[Any] = None) -> str:
         lc_messages = self.to_lc_messages(message, chat_history)
-        print("after lc")
         
         #langchain uses the db (the active session), gitlab_connection and gitlab_project_id in the validation tool
         #since it sends the yaml and determines the platform, it can't determine the connection token and the llm can't produce them
@@ -214,7 +216,6 @@ class ChatbotAgent:
                     "context_summary" : context_summary # str for LLM + tools
                    }
                 }
-        print("[ChatbotAgent.invoke] config:", config)
         active_pipeline_msg = ""
         if pipeline_id and db:
             result = await db.execute(select(Pipeline).where(Pipeline.id == pipeline_id))
@@ -227,10 +228,8 @@ class ChatbotAgent:
                     f"This is the code the user is looking at on their screen. "
                     f"Ignore other YAML files in the repo if they conflict with this one."
                 )
-                print("[ChatbotAgent.invoke] active_pipeline_msg:", active_pipeline_msg)
 
                 # lc_messages = [SystemMessage(content=active_pipeline_msg)] + lc_messages
-        print(lc_messages)
         initial_state = {
         "messages": lc_messages,
         "context": context,
@@ -243,5 +242,4 @@ class ChatbotAgent:
         # parsed_data = self.extract_pipeline_data(last_message.content)
         # return json.dumps(parsed_data) 
         segments = self.parse_full_response(last_message.content)
-        print("[ChatbotAgent.invoke] Parsed segments:", segments)
         return segments #returns a list of dicts

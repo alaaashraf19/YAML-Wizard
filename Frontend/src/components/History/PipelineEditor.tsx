@@ -3,13 +3,13 @@ import styles from './Pipeline.module.css'
 
 import ChatbotBubble from "./ChatbotBubble";
 import SortableJob from './SortableJob';
-import type { Job } from "../../types";
+import type { Job, JobReview } from "../../types";
 import { useEffect, useRef, useState, useCallback } from "react";
 
 import { FaCircleCheck } from "react-icons/fa6";
 import { IoClose } from "react-icons/io5";
-import { MdBrightness6 } from "react-icons/md";
-import { MdBrightness2 } from "react-icons/md";
+import { MdBrightness6, MdBrightness2 } from "react-icons/md";
+import { MdFactCheck } from "react-icons/md";
 
 import { DndContext, type DragEndEvent } from "@dnd-kit/core";
 import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
@@ -18,6 +18,7 @@ import { useHistoryStore } from "../../pages/History";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import Popup from "../Popup/Popup";
+import PipelineReview from "./PipelineReview";
 
 
 type EditorProps = {
@@ -49,11 +50,16 @@ type HistoryState = {
 };
 
 type EditorStore = {
+    pipelineId: number | null,
+
     jobs: Job[],
     setJobs: (jobs: Job[]) => void,
     
     history: HistoryState,
     setHistory: (history: HistoryState) => void,
+
+    review: JobReview | null,
+    setReview: (review: JobReview | null) => void,
 
     originalJobs: Job[],
     setOriginalJobs: (jobs: Job[]) => void,
@@ -61,18 +67,21 @@ type EditorStore = {
     hasChanges: boolean;
     setHasChanges: (hasChanges: boolean) => void,
 
-    initializeEditor: (jobs: Job[]) => void;
-
-    resetEditor: () => void;
-
-    saveChanges: (onSave: (jobs: Job[]) => void) => void;
+    resetEditorState: (newJobs: Job[], pipelineId: number | null) => void
 }
 
-const useEditorStore = create<EditorStore>()(
+export const useEditorStore = create<EditorStore>()(
     persist(
-        (set, get) => ({
+        (set) => ({
+            pipelineId: null,
             jobs: [],
             setJobs: (jobs) => set({ jobs }),
+            
+            history: { snapshots: [], index: 0 },
+            setHistory: (history) => set({ history }),
+
+            review: null,
+            setReview: (review) => set({review}),
 
             originalJobs: [],
             setOriginalJobs: (jobs) => set({ originalJobs: jobs }),
@@ -80,139 +89,123 @@ const useEditorStore = create<EditorStore>()(
             hasChanges: false,
             setHasChanges: (hasChanges) => set({ hasChanges }),
 
-            history: { snapshots: [], index: 0 },
-            setHistory: (history) => set({ history }),
-
-            initializeEditor: (jobs: Job[]) => {
-                const currentHistory = get().history;
-                
-                if (currentHistory.snapshots.length > 0) {
-                    const persistedJobs = currentHistory.snapshots[currentHistory.index]?.jobs;                    
-                    if (persistedJobs && JSON.stringify(persistedJobs) === JSON.stringify(jobs)) {
-                        set({
-                            jobs: structuredClone(persistedJobs),
-                            originalJobs: structuredClone(jobs),
-                        });
-                        return;
-                    }
-                }
-                
+            resetEditorState: (newJobs: Job[], pipelineId: number | null) => {
                 const initialSnapshot: HistoryEntry = {
-                    jobs: structuredClone(jobs),
+                    jobs: structuredClone(newJobs),
                     type: 'structural'
                 };
                 
                 set({
-                    jobs: structuredClone(jobs),
-                    originalJobs: structuredClone(jobs),
+                    pipelineId,
+                    jobs: structuredClone(newJobs),
+                    originalJobs: structuredClone(newJobs),
                     history: {
                         snapshots: [initialSnapshot],
                         index: 0,
                     },
                     hasChanges: false,
+                    review: null,
                 });
             },
 
-            resetEditor: () => {
-                const originalJobs = get().originalJobs;
-                if (originalJobs.length === 0) return;
-                
-                const initialSnapshot: HistoryEntry = {
-                    jobs: structuredClone(originalJobs),
-                    type: 'structural'
-                };
-                
-                set({
-                    jobs: structuredClone(originalJobs),
-                    history: {
-                        snapshots: [initialSnapshot],
-                        index: 0,
-                    },
-                    hasChanges: false,
-                });
-                sessionStorage.removeItem('editor_store');
-            },
-
-            saveChanges: (onSave: (jobs: Job[]) => void) => {
-                const currentJobs = get().jobs;
-                onSave(currentJobs);
-                set({ 
-                    hasChanges: false,
-                    originalJobs: structuredClone(currentJobs)
-                });
-            },
         }),
         {
             name: "editor_store",
             storage: createJSONStorage(() => sessionStorage),
-            // only persist history
-            partialize: (state) => ({history: state.history,}),
+            partialize: (state) => ({
+                pipelineId: state.pipelineId,
+                history: state.history,
+                jobs: state.jobs,
+                hasChanges: state.hasChanges,
+                review: state.review,
+            }),
         }
     )
 );
 
 function PipelineEditor({ initJobs, isDiscardChanges, setDiscardChanges, setInitJobs }: EditorProps) {
     const MAX_SNAPSHOTS = 50;
-    const {isDark, setIsDark, setIsEdit} = useHistoryStore();
+    const {isDark, setIsDark, setIsEdit, project, pipeline, setPipeline} = useHistoryStore();
 
-    const {jobs, setJobs, history, setHistory, setHasChanges,
-        resetEditor, initializeEditor} = useEditorStore();
+    const {jobs, setJobs, history, setHistory, hasChanges, setHasChanges,
+        resetEditorState, review, setReview, pipelineId} = useEditorStore();
 
-    const [isChatOpen, setIsChatOpen] = useState(false);
+    const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
+    const [isReviewOpen, setIsReviewOpen] = useState<boolean>(false);
+    const [isReviewing, setIsReviewing] = useState<boolean>(false);
+
     const [askDiscard, setAskDiscard] = useState<string | null>(null);
     const [warningDiscard, setWarningDiscard] = useState<string | null>(null);
+    const [askSubmit, setAskSubmit] = useState<string | null>(null);
     const [confirmSubmit, setConfirmSubmit] = useState<string | null>(null);
+    const [warningSubmit, setWarningSubmit] = useState<string | null>(null);
     const [errorSubmit, setErrorSubmit] = useState<string | null>(null);
 
-    const isInitialized = useRef(false);
-    const prevInitJobsRef = useRef<Job[]>([]);
     const jobsEndRef = useRef<HTMLDivElement | null>(null);
     const popupRef = useRef<HTMLDivElement>(null);
 
-    // Handle discard
-    const handleNewEditor = () => {
-        resetEditor();
-        setIsEdit(false);
-    };
-    useEffect(()=>{
-        if(isDiscardChanges){
-            handleNewEditor();
-            setDiscardChanges(false);
-        }
-    }, [isDiscardChanges]);
+    const api_url = import.meta.env.VITE_API_URL;
 
-    // initialize editor only if there is no history
+    const isRestoringFromHistory = useRef(false);
+    const isUndoRedoInProgress = useRef(false);
+    const currentPipelineIdRef = useRef<number | null>(null);
+    const originalJobsRef = useRef<Job[]>([]);
+
+    // Update originalJobsRef when initJobs changes
     useEffect(() => {
-        if (initJobs.length === 0) return;
-        if (isInitialized.current) return;
-        
-        const hasPersistedHistory = history.snapshots.length > 0;
-        
-        if (hasPersistedHistory) {
-            const persistedJobs = history.snapshots[history.index]?.jobs;
-            if (persistedJobs) {
-                setJobs(structuredClone(persistedJobs));
-                isInitialized.current = true;
-                prevInitJobsRef.current = structuredClone(initJobs);
-                return;
+        if (initJobs.length > 0) {
+            originalJobsRef.current = structuredClone(initJobs);
+            console.log("Initialized original jobs");
+        }
+    }, [initJobs]);
+
+    // handle pipeline changes with first load support
+    useEffect(() => {
+        const currentPipelineId = pipeline?.id || null;
+        if (!pipeline || initJobs.length === 0) {
+            if (currentPipelineIdRef.current !== null) {
+                console.log("No pipeline selected or jobs empty. Closing editor.");
+                currentPipelineIdRef.current = null;
+                setIsEdit(false);
+            }
+            return;
+        }
+
+        if (pipelineId !== currentPipelineId) {
+            console.log(`Pipeline changed from ${pipelineId} to ${currentPipelineId}. Resetting state.`);
+            
+            originalJobsRef.current = structuredClone(initJobs);
+            currentPipelineIdRef.current = currentPipelineId;
+            
+            resetEditorState(initJobs, currentPipelineId);
+        } else {
+            currentPipelineIdRef.current = currentPipelineId;
+            if (originalJobsRef.current.length === 0) {
+                originalJobsRef.current = structuredClone(initJobs);
             }
         }
         
-        initializeEditor(initJobs);
-        isInitialized.current = true;
-        prevInitJobsRef.current = structuredClone(initJobs);
-    }, [initJobs, initializeEditor, history.snapshots, history.index, setJobs]);
-    
-    // ref instead of state to avoid re-renders
-    const isRestoringFromHistory = useRef(false);
-    const isUndoRedoInProgress = useRef(false);
-        
-    const jobIdCounter = useRef(0);
-    const generateJobId = useCallback(() => {
-        jobIdCounter.current += 1;
-        return `job_${Date.now()}_${jobIdCounter.current}`;
-    }, []);
+    }, [initJobs, pipeline, pipelineId, resetEditorState, setIsEdit]);
 
+    //Handle discard changes
+    useEffect(() => {
+        if (isDiscardChanges) {
+            console.log("Discarding changes - resetting to original jobs");
+            
+            const originalJobs = originalJobsRef.current;
+            const currentPipelineId = pipeline?.id || null;
+            
+            if (originalJobs.length > 0) {
+                resetEditorState(originalJobs, currentPipelineId);
+                setInitJobs(originalJobs);
+            }
+            
+            setIsEdit(false);
+            setDiscardChanges(false);
+            setReview(null);
+        }
+    }, [isDiscardChanges, resetEditorState, setIsEdit, setDiscardChanges, setReview, setInitJobs, pipeline?.id]);
+    
     const getStorageSize = () => {
         let total = 0;
         for (let key in sessionStorage) {
@@ -246,14 +239,12 @@ function PipelineEditor({ initJobs, isDiscardChanges, setDiscardChanges, setInit
         } else {
             if (getStorageSize() > 4.5) {
                 console.warn('Session storage approaching limit');
-                snapshots = snapshots.slice(-30); // Keep only last 30
+                snapshots = snapshots.slice(-30);
             }
             setHistory({ snapshots, index: snapshots.length - 1 });
         }
         
-        if (type !== 'text') {
-            setHasChanges(true);
-        }
+        setHasChanges(true);
     }, [history, setHistory, setHasChanges]);
 
     const saveStructuralChange = useCallback((newJobs: Job[]) => {
@@ -272,10 +263,9 @@ function PipelineEditor({ initJobs, isDiscardChanges, setDiscardChanges, setInit
     }, [saveHistory, setJobs]);
 
     const updateJobContent = useCallback((jobIndex: number, content: string) => {
-        // Skip saving if we're restoring from history
         if (isRestoringFromHistory.current) return;
         
-        const newJobs = [...jobs];
+        const newJobs = structuredClone(jobs);
         newJobs[jobIndex] = { ...newJobs[jobIndex], content };
         saveTextChange(newJobs, jobIndex, content);
     }, [jobs, saveTextChange]);
@@ -291,7 +281,6 @@ function PipelineEditor({ initJobs, isDiscardChanges, setDiscardChanges, setInit
         isUndoRedoInProgress.current = true;
         isRestoringFromHistory.current = true;
         
-        // handle tab undo
         if (currentEntry.type === 'tab' && currentEntry.tabInfo) {
             const textarea = document.querySelector(
                 `textarea[data-job-index="${currentEntry.tabInfo.jobIndex}"]`
@@ -328,7 +317,6 @@ function PipelineEditor({ initJobs, isDiscardChanges, setDiscardChanges, setInit
         isUndoRedoInProgress.current = true;
         isRestoringFromHistory.current = true;
         
-        // handle tab redo
         if (nextEntry.type === 'tab' && nextEntry.tabInfo) {
             const textarea = document.querySelector(
                 `textarea[data-job-index="${nextEntry.tabInfo.jobIndex}"]`
@@ -355,7 +343,6 @@ function PipelineEditor({ initJobs, isDiscardChanges, setDiscardChanges, setInit
         }, 50);
     }, [history, setJobs, setHistory]);
 
-    // Tab key handler
     const handleTabKeyDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>, jobIndex: number) => {
         if (e.key === "Tab") {
             e.preventDefault();
@@ -367,7 +354,7 @@ function PipelineEditor({ initJobs, isDiscardChanges, setDiscardChanges, setInit
             const newValue = value.slice(0, selectionStart) + tab + value.slice(selectionEnd);
             const textAfter = newValue;
             
-            const newJobs = [...jobs];
+            const newJobs = structuredClone(jobs);
             newJobs[jobIndex] = { ...newJobs[jobIndex], content: newValue };
             
             saveTabChange(newJobs, jobIndex, selectionStart, selectionEnd, textBefore, textAfter);
@@ -378,7 +365,6 @@ function PipelineEditor({ initJobs, isDiscardChanges, setDiscardChanges, setInit
         }
     }, [jobs, saveTabChange]);
 
-    // Keyboard shortcuts handler
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if (isUndoRedoInProgress.current) return;
@@ -401,7 +387,6 @@ function PipelineEditor({ initJobs, isDiscardChanges, setDiscardChanges, setInit
         return () => window.removeEventListener("keydown", handleKeyDown);
     }, [undo, redo]);
 
-    // Job operation functions
     const moveJob = useCallback((index: number, direction: -1 | 1) => {
         const newIndex = index + direction;
         if (newIndex < 0 || newIndex >= jobs.length) return;
@@ -414,11 +399,11 @@ function PipelineEditor({ initJobs, isDiscardChanges, setDiscardChanges, setInit
 
     const addJob = useCallback(() => {
         const newJobs = [...jobs, {
-            id: generateJobId(),
+            id: "new_job",
             content: "new_job:\n  stage:\n  script:"
         }];
         saveStructuralChange(newJobs);
-    }, [jobs, generateJobId, saveStructuralChange]);
+    }, [jobs, saveStructuralChange]);
 
     const deleteJob = useCallback((jobIndex: number) => {
         if (jobs.length === 1) return;
@@ -438,6 +423,74 @@ function PipelineEditor({ initJobs, isDiscardChanges, setDiscardChanges, setInit
         saveStructuralChange(newJobs);
     }, [jobs, saveStructuralChange]);
 
+    const reviewJobs = async ()=> {
+        if(!project || !pipeline)return;
+        setIsReviewing(true);
+        try {
+            const res = await fetch(`${api_url}/projects/${project.id}/pipelines/${pipeline.id}/jobs`, {
+                credentials: "include",
+                method: "PUT",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    jobs: jobs.map(job => ({
+                        id: job.id,
+                        content: job.content
+                    }))
+                })
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                console.error(data.detail?.[0]?.msg || data.detail || "Failed to fetch pipeline script");
+                setErrorSubmit("Something went wrong while reviewing the pipeline script. Please try again later.");
+                setIsReviewing(false);
+                return;
+            }
+            setReview(data);
+            setIsReviewing(false);
+
+        }catch(e: any){
+            console.error(`Failed to get jobs of pipeline with id: ${pipeline.id}`)
+            setIsReviewing(false);
+        }
+    };
+
+    const submitJobs = async ()=> {
+        if(!project || !pipeline)return;
+        try {
+            const res = await fetch(`${api_url}/projects/${project.id}/pipelines/${pipeline.id}/jobs/commit`, {
+                credentials: "include",
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    jobs: jobs.map(job => ({
+                        id: job.id,
+                        content: job.content
+                    }))
+                })
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                console.error(data.detail?.[0]?.msg || data.detail || "Failed to submit changes");
+                return;
+            }
+            // setInitJobs(jobs);
+            setConfirmSubmit("Submitted successfully, You can find the new version in history version");
+            setPipeline(pipeline && {...pipeline, updated_at:new Date()});
+            setDiscardChanges(true);
+
+        }catch(e: any){
+            console.error(`Failed to submit changes of pipeline with id: ${pipeline.id}`)
+        }
+    };
+
+    const handleSubmit = () => {
+        setAskSubmit(`Save changes to history${(review?.ai_warnings || review?.warnings) ? " with errors/warnings" : ""} ?`),
+        setWarningSubmit("Open the logs to review the errors/warnings before saving.")
+    }
 
     let lineNumber = 1;
     return (
@@ -445,6 +498,7 @@ function PipelineEditor({ initJobs, isDiscardChanges, setDiscardChanges, setInit
             <SortableContext items={jobs.map(j => j.id)} strategy={verticalListSortingStrategy}>
                 <div className={`${styles.pipeline} ${isDark ? styles.dark : styles.bright}`}>
                     <div className={styles.btnsContainer}>
+ 
                         <button className={`${styles.addBtn} ${gStyles.clickable}`}
                             onClick={() => {
                                 addJob();
@@ -452,12 +506,46 @@ function PipelineEditor({ initJobs, isDiscardChanges, setDiscardChanges, setInit
                                     jobsEndRef.current?.scrollIntoView({ behavior: "smooth" });
                                 });
                             }}> Add Job </button>
+
+                        {review && 
+                            <button 
+                                className={`${styles.submitBtn} ${gStyles.clickable} ${!review.valid ? styles.submitDisabled : ''}`} 
+                                title={!review.valid ? "Fix errors to submit" : "Submit Changes"}
+                                onClick={() => {
+                                    if (review.valid) {
+                                        handleSubmit();
+                                    }
+                                }}
+                                disabled={!review.valid}>
+                                <span className={styles.btnText}>
+                                    {!review.valid ? 'Fix errors to submit' : 'Save changes to history'}
+                                </span>
+                                <FaCircleCheck />
+                            </button>
+                        }
+
+                        {review && hasChanges &&
+                        <PipelineReview review={review} isReviewOpen={isReviewOpen}
+                            setIsReviewOpen={setIsReviewOpen} handleSubmit={handleSubmit}/>
+                        }
+
+                        {hasChanges && 
+                            <button className={`${styles.validBtn} ${gStyles.clickable}`}
+                                onClick={reviewJobs} disabled={isReviewing}>
+                                <span className={styles.btnText}>
+                                    {isReviewing ? "Checking..." : "Check for Errors"}
+                                </span>
+                                <MdFactCheck/>
+                            </button>
+                        }
+
                         <button className={`${styles.discardBtn} ${gStyles.clickable}`} title="Discard Changes"
                             onClick={() => {
-                                setAskDiscard("Discard all changes?");
-                                setWarningDiscard("This Action can not be undone!");
-                            }}><IoClose /></button>
-                        <button className={`${styles.submitBtn} ${gStyles.clickable}`} title="Submit Changes"><FaCircleCheck /></button>
+                                hasChanges ? (
+                                    setAskDiscard("Discard all changes?"),
+                                    setWarningDiscard("This Action can not be undone!")
+                                ) : setIsEdit(false)
+                            }}><span className={styles.btnText}>{hasChanges?"Discard Changes":"Close Editor"}</span><IoClose/></button>
                     </div>
 
                     {jobs.map((job, jobIndex) => {
@@ -491,13 +579,22 @@ function PipelineEditor({ initJobs, isDiscardChanges, setDiscardChanges, setInit
                 {askDiscard && 
                 <Popup
                     btnText1="Discard"
-                    btn1Action={handleNewEditor}
+                    btn1Action={()=> setDiscardChanges(true)}
                     btnText2="Cancel"
                     questionMessage={askDiscard}
                     setQuestionMessage={setAskDiscard}
                     warningMessage={warningDiscard}
                     setWarningMessage={setWarningDiscard}
-                    popupRef={popupRef}
+                />}
+                {askSubmit && 
+                <Popup
+                    btnText1="Submit"
+                    btn1Action={()=> {submitJobs(); setIsEdit(false);}}
+                    btnText2="Cancel"
+                    questionMessage={askSubmit}
+                    setQuestionMessage={setAskSubmit}
+                    warningMessage={warningSubmit}
+                    setWarningMessage={setWarningSubmit}
                 />}
                 {(confirmSubmit || errorSubmit) && 
                 <Popup

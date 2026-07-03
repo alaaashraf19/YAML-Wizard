@@ -19,7 +19,6 @@ interface Props {
   activeId: number | null;
   onSelect: (repo: Repo) => void;
 }
-
 export default function RepoSidebar({
   repos,
   isLoading,

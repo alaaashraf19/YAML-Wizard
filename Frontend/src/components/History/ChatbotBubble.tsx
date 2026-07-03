@@ -45,7 +45,7 @@ function ChatbotBubble({isChatOpen, setIsChatOpen }:ChatbotBubbleProps){
 
         const sessionExist: boolean = session?true:false;
 
-        console.log("at send, pipeline id:", pipeline?.id);
+        console.log("at send, pipeline name:", pipeline?.name, "pipeline id:", pipeline?.id);
         setIsLoading(true);
         try{
             const res = await fetch(`${api_url}/chatbot/chat`, {
@@ -120,7 +120,6 @@ function ChatbotBubble({isChatOpen, setIsChatOpen }:ChatbotBubbleProps){
                     setMessages([]);
                     return;
                 }
-                console.log("loaded session", data);
                 const newSession: Session = {
                     id: data.id,
                     session_name: data.session_name,
@@ -137,7 +136,7 @@ function ChatbotBubble({isChatOpen, setIsChatOpen }:ChatbotBubbleProps){
         };
 
         loadSession();
-    }, [pipeline]);
+    }, [pipeline?.id]);
 
     const deleteSession = async () => {
         try{
@@ -190,7 +189,7 @@ function ChatbotBubble({isChatOpen, setIsChatOpen }:ChatbotBubbleProps){
     return( <div className={`${styles.chatbotWidget} ${ isChatOpen ? styles.chatbotOpen : styles.chatbotClosed}`}>
                 {!isChatOpen ? (
                     <button className={styles.chatbotBubble} onClick={() => setIsChatOpen(true)} title="Open Chatbot">
-                        {/* 🤖 */}<RiRobot2Line className={styles.botIcon}/>
+                        <RiRobot2Line className={styles.botIcon}/>
                     </button>
                 ) : (
                     <>
@@ -241,7 +240,6 @@ function ChatbotBubble({isChatOpen, setIsChatOpen }:ChatbotBubbleProps){
                         btnText1={"Reset"}
                         btn1Action={deleteSession}
                         btnText2={"Cancel"}
-                        btn2Action={() => setSession(null)}
                         questionMessage={askReset}
                         setQuestionMessage={setAskReset}
                     />

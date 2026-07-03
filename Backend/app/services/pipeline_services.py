@@ -22,7 +22,7 @@ async def create_pipeline(
     pipeline_data = pipeline.model_dump()
 
     if pipeline_data.get('is_active'):
-        pipeline_data['activated_at'] = datetime.utcnow()
+        pipeline_data['committed_at'] = datetime.utcnow()
 
     new_pipeline = Pipeline(
         **pipeline_data,
@@ -87,7 +87,7 @@ async def get_active_pipelines(
             Pipeline.project_id == project_id,
             Pipeline.is_active == True
         )
-        .order_by(Pipeline.activated_at.desc())
+        .order_by(Pipeline.committed_at.desc())
     )
     pipelines = result.scalars().all()
 
@@ -103,7 +103,7 @@ async def set_active_pipeline(
     pipeline = await get_pipeline_by_id(pipeline_id, user_id, db)
 
     pipeline.is_active = True
-    pipeline.activated_at = datetime.utcnow()
+    pipeline.committed_at = datetime.utcnow()
     pipeline.updated_at = datetime.utcnow()
 
     await db.commit()

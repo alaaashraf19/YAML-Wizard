@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
+from models.project_model import Project
 from core.security import get_current_user
-from schemas.dashboard import RepoCreate, RepoOut, SyncStatus
+from schemas.dashboard import RepoCreate, RepoOut, SyncStatus, RepositoryDeleteStatus
 from database.db_engine import get_db
 from sqlalchemy.ext.asyncio import AsyncSession
 from services.dashboard.repos_services import add_repo_service
@@ -32,14 +33,23 @@ async def get_repo(repo_id: int, db: AsyncSession = Depends(get_db), current_use
     return repo
 
 
-@router.delete("/repos/delete/{repo_id}", status_code=204)
+@router.delete("/repos/delete/{repo_id}")
 async def delete_repo(repo_id: int, db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_user)):
     result = await db.execute(select(Repository).where(Repository.id == repo_id and Repository.user_id == current_user.id))
     repo = result.scalar_one_or_none()
     if not repo:
         raise HTTPException(status_code=404, detail="Repository not found")
+    project = await db.scalar(
+            select(Project).where(Project.repo_id == repo.id)
+        )
+    if project:
+        raise HTTPException(
+            status_code=400,
+            detail="Cannot delete a repository that is associated with a project."
+        )
     await db.delete(repo)
     await db.commit()
+
 
 
 
@@ -53,3 +63,33 @@ async def sync_repo(repo_id: int, db: AsyncSession = Depends(get_db), current_us
         raise HTTPException(status_code=404, detail="Repository not found")
     
     return await sync_repository(current_user.id, repo, db)
+
+
+
+
+@router.get(
+    "/repos/{repo_id}/delete-status",
+    response_model=RepositoryDeleteStatus,
+)
+async def get_delete_status(
+    repo_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    repo = await db.scalar(
+        select(Repository).where(
+            Repository.id == repo_id,
+            Repository.user_id == current_user.id,
+        )
+    )
+
+    if repo is None:
+        raise HTTPException(status_code=404, detail="Repository not found")
+
+    project = await db.scalar(
+        select(Project).where(Project.repo_id == repo.id)
+    )
+
+    return RepositoryDeleteStatus(
+        can_delete=project is None
+    )

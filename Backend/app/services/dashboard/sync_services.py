@@ -8,22 +8,23 @@ from typing import Tuple
 from ..project_service import _resolve_token
 from models.repository_model import Repository
 from fastapi import HTTPException
+from datetime import datetime, timezone
 
 async def sync_repository(user_id :int,repo: Repository, db: AsyncSession) -> SyncStatus:
     
     repo_schema = RepositorySchema.model_validate(repo)
-    print("validated repo orm")
 
     token, _ = await _resolve_token(user_id, repo.platform, repo.url, db)
     if token is None:
         raise HTTPException(status_code=401, detail="No authentication token available.")
 
     collector = get_ci_collector(repo.platform, token)
-    # print(f"[sync-repo] Starting sync for repo {repo_schema.full_name} (ID: {repo_id}) on platform {repo_orm.platform}", flush=True)
-    # print(f"[sync-repo] using collector: {collector.__class__.__name__}", flush=True)
     ctx = build_ctx(repo, repo_schema)
     try:
-        return await collector.sync(ctx, db)
+        status = await collector.sync(ctx, db)
+        repo.last_synced_at = datetime.now(timezone.utc)
+        await db.commit()
+        return status
 
     finally:
         await collector.close()

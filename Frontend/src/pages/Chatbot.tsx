@@ -12,9 +12,15 @@ import ChatProjects from "../components/Chatbot/ChatProjects";
 import SideBar from "../components/Chatbot/SideBar";
 import Popup from "../components/Popup/Popup";
 import { ProjectSubInfo } from "../components/UserProfile/ProjectInfoTab";
-import CodeBlock from "../components/History/CodeBlock";
-import PipelineApproval from "../components/History/PipelineApproval";
+import CodeBlock from "../components/Chatbot/CodeBlock";
 
+export interface Model {
+    id?: string,
+    label: string,
+    available?: boolean
+}
+
+type Status = "idle" | "saving" | "approved";
 
 function Chatbot() {
     const [prompt, setPrompt] = useState("");
@@ -22,6 +28,10 @@ function Chatbot() {
     const [sessionId, setSessionId] = useState<number | null>(null);
     const [sessions, setSessions] = useState<Session[]>([]);
     const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+    const [status, setStatus] = useState<Status>("idle");
+
+    const [models, setModels] = useState<Model[]>([]);
+    const [selectedModel, setSelectedModel] = useState<Model | null>(models[0]);
 
     const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
     const [isShowInfo, setIsShowInfo] = useState<boolean>(false);
@@ -30,6 +40,8 @@ function Chatbot() {
     const [confirmMessage, setConfirmMessage] = useState<string | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+    const [chatURL, setChatURL] = useState<string>(`chatbot/chat`);
+
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
     const textareaRef = useRef<HTMLTextAreaElement | null>(null);
     const menuRef = useRef<HTMLDivElement | null>(null);
@@ -37,7 +49,6 @@ function Chatbot() {
     const infoRef = useRef<HTMLDivElement | null>(null);
     // const navigate = useNavigate();
     const api_url = import.meta.env.VITE_API_URL;
-
 
     // Auto focus on textarea
     useEffect(() => {
@@ -86,7 +97,6 @@ function Chatbot() {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
 
-
     // Control Textarea Height
     const MAX_HEIGHT = 300;
     const resizeTextarea = () => {
@@ -115,6 +125,32 @@ function Chatbot() {
         return () => {
             window.removeEventListener("resize", resizeTextarea);
         };
+    }, []);
+
+    // get models
+    useEffect(()=> {
+        const fetchModels = async () => {
+            try {
+                const res = await fetch(`${api_url}/chatbot/models`, {
+                    credentials: "include",
+                    method: "GET",
+                    headers: {"Content-Type": "application/json"}
+                });
+
+                const data = await res.json();
+
+                if (!res.ok) {
+                    console.error(data.detail || data.detail.msg || "Failed to load models");
+                    return;
+                }
+                setModels(data.engines);
+
+            } catch (e) {
+                console.error("Failed to load models:", e);
+            }
+        }
+
+        fetchModels();
     }, []);
 
     // get selected project on change of session id
@@ -166,7 +202,7 @@ function Chatbot() {
 
         setIsLoading(true);
         try{
-            const res = await fetch(`${api_url}/chatbot/chat`, {
+            const res = await fetch(`${api_url}/${chatURL ?? 'chatbot/chat'}`, {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
                 credentials: "include",
@@ -231,8 +267,6 @@ function Chatbot() {
         return content.startsWith("⚠️");
     };
 
-    // Undo Python's str()-style escaping (\n, \t, \', \\) so legacy payloads
-    // read like normal text instead of literal backslash-n sequences.
     const unescapePythonString = (raw: string) => {
         return raw
             .replace(/\\n/g, "\n")
@@ -242,13 +276,6 @@ function Chatbot() {
             .replace(/\\\\/g, "\\");
     };
 
-    // Backwards-compat shim: older backend responses were produced by calling
-    // Python's str() on a list of segment dicts, e.g.
-    //   "[{'type': 'text', 'content': '...'}, {'type': 'code', 'language': 'yaml', 'content': '...'}]"
-    // instead of returning proper markdown. If we detect that shape, rebuild
-    // it into normal ```lang ... ``` markdown so renderMessageContent can
-    // handle it exactly like any other message. Anything that doesn't match
-    // this legacy pattern is returned untouched.
     const normalizeLegacyContent = (content: string) => {
         const trimmed = content.trim();
         if (!/^\[\s*\{\s*'type':/.test(trimmed)) return content;
@@ -272,11 +299,52 @@ function Chatbot() {
         return parts.length ? parts.join("\n\n") : content;
     };
 
-    // splits a message into plain-text chunks and ```lang ... ``` code chunks,
-    // rendering code chunks with the CodeBlock component. Assistant-generated
-    // YAML pipelines get an Approve/Edit action bar underneath so the user can
-    // review, tweak, and save the pipeline to their project's database.
-    const renderMessageContent = (content: string, role: Message["role"], msgIndex: number) => {
+    const handleApprove = async (code: string) => {
+        if (status === "saving") return;
+
+        if (!selectedProject) {
+            setErrorMessage("Connect a project first so this pipeline can be saved.");
+            return;
+        }
+
+        setStatus("saving");
+        try {
+            const res = await fetch(`${api_url}/pipelines/${selectedProject.id}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify({
+                    name: "generated-pipeline",
+                    description: "",
+                    branch: selectedProject.branch,
+                    content: code,
+                    is_generated_by_wizard: true,
+                    "is_active": false
+                }),
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                console.error(data.detail || data.detail.msg || "Failed to load profile");
+                return;
+            }
+
+            setStatus("approved");
+            setConfirmMessage(`Pipeline is saved to your project with name ${data.name}.`);
+
+        } catch (e) {
+            console.error("Approve pipeline failed:", e);
+            setStatus("idle");
+            setErrorMessage(e instanceof Error ? e.message : "Failed to save the pipeline. Please try again.");
+        }
+    };
+
+    const handlePublish = async () => {
+
+    };
+
+    const renderMessageContent = (content: string, role: Message["role"]) => {
         content = normalizeLegacyContent(content);
         const codeFenceRegex = /```(\w+)?\n?([\s\S]*?)```/g;
         const nodes: React.ReactNode[] = [];
@@ -288,7 +356,7 @@ function Chatbot() {
             if (match.index > lastIndex) {
                 const textChunk = content.slice(lastIndex, match.index);
                 if (textChunk.trim()) {
-                    nodes.push(<span key={key++}>{renderBold(textChunk)}</span>);
+                    nodes.push(<span className={styles.messageText} key={key++}>{renderBold(textChunk)}</span>);
                 }
             }
             const language = match[1];
@@ -297,19 +365,27 @@ function Chatbot() {
 
             if (isYamlPipeline) {
                 nodes.push(
-                    <PipelineApproval
-                        key={`${msgIndex}-${key++}`}
-                        code={code}
-                        language={language}
-                        projectId={selectedProject?.id ?? null}
-                        branch={selectedProject?.branch}
-                        apiUrl={api_url}
-                        setConfirmMessage={setConfirmMessage}
-                        setErrorMessage={setErrorMessage}
-                    />
+                    <div className={styles.wrapper}>
+                        <CodeBlock key={key++} language={language} code={code} />
+                        <div className={styles.actionsBar}>
+                            <button
+                                type="button"
+                                className={`${styles.actionBtn} ${styles.approveBtn}`}
+                                onClick={() => {
+                                    status === "approved" ? handlePublish() : handleApprove(code) 
+                                }}
+                                title={"Save this pipeline to your project"}
+                            >
+                                {status === "saving" ? "Saving..." : status === "approved" ? "Publish" : ""}
+                            </button>
+                            
+                        </div>
+                    </div>
                 );
             } else {
-                nodes.push(<CodeBlock key={key++} language={language} code={code} />);
+                nodes.push(
+                    <CodeBlock key={key++} language={language} code={code} />
+                );
             }
             lastIndex = codeFenceRegex.lastIndex;
         }
@@ -327,8 +403,6 @@ function Chatbot() {
     const renderBold = (text: string) => {
         // const withoutBulletMarkers = text.replace(/^[ \t]*[*-][ \t]+/gm, "");
         const withoutBulletMarkers = text.replace(/^([ \t]*)[*-][ \t]+/gm, "$1");
-        // Strip markdown heading markers (#, ##, ### ...) so raw "### Title"
-        // text never leaks into the chat bubble - render headings as bold text.
         const withoutHeadingMarkers = withoutBulletMarkers.replace(/^[ \t]*#{1,6}[ \t]+(.*)$/gm, "**$1**");
         const parts = withoutHeadingMarkers.split(/\*{1,2}(.*?)\*{1,2}/g);
         return parts.map((part, i) =>
@@ -336,11 +410,35 @@ function Chatbot() {
         );
     };
 
+    // get saved model from sessionStorage
+    useEffect(() => {
+        if (models.length === 0)return;
+        console.log(typeof(models));
+
+        const savedModelLabel = sessionStorage.getItem("selected_model");
+        if (savedModelLabel) {
+            const foundModel:Model | undefined = models.find(model => model.label === savedModelLabel);
+            if (foundModel) {
+                setSelectedModel(foundModel);
+            }
+        } else {
+            setSelectedModel(models[0]);
+            sessionStorage.setItem("selected_model", models[0]?.label);
+        }
+    }, [models, selectedModel]);
+
+
+    const handleModelChange = (selectedModel: Model)=> {
+        setSelectedModel(selectedModel);
+        setChatURL(selectedModel.label === "Main Model" ? 'chatbot/chat' : 'chatbot/generate');
+    };
+
 
     return(
         <div className={styles.window}>
             <SideBar sessionId={sessionId} setSessionId={setSessionId} sessions={sessions}
-                setSessions={setSessions} setMessages={setMessages} isLoading={isLoading}/>
+                setSessions={setSessions} setMessages={setMessages} isLoading={isLoading}
+                models={models} onModelChange={handleModelChange}/>
 
             <div className={styles.chatWindow}>
                 <div className={styles.chatMessages}>
@@ -349,7 +447,7 @@ function Chatbot() {
                         <div key={i} className={styles.messagePack}>
                             <div className={`${styles.message} ${msg.role === "user" ?
                                 styles.userMessage : (isErrorMessage(msg.content)? styles.errorMessage : styles.botMessage)}`}>
-                                {renderMessageContent(msg.content, msg.role, i)}
+                                {renderMessageContent(msg.content, msg.role)}
                             </div>
                         </div>
                     ))}

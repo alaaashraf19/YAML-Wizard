@@ -116,7 +116,13 @@ async def create_project(project: ProjectCreate, user_id: int, db: AsyncSession)
     if result.scalar_one_or_none():
         raise HTTPException(status_code=409, detail="You have already added this repository.")
         
-    full_name, detected_platform, parsed_branch = _parse_repo_info(repo_url)
+    try:
+        full_name, detected_platform, parsed_branch = _parse_repo_info(repo_url)
+    except ValueError:
+        raise HTTPException(
+            status_code=400,
+            detail="Entered URL is invalid"
+        )
     default_branch = parsed_branch
 
     gitlab_project_id = None
@@ -124,7 +130,11 @@ async def create_project(project: ProjectCreate, user_id: int, db: AsyncSession)
     github_repo_id = None
 
     if detected_platform not in ["github", "gitlab"]:
-        raise HTTPException(status_code=400, detail="Unsupported platform.")
+        raise HTTPException(status_code=400, detail="Unsupported platform")
+
+    token, _ = await _resolve_token(user_id=user_id, platform=detected_platform, repo_url=repo_url, db=db)
+    if not token:
+        raise HTTPException(status_code=401, detail="No authentication token available.")
 
     if detected_platform == "github":
         user_result = await db.execute(select(User).where(User.id == user_id))
@@ -172,7 +182,7 @@ async def create_project(project: ProjectCreate, user_id: int, db: AsyncSession)
                 status_code=403,
                 detail=f"{detected_platform.upper()} account is required"
             )
-        gitlab_project_id = await _get_gitlab_proj_id(full_name)
+        gitlab_project_id = await _get_gitlab_proj_id(full_name,token)
 
     if project.github_repo_id is not None:
         github_repo_id = project.github_repo_id
@@ -195,11 +205,6 @@ async def create_project(project: ProjectCreate, user_id: int, db: AsyncSession)
         raise HTTPException(status_code=409, detail="Repository URL already exists")
     await db.refresh(repo)
 
-    token, _ = await _resolve_token(user_id=user_id, platform=detected_platform, repo_url=repo_url, db=db)
-    if not token:
-        await db.delete(repo)
-        await db.commit()
-        raise HTTPException(status_code=401, detail="No authentication token available.")
 
     if default_branch is None:
         if detected_platform == "github":
@@ -346,7 +351,7 @@ async def update_project(project_id: int, user_id: int, project_update: ProjectU
                 default_branch = await get_gitlab_default_branch(repo.url, token)
         
         repo.default_branch=default_branch
-        repo.gitlab_project_id = await _get_gitlab_proj_id(repo.full_name) if detected_platform == "gitlab" else None
+        repo.gitlab_project_id = await _get_gitlab_proj_id(repo.full_name,token) if detected_platform == "gitlab" else None
 
     project.updated_at = datetime.utcnow()
     try:

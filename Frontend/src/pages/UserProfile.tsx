@@ -22,7 +22,6 @@ function UserProfile() {
     const [projects, setProjects] = useState<Project[]>([]);
     const [projectInfoId, setProjectInfoId] = useState<number | null>(null);
 
-    const [questionMessage, setQuestionMessage] = useState<string | null>("");
     const [confirmMessage, setConfirmMessage] = useState<string | null>("");
     const [warningMessage, setWarningMessage] = useState<string | null>("");
     const [errorMessage, setErrorMessage] = useState<string | null>("");
@@ -52,29 +51,6 @@ function UserProfile() {
         }
     }, []);
 
-    // Close info popup on outside click
-    // useEffect(
-    //     () => {
-    //         function handleClickOutside(e: MouseEvent) {
-    //             if (projectInfoId && infoRef.current &&
-    //                 !infoRef.current.contains(e.target as Node)) {
-    //                 setProjectInfoId(null);
-    //             }
-
-    //             if((confirmMessage || errorMessage) && popupRef.current &&
-    //                     !popupRef.current.contains(e.target as Node)){
-    //                 setConfirmMessage("");
-    //                 setErrorMessage("");
-    //             }
-    //         }
-
-    //         document.addEventListener("mousedown", handleClickOutside);
-    //         return () => {
-    //             document.removeEventListener("mousedown", handleClickOutside);
-    //         };
-    //     }
-    // , [projectInfoId, confirmMessage, errorMessage]);
-
     return(
         <div className={styles.pageContainer}>
             <div ref={startRef}/>
@@ -99,7 +75,6 @@ function UserProfile() {
                     projects={projects}
                     setProjects={setProjects}
                     infoRef={infoRef}
-                    popupRef={popupRef}
                 />
             }
 

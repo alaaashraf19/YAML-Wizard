@@ -22,8 +22,7 @@ from services.project_service import get_project_by_id
 from agent.chatbot_agent import ChatbotAgent
 from agent.utils.context_resolver import ContextResolver, build_context_summary
 from schemas.project_schema import ProjectResponse
-
-from langchain_groq import ChatGroq
+from agent.utils.yaml_cleaner import redact_secrets
 
 
 class ChatbotService:
@@ -104,8 +103,9 @@ class ChatbotService:
                     context_summary = build_context_summary(context.repo_context)  # return str
 
             # print("context in chat",context )
+            message_to_send = redact_secrets(message)
             response = await self.agent.invoke(
-                message=message,
+                message=message_to_send,
                 chat_history=chat_history,
                 db=db,
                 gitlab_connection=gitlab_connection,
@@ -117,7 +117,6 @@ class ChatbotService:
                 context=context,
                 context_summary=context_summary
             )
-
             return {
                 "role": "assistant",
                 "content": self._format_response_content(response)
@@ -125,7 +124,6 @@ class ChatbotService:
 
         except Exception as e:
             error_text = str(e)
-            print("error texttttttttttttttt", error_text, )
 
             if "RESOURCE_EXHAUSTED" in error_text or "429" in error_text:
                 return {
@@ -402,7 +400,7 @@ class ChatbotService:
                 "updated_at": session.project.updated_at,
                 "branch": session.project.repository.default_branch,
             } if session.project else None,
-            pipeline={
+            pipeline= {
                 "id": session.pipeline_id,
                 "name": session.pipeline.name,
                 "content": session.pipeline.content,
@@ -412,7 +410,7 @@ class ChatbotService:
                 "description": session.pipeline.description,
                 "created_at": session.pipeline.created_at,
                 "updated_at": session.pipeline.updated_at,
-                "activated_at": session.pipeline.activated_at,
+                "committed_at": session.pipeline.committed_at,
             } if session.pipeline else None,
             messages=messages
 
@@ -459,7 +457,7 @@ class ChatbotService:
                 "description": session.pipeline.description,
                 "created_at": session.pipeline.created_at,
                 "updated_at": session.pipeline.updated_at,
-                "activated_at": session.pipeline.activated_at,
+                "committed_at": session.pipeline.committed_at,
             } if session.pipeline else None,
             "messages": messages
         }

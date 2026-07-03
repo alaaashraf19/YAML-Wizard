@@ -17,11 +17,10 @@ type ProjectInfoTabProps = {
     setProjectInfoId: React.Dispatch<React.SetStateAction<number | null>>,
     projects: Project[],
     setProjects: React.Dispatch<React.SetStateAction<Project[]>>,
-    infoRef: React.Ref<HTMLDivElement>,
-    popupRef: React.Ref<HTMLDivElement>
+    infoRef: React.Ref<HTMLDivElement>
 }
 
-function ProjectInfoTab({ projectInfoId, setProjectInfoId, projects, setProjects, infoRef, popupRef } : ProjectInfoTabProps){
+function ProjectInfoTab({ projectInfoId, setProjectInfoId, projects, setProjects, infoRef } : ProjectInfoTabProps){
     const [projectName, setProjectName] = useState<string | undefined>('');
     const [repoURL, setRepoUrl] = useState<string | undefined>('');
     const [platform, setPlatform] = useState<Platform | null | undefined>('github' as Platform);
@@ -180,14 +179,13 @@ function ProjectInfoTab({ projectInfoId, setProjectInfoId, projects, setProjects
 
     return(
         <div className={popupStyles.popupLayover}>
-            {askDelete? 
+            {askDelete?
                 <Popup
                     btnText1={"Delete"}
                     btn1Action={handleDelete}
                     btnText2={"Cancel"}
                     questionMessage={askDelete}
                     setQuestionMessage={setAskDelete}
-                    popupRef={popupRef}
                 />
                 : <div className={`${styles.infoPopup} ${popupStyles.popup}`} ref={editMode? null : infoRef}>
                 {editMode? (<>
