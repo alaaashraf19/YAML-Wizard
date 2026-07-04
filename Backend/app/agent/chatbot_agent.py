@@ -30,29 +30,29 @@ class AgentState(TypedDict):
 class ChatbotAgent:
     def __init__(self, 
                 #  model: str = os.getenv("GROQ_MODEL", "openai/gpt-oss-120b"),
-                #  model :str = "models/gemini-2.5-flash",
-                 model: str = "Qwen/Qwen2.5-72B-Instruct-AWQ", 
+                 model :str = "models/gemini-2.5-flash",
+                #  model: str = "Qwen/Qwen2.5-72B-Instruct-AWQ", 
                  temperature: float = 0.3,
         max_output_tokens: int = 2500, tools: Optional[list] = None,
         system_prompt: Optional[str] = SYSTEM_PROMPT, ):
         
         self.tools = TOOLS
         self.system_prompt = system_prompt
-        # base_llm = ChatGoogleGenerativeAI(
-        #     model=model,
-        #     google_api_key=os.getenv("GEMINI_API_KEY"),
-        #     temperature=temperature,
-        #     max_output_tokens=max_output_tokens,
-        # )
-        base_llm = ChatOpenAI(####################check if we will add max output tokens############################
+        base_llm = ChatGoogleGenerativeAI(
             model=model,
-            openai_api_key="token-not-needed", # vLLM doesn't require a key usually
-            openai_api_base="http://localhost:8001/v1",
+            google_api_key=os.getenv("GEMINI_API_KEY"),
             temperature=temperature,
-            max_retries=2,
-            # Matches your 300s timeout from the test script
-            timeout=300, 
+            max_output_tokens=max_output_tokens,
         )
+        # base_llm = ChatOpenAI(####################check if we will add max output tokens############################
+        #     model=model,
+        #     openai_api_key="token-not-needed", # vLLM doesn't require a key usually
+        #     openai_api_base="http://localhost:8001/v1",
+        #     temperature=temperature,
+        #     max_retries=2,
+        #     # Matches your 300s timeout from the test script
+        #     timeout=300, 
+        # )
         # base_llm = ChatGroq(
         #     model=model,
         #     api_key=os.getenv("GROQ_API_KEY"),
