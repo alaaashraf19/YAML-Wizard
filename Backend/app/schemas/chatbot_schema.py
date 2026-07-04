@@ -53,3 +53,16 @@ class ChatResponse(BaseModel):
     session_name: str
     message: ChatMessage
     full_history: List[ChatMessage]
+
+
+# ---- Guest (unauthenticated) chat ----
+# Guests have no account, no persisted session, and no linked project/pipeline,
+# so the request/response shapes are intentionally minimal: the frontend keeps
+# the conversation in memory and resends it as `chat_history` each turn.
+class GuestChatRequest(BaseModel):
+    message: str
+    chat_history: List[ChatMessage] = []
+
+
+class GuestChatResponse(BaseModel):
+    message: ChatMessage
