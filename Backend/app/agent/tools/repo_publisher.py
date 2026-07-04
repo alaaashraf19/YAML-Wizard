@@ -9,7 +9,7 @@ from schemas.publish_yaml_schema import PublishResult
 from langchain_core.tools import tool
 from langchain_core.runnables import RunnableConfig
 from services.project_service import _resolve_token
-from services.dashboard.repos_services import _parse_repo_info, get_github_default_branch, parse_github_repo, _get_gitlab_proj_id
+from services.dashboard.repos_services import _parse_repo_info, get_github_default_branch, get_gitlab_default_branch, parse_github_repo, _get_gitlab_proj_id
 from sqlalchemy import select
 from models.project_model import Project
 from models.repository_model import Repository
@@ -79,7 +79,14 @@ async def publish_to_repo_tool(yaml_content: str, repo_url: Optional[str] = None
         return PublishResult(success=False, message="No authentication token found for the platform.")
     
     if parsed_branch is None:
-        parsed_branch = await get_github_default_branch(repo_url, token)
+        try:
+            if target_platform == "gitlab":
+                parsed_branch = await get_gitlab_default_branch(repo_url, token)
+            else:
+                parsed_branch = await get_github_default_branch(repo_url, token)
+        except Exception as e:
+            print("[publish_to_repo_tool] could not resolve default branch:", str(e))
+            return PublishResult(success=False, message=f"Could not resolve default branch: {str(e)}")
     if target_platform == "github":
         return _publish_github(
             yaml_content, repo_url, token, file_path, parsed_branch,
@@ -95,7 +102,7 @@ async def publish_to_repo_tool(yaml_content: str, repo_url: Optional[str] = None
         else:
             print("[publish_to_repo_tool] using provided gitlab_project_id:", gitlab_project_id)
         return _publish_gitlab(
-            yaml_content, repo_url, token, file_path, branch,
+            yaml_content, repo_url, token, file_path, branch or parsed_branch,
             commit_message, create_pr, pr_branch,
             gitlab_project_id
         )
