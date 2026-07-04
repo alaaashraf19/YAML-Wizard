@@ -1,9 +1,13 @@
 import gStyles from "../global.module.css"
 import styles from './SignUp.Login.module.css';
-import { useState } from "react";
+import logo from "../assets/yaml_wizard_logo.png";
 import { UsernameField, EmailField, PasswordField } from "../components/AuthForm/AuthForm";
+import { useState } from "react";
 import { Link } from 'react-router-dom';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from '../Context/AuthContext';
+import type { LoginRedirectState } from "../types";
+
 
 function SignUp(){
     const [username, setUsername] = useState("");
@@ -18,13 +22,21 @@ function SignUp(){
     const [emptyEmail, setEmptyEmail] = useState(false);
     const [emptyPassword, setEmptyPassword] = useState(false);
     const [emptyConfirmPassword, setEmptyConfirmPassword] = useState(false);
+    const { login } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
     const api_url = import.meta.env.VITE_API_URL;
+
+    // Keep passing the same { from, allowGuest } through signup, so that
+    // after signing up the person still lands back where they originally
+    // started (e.g. "Connect Your First Repository") instead of always /chatbot.
+    const redirectState = (location.state ?? null) as LoginRedirectState | null;
+    const redirectTo = redirectState?.from?.pathname || "/chatbot";
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setResponseError("");
-        
+
         if (!username) setEmptyUsername(true);
         else setEmptyUsername(false);
         if (!email) setEmptyEmail(true);
@@ -35,19 +47,19 @@ function SignUp(){
         else setEmptyConfirmPassword(false);
 
         if (password !== confirmPassword)setResponseError("Passwords do not match.");
-        
-        if (!username || !email || !password || !confirmPassword 
+
+        if (!username || !email || !password || !confirmPassword
             || password !== confirmPassword) {
             return;
         }
-        
-        
+
+
         const userData = {
             username,
             email,
             password
         };
-        
+
         setLoading(true);
         try {
             const res = await fetch(`${api_url}/auth/signup`, {
@@ -66,8 +78,9 @@ function SignUp(){
                 return;
             }
 
-            console.log("Server:", data.msg);
-            navigate("/login");
+            login(username);
+            console.log(data.msg);
+            navigate(redirectTo);
 
         } catch (err: any) {
             const msg = err?.response?.data?.detail?.[0]?.msg || "Server Error. Please try again later.";
@@ -81,6 +94,12 @@ function SignUp(){
 
     return (
         <div className={styles.formContainer}>
+            <div className={styles.appNameContainer}>
+                <img src={logo} alt="" className={`${styles.logo} ${gStyles.clickable}`}
+                    title="Go to home page" onClick={() => navigate("/")}/>
+                <span className={`${styles.appName} ${gStyles.clickable}`} onClick={() => navigate("/")}
+                    title="Go to home page">YAML Wizard</span>
+            </div>
             <h1>Sign Up</h1>
             <form className={styles.form} onSubmit={handleSubmit} noValidate>
                 {responseError && <p className={styles.error}>{responseError}</p>}
@@ -98,14 +117,14 @@ function SignUp(){
                     showPassword={showConfirmPassword} setShowPassword={setShowConfirmPassword} />
                 {emptyConfirmPassword && <p className={styles.fieldError}>Confirm Password is required</p>}
 
-                <button type="submit" className={`${styles.submit} ${gStyles.clickable}`} disabled={loading}>
+                <button type="submit" className={`${styles.submit} ${gStyles.gButton}`} disabled={loading}>
                     {loading ? "Signing Up..." : "Sign Up"}
                 </button>
             </form>
 
             <p>
                 Already have an account?
-                <Link className={`${styles.link} ${gStyles.clickable}`} to="/login">Login</Link>
+                <Link className={`${styles.link} ${gStyles.clickable}`} to="/login" state={redirectState}>Login</Link>
             </p>
         </div>
     )

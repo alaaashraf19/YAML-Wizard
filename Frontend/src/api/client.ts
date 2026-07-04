@@ -21,8 +21,8 @@ async function request<T>(path: string, opts?: RequestInit): Promise<T> {
     credentials: "include",
   });
   if (!res.ok) {
-    const body = await res.text();
-    throw new Error(`${res.status}: ${body}`);
+    const body = await res.json();
+    throw new Error(body.detail);
   }
   if (res.status === 204) return undefined as T;
   return res.json();
@@ -40,6 +40,11 @@ export const api = {
 
   deleteRepo: (id: number) =>
     request<void>(`/repos/delete/${id}`, { method: 'DELETE' }),
+  
+  getRepoDeleteStatus: (repoId: number) =>
+    request<{ can_delete: boolean }>(
+      `/repos/${repoId}/delete-status`
+    ),
 
   syncRepo: (id: number) =>
     request<import('../types').SyncStatus>(`/repos/sync/${id}`, { method: 'POST' }),
@@ -57,6 +62,12 @@ export const api = {
     if (repoId == null) throw new Error("repoId required");
 
     return request<import('../types').PipelineRunDetail>(`/repos/${repoId}/runs/latest`);
+  },
+
+  getBranches: (repoId: number) => {
+    if (repoId == null) throw new Error("repoId required");
+
+    return request<string[]>(`/repos/${repoId}/branches`);
   },
 
   getRun: (repoId: number, runId: number) => {

@@ -5,38 +5,37 @@ from .platform_collectors.gitlab_collector_services import GitLabCollector
 from .platform_collectors.ci_collector import CICollector
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Tuple
+from ..project_service import _resolve_token
+from models.repository_model import Repository
+from fastapi import HTTPException
+from datetime import datetime, timezone
 
-
-async def sync_repository(repo_id: int, db: AsyncSession) -> SyncStatus:
-
-    repo_orm = await db.get(Repository, repo_id)
-    if not repo_orm:
-        raise ValueError("Repository not found")
+async def sync_repository(user_id :int,repo: Repository, db: AsyncSession) -> SyncStatus:
     
-    repo_schema = RepositorySchema.model_validate(repo_orm)
+    repo_schema = RepositorySchema.model_validate(repo)
 
-    if repo_orm.platform not in ["github", "gitlab"]:
-        raise ValueError(f"Unsupported platform: {repo_orm.platform}")
+    token, _ = await _resolve_token(user_id, repo.platform, repo.url, db)
+    if token is None:
+        raise HTTPException(status_code=401, detail="No authentication token available.")
 
-    collector = get_ci_collector(repo_orm.platform)
-    # print(f"[sync-repo] Starting sync for repo {repo_schema.full_name} (ID: {repo_id}) on platform {repo_orm.platform}", flush=True)
-    # print(f"[sync-repo] using collector: {collector.__class__.__name__}", flush=True)
-    ctx = build_ctx(repo_orm, repo_schema)
+    collector = get_ci_collector(repo.platform, token)
+    ctx = build_ctx(repo, repo_schema)
     try:
-        return await collector.sync(ctx, db)
+        status = await collector.sync(ctx, db)
+        repo.last_synced_at = datetime.now(timezone.utc)
+        await db.commit()
+        return status
 
     finally:
         await collector.close()
 
     
 
-def get_ci_collector(platform: str) -> CICollector:
+def get_ci_collector(platform: str, token:str) -> CICollector:
     if platform == "github":
-        return GitHubCollector()
+        return GitHubCollector(token)
     elif platform == "gitlab":
-        return GitLabCollector()
-    else:
-        raise ValueError(f"Unsupported platform: {platform}")
+        return GitLabCollector(token)
 
 def build_ctx(repo_orm, repo_schema):
 
@@ -54,8 +53,13 @@ def build_ctx(repo_orm, repo_schema):
 
 def parse_full_name(full_name: str) -> Tuple[str, str]:
     """Parse 'owner/repo' from GitHub full name"""
-    parts = full_name.split("/")
-    if len(parts) != 2:
+    parts = full_name.strip("/").split("/")
+
+    if len(parts) < 2:
         raise ValueError(f"Invalid repository full name: {full_name}")
-    return parts[0], parts[1]
+
+    owner = parts[0]
+    repo = parts[1]
+
+    return owner, repo
 

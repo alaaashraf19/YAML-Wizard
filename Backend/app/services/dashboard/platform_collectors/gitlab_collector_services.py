@@ -1,16 +1,22 @@
 import os
+import base64
 import httpx
 from dotenv import load_dotenv
+
+from models import PipelineVersion
 from .ci_collector import CICollector
 from urllib.parse import quote
 from schemas.dashboard import CollectorsRepositoryDetail, CIArtifact, SyncStatus
 from sqlalchemy.ext.asyncio import AsyncSession
-from models.repository_model import JobTiming, PipelineRun
 from sqlalchemy import select
 from datetime import datetime, timezone
 from ..recommendations_services.processor_services import compute_job_comparison, compute_run_comparison
+from models.repository_model import JobTiming, PipelineRun
+from models.pipeline_model import Pipeline
+from models.project_model import Project
 from ..test_parsers.ParserRegistry import ParserRegistry
 from .collectors_utils import parse_duration, _parse_ts, process_test_batch, extract_test_reports_from_zip
+import yaml
 
 load_dotenv()
 
@@ -21,13 +27,13 @@ class GitLabCollector(CICollector):
 
     def __init__(self, token: str | None = None) -> None:
         
-        self.token = token or os.getenv("GITLAB_ACCESS_TOKEN")
-
-        if not self.token:
+        self.token = token
+        
+        if not self.token:        
             raise ValueError("GitLab access token not provided.")
 
         self.headers = {
-            "PRIVATE-TOKEN": self.token,
+            "Authorization": f"Bearer {self.token}",
         }
 
         self._client = httpx.AsyncClient(headers=self.headers, timeout=30.0)
@@ -215,8 +221,8 @@ class GitLabCollector(CICollector):
                     jobs_synced += 1
                 
                 runs_synced += 1
-                ctx.repo.last_synced_at = datetime.now(timezone.utc)
-                await db.commit()
+            ctx.repo.last_synced_at = datetime.now(timezone.utc)
+            await db.commit()
 
                     
         except Exception as e:
@@ -323,4 +329,327 @@ class GitLabCollector(CICollector):
         
         # print(f"[sync-tests] Completed sync_job_tests from logs for {job.job_name}: {tests_found} tests found", flush=True)
         return tests_found
-        
+
+    async def get_repository_files(
+            self,
+            ctx: CollectorsRepositoryDetail,
+            path: str = "",
+            ref: str = "main",
+            recursive: bool = False,
+    ) -> list[dict]:
+        """Fetch repository files from GitLab API."""
+        project_id = self._proj_id(ctx)
+
+        url = f"{self.BASE_URL}/projects/{project_id}/repository/tree"
+        params = {
+            "path": path,
+            "ref": ref,
+            "recursive": "true" if recursive else "false",
+            "per_page": 100,
+        }
+
+        all_items = []
+        page = 1
+
+        while True:
+            params["page"] = page
+            resp = await self._client.get(url, params=params)
+
+            if resp.status_code == 404:
+                return []
+
+            resp.raise_for_status()
+            items = resp.json()
+
+            if not items:
+                break
+
+            all_items.extend(items)
+            page += 1
+
+            if len(items) < 100:
+                break
+
+        return all_items
+
+    async def get_file_content(
+            self,
+            ctx: CollectorsRepositoryDetail,
+            file_path: str,
+            ref: str = "main"
+    ) -> str | None:
+        """Fetch the content of a specific file."""
+        project_id = self._proj_id(ctx)
+        encoded_path = quote(file_path, safe="")
+
+        url = f"{self.BASE_URL}/projects/{project_id}/repository/files/{encoded_path}"
+        params = {"ref": ref}
+
+        try:
+            resp = await self._client.get(url, params=params)
+
+            if resp.status_code == 404:
+                return None
+
+            resp.raise_for_status()
+
+            data = resp.json()
+
+            if "content" in data:
+                content = base64.b64decode(data["content"]).decode("utf-8")
+                return content
+
+            return None
+
+        except Exception as e:
+            print(f"[GitLabCollector] Error fetching file {file_path}: {e}")
+            return None
+
+    async def find_yaml_files(
+            self,
+            ctx: CollectorsRepositoryDetail,
+            ref: str = "main"
+    ) -> list[dict]:
+        """Find all YAML files in the repository."""
+        yaml_files = []
+
+        try:
+            all_files = await self.get_repository_files(ctx, ref=ref,recursive=True)
+
+            for file in all_files:
+                if file.get("type") == "blob":
+                    filename = file.get("name", "")
+                    file_path = file.get("path", "")
+
+                    if filename.endswith((".yml", ".yaml")):
+                        if self._is_ci_file(filename, file_path):
+                            content = await self.get_file_content(
+                                ctx,
+                                file_path,
+                                ref=ref
+                            )
+                            if content:
+                                yaml_files.append({
+                                    "path": file_path,
+                                    "name": filename,
+                                    "content": content,
+                                    "ref": ref,
+                                })
+
+        except Exception as e:
+            print(f"[GitLabCollector] Error finding YAML files: {e}")
+
+        return yaml_files
+
+    def _is_ci_file(self, filename: str, path: str) -> bool:
+        """Check if a file is a CI/CD configuration file."""
+        ci_patterns = [
+            "gitlab-ci", "ci", "cd", "deploy", "build",
+            "test", "release", "pipeline", "actions", "workflow"
+        ]
+
+        name_lower = filename.lower()
+        path_lower = path.lower()
+
+        if filename == ".gitlab-ci.yml":
+            return True
+
+        if any(p in path_lower for p in ["ci", "pipeline", ".gitlab"]):
+            return True
+
+        if any(p in name_lower for p in ci_patterns):
+            return True
+
+        return False
+
+    def _extract_description(self, content: str) -> str | None:
+        """Extract description from YAML content."""
+        try:
+            data = yaml.safe_load(content)
+            if isinstance(data, dict):
+                if "description" in data:
+                    return data["description"]
+                if "name" in data:
+                    return data["name"]
+            return None
+        except:
+            return None
+
+    async def _get_project_for_repo(
+            self,
+            repo_id: int,
+            db: AsyncSession
+    ) -> Project | None:
+        """Get the project associated with a repository."""
+        result = await db.execute(
+            select(Project).where(Project.repo_id == repo_id)
+        )
+        return result.scalar_one_or_none()
+
+    async def save_yaml_files(
+            self,
+            ctx: CollectorsRepositoryDetail,
+            db: AsyncSession
+    ) -> tuple[int, int]:
+        """Fetch YAML files and save them as Pipeline records with commit info.
+        Returns (saved_count, updated_count).
+        """
+        saved = 0
+        updated = 0
+        ref = ctx.repo.default_branch or "main"
+        yaml_files = await self.find_yaml_files(ctx, ref=ref)
+
+        project = await self._get_project_for_repo(ctx.repo.id, db)
+        if not project:
+            return 0, 0
+
+        for yf in yaml_files:
+            # Get commit info for this file
+            commit_info = await self.get_file_with_commit_info(
+                ctx, yf["path"], ref=ref
+            )
+
+            existing = await db.execute(
+                select(Pipeline).where(
+                    Pipeline.project_id == project.id,
+                    Pipeline.path == yf["path"],
+                    Pipeline.branch == yf.get("ref", ref)
+                )
+            )
+            existing_version = await db.execute(
+                select(PipelineVersion).where(
+                    PipelineVersion.project_id == project.id,
+                    PipelineVersion.path == yf["path"],
+                    PipelineVersion.branch == yf.get("ref", ref),
+                    PipelineVersion.is_active == True
+                )
+            )
+            pipeline = existing.scalar_one_or_none()
+            active_version = existing_version.scalar_one_or_none()
+            if pipeline:
+                if active_version:
+                    continue
+                else:
+                    # Update if content changed or commit hash changed
+                    if (pipeline.content != yf["content"]) or (
+                            commit_info and pipeline.commit_hash != commit_info.get("commit_hash")
+                    ):
+                        pipeline.content = yf["content"]
+                        pipeline.updated_at = datetime.utcnow()
+                        pipeline.name = yf["name"]
+                        pipeline.description = self._extract_description(yf["content"])
+                        if commit_info:
+                            pipeline.commit_hash = commit_info.get("commit_hash")
+                            pipeline.commit_author = commit_info.get("commit_author")
+                            pipeline.commit_message = commit_info.get("commit_message")
+                            if commit_info and commit_info.get("committed_at"):
+                                committed_at = commit_info["committed_at"]
+                                if isinstance(committed_at, str):
+                                    # Convert to naive UTC
+                                    aware = datetime.fromisoformat(committed_at.replace("Z", "+00:00"))
+                                    naive = aware.replace(tzinfo=None)
+                                    pipeline.committed_at = naive
+                                else:
+                                    # If it's already a datetime, ensure it's naive
+                                    if committed_at.tzinfo is not None:
+                                        pipeline.committed_at = committed_at.replace(tzinfo=None)
+                                    else:
+                                        pipeline.committed_at = committed_at
+                        pipeline.is_active = True
+
+                        await db.commit()
+                        await db.refresh(pipeline)
+                        updated += 1
+            else:
+                new_pipe = Pipeline(
+                    name=yf["name"],
+                    content=yf["content"],
+                    path=yf["path"],
+                    branch=yf.get("ref", ref),
+                    is_generated_by_wizard=False,
+                    is_active=True,
+                    description=self._extract_description(yf["content"]),
+                    project_id=project.id,
+                    created_at=datetime.utcnow(),
+                    updated_at=datetime.utcnow(),
+                )
+                if commit_info:
+                    new_pipe.commit_hash = commit_info.get("commit_hash")
+                    new_pipe.commit_author = commit_info.get("commit_author")
+                    new_pipe.commit_message = commit_info.get("commit_message")
+                    if commit_info and commit_info.get("committed_at"):
+                        committed_at = commit_info["committed_at"]
+                        if isinstance(committed_at, str):
+                            # Convert to naive UTC
+                            aware = datetime.fromisoformat(committed_at.replace("Z", "+00:00"))
+                            naive = aware.replace(tzinfo=None)
+                            new_pipe.committed_at = naive
+                        else:
+                            # If it's already a datetime, ensure it's naive
+                            if committed_at.tzinfo is not None:
+                                new_pipe.committed_at = committed_at.replace(tzinfo=None)
+                            else:
+                                new_pipe.committed_at = committed_at
+                db.add(new_pipe)
+                await db.commit()
+                await db.refresh(new_pipe)
+                saved += 1
+
+        return saved, updated
+
+    async def get_file_with_commit_info(
+            self,
+            ctx: CollectorsRepositoryDetail,
+            file_path: str,
+            ref: str = "main"
+    ) -> dict | None:
+        """
+        Fetch file content AND the latest commit info for that file from GitLab.
+        """
+        project_id = self._proj_id(ctx)
+        encoded_path = quote(file_path, safe="")
+
+        try:
+            # 1) File content
+            url = f"{self.BASE_URL}/projects/{project_id}/repository/files/{encoded_path}"
+            resp = await self._client.get(url, params={"ref": ref})
+            if resp.status_code == 404:
+                return None
+            resp.raise_for_status()
+            data = resp.json()
+            if "content" not in data:
+                return None
+
+            content = base64.b64decode(data["content"]).decode("utf-8")
+
+            # 2) Latest commit for file
+            commits_url = f"{self.BASE_URL}/projects/{project_id}/repository/commits"
+            params = {"path": file_path, "ref_name": ref, "per_page": 1}
+            commits_resp = await self._client.get(commits_url, params=params)
+            commits_resp.raise_for_status()
+            commits = commits_resp.json()
+
+            result = {
+                "content": content,
+                "branch": ref,
+                "file_sha": data.get("last_commit_id"),
+            }
+
+            if commits and len(commits) > 0:
+                latest = commits[0]
+                result["commit_hash"] = latest.get("id")
+                result["commit_author"] = latest.get("author_name")
+                result["commit_email"] = latest.get("author_email")
+                result["commit_message"] = latest.get("message", "")
+                result["committed_at"] = latest.get("created_at")
+            else:
+                result["commit_hash"] = None
+                result["commit_author"] = None
+                result["commit_message"] = None
+                result["committed_at"] = None
+
+            return result
+
+        except Exception as e:
+            print(f"[GitLabCollector] Error fetching file with commit info {file_path}: {e}")
+            return None

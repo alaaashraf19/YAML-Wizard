@@ -1,31 +1,16 @@
-"""
-GitHub Repo Context Agent
-=========================
-Deterministic repo scanner using the @modelcontextprotocol/server-github MCP server.
-
-Steps:
-  1. List repo root via MCP
-  2. Fetch key config / dependency files
-  3. Fetch default branch from GitHub API
-  4. Delegate all detection to agent/utils/detection.py
-  5. Return a ContextPackage
-
-Detection logic lives exclusively in agent/utils/detection.py — nothing is
-duplicated here.
-"""
 from __future__ import annotations
 
-import json
 import logging
-import os
 
-from agent.tools.github_mcp_tools import MCPSessionManager, build_github_tools
+from agent.tools.github_graphql_client import GitHubGraphQLClient, GitHubGraphQLError
+# from agent.tools.github_mcp_tools import MCPSessionManager, build_github_tools
 from agent.utils.detection import build_context_package, truncate
+from agent.utils.url_parser import parse_repo_url
 from schemas.context_package import ContextPackage
 
 logger = logging.getLogger(__name__)
 
-MAX_TOOL_CALLS = 20  # raised from 15 to handle larger repos
+MAX_FILES_PER_REQUEST = 60  # GitHub GraphQL caps total aliased fields per query; stay well under it
 
 # Files always fetched if present at root
 ROOT_FILES_TO_FETCH = {
@@ -69,6 +54,14 @@ ROOT_FILES_TO_FETCH = {
 # Subdirectories to scan for config files
 SUBDIRS_TO_SCAN = {"backend", "frontend", "src", "app", "api", "server", "web", "packages"}
 
+SUBDIR_FILES = (
+    "pyproject.toml", "requirements.txt", "package.json",
+    "jest.config.js", "jest.config.ts",
+    "playwright.config.js", "playwright.config.ts",
+    "pytest.ini", "setup.cfg",
+    ".env.example", ".env.sample",
+)
+
 # Directories to recurse into
 DIRS_TO_EXPLORE = {".github"}
 
@@ -77,62 +70,8 @@ DIRS_TO_EXPLORE = {".github"}
 # Internal helpers
 # ---------------------------------------------------------------------------
 
-def _parse_directory_listing(raw: str) -> tuple[str, list[dict]]:
-    try:
-        entries = json.loads(raw)
-        if not isinstance(entries, list):
-            return raw, []
-        lines = []
-        for entry in entries:
-            name = entry.get("name", "")
-            kind = entry.get("type", "")
-            lines.append(f"{name}/" if kind == "dir" else name)
-        return "\n".join(lines), entries
-    except (json.JSONDecodeError, AttributeError):
-        return raw, []
-
-
-def _extract_file_content(raw: str) -> str:
-    """
-    GitHub MCP wraps file responses:
-      {"name": "pyproject.toml", "content": "actual text", ...}
-    Extract the plain content field, falling back to raw string.
-    """
-    try:
-        parsed = json.loads(raw)
-        if isinstance(parsed, dict) and "content" in parsed and isinstance(parsed["content"], str):
-            return parsed["content"]
-    except (json.JSONDecodeError, TypeError):
-        pass
-    return raw
-
-
-def _select_files_to_fetch(entries: list[dict]) -> list[str]:
-    paths: list[str] = []
-    dir_names: list[str] = []
-    for entry in entries:
-        name = entry.get("name", "")
-        kind = entry.get("type", "")
-        if kind == "file" and name in ROOT_FILES_TO_FETCH:
-            paths.append(name)
-        elif kind == "dir" and name in DIRS_TO_EXPLORE:
-            dir_names.append(name)
-    if ".github" in dir_names:
-        paths.append(".github/workflows")
-    return paths
-
-
-def _get_default_branch_via_api(owner: str, repo: str, github_token: str) -> str:
-    """Fetch default branch directly from GitHub REST API."""
-    try:
-        import httpx
-        headers = {"Authorization": f"Bearer {github_token}", "Accept": "application/vnd.github+json"}
-        resp = httpx.get(f"https://api.github.com/repos/{owner}/{repo}", headers=headers, timeout=10)
-        resp.raise_for_status()
-        return resp.json().get("default_branch", "main")
-    except Exception as exc:
-        logger.warning("Could not fetch default branch from GitHub API: %s", exc)
-        return "main"
+def _build_directory_tree(entries: list[dict]) -> str:
+    return "\n".join(f"{e['name']}/" if e["type"] == "dir" else e["name"] for e in entries)
 
 
 # ---------------------------------------------------------------------------
@@ -148,110 +87,89 @@ def run_github_agent(
 
     Args:
         repo_url:     Full GitHub URL (any format).
-        github_token: Personal access token with repo read access.
+        github_token: Token with repo read access (OAuth token or GitHub App
+                       installation token — see core/github_auth.py).
     """
-    # ── Parse owner/repo from URL ─────────────────────────────────────────
-    url_clean = repo_url.rstrip("/")
-    for marker in ("/tree/", "/blob/", "/commit/", "/releases", "/issues", "/pulls"):
-        if marker in url_clean:
-            url_clean = url_clean[:url_clean.index(marker)]
-    parts = url_clean.rstrip("/").split("/")
-    if len(parts) < 2:
-        raise ValueError(f"Cannot parse owner/repo from URL: {repo_url}")
-    owner, repo = parts[-2], parts[-1]
-    repo = repo.removesuffix(".git")
+    parsed = parse_repo_url(repo_url)
+    owner, repo = parsed.owner, parsed.repo
 
     logger.info("GitHubAgent starting: %s/%s", owner, repo)
 
-    # ── Build MCP tools ───────────────────────────────────────────────────
-    manager  = MCPSessionManager(github_token=github_token)
-    tools    = build_github_tools(manager)
-    tool_map = {t.name: t for t in tools}
+    client = GitHubGraphQLClient(token=github_token)
 
-    def call(tool_name: str, **kwargs) -> str:
-        result = tool_map[tool_name].invoke(kwargs)
-        return result if isinstance(result, str) else str(result)
+    # ── Call 1: root listing + default branch + every root-candidate file ──
+    # in a single batched request.
+    candidate_root_paths = sorted(ROOT_FILES_TO_FETCH)
+    try:
+        result = client.fetch_root_and_files(owner, repo, candidate_root_paths)
+    except GitHubGraphQLError as exc:
+        logger.warning("GraphQL batch error, repo may have an empty/unusual root: %s", exc)
+        raise
 
-    # ── Step 1: list root ─────────────────────────────────────────────────
-    raw_root = call("list_directory", owner=owner, repo=repo, path="")
-    plain_tree, root_entries = _parse_directory_listing(raw_root)
-    logger.info("Root listing: %d entries", len(root_entries))
-
-    all_paths = [e.get("name", "") for e in root_entries if e.get("type") == "file"]
-
-    # ── Step 2: fetch key files ───────────────────────────────────────────
-    paths_to_fetch = _select_files_to_fetch(root_entries)
-    logger.info("Files selected: %s", paths_to_fetch)
+    default_branch = result.default_branch
+    root_entries = result.entries
+    plain_tree = _build_directory_tree(root_entries)
+    all_paths = [e["name"] for e in root_entries if e["type"] == "file"]
 
     key_files: dict[str, str] = {}
-    fetch_count = 0
-
-    for path in paths_to_fetch:
-        if fetch_count >= MAX_TOOL_CALLS:
-            logger.warning("MAX_TOOL_CALLS (%d) reached", MAX_TOOL_CALLS)
-            break
-
-        raw = call("get_file_contents", owner=owner, repo=repo, path=path)
-        fetch_count += 1
-
-        if raw.startswith("[ERROR]"):
-            logger.warning("Skipping %s: %s", path, raw)
+    fetched = 0
+    for path, file_result in result.files.items():
+        if file_result.content is None or file_result.is_binary:
             continue
+        key_files[path] = truncate(file_result.content)
+        fetched += 1
+    logger.info("Call 1: root listing (%d entries) + %d root files fetched in 1 round-trip",
+                len(root_entries), fetched)
 
-        _, sub_entries = _parse_directory_listing(raw)
-        if sub_entries:
-            # It's a directory (e.g. .github/workflows) → fetch yml files inside
-            for entry in sub_entries:
-                sub_name = entry.get("name", "")
-                sub_kind = entry.get("type", "")
-                if sub_kind == "file" and sub_name.endswith((".yml", ".yaml")):
-                    sub_path = f"{path}/{sub_name}"
-                    if fetch_count >= MAX_TOOL_CALLS:
-                        break
-                    sub_raw = call("get_file_contents", owner=owner, repo=repo, path=sub_path)
-                    fetch_count += 1
-                    if not sub_raw.startswith("[ERROR]"):
-                        key_files[sub_path] = truncate(_extract_file_content(sub_raw))
-                        all_paths.append(sub_path)
-                        logger.info("Fetched: %s", sub_path)
-        else:
-            key_files[path] = truncate(_extract_file_content(raw))
-            logger.info("Fetched: %s", path)
+    # ── Call 2 (conditional): subdir candidate files + .github/workflows ───
+    # We don't know workflow filenames yet, so list that directory first —
+    # this is the only place we may need a small extra round-trip, and only
+    # if the repo actually has a .github directory.
+    second_batch_paths: list[str] = []
 
-    # ── Step 2b: scan known subdirs ───────────────────────────────────────
-    SUBDIR_FILES = (
-        "pyproject.toml", "requirements.txt", "package.json",
-        "jest.config.js", "jest.config.ts",
-        "playwright.config.js", "playwright.config.ts",
-        "pytest.ini", "setup.cfg",
-        ".env.example", ".env.sample",
-    )
     for entry in root_entries:
-        name = entry.get("name", "")
-        kind = entry.get("type", "")
-        if kind != "dir" or name not in SUBDIRS_TO_SCAN:
-            continue
-        for sub_file in SUBDIR_FILES:
-            sub_path = f"{name}/{sub_file}"
-            if sub_path in key_files or fetch_count >= MAX_TOOL_CALLS:
-                continue
-            sub_raw = call("get_file_contents", owner=owner, repo=repo, path=sub_path)
-            fetch_count += 1
-            if not sub_raw.startswith("[ERROR]"):
-                key_files[sub_path] = truncate(_extract_file_content(sub_raw))
-                logger.info("Fetched subdir file: %s", sub_path)
+        if entry["type"] == "dir" and entry["name"] in SUBDIRS_TO_SCAN:
+            for sub_file in SUBDIR_FILES:
+                second_batch_paths.append(f"{entry['name']}/{sub_file}")
 
-    # ── Step 3: fetch default branch ──────────────────────────────────────
-    default_branch = _get_default_branch_via_api(owner, repo, github_token)
-    logger.info("Default branch: %s", default_branch)
+    has_github_dir = any(e["type"] == "dir" and e["name"] == ".github" for e in root_entries)
+    workflow_paths: list[str] = []
+    if has_github_dir:
+        try:
+            workflow_entries = client.list_directory(owner, repo, ".github/workflows", ref=default_branch)
+            workflow_paths = [
+                f".github/workflows/{e['name']}"
+                for e in workflow_entries
+                if e["type"] == "file" and e["name"].endswith((".yml", ".yaml"))
+            ]
+            all_paths.extend(workflow_paths)
+        except (FileNotFoundError, GitHubGraphQLError) as exc:
+            logger.info("No .github/workflows directory or could not list it: %s", exc)
 
-    # ── Step 4: build ContextPackage via shared detection utils ──────────
+    second_batch_paths.extend(workflow_paths)
+    second_batch_paths = second_batch_paths[:MAX_FILES_PER_REQUEST]
+
+    if second_batch_paths:
+        try:
+            batch2 = client.fetch_files(owner, repo, second_batch_paths)
+            for path, file_result in batch2.items():
+                if file_result.content is None or file_result.is_binary:
+                    continue
+                key_files[path] = truncate(file_result.content)
+                fetched += 1
+            logger.info("Call 2: %d subdir/workflow files fetched in 1 round-trip", len(batch2))
+        except GitHubGraphQLError as exc:
+            logger.warning("Subdir/workflow batch fetch failed, continuing with what we have: %s", exc)
+
+    logger.info("Total files fetched: %d (in at most 3 GraphQL round-trips)", fetched)
+
+    # ── Build ContextPackage via shared detection utils ────────────────────
     package = build_context_package(
         key_files=key_files,
         all_paths=all_paths,
         directory_tree=plain_tree,
         default_branch=default_branch,
-        notes=f"GitHub: fetched {fetch_count} files from {owner}/{repo}",
+        notes=f"GitHub: fetched {fetched} files from {owner}/{repo} via GraphQL",
     )
     logger.info(
         "Done — languages=%s runners=%s env_vars=%d services=%s",

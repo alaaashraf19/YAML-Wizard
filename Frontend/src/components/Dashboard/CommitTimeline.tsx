@@ -1,6 +1,9 @@
 import type { PipelineRun } from '../../types';
 import styles from './CommitTimeline.module.css';
 
+import { IoCheckmarkCircle, IoCloseCircle, IoRemoveCircleOutline, IoTimeOutline } from 'react-icons/io5';
+import { CgSync } from 'react-icons/cg';
+
 interface Props {
   runs: PipelineRun[];
   selectedId: number | null;
@@ -10,13 +13,13 @@ interface Props {
 function statusIcon(conclusion: string | null) {
   switch (conclusion) {
     case 'success':
-      return '✅';
+      return <IoCheckmarkCircle className={styles.iconGreen} />;
     case 'failure':
-      return '❌';
+      return <IoCloseCircle className={styles.iconRed} />;
     case 'cancelled':
-      return '⚪';
+      return <IoRemoveCircleOutline className={styles.iconMuted} />;
     default:
-      return '⏳';
+      return <IoTimeOutline className={styles.iconMuted} />;
   }
 }
 
@@ -47,7 +50,11 @@ function timeAgo(dateStr: string | null) {
 
 export default function CommitTimeline({runs,selectedId,onSelect,}: Props) {
   if (!runs.length) {
-    return (<p className={styles.empty}>No runs synced yet. Click 🔄 to sync.</p>);
+    return (
+      <p className={styles.empty}>
+        No runs synced yet. Click <CgSync className={styles.inlineIcon} /> to sync.
+      </p>
+    );
   }
 
   return (

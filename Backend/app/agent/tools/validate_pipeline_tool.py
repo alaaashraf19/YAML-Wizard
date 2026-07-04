@@ -14,8 +14,17 @@ from agent.tools.validators import parse_yaml, validate_github, validate_gitlab
 @tool
 async def validate_pipeline_tool(
     yaml_content: str, target: Literal["github", "gitlab"], config: RunnableConfig = None) -> str:
-    """Validate a CI/CD pipeline YAML both syntactically and semantically. Call this on
-    every pipeline YAML you produce before returning it to the user.
+    """
+    Call this FIRST if a user provides an existing YAML and asks 
+    to 'fix' it, 'check' it, or reports that it is not working. 
+    
+    Internal diagnostic tool for the assistant it Validates a CI/CD pipeline YAML both syntactically and semantically.
+
+    Use this tool automatically before returning any generated or modified pipeline YAML.
+    Do not ask the user to run this tool.
+
+    If validation fails, the assistant should fix the YAML and validate again.
+    Only present the final validated YAML to the user.
 
     Two layers:
     - Syntactic: PyYAML parses the content (errors tagged source="pyyaml" with line/col).
@@ -36,7 +45,10 @@ async def validate_pipeline_tool(
          "fallback_used": bool, "fallback_reason": str|null,
          "summary": "<n> error(s), <m> warning(s)",
          "errors": [{"source":..., "level":..., ...}], "warnings": [ ... ]}
-    If "valid" is false, read the errors, fix the YAML, and call again; if true, return it to the user.
+    
+    IMPORTANT: Do not summarize or show this JSON to the user. 
+    Use the 'valid' boolean to decide whether to provide the YAML to the user (if true) 
+    or to call the rectification tool (if false).
     """
     configurable = (config or {}).get("configurable", {})
     report = await build_report(
@@ -44,12 +56,22 @@ async def validate_pipeline_tool(
         target,
         connection=configurable.get("gitlab_connection"),
         db=configurable.get("db"),
+        project_id=configurable.get("gitlab_project_id"),
     )
+
     log_validation_report(report, target)
+    if len(report["errors"]) > 3:
+        shortened_errors = report["errors"][:3] # Keep only the first 3
+        return json.dumps({
+            "valid": False,
+            "summary": f"Found {len(report['errors'])} errors. Highlighting the first 3 to save space.",
+            "errors": shortened_errors,
+            "target": report.get("target")
+        })
     return json.dumps(report, indent=2, ensure_ascii=False)
 
 
-async def build_report(yaml_content: str, target: str, connection: Any = None, db: Any = None,) -> Dict[str, Any]:
+async def build_report(yaml_content: str, target: str, connection: Any = None, db: Any = None, project_id: Any = None,) -> Dict[str, Any]:
     if target not in ("github", "gitlab"):
         return {
             "valid": False,
@@ -103,7 +125,7 @@ async def build_report(yaml_content: str, target: str, connection: Any = None, d
     if target == "github":
         result = validate_github(yaml_content, doc)
     else:
-        result = await validate_gitlab(yaml_content, doc, connection, db)
+        result = await validate_gitlab(yaml_content, doc, connection, db, project_id)
 
     errors: List[Dict[str, Any]] = result.get("errors", [])
     warnings: List[Dict[str, Any]] = result.get("warnings", [])
@@ -122,6 +144,8 @@ async def build_report(yaml_content: str, target: str, connection: Any = None, d
         report["api_endpoint"] = result.get("api_endpoint")
         report["jobs"] = result.get("jobs", [])
         # print(report)
+    
+    print("report in validate", report)
     return report
 
 

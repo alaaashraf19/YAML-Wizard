@@ -29,5 +29,11 @@ class Settings(BaseSettings):
     cloudinary_cloud_name: str = ""
     cloudinary_api_key: str = ""
     cloudinary_api_secret: str = ""
-    
+
+    # Finetuned CI/CD YAML model
+    finetuned_base_url: str = "http://localhost:11434/v1"
+    finetuned_model_name: str = "yaml-wizard-ci"
+    finetuned_api_key: str = "ollama"
+    finetuned_timeout_sec: float = 120.0
+
 settings = Settings()

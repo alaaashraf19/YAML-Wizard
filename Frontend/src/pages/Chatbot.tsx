@@ -1,29 +1,58 @@
 import gStyles from "../global.module.css"
 import styles from "./Chatbot.module.css";
+import popupStyles from '../components/Popup/Popup.module.css'
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md"
-import { IoSend } from "react-icons/io5";
+import { IoSend, IoClose } from "react-icons/io5";
+import { BsFillPatchCheckFill } from "react-icons/bs";
 
-import type { Session, Message } from "../types";
+import type { Session, Message, Project } from "../types";
 import ChatProjects from "../components/Chatbot/ChatProjects";
 import SideBar from "../components/Chatbot/SideBar";
+import Popup from "../components/Popup/Popup";
+import { ProjectSubInfo } from "../components/UserProfile/ProjectInfoTab";
+import CodeBlock from "../components/Chatbot/CodeBlock";
+import { useNavigate } from "react-router-dom";
+import { useHistoryStore } from "./History";
 
+export interface Model {
+    id?: string,
+    label: string,
+    available?: boolean
+}
+
+type Status = "idle" | "saving" | "approved";
 
 function Chatbot() {
     const [prompt, setPrompt] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [messages, setMessages] = useState<Message[] | []>([]);
     const [sessionId, setSessionId] = useState<number | null>(null);
     const [sessions, setSessions] = useState<Session[]>([]);
-    const [selectedProject, setSelectedProject] = useState<string | React.ReactNode>(<>
-        Connect Project <MdOutlineKeyboardArrowRight style={{ marginLeft: 10 }} />
-    </>);
-    
+    const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+    const [status, setStatus] = useState<Status>("idle");
+
+    const { setProject }= useHistoryStore();
+
+    const [models, setModels] = useState<Model[]>([]);
+    const [selectedModel, setSelectedModel] = useState<Model | null>(models[0]);
+
+    const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+    const [isShowInfo, setIsShowInfo] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+
+    const [askAfterApprove, setAskAfterApprove] = useState<string | null>(null);
+    const [confirmMessage, setConfirmMessage] = useState<string | null>(null);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+    const [chatURL, setChatURL] = useState<string>(`chatbot/chat`);
+
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
     const textareaRef = useRef<HTMLTextAreaElement | null>(null);
     const menuRef = useRef<HTMLDivElement | null>(null);
+    const popupRef = useRef<HTMLDivElement | null>(null);
+    const infoRef = useRef<HTMLDivElement | null>(null);
+    const navigate = useNavigate();
     const api_url = import.meta.env.VITE_API_URL;
 
     // Auto focus on textarea
@@ -47,13 +76,16 @@ function Chatbot() {
         window.addEventListener("keydown", handleKeyDown);
         return () => {window.removeEventListener("keydown", handleKeyDown)};
     }, []);
-    
+
     // Close menu on outside click
     useEffect(
         () => {
             function handleClickOutside(e: MouseEvent) {
                 if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
                     setIsMenuOpen(false);
+                }
+                if(infoRef.current && !infoRef.current.contains(e.target as Node)){
+                    setIsShowInfo(false);
                 }
             }
 
@@ -64,22 +96,21 @@ function Chatbot() {
             };
         }
     , []);
-    
+
     // Auto-scroll smoothly
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
 
-    
     // Control Textarea Height
     const MAX_HEIGHT = 300;
     const resizeTextarea = () => {
         const textarea = textareaRef.current;
         if (!textarea) return;
-        
+
         textarea.style.height = "auto";
         textarea.style.overflowY = "hidden";
-        
+
         if(textarea.scrollHeight <= MAX_HEIGHT) {
             textarea.style.height = textarea.scrollHeight + "px";
         }
@@ -95,12 +126,51 @@ function Chatbot() {
     }, [prompt]);
     useEffect(() => {
         window.addEventListener("resize", resizeTextarea);
-        
+
         return () => {
             window.removeEventListener("resize", resizeTextarea);
         };
     }, []);
-    
+
+    // get models
+    useEffect(()=> {
+        const fetchModels = async () => {
+            try {
+                const res = await fetch(`${api_url}/chatbot/models`, {
+                    credentials: "include",
+                    method: "GET",
+                    headers: {"Content-Type": "application/json"}
+                });
+
+                const data = await res.json();
+
+                if (!res.ok) {
+                    console.error(data.detail || data.detail.msg || "Failed to load models");
+                    return;
+                }
+                setModels(data.engines);
+
+            } catch (e) {
+                console.error("Failed to load models:", e);
+            }
+        }
+
+        fetchModels();
+    }, []);
+
+    // get selected project on change of session id
+    useEffect(() => {
+        const foundProject = sessions.find(s => s.id === sessionId)?.project;
+        setSelectedProject(foundProject ?? null);
+    }, [sessionId, sessions]);
+
+    //set text for select project button
+    const selectedProjectText = useMemo(() => {
+        return selectedProject? selectedProject.project_name :
+            <span className={styles.connectBtn}> Connect Project
+                <MdOutlineKeyboardArrowRight className={styles.arrow}/>
+            </span>
+    }, [selectedProject]);
 
     const handleSend = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -120,13 +190,14 @@ function Chatbot() {
 
         // handle new session
         if (!activeSessionId) {
-            const newSession = {
-                id: activeSessionId,
+            const newSession: Session = {
+                id: null,
                 session_name: "...",
                 created_at: new Date().toISOString(),
-                updated_at: new Date().toISOString()
+                updated_at: new Date().toISOString(),
+                project: selectedProject
             }
-            
+
             setSessions(prev => [...prev, newSession]);
         }
         else {
@@ -136,19 +207,20 @@ function Chatbot() {
 
         setIsLoading(true);
         try{
-            const res = await fetch(`${api_url}/chatbot/chat`, {
+            const res = await fetch(`${api_url}/${chatURL ?? 'chatbot/chat'}`, {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
                 credentials: "include",
                 body: JSON.stringify({
                     message: userPrompt,
-                    session_id: activeSessionId
+                    session_id: activeSessionId,
+                    project_id: selectedProject?.id
                 })
             })
 
             const data = await res.json();
             let text: string;
-            
+
             if (!res.ok){
                 console.error("Error with status code(", res.status, "):", data?.detail?.error);
                 text = data.detail?.message?.content || "⚠️ Something went Wrong. Please try again later.";
@@ -170,7 +242,7 @@ function Chatbot() {
 
                 setSessions(prev => prev.map(s => s.id === activeSessionId
                     ? { ...s, id: session_id, session_name: session_name } : s));
-                
+
                 setSessionId(session_id)
                 sessionStorage.setItem("session_id", session_id.toString());
             }
@@ -188,6 +260,7 @@ function Chatbot() {
         }
     };
 
+    //handle enter and shift+enter
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
@@ -199,21 +272,182 @@ function Chatbot() {
         return content.startsWith("⚠️");
     };
 
+    const unescapePythonString = (raw: string) => {
+        return raw
+            .replace(/\\n/g, "\n")
+            .replace(/\\t/g, "\t")
+            .replace(/\\"/g, "\"")
+            .replace(/\\'/g, "'")
+            .replace(/\\\\/g, "\\");
+    };
+
+    const normalizeLegacyContent = (content: string) => {
+        const trimmed = content.trim();
+        if (!/^\[\s*\{\s*'type':/.test(trimmed)) return content;
+
+        const segmentRegex =
+            /\{\s*'type':\s*'(\w+)'\s*(?:,\s*'language':\s*'([\w.+-]*)')?\s*,\s*'content':\s*'((?:\\.|[^'\\])*)'\s*\}/g;
+
+        const parts: string[] = [];
+        let match: RegExpExecArray | null;
+
+        while ((match = segmentRegex.exec(trimmed)) !== null) {
+            const [, type, language, rawText] = match;
+            const text = unescapePythonString(rawText);
+            parts.push(
+                type === "code" ? "```" + (language || "") + "\n" + text + "\n```" : text
+            );
+        }
+
+        // If nothing matched, don't risk mangling a legitimate message -
+        // fall back to the original content.
+        return parts.length ? parts.join("\n\n") : content;
+    };
+
+    const handleApprove = async (code: string) => {
+        if (status === "saving") return;
+
+        if (!selectedProject) {
+            setErrorMessage("Connect a project first so this pipeline can be saved.");
+            return;
+        }
+
+        setStatus("saving");
+        try {
+            const res = await fetch(`${api_url}/pipelines/${selectedProject.id}/approve`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify({
+                    name: "generated-pipeline",
+                    description: "",
+                    branch: selectedProject.branch,
+                    content: code,
+                    is_generated_by_wizard: true,
+                    "is_active": false
+                }),
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                console.error(data.detail || data.detail.msg || "Failed to load profile");
+                return;
+            }
+
+            setStatus("approved");
+            setAskAfterApprove(`Pipeline is saved to your project with name '${data.name}'.\n
+                To Edit or Publish this script go to Version History.`);
+
+        } catch (e) {
+            console.error("Approve pipeline failed:", e);
+            setStatus("idle");
+            setErrorMessage(e instanceof Error ? e.message : "Failed to save the pipeline. Please try again.");
+        }
+    };
+
+    const renderMessageContent = (content: string, role: Message["role"]) => {
+        content = normalizeLegacyContent(content);
+        const codeFenceRegex = /```(\w+)?\n?([\s\S]*?)```/g;
+        const nodes: React.ReactNode[] = [];
+        let lastIndex = 0;
+        let match: RegExpExecArray | null;
+        let key = 0;
+
+        while ((match = codeFenceRegex.exec(content)) !== null) {
+            if (match.index > lastIndex) {
+                const textChunk = content.slice(lastIndex, match.index);
+                if (textChunk.trim()) {
+                    nodes.push(<span className={styles.messageText} key={key++}>{renderBold(textChunk)}</span>);
+                }
+            }
+            const language = match[1];
+            const code = match[2].replace(/\n$/, "");
+            const isYamlPipeline = role === "assistant" && !!language && ["yaml", "yml"].includes(language.toLowerCase());
+
+            if (isYamlPipeline) {
+                nodes.push(
+                    <div key={key++} className={styles.wrapper}>
+                        <CodeBlock language={language} code={code} />
+                        <div className={styles.actionsBar}>
+                            <button
+                                type="button"
+                                className={`${styles.actionBtn} ${styles.approveBtn}`}
+                                onClick={() => {handleApprove(code)}}
+                                title={"Save this pipeline to your project"}
+                            >
+                                <BsFillPatchCheckFill/>
+                            </button>
+                            
+                        </div>
+                    </div>
+                );
+            } else {
+                nodes.push(
+                    <CodeBlock key={key++} language={language} code={code} />
+                );
+            }
+            lastIndex = codeFenceRegex.lastIndex;
+        }
+
+        if (lastIndex < content.length) {
+            const textChunk = content.slice(lastIndex);
+            if (textChunk.trim()) {
+                nodes.push(<span key={key++}>{renderBold(textChunk)}</span>);
+            }
+        }
+
+        return nodes.length ? nodes : renderBold(content);
+    };
+
+    const renderBold = (text: string) => {
+        // const withoutBulletMarkers = text.replace(/^[ \t]*[*-][ \t]+/gm, "");
+        const withoutBulletMarkers = text.replace(/^([ \t]*)[*-][ \t]+/gm, "$1");
+        const withoutHeadingMarkers = withoutBulletMarkers.replace(/^[ \t]*#{1,6}[ \t]+(.*)$/gm, "**$1**");
+        const parts = withoutHeadingMarkers.split(/\*{1,2}(.*?)\*{1,2}/g);
+        return parts.map((part, i) =>
+            i % 2 === 1 ? <strong key={i}>{part}</strong> : part
+        );
+    };
+
+    // get saved model from sessionStorage
+    useEffect(() => {
+        if (models.length === 0)return;
+
+        const savedModelLabel = sessionStorage.getItem("selected_model");
+        if (savedModelLabel) {
+            const foundModel:Model | undefined = models.find(model => model.label === savedModelLabel);
+            if (foundModel) {
+                setSelectedModel(foundModel);
+            }
+        } else {
+            setSelectedModel(models[0]);
+            sessionStorage.setItem("selected_model", models[0]?.label);
+        }
+    }, [models, selectedModel]);
+
+
+    const handleModelChange = (selectedModel: Model)=> {
+        setSelectedModel(selectedModel);
+        setChatURL(selectedModel.label === "Main Model" ? 'chatbot/chat' : 'chatbot/generate');
+    };
+
 
     return(
         <div className={styles.window}>
-            <SideBar sessionId={sessionId} setSessionId={setSessionId} sessions={sessions} 
-                setSessions={setSessions} setMessages={setMessages} isLoading={isLoading}/>
+            <SideBar sessionId={sessionId} setSessionId={setSessionId} sessions={sessions}
+                setSessions={setSessions} setMessages={setMessages} isLoading={isLoading}
+                models={models} onModelChange={handleModelChange}/>
 
             <div className={styles.chatWindow}>
                 <div className={styles.chatMessages}>
                     <div className={styles.spacer}/>
                     {messages.map((msg, i) => (
                         <div key={i} className={styles.messagePack}>
-                            <p className={`${styles.message} ${msg.role === "user" ?
-                                styles.userMessage : (isErrorMessage(msg.content)? styles.errorMessage : styles.botMessage)}`}>
-                                {msg.content}
-                            </p>
+                            <div className={`${styles.message} ${msg.role === "user" ? styles.userMessage 
+                                :(isErrorMessage(msg.content)? styles.errorMessage : styles.botMessage)}`}>
+                                {renderMessageContent(msg.content, msg.role)}
+                            </div>
                         </div>
                     ))}
                     {isLoading && (
@@ -244,15 +478,62 @@ function Chatbot() {
                         </form>
 
                         <div>
-                            <button onClick={() => setIsMenuOpen(prev => !prev)} className={`${styles.projectButton} ${gStyles.clickable}`}>
-                                {selectedProject}
+                            <button className={`${styles.projectButton} ${gStyles.clickable}`}
+                                title={selectedProject ? "Show project info" : "Open projects menu"}
+                                onClick={() => {!selectedProject? setIsMenuOpen(prev => !prev)
+                                    : setIsShowInfo(true)
+                                }}>
+                                {selectedProjectText}
                             </button>
+                            
+                            {isShowInfo && 
+                            <div className={popupStyles.popupLayover}>
+                                <div className={`${styles.infoPopup} ${popupStyles.popup}`} ref={infoRef}>
+                                    <div className={styles.infoBtns}>
+                                        <IoClose className={`${gStyles.clickable} ${styles.infoBtn}`}
+                                            onClick={() => setIsShowInfo(false)} title="Close"/>
+                                    </div>
+                                    <ProjectSubInfo selectedProject={selectedProject}/>
+                                </div>
+                            </div>
+                            }
 
-                            {isMenuOpen && <ChatProjects setIsMenuOpen={setIsMenuOpen} setSelectedProject={setSelectedProject} menuRef={menuRef}/>}
+                            {isMenuOpen &&
+                            <ChatProjects 
+                                sessionId={sessionId}
+                                setProject={setSelectedProject}
+                                setSessions={setSessions}
+                                setConfirmMessage={setConfirmMessage}
+                                setErrorMessage={setErrorMessage}
+                                setIsMenuOpen={setIsMenuOpen}
+                                menuRef={menuRef}
+                            />}
                         </div>
                     </div>
                 </div>
             </div>
+
+            {(confirmMessage || errorMessage) &&
+            <Popup
+                btnText1={"Got it"}
+                confirmMessage={confirmMessage}
+                setConfirmMessage={setConfirmMessage}
+                errorMessage={errorMessage}
+                setErrorMessage={setErrorMessage}
+                popupRef={popupRef}
+            />}
+            {(askAfterApprove) &&
+            <Popup
+                btnText1={"Go to Version History"}
+                btn1Action={() => {
+                    setProject(selectedProject);
+                    navigate("/history");
+                }}
+                btnText2="Close"
+                questionMessage={askAfterApprove}
+                setQuestionMessage={setAskAfterApprove}
+                popupRef={popupRef}
+            />}
         </div>
     )
 }

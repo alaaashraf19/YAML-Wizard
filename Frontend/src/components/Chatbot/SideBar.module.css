@@ -20,6 +20,7 @@
     font-size: 16px;
     justify-content: center;
     white-space: nowrap;
+    overflow-x: hidden;
 }
 .collapsed {
     width: 60px;
@@ -107,6 +108,14 @@
 .sessionEnd {
     border-top: 1px solid rgba(255, 255, 255, 0.2);
 }
+.modelSwitchWrapper {
+    margin: 5px 0 0 0;
+    padding: 0;
+    width: 100%;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding-top: 8px;
+}
+
 .session {
     padding: 3px 10px;
     border: 1px solid transparent;
@@ -184,7 +193,7 @@
 
     transition: 0.7s;
 }
-.option {
+.optionSignout, .optionProfile {
     display: flex;
     align-items: center;
     gap: 7px;
@@ -195,8 +204,10 @@
     margin: 5px;
     padding: 10px 15px;
     border-radius: 10px;
+    transition: background-color 0.25s ease;
 }
-.option:hover {background-color: rgb(19, 5, 79);}
+.optionProfile:hover {background-color: rgb(19, 5, 79);}
+.optionSignout:hover {background-color: rgb(61, 3, 6);}
 
 .username {
     margin: 10px;
@@ -213,11 +224,9 @@
     color: inherit;
     font-size: 16px;
 
-    /* background: linear-gradient(90deg, rgb(23, 8, 92)50%, rgb(9, 2, 41)); */
     background: linear-gradient(90deg,  rgb(9, 2, 41)0%, rgb(23, 8, 92)60%, rgb(9, 2, 41)100%);
     font-weight: bold;
 
-    border: 1px solid rgba(221, 223, 251, 0.25);
     border-radius: 20px;
     cursor: pointer;
 }

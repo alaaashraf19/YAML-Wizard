@@ -195,7 +195,7 @@ function ProfileTab({ setConfirmMessage, setErrorMessage } : ProfileProps) {
                     setEditEmail={setEditEmail}
                     />
                 {(editUsername || editEmail) && 
-                    <button type="submit" className={`${gStyles.clickable} ${styles.button}`}>
+                    <button type="submit" className={`${gStyles.gButton} ${styles.button}`}>
                         Update Profile
                     </button>
                 }
@@ -209,7 +209,7 @@ function ProfileTab({ setConfirmMessage, setErrorMessage } : ProfileProps) {
 
                 <div className={styles.imgBtnContainer}>
                     <label htmlFor="fileInput"
-                        className={`${styles.inputImg} ${styles.button}  ${gStyles.clickable}`}>
+                        className={`${styles.inputImg} ${styles.button}  ${gStyles.gButton}`}>
                         Change Image
                     </label>
                     <input type="file" id="fileInput" accept="image/*" onChange={handleImageChange}

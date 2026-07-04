@@ -8,7 +8,7 @@ import ProjectsTab from "../components/UserProfile/ProjectsTab";
 import ProjectInfoTab from "../components/UserProfile/ProjectInfoTab";
 import SecurityTab from "../components/UserProfile/SecurityTab";
 
-import { Popup } from "../components/Popup/Popup"
+import Popup from "../components/Popup/Popup"
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
@@ -23,6 +23,7 @@ function UserProfile() {
     const [projectInfoId, setProjectInfoId] = useState<number | null>(null);
 
     const [confirmMessage, setConfirmMessage] = useState<string | null>("");
+    const [warningMessage, setWarningMessage] = useState<string | null>("");
     const [errorMessage, setErrorMessage] = useState<string | null>("");
 
     const navigate = useNavigate();
@@ -41,28 +42,14 @@ function UserProfile() {
         setActiveTab(searchParams.get("tab") || null);
     }, [searchParams]);
 
-    // Close info popup on outside click
-    // useEffect(
-    //     () => {
-    //         function handleClickOutside(e: MouseEvent) {
-    //             if (projectInfoId && infoRef.current &&
-    //                 !infoRef.current.contains(e.target as Node)) {
-    //                 setProjectInfoId(null);
-    //             }
+    // check if project info id is selected
+    useEffect(() => {
+        const projectId = sessionStorage.getItem("project_id");
 
-    //             if((confirmMessage || errorMessage) && popupRef.current &&
-    //                     !popupRef.current.contains(e.target as Node)){
-    //                 setConfirmMessage("");
-    //                 setErrorMessage("");
-    //             }
-    //         }
-
-    //         document.addEventListener("mousedown", handleClickOutside);
-    //         return () => {
-    //             document.removeEventListener("mousedown", handleClickOutside);
-    //         };
-    //     }
-    // , [projectInfoId, confirmMessage, errorMessage]);
+        if(projectId){
+            setProjectInfoId(Number(projectId));
+        }
+    }, []);
 
     return(
         <div className={styles.pageContainer}>
@@ -88,13 +75,12 @@ function UserProfile() {
                     projects={projects}
                     setProjects={setProjects}
                     infoRef={infoRef}
-                    popupRef={popupRef}
-                    />
+                />
             }
 
             <div className={styles.formContainer} ref={formRef}>
                 {(!activeTab || activeTab === tabs[0]) && (
-                    <ProfileTab 
+                    <ProfileTab
                         setConfirmMessage={setConfirmMessage}
                         setErrorMessage={setErrorMessage}
                     />
@@ -103,6 +89,7 @@ function UserProfile() {
                 {(!activeTab || activeTab === tabs[1]) && (
                     <PlatformsTab
                         setConfirmMessage={setConfirmMessage}
+                        setWarningMessage={setWarningMessage}
                         setErrorMessage={setErrorMessage}
                     />
                 )}
@@ -127,16 +114,15 @@ function UserProfile() {
             </div>
 
             {(errorMessage || confirmMessage) && 
-                <Popup 
+                <Popup
                     btnText1={"Got it"}
                     btn1Action={
-                        Platforms.find(p => searchParams.get(p) !== null)? () => navigate("/profile"): null}
-                    btnText2={null}
-                    btn2Action={null}
+                        Platforms.find(p => searchParams.get(p) !== null)
+                        ? () => navigate("/profile"): null}
                     confirmMessage={confirmMessage}
                     setConfirmMessage={setConfirmMessage}
-                    warningMessage={null}
-                    setWarningMessage={null}
+                    warningMessage={warningMessage}
+                    setWarningMessage={setWarningMessage}
                     errorMessage={errorMessage}
                     setErrorMessage={setErrorMessage}
                     popupRef={popupRef}

@@ -118,21 +118,75 @@ export interface Session {
     session_name: string;
     created_at: string;
     updated_at: string;
+    project?: Project | null;
+    pipeline?: Pipeline | null;
 };
 
 export interface AuthContextType {
     username: string | null;
     loading: boolean | null;
+    isGuest: boolean;
     login: (username: string) => void;
+    loginAsGuest: () => void;
     logout: () => void;
 };
 
+// Passed as router `state` when redirecting to /login, so Login knows where
+// to send the person back to afterwards and whether "Continue as Guest"
+// should be offered for that particular destination.
+export interface LoginRedirectState {
+    from?: { pathname: string };
+    allowGuest?: boolean;
+};
+
 export interface Project {
-    id: number | null;
-    user_id: number | null;
+    id: number;
+    user_id: number;
     project_name: string;
+    branch:string;
     repo_url: string;
     platform: Platform;
     created_at: string;
     updated_at: string;
+}
+
+export interface Pipeline {
+    id: number;
+    pipeline_id?: number;
+    name: string;
+    commit_author: string;
+    commit_hash?: string;
+    branch: string;
+    path: string;
+    content: string;
+    is_active: boolean;
+    created_at: Date;
+    updated_at: Date;
+    commited_at: Date;
+    is_generated_by_wizard: boolean;
+}
+
+export interface Job {
+    id: string;
+    display_index?: number;
+    stage?: string | null;
+    needs?: string[];
+    content: string;
+}
+
+export interface JobReview {
+    pipeline_id: number;
+    platform: string;
+    jobs: Job[];
+    content: string;
+    valid: boolean;
+    errors: string[];
+    warnings: string[];
+    ai_warnings: string[];
+    ai_review: {
+        available: boolean,
+        model: string,
+        error: string
+    }
+    commited: boolean;
 }

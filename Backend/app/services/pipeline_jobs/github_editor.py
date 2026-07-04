@@ -28,5 +28,5 @@ class GitHubPipelineEditor(PipelineEditor):
         out: list[JobView] = []
         for index, (key, spec) in enumerate(jobs.items()):
             needs = normalize_needs(spec.get("needs")) if isinstance(spec, dict) else []
-            out.append(JobView(id=str(key), display_index=index, stage=None, needs=needs))
+            out.append(JobView(id=str(key),display_index=index, stage=None, needs=needs, content=self.job_block(key, spec)))
         return out

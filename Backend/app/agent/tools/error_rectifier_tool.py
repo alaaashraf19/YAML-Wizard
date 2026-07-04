@@ -3,19 +3,21 @@ from agent.prompts import RECTIFY_PROMPT
 from langchain_core.tools import tool
 
 @tool
-async def rectify_yaml_tool(yaml_content: str,validation_report: str,) -> str:
+async def rectify_yaml_tool(
+    yaml_content: str,
+    validation_report: str,
+) -> str:
     """
-    Prepare YAML validation errors for correction.
-
-    Args:
-        yaml_content: Current YAML.
-        validation_report: JSON output from validate_pipeline_tool.
-
-    Returns:
-        Prompt containing YAML and validation errors that should be fixed.
+    Call this tool ONLY when `validate_pipeline_tool` returns errors.
+    It provides the context needed for the RECTIFY_PROMPT.
     """
+    print("[rectify_yaml_tool] called — validation errors received")
 
-    return RECTIFY_PROMPT.format(
-        yaml_content=yaml_content,
-        validation_report=validation_report,
+    # Keep it short and clear
+    return (
+        f"VALIDATION_FAILED\n"
+        f"Current YAML:\n```yaml\n{yaml_content}\n```\n\n"
+        f"The YAML failed validation. Here are the errors:\n{validation_report}\n\n"
+        f"Please apply the RECTIFY_PROMPT rules now: "
+        f"Explain the fix, then provide the corrected ```yaml block."
     )

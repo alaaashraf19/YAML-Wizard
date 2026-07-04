@@ -2,7 +2,9 @@ import gStyles from "../../global.module.css"
 import styles from "./SideBar.module.css";
 import logo from "../../assets/yaml_wizard_logo.png";
 import { useAuth } from '../../Context/AuthContext';
+import ModelSwitch from "./ModelSwitch";
 import type { Session, Message } from "../../types";
+import type { Model } from "./../../pages/Chatbot";
 
 import { useState, useEffect, useRef, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -14,7 +16,7 @@ import { MdDeleteOutline, MdChatBubbleOutline } from "react-icons/md";
 import { FaHistory } from "react-icons/fa";
 import { GoPerson } from "react-icons/go";
 import { RiDashboardFill } from "react-icons/ri";
-import { Popup } from "../Popup/Popup";
+import Popup from "../Popup/Popup";
 
 
 type sideBar_props = {
@@ -23,11 +25,22 @@ type sideBar_props = {
     sessions: Session[],
     setSessions: React.Dispatch<React.SetStateAction<Session[] | []>>,
     setMessages: React.Dispatch<React.SetStateAction<Message[] | []>>,
-    isLoading: boolean
+    isLoading: boolean,
+    models: Model[],
+    onModelChange: (model: Model) => void
 }
 
-function SideBar({sessionId, setSessionId, sessions, setSessions, setMessages, isLoading}: sideBar_props) {
-    const [confirmMessage, setConfirmMessage] = useState<string | null>("");
+function SideBar({
+    sessionId,
+    setSessionId,
+    sessions,
+    setSessions,
+    setMessages,
+    isLoading,
+    models,
+    onModelChange,
+}: sideBar_props) {
+    const [askDelete, setAskDelete] = useState<string | null>("");
     const [warningMessage, setWarningMessage] = useState<string | null>("");
     const [sessionToDelete, setSessionToDelete] = useState<number | null>(null);
     const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
@@ -72,7 +85,7 @@ function SideBar({sessionId, setSessionId, sessions, setSessions, setMessages, i
         setMessages([]);
     };
 
-    // get session by id
+    // get session by id to make active
     const loadSession = async (session_id: number) => {
         if(isLoading) return;
         
@@ -128,11 +141,14 @@ function SideBar({sessionId, setSessionId, sessions, setSessions, setMessages, i
 
     // persist sessionsId to stay on after refresh
     useEffect(() => {
-        const currentSession = sessionStorage.getItem("session_id");
+        const currentSessionId = sessionStorage.getItem("session_id");
 
-        if (currentSession) {
-            setSessionId(Number(currentSession));
-            loadSession(Number(currentSession));
+        if (currentSessionId) {
+            setSessionId(Number(currentSessionId));
+            loadSession(Number(currentSessionId));
+        }
+        else{
+            sessionStorage.clear();
         }
     }, []);
 
@@ -172,15 +188,15 @@ function SideBar({sessionId, setSessionId, sessions, setSessions, setMessages, i
                 title={"Go to Dashboard"} onClick={() => navigate("/dashboard")}/>
             
             <div ref={avatarIconRef} className={styles.settingsContainer}>
-                <GoPerson className={`${styles.username} ${gStyles.clickable}`} title={"Open Menu"}
+                <GoPerson className={`${styles.username} ${gStyles.gButton}`} title={"Open Menu"}
                 onClick={() => setOpenSettings(prev => !prev)}/>
                 {openSettings &&
                     <div className={styles.settingsMenu} ref={settingsRef}>
-                        <Link className={`${styles.option} ${gStyles.clickable}`} to="/profile">
+                        <Link className={`${styles.optionProfile} ${gStyles.clickable}`} to="/profile">
                             <IoPerson/>
                             Profile
                         </Link>
-                        <Link className={`${styles.option} ${gStyles.clickable}`} to="/"
+                        <Link className={`${styles.optionSignout} ${gStyles.clickable}`} to="/"
                             onClick={() => logout()}>
                             <FaSignOutAlt/> Sign out
                         </Link>
@@ -227,7 +243,7 @@ function SideBar({sessionId, setSessionId, sessions, setSessions, setMessages, i
                         <button className={`${styles.deleteIcon} ${gStyles.clickable}`}  title="Delete"
                             onClick={() => {
                                 setSessionToDelete(session.id);
-                                setConfirmMessage("Delete this conversation?");
+                                setAskDelete("Delete this conversation?");
                                 setWarningMessage("This action cannot be undone");
                             }}>
                             <MdDeleteOutline/>
@@ -237,21 +253,28 @@ function SideBar({sessionId, setSessionId, sessions, setSessions, setMessages, i
             </div>
             <p className={styles.sessionEnd}/>
 
+            <div className={styles.modelSwitchWrapper}>
+                <ModelSwitch 
+                    models={models} 
+                    onModelChange={onModelChange}
+                />
+            </div>
+
             <div className={styles.bottomContainer}>
                 {!loading && (
                     username? (
                         <div ref={avatarRef} className={styles.settingsContainer}>
-                            <button className={`${styles.username} ${gStyles.clickable}`} title={"Open Menu"}
+                            <button className={`${styles.username} ${gStyles.gButton}`} title={"Open Menu"}
                                 onClick={() => setOpenSettings(prev => !prev)}>
                                 <GoPerson/>{username}
                             </button>
                             {openSettings && 
                                 <div className={styles.settingsMenu} ref={settingsRef}>
-                                    <Link className={`${styles.option} ${gStyles.clickable}`} to="/profile">
+                                    <Link className={`${styles.optionProfile} ${gStyles.clickable}`} to="/profile">
                                         <IoPerson/>
                                         Profile
                                     </Link>
-                                    <Link className={`${styles.option} ${gStyles.clickable}`} to="/"
+                                    <Link className={`${styles.optionSignout} ${gStyles.clickable}`} to="/"
                                         onClick={() => logout()}>
                                         <FaSignOutAlt/>
                                         Sign out
@@ -271,19 +294,16 @@ function SideBar({sessionId, setSessionId, sessions, setSessions, setMessages, i
         </>)}
         </div>
 
-        {confirmMessage && (
+        {askDelete && (
             <Popup
                 btnText1={"Delete"}
                 btn1Action={deleteSession}
                 btnText2={"Cancel"}
                 btn2Action={() => setSessionToDelete(null)}
-                confirmMessage={confirmMessage}
-                setConfirmMessage={setConfirmMessage}
+                questionMessage={askDelete}
+                setQuestionMessage={setAskDelete}
                 warningMessage={warningMessage}
                 setWarningMessage={setWarningMessage}
-                errorMessage={null}
-                setErrorMessage={null}
-                popupRef={null}
             />
         )}
     </>)
