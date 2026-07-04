@@ -78,9 +78,9 @@ function SignUp(){
                 return;
             }
 
-            login(username);
+            // login(username);
             console.log(data.msg);
-            navigate(redirectTo);
+            navigate("/login");
 
         } catch (err: any) {
             const msg = err?.response?.data?.detail?.[0]?.msg || "Server Error. Please try again later.";
