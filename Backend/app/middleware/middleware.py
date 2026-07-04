@@ -5,7 +5,8 @@ def setup_middleware(app):
         CORSMiddleware,
         allow_origins=[
             "http://localhost:5173",
-            "https://sprain-reiterate-cape.ngrok-free.dev"
+            "https://sprain-reiterate-cape.ngrok-free.dev",
+            "https://gauging-scandal-railway.ngrok-free.dev"
         ],
         allow_credentials=True,
         allow_methods=["*"],

@@ -1,15 +1,14 @@
-from fastapi import  HTTPException, Request
+from fastapi import  HTTPException
 from fastapi.responses import RedirectResponse
 import httpx
-from models.user_model import User
-from agent.utils.github_auth import generate_jwt
+from sqlalchemy import select
+from core.github_auth import get_installation_token, generate_jwt
 from core.security import get_current_user
-from models.github_installation_model import GitHubInstallation as GitHubInstallationModel
-from models.user_model import User as UserModel
-from dotenv import load_dotenv
+from models.platforms_model import GitHubInstallation as GitHubInstallationModel, GitHubInstallationRepo
+from schemas.github_app_schema import GitHubInstallationRepoSchema
 import os
+from dotenv import load_dotenv
 load_dotenv()
-
 
 # User clicks button
 #         ↓
@@ -40,7 +39,7 @@ load_dotenv()
 #    installation_id ↔ current_user.id
 #    ↓
 # Done
-
+frontend_url = os.getenv("Frontend_Base_URL")
 async def install_app_services():
     url = "https://github.com/apps/yaml-wizard/installations/new"
     return RedirectResponse(url, status_code=302)
@@ -49,67 +48,114 @@ async def github_webhook(request, db):
     payload = await request.json()
     event = request.headers.get("X-GitHub-Event")
 
-    if event == "installation" and payload.get("action") == "created":
+    if event == "installation":
 
         installation_data = payload.get("installation", {})
-        account = installation_data.get("account", {})
+        action = payload.get("action")
 
         installation_id = installation_data.get("id")
+        account = installation_data.get("account", {})
+
         account_login = account.get("login")
         account_id = account.get("id")
+        account_type = account.get("type")
+        repo_selection = installation_data.get("repository_selection")
 
-        #account_type = payload["installation"]["account"]["type"] # User | Organization
-        print(f"App installed: {installation_id} by {account_login}")
-        
-        installation = db.query(GitHubInstallationModel).filter(GitHubInstallationModel.installation_id == installation_id).first()
+        result = await db.execute(select(GitHubInstallationModel).where(GitHubInstallationModel.installation_id == installation_id))
+        installation = result.scalar_one_or_none()
 
-        if not installation:
-            installation = GitHubInstallationModel(
-                installation_id=installation_id,
-                account_login=account_login,
-                account_id=account_id
+        if action == "created":
+            print(
+                f"App installed: {installation_id} by {account_login}, "
+                f"repos selection: {repo_selection}",  f"account_type: {account_type}"
             )
-            db.add(installation)
 
-        else:
-            # update info if already exists
-            installation.account_login = account_login
-            installation.account_id = account_id
-        db.commit()
+            if not installation:
+                installation = GitHubInstallationModel(
+                    installation_id=installation_id,
+                    account_login=account_login,
+                    account_id=account_id,
+                    account_type=account_type,
+                    repos_selection=repo_selection or "all",
+                    user_id=None,  # will be linked later in /setup
+                )
+                db.add(installation)
+
+            else:
+                installation.account_login = account_login
+                installation.account_id = account_id
+                installation.account_type = account_type
+
+                if repo_selection is not None:
+                    installation.repos_selection = repo_selection
+
+        elif action == "deleted":
+
+            if installation:
+                print(
+                f"App uninstalled: {installation_id} by {account_login}, "
+                f"repos selection: {repo_selection}",  f"account_type: {account_type}")
+                await db.delete(installation)
+
+        await db.commit()
 
 
-    elif event == "installation" and payload.get("action") == "deleted":
-        installation_id = payload["installation"]["id"]
+    elif event == "installation_repositories":
 
-        installation = db.query(GitHubInstallationModel).filter(GitHubInstallationModel.installation_id == installation_id).first()
-        if installation:
-            # either delete OR unlink
-            db.delete(installation)
-            db.commit()
-            
-    # repo = payload.get("repository", {})
+        installation_data = payload.get("installation", {})
+        installation_id = installation_data.get("id")
 
-    # repo_id = repo.get("id")
-    # full_name = repo.get("full_name")
-    # default_branch = repo.get("default_branch")
-    # private = repo.get("private")
-    
+        repositories_added = payload.get("repositories_added", [])
+        repositories_removed = payload.get("repositories_removed", [])
+
+        #add repos
+        for repo in repositories_added:
+
+            repo_id = repo.get("id")
+            if not repo_id:
+                continue #since our db logic depend on repo id if we didnt receive it we discard 
+
+            existing = await db.execute(
+                select(GitHubInstallationRepo).where(
+                    GitHubInstallationRepo.installation_id == installation_id,
+                    GitHubInstallationRepo.repo_id == repo_id,)
+            )
+
+            if existing.scalar_one_or_none():
+                continue
+
+            db.add(
+                GitHubInstallationRepo(
+                    installation_id=installation_id,
+                    repo_id=repo_id,
+                    repo_full_name=repo.get("full_name"),
+                    repo_url=repo.get("html_url"),
+                )
+            )
+
+        #remove repos
+        for repo in repositories_removed:
+
+            repo_id = repo.get("id")
+            if not repo_id:
+                continue 
+
+            result = await db.execute(
+                select(GitHubInstallationRepo).where(
+                    GitHubInstallationRepo.installation_id == installation_id,
+                    GitHubInstallationRepo.repo_id == repo_id,)
+            )
+
+            repo_record = result.scalar_one_or_none()
+
+            if repo_record:
+                await db.delete(repo_record)
+
+        await db.commit()
     return {"ok": True}
+            
 
 
-
-async def setup_github_url_services(installation_id, request, db):
-    token = request.cookies.get("access_token")
-    if not token:
-        raise HTTPException(status_code=401, detail="Unauthorized")
-    user = get_current_user(db, token)
-
-    if user.github_id is None:
-        raise HTTPException(
-            status_code=400, 
-            detail="Please connect your GitHub account first"
-        )
-    
     # The webhook may not have been received yet, or the user may have installed
     # the app previously but never linked it to their account.
     #
@@ -120,44 +166,58 @@ async def setup_github_url_services(installation_id, request, db):
     # - If it is already linked to another user, we reject the request.
     # - Otherwise, we safely link this installation to the current user.
 
-    installation = db.query(GitHubInstallationModel).filter(GitHubInstallationModel.installation_id == installation_id).first()
 
+async def setup_github_url_services(installation_id, request, db):
+    token = request.cookies.get("access_token")
+    if not token:
+        # raise HTTPException(status_code=401, detail="Unauthorized")
+        return RedirectResponse(f"{frontend_url}/login")
+    
+    user = await get_current_user(db, token)
+
+    result = await db.execute(select(GitHubInstallationModel).where(GitHubInstallationModel.installation_id == installation_id))
+    installation = result.scalar_one_or_none()
+
+    if(installation 
+    and installation.user_id 
+    and installation.user_id != user.id
+    ):
+        return RedirectResponse(f"{frontend_url}/profile")
+        # raise HTTPException(status_code=400, detail="Installation already linked to a different user")
+    
+    if installation and installation.user_id == user.id:
+        return RedirectResponse(f"{frontend_url}/profile")
+    
     if not installation:
-        installation = GitHubInstallationModel(installation_id=installation_id)
+        account_data = await fetch_installation_account_data(installation_id)
+        installation = GitHubInstallationModel(
+            installation_id=installation_id,
+            account_id=account_data.get("id"),
+            account_login=account_data.get("login"),
+            account_type=account_data.get("type"),
+            user_id=user.id,
+            repos_selection=None,  # webhook will fill this
+        )
         db.add(installation)
-        db.flush() # Get the installation in DB without committing
+    else:
+        if installation.user_id is None:
+            installation.user_id = user.id
+        if not installation.account_id or not installation.account_login or not installation.account_type:
+            account_data = await fetch_installation_account_data(installation_id)
+            installation.account_id = account_data.get("id")
+            installation.account_login = account_data.get("login")
+            installation.account_type = account_data.get("type")
     
+    await db.commit()
+    return RedirectResponse(f"{frontend_url}/profile")
 
-    account_id = installation.account_id
-    if account_id is None:
-        account_id = await fetch_installation_account_id(installation_id)
-        installation.account_id = account_id
-        db.flush() #If an exception happens after this → transaction is rolled back
+
+async def fetch_installation_account_data(installation_id: int) -> dict:
     
-    if account_id != user.github_id:
-        raise HTTPException(
-            status_code=403, 
-            detail="This installation belongs to a different GitHub account"
-        )
-    
-    user_id = installation.user_id
-    if user_id is not None and user_id != user.id:
-        raise HTTPException(
-            status_code=400, 
-            detail="This GitHub installation is already linked to another user"
-        )
-        
-    installation.user_id = user.id
-    db.commit()
+    """     Fetch installation account info from GitHub using app auth at any time
+            This is useful when webhook might be delayed or missing, or installation created before account info update
+            If webhook hasn’t arrived → fetch from GitHub directly """
 
-    return {"message": "GitHub app setup successful"} #link to a page where he can return to user profile page or home page
-
-
-async def fetch_installation_account_id(installation_id: int) -> int:
-    """Fetch installation account info from GitHub using app auth at any time
-    This is useful when webhook might be delayed or missing, or installation created before account info update
-    """
-    """If webhook hasn’t arrived → fetch from GitHub directly"""
     async with httpx.AsyncClient() as client:
         response = await client.get(
             f"https://api.github.com/app/installations/{installation_id}",
@@ -167,18 +227,79 @@ async def fetch_installation_account_id(installation_id: int) -> int:
             }
         )
     
-    if response.status_code == 200:
-        data = response.json()
-        account_id: int = data["account"]["id"] 
-        return account_id
-    elif response.status_code == 404:
-        raise HTTPException(status_code=404, detail="Installation not found")
+    response.raise_for_status()
+    data = response.json()
 
-    elif response.status_code == 401:
-        raise HTTPException(status_code=401, detail="Invalid GitHub App JWT")
+    account = data.get("account", {})
 
-    else:
-        raise HTTPException(
-            status_code=400,
-            detail=f"GitHub API error: {response.status_code}"
+    return {
+        "id": account.get("id"),
+        "login": account.get("login"),
+        "type": account.get("type"),  #"User" or "Organization"
+    }
+    
+
+
+async def fetch_installation_repos(current_user, db) -> list[GitHubInstallationRepoSchema]:
+
+    # Fetch the installation linked to the current user
+    result = await db.execute(select(GitHubInstallationModel).where(GitHubInstallationModel.user_id == current_user.id))
+    installations = result.scalars().all()
+
+    if not installations:
+        return []
+    
+    repos = []
+
+    for installation in installations:
+        installation_token = get_installation_token(
+            installation.installation_id
         )
+
+        headers = {
+            "Authorization": f"Bearer {installation_token}",
+            "Accept": "application/vnd.github+json"
+        }
+
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
+                "https://api.github.com/installation/repositories",
+                headers=headers
+            )
+            response.raise_for_status()
+            data = response.json()
+
+        existing = await db.execute(
+            select(GitHubInstallationRepo.repo_id).where(
+                GitHubInstallationRepo.installation_id
+                == installation.installation_id
+            )
+        )
+
+        existing_ids = set(existing.scalars().all())
+
+        for repo in data.get("repositories", []):
+            repo_id = repo["id"]
+            repo_full_name = repo["full_name"]
+            repo_url = repo["html_url"]
+
+            repos.append(
+                GitHubInstallationRepoSchema(
+                    repo_id=repo_id,
+                    repo_full_name=repo_full_name,
+                    repo_url=repo_url
+                )
+            )
+
+            if repo_id not in existing_ids:
+                db.add(
+                    GitHubInstallationRepo(
+                        installation_id=installation.installation_id,
+                        repo_id=repo_id,
+                        repo_full_name=repo_full_name,
+                        repo_url=repo_url,
+                    )
+                )
+
+    await db.commit()
+    return repos

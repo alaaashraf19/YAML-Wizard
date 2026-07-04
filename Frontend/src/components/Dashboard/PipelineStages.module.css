@@ -1,0 +1,101 @@
+.container {
+    display: flex;
+    flex-direction: column;
+}
+
+.title {
+    font-size: 14px;
+    font-weight: 600;
+    color: rgb(209 213 219);
+    margin-bottom: 8px;
+}
+
+.empty {
+    color: rgb(156 163 175);
+    font-size: 14px;
+}
+
+/* list spacing */
+.list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* job card */
+.card {
+    background: rgba(31, 41, 55, 0.5);
+    border-radius: 6px;
+    padding: 8px;
+}
+
+/* header row */
+.row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 4px;
+}
+
+.left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.jobName {
+    font-size: 14px;
+    color: rgb(229 231 235);
+}
+
+.right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+}
+
+.duration {
+    color: rgb(209 213 219);
+}
+
+/* diff colors */
+.diffRed {
+    color: rgb(248 113 113);
+}
+
+.diffYellow {
+    color: rgb(250 204 21);
+}
+
+.diffGreen {
+    color: rgb(34 197 94);
+}
+
+/* bar container */
+.barBg {
+    width: 100%;
+    height: 8px;
+    background: rgb(55 65 81);
+    border-radius: 999px;
+}
+
+/* bar colors */
+.barGreen {
+    background: rgb(22 163 74);
+}
+
+.barYellow {
+    background: rgb(202 138 4);
+}
+
+.barRed {
+    background: rgb(220 38 38);
+}
+
+/* bar fill */
+.barFill {
+    height: 8px;
+    border-radius: 999px;
+    transition: width 0.5s ease;
+}
