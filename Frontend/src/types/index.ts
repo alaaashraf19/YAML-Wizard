@@ -125,8 +125,18 @@ export interface Session {
 export interface AuthContextType {
     username: string | null;
     loading: boolean | null;
+    isGuest: boolean;
     login: (username: string) => void;
+    loginAsGuest: () => void;
     logout: () => void;
+};
+
+// Passed as router `state` when redirecting to /login, so Login knows where
+// to send the person back to afterwards and whether "Continue as Guest"
+// should be offered for that particular destination.
+export interface LoginRedirectState {
+    from?: { pathname: string };
+    allowGuest?: boolean;
 };
 
 export interface Project {

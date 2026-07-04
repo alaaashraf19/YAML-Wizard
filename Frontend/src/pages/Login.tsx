@@ -5,8 +5,9 @@ import { UsernameField, PasswordField } from "../components/AuthForm/AuthForm";
 import logo from "../assets/yaml_wizard_logo.png";
 
 import { Link } from 'react-router-dom';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from '../Context/AuthContext';
+import type { LoginRedirectState } from "../types";
 
 function Login(){
     const [username, setUsername] = useState("");
@@ -16,28 +17,39 @@ function Login(){
     const [responseError, setResponseError] = useState("");
     const [emptyUsername, setEmptyUsername] = useState(false);
     const [emptyPassword, setEmptyPassword] = useState(false);
-    const { login } = useAuth();
+    const { login, loginAsGuest } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
     const api_url = import.meta.env.VITE_API_URL;
+
+    
+    const redirectState = (location.state ?? null) as LoginRedirectState | null;
+    const redirectTo = redirectState?.from?.pathname || "/chatbot";
+    const allowGuest = !!redirectState?.allowGuest;
+
+    const handleContinueAsGuest = () => {
+        loginAsGuest();
+        navigate(redirectTo);
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setResponseError("");
-        
+
         if (!username) setEmptyUsername(true);
         else setEmptyUsername(false);
         if (!password) setEmptyPassword(true);
         else setEmptyPassword(false);
-        
+
         if (!username || !password) {
             return;
         }
-        
+
         const userData = {
             username,
             password
         };
-        
+
         setLoading(true);
         try {
             const res = await fetch(`${api_url}/auth/login`, {
@@ -48,7 +60,7 @@ function Login(){
             });
 
             const data = await res.json();
-            
+
             if (!res.ok) {
                 if(data.detail && Array.isArray(data.detail) && data.detail.length > 0) {
                     const msg = data.detail[0].msg || "Login failed";
@@ -63,7 +75,7 @@ function Login(){
 
             login(username);
             console.log(data.msg);
-            navigate("/chatbot"); // Redirect to home page on successful login
+            navigate(redirectTo); // Redirect to where the person came from, or /chatbot by default
 
         } catch (err: any) {
             const msg = err?.response?.data?.detail?.[0]?.msg || "Server Error. Please try again later.";
@@ -99,7 +111,15 @@ function Login(){
                 </button>
             </form>
 
-            <p>Don't have an account? <Link className={`${styles.link} ${gStyles.clickable}`} to="/signup">Sign Up</Link></p>
+            {allowGuest &&
+                <button type="button" className={`${gStyles.gButton} ${styles.guestButton}`}
+                    onClick={handleContinueAsGuest}>
+                    Continue as Guest
+                </button>
+            }
+
+            <p>Don't have an account? <Link className={`${styles.link} ${gStyles.clickable}`}
+                to="/signup" state={redirectState}>Sign Up</Link></p>
         </div>
     )
 }
