@@ -10,6 +10,8 @@ export default defineConfig(({ mode }) => {
   console.log('🔍 Mode:', mode)
   console.log('🔍 VITE_API_URL from .env:', env.VITE_API_URL)
   console.log('🔍 VITE_API_URL from process.env:', process.env.VITE_API_URL)
+  console.log('🔍 VITE_WS_URL from .env:', env.VITE_WS_URL)
+  console.log('🔍 VITE_WS_URL from process.env:', process.env.VITE_WS_URL)
   
   return {
     plugins: [

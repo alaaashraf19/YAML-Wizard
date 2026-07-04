@@ -11,6 +11,8 @@ import { TbTimelineEventText } from "react-icons/tb";
 import { TbShieldLockFilled } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
 import CodeWindowMockup from "../components/Home/CodeWindowMockup";
+import screenshot1 from "../assets/dashboard_screenshot_1.png"
+import screenshot2 from "../assets/dashboard_screenshot_2.png"
 
 
 function Home() {
@@ -262,7 +264,8 @@ function Home() {
                 </p>
 
                 <div className={styles.dashboardPlaceholder}>
-                    Dashboard Screenshot / Demo Area
+                    <img className={styles.img} src={screenshot1} alt="Dashboard Screenshot 1"></img>
+                    <img className={styles.img} src={screenshot2} alt="Dashboard Screenshot 2"></img>
                 </div>
             </section>
 
