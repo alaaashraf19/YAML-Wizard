@@ -349,7 +349,8 @@ async def update_project(project_id: int, user_id: int, project_update: ProjectU
                 default_branch = await get_github_default_branch(repo.url, token)
             elif detected_platform == "gitlab":
                 default_branch = await get_gitlab_default_branch(repo.url, token)
-        
+                
+        print(default_branch)
         repo.default_branch=default_branch
         repo.gitlab_project_id = await _get_gitlab_proj_id(repo.full_name,token) if detected_platform == "gitlab" else None
 

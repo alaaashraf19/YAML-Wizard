@@ -46,6 +46,8 @@ async def approve_pipeline_chatbot(project_id: int, pipeline: PipelineCreate,  d
     
     data = yaml.safe_load(pipeline.content)
     workflow_name = data.get("name")
+    if workflow_name is None:
+        workflow_name = "CI/CD pipeline" 
     platform = repo.platform.lower()
     file_path=None
     if platform.lower() == "github":
@@ -54,7 +56,7 @@ async def approve_pipeline_chatbot(project_id: int, pipeline: PipelineCreate,  d
         file_path = ".gitlab-ci.yml"
 
     pipeline = await create_pipeline(PipelineCreate(
-        name=workflow_name,
+        name=workflow_name ,
         description=pipeline.description,
         content=pipeline.content,
         is_generated_by_wizard=True,
