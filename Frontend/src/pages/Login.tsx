@@ -22,10 +22,7 @@ function Login(){
     const location = useLocation();
     const api_url = import.meta.env.VITE_API_URL;
 
-    // Where to send the person back to after they log in, and whether this
-    // particular destination is one a guest is allowed to visit instead.
-    // e.g. Home's "Start Generating YAML" sends { from: "/chatbot", allowGuest: true },
-    // while "Connect Your First Repository" sends { from: "/profile?tab=Platforms", allowGuest: false }.
+    
     const redirectState = (location.state ?? null) as LoginRedirectState | null;
     const redirectTo = redirectState?.from?.pathname || "/chatbot";
     const allowGuest = !!redirectState?.allowGuest;

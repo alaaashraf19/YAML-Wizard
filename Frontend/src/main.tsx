@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AuthProvider } from './Context/AuthContext.tsx';
-import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute.tsx';
+import {ProtectedGuest, ProtectedUser} from './components/ProtectedRoute/ProtectedRoute.tsx';
 
 import App from './App.tsx'
 import SignUp from './pages/SignUp.tsx';
@@ -31,17 +31,15 @@ const router = createBrowserRouter([{
   element: <App />,
   errorElement: <Error/>,
   children: [
-    // Chatbot is the one authenticated feature guests get to try -
-    // allowGuest lets someone who chose "Continue as Guest" stay here.
-    { path: "/chatbot", element: <ProtectedRoute allowGuest><Chatbot/></ProtectedRoute> },
-    { path: "/profile", element: <ProtectedRoute><UserProfile/></ProtectedRoute>},
-    { path: '/dashboard', element: <ProtectedRoute><Dashboard/></ProtectedRoute> },
-    { path: '/history', element: <ProtectedRoute><History/></ProtectedRoute> },
+    { path: "/chatbot", element: < ProtectedGuest ><Chatbot/></ProtectedGuest> },
+    { path: "/profile", element: <ProtectedGuest><UserProfile/></ProtectedGuest>},
+    { path: '/dashboard', element: <ProtectedGuest><Dashboard/></ProtectedGuest> },
+    { path: '/history', element: <ProtectedGuest><History/></ProtectedGuest> },
     { path: "/", element: <Home/> },
     {path: "*", element: <Error/>}, // Handle not provided page
   ]},
-  { path: "/signup", element: <SignUp /> },
-  { path: "/login", element: <Login /> },
+  { path: "/signup", element: < ProtectedUser ><SignUp/></ProtectedUser> },
+  { path: "/Login", element: < ProtectedUser ><Login/></ProtectedUser> },
 ]);
 
 createRoot(document.getElementById('root')!).render(
