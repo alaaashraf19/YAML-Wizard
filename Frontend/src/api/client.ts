@@ -21,8 +21,8 @@ async function request<T>(path: string, opts?: RequestInit): Promise<T> {
     credentials: "include",
   });
   if (!res.ok) {
-    const body = await res.text();
-    throw new Error(`${res.status}: ${body}`);
+    const body = await res.json();
+    throw new Error(body.detail);
   }
   if (res.status === 204) return undefined as T;
   return res.json();
