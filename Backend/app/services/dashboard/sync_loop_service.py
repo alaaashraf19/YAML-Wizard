@@ -7,7 +7,6 @@ from realtime.connection_manager import ws_manager
 import os
 from dotenv import load_dotenv
 
-from .yaml_sync_service import yaml_sync_service
 import traceback
 
 load_dotenv()

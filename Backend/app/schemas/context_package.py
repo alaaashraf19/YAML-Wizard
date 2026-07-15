@@ -1,12 +1,5 @@
 """
 ContextPackage — structured output of any repo context agent (GitHub or GitLab).
-
-New fields vs original:
-  - default_branch    : detected from API, not hardcoded "main"
-  - env_vars          : list of env var names found in .env.example / source files
-  - services          : backing services detected from docker-compose (postgres, redis …)
-  - test_commands     : actual test command strings extracted from package.json / Makefile
-  - build_commands    : actual build command strings
 """
 from __future__ import annotations
 

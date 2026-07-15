@@ -2,11 +2,11 @@ from typing import List, Optional
 from datetime import datetime
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import HTTPException, status
+from fastapi import HTTPException
 
 from models.pipeline_model import Pipeline
 from models.project_model import Project
-from schemas.pipeline_schema import PipelineCreate, PipelineUpdate, PipelineSummary, PipelineResponse
+from schemas.pipeline_schema import PipelineCreate, PipelineUpdate
 from services.project_service import get_projectModel_by_id
 
 

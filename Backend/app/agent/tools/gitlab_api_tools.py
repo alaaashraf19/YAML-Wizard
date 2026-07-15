@@ -7,11 +7,8 @@ Requires a GitLab personal access token with `read_api` scope.
 from __future__ import annotations
 
 import base64
-import json
 import logging
-import re
 from urllib.parse import quote
-
 import httpx
 
 logger = logging.getLogger(__name__)

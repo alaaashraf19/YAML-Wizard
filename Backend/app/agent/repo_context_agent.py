@@ -15,12 +15,8 @@ from __future__ import annotations
 
 import json
 import logging
-import re
 import xml.etree.ElementTree as ET
 from agent.utils.detection import detect_env_vars
-from typing import TypedDict
-
-from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, SystemMessage, ToolMessage
 
 from agent.tools.github_mcp_tools import MCPSessionManager, build_github_tools
 from schemas.context_package import ContextPackage, TestReportInfo, TestRunnerInfo

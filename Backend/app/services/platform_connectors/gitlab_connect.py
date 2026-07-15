@@ -7,7 +7,7 @@ import httpx
 from fastapi import HTTPException
 from datetime import datetime, timezone, timedelta
 from models.platforms_model import GitLabConnection, OAuthState
-from fastapi.responses import JSONResponse, RedirectResponse
+from fastapi.responses import RedirectResponse
 from sqlalchemy import select
 from .oauth_connector import oauthConnector
 from .oauth_utils import encrypt_token, decrypt_token

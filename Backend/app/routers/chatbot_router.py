@@ -11,7 +11,6 @@ from services.chatbot_service import ChatbotService
 from database.db_engine import get_db
 from core.security import get_current_user
 from models.user_model import User
-from models.repository_model import Repository
 
 router = APIRouter()
 

@@ -1,5 +1,5 @@
 from langchain_core.tools import tool
-from ..utils.url_parser import parse_repo_url, ParsedRepoURL
+from ..utils.url_parser import parse_repo_url
 from fastapi.concurrency import run_in_threadpool
 from services.project_service import _resolve_token
 from langchain_core.runnables import RunnableConfig

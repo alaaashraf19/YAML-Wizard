@@ -5,23 +5,25 @@ from database.db_engine import get_db
 from models.platforms_model import GitHubConnection, GitLabConnection
 from core.security import get_current_user
 from sqlalchemy import select
+from schemas.repo_schema import Platform
+
 router = APIRouter()
 
 
 
 @router.get("/{platform}/connect")
-async def connect(platform: str, request: Request, db: AsyncSession = Depends(get_db)):
+async def connect(platform: Platform, request: Request, db: AsyncSession = Depends(get_db)):
     connector = get_connector(platform)
     return await connector.connect(request, db)
 
 
 @router.get("/{platform}/callback")
-async def callback(platform: str, code: str, state: str, request: Request, db: AsyncSession = Depends(get_db)):
+async def callback(platform: Platform, code: str, state: str, request: Request, db: AsyncSession = Depends(get_db)):
     connector = get_connector(platform)
     return await connector.callback(code, state, request, db)
     
 @router.get("/{platform}/disconnect")
-async def disconnect(platform: str, request: Request, db: AsyncSession = Depends(get_db)):
+async def disconnect(platform: Platform, request: Request, db: AsyncSession = Depends(get_db)):
     connector = get_connector(platform)
     return await connector.disconnect(request, db)
 

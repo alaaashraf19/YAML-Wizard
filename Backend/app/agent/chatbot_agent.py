@@ -12,13 +12,9 @@ from langchain_core.messages import HumanMessage, AIMessage, SystemMessage, Base
 from agent.tools import TOOLS
 from agent.prompts import SYSTEM_PROMPT
 from agent.utils.context_resolver import ContextResolverResponse
-from schemas.context_package import ContextPackage
 from models.pipeline_model import Pipeline
 from sqlalchemy import select
-import logging
-import json
 import re
-# logging.basicConfig(level=logging.DEBUG)
 
 class AgentState(TypedDict):
     messages: Annotated[List[BaseMessage], add_messages]
@@ -60,8 +56,6 @@ class ChatbotAgent:
         #     max_tokens=max_output_tokens,
         # )
         self.llm = base_llm.bind_tools(self.tools) if self.tools else base_llm
-        #print("\n========== LLM CREATED ==========")
-        #print(self.llm)
         self.graph = self.build_graph()
 
     def build_graph(self):
@@ -87,7 +81,6 @@ class ChatbotAgent:
 
         if history and isinstance(history[-1], ToolMessage):
             # Check if the tool that just ran was the retrieval tool
-            # (Assuming your tool is named 'retrieve_examples_tool')
             if history[-1].name == "retrieve_examples_tool":
                 rag_content = history[-1].content
             
@@ -229,7 +222,6 @@ class ChatbotAgent:
                     f"Ignore other YAML files in the repo if they conflict with this one."
                 )
 
-                # lc_messages = [SystemMessage(content=active_pipeline_msg)] + lc_messages
         initial_state = {
         "messages": lc_messages,
         "context": context,
@@ -239,7 +231,5 @@ class ChatbotAgent:
         result = await self.graph.ainvoke(initial_state, config=config)
         last_message = result["messages"][-1]
 
-        # parsed_data = self.extract_pipeline_data(last_message.content)
-        # return json.dumps(parsed_data) 
         segments = self.parse_full_response(last_message.content)
         return segments #returns a list of dicts

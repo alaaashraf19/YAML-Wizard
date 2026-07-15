@@ -12,7 +12,6 @@ from services.dashboard.platform_collectors.gitlab_collector_services import Git
 
 
 #this is for adding a repo in dashboard by pasting the url, if it's not added in our user profile aka projects field
-# will be saved in db, need to make it appear in user projects to fetch all projects from db and show them this included
 async def add_repo_service(body: RepoCreate, db, current_user):
     
     try:

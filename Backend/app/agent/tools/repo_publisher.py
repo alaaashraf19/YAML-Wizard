@@ -3,8 +3,6 @@ import time
 import httpx
 from urllib.parse import urlparse, quote
 from typing import Optional, Literal
-
-from pydantic import BaseModel, field_validator
 from schemas.publish_yaml_schema import PublishResult
 from langchain_core.tools import tool
 from langchain_core.runnables import RunnableConfig

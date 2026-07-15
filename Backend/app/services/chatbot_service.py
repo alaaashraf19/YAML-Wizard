@@ -7,7 +7,7 @@ from datetime import datetime
 from google import genai
 # from google.genai import types
 
-from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.orm import joinedload
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update, delete
 

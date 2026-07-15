@@ -6,12 +6,10 @@ from dataclasses import dataclass, field
 
 from schemas.dashboard import RepoCreate
 from agent.chatbot_agent import ChatbotAgent
-from agent.repo_context_agent import run_repo_context_agent
 from .comparator import ComparisonResult, compare_yaml
 from .scorer import ScoreBreakdown, score_yaml
 from schemas.benchmark_schema import BenchmarkContext
-from schemas.context_package import ContextPackage
-from agent.utils.context_resolver import ContextResolver, build_context_summary
+from agent.utils.context_resolver import build_context_summary
 
 import os
 from dotenv import load_dotenv

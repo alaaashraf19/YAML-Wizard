@@ -10,13 +10,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
 from ..recommendations_services.processor_services import compute_job_comparison, compute_run_comparison
-from models.repository_model import JobTiming, PipelineRun, Repository
+from models.repository_model import JobTiming, PipelineRun
 from models.pipeline_model import Pipeline
 from models.project_model import Project
 from models.pipeline_version_model import PipelineVersion
 from ..test_parsers.ParserRegistry import ParserRegistry
 from .collectors_utils import parse_duration, _parse_ts, process_test_batch, extract_test_reports_from_zip
-import asyncio
 
 load_dotenv()
 

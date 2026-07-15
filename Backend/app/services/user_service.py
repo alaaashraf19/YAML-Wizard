@@ -1,5 +1,4 @@
 import cloudinary.uploader
-import os
 from fastapi import HTTPException
 from schemas.user_schema import UserUpdate
 from core.security import hash_password, verify_password

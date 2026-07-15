@@ -1,6 +1,4 @@
 import cloudinary
-import cloudinary.uploader
-import os
 from .config import settings
 
 cloudinary.config(

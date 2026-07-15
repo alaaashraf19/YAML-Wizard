@@ -3,11 +3,9 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from models.repository_model import Repository
 from database.db_engine import get_db, async_session
-from models.pipeline_model import Pipeline
-from schemas.project_schema import ProjectCreate,ProjectResponse, ProjectSession,ProjectUpdate
-from schemas.pipeline_schema import PipelineCreate,PipelineResponse,PipelineUpdate,PipelineSummary
+from schemas.pipeline_schema import PipelineCreate,PipelineResponse,PipelineUpdate
 
-from services.project_service import get_project_by_id,get_projectModel_by_id
+from services.project_service import get_projectModel_by_id
 from services.pipeline_services import(
     create_pipeline,get_pipeline_by_id,get_project_pipelines
     ,get_active_pipelines,set_active_pipeline,
@@ -16,7 +14,7 @@ from core.security import get_current_user
 from models.user_model import User
 from typing import List, Optional
 from services.dashboard.yaml_sync_service import yaml_sync_service
-from schemas.yaml_sync_schema import YamlSyncResult, PipelineSyncResult
+from schemas.yaml_sync_schema import YamlSyncResult
 import yaml
 
 
@@ -188,21 +186,4 @@ async def sync_all_user_repositories(
     return results
 
 
-@router.post("/{project_id}/{pipeline_id}/sync", response_model=PipelineResponse)
-async def sync_single_pipeline_manual(
-    project_id: int,
-    pipeline_id: int,
-    db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    """Sync a single pipeline with the latest file from the repository."""
-    # verify project ownership
-    await get_projectModel_by_id(project_id, current_user.id, db)
-    # verify pipeline belongs to project
-    pipeline = await get_pipeline_by_id(pipeline_id, current_user.id, db)
-    if pipeline.project_id != project_id:
-        raise HTTPException(404, "Pipeline not in this project")
-    # call service
-    updated_data = await yaml_sync_service.sync_single_pipeline(current_user.id, pipeline_id, current_user.id, db)
-    return PipelineResponse(**updated_data)
 

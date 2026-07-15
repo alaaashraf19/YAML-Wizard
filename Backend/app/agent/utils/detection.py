@@ -9,7 +9,6 @@ from __future__ import annotations
 import json
 import re
 import xml.etree.ElementTree as ET
-from typing import Optional
 
 from schemas.context_package import ContextPackage, TestReportInfo, TestRunnerInfo
 

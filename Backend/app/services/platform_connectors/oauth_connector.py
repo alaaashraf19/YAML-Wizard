@@ -1,4 +1,3 @@
-# provider_connector.py
 from abc import ABC, abstractmethod
 
 class oauthConnector(ABC):

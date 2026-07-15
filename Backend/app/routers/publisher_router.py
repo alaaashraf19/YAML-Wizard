@@ -9,8 +9,6 @@ from core.security import get_current_user
 from models.user_model import User
 from models.platforms_model import GitHubInstallation,GitLabConnection, GitHubConnection
 from services.repo_publish_service import publish_to_repo_tool
-from core.github_auth import get_installation_token
-from services.platform_connectors.gitlab_connect import GitLabConnector
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from schemas.publish_yaml_schema import PublishResult, PublishRequest
