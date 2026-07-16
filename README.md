@@ -420,7 +420,6 @@ Backend/middleware/middleware.py
 
 allow_origins=[
     "http://localhost:5173",
-    "http://localhost:8000",
     "https://your-unique-id.ngrok-free.dev",
 ]
 ```
