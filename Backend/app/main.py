@@ -8,7 +8,6 @@ from realtime import websocket_router
 import asyncio
 from services.dashboard.sync_loop_service import background_sync_loop
 from services.dashboard.test_parsers.loader import load_parsers
-from services.dashboard.yaml_sync_service import yaml_sync_service
 import logging
 import sys
 import os
@@ -20,7 +19,6 @@ sys.path.insert(0, os.path.dirname(__file__))
 
 
 _sync_task: asyncio.Task | None = None
-_yaml_sync_task: asyncio.Task | None = None
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -33,7 +31,6 @@ async def lifespan(app: FastAPI):
 
     _sync_task = asyncio.create_task(background_sync_loop())
 
-    # await yaml_sync_service.start_background_sync()
     yield
     if _sync_task:
         _sync_task.cancel()
@@ -41,7 +38,6 @@ async def lifespan(app: FastAPI):
             await _sync_task
         except asyncio.CancelledError:
             pass
-    # await yaml_sync_service.stop_background_sync()
 
 app = FastAPI(
     lifespan=lifespan,
