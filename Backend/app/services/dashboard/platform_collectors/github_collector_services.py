@@ -47,6 +47,41 @@ class GitHubCollector(CICollector):
     async def close(self) -> None:
         await self._client.aclose()
 
+    async def get_branches(self, owner: str, repo: str) -> list[str]:
+        """
+        Returns all branch names for a GitHub repository.
+        """
+        url = f"{self.BASE_URL}/repos/{owner}/{repo}/branches"
+
+        branches = []
+        page = 1
+        per_page = 100
+
+        while True:
+            response = await self._client.get(
+                url,
+                params={
+                    "per_page": per_page,
+                    "page": page,
+                },
+            )
+
+            response.raise_for_status()
+
+            data = response.json()
+            if not data:
+                break
+
+            branches.extend(branch["name"] for branch in data)
+
+            if len(data) < per_page:
+                break
+
+            page += 1
+
+        return branches
+    
+
     #if branch is not specified github api returns runs from all branches
     async def get_runs(self, ctx: CollectorsRepositoryDetail, per_page: int = 30, page: int = 1, branch: str | None = None,) -> list[dict]:
         
@@ -131,10 +166,10 @@ class GitHubCollector(CICollector):
             max_runs = os.getenv("MAX_RUNS_PER_SYNC")
             if max_runs is None:
                 raise ValueError("MAX_RUNS_PER_SYNC not found as env variable or invalid. Please set it to a positive integer.")
-            raw_runs = await self.get_runs(ctx, per_page=int(max_runs))
+            branch = ctx.repo.default_branch
+            raw_runs = await self.get_runs(ctx, per_page=int(max_runs), branch = branch)
 
             for raw_run in raw_runs:
-                run_tests = 0
                 external_id = raw_run["id"] # GitHub's unique run ID
 
                 #Skip if already synced
@@ -233,7 +268,6 @@ class GitHubCollector(CICollector):
         tests_found = 0
 
         parts = ctx.repo.full_name.split("/")
-        owner, repo_name = parts
         repo_id = ctx.repo.id
 
         try:

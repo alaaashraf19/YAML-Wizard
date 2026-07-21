@@ -9,7 +9,7 @@ from models.platforms_model import GitHubConnection, GitHubInstallation, GitLabC
 from fastapi import HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from .dashboard.repos_services import _parse_repo_info, _get_gitlab_proj_id, get_github_default_branch,get_gitlab_default_branch
+from .dashboard.repos_services import _parse_repo_info,_parse_branch, _get_gitlab_proj_id, get_github_default_branch,get_gitlab_default_branch
 from .platform_connectors.oauth_utils import decrypt_token
 from sqlalchemy.exc import IntegrityError
 from fastapi.concurrency import run_in_threadpool
@@ -113,14 +113,13 @@ async def create_project(project: ProjectCreate, user_id: int, db: AsyncSession)
         raise HTTPException(status_code=409, detail="You have already added this repository.")
         
     try:
-        full_name, detected_platform, parsed_branch = _parse_repo_info(repo_url)
+        full_name, detected_platform = _parse_repo_info(repo_url)
     except ValueError:
         raise HTTPException(
             status_code=400,
             detail="Entered URL is invalid"
         )
-    default_branch = parsed_branch
-
+    
     gitlab_project_id = None
     installation_id = None
     github_repo_id = None
@@ -187,7 +186,7 @@ async def create_project(project: ProjectCreate, user_id: int, db: AsyncSession)
         full_name=full_name,
         platform=detected_platform,
         gitlab_project_id=gitlab_project_id,
-        default_branch=default_branch,
+        default_branch=None,
         url=repo_url,
         user_id=user_id,
         github_repo_id=github_repo_id,
@@ -202,11 +201,8 @@ async def create_project(project: ProjectCreate, user_id: int, db: AsyncSession)
     await db.refresh(repo)
 
 
-    if default_branch is None:
-        if detected_platform == "github":
-            default_branch = await get_github_default_branch(repo_url, token)
-        elif detected_platform == "gitlab":
-            default_branch = await get_gitlab_default_branch(repo_url, token)
+    #### get branch fron url and if no branch specified then turn to get default branch of the repo
+    default_branch = await _parse_branch(repo.url, repo.platform, repo.full_name, token)
     repo.default_branch = default_branch
 
     try:
@@ -327,7 +323,7 @@ async def update_project(project_id: int, user_id: int, project_update: ProjectU
 
         repo.url = project_update.repo_url
 
-        full_name, detected_platform, parsed_branch = _parse_repo_info(repo.url)
+        full_name, detected_platform = _parse_repo_info(repo.url)
         repo.full_name=full_name
         if detected_platform not in ["github", "gitlab"]:
             raise HTTPException(status_code=400, detail="Unsupported platform.")
@@ -340,14 +336,10 @@ async def update_project(project_id: int, user_id: int, project_update: ProjectU
             await db.commit()
             raise HTTPException(status_code=401,detail="No authentication token available.")
         
-        if parsed_branch is None:
-            if detected_platform == "github":
-                default_branch = await get_github_default_branch(repo.url, token)
-            elif detected_platform == "gitlab":
-                default_branch = await get_gitlab_default_branch(repo.url, token)
-                
+        default_branch = await _parse_branch(repo.url, repo.platform, repo.full_name, token)
+        repo.default_branch = default_branch
+       
         print(default_branch)
-        repo.default_branch=default_branch
         repo.gitlab_project_id = await _get_gitlab_proj_id(repo.full_name,token) if detected_platform == "gitlab" else None
 
     project.updated_at = datetime.utcnow()

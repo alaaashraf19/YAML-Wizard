@@ -32,10 +32,10 @@ export const api = {
   // Repos
   listRepos: () => request<import('../types').Repo[]>('/repos/list'),
 
-  addRepo: (url: string, branch = 'main') =>
+  addRepo: (url: string) =>
     request<import('../types').Repo>('/repos/add', {
       method: 'POST',
-      body: JSON.stringify({ url, default_branch: branch }),
+      body: JSON.stringify({ url}),
     }),
 
   deleteRepo: (id: number) =>

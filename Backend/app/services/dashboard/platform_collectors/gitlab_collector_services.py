@@ -41,7 +41,49 @@ class GitLabCollector(CICollector):
     async def close(self) -> None:
         await self._client.aclose()
 
+    from urllib.parse import quote
 
+
+    async def get_branches(self, project_path: str) -> list[str]:
+        """
+        Returns all branch names for a GitLab repository.
+
+        project_path example:
+            "group/repo"
+            "group/subgroup/repo"
+        """
+        encoded_project = quote(project_path, safe="")
+        url = f"{self.BASE_URL}/projects/{encoded_project}/repository/branches"
+
+        branches = []
+        page = 1
+        per_page = 100
+
+        while True:
+            response = await self._client.get(
+                url,
+                params={
+                    "per_page": per_page,
+                    "page": page,
+                },
+            )
+
+            response.raise_for_status()
+
+            data = response.json()
+            if not data:
+                break
+
+            branches.extend(branch["name"] for branch in data)
+
+            if len(data) < per_page:
+                break
+
+            page += 1
+
+        return branches
+    
+    
     async def get_project_id(self, full_name: str) -> int:
 
         encoded = quote(full_name, safe="")

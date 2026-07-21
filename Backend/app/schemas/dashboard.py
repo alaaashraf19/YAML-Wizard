@@ -6,7 +6,7 @@ from enum import Enum
 class RepoCreate(BaseModel):
     url: str
     platform: str | None = None
-    default_branch: str = "main"
+    default_branch: str | None = None
 
 
 class RepoOut(BaseModel):
@@ -163,10 +163,9 @@ class RepositorySchema(BaseModel):
     gitlab_project_id: int | None
     github_repo_id: int | None
     installation_id: int | None
-    default_branch: str
+    default_branch: str | None
     last_synced_at: datetime | None
     url: str
-    _at: datetime | None = None
     created_at: datetime
 
 class CollectorsRepositoryDetail(BaseModel):

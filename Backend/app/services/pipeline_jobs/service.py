@@ -373,16 +373,18 @@ async def push_version_to_repo(
     user_id: int, db: AsyncSession, commit_message: str | None,
 ) -> tuple[object, str]:
     platform = (repo.platform or "").lower()
-    token = await resolve_publish_token(platform, repo, user_id, db)
+    from ..project_service import _resolve_token
+    token, _ = await _resolve_token(user_id, platform, repo.url, db)
+    if token is None:
+        raise HTTPException(status_code=401, detail="No authentication token available.")
+    # token = await resolve_publish_token(platform, repo, user_id, db)
 
     file_path = (pipeline.path or "").lstrip("/")
     branch = pipeline.branch or repo.default_branch or "main"
     message = commit_message or f"ci: publish {version.name} via YAML Wizard"
 
-    from agent.tools.repo_publisher import publish_to_repo_tool
-    publish_fn = getattr(publish_to_repo_tool, "func", publish_to_repo_tool)
-    result = await asyncio.to_thread(
-        publish_fn,
+    from ..repo_publish_service import publish_to_repo_tool
+    result = publish_to_repo_tool(
         yaml_content=version.content,
         repo_url=repo.url,
         platform=platform,

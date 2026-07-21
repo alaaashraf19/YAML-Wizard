@@ -7,7 +7,7 @@ from schemas.publish_yaml_schema import PublishResult
 from langchain_core.tools import tool
 from langchain_core.runnables import RunnableConfig
 from services.project_service import _resolve_token
-from services.dashboard.repos_services import _parse_repo_info, get_github_default_branch, get_gitlab_default_branch, parse_github_repo, _get_gitlab_proj_id
+from services.dashboard.repos_services import _parse_repo_info,_parse_branch, get_github_default_branch, get_gitlab_default_branch, parse_github_repo, _get_gitlab_proj_id
 from sqlalchemy import select
 from models.project_model import Project
 from models.repository_model import Repository
@@ -64,7 +64,7 @@ async def publish_to_repo_tool(yaml_content: str, repo_url: Optional[str] = None
 
     
     try:
-        parsed_full_name, parsed_platform, parsed_branch = _parse_repo_info(repo_url)
+        parsed_full_name, parsed_platform = _parse_repo_info(repo_url)
 
         # Use the parsed_platform to override/verify the LLM's platform choice
         target_platform = parsed_platform.lower()
@@ -76,15 +76,10 @@ async def publish_to_repo_tool(yaml_content: str, repo_url: Optional[str] = None
         print("[publish_to_repo_tool] no authentication token found")
         return PublishResult(success=False, message="No authentication token found for the platform.")
     
+    parsed_branch = await _parse_branch(repo_url, parsed_platform, parsed_full_name, token)
     if parsed_branch is None:
-        try:
-            if target_platform == "gitlab":
-                parsed_branch = await get_gitlab_default_branch(repo_url, token)
-            else:
-                parsed_branch = await get_github_default_branch(repo_url, token)
-        except Exception as e:
-            print("[publish_to_repo_tool] could not resolve default branch:", str(e))
-            return PublishResult(success=False, message=f"Could not resolve default branch: {str(e)}")
+        return PublishResult(success=False, message=f"Could not resolve default branch: {str(e)}")
+        
     if target_platform == "github":
         return _publish_github(
             yaml_content, repo_url, token, file_path, parsed_branch,

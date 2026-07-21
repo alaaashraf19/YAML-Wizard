@@ -9,13 +9,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from models.user_model import User
 from models.repository_model import Repository, PipelineRun
 from services.dashboard.platform_collectors.gitlab_collector_services import GitLabCollector
+from services.dashboard.platform_collectors.github_collector_services import GitHubCollector
 
 
 #this is for adding a repo in dashboard by pasting the url, if it's not added in our user profile aka projects field
 async def add_repo_service(body: RepoCreate, db, current_user):
     
     try:
-        full_name, detected_platform, parsed_branch = _parse_repo_info(body.url)
+        full_name, detected_platform = _parse_repo_info(body.url)
     except ValueError:
         raise HTTPException(
             status_code=400,
@@ -37,12 +38,13 @@ async def add_repo_service(body: RepoCreate, db, current_user):
     existing = await db.execute(select(Repository).where(Repository.full_name == full_name))
     if existing.scalar_one_or_none():
         raise HTTPException(status_code=409, detail=f"Repository '{full_name}' already tracked")
-
+    
+    default_branch = await _parse_branch(body.url, detected_platform, full_name, token)
     repo = Repository(
         full_name=full_name,
         platform=platform,
         gitlab_project_id=gitlab_project_id if platform == "gitlab" else None,
-        default_branch=body.default_branch,
+        default_branch=default_branch,
         url=body.url.rstrip("/"),
         user_id=current_user.id
 
@@ -53,29 +55,16 @@ async def add_repo_service(body: RepoCreate, db, current_user):
     return repo
     
 
-
-def _parse_repo_info(url: str) -> tuple[str, str, str | None]:
+def _parse_repo_info(url: str) -> tuple[str, str]:
     """
-    Returns: (full_name, platform, branch)
+    Returns: (full_name, platform)
     """
     parsed = urlparse(url)
     host = (parsed.hostname or "").lower()
-
-    # Strip query string first (everything after ?)
-    path = parsed.path
-    parts = path.strip("/").split("/")
-
-    branch = None
-    full_name = None
+    parts = parsed.path.strip("/").split("/")
 
     if "github" in host:
         platform = "github"
-
-        if "tree" in parts:
-            tree_idx = parts.index("tree")
-            if len(parts) > tree_idx + 1:
-                branch = parts[tree_idx + 1]
-            parts = parts[:tree_idx]
 
         if len(parts) < 2:
             raise ValueError("Invalid GitHub repository URL")
@@ -85,16 +74,8 @@ def _parse_repo_info(url: str) -> tuple[str, str, str | None]:
     elif "gitlab" in host:
         platform = "gitlab"
 
-        if "tree" in parts:
-            tree_idx = parts.index("tree")
-            if len(parts) > tree_idx + 1:
-                branch = parts[tree_idx + 1]
-            parts = parts[:tree_idx]
-
-        # Remove the "-" separator on GitLab
         if "-" in parts:
-            dash_idx = parts.index("-")
-            parts = parts[:dash_idx]
+            parts = parts[:parts.index("-")]
 
         if len(parts) < 2:
             raise ValueError("Invalid GitLab repository URL")
@@ -104,10 +85,74 @@ def _parse_repo_info(url: str) -> tuple[str, str, str | None]:
     else:
         raise ValueError("Unsupported repository host")
 
-    if full_name and full_name.endswith(".git"):
+    if full_name.endswith(".git"):
         full_name = full_name[:-4]
 
-    return full_name, platform, branch
+    return full_name, platform
+
+async def _parse_branch(url: str,platform: str,full_name: str,token: str) -> str | None:
+    """
+    Returns the branch from a repository URL.
+    """
+    parts = urlparse(url).path.strip("/").split("/")
+
+    if platform == "github":
+        branch_parts = []
+
+        if "tree" in parts:
+            tree_idx = parts.index("tree")
+            branch_parts = parts[tree_idx + 1:]
+
+        return await _resolve_github_branch(url, branch_parts, token)
+
+    if platform == "gitlab":
+        branch_parts = []
+
+        if "-" in parts:
+            dash_idx = parts.index("-")
+            if len(parts) > dash_idx + 2:
+                branch_parts = parts[dash_idx + 2:]
+
+        return await _resolve_gitlab_branch(url, full_name, branch_parts, token)
+
+    return None
+
+
+async def _resolve_github_branch(url: str, branch_parts: list[str], token: str) -> str:
+    """
+    Finds the longest branch name matching the URL.
+    Example:
+        ["yaml-wizard", "ci-pipeline", "backend"]
+
+    tries:
+        yaml-wizard/ci-pipeline/backend
+        yaml-wizard/ci-pipeline
+        yaml-wizard
+    """
+    if not branch_parts:
+        return await get_github_default_branch(url, token)
+
+    owner, repo = parse_github_repo(url)
+    branches = await GitHubCollector(token).get_branches(owner, repo)
+    branch_set = set(branches)
+
+    for i in range(len(branch_parts), 0, -1):
+        candidate = "/".join(branch_parts[:i])
+        if candidate in branch_set:
+            return candidate
+
+async def _resolve_gitlab_branch(url: str, full_name: str, branch_parts: list[str], token: str) -> str:
+
+    if not branch_parts:
+        return await get_gitlab_default_branch(url, token)
+
+    branches = await GitLabCollector(token).get_branches(full_name)
+    branch_set = set(branches)
+
+    for i in range(len(branch_parts), 0, -1):
+        candidate = "/".join(branch_parts[:i])
+        if candidate in branch_set:
+            return candidate
 
 
 async def get_repo_or_404(repo_id: int, db: AsyncSession, current_user: User):
