@@ -1,4 +1,3 @@
-
 name: Python CI
 
 on:
@@ -10,7 +9,7 @@ on:
       - main
 
 jobs:
-  build:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -19,7 +18,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11' # You can specify your desired Python version
+          python-version: '3.x' # Use the desired Python version
 
       - name: Cache pip dependencies
         uses: actions/cache@v4
