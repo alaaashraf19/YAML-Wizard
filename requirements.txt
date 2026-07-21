@@ -149,14 +149,14 @@ pyparsing==3.3.2
 pypdf==6.5.0
 PyPika==0.48.9
 pyproject_hooks==1.2.0
-pyreadline3==3.5.4
+pyreadline3==3.5.4; platform_system=="Windows"
 pytest==9.0.3
 python-dateutil==2.9.0.post0
 python-dotenv==1.2.2
 python-jose==3.5.0
-python-magic-bin==0.4.14
+python-magic==0.4.27
 python-multipart==0.0.32
-pywin32==312
+pywin32==312; platform_system=="Windows"
 PyYAML==6.0.2
 pyzmq==27.1.0
 referencing==0.37.0
@@ -211,3 +211,4 @@ yamllint==1.38.0
 yarl==1.22.0
 zipp==3.23.0
 zstandard==0.25.0
+
